@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>COG$</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body{
+background:#111114;
+color:#f0ece4;
+font-family:'DM Sans',system-ui,sans-serif;
+font-size:16px;
+line-height:1.75;
+}
+
+:root{
+--gold:#d4a843;
+--gold-lt:#ecc96a;
+--gold-dk:#7a5e18;
+--border:#303038;
+--text:#f0ece4;
+--body:#c4bfb4;
+--muted:#888078;
+--max:1000px;
+--px:clamp(1.4rem,6vw,3.5rem);
+}
+
+.wrap{max-width:var(--max);margin:auto;padding:0 var(--px);}
+
+h1,h2,h3{font-family:'Cormorant Garamond',serif;letter-spacing:.02em;}
+
+h1{font-size:52px;color:var(--gold);margin-bottom:10px}
+
+h2{font-size:36px;margin-bottom:18px;color:var(--gold)}
+
+section{padding:90px 0;border-bottom:1px solid var(--border)}
+
+.hero{text-align:center;padding:120px 0}
+
+.lead{max-width:700px;margin:auto;color:var(--body);margin-top:12px}
+
+.btn{display:inline-block;font-size:.85rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:.9rem 2rem;border:none;cursor:pointer}
+
+.btn-g{background:var(--gold);color:#111114}
+
+.btn-g:hover{background:var(--gold-lt)}
+
+.card{background:#18181c;border:1px solid var(--border);padding:30px;border-radius:10px;margin-top:25px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px}
+
+@media(max-width:900px){.grid,.grid3{grid-template-columns:1fr}}
+
+ul{padding-left:18px}
+
+.notice{background:#18181c;border-left:4px solid var(--gold);padding:22px;margin-top:20px}
+
+input,textarea{
+width:100%;
+padding:12px;
+margin-top:8px;
+margin-bottom:16px;
+background:#111114;
+border:1px solid var(--border);
+color:white;
+border-radius:6px
+}
+
+button{margin-top:10px}
+
+footer{text-align:center;padding:50px 0;color:var(--muted)}
+
+/* Mobile-friendly diagram improvements */
+.card svg{width:100%;height:auto;max-width:100%;display:block;margin:auto;overflow:visible}
+
+/* Larger readable diagram text */
+svg text{
+font-size:clamp(16px,4.5vw,24px);
+letter-spacing:.02em;
+dominant-baseline:middle;
+}
+
+/* Thicker connectors and clearer shapes */
+svg rect{rx:12}
+svg line, svg path{stroke-width:3}
+
+/* Mobile layout optimisation */
+@media(max-width:700px){
+
+section{padding:60px 0}
+.card{padding:22px}
+
+svg text{font-size:clamp(18px,5.2vw,26px)}
+.card svg{transform:scale(1.05);transform-origin:center}
+
+}
+
+@media(max-width:420px){
+svg text{font-size:clamp(20px,6vw,28px)}
+.card svg{transform:scale(1.1);transform-origin:center}
+
+}
+.hero svg{margin-top:20px}
+svg text{font-size:clamp(16px,4.5vw,22px);} 
+.card{padding:22px}
+}
+
+</style>
+</head>
+
+<body>
+
+<section class="hero" style="padding:80px 20px;text-align:center;background:linear-gradient(180deg,#0f0f12,#1b1b20);">
+<div class="wrap">
+  <h1>COG$</h1>
+<h1 style="font-size:24px;margin-bottom:30px;color:#f0ece4;">Community Ownership and Governance
+      of Australia's 
+        Resources</h1>
+
+<svg width="100%" height="420" viewBox="0 0 900 420" style="max-width:900px;margin:auto;display:block">
+
+<defs>
+<marker id="heroArrow" markerWidth="14" markerHeight="14" refX="9" refY="5" orient="auto">
+<path d="M0,0 L10,5 L0,10 Z" fill="#d4a843" />
+</marker>
+</defs>
+
+<rect x="320" y="20" width="260" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="3"/>
+<text x="450" y="65" text-anchor="middle" fill="#f0ece4" font-size="22">Australia's Resources</text>
+
+<rect x="320" y="130" width="260" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="3"/>
+<text x="450" y="175" text-anchor="middle" fill="#f0ece4" font-size="20"><tspan x="450" dy="-6">Community Share</tspan><tspan x="450" dy="22">of Ownership</tspan></text>
+
+<rect x="320" y="240" width="260" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="3"/>
+<text x="450" y="285" text-anchor="middle" fill="#f0ece4" font-size="20"><tspan x="450" dy="-6">Community Share</tspan><tspan x="450" dy="22">of Governance</tspan></text>
+<text x="450" y="310" text-anchor="middle" fill="#f0ece4" font-size="20">and Control</text>
+
+<rect x="320" y="350" width="260" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="3"/>
+<text x="450" y="395" text-anchor="middle" fill="#f0ece4" font-size="20">Community Share of Benefits</text>
+<text x="450" y="418" text-anchor="middle" fill="#f0ece4" font-size="20">and Dividends</text>
+
+<line x1="450" y1="100" x2="450" y2="130" stroke="#d4a843" stroke-width="4" marker-end="url(#heroArrow)"/>
+<line x1="450" y1="210" x2="450" y2="240" stroke="#d4a843" stroke-width="4" marker-end="url(#heroArrow)"/>
+<line x1="450" y1="320" x2="450" y2="350" stroke="#d4a843" stroke-width="4" marker-end="url(#heroArrow)"/>
+
+</svg>
+
+<p class="lead" style="margin-top:40px;font-size:20px;max-width:900px;margin-left:auto;margin-right:auto;">
+COG$ enables Australians to participate in the ownership, governance and benefits of the nation's resource sector through a community resources trust foundation accumulating shares in ASX listed resource companies.
+</p>
+
+</div>
+</section>
+
+
+<section class="hero">
+<div class="wrap">
+<h1>COG$</h1>
+<p class="lead">Community Owned Gold and Silver 
+  - Australia's first Community Resources Trust Foundation owned and governed equally by its members.</p>
+<br>
+<a href="#reserve" class="btn btn-g">I want to Join</a>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Why Now?</h2>
+<p>The resources of Australia are currently controlled by and profited from by publicly listed corporation. <strong>COG$ addresses this through community ownership, governance and benefits.</strong></p>
+<br>
+<p>The Community Resources Wealth Trust Foundation — a not‑for‑profit foundation — is accumulating ASX shares in Australian resource companies and creating community‑led governance and community benefits issued directly to members and communities.</p>
+<br>
+<p>Instead of companies or institutions owning ALL the nation’s resource wealth, the community itself becomes a shareholder, imfluencimg governance, voting at company AGMs and sharing directly in the profits generated by Australia’s resource economy.</p>
+</section>
+
+<section>
+<div class="wrap">
+<h2>How COG$ Works</h2>
+<p>COG$ is  Australia’s first community resources wealth fund. Members collectively own a growing basket of Australian resource companies enabling governance and benefits.</p>
+
+<div class="grid">
+<div class="card">
+<h3>$4 Permanent Membership</h3>
+<p>You pay <strong>$4 once</strong> on Foundation Day for your Personal COG$ NFT. It never expires and gives you one equal governance vote. </p>
+</div>
+
+<div class="card">
+<h3>Direct Share Ownership</h3>
+<p>All shares are held directly on the ASX CHESS register in the Foundation's name. No ETF. No fund manager. No middleman. </p>
+</div>
+
+<div class="card">
+<h3>The Dividend Engine</h3>
+<p>50% of dividends flow directly to members while 50% automatically purchases more shares, compounding the community basket forever. </p>
+</div>
+
+<div class="card">
+<h3>Equal Governance</h3>
+<p>One Personal COG$ NFT equals one vote in all governance decisions, regardless of how many investment tokens you hold.</p>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>The First Acquisition</h2>
+<div class="card">
+<p>The first target acquisition is <strong>Legacy Minerals (ASX:LGM)</strong>, which controls approximately <strong>9,000 km² of mineral tenements in New South Wales</strong> including gold, silver, copper, zinc and nickel independantly valued at $5.9B.  Current market Cap is umder $40M. </p>
+<br>
+<p>The flagship project, Mt Carrington, is currently free of farm‑in agreements or joint ventures, making it a potential foundation asset for the community basket.</p>
+<br>
+<p>The long‑term goal is to gradually accumulate ownership across ASX‑listed resource companies, giving communities both economic participation and governance influence.</p>
+<br>
+<a href="#reserve" class="btn btn-g">I want to Join</a>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>The First Four Phases</h2>
+<div class="grid">
+<div class="card"><strong>Phase 1</strong><br>Acquire 1% of Legacy Minerals to achieve ESG board input. </div>
+<div class="card"><strong>Phase 2</strong><br>Acquire 20% ownership of Legacy Minerals and launch takeover bid. </div>
+<div class="card"><strong>Phase 3</strong><br>Acquire 1% stakes across ASX listed resource companies. </div>
+<div class="card"><strong>Phase 4</strong><br>Continue compounding ownership across the Australian resource sector. </div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>The Five Constants</h2>
+<div class="card">
+<ul>
+<li>$4 per COG$ token — fixed forever.</li>
+<li>$4 million maximum per person so the fund cannot be captured by wealth.</li>
+<li>All shares held directly on the ASX CHESS registry.</li>
+<li>Seat of Country held in perpetual trust.</li>
+<li>50/50 dividend split between members and reinvestment.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Why This Has Never Existed Before</h2>
+<div class="card">
+<p>Every sovereign wealth fund in history has been created and controlled by governments. Examples include Norway’s Sovereign wealth fund and Australia’s Future Fund. While these funds manage enormous national wealth, the people whose land and resources produced that wealth rarely hold a direct share in the assets themselves and habe no say.</p>
+<br>
+<p>COG$ introduces a different model. Instead of government ownership or corporate control, the community becomes a governing shareholder. Members participate directly in governance and share in the economic benefits generated by Australia’s natural resources. </p>
+</div>
+
+</div>
+
+</section>
+<section>
+<div class="wrap">
+<h2>How Foundation Day Works</h2>
+<div class="card">
+<p>Submitting a reservation records your intention to participate when COG$ officially launches. No payment is required when making a reservation.</p>
+<br>
+<ul>
+<li>On Foundation Day, participants may choose to exercise some, all, or none of their reserved tokens.</li>
+<li>The cost of each COG$ token is fixed at $4.</li>
+<li>If you decide not to proceed, your reservation simply expires with no obligation.</li>
+<li>Reservations help COG$ estimate community participation before Foundation Day.</li>
+</ul>
+
+<p>This approach allows COG$ to measure support and prepare governance structures before any tokens are issued.</p>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>What Members Receive</h2>
+<div class="grid">
+
+<div class="card">
+<h3>Equal Governance</h3>
+<p>Every member holds one governance vote through their Personal NFT COG$, ensuring an equal say regarding important decisions.</p>
+</div>
+
+<div class="card">
+<h3>Dividend and Profit Participation</h3>
+<p>Members receive a proportional share of 50% of all dividends paid by the community-owned basket of resource companies.</p>
+</div>
+
+<div class="card">
+<h3>Perpetual Ownership</h3>
+<p>Your membership does not expire. The community assets and dividend engine are designed to compound across generations.</p>
+</div>
+
+<div class="card">
+<h3>Inheritance</h3>
+<p>Membership interests and benefits can be passed to heirs, allowing the community wealth structure to persist long term.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>How the Trust Structure Works</h2>
+<div class="card">
+<p>The Community Resources Wealth Foundation Trust (NFP) holds ASX-listed resource company shares on behalf of the community. Every share is registered directly through the ASX CHESS system in the Foundation’s name.</p>
+<br>
+<p>Members participate through NFT COG$ tokens that represent governance participation and COG$ provide dividend rights. The Trust cannot be privately owned, sold, or captured because its rules are locked in the founding deed and governed by your votes.</p>
+<br>
+<p>This structure ensures that the underlying assets remain permanently community-owned while governance remains democratic and transparent.</p>
+</div>
+<br>
+<a href="#reserve" class="btn btn-g">I want to Join</a>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>The Dividend Engine</h2>
+<div class="grid">
+
+<div class="card">
+<h3>Community Peofit Dividends</h3>
+<p>50% of all dividends received from the community-owned basket of resource companies are distributed to COG$ members.</p>
+</div>
+
+<div class="card">
+<h3>Automatic Reinvestmen = Compoundimg Growth</h3>
+<p>The remaining 50% of dividends purchases more ASX resource company shares, expanding the community ownership and governance base expomentially,forever.</p>
+</div>
+
+<div class="card">
+<h3>Compounding Ownership</h3>
+<p>Each reinvestment increases the total number of shares held by the Foundation, meaning future dividends from an ever increasing basket.</p>
+</div>
+
+<div class="card">
+<h3>Perpetual Growth</h3>
+<p>This compounding cycle continues indefinitely, creating a permanent community governed wealth engine tied to Australia's natural resource economy.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Path to One Million Members</h2>
+<div class="card" style="text-align:center">
+<svg width="100%" height="420" viewBox="0 0 900 420">
+
+<defs>
+<marker id="arrow5" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 Z" fill="#d4a843" />
+</marker>
+</defs>
+
+<line x1="80" y1="340" x2="860" y2="340" stroke="#f0ece4" stroke-width="2"/>
+<line x1="80" y1="340" x2="80" y2="40" stroke="#f0ece4" stroke-width="2"/>
+
+<path d="M80 330 C200 330,260 320,320 300 C420 260,520 200,620 130 C720 70,800 40,860 30" fill="none" stroke="#d4a843" stroke-width="4" marker-end="url(#arrow5)"/>
+
+<text x="450" y="380" text-anchor="middle" fill="#f0ece4" font-size="20">Time</text>
+<text x="20" y="200" transform="rotate(-90 20,200)" fill="#f0ece4" font-size="20">Members</text>
+
+<text x="200" y="315" fill="#f0ece4" font-size="18">Early Members</text>
+<text x="420" y="250" fill="#f0ece4" font-size="18">Capital Growth</text>
+<text x="650" y="140" fill="#f0ece4" font-size="18">Share Ownership Expands</text>
+<text x="760" y="60" fill="#f0ece4" font-size="18">Dividend Engine</text>
+
+</svg>
+<p class="lead">Growth accelerates as membership expands. More members create more capital, enabling larger share acquisitions, more community governance and increasing basket of dividend payments, which attracts further membership growth, and on and on and on.</p>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>The COG$ Ecosystem</h2>
+
+<div class="card" style="text-align:center">
+<svg width="100%" height="360" viewBox="0 0 900 360">
+
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+<path d="M0,0 L6,3 L0,6 Z" fill="#d4a843" />
+</marker>
+</defs>
+
+<rect x="40" y="140" width="200" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="140" y="185" text-anchor="middle" fill="#f0ece4" font-size="16">Community Members</text>
+
+<rect x="350" y="40" width="220" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="460" y="85" text-anchor="middle" fill="#f0ece4" font-size="16">Foundation Trust</text>
+
+<rect x="660" y="140" width="200" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="760" y="185" text-anchor="middle" fill="#f0ece4" font-size="16">ASX Resource Companies</text>
+
+<rect x="350" y="240" width="220" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="460" y="285" text-anchor="middle" fill="#f0ece4" font-size="16">Dividend Engine</text>
+
+<line x1="240" y1="180" x2="350" y2="80" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="570" y1="80" x2="660" y2="180" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="760" y1="220" x2="460" y2="240" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="350" y1="280" x2="140" y2="220" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow)"/>
+
+</svg>
+<p class="lead">Members participate through the community trust which accumulates ASX resource company shares. Dividends flow back into the system, half distributed to members and half reinvested to grow ownership.</p>
+</div>
+
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>The Dividend Compounding Cycle</h2>
+
+<div class="card" style="text-align:center">
+<svg width="100%" height="360" viewBox="0 0 800 360">
+
+<defs>
+<marker id="arrow2" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+<path d="M0,0 L6,3 L0,6 Z" fill="#d4a843" />
+</marker>
+</defs>
+
+<circle cx="400" cy="180" r="120" fill="none" stroke="#d4a843" stroke-width="2"/>
+
+<text x="400" y="50" text-anchor="middle" fill="#f0ece4" font-size="16"><tspan x="400" dy="-6">Resource Company</tspan><tspan x="400" dy="22">Dividends</tspan></text>
+<text x="650" y="190" text-anchor="middle" fill="#f0ece4" font-size="16">50% Reinvest</text>
+<text x="400" y="330" text-anchor="middle" fill="#f0ece4" font-size="16">More Shares Purchased</text>
+<text x="150" y="190" text-anchor="middle" fill="#f0ece4" font-size="16">50% Paid to Members</text>
+
+<line x1="400" y1="70" x2="600" y2="150" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow2)"/>
+<line x1="650" y1="210" x2="450" y2="300" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow2)"/>
+<line x1="350" y1="300" x2="150" y2="210" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow2)"/>
+<line x1="150" y1="150" x2="350" y2="70" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow2)"/>
+
+</svg>
+
+<p class="lead">The Foundation dividend engine splits every dividend: half distributed to members and half reinvested to acquire additional shares. This compounding cycle continuously expands community ownership.</p>
+</div>
+
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Community Governance Model</h2>
+
+<div class="card" style="text-align:center">
+<svg width="100%" height="360" viewBox="0 0 900 360">
+
+<defs>
+<marker id="arrow3" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+<path d="M0,0 L6,3 L0,6 Z" fill="#d4a843" />
+</marker>
+</defs>
+
+<rect x="80" y="60" width="240" height="90" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="200" y="110" text-anchor="middle" fill="#f0ece4" font-size="16">National Governance
+1 Member = 1 Vote</text>
+
+<rect x="580" y="60" width="240" height="90" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="700" y="110" text-anchor="middle" fill="#f0ece4" font-size="16">Local Landholder
+Weighted Voting</text>
+
+<rect x="330" y="230" width="240" height="90" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="450" y="280" text-anchor="middle" fill="#f0ece4" font-size="16">Resource Project Decisions</text>
+
+<line x1="200" y1="150" x2="450" y2="230" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow3)"/>
+<line x1="700" y1="150" x2="450" y2="230" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow3)"/>
+
+</svg>
+
+<p class="lead">Major governance decisions remain democratic across the entire community. When mining, resources extracttiom or exploration decisions affect specific land areas, local landholder members receive additional weighted voting influence, uour land more say.</p>
+</div>
+
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>A Letter From the Project Coordinator</h2>
+<div class="card">
+<p>For generations, the natural wealth of Australia has flowed primarily to corporations and governments. The people whose communities sit above these resources rarely hold direct ownership and have litle to no say in the operations of companies extracting the.</p>
+<br>
+<p>COG$ allows the community itself to become the shareholder.</p>
+<br>
+<p>Through the Community Resources Wealth Foundation Trust, members collectively accumulate ownership and governance of Australian resource companies and participate directly in governance and profit. The goal is not short‑term speculation but the creation of a permanent community governance and wealth structure that compounds across, days, years and generations.</p>
+<br>
+<p>COG$ started with a simple step: people reserving their place amd communities demonstratimg collective support before Foundation Day.</p>
+<br>
+<p><strong>Thomas</strong><br>Project Coordinator</p>
+</div>
+<a href="#reserve" class="btn btn-g">I want to Join</a>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Have your say, receive your share.</h2>
+<div class="card" style="text-align:center">
+<h1 id="reservationCount">24</h1>
+<p>Peoples Reservations Recorded</p>
+<p class="lead">As reservations continue to grow, we gain a clearer picture of the people and the communities ready to participate on Foundation Day.</p>
+</div>
+</div>
+</section>
+
+<script>
+let stored = localStorage.getItem('cogs_reservations');
+let count = stored ? stored : 20;
+document.getElementById('reservationCount').innerText = count;
+</script>
+
+<section>
+<div class="wrap">
+<h2>More COG$ Participation Options</h2>
+<p>Beyond the Personal NFT COG$ $4Aud membership, COG$ allows several additional participation paths that help accelerate the growth of community ownership.</p>
+
+<div class="grid3">
+
+<div class="card">
+<h3>Investment COG$</h3>
+<p>Investment COG$ are additional COG$ tokens that members may reserve beyond their Personal NFT COG$ membership token. Each COG$ token is priced at $4 Aud.</p>
+<br>
+<p>These tokens increase your proportional participation in the dividend distribution but do not provide additional governance votes. Governance remains one‑member‑one‑vote to protect democratic control. More money doesnt equal.more power.</p>
+<br>
+<p>By allowing members to reserve additional tokens, the community can accelerate the capital used to accumulate ASX resource company shares.</p>
+</div>
+
+<div class="card">
+<h3>Landholder COG$</h3>
+<p>Landholders may reserve COG$ tokens linked to their land at a rate of up to 10,000 tokens per hectare, (or any part thereof) $4 Aud per COG$ token.</p>
+<br>
+<p>This connects surface land ownership with the mineral and resource wealth beneath it. Landholder tokens participate in dividends while also enabling <strong>weighted local governance for mining and exploration decisions affecting your local region.</strong></p>
+<br>
+<p>When projects relate to specific land areas or mining tenements, local landholder members receive additional weighted voting input on those project decisions. This ensures that the communities living on the land where resources are extracted have a stronger voice in how those projects proceed.</p>
+<br>
+<p>This model aligns the interests of communities living on resource land with the companies extracting those resources.</p>
+</div>
+
+<div class="card">
+<h3>Donation/Philanthropic COG$</h3>
+<p>Supporters may also contribute through Philanthropic donation COG$ tokens @ $4 Aud. These contributions increase the number of shares the Foundation can acquire without increasing the voting power of any single member. 25% of dividends are reinvested in more ASX listed shares, 50% is used for Foundation operational expenses and 25% is invested in community led imitiatives</p>
+<br>
+<p>COG$ Donations help grow the community asset base faster and allow individuals or organisations to support the project’s long‑term goal of community resource ownership.</p>
+</div>
+
+</div>
+
+<div class="card" style="margin-top:30px">
+<h3>Why These Accelerate Growth</h3>
+<p>The combination of Personal, Investment, Landholder and Donation participation allows COG$ to grow more rapidly than a traditional membership model.</p>
+
+<ul>
+<li>Personal memberships create the democratic governance base.</li>
+<li>Investment tokens increase the pool of capital used to acquire shares.</li>
+<li>Landholder participation links communities directly to the resources beneath their land.</li>
+<li>Donations expand the community asset base without concentrating control.</li>
+</ul>
+
+<p>Together these mechanisms allow the Foundation to accumulate larger shareholdings in Australian resource companies more quickly while maintaining equal community governance.</p>
+</div>
+
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Example: If COG$ Owned 1% of the Sector</h2>
+<div class="card">
+<p>Australia's resource sector generates billions of dollars in dividends each year across mining, resource and energy companies.</p>
+<br>
+<p>When COG$ accumulates even a <strong>1% ownership and governance position across a basket of ASX listed resource companies</strong>, those $millions begin flowing directly back to community members.</p>
+<br>
+<p>Because half of all dividends are reinvested automatically, the ownership base will continue expanding each year. Over time this creates a compounding national asset owned and governed collectively by its members.</p>
+<br>
+<p>The goal is not short‑term profit but the creation of a <strong>permanent community governance wealth engine</strong> tied to Australia's natural resource economy.</p>
+</div>
+<a href="#reserve" class="btn btn-g">I want to Join</a>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>The First Five Years</h2>
+<div class="grid">
+<div class="card"><strong>Day 0</strong><br>Foundation Day and initial community participation.</div>
+<div class="card"><strong>Months 1-3 1</strong><br>Acquire the first strategic toe-hold governance stake in Legacy Minerals.</div>
+<div class="card"><strong>Months 3-6 1</strong><br>Acquire 20% governance stake in Legacy Minerals and launch take-over bid to board.</div>
+<div class="card"><strong>Months 6-12 1</strong><br>Identify next target and aquire 1% toehold governance.</div>
+<div class="card"><strong>Years 2-3</strong><br>Expand ownership and governance across additional ASX resource companies.</div>
+<div class="card"><strong>Years 4+</strong><br>Compound profit reinvestment and increase sector influence.</div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Australia Resource Ownership Vision</h2>
+<div class="card" style="text-align:center">
+<svg width="100%" height="340" viewBox="0 0 900 340">
+
+<defs>
+<marker id="arrow4" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+<path d="M0,0 L6,3 L0,6 Z" fill="#d4a843" />
+</marker>
+</defs>
+
+<rect x="80" y="120" width="220" height="90" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="190" y="170" text-anchor="middle" fill="#f0ece4" font-size="16">Community Members</text>
+
+<rect x="360" y="40" width="220" height="90" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="470" y="90" text-anchor="middle" fill="#f0ece4" font-size="16">Community Trust</text>
+
+<rect x="640" y="120" width="220" height="90" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="750" y="170" text-anchor="middle" fill="#f0ece4" font-size="16"><tspan x="750" dy="-6">Australian Resource</tspan><tspan x="750" dy="22">Sector</tspan></text>
+
+<line x1="300" y1="160" x2="360" y2="90" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow4)"/>
+<line x1="580" y1="90" x2="640" y2="160" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow4)"/>
+
+</svg>
+<p class="lead">The long‑term vision is a growing community (NFP) Wealth Foundation that gradually accumulates ownership across the Australian resource sector, increasing governance and returning profits directly to members.</p>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<h2>Path to One Million Members</h2>
+<div class="card" style="text-align:center">
+<svg width="100%" height="340" viewBox="0 0 900 340">
+
+<defs>
+<marker id="arrow5" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+<path d="M0,0 L6,3 L0,6 Z" fill="#d4a843" />
+</marker>
+</defs>
+
+<rect x="60" y="200" width="200" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="160" y="245" text-anchor="middle" fill="#f0ece4" font-size="15">Members</text>
+
+<rect x="300" y="150" width="200" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="400" y="195" text-anchor="middle" fill="#f0ece4" font-size="15">Capital Pool</text>
+
+<rect x="540" y="100" width="200" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="640" y="145" text-anchor="middle" fill="#f0ece4" font-size="15">Share Ownership</text>
+
+<rect x="760" y="50" width="120" height="80" fill="#1e1e22" stroke="#d4a843" stroke-width="2"/>
+<text x="820" y="95" text-anchor="middle" fill="#f0ece4" font-size="15">Dividends</text>
+
+<line x1="260" y1="220" x2="300" y2="190" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow5)"/>
+<line x1="500" y1="170" x2="540" y2="140" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow5)"/>
+<line x1="740" y1="120" x2="760" y2="90" stroke="#d4a843" stroke-width="2" marker-end="url(#arrow5)"/>
+
+</svg>
+<p class="lead">As membership grows, the capital pool increases, enabling the Foundation to accumulate larger shareholdings, more governance and generate increasing influence and wealth for the community.</p>
+</div>
+</div>
+
+
+<section id="reserve">
+<div class="wrap">
+<h2>Reserve Your Place in COG$</h2>
+<p>This reservation records your intention to participate in COG$ when the project launches. No payment is required today. </p>
+
+<div class="notice">
+<strong>No payment today.</strong><br>
+Submitting this form records a reservation only. You may choose whether to exercise it on Foundation Day.
+</div>
+
+<div class="card">
+
+<form action="https://formsubmit.co/cogsaustralia@gmail.com" method="POST">
+
+<input type="hidden" name="_captcha" value="false">
+
+<div class="grid">
+<div>
+<label>Full Name</label>
+<input type="text" name="name" required>
+</div>
+
+<div>
+<label>Date of Birth</label>
+<input type="date" name="dob" required>
+</div>
+</div>
+
+<label>Email</label>
+<input type="email" name="email" required>
+
+<label>Mobile</label>
+<input type="tel" name="mobile">
+
+<label>Address</label>
+<textarea name="address"></textarea>
+
+<h3>Reservation Options</h3>
+
+<label>Personal NfT COG$ Membership @ $4ea</label>
+<input type="text" value="1 Reserved" readonly>
+
+I want to help - Donation COG$ Tokens @ $4ea (optional)</label>
+<input type="number" name="philanthropic_tokens">
+
+<label>I want Investment COG$ Tokens @ $4ea (optional)</label>
+<input type="number" name="investment_tokens">
+
+<label>I want Landholder COG$ Tokens @$4ea (optional)</label>
+<input type="number" name="landholder_tokens">
+
+<label>Land Area (hectares if landholder)</label>
+<input type="number" name="land_area">
+
+<label>
+<input type="checkbox" required>
+I understand this is a NO OBLIGATION reservation and no payment is required.
+</label>
+
+<br><br>
+<button class="btn btn-g" type="submit">Please Reserve My COG$</button>
+
+</form>
+
+</div>
+</div>
+</section>
+
+<footer>
+<div class="wrap">
+COGs Reservation System — Reservation Only. No financial product offered today. Regulatory engagement and approval before any COG$ token issued.
+</div>
+</footer>
+
+</body>
+</html>
