@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COG$ — Privacy Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C8901A;
+    --gold-light: #F0B429;
+    --bg: #0F0D09;
+    --bg-card: #221E14;
+    --bg-card2: #2A2418;
+    --text: #F0E8D6;
+    --text-muted: #C4B49A;
+    --text-faint: #9A8A74;
+    --border: rgba(200,144,26,0.15);
+    --border-strong: rgba(200,144,26,0.35);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .legal-banner {
+    background: #1a1308;
+    border-bottom: 1px solid var(--border-strong);
+    padding: 8px 24px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .legal-banner span {
+    color: #B8A888;
+    font-weight: 300;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 12px;
+    font-size: 11px;
+  }
+  nav {
+    background: rgba(15,13,9,0.97);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-back {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--gold-light); }
+
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+    flex: 1;
+  }
+
+  .doc-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 1rem;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+  }
+  .doc-meta {
+    font-size: 13px;
+    color: var(--text-faint);
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--text);
+    margin: 2.5rem 0 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin: 1.5rem 0 0.5rem;
+  }
+  p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  ul {
+    list-style: none;
+    margin: 0.5rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  ul li {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .highlight-box {
+    background: rgba(200,144,26,0.05);
+    border-left: 3px solid var(--gold);
+    padding: 1.25rem 1.5rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 1.5rem 0;
+  }
+  .highlight-box p { margin: 0; }
+  strong { color: var(--text); font-weight: 500; }
+  a { color: var(--gold-light); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .contact-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-top: 3rem;
+  }
+  .contact-card h2 { margin-top: 0; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  footer a { color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<div class="legal-banner">
+  Not for public disclosure — Private community use only
+  <span>Reservation only. No financial product offered. ASIC &amp; ATO regulatory engagement ongoing.</span>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">COG$</a>
+  <a href="index.html" class="nav-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to COG$
+  </a>
+</nav>
+
+<div class="page">
+
+  <div class="doc-eyebrow">Legal</div>
+  <h1>Privacy Policy</h1>
+  <p class="doc-meta">Last updated: May 2025 &nbsp;·&nbsp; COG$ Community Resources Wealth Trust Foundation</p>
+
+  <div class="highlight-box">
+    <p>This Privacy Policy explains how the COG$ Community Resources Wealth Trust Foundation (<strong>"we", "us", "our"</strong>) collects, uses, stores, and protects personal information in accordance with the <strong>Privacy Act 1988 (Cth)</strong> and the Australian Privacy Principles (APPs).</p>
+  </div>
+
+  <h2>1. Who we are</h2>
+  <p>The COG$ Community Resources Wealth Trust Foundation is a not-for-profit foundation being established under Australian law. Our contact address is <a href="mailto:COGsAustralia@gmail.com">COGsAustralia@gmail.com</a>.</p>
+
+  <h2>2. What information we collect</h2>
+  <p>When you submit a reservation through our website, we may collect the following personal information:</p>
+  <ul>
+    <li>Full legal name</li>
+    <li>Date of birth</li>
+    <li>Email address</li>
+    <li>Mobile phone number</li>
+    <li>Residential address</li>
+    <li>Land ownership details (if you reserve Landholder COG$ tokens)</li>
+    <li>Financial reservation details (token types and values indicated)</li>
+    <li>Any additional information you voluntarily provide in the reservation form</li>
+  </ul>
+  <p>We do not collect payment card details, bank account information, or any financial credentials through this website. No payment is taken at the reservation stage.</p>
+
+  <h2>3. How we collect your information</h2>
+  <p>We collect personal information directly from you when you:</p>
+  <ul>
+    <li>Complete and submit the reservation form on our website</li>
+    <li>Contact us by email</li>
+    <li>Otherwise communicate with us in connection with the COG$ Foundation</li>
+  </ul>
+
+  <h2>4. Why we collect your information</h2>
+  <p>We collect and use your personal information for the following purposes:</p>
+  <ul>
+    <li>To record and manage your reservation ahead of Foundation Day</li>
+    <li>To communicate with you about COG$ updates, regulatory milestones, and Foundation Day details</li>
+    <li>To assess community participation levels ahead of the Foundation's launch</li>
+    <li>To administer your membership if you proceed on Foundation Day</li>
+    <li>To comply with our legal and regulatory obligations</li>
+    <li>To respond to your enquiries and requests</li>
+  </ul>
+  <p>We will not use your personal information for any purpose that is inconsistent with these purposes without your consent.</p>
+
+  <h2>5. How we store and protect your information</h2>
+  <p>Your personal information is transmitted to us via <strong>FormSubmit.co</strong>, a third-party form delivery service, and received at our secure email address. We take reasonable steps to protect your information from misuse, interference, loss, unauthorised access, modification, and disclosure.</p>
+  <p>Personal information is held only for as long as it is required for the purposes described in this policy, or as required by law.</p>
+
+  <h2>6. Disclosure of your information</h2>
+  <p>We do not sell, trade, rent, or otherwise disclose your personal information to third parties for commercial purposes. We may disclose your information to:</p>
+  <ul>
+    <li>Service providers who assist us in operating the Foundation (such as legal advisors and regulatory consultants), who are bound by confidentiality obligations</li>
+    <li>Regulatory bodies such as ASIC or the ATO where required by law</li>
+    <li>Any person with your consent</li>
+  </ul>
+  <p>Where information is disclosed to third parties outside Australia, we take reasonable steps to ensure those parties handle your information in accordance with the Australian Privacy Principles.</p>
+
+  <h2>7. Cookies and website analytics</h2>
+  <p>Our website does not currently use cookies for tracking or advertising purposes. Basic server-side analytics may be recorded by your hosting provider. No personal information is collected through cookies on this site.</p>
+
+  <h2>8. Your rights</h2>
+  <p>Under the Privacy Act 1988 (Cth), you have the right to:</p>
+  <ul>
+    <li>Request access to the personal information we hold about you</li>
+    <li>Request correction of any inaccurate or incomplete information</li>
+    <li>Request deletion of your reservation data at any time prior to Foundation Day</li>
+    <li>Withdraw your reservation and request removal of your information from our records</li>
+    <li>Lodge a complaint with the Office of the Australian Information Commissioner (OAIC) if you believe your privacy rights have been breached</li>
+  </ul>
+  <p>To exercise any of these rights, contact us at <a href="mailto:COGsAustralia@gmail.com">COGsAustralia@gmail.com</a>. We will respond within 30 days.</p>
+
+  <h2>9. Children's privacy</h2>
+  <p>We collect information about children only where a parent or guardian submits a Kids COG$ NFT reservation on their behalf. By submitting such a reservation, the parent or guardian confirms they have the legal authority to do so and consents to this Privacy Policy on behalf of the child.</p>
+
+  <h2>10. Changes to this policy</h2>
+  <p>We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. The current version will always be available at this page. We encourage you to review it periodically. Continued use of our website or reservation system constitutes acceptance of any updated policy.</p>
+
+  <h2>11. Complaints</h2>
+  <p>If you have a complaint about how we have handled your personal information, please contact us first at <a href="mailto:COGsAustralia@gmail.com">COGsAustralia@gmail.com</a> so we can attempt to resolve it. If you are not satisfied with our response, you may contact the Office of the Australian Information Commissioner:</p>
+  <ul>
+    <li>Website: <a href="https://www.oaic.gov.au" target="_blank" rel="noopener">www.oaic.gov.au</a></li>
+    <li>Phone: 1300 363 992</li>
+    <li>Post: GPO Box 5218, Sydney NSW 2001</li>
+  </ul>
+
+  <div class="contact-card">
+    <h2>Contact us</h2>
+    <p>For any privacy-related enquiries, access requests, or to withdraw your reservation:</p>
+    <p><strong>COG$ Community Resources Wealth Trust Foundation</strong><br>
+    Email: <a href="mailto:COGsAustralia@gmail.com">COGsAustralia@gmail.com</a><br>
+    ABN: Pending registration</p>
+  </div>
+
+</div>
+
+<footer>
+  COG$ Community Resources Wealth Trust Foundation &nbsp;·&nbsp;
+  <a href="index.html">Home</a> &nbsp;·&nbsp;
+  <a href="terms.html">Terms of Use</a> &nbsp;·&nbsp;
+  <a href="mailto:COGsAustralia@gmail.com">Contact</a>
+</footer>
+
+</body>
+</html>

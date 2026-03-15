@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COG$ — Reservation Confirmed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C8901A;
+    --gold-light: #F0B429;
+    --bg: #0F0D09;
+    --bg-card: #221E14;
+    --bg-card2: #2A2418;
+    --text: #F0E8D6;
+    --text-muted: #C4B49A;
+    --text-faint: #9A8A74;
+    --border: rgba(200,144,26,0.15);
+    --border-strong: rgba(200,144,26,0.35);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* LEGAL BANNER */
+  .legal-banner {
+    background: #1a1308;
+    border-bottom: 1px solid var(--border-strong);
+    padding: 8px 24px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .legal-banner span {
+    color: #B8A888;
+    font-weight: 300;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 12px;
+    font-size: 11px;
+  }
+
+  /* NAV */
+  nav {
+    background: rgba(15,13,9,0.97);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    flex-shrink: 0;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-back {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--gold-light); }
+
+  /* MAIN CONTENT */
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+  }
+
+  .thankyou-wrap {
+    max-width: 680px;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* TICK ICON */
+  .tick-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(200,144,26,0.1);
+    border: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.1); }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+  .tick-circle svg {
+    width: 32px;
+    height: 32px;
+    stroke: var(--gold-light);
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+  h1 em { font-style: italic; color: var(--gold-light); }
+
+  .lead {
+    font-size: 1.05rem;
+    color: var(--text);
+    opacity: 0.8;
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.75;
+  }
+
+  /* INFO CARDS */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    text-align: left;
+  }
+  .info-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+  }
+  .info-card-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .info-card-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold-light);
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+  .info-card-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* WHAT HAPPENS NEXT */
+  .next-steps {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    text-align: left;
+  }
+  .next-steps h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+  }
+  .next-step {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .next-step:last-child { border-bottom: none; }
+  .next-step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .next-step h3 { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 0.2rem; }
+  .next-step p  { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* SHARE */
+  .share-section {
+    margin-bottom: 2.5rem;
+  }
+  .share-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .share-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+    background: var(--bg-card);
+    transition: border-color 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+  .share-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+  .share-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+  /* CTA */
+  .btn-primary {
+    background: var(--gold);
+    color: #0F0D09;
+    text-decoration: none;
+    padding: 14px 36px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-faint);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 480px) {
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .share-buttons { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="legal-banner">
+  Not for public disclosure — Private community use only
+  <span>Reservation only. No financial product offered. ASIC &amp; ATO regulatory engagement ongoing.</span>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">COG$</a>
+  <a href="index.html" class="nav-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to COG$
+  </a>
+</nav>
+
+<main>
+  <div class="thankyou-wrap">
+
+    <div class="tick-circle">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+
+    <div class="eyebrow">Reservation recorded</div>
+    <h1>You're in.<br><em>Welcome to COG$.</em></h1>
+    <p class="lead">
+      Your reservation has been received. No payment has been taken and no obligation created — you're simply in line for Foundation Day.
+    </p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-label">Foundation Day</div>
+        <div class="info-card-value">14 May</div>
+        <div class="info-card-desc">The date you choose whether to proceed with your reservation</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Your membership</div>
+        <div class="info-card-value">$4</div>
+        <div class="info-card-desc">One permanent governance vote — never expires</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Obligation today</div>
+        <div class="info-card-value">None</div>
+        <div class="info-card-desc">You can change your mind at any time before Foundation Day</div>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <h2>What happens next</h2>
+      <div class="next-step">
+        <div class="next-step-num">1</div>
+        <div>
+          <h3>Check your email</h3>
+          <p>You'll receive a confirmation email shortly. Keep an eye on your inbox — including your spam folder — for updates from COGsAustralia@gmail.com.</p>
+        </div>
+      </div>
+      <div class="next-step">
+        <div class="next-step-num">2</div>
+        <div>
+          <h3>We'll be in touch before Foundation Day</h3>
+          <p>As 14 May approaches, you'll receive information about the White &amp; Black Paper, regulatory updates, and instructions on how to exercise your reservation.</p>
+        </div>
+      </div>
+      <div class="next-step">
+        <div class="next-step-num">3</div>
+        <div>
+          <h3>On Foundation Day — choose your path</h3>
+          <p>You can exercise some, all, or none of your reserved COG$ tokens. If you decide not to proceed, your reservation simply expires — no action required.</p>
+        </div>
+      </div>
+      <div class="next-step">
+        <div class="next-step-num">4</div>
+        <div>
+          <h3>Spread the word</h3>
+          <p>Every additional member strengthens the Foundation's collective stewardship and governance. Share COG$ with your community, your neighbours, and anyone who cares about Australia's future.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-section">
+      <p class="share-label">Help grow the community — share COG$ with people you know</p>
+      <div class="share-buttons">
+        <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=https://cogsaustralia.org" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          Share on Facebook
+        </a>
+        <a class="share-btn" href="https://twitter.com/intent/tweet?text=I%20just%20reserved%20my%20place%20in%20COG%24%20%E2%80%94%20Australia%27s%20first%20community%20resources%20wealth%20foundation.%20Own%20a%20share%20of%20Australia%27s%20resources.%20Foundation%20Day%2014%20May.&url=https://cogsaustralia.org" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M4 4l16 16M4 20L20 4"/></svg>
+          Share on X
+        </a>
+        <button class="share-btn" onclick="copyLink()">
+          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span id="copy-label">Copy link</span>
+        </button>
+      </div>
+    </div>
+
+    <a href="index.html" class="btn-primary">Back to COG$</a>
+
+  </div>
+</main>
+
+<footer>
+  COG$ Community Resources Wealth Trust Foundation &nbsp;·&nbsp; Reservation only — no financial product offered &nbsp;·&nbsp; <a href="index.html" style="color:var(--text-faint);">cogsaustralia.org</a>
+</footer>
+
+<script>
+  function copyLink() {
+    navigator.clipboard.writeText('https://cogsaustralia.org').then(function() {
+      var label = document.getElementById('copy-label');
+      label.textContent = 'Copied!';
+      setTimeout(function() { label.textContent = 'Copy link'; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
