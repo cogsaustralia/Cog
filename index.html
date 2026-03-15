@@ -133,10 +133,12 @@ svg text{font-size:clamp(16px,4.5vw,22px);}
 }
 
 img {
-  max-width: 25%; /* Ensures the image scales down if the screen is narrower than its original width */
-  height: auto;    /* Automatically calculates the height to maintain the aspect ratio */
-  display: block;  /* Helps remove extra space below the image */
+    width: 25vw; /* Sets the image width to 25% of the viewport width */
+    height: auto; /* Automatically adjusts height to maintain aspect ratio */
+    display: block; /* Helps with centering or layout control */
+    max-width: 100%; /* Ensures the image does not exceed its original size if it's smaller than 25vw */
 }
+
 
 </style>
 </head>
