@@ -1357,39 +1357,48 @@
           <strong>Reservation only — no payment today.</strong> This form records your intention to participate when COG$ publicly launches. No financial product is offered and no obligation is created. You may withdraw at any time.
         </div>
 
+        <form action="https://formsubmit.co/COGsAustralia@gmail.com" method="POST" id="reserveForm">
+          <!-- FormSubmit configuration -->
+          <input type="hidden" name="_subject" value="COG$ Foundation — New Reservation">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="https://cogsaustralia.org/thankyou.html">
+          <!-- Honeypot spam trap -->
+          <input type="text" name="_honey" style="display:none">
+
         <div class="form-grid">
           <div class="form-group">
             <label for="fname">Full name *</label>
-            <input type="text" id="fname" placeholder="Your full legal name">
+            <input type="text" id="fname" name="Full Name" placeholder="Your full legal name" required>
           </div>
           <div class="form-group">
             <label for="dob">Date of birth *</label>
-            <input type="date" id="dob">
+            <input type="date" id="dob" name="Date of Birth" required>
           </div>
           <div class="form-group">
             <label for="email">Email address *</label>
-            <input type="email" id="email" placeholder="your@email.com">
+            <input type="email" id="email" name="Email Address" placeholder="your@email.com" required>
           </div>
           <div class="form-group">
             <label for="mobile">Mobile *</label>
-            <input type="tel" id="mobile" placeholder="+61 4xx xxx xxx">
+            <input type="tel" id="mobile" name="Mobile" placeholder="+61 4xx xxx xxx" required>
           </div>
           <div class="form-group full">
             <label for="address">Residential address *</label>
-            <input type="text" id="address" placeholder="Street address, suburb, state, postcode">
+            <input type="text" id="address" name="Residential Address" placeholder="Street address, suburb, state, postcode" required>
           </div>
 
           <div class="form-group full">
             <label>Reservation options</label>
             <div class="checkbox-group mt-sm">
               <label class="checkbox-item">
-                <input type="checkbox" checked>
+                <input type="checkbox" name="Personal NFT Membership ($4)" value="Yes" checked>
                 <span><strong>Personal NFT COG$ membership</strong> — $4 AUD, one governance vote, never expires</span>
               </label>
               <label class="checkbox-item">
-                <input type="checkbox">
+                <input type="checkbox" name="Kids COG$ NFT" value="Yes">
                 <span><strong>Kids COG$ NFT</strong> — $4 AUD each. How many children / grandchildren?
-                  <input type="number" min="0" max="20" placeholder="0" style="width:60px; margin-left:8px; display:inline-block;">
+                  <input type="number" name="Kids COG$ NFT Count" min="0" max="20" placeholder="0" style="width:60px; margin-left:8px; display:inline-block;">
                 </span>
               </label>
             </div>
@@ -1397,40 +1406,41 @@
 
           <div class="form-group">
             <label for="invest">Investment COG$ tokens ($4 each) — total $ value</label>
-            <input type="number" id="invest" placeholder="0" min="0">
+            <input type="number" id="invest" name="Investment COG$ Value ($)" placeholder="0" min="0">
           </div>
           <div class="form-group">
             <label for="donate">Donation / philanthropic COG$ ($4 each) — total $ value</label>
-            <input type="number" id="donate" placeholder="0" min="0">
+            <input type="number" id="donate" name="Donation COG$ Value ($)" placeholder="0" min="0">
           </div>
 
           <div class="form-group">
             <label for="hectares">Landholder COG$ — approximate hectares you own</label>
-            <input type="number" id="hectares" placeholder="0" min="0">
+            <input type="number" id="hectares" name="Landholder Hectares" placeholder="0" min="0">
           </div>
           <div class="form-group">
             <label for="landval">Landholder COG$ — total $ value to reserve</label>
-            <input type="number" id="landval" placeholder="0" min="0">
+            <input type="number" id="landval" name="Landholder COG$ Value ($)" placeholder="0" min="0">
           </div>
 
           <div class="form-group full">
             <label for="info">Additional information requested (optional)</label>
-            <textarea id="info" rows="3" placeholder="e.g. Please send me a copy of the White and Black Paper, more information about landholder governance..."></textarea>
+            <textarea id="info" name="Additional Information Requested" rows="3" placeholder="e.g. Please send me a copy of the White and Black Paper, more information about landholder governance..."></textarea>
           </div>
 
           <div class="form-group full">
             <label class="checkbox-item" style="cursor:pointer;">
-              <input type="checkbox" id="confirm">
+              <input type="checkbox" id="confirm" name="No-Obligation Reservation Confirmed" value="Yes" required>
               <span>I understand this is a <strong>no-obligation reservation</strong>. No payment is required today. I may choose whether to proceed on or after Foundation Day — 14 May.</span>
             </label>
           </div>
         </div>
 
-        <button class="btn-primary form-submit" onclick="handleSubmit()">Reserve my place in COG$</button>
+        <button type="submit" class="btn-primary form-submit">Reserve my place in COG$</button>
         <p class="form-legal">
           By submitting this form you agree to our <a href="#privacy">Privacy Policy</a> and <a href="#terms">Terms of Use</a>.<br>
           Personal information is collected under the Australian Privacy Act 1988 and used solely for COG$ Foundation purposes.
         </p>
+        </form>
       </div>
 
       <div>
@@ -1473,7 +1483,7 @@
         <div class="card">
           <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.75rem;">Contact</p>
           <p style="font-size:13px; color:var(--text-muted); line-height:1.65;">Questions about COG$ or your reservation? Contact the project team directly.</p>
-          <p style="font-size:13px; color:var(--gold-light); margin-top:0.5rem;"><a href="mailto:hello@COGsAustralia.org" style="color:var(--gold-light); text-decoration:none;">hello@COGsAustralia.org</a></p>
+          <p style="font-size:13px; color:var(--gold-light); margin-top:0.5rem;"><a href="mailto:COGsAustralia@gmail.com" style="color:var(--gold-light); text-decoration:none;">COGsAustralia@gmail.com</a></p>
           <p style="font-size:12px; color:var(--text-muted); margin-top:1rem;">ABN: [Pending registration]<br>ACN: [Pending registration]</p>
         </div>
       </div>
@@ -1507,7 +1517,7 @@
           <li><a href="#" id="privacy">Privacy Policy</a></li>
           <li><a href="#" id="terms">Terms of Use</a></li>
           <li><a href="#regulatory">Regulatory Status</a></li>
-          <li><a href="mailto:hello@COGsAustralia.org">Contact</a></li>
+          <li><a href="mailto:COGsAustralia@gmail.com">Contact</a></li>
         </ul>
       </div>
     </div>
@@ -1547,15 +1557,21 @@
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  // Form submission placeholder
-  function handleSubmit() {
-    const name = document.getElementById('fname').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const confirm = document.getElementById('confirm').checked;
-    if (!name || !email) { alert('Please enter your name and email address to continue.'); return; }
-    if (!confirm) { alert('Please confirm that you understand this is a no-obligation reservation.'); return; }
-    alert('Thank you, ' + name + '! Your reservation has been recorded. We will be in touch at ' + email + ' with updates ahead of Foundation Day — 14 May.');
-  }
+  // Form validation — FormSubmit.co handles delivery to COGsAustralia@gmail.com
+  document.getElementById('reserveForm').addEventListener('submit', function(e) {
+    var name    = document.getElementById('fname').value.trim();
+    var email   = document.getElementById('email').value.trim();
+    var mobile  = document.getElementById('mobile').value.trim();
+    var address = document.getElementById('address').value.trim();
+    var confirm = document.getElementById('confirm').checked;
+
+    if (!name)    { e.preventDefault(); alert('Please enter your full name.'); return; }
+    if (!email)   { e.preventDefault(); alert('Please enter your email address.'); return; }
+    if (!mobile)  { e.preventDefault(); alert('Please enter your mobile number.'); return; }
+    if (!address) { e.preventDefault(); alert('Please enter your residential address.'); return; }
+    if (!confirm) { e.preventDefault(); alert('Please confirm you understand this is a no-obligation reservation.'); return; }
+    // All good — FormSubmit.co takes it from here
+  });
 </script>
 </body>
 </html>
