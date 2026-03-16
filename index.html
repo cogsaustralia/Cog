@@ -380,18 +380,18 @@
     gap: 1rem;
   }
   .letter-avatar {
-    width: 46px;
-    height: 46px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: rgba(200,144,26,0.15);
-    border: 1px solid var(--border-strong);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px;
-    color: var(--gold-light);
+    border: 2px solid var(--border-strong);
+    overflow: hidden;
     flex-shrink: 0;
+  }
+  .letter-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
   .letter-sig-name { font-size: 15px; font-weight: 500; color: var(--text); }
   .letter-sig-title { font-size: 13px; color: var(--text-muted); }
@@ -820,7 +820,7 @@
     <div class="hero-eyebrow">Australia's first community resources wealth foundation</div>
     <h1>Own a share of<br><em>Australia's resources.</em><br>Have your say.</h1>
     <p class="hero-sub">
-      The COG$ Community Resources Wealth Trust Foundation is a not-for-profit foundation that enables Australians to participate in the stewardship, governance, and profits of the nation's resource sector — together.
+      The COG$ Community Resources Wealth Foundation is a not-for-profit foundation that enables Australians to participate in the stewardship, governance, and profits of the nation's resource sector — together.
     </p>
     <div class="hero-actions">
       <a href="#reserve" class="btn-primary">Reserve your place — $4</a>
@@ -858,14 +858,14 @@
     <div class="letter-card">
       <div class="letter-text">
         <p>For generations, the natural wealth of Australia has flowed primarily to corporations and governments. The people whose communities sit above these resources rarely hold direct ownership, and have little to no say in the operations of companies extracting those resources — or whether those resources get extracted at all.</p>
-        <p>COG$ allows the community to become stewards of their local resources and environment. Through the Community Resources Wealth Foundation Trust, members collectively accumulate ownership, stewardship, and legally enforceable governance of Australian resource companies. We participate directly in governance and share in any realised profit.</p>
+        <p>COG$ allows the community to become stewards of their local resources and environment. Through the Community Resources Wealth Foundation, members collectively accumulate ownership, stewardship, and legally enforceable governance of Australian resource companies. We participate directly in governance and share in any realised profit.</p>
         <p>The goal is not short-term speculation or a meaningless gesture. It is the creation of a permanent community governance and wealth structure that compounds across days, years, and generations.</p>
         <p>COG$ started with a simple step: people are now reserving their place, and communities are demonstrating collective support ahead of Foundation Day, 14 May.</p>
       </div>
       <div class="letter-sig">
-        <div class="letter-avatar">T</div>
+        <div class="letter-avatar"><img src="tcavatar.png" alt="Thomas Cunliffe"></div>
         <div>
-          <div class="letter-sig-name">Thomas</div>
+          <div class="letter-sig-name">Thomas Cunliffe</div>
           <div class="letter-sig-title">Project Coordinator, COG$ Foundation</div>
         </div>
       </div>
@@ -899,7 +899,7 @@
           </div>
           <div class="card">
             <div class="card-num">NFP</div>
-            <div class="card-label">Not-for-profit Trust Deed — cannot be privately owned, sold, or captured</div>
+            <div class="card-label">Not-for-profit Foundation Deed — cannot be privately owned, sold, or captured</div>
           </div>
           <div class="card">
             <div class="card-num">$4</div>
@@ -1016,14 +1016,14 @@
   <!-- NFP STRUCTURE -->
   <section class="fade-in">
     <div class="section-eyebrow">Foundation structure</div>
-    <h2 class="section-title">A not-for-profit Trust — <em>locked for the community.</em></h2>
-    <p class="section-intro mb-md">The Community Resources Wealth Foundation Trust is a not-for-profit entity. Its rules are locked in the founding Trust Deed. The Foundation cannot be privately owned, sold, or captured.</p>
+    <h2 class="section-title">A not-for-profit Foundation — <em>locked for the community.</em></h2>
+    <p class="section-intro mb-md">The Community Resources Wealth Foundation is a not-for-profit entity. Its rules are locked in the founding Foundation Deed. The Foundation cannot be privately owned, sold, or captured.</p>
 
     <div class="card-grid">
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        <h3>Locked Trust Deed</h3>
-        <p>The Foundation's rules are permanently encoded in the Trust Deed. No individual, corporation, or government can alter the community-first governance structure.</p>
+        <h3>Foundation Deed</h3>
+        <p>The Foundation's rules are permanently encoded in the Foundation Deed. No individual, corporation, or government can alter the community-first governance structure.</p>
       </div>
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div>
@@ -1038,12 +1038,12 @@
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
         <h3>CHESS-registered shares</h3>
-        <p>Every share is held directly on the ASX CHESS register in the Foundation's name — in trust for community beneficiaries. No fund managers, no intermediaries, no hidden layers.</p>
+        <p>Every share is held directly on the ASX CHESS register in the Foundation's name — on behalf of community beneficiaries. No fund managers, no intermediaries, no hidden layers.</p>
       </div>
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-        <h3>Seat of Country in perpetual trust</h3>
-        <p>The Foundation is permanently tied to the land — a Seat of Country is held in perpetual trust, anchoring the community mission in the Australian landscape itself.</p>
+        <h3>Seat of Country in perpetual stewardship</h3>
+        <p>The Foundation is permanently tied to the land — a Seat of Country is held in perpetual stewardship, anchoring the community mission in the Australian landscape itself.</p>
       </div>
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
@@ -1088,8 +1088,8 @@
           </div>
           <div class="gov-arrow">↓</div>
           <div class="gov-tier">
-            <div class="gov-tier-title">Foundation Trust</div>
-            <div class="gov-tier-sub">NFP — Trust Deed locked, democratically governed</div>
+            <div class="gov-tier-title">Foundation</div>
+            <div class="gov-tier-sub">NFP — Foundation Deed locked, democratically governed</div>
           </div>
           <div class="gov-arrow">↓</div>
           <div class="gov-tier">
@@ -1132,7 +1132,7 @@
         </div>
         <div class="principle">
           <div class="principle-dot"></div>
-          <p><strong>Seat of Country held in perpetual trust</strong> — tying the Foundation to the Australian land and communities it serves, permanently.</p>
+          <p><strong>Seat of Country held in perpetual stewardship</strong> — tying the Foundation to the Australian land and communities it serves, permanently.</p>
         </div>
         <div class="principle">
           <div class="principle-dot"></div>
@@ -1282,8 +1282,8 @@
           <div style="width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0;"></div>
           <span style="font-size:12px; font-weight:500; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">In progress</span>
         </div>
-        <h3>Trust Deed drafting</h3>
-        <p>The Community Resources Wealth Foundation Trust Deed is being drafted by legal advisors to ensure the not-for-profit community governance structure is legally enforceable, robust, and permanent before any member commits funds.</p>
+        <h3>Foundation Deed drafting</h3>
+        <p>The Community Resources Wealth Foundation Deed is being drafted by legal advisors to ensure the not-for-profit community governance structure is legally enforceable, robust, and permanent before any member commits funds.</p>
       </div>
       <div class="card">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
@@ -1309,7 +1309,7 @@
       <div>
         <div class="faq-item">
           <div class="faq-q">Is my $4 at risk?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">No payment is made during the reservation period. On Foundation Day (14 May), you choose whether to proceed. Your $4 membership fee goes into the Foundation's community trust structure — it is not a speculative investment but a one-time governance membership. The $4 is not a financial product or share purchase.</div>
+          <div class="faq-a">No payment is made during the reservation period. On Foundation Day (14 May), you choose whether to proceed. Your $4 membership fee goes into the Foundation's community foundation structure — it is not a speculative investment but a one-time governance membership. The $4 is not a financial product or share purchase.</div>
         </div>
         <div class="faq-item">
           <div class="faq-q">What happens if Foundation Day is delayed?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
@@ -1326,8 +1326,12 @@
       </div>
       <div>
         <div class="faq-item">
+          <div class="faq-q">Who owns the resources under my land?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a">Under Australian law, you do not own the minerals beneath your property — even if you hold freehold title to the surface. From the 1850s onwards, legislation in every state and territory vested ownership of all minerals in the Crown — meaning the State government — regardless of who owns the land above. This applies to gold, silver, copper, coal, hydrocarbons, and virtually every naturally occurring substance in the earth's crust.<br><br>As the legal owner of those minerals, the State can grant exploration and mining tenements to companies, giving them the right to access your land and extract what lies beneath it. If a tenement holder seeks to carry out mining activities on private land, there is an obligation to consult the landowner and negotiate compensation — but if no agreement can be reached, a court can determine the terms. In practice, the law does not favour landholders opposed to mining.<br><br>In short: a mining company can be legally granted the right to operate beneath your property, and your ability to stop or meaningfully influence that is extremely limited under current law.<br><br><strong>This is precisely the imbalance COG$ is designed to address.</strong> By accumulating direct shareholdings in ASX-listed resource companies on behalf of the community, the COG$ Foundation creates something that has never existed before in Australia — a community body with legally recognised, shareholder-enforced ESG governance input over how those resources are explored, managed, and extracted. As a Foundation member, your voice is exercised through shareholder voting rights at company AGMs, board-level ESG engagement, and weighted local governance votes for landholders in directly affected regions. COG$ provides unprecedented, legally recognised ESG input into decisions that have, until now, been made entirely without you.</div>
+        </div>
+        <div class="faq-item">
           <div class="faq-q">Who governs the Foundation?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">The Foundation is governed by its members through democratic voting. The Trust Deed locks this structure permanently — no single person, company, or institution can alter the governance model. A founding committee oversees establishment, but ongoing governance transfers fully to the member community once the Foundation is operational.</div>
+          <div class="faq-a">The Foundation is governed by its members through democratic voting. The Foundation Deed locks this structure permanently — no single person, company, or institution can alter the governance model. A founding committee oversees establishment, but ongoing governance transfers fully to the member community once the Foundation is operational.</div>
         </div>
         <div class="faq-item">
           <div class="faq-q">What if I own land near a tenement area?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
@@ -1339,7 +1343,7 @@
         </div>
         <div class="faq-item">
           <div class="faq-q">Where can I read the whitepaper?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">The COG$ White and Black Paper is in final preparation and will be published ahead of Foundation Day. You can request an advance copy by noting your interest in the reservation form below. It will cover the full legal structure, Trust Deed framework, regulatory status, financial model, and governance design.</div>
+          <div class="faq-a">The COG$ White and Black Paper is in final preparation and will be published ahead of Foundation Day. You can request an advance copy by noting your interest in the reservation form below. It will cover the full legal structure, Foundation Deed framework, regulatory status, financial model, and governance design.</div>
         </div>
       </div>
     </div>
@@ -1523,7 +1527,7 @@
     </div>
     <div class="footer-bottom">
       <div>
-        <span>COG$ Community Resources Wealth Trust Foundation</span>
+        <span>COG$ Community Resources Wealth Foundation</span>
         &nbsp;·&nbsp;
         <span>ABN: Pending</span>
         &nbsp;·&nbsp;
