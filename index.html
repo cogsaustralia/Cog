@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COG$ — Community Owned Gold &amp; Silver | Community Operated Governance Structure</title>
+<title>COG$™ — Community Owned Gold &amp; Silver | Community Operated Governance Structure™</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -827,7 +827,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#top" class="nav-logo" title="Community Owned Gold &amp; Silver | Community Operated Governance Structure">COG$</a>
+  <a href="#top" class="nav-logo" title="Community Owned Gold &amp; Silver™ | Community Operated Governance Structure™">COG$<sup style="font-size:0.55em; vertical-align:super; letter-spacing:0;">™</sup></a>
   <ul class="nav-links">
     <li><a href="#how-it-works">How it works</a></li>
     <li><a href="#governance">Governance</a></li>
@@ -856,8 +856,8 @@
   <section class="hero fade-in">
     <img src="logo_webcir.png" alt="COG$ — The World with COG$" style="display:block; margin: 0 auto 2.5rem; width: clamp(120px, 22vw, 200px); border-radius: 50%; opacity: 0.95;">
     <div style="text-align:left; margin-bottom:1rem;">
-      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--gold-light); letter-spacing:0.01em; line-height:1.4;">Community Owned Gold &amp; Silver</div>
-      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--text-muted); letter-spacing:0.01em; line-height:1.4; opacity:0.85;">Community Operated Governance Structure</div>
+      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--gold-light); letter-spacing:0.01em; line-height:1.4;">Community Owned Gold &amp; Silver™</div>
+      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--text-muted); letter-spacing:0.01em; line-height:1.4; opacity:0.85;">Community Operated Governance Structure™</div>
     </div>
     <div class="hero-eyebrow">Australia's first community resources wealth foundation</div>
     <h1>Own a share of<br><em>Australia's resources.</em><br>Have your say.</h1>
@@ -1028,6 +1028,14 @@
           <div class="flow-row">
             <div class="flow-box accent">Larger future dividends → repeat</div>
           </div>
+        </div>
+
+        <!-- COG$ TOKEN COIN IMAGE -->
+        <div style="text-align:center; margin-bottom:1.5rem;">
+          <img src="cogs_coin_web.png"
+               alt="COG$ Community Foundation Token"
+               style="width: clamp(160px, 30vw, 240px); height: auto; display:inline-block; filter: drop-shadow(0 5px 18px rgba(200,144,26,0.4));">
+          <p style="font-size:11px; color:var(--text-muted); margin-top:0.5rem; letter-spacing:0.04em;">The COG$ Community Token</p>
         </div>
 
         <div class="card mt-md">
@@ -1568,6 +1576,16 @@
           </div>
 
           <div class="form-group full">
+            <label for="referral">Referral code (optional)</label>
+            <div style="display:flex; align-items:center; gap:0.75rem; max-width:180px;">
+              <input type="text" id="referral" name="Referral Code" placeholder="e.g. A1B" maxlength="3"
+                style="text-align:center; font-size:1.3rem; font-weight:500; letter-spacing:0.25em; padding:10px 14px; text-transform:uppercase;"
+                oninput="this.value=this.value.toUpperCase().slice(0,3)">
+            </div>
+            <p class="token-hint">If someone referred you to COG$, enter their 3-digit code here.</p>
+          </div>
+
+          <div class="form-group full">
             <label class="checkbox-item" style="cursor:pointer;">
               <input type="checkbox" id="confirm" name="No-Obligation Reservation Confirmed" value="Yes" required>
               <span>I understand this is a <strong>no-obligation reservation</strong>. No payment is required today. I may choose whether to proceed on or after Foundation Day — 14 May.</span>
@@ -1651,7 +1669,7 @@
           <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.75rem;">Contact</p>
           <p style="font-size:13px; color:var(--text-muted); line-height:1.65;">Questions about COG$ or your reservation? Contact the project team directly.</p>
           <p style="font-size:13px; color:var(--gold-light); margin-top:0.5rem;"><a href="mailto:COGsAustralia@gmail.com" style="color:var(--gold-light); text-decoration:none;">COGsAustralia@gmail.com</a></p>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:1rem;">ABN: [Pending registration]<br>ACN: [Pending registration]</p>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:1rem;">ABN: 61 734 327 831<br></p>
           <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
             <p style="font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.5rem;">Postal address</p>
             <p style="font-size:13px; color:var(--text-muted); line-height:1.8;">
@@ -1674,8 +1692,8 @@
   <div class="page">
     <div class="footer-grid">
       <div>
-        <div class="footer-brand">COG$</div>
-        <p class="footer-desc">Community Owned Gold &amp; Silver · Community Operated Governance Structure. Australia's first community resources wealth foundation — not-for-profit, community governed, permanently structured for the benefit of its members.</p>
+        <div class="footer-brand">COG$<sup style="font-size:0.5em; vertical-align:super; letter-spacing:0;">™</sup></div>
+        <p class="footer-desc">Community Owned Gold &amp; Silver™ · Community Operated Governance Structure™. Australia's first community resources wealth foundation — not-for-profit, community governed, permanently structured for the benefit of its members.</p>
       </div>
       <div class="footer-col">
         <h4>Navigate</h4>
@@ -1703,7 +1721,7 @@
       <div>
         <span>COG$ Community Resources Wealth Foundation</span>
         &nbsp;·&nbsp;
-        <span>ABN: Pending</span>
+        <span>ABN: 61 734 327 831</span>
         &nbsp;·&nbsp;
         <span>Not for public disclosure — Private community use only</span>
       </div>
