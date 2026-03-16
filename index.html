@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COG$ — Community Owned Gold & Silver</title>
+<title>COG$ — Community Owned Gold &amp; Silver | Community Operated Governance Structure</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -827,7 +827,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#top" class="nav-logo">COG$</a>
+  <a href="#top" class="nav-logo" title="Community Owned Gold &amp; Silver | Community Operated Governance Structure">COG$</a>
   <ul class="nav-links">
     <li><a href="#how-it-works">How it works</a></li>
     <li><a href="#governance">Governance</a></li>
@@ -855,13 +855,17 @@
   <!-- HERO -->
   <section class="hero fade-in">
     <img src="logo_webcir.png" alt="COG$ — The World with COG$" style="display:block; margin: 0 auto 2.5rem; width: clamp(120px, 22vw, 200px); border-radius: 50%; opacity: 0.95;">
+    <div style="text-align:left; margin-bottom:1rem;">
+      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--gold-light); letter-spacing:0.01em; line-height:1.4;">Community Owned Gold &amp; Silver</div>
+      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--text-muted); letter-spacing:0.01em; line-height:1.4; opacity:0.85;">Community Operated Governance Structure</div>
+    </div>
     <div class="hero-eyebrow">Australia's first community resources wealth foundation</div>
     <h1>Own a share of<br><em>Australia's resources.</em><br>Have your say.</h1>
     <p class="hero-sub">
       The COG$ Community Resources Wealth Foundation is a not-for-profit foundation that enables Australians to participate in the stewardship, governance, and profits of the nation's resource sector — together.
     </p>
     <div class="hero-actions">
-      <a href="#reserve" class="btn-primary">Reserve your place — $4</a>
+      <a href="#reserve" class="btn-primary">Reserve your place</a>
       <a href="#how-it-works" class="btn-secondary">Learn how it works</a>
     </div>
     <div class="reg-status">
@@ -1430,6 +1434,14 @@
           <div class="faq-q">Where can I read the whitepaper?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
           <div class="faq-a">The COG$ White and Black Paper is in final preparation and will be published ahead of Foundation Day. You can request an advance copy by noting your interest in the reservation form below. It will cover the full legal structure, Foundation Deed framework, regulatory status, financial model, and governance design.</div>
         </div>
+        <div class="faq-item">
+          <div class="faq-q">Can COG$ tokens be sold?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a"><strong>Personal NFT COG$</strong> can never be sold — only transferred to your heirs. If you have no heirs, the NFT COG$ are burnt (destroyed).<br><br><strong>Landholder COG$</strong> cannot be sold. They are tied directly to the land itself and are only transferable by transferring your Property Title.<br><br><strong>Investor COG$</strong> — for the first two (2) years after Foundation Day, all Investor COG$ tokens are locked and cannot be sold. After the lock period, they will be fully exchangeable through a digital wallet between members only. They may be gifted, sold, or exchanged for goods or services with any other COG$ member. Dividends will flow to the new owner accordingly.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What happens to Landholder COG$ if I sell my property?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="faq-a">Landholder COG$ cannot be sold independently. They are tied directly to the land itself and are only transferable along with your Property Title. We are exploring ways that this transfer will be done automatically when a property changes hands.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -1539,6 +1551,33 @@
           </div>
         </div>
 
+        <!-- RESERVATION SUMMARY -->
+        <div id="form-summary" style="background:var(--bg-card2); border:1px solid var(--border-strong); border-radius:var(--radius); padding:1.25rem 1.5rem; margin-top:1.5rem;">
+          <p style="font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">Reservation summary</p>
+          <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem;">
+            <div id="sum-personal" style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted);">
+              <span>Personal NFT membership</span><span style="color:var(--text);">$4.00</span>
+            </div>
+            <div id="sum-kids" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
+              <span id="sum-kids-label">Kids NFT (0)</span><span id="sum-kids-val" style="color:var(--text);">$0.00</span>
+            </div>
+            <div id="sum-invest" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
+              <span id="sum-invest-label">Investment COG$ tokens (0)</span><span id="sum-invest-val" style="color:var(--text);">$0.00</span>
+            </div>
+            <div id="sum-donate" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
+              <span id="sum-donate-label">Donation COG$ tokens (0)</span><span id="sum-donate-val" style="color:var(--text);">$0.00</span>
+            </div>
+            <div id="sum-land" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
+              <span id="sum-land-label">Landholder COG$ tokens (0)</span><span id="sum-land-val" style="color:var(--text);">$0.00</span>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border-strong); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-size:13px; font-weight:500; color:var(--text);">Total reservation value</span>
+            <span id="sum-total" style="font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--gold-light);">$4.00</span>
+          </div>
+          <p style="font-size:11px; color:var(--text-faint); margin-top:0.6rem;">No payment is made today. This is a no-obligation reservation only.</p>
+        </div>
+
         <button type="submit" class="btn-primary form-submit">Reserve my place in COG$</button>
         <p class="form-legal">
           By submitting this form you agree to our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms of Use</a>.<br>
@@ -1589,6 +1628,16 @@
           <p style="font-size:13px; color:var(--text-muted); line-height:1.65;">Questions about COG$ or your reservation? Contact the project team directly.</p>
           <p style="font-size:13px; color:var(--gold-light); margin-top:0.5rem;"><a href="mailto:COGsAustralia@gmail.com" style="color:var(--gold-light); text-decoration:none;">COGsAustralia@gmail.com</a></p>
           <p style="font-size:12px; color:var(--text-muted); margin-top:1rem;">ABN: [Pending registration]<br>ACN: [Pending registration]</p>
+          <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
+            <p style="font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.5rem;">Postal address</p>
+            <p style="font-size:13px; color:var(--text-muted); line-height:1.8;">
+              COG$ Australia<br>
+              Attn: Thomas Cunliffe<br>
+              C/- Drake Village Resource Centre<br>
+              Drake Village, NSW 2469<br>
+              Australia
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -1602,7 +1651,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">COG$</div>
-        <p class="footer-desc">Community Owned Gold &amp; Silver. Australia's first community resources wealth foundation — not-for-profit, community governed, permanently structured for the benefit of its members.</p>
+        <p class="footer-desc">Community Owned Gold &amp; Silver · Community Operated Governance Structure. Australia's first community resources wealth foundation — not-for-profit, community governed, permanently structured for the benefit of its members.</p>
       </div>
       <div class="footer-col">
         <h4>Navigate</h4>
@@ -1781,21 +1830,78 @@
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  // Token calculator — updates $ value display as user types token count
+  // Format AUD value
+  function aud(n) { return '$' + n.toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+  // Token calculator — updates $ value display + summary
   function calcTokens(inputId, displayId, hiddenId) {
-    var tokens = parseInt(document.getElementById(inputId).value) || 0;
-    var value  = tokens * 4;
+    var tokens  = parseInt(document.getElementById(inputId).value) || 0;
+    var value   = tokens * 4;
     var display = document.getElementById(displayId);
     var hidden  = document.getElementById(hiddenId);
-    if (tokens > 0) {
-      display.textContent = '= $' + value.toLocaleString('en-AU', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-      display.classList.add('active');
-    } else {
-      display.textContent = '= $0.00';
-      display.classList.remove('active');
-    }
+    display.textContent = tokens > 0 ? '= ' + aud(value) : '= $0.00';
+    tokens > 0 ? display.classList.add('active') : display.classList.remove('active');
     hidden.value = value;
+    updateSummary();
   }
+
+  // Live reservation summary
+  function updateSummary() {
+    var total = 4; // Personal NFT always $4
+
+    // Kids
+    var kidsInput = document.querySelector('.checkbox-group input[type=number]');
+    var kids = parseInt(kidsInput ? kidsInput.value : 0) || 0;
+    var kidsVal = kids * 4;
+    var kidsRow = document.getElementById('sum-kids');
+    if (kids > 0) {
+      document.getElementById('sum-kids-label').textContent = 'Kids NFT (' + kids + ')';
+      document.getElementById('sum-kids-val').textContent = aud(kidsVal);
+      kidsRow.style.display = 'flex';
+      total += kidsVal;
+    } else { kidsRow.style.display = 'none'; }
+
+    // Investment COG$ tokens
+    var investTokens = parseInt(document.getElementById('invest').value) || 0;
+    var investVal = investTokens * 4;
+    var investRow = document.getElementById('sum-invest');
+    if (investTokens > 0) {
+      document.getElementById('sum-invest-label').textContent = 'Investment COG$ tokens (' + investTokens.toLocaleString() + ')';
+      document.getElementById('sum-invest-val').textContent = aud(investVal);
+      investRow.style.display = 'flex';
+      total += investVal;
+    } else { investRow.style.display = 'none'; }
+
+    // Donation COG$ tokens
+    var donateTokens = parseInt(document.getElementById('donate').value) || 0;
+    var donateVal = donateTokens * 4;
+    var donateRow = document.getElementById('sum-donate');
+    if (donateTokens > 0) {
+      document.getElementById('sum-donate-label').textContent = 'Donation COG$ tokens (' + donateTokens.toLocaleString() + ')';
+      document.getElementById('sum-donate-val').textContent = aud(donateVal);
+      donateRow.style.display = 'flex';
+      total += donateVal;
+    } else { donateRow.style.display = 'none'; }
+
+    // Landholder COG$ tokens
+    var landTokens = parseInt(document.getElementById('landval').value) || 0;
+    var landVal = landTokens * 4;
+    var landRow = document.getElementById('sum-land');
+    if (landTokens > 0) {
+      document.getElementById('sum-land-label').textContent = 'Landholder COG$ tokens (' + landTokens.toLocaleString() + ')';
+      document.getElementById('sum-land-val').textContent = aud(landVal);
+      landRow.style.display = 'flex';
+      total += landVal;
+    } else { landRow.style.display = 'none'; }
+
+    document.getElementById('sum-total').textContent = aud(total);
+  }
+
+  // Wire up kids count input to update summary
+  document.addEventListener('DOMContentLoaded', function() {
+    var kidsInput = document.querySelector('.checkbox-group input[type=number]');
+    if (kidsInput) kidsInput.addEventListener('input', updateSummary);
+  });
 
   // Form validation — FormSubmit.co handles delivery to COGsAustralia@gmail.com
   document.getElementById('reserveForm').addEventListener('submit', function(e) {
