@@ -1272,6 +1272,14 @@
           <!-- STATS -->
           <div style="border-top:1px solid var(--border); padding-top:1rem; display:flex; flex-direction:column; gap:0.6rem;">
             <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:12px; color:var(--text-muted);">Confirmed shares held</span>
+              <span style="font-size:12px; color:var(--text); font-weight:500;" id="tracker-confirmed"></span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:12px; color:var(--gold); font-weight:500;">+ Your reservation</span>
+              <span id="tracker-form-shares" style="font-size:12px; color:var(--gold); font-weight:500;">0 shares</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding-top:0.4rem; border-top:1px solid var(--border);">
               <span style="font-size:12px; color:var(--text-muted);">LGM total shares on issue</span>
               <span style="font-size:12px; color:var(--text); font-weight:500;">200,120,000</span>
             </div>
@@ -1442,6 +1450,22 @@
           <div class="faq-q">What happens to Landholder COG$ if I sell my property?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
           <div class="faq-a">Landholder COG$ cannot be sold independently. They are tied directly to the land itself and are only transferable along with your Property Title. We are exploring ways that this transfer will be done automatically when a property changes hands.</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOLDEN COGS THANK YOU BANNER -->
+  <section class="fade-in">
+    <div style="background: linear-gradient(135deg, var(--bg-card) 0%, #1e1a0f 100%); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); padding: 2.5rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+      <img src="goldencog.png" alt="Golden COG$" style="width: 80px; height: 80px; flex-shrink: 0; filter: drop-shadow(0 4px 12px rgba(200,144,26,0.4));">
+      <div style="flex: 1; min-width: 240px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.5rem;">With deep gratitude</div>
+        <h2 style="font-family: 'DM Serif Display', serif; font-size: clamp(1.4rem, 3vw, 2rem); color: var(--text); margin-bottom: 0.6rem; letter-spacing: -0.02em; line-height: 1.2;">Thank you to our <em style="color: var(--gold-light); font-style: italic;">Golden COGs</em> in the Community</h2>
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.7; max-width: 560px; margin-bottom: 1rem;">COG$ would not exist without the vision, generosity, and belief of those who gave their time, resources, and trust before the Foundation had even launched. We honour them on our Golden COG$ recognition page — a place of genuine, lasting gratitude.</p>
+        <a href="goldencogs.html" style="display: inline-flex; align-items: center; gap: 7px; color: var(--gold-light); text-decoration: none; font-size: 14px; font-weight: 500; border: 1px solid var(--border-strong); padding: 9px 20px; border-radius: 8px; transition: background 0.2s, color 0.2s;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          Meet our Golden COGs
+        </a>
       </div>
     </div>
   </section>
@@ -1662,6 +1686,7 @@
           <li><a href="#regulatory">Regulatory status</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="#reserve">Reserve your place</a></li>
+          <li><a href="goldencogs.html">Golden COG$ in the Community</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -1699,77 +1724,87 @@
   var SHARES_TARGET = 2001200;      // 1% of LGM (200,120,000 shares on issue)
   // ============================================================
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var pct        = (SHARES_OWNED / SHARES_TARGET) * 100;
-    var pctOfTotal = (SHARES_OWNED / 200120000) * 100;
-    var remaining  = SHARES_TARGET - SHARES_OWNED;
+  // Renders the tracker — call with extraShares from form to show live preview
+  function renderTracker(extraShares) {
+    extraShares = extraShares || 0;
+    var totalShares = SHARES_OWNED + extraShares;
+    var pct        = (totalShares / SHARES_TARGET) * 100;
+    var pctOfTotal = (totalShares / 200120000) * 100;
+    var remaining  = SHARES_TARGET - totalShares;
 
-    // Populate text
-    document.getElementById('tracker-owned').textContent    = SHARES_OWNED.toLocaleString();
-    document.getElementById('tracker-target').textContent   = SHARES_TARGET.toLocaleString();
-    document.getElementById('tracker-pct').textContent      = pctOfTotal.toFixed(5) + '%';
-    document.getElementById('tracker-pct-big').textContent  = pct.toFixed(2) + '%';
-    document.getElementById('tracker-remaining').textContent = remaining.toLocaleString() + ' shares';
+    // Text values — shares only, no $ amounts
+    document.getElementById('tracker-owned').textContent     = totalShares.toLocaleString() + ' shares';
+    document.getElementById('tracker-confirmed').textContent = SHARES_OWNED.toLocaleString() + ' shares';
+    document.getElementById('tracker-target').textContent    = SHARES_TARGET.toLocaleString() + ' shares';
+    document.getElementById('tracker-pct').textContent       = pctOfTotal.toFixed(5) + '%';
+    document.getElementById('tracker-pct-big').textContent   = pct.toFixed(2) + '%';
+    document.getElementById('tracker-remaining').textContent = Math.max(0, remaining).toLocaleString() + ' shares';
+    document.getElementById('tracker-form-shares').textContent = extraShares > 0
+      ? '+ ' + extraShares.toLocaleString() + ' shares'
+      : '0 shares';
 
-    // Animate bar after short delay
-    setTimeout(function() {
-      document.getElementById('tracker-bar').style.width = Math.min(pct, 100) + '%';
-    }, 400);
+    // Progress bar
+    document.getElementById('tracker-bar').style.width = Math.min(pct, 100) + '%';
 
-    // Draw arc/donut chart on canvas
+    // Redraw arc chart
     var canvas = document.getElementById('tracker-canvas');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     var W = canvas.width, H = canvas.height;
-    var cx = W / 2, cy = H - 10;  // bottom-center origin for semicircle
+    var cx = W / 2, cy = H - 10;
     var radius = Math.min(W, H * 2) * 0.44;
     var stroke = 18;
+    var fillAngle = Math.PI + (Math.PI * Math.min(pct / 100, 1));
 
-    // Angles: semicircle from PI to 0 (left to right across bottom)
-    var startAngle = Math.PI;
-    var endAngle   = 0;
-    var fillAngle  = Math.PI + (Math.PI * Math.min(pct / 100, 1));
+    ctx.clearRect(0, 0, W, H);
 
-    // Background arc (empty track)
+    // Background arc
     ctx.beginPath();
     ctx.arc(cx, cy, radius, Math.PI, 0, false);
     ctx.strokeStyle = 'rgba(200,144,26,0.15)';
-    ctx.lineWidth   = stroke;
-    ctx.lineCap     = 'round';
+    ctx.lineWidth = stroke; ctx.lineCap = 'round';
     ctx.stroke();
 
-    // Filled arc (owned shares)
+    // Confirmed shares arc (solid gold)
+    var confirmedPct = (SHARES_OWNED / SHARES_TARGET) * 100;
+    var confirmedAngle = Math.PI + (Math.PI * Math.min(confirmedPct / 100, 1));
     if (SHARES_OWNED > 0) {
       ctx.beginPath();
-      ctx.arc(cx, cy, radius, Math.PI, fillAngle, false);
+      ctx.arc(cx, cy, radius, Math.PI, confirmedAngle, false);
       var grad = ctx.createLinearGradient(cx - radius, cy, cx + radius, cy);
-      grad.addColorStop(0,   '#C8901A');
-      grad.addColorStop(1,   '#F0B429');
-      ctx.strokeStyle = grad;
-      ctx.lineWidth   = stroke;
-      ctx.lineCap     = 'round';
+      grad.addColorStop(0, '#C8901A'); grad.addColorStop(1, '#F0B429');
+      ctx.strokeStyle = grad; ctx.lineWidth = stroke; ctx.lineCap = 'round';
       ctx.stroke();
     }
 
-    // Start tick (left)
+    // Form reservation arc (lighter gold overlay)
+    if (extraShares > 0 && fillAngle > confirmedAngle) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, confirmedAngle, fillAngle, false);
+      ctx.strokeStyle = 'rgba(240,180,41,0.45)';
+      ctx.lineWidth = stroke; ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    // End dots
     ctx.beginPath();
     ctx.arc(cx - radius, cy, stroke * 0.6, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(200,144,26,0.3)';
-    ctx.fill();
-
-    // End tick (right — target)
+    ctx.fillStyle = 'rgba(200,144,26,0.3)'; ctx.fill();
     ctx.beginPath();
     ctx.arc(cx + radius, cy, stroke * 0.6, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(200,144,26,0.5)';
-    ctx.fill();
+    ctx.fillStyle = 'rgba(200,144,26,0.5)'; ctx.fill();
 
-    // Labels below arc ends
+    // Labels
     ctx.font = '500 11px Outfit, sans-serif';
     ctx.fillStyle = 'rgba(200,144,26,0.7)';
     ctx.textAlign = 'left';
     ctx.fillText('0', cx - radius - 4, cy + 18);
     ctx.textAlign = 'right';
     ctx.fillText('1%', cx + radius + 4, cy + 18);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { renderTracker(0); }, 400);
   });
 
   // FAQ accordion — measures full content height including padding, never clips
@@ -1895,6 +1930,10 @@
     } else { landRow.style.display = 'none'; }
 
     document.getElementById('sum-total').textContent = aud(total);
+
+    // Update share tracker: total reservation $ / $0.25 LGM share price = equivalent shares
+    var formShares = Math.floor(total / 0.25);
+    renderTracker(formShares);
   }
 
   // Wire up kids count input to update summary
