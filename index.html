@@ -528,12 +528,14 @@
     font-size: 14px;
     color: var(--text-muted);
     line-height: 1.75;
-    max-height: 0;
+    height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease, padding-top 0.2s;
+    padding-top: 0;
+    padding-bottom: 0;
+    transition: height 0.45s ease;
   }
   .faq-item.open .faq-q svg { transform: rotate(45deg); }
-  .faq-item.open .faq-a { max-height: 1200px; padding-top: 0.75rem; transition: max-height 0.5s ease, padding-top 0.2s; }
+  .faq-item.open .faq-a { padding-top: 0; }
 
   /* FORM */
   .form-card {
@@ -1197,6 +1199,53 @@
           </div>
         </div>
 
+        <div class="card mt-md" id="lgm-tracker-card">
+          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1.25rem;">Phase 1 target — 1% of LGM</p>
+
+          <!-- ARC CHART -->
+          <div style="position:relative; width:100%; max-width:220px; margin:0 auto 1.5rem;">
+            <canvas id="tracker-canvas" width="220" height="130" style="display:block; width:100%;"></canvas>
+            <div style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); text-align:center; padding-bottom:4px;">
+              <div id="tracker-pct-big" style="font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--gold-light); line-height:1;"></div>
+              <div style="font-size:10px; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase; margin-top:2px;">of target</div>
+            </div>
+          </div>
+
+          <!-- BAR CHART -->
+          <div style="margin-bottom:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:11px; color:var(--text-muted);">Shares owned</span>
+              <span id="tracker-owned" style="font-size:13px; font-weight:500; color:var(--gold-light);"></span>
+            </div>
+            <div style="background:var(--bg-card2); border-radius:100px; height:10px; overflow:hidden; margin-bottom:10px;">
+              <div id="tracker-bar" style="height:100%; border-radius:100px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); transition:width 1.4s ease; width:0%;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:11px; color:var(--text-muted);">1% target (ESG threshold)</span>
+              <span id="tracker-target" style="font-size:13px; font-weight:500; color:var(--text-muted);"></span>
+            </div>
+            <div style="background:var(--bg-card2); border-radius:100px; height:10px; overflow:hidden;">
+              <div style="height:100%; border-radius:100px; background:rgba(200,144,26,0.2); width:100%;"></div>
+            </div>
+          </div>
+
+          <!-- STATS -->
+          <div style="border-top:1px solid var(--border); padding-top:1rem; display:flex; flex-direction:column; gap:0.6rem;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:12px; color:var(--text-muted);">LGM total shares on issue</span>
+              <span style="font-size:12px; color:var(--text); font-weight:500;">200,120,000</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:12px; color:var(--text-muted);">Shares still needed</span>
+              <span id="tracker-remaining" style="font-size:12px; color:var(--gold); font-weight:500;"></span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:12px; color:var(--text-muted);">% of LGM currently held</span>
+              <span id="tracker-pct" style="font-size:12px; color:var(--text); font-weight:500;"></span>
+            </div>
+          </div>
+        </div>
+
         <div class="card mt-md">
           <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">In-ground monetisation — global precedents</p>
           <a href="https://natgold.com" target="_blank" class="case-study" style="margin-bottom:0.75rem;">
@@ -1543,13 +1592,133 @@
 </footer>
 
 <script>
-  // FAQ accordion
-  document.querySelectorAll('.faq-q').forEach(q => {
-    q.addEventListener('click', () => {
-      const item = q.parentElement;
-      const wasOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!wasOpen) item.classList.add('open');
+  // ============================================================
+  // LGM PHASE 1 TRACKER — update SHARES_OWNED to current count
+  // ============================================================
+  var SHARES_OWNED  = 900;          // <-- UPDATE THIS NUMBER
+  var SHARES_TARGET = 2001200;      // 1% of LGM (200,120,000 shares on issue)
+  // ============================================================
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var pct        = (SHARES_OWNED / SHARES_TARGET) * 100;
+    var pctOfTotal = (SHARES_OWNED / 200120000) * 100;
+    var remaining  = SHARES_TARGET - SHARES_OWNED;
+
+    // Populate text
+    document.getElementById('tracker-owned').textContent    = SHARES_OWNED.toLocaleString();
+    document.getElementById('tracker-target').textContent   = SHARES_TARGET.toLocaleString();
+    document.getElementById('tracker-pct').textContent      = pctOfTotal.toFixed(5) + '%';
+    document.getElementById('tracker-pct-big').textContent  = pct.toFixed(2) + '%';
+    document.getElementById('tracker-remaining').textContent = remaining.toLocaleString() + ' shares';
+
+    // Animate bar after short delay
+    setTimeout(function() {
+      document.getElementById('tracker-bar').style.width = Math.min(pct, 100) + '%';
+    }, 400);
+
+    // Draw arc/donut chart on canvas
+    var canvas = document.getElementById('tracker-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    var cx = W / 2, cy = H - 10;  // bottom-center origin for semicircle
+    var radius = Math.min(W, H * 2) * 0.44;
+    var stroke = 18;
+
+    // Angles: semicircle from PI to 0 (left to right across bottom)
+    var startAngle = Math.PI;
+    var endAngle   = 0;
+    var fillAngle  = Math.PI + (Math.PI * Math.min(pct / 100, 1));
+
+    // Background arc (empty track)
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, Math.PI, 0, false);
+    ctx.strokeStyle = 'rgba(200,144,26,0.15)';
+    ctx.lineWidth   = stroke;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    // Filled arc (owned shares)
+    if (SHARES_OWNED > 0) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, Math.PI, fillAngle, false);
+      var grad = ctx.createLinearGradient(cx - radius, cy, cx + radius, cy);
+      grad.addColorStop(0,   '#C8901A');
+      grad.addColorStop(1,   '#F0B429');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth   = stroke;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+    }
+
+    // Start tick (left)
+    ctx.beginPath();
+    ctx.arc(cx - radius, cy, stroke * 0.6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(200,144,26,0.3)';
+    ctx.fill();
+
+    // End tick (right — target)
+    ctx.beginPath();
+    ctx.arc(cx + radius, cy, stroke * 0.6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(200,144,26,0.5)';
+    ctx.fill();
+
+    // Labels below arc ends
+    ctx.font = '500 11px Outfit, sans-serif';
+    ctx.fillStyle = 'rgba(200,144,26,0.7)';
+    ctx.textAlign = 'left';
+    ctx.fillText('0', cx - radius - 4, cy + 18);
+    ctx.textAlign = 'right';
+    ctx.fillText('1%', cx + radius + 4, cy + 18);
+  });
+
+  // FAQ accordion — measures full content height including padding, never clips
+  var PAD_TOP = 12;     // 0.75rem top padding when open
+  var PAD_BOT = 20;     // 1.25rem bottom padding for breathing room
+
+  function openFaq(item) {
+    var answer = item.querySelector('.faq-a');
+    // Temporarily make visible off-screen to measure true content height
+    answer.style.visibility = 'hidden';
+    answer.style.height = 'auto';
+    var fullHeight = answer.scrollHeight + PAD_TOP + PAD_BOT;
+    answer.style.height = '0';
+    answer.style.paddingTop = '0';
+    answer.style.paddingBottom = '0';
+    answer.style.visibility = '';
+    // Force reflow then animate
+    answer.offsetHeight;
+    answer.style.height = fullHeight + 'px';
+    answer.style.paddingTop = PAD_TOP + 'px';
+    answer.style.paddingBottom = PAD_BOT + 'px';
+  }
+
+  function closeFaq(item) {
+    var answer = item.querySelector('.faq-a');
+    // Lock current pixel height first so transition has a start value
+    answer.style.height = answer.offsetHeight + 'px';
+    answer.offsetHeight; // reflow
+    answer.style.height = '0';
+    answer.style.paddingTop = '0';
+    answer.style.paddingBottom = '0';
+  }
+
+  document.querySelectorAll('.faq-q').forEach(function(q) {
+    q.addEventListener('click', function() {
+      var item = q.parentElement;
+      var wasOpen = item.classList.contains('open');
+      // Close all open items
+      document.querySelectorAll('.faq-item').forEach(function(i) {
+        if (i.classList.contains('open')) {
+          i.classList.remove('open');
+          closeFaq(i);
+        }
+      });
+      // Open clicked item if it was closed
+      if (!wasOpen) {
+        item.classList.add('open');
+        openFaq(item);
+      }
     });
   });
 
