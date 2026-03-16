@@ -588,6 +588,42 @@
   .checkbox-item span strong { color: var(--text); font-weight: 500; }
   .form-sub { grid-column: 1 / -1; margin-top: 0.5rem; }
   .form-submit { margin-top: 1.5rem; width: 100%; font-size: 16px; padding: 16px; }
+
+  /* Token calculator fields */
+  .token-field {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .token-field input {
+    flex: 1;
+    min-width: 0;
+  }
+  .token-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    padding: 10px 12px;
+    background: rgba(200,144,26,0.08);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gold-light);
+    white-space: nowrap;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .token-value.active {
+    background: rgba(200,144,26,0.15);
+  }
+  .token-hint {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
   .form-legal { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 1rem; line-height: 1.6; }
   .form-legal a { color: var(--gold-light); }
 
@@ -1458,12 +1494,22 @@
           </div>
 
           <div class="form-group">
-            <label for="invest">Investment COG$ tokens ($4 each) — total $ value</label>
-            <input type="number" id="invest" name="Investment COG$ Value ($)" placeholder="0" min="0">
+            <label for="invest">Investment COG$ tokens @ $4 each</label>
+            <div class="token-field">
+              <input type="number" id="invest" name="Investment COG$ Tokens" placeholder="Number of tokens" min="0" oninput="calcTokens('invest','invest-val','invest-hidden')">
+              <div class="token-value" id="invest-val">= $0.00</div>
+            </div>
+            <input type="hidden" id="invest-hidden" name="Investment COG$ Value ($)" value="0">
+            <p class="token-hint">Each token = $4 AUD · increases your dividend share · does not add governance votes</p>
           </div>
           <div class="form-group">
-            <label for="donate">Donation / philanthropic COG$ ($4 each) — total $ value</label>
-            <input type="number" id="donate" name="Donation COG$ Value ($)" placeholder="0" min="0">
+            <label for="donate">Donation / philanthropic COG$ tokens @ $4 each</label>
+            <div class="token-field">
+              <input type="number" id="donate" name="Donation COG$ Tokens" placeholder="Number of tokens" min="0" oninput="calcTokens('donate','donate-val','donate-hidden')">
+              <div class="token-value" id="donate-val">= $0.00</div>
+            </div>
+            <input type="hidden" id="donate-hidden" name="Donation COG$ Value ($)" value="0">
+            <p class="token-hint">Each token = $4 AUD · supports community initiatives · 50% reinvested, 25% admin, 25% community projects</p>
           </div>
 
           <div class="form-group">
@@ -1471,8 +1517,13 @@
             <input type="number" id="hectares" name="Landholder Hectares" placeholder="0" min="0">
           </div>
           <div class="form-group">
-            <label for="landval">Landholder COG$ — total $ value to reserve</label>
-            <input type="number" id="landval" name="Landholder COG$ Value ($)" placeholder="0" min="0">
+            <label for="landval">Landholder COG$ tokens @ $4 each</label>
+            <div class="token-field">
+              <input type="number" id="landval" name="Landholder COG$ Tokens" placeholder="Number of tokens" min="0" oninput="calcTokens('landval','landval-val','landval-hidden')">
+              <div class="token-value" id="landval-val">= $0.00</div>
+            </div>
+            <input type="hidden" id="landval-hidden" name="Landholder COG$ Value ($)" value="0">
+            <p class="token-hint">Each token = $4 AUD · max 10,000 tokens per hectare · increases dividends &amp; weighted local governance votes</p>
           </div>
 
           <div class="form-group full">
@@ -1551,7 +1602,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">COG$</div>
-        <p class="footer-desc">Community Owned Gold &amp; Silver. Australia's first community resources wealth trust foundation — not-for-profit, community governed, permanently structured for the benefit of its members.</p>
+        <p class="footer-desc">Community Owned Gold &amp; Silver. Australia's first community resources wealth foundation — not-for-profit, community governed, permanently structured for the benefit of its members.</p>
       </div>
       <div class="footer-col">
         <h4>Navigate</h4>
@@ -1729,6 +1780,22 @@
     });
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Token calculator — updates $ value display as user types token count
+  function calcTokens(inputId, displayId, hiddenId) {
+    var tokens = parseInt(document.getElementById(inputId).value) || 0;
+    var value  = tokens * 4;
+    var display = document.getElementById(displayId);
+    var hidden  = document.getElementById(hiddenId);
+    if (tokens > 0) {
+      display.textContent = '= $' + value.toLocaleString('en-AU', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      display.classList.add('active');
+    } else {
+      display.textContent = '= $0.00';
+      display.classList.remove('active');
+    }
+    hidden.value = value;
+  }
 
   // Form validation — FormSubmit.co handles delivery to COGsAustralia@gmail.com
   document.getElementById('reserveForm').addEventListener('submit', function(e) {
