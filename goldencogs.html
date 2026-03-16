@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COG$ — Golden COG$ in the Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C8901A;
+    --gold-light: #F0B429;
+    --gold-pale: #F5E6C0;
+    --bg: #0F0D09;
+    --bg-card: #221E14;
+    --bg-card2: #2A2418;
+    --text: #F0E8D6;
+    --text-muted: #C4B49A;
+    --text-faint: #9A8A74;
+    --border: rgba(200,144,26,0.15);
+    --border-strong: rgba(200,144,26,0.35);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* LEGAL BANNER */
+  .legal-banner {
+    background: #1a1308;
+    border-bottom: 1px solid var(--border-strong);
+    padding: 8px 24px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .legal-banner span {
+    color: #B8A888;
+    font-weight: 300;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 12px;
+    font-size: 11px;
+  }
+
+  /* NAV */
+  nav {
+    background: rgba(15,13,9,0.97);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-back {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--gold-light); }
+
+  /* PAGE */
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+    flex: 1;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4rem;
+  }
+  .coin-wrap {
+    margin: 0 auto 2rem;
+    width: clamp(140px, 25vw, 200px);
+    filter: drop-shadow(0 6px 24px rgba(200,144,26,0.35));
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { filter: drop-shadow(0 6px 24px rgba(200,144,26,0.35)); }
+    50%       { filter: drop-shadow(0 6px 36px rgba(240,180,41,0.60)); }
+  }
+  .coin-wrap img { width: 100%; display: block; }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold-light);
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    line-height: 1.1;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+  h1 em { font-style: italic; color: var(--gold-light); }
+
+  .hero-intro {
+    font-size: 1.1rem;
+    color: var(--text);
+    opacity: 0.82;
+    max-width: 620px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.8;
+  }
+  .hero-sub {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.75;
+  }
+
+  /* CATEGORIES */
+  .categories {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+  .cat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .cat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    filter: sepia(1) saturate(3) hue-rotate(10deg) brightness(1.1);
+  }
+  .cat-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold-light);
+    margin-bottom: 0.4rem;
+  }
+  .cat-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* SECTION HEADING */
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.75rem;
+  }
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+    line-height: 1.15;
+  }
+  h2 em { font-style: italic; color: var(--gold-light); }
+
+  /* GOLDEN COG RECIPIENT CARD */
+  .recipient-section {
+    margin-bottom: 5rem;
+  }
+  .recipient-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+  }
+  .recipient-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+  .recipient-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    padding: 2.5rem;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .recipient-logo-wrap {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card2);
+    border: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .recipient-logo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+  }
+  .recipient-logo-placeholder {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 12px;
+    padding: 1rem;
+    line-height: 1.4;
+  }
+  .recipient-number {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .recipient-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+  .recipient-website {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold-light);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    transition: color 0.2s;
+    margin-top: 0.25rem;
+  }
+  .recipient-website:hover { color: var(--text); }
+  .recipient-website svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .recipient-body {
+    padding: 2.5rem;
+  }
+  .tribute-text {
+    font-size: 1.05rem;
+    color: var(--text);
+    opacity: 0.85;
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+  .tribute-text p + p { margin-top: 1rem; }
+
+  /* CONTRIBUTION TAGS */
+  .contrib-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .contrib-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 100px;
+    background: rgba(200,144,26,0.1);
+    border: 1px solid var(--border-strong);
+    color: var(--gold-light);
+    letter-spacing: 0.03em;
+  }
+
+  /* COIN AWARD STAMP */
+  .award-stamp {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(200,144,26,0.06);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+  }
+  .award-stamp img {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+  }
+  .award-stamp-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .award-stamp-text strong { color: var(--gold-light); font-weight: 500; }
+
+  /* COMING SOON */
+  .coming-soon {
+    background: var(--bg-card);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 3rem;
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .coming-soon h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .coming-soon p { font-size: 14px; color: var(--text-faint); max-width: 480px; margin: 0 auto; }
+
+  /* NOMINATE */
+  .nominate-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .nominate-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .nominate-card h3 em { font-style: italic; color: var(--gold-light); }
+  .nominate-card p { font-size: 15px; color: var(--text-muted); max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.7; }
+  .btn-primary {
+    background: var(--gold);
+    color: #0F0D09;
+    text-decoration: none;
+    padding: 13px 32px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-faint);
+    flex-shrink: 0;
+  }
+  footer a { color: var(--text-faint); text-decoration: none; }
+  footer a:hover { color: var(--text-muted); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+
+  /* FADE IN */
+  .fade-in { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 640px) {
+    .categories { grid-template-columns: 1fr; }
+    .recipient-header { grid-template-columns: 1fr; text-align: center; }
+    .recipient-logo-wrap { margin: 0 auto; }
+    .contrib-tags { justify-content: center; }
+    .award-stamp { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="legal-banner">
+  Not for public disclosure — Private community use only
+  <span>Reservation only. No financial product offered. ASIC &amp; ATO regulatory engagement ongoing.</span>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">COG$</a>
+  <a href="index.html" class="nav-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to COG$
+  </a>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero fade-in">
+    <div class="coin-wrap">
+      <img src="goldencog.png" alt="Golden COG$ Award">
+    </div>
+    <div class="hero-eyebrow">With deep gratitude</div>
+    <h1>Golden COG$ in<br><em>the Community</em></h1>
+    <p class="hero-intro">
+      Some individuals, institutions, and organisations do not just support COG$ — they make it possible. The Golden COG$ is our highest recognition, awarded with profound gratitude to those who have given their time, resources, expertise, and belief to help build a better, community-owned future for Australia.
+    </p>
+    <p class="hero-sub">
+      These are the people and organisations who turned an idea into a movement. We are genuinely, deeply grateful.
+    </p>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="categories fade-in">
+    <div class="cat-card">
+      <span class="cat-icon">👤</span>
+      <div class="cat-title">Individuals</div>
+      <div class="cat-desc">Visionaries and community champions who gave their time, skills, and personal belief in a fairer Australia.</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🏛️</span>
+      <div class="cat-title">Institutions</div>
+      <div class="cat-desc">Organisations, businesses, and foundations whose support has given COG$ the foundations to grow.</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🌿</span>
+      <div class="cat-title">The Ingenious</div>
+      <div class="cat-desc">Movements and innovators whose ideas and energy are reshaping how communities relate to the land and its resources.</div>
+    </div>
+  </div>
+
+  <!-- FIRST GOLDEN COG$ RECIPIENT -->
+  <div class="recipient-section fade-in">
+    <div class="section-eyebrow">Golden COG$ — #001</div>
+    <h2>Our <em>first</em> Golden COG$</h2>
+    <p style="font-size:15px; color:var(--text-muted); margin-bottom:2rem; line-height:1.75;">It is with enormous pride and heartfelt gratitude that we award the very first Golden COG$ to an organisation whose values, vision, and mission align perfectly with everything COG$ stands for — community, stewardship, and a sustainable future for the land and its people.</p>
+
+    <div class="recipient-card">
+      <div class="recipient-header">
+        <div class="recipient-logo-wrap">
+          <!-- Replace ghm-logo.png with the actual GHM logo file once uploaded to your server -->
+          <div class="recipient-logo-placeholder">
+            <img src="ghm-logo.png" alt="The Global Hemp Movement" style="width:100%; height:100%; object-fit:contain;"
+              onerror="this.parentElement.innerHTML='<div class=\'recipient-logo-placeholder\'>GHM<br>Logo</div>'">
+          </div>
+        </div>
+        <div>
+          <div class="recipient-number">Golden COG$ — #001 · The Ingenious</div>
+          <div class="recipient-name">The Global Hemp Movement</div>
+          <a href="https://theghm.myshopify.com/" target="_blank" rel="noopener" class="recipient-website">
+            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            theghm.myshopify.com
+          </a>
+        </div>
+      </div>
+
+      <div class="recipient-body">
+        <div class="tribute-text">
+          <p>The Global Hemp Movement represents everything that is possible when a community of passionate, principled people decides to take the future of the land into their own hands. Long before COG$ existed as an idea, the GHM was already doing the quiet, determined work of reconnecting communities with the earth, its resources, and each other.</p>
+          <p>Hemp is not simply a crop — it is a statement. A statement that land can regenerate rather than be depleted. That resources can sustain rather than be extracted. That communities can benefit from the earth they live on, rather than watching that benefit flow elsewhere. These are precisely the values that COG$ was built to amplify and protect across the entirety of Australia's resource sector.</p>
+          <p>The Global Hemp Movement's belief in community-led stewardship, in sustainable resource management, and in giving people a genuine stake in the land they call home made them a natural ally from the very beginning. Their support — in time, in energy, in shared purpose — has been a genuine gift to the COG$ community.</p>
+          <p>We are honoured to name The Global Hemp Movement as our first Golden COG$. May this recognition be a small reflection of the enormous gratitude and respect we hold for everything they represent and everything they do.</p>
+        </div>
+
+        <div class="contrib-tags">
+          <span class="contrib-tag">Sustainable stewardship</span>
+          <span class="contrib-tag">Community support</span>
+          <span class="contrib-tag">Shared vision</span>
+          <span class="contrib-tag">The Ingenious</span>
+          <span class="contrib-tag">Golden COG$ #001</span>
+        </div>
+
+        <div class="award-stamp">
+          <img src="goldencog.png" alt="Golden COG$ Award">
+          <div class="award-stamp-text">
+            <strong>Golden COG$ — Awarded with Gratitude</strong><br>
+            Presented by the COG$ Community Resources Wealth Foundation to The Global Hemp Movement in recognition of outstanding contribution, shared values, and steadfast support of community stewardship in Australia.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMING SOON -->
+  <div class="coming-soon fade-in">
+    <div class="coin-wrap" style="width:70px; margin-bottom:1.25rem; animation:none; filter:drop-shadow(0 3px 10px rgba(200,144,26,0.25));">
+      <img src="goldencog.png" alt="Golden COG$" style="opacity:0.5;">
+    </div>
+    <h3>More Golden COG$ to come</h3>
+    <p>As the COG$ community grows, so too will this page. Do you know an individual, organisation, or movement whose contribution deserves recognition? Nominate them below.</p>
+  </div>
+
+  <!-- NOMINATE -->
+  <div class="nominate-card fade-in">
+    <h3>Nominate a <em>Golden COG$</em></h3>
+    <p>Know someone who deserves recognition for their contribution to community stewardship, sustainable resource management, or the COG$ Foundation? We'd love to hear from you.</p>
+    <a href="mailto:COGsAustralia@gmail.com?subject=Golden%20COG%24%20Nomination&body=I%20would%20like%20to%20nominate%20the%20following%20person%20or%20organisation%20for%20a%20Golden%20COG%24%3A%0A%0AName%3A%0AWebsite%20%28if%20applicable%29%3A%0AReason%20for%20nomination%3A" class="btn-primary">Nominate someone</a>
+  </div>
+
+</div>
+
+<footer>
+  COG$ Community Resources Wealth Foundation &nbsp;·&nbsp;
+  <a href="index.html">Home</a> &nbsp;·&nbsp;
+  <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+  <a href="terms.html">Terms of Use</a> &nbsp;·&nbsp;
+  <a href="mailto:COGsAustralia@gmail.com">Contact</a>
+</footer>
+
+<script>
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+</script>
+</body>
+</html>
