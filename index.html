@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Cache control: always serve fresh version -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>COG$™ — Community Owned Gold &amp; Silver | Community Operated Governance Structure™</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1558,6 +1562,9 @@
           <input type="hidden" name="_next" value="https://cogsaustralia.org/thankyou.html">
           <!-- Honeypot spam trap -->
           <input type="text" name="_honey" style="display:none">
+          <!-- Total reservation value — populated by JS before submit -->
+          <input type="hidden" name="Total Reservation Value" id="hidden-total-value" value="$4.00">
+          <input type="hidden" name="NFT Tokens Reserved" id="hidden-nft-count" value="1">
 
         <div class="form-grid">
           <div class="form-group">
@@ -1697,6 +1704,14 @@
             <div class="progress-fill" style="width: 12.4%;"></div>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:6px;">Target: 1,000 reservations before Foundation Day — 14 May</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
+            <span style="font-size:12px; color:var(--text-muted);">NFT tokens in this reservation</span>
+            <span id="live-nft-count" style="font-size:1.1rem; font-weight:600; font-family:'DM Serif Display',serif; color:var(--gold-light);">1</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.6rem; padding-top:0.6rem; border-top:1px solid var(--border);">
+            <span style="font-size:12px; color:var(--text-muted);">Total NFT tokens reserved (this device)</span>
+            <span id="cumulative-nft-count" style="font-size:1.1rem; font-weight:600; font-family:'DM Serif Display',serif; color:var(--gold-light);">—</span>
+          </div>
         </div>
 
         <div class="card mb-md">
@@ -1881,8 +1896,25 @@
     ctx.fillText('1%', cx + radius + 4, cy + 18);
   }
 
+  // ── LocalStorage persistence for share tracker ──
+  // Adds cumulative shares from all submissions on this browser to SHARES_OWNED
+  (function() {
+    try {
+      var stored = JSON.parse(localStorage.getItem('cogs_extra_shares') || '0');
+      if (typeof stored === 'number' && stored > 0) {
+        SHARES_OWNED += stored;
+      }
+    } catch(e) {}
+  })();
+
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() { renderTracker(0); }, 400);
+    // Show cumulative NFT count from localStorage
+    try {
+      var cumNft = parseInt(localStorage.getItem('cogs_total_nft') || '0') || 0;
+      var cumEl = document.getElementById('cumulative-nft-count');
+      if (cumEl) cumEl.textContent = cumNft > 0 ? cumNft.toLocaleString() : '—';
+    } catch(e) {}
   });
 
   // FAQ accordion — measures full content height including padding, never clips
@@ -2009,6 +2041,19 @@
 
     document.getElementById('sum-total').textContent = aud(total);
 
+    // Update hidden field so total appears in the email
+    var hiddenTotal = document.getElementById('hidden-total-value');
+    if (hiddenTotal) hiddenTotal.value = aud(total);
+
+    // Count total NFT tokens for this submission
+    var nftCount = 1 + kids; // personal NFT (always 1) + kids
+    var hiddenNft = document.getElementById('hidden-nft-count');
+    if (hiddenNft) hiddenNft.value = nftCount;
+
+    // Update NFT count display in reservation progress card
+    var nftDisplay = document.getElementById('live-nft-count');
+    if (nftDisplay) nftDisplay.textContent = nftCount.toLocaleString();
+
     // Update share tracker: total reservation $ / $0.25 LGM share price = equivalent shares
     var formShares = Math.floor(total / 0.25);
     renderTracker(formShares);
@@ -2033,6 +2078,33 @@
     if (!mobile)  { e.preventDefault(); alert('Please enter your mobile number.'); return; }
     if (!address) { e.preventDefault(); alert('Please enter your residential address.'); return; }
     if (!confirm) { e.preventDefault(); alert('Please confirm you understand this is a no-obligation reservation.'); return; }
+
+    // Stamp the final total into the hidden field and update email subject
+    var totalText = document.getElementById('sum-total').textContent;
+    var hiddenTotal = document.getElementById('hidden-total-value');
+    if (hiddenTotal) hiddenTotal.value = totalText;
+    var subjectField = document.querySelector('input[name="_subject"]');
+    if (subjectField) subjectField.value = 'COG$ Reservation — ' + name + ' — ' + totalText;
+
+    // Stamp NFT count
+    var nftEl = document.getElementById('live-nft-count');
+    var hiddenNft = document.getElementById('hidden-nft-count');
+    if (nftEl && hiddenNft) hiddenNft.value = nftEl.textContent;
+
+    // Save cumulative NFT count to localStorage
+    try {
+      var nftNow = parseInt((document.getElementById('hidden-nft-count') || {}).value || '1') || 1;
+      var prevNft = parseInt(localStorage.getItem('cogs_total_nft') || '0') || 0;
+      localStorage.setItem('cogs_total_nft', prevNft + nftNow);
+    } catch(e) {}
+
+    // Persist this submission's shares to localStorage before redirect
+    try {
+      var formSharesNow = Math.floor(parseFloat((document.getElementById('sum-total').textContent || '4').replace(/[^0-9.]/g,'')) / 0.25);
+      var prevStored = parseInt(localStorage.getItem('cogs_extra_shares') || '0') || 0;
+      localStorage.setItem('cogs_extra_shares', prevStored + formSharesNow);
+    } catch(e) {}
+
     // All good — FormSubmit.co takes it from here
   });
 </script>
