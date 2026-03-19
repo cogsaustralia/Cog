@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>COG$ Independence Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+:root {
+  --gd:#C8901A; --gl:#F0B429; --gp:#F5E6C0;
+  --bg:#0F0D09; --bs:#1C1710; --bc:#221E14; --bc2:#2A2418;
+  --tx:#F0E8D6; --tm:#C4B49A; --tf:#9A8A74;
+  --br:rgba(200,144,26,0.15); --brs:rgba(200,144,26,0.35);
+  --r:10px; --rl:16px; --danger:#8B2020;
+  --nav-h:64px; --safe-b:env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:300;
+  line-height:1.7;background:var(--bg);color:var(--tx);
+}
+.hidden{display:none!important}
+.fade{animation:fd .35s ease both}
+@keyframes fd{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════ DESKTOP LAYOUT (>640px) — unchanged ═══════════ */
+.desk-page{max-width:520px;margin:0 auto;padding:clamp(1.5rem,4vw,2.5rem) clamp(1rem,3vw,1.5rem) 4rem}
+.desk-page.wide{max-width:780px}
+.desk-card{background:var(--bc);border:1px solid var(--br);border-radius:var(--rl);padding:1.25rem 1.5rem;margin-bottom:1rem}
+.desk-card.accent{border-color:var(--brs);background:linear-gradient(135deg,var(--bc) 0%,#1a1508 100%)}
+.desk-topbar{height:3px;background:linear-gradient(90deg,var(--gd),var(--gl));border-radius:var(--rl) var(--rl) 0 0;margin:-1.25rem -1.5rem 1rem}
+.legal-banner{background:#1a1308;border-bottom:1px solid var(--brs);padding:7px 20px;text-align:center;font-size:11px;font-weight:500;color:var(--gl);letter-spacing:.08em;text-transform:uppercase}
+.top-nav{background:rgba(15,13,9,.97);border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1rem,4vw,2.5rem);height:56px;position:sticky;top:0;z-index:100}
+.nav-brand{font-family:'DM Serif Display',serif;font-size:18px;color:var(--gl)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nbadge{font-size:11px;color:var(--gl);background:rgba(200,144,26,.1);border:1px solid var(--brs);border-radius:20px;padding:4px 12px}
+.nlo{font-size:12px;color:var(--tf);background:none;border:none;cursor:pointer;padding:4px 8px;font-family:inherit}
+.nlo:hover{color:var(--tm)}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:.4rem}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,4vw,2.2rem);color:var(--tx);letter-spacing:-.02em;line-height:1.15;margin-bottom:.5rem}
+h1 em{font-style:italic;color:var(--gl)}
+h2{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--tx);margin-bottom:.4rem}
+h2 em{font-style:italic;color:var(--gl)}
+.gold-num{font-family:'DM Serif Display',serif;font-size:2.4rem;color:var(--gl);line-height:1}
+.iv-input{width:100%;padding:11px 14px;margin-top:8px;border-radius:var(--r);border:1px solid var(--brs);background:rgba(0,0,0,.4);color:var(--tx);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.iv-input:focus{border-color:var(--gl)}
+.iv-input::placeholder{color:var(--tf)}
+iv-label{font-size:12px;color:var(--tm);display:block;margin-top:10px}
+.btn{display:block;width:100%;padding:11px 24px;border-radius:var(--r);font-size:14px;font-weight:500;border:none;cursor:pointer;margin-top:10px;font-family:inherit;text-align:center;text-decoration:none;transition:all .2s}
+.btn-p{background:var(--gd);color:#0F0D09}.btn-p:hover{background:var(--gl);transform:translateY(-1px)}
+.btn-s{background:transparent;color:var(--tm);border:1px solid var(--brs)}.btn-s:hover{border-color:var(--gd);color:var(--gl)}
+.btn-d{background:var(--danger);color:#fff}.btn-d:hover{background:#a02525}
+.tr{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br);font-size:13px}
+.tr:last-child{border-bottom:none}
+.tl{color:var(--tm)}.tv{font-family:'DM Serif Display',serif;color:var(--tx)}.tv.g{color:var(--gl)}
+.divr{border:none;border-top:1px solid var(--br);margin:1.25rem 0}
+.err{color:#ff6b6b;font-size:12px;margin-top:6px}
+.hint{font-size:12px;color:var(--tf);margin-top:5px}
+.stepper{display:flex;align-items:center;gap:10px;margin-top:10px}
+.sb{width:38px;height:38px;border-radius:50%;border:1px solid var(--brs);background:var(--bc2);color:var(--gl);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-family:inherit}
+.sb:hover{background:rgba(200,144,26,.15)}
+.stepper .iv-input{flex:1;text-align:center;margin-top:0}
+.btn-vote-row{display:flex;gap:8px;margin-top:10px}
+.bv{flex:1;padding:10px 6px;border-radius:var(--r);font-size:13px;font-weight:500;border:1px solid var(--brs);background:var(--bc2);color:var(--tx);cursor:pointer;font-family:inherit;transition:all .15s}
+.bv:hover,.bv.on{background:rgba(200,144,26,.15);border-color:var(--gl);color:var(--gl)}
+.toggle-wrap{display:flex;background:var(--bc2);border-radius:8px;overflow:hidden;border:1px solid var(--brs);margin-top:10px}
+.tog{flex:1;padding:10px 8px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--tf);border:none;background:none;transition:all .2s;font-family:inherit}
+.tog.on{background:var(--gd);color:#0F0D09}
+.ni{border-bottom:1px solid var(--br);padding:1rem 0}
+.ni:first-child{padding-top:0}.ni:last-child{border-bottom:none;padding-bottom:0}
+.nd{font-size:10px;color:var(--tf);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+.nt{font-size:14px;color:var(--tx);font-weight:500;margin-bottom:6px}
+.nb{font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:8px}
+.nvl{font-size:11px;color:var(--tf);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+.vr{font-size:11px;color:var(--tf);margin-top:6px;font-style:italic}
+.vbw{background:rgba(200,144,26,.08);border-radius:6px;height:8px;margin-top:8px;overflow:hidden}
+.vbf{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));border-radius:6px;transition:width .5s ease}
+.faq-item{border-bottom:1px solid var(--br)}.faq-item:first-child{border-top:1px solid var(--br)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:12px 0;cursor:pointer;font-size:14px;color:var(--tx);gap:10px}.faq-q:hover{color:var(--gl)}
+.faq-q svg{flex-shrink:0;transition:transform .25s;stroke:var(--gd)}
+.faq-a{font-size:13px;color:var(--tm);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-item.open .faq-q svg{transform:rotate(45deg)}.faq-item.open .faq-a{padding-bottom:12px}
+
+/* ═══════════ MOBILE LAYOUT (≤640px) — Wallet App ═══════════ */
+@media (max-width:640px) {
+  .legal-banner{display:none}
+  .top-nav{display:none}
+
+  /* App Shell */
+  #mobileShell{display:flex;flex-direction:column;height:100dvh;overflow:hidden;position:fixed;top:0;left:0;right:0;bottom:0}
+
+  /* App Header */
+  .app-header{
+    background:rgba(15,13,9,0.96);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--brs);
+    padding:calc(env(safe-area-inset-top,0px) + 12px) 20px 12px;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-shrink:0;
+  }
+  .app-header-brand{font-family:'DM Serif Display',serif;font-size:16px;color:var(--gl);letter-spacing:-.01em}
+  .app-header-sub{font-size:10px;color:var(--tf);font-family:'Outfit',sans-serif;font-weight:300;margin-top:1px}
+  .app-header-badge{font-size:10px;color:var(--gl);background:rgba(200,144,26,.12);border:1px solid var(--brs);border-radius:20px;padding:3px 10px;letter-spacing:.04em}
+
+  /* Scroll area between header and bottom nav */
+  .app-screens{flex:1;overflow:hidden;position:relative}
+
+  /* Each screen */
+  .app-screen{
+    position:absolute;top:0;left:0;right:0;bottom:0;
+    overflow-y:auto;overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    padding:1.25rem 1.1rem calc(var(--nav-h) + env(safe-area-inset-bottom,16px) + 8px);
+    display:none;
+    scroll-behavior:smooth;
+  }
+  .app-screen.active{display:block}
+
+  /* Mobile cards */
+  .m-card{
+    background:var(--bc);
+    border:1px solid var(--br);
+    border-radius:var(--rl);
+    padding:1.1rem 1.2rem;
+    margin-bottom:.85rem;
+  }
+  .m-card.accent{border-color:var(--brs);background:linear-gradient(135deg,var(--bc) 0%,#1a1508 100%)}
+  .m-topbar{height:3px;background:linear-gradient(90deg,var(--gd),var(--gl));border-radius:var(--rl) var(--rl) 0 0;margin:-1.1rem -1.2rem .9rem}
+
+  /* Wallet hero card */
+  .wallet-hero{
+    background:linear-gradient(145deg,#1a1508 0%,#2A2418 60%,#1a1508 100%);
+    border:1px solid var(--brs);
+    border-radius:20px;
+    padding:1.5rem 1.25rem;
+    margin-bottom:.85rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .wallet-hero::before{
+    content:'';position:absolute;top:-40px;right:-40px;
+    width:140px;height:140px;border-radius:50%;
+    background:rgba(200,144,26,0.06);
+  }
+  .wallet-hero::after{
+    content:'';position:absolute;bottom:-30px;left:-30px;
+    width:100px;height:100px;border-radius:50%;
+    background:rgba(200,144,26,0.04);
+  }
+  .wallet-total-label{font-size:10px;color:var(--tf);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+  .wallet-total-num{font-family:'DM Serif Display',serif;font-size:3rem;color:var(--gl);line-height:1;margin-bottom:4px}
+  .wallet-total-sub{font-size:11px;color:var(--tf)}
+  .wallet-coin-img{position:absolute;right:1.25rem;top:50%;transform:translateY(-50%);width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(200,144,26,0.4));opacity:.9}
+
+  /* Pill chips for token types */
+  .chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:1rem}
+  .chip{
+    display:flex;align-items:center;gap:5px;
+    background:rgba(200,144,26,0.08);
+    border:1px solid var(--brs);
+    border-radius:20px;padding:5px 11px;
+    font-size:11px;color:var(--tm);
+  }
+  .chip strong{color:var(--gl);font-family:'DM Serif Display',serif;font-size:13px;font-weight:400}
+
+  /* Stepper mobile */
+  .m-stepper{display:flex;align-items:center;gap:8px;background:var(--bc2);border-radius:var(--r);padding:8px 10px;margin-top:8px}
+  .m-stepper label{flex:1;font-size:12px;color:var(--tm)}
+  .m-stepper .cnt{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--gl);min-width:30px;text-align:center}
+  .m-sb{width:30px;height:30px;border-radius:50%;border:1px solid var(--brs);background:rgba(200,144,26,.08);color:var(--gl);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-family:inherit}
+
+  /* Bottom Nav */
+  .bottom-nav{
+    height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
+    background:rgba(15,13,9,0.97);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border-top:1px solid var(--brs);
+    display:flex;align-items:flex-start;
+    padding-top:6px;
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    flex-shrink:0;
+    z-index:50;
+  }
+  .bn-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;
+    cursor:pointer;padding:6px 4px;gap:3px;
+    color:var(--tf);font-size:9px;letter-spacing:.04em;text-transform:uppercase;
+    transition:color .15s;border:none;background:none;font-family:inherit;
+  }
+  .bn-item.active{color:var(--gl)}
+  .bn-icon{font-size:20px;line-height:1;transition:transform .15s}
+  .bn-item.active .bn-icon{transform:scale(1.15)}
+
+  /* News vote compact */
+  .vote-compact{display:flex;gap:5px;margin-top:8px}
+  .vc-btn{flex:1;padding:7px 4px;border-radius:8px;font-size:11px;font-weight:500;border:1px solid var(--brs);background:var(--bc2);color:var(--tm);cursor:pointer;font-family:inherit;transition:all .15s}
+  .vc-btn.on{background:rgba(200,144,26,.15);border-color:var(--gl);color:var(--gl)}
+
+  /* Section title in mobile */
+  .m-section-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--tx);margin-bottom:.2rem}
+  .m-section-title em{color:var(--gl);font-style:italic}
+  .m-eyebrow{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:.3rem}
+
+  /* Status pills */
+  .status-pill{font-size:10px;font-weight:500;color:var(--gl);background:rgba(200,144,26,.1);border:1px solid var(--brs);border-radius:20px;padding:2px 9px}
+
+  /* Mobile login */
+  #mLoginWrap{
+    display:flex;flex-direction:column;justify-content:center;
+    min-height:100dvh;padding:2rem 1.25rem;
+    background:var(--bg);
+  }
+  .m-login-card{background:var(--bc);border:1px solid var(--brs);border-radius:24px;padding:1.75rem 1.5rem;margin-top:1.25rem}
+
+  /* Hide desktop elements on mobile */
+  .desk-only{display:none!important}
+  .m-card .btn{margin-top:8px}
+
+  /* Swipe hint */
+  .swipe-hint{display:flex;justify-content:center;gap:5px;margin-bottom:.75rem}
+  .swipe-dot{width:5px;height:5px;border-radius:50%;background:var(--br)}
+  .swipe-dot.active{background:var(--gl);width:16px;border-radius:3px}
+}
+
+/* Desktop: hide mobile elements */
+@media (min-width:641px){
+  #mobileShell{display:none!important}
+  .m-only{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     DESKTOP VERSION (>640px) — layout unchanged
+══════════════════════════════════════════════════ -->
+<!-- ══ FIRST LOGIN — PASSWORD SETUP (new registrations) ══ -->
+<div id="screenFirstLogin" class="hidden" style="min-height:100vh;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.25rem">
+  <div style="width:100%;max-width:440px">
+    <div style="text-align:center;margin-bottom:1.75rem">
+      <img src="logo_webcir.png" alt="COG$" style="width:70px;height:70px;border-radius:50%;object-fit:cover;margin-bottom:12px;filter:drop-shadow(0 4px 14px rgba(200,144,26,0.4))">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gl);margin-bottom:.4rem">Welcome to COG$</div>
+      <h1 style="font-family:'DM Serif Display',serif;font-size:1.9rem;color:var(--tx);line-height:1.1;margin-bottom:.4rem">Set your <em style="color:var(--gl);font-style:italic">password</em></h1>
+      <p style="font-size:13px;color:var(--tf);line-height:1.65">Your COG$ member number has been pre-filled. Create a password to secure your Independence Vault.</p>
+    </div>
+    <div class="setup-card">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:1rem">Your member details</div>
+      <div class="setup-step"><div class="setup-step-num">1</div><div class="setup-step-txt">Member number confirmed from your reservation</div></div>
+      <div style="background:var(--bc2);border:1px solid var(--brs);border-radius:var(--r);padding:10px 14px;font-family:monospace;font-size:15px;color:var(--gl);letter-spacing:.18em;margin-bottom:1rem;text-align:center" id="setupMemberNum">—</div>
+      <div class="setup-step"><div class="setup-step-num">2</div><div class="setup-step-txt">Confirm your email address</div></div>
+      <input class="iv-input" id="setupEmail" type="email" placeholder="your@email.com" autocomplete="email" style="margin-top:4px;margin-bottom:1rem">
+      <div class="setup-step"><div class="setup-step-num">3</div><div class="setup-step-txt">Create a password (8–16 characters)</div></div>
+      <input class="iv-input" id="setupPw1" type="password" placeholder="Create password" autocomplete="new-password" oninput="checkPwStrength()" style="margin-top:4px">
+      <div class="pw-strength"><div class="pw-strength-fill" id="pwFill" style="width:0%;background:#e74c3c"></div></div>
+      <div style="font-size:10px;color:var(--tf);margin-top:3px" id="pwStrengthLabel">Enter a password</div>
+      <input class="iv-input" id="setupPw2" type="password" placeholder="Confirm password" autocomplete="new-password" style="margin-top:10px">
+
+      <div class="setup-step" style="margin-top:1rem"><div class="setup-step-num">4</div><div class="setup-step-txt">Set a password hint (optional — only you see this on the login screen)</div></div>
+      <input class="iv-input" id="setupHint" type="text" placeholder="e.g. My first pet's name + birth year" autocomplete="off" style="margin-top:4px">
+      <div style="font-size:10px;color:var(--tf);margin-top:4px">This hint is shown to you on the login screen if you forget your password. Do not write the actual password.</div>
+
+      <div class="setup-step" style="margin-top:1rem"><div class="setup-step-num">5</div><div class="setup-step-txt">Choose a security question for identity verification</div></div>
+      <select class="iv-input" id="setupSecQ" style="margin-top:4px">
+        <option value="">— Select a security question —</option>
+        <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+        <option value="What was the make of your first car?">What was the make of your first car?</option>
+        <option value="What primary school did you attend?">What primary school did you attend?</option>
+        <option value="What is the name of the town where you were born?">What is the name of the town where you were born?</option>
+        <option value="What was the name of your childhood best friend?">What was the name of your childhood best friend?</option>
+        <option value="What street did you grow up on?">What street did you grow up on?</option>
+      </select>
+      <input class="iv-input" id="setupSecA" type="text" placeholder="Your answer" autocomplete="off" style="margin-top:8px">
+      <div style="font-size:10px;color:var(--tf);margin-top:4px">Used by the Foundation to verify your identity if you need a password reset. Stored securely.</div>
+
+      <div id="setupErr" class="err" style="margin-top:8px"></div>
+      <button class="btn btn-p" onclick="doFirstLogin()" style="margin-top:16px;padding:13px;font-size:15px;border-radius:14px;width:100%" id="setupBtn">Create password &amp; enter vault</button>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--tf);margin-top:1rem;line-height:1.7">You will use this password every time you log in.<br>ABN: 61 734 327 831</p>
+  </div>
+</div>
+
+<div class="desk-only" id="desktopRoot">
+<div style="background:rgba(200,144,26,0.12);border-bottom:2px solid var(--gold);padding:7px 20px;text-align:center;font-size:11px;font-weight:500;color:var(--gold-light);letter-spacing:.06em">
+  ⚙ BETA — Testing Phase 2 &nbsp;·&nbsp; Wallet · Communication · Governance Voting Structure &nbsp;·&nbsp; Full deployment pending secured private App testing &amp; compliance
+</div>
+<div class="legal-banner">Not for public disclosure — Private community use only &nbsp;·&nbsp; Reservation only — no financial product offered</div>
+
+<!-- LOGIN DESKTOP -->
+<div id="dLogin">
+  <div class="desk-page" style="padding-top:2.5rem">
+    <div style="text-align:center;margin-bottom:2rem">
+      <img src="logo_webcir.png" alt="COG$" style="width:80px;border-radius:50%;margin-bottom:14px;filter:drop-shadow(0 4px 16px rgba(200,144,26,0.35))">
+      <div class="eyebrow">COG$ Community Foundation</div>
+      <h1>Independence <em>Vault</em></h1>
+      <p style="font-size:13px;color:var(--tf);margin-top:6px">Your personal wallet · voting &amp; communication platform</p>
+    </div>
+    <div class="desk-card accent">
+      <div class="desk-topbar"></div>
+      <form id="dLoginForm" autocomplete="on" onsubmit="event.preventDefault();doLogin('d')">
+      <label class="eyebrow" style="font-size:11px;color:var(--tm);display:block;margin-top:0">Email or Mobile</label>
+      <input class="iv-input" id="dlc" placeholder="you@email.com or 04XX XXX XXX" autocomplete="username" name="username">
+      <label class="eyebrow" style="font-size:11px;color:var(--tm);display:block;margin-top:12px">COG$ Number</label>
+      <input class="iv-input" id="dlid" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" autocomplete="off" name="member-number" onblur="showPwHint(this.value.replace(/\s/g,''))">
+      <div class="hint" id="dPwHint" style="color:var(--gl);font-style:italic"></div>
+      <label class="eyebrow" style="font-size:11px;color:var(--tm);display:block;margin-top:12px">Password</label>
+      <input class="iv-input" id="dlpw" type="password" placeholder="8–16 characters" minlength="8" maxlength="16" autocomplete="current-password" name="password">
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+        <input type="checkbox" id="dRemember" style="width:auto;margin:0;accent-color:var(--gd)">
+        <label for="dRemember" style="font-size:12px;color:var(--tm);margin:0;cursor:pointer">Remember me on this device</label>
+      </div>
+      <div id="dlerr" class="err"></div>
+      <button type="submit" class="btn btn-p" id="dLoginBtn" style="margin-top:16px">Enter Independence Vault</button>
+      </form>
+      <div class="divr"></div>
+      <button class="btn btn-s" onclick="window.open('https://cogsaustralia.org','_blank')">Back to COG$ of Australia Foundation</button>
+      <div style="text-align:center;margin-top:1rem;display:flex;flex-direction:column;gap:6px">
+        <button onclick="showRecovery('password')" style="background:none;border:none;color:var(--tf);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">Forgot password?</button>
+        <button onclick="showRecovery('number')" style="background:none;border:none;color:var(--tf);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">Lost my COG$ member number</button>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--tf);text-align:center;margin-top:1rem;line-height:1.7">Registration &amp; governance dashboard only — no financial value<br>ABN: 61 734 327 831</p>
+  </div>
+</div>
+
+<!-- NAV DESKTOP -->
+<nav class="top-nav hidden" id="dNav">
+  <div class="nav-brand" style="font-family:'DM Serif Display',serif">COG$ <em style="font-family:'DM Serif Display',serif;font-style:italic;color:var(--tm);font-size:14px">Independence Vault</em></div>
+  <div class="nav-right">
+    <span class="nbadge" id="dNavBadge"></span>
+    <a href="vault.html" style="font-size:12px;color:var(--gold-light);text-decoration:none;border:1px solid var(--brs);padding:4px 10px;border-radius:6px">🏛 Community Vault</a>
+    <a href="https://cogsaustralia.org" target="_blank" style="font-size:12px;color:var(--tf);text-decoration:none">↗ cogsaustralia.org</a>
+    <button class="nlo" onclick="doLogout('d')">Log out</button>
+  </div>
+</nav>
+
+<!-- APP DESKTOP -->
+<div class="hidden" id="dApp">
+<div class="desk-page wide">
+
+  <div style="text-align:center;padding:1rem 0 .5rem" class="fade">
+    <img src="cogs_coin_web.png" alt="COG$ Token" style="width:90px;height:90px;object-fit:contain;filter:drop-shadow(0 6px 22px rgba(200,144,26,0.5));margin-bottom:10px;display:block;margin-left:auto;margin-right:auto">
+    <div style="font-size:10px;color:var(--gl);letter-spacing:.12em;text-transform:uppercase" id="dVid"></div>
+    <div style="font-size:12px;color:var(--tf);margin-top:3px">Your personal wallet · voting &amp; communication platform · update your COG$ reservation</div>
+  </div>
+
+  <!-- HOLDINGS DESKTOP -->
+  <div class="desk-card accent fade">
+    <div class="desk-topbar"></div>
+    <div class="eyebrow">Your COG$ Holdings</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1rem">
+      <div><div class="gold-num" id="dTotal">0</div><div style="font-size:11px;color:var(--tf)">Total COG$ tokens reserved</div></div>
+      <img src="cogs_coin_web.png" style="width:48px;opacity:.8">
+    </div>
+    <div class="tr"><span class="tl">🪙 Personal NFT Membership</span><span class="tv g" id="dNft">1</span></div>
+    <div class="tr"><span class="tl" style="font-size:11px;color:var(--tf);padding-left:14px">Governance vote · Non-transferable</span><span></span></div>
+    <div class="divr" style="margin:.5rem 0"></div>
+    <div class="tr"><span class="tl">💛 Investment COG$</span><span class="tv" id="dInv">0</span></div>
+    <div class="tr"><span class="tl">🌿 Landholder COG$</span><span class="tv" id="dLnd">0</span></div>
+    <div class="tr"><span class="tl">🤝 Donation COG$</span><span class="tv" id="dDon">0</span></div>
+    <div class="divr" style="margin:.5rem 0"></div>
+    <div class="tr"><span class="tl" style="font-weight:500;color:var(--tx)">Estimated reservation value</span><span class="tv g" id="dVal">$4.00</span></div>
+  </div>
+
+  <!-- VAULT LINK DESKTOP -->
+  <div class="desk-card fade" style="background:linear-gradient(135deg,#1a1508,#2A2418);border-color:var(--border-strong);margin-bottom:1rem">
+    <div class="eyebrow" style="margin-bottom:.4rem">COG$ of Australia Foundation</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+      <div>
+        <h2 style="margin-bottom:.25rem">Community <em>Vault</em></h2>
+        <p style="font-size:13px;color:var(--tm);line-height:1.65">View live totals — all members, all COG$ reserved, all governance votes cast across the entire Foundation.</p>
+      </div>
+      <a href="vault.html" style="display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:#0F0D09;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0">🏛 Open Community Vault</a>
+    </div>
+  </div>
+
+  <!-- ADJUST DESKTOP -->
+  <div class="desk-card fade">
+    <div class="eyebrow">Adjust Your Reservation</div>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:1rem">Update your COG$ reservation at any time before Foundation Day — increase or decrease Investment, Landholder, and Donation tokens. Deleting your NFT COG$ removes your registration entirely.</p>
+    <label class="eyebrow" style="font-size:11px;color:var(--tm);display:block;margin-top:0">Investment COG$ tokens</label>
+    <div class="stepper"><button class="sb" onclick="step('inv',-1)">−</button><input class="iv-input" id="ainv" type="number" min="0" value="0"><button class="sb" onclick="step('inv',1)">+</button></div>
+    <label class="eyebrow" style="font-size:11px;color:var(--tm);display:block;margin-top:12px">Landholder COG$ tokens</label>
+    <div class="stepper"><button class="sb" onclick="step('lnd',-1)">−</button><input class="iv-input" id="alnd" type="number" min="0" value="0"><button class="sb" onclick="step('lnd',1)">+</button></div>
+    <label class="eyebrow" style="font-size:11px;color:var(--tm);display:block;margin-top:12px">Donation COG$ tokens</label>
+    <div class="stepper"><button class="sb" onclick="step('don',-1)">−</button><input class="iv-input" id="adon" type="number" min="0" value="0"><button class="sb" onclick="step('don',1)">+</button></div>
+    <button class="btn btn-p" id="dSaveBtn" onclick="saveAdj()" style="margin-top:14px">Save Changes</button>
+    <div class="divr"></div>
+    <div class="eyebrow" style="color:#ff6b6b;margin-bottom:.4rem">Delete Registration</div>
+    <p style="font-size:12px;color:var(--tf);margin-bottom:8px">Deleting your Personal NFT COG$ permanently removes your registration.</p>
+    <button class="btn btn-d" onclick="delNFT()">Delete NFT COG$ — Remove Registration</button>
+  </div>
+
+  <!-- COMMUNITY VAULT DESKTOP -->
+  <div class="desk-card accent fade">
+    <div class="desk-topbar"></div>
+    <div class="eyebrow">COG$ Community Vault</div>
+    <h2>Total registered across <em>all members</em></h2>
+    <div class="gold-num" id="dComm">—</div>
+    <div style="font-size:11px;color:var(--tf);margin-top:4px">COG$ tokens registered by all members (this device)</div>
+    <div class="vbw"><div class="vbf" id="dCommBar" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tf);margin-top:5px"><span>0</span><span>Target: 1,000,000 COG$</span></div>
+  </div>
+
+  <!-- GOVERNANCE DESKTOP -->
+  <div class="desk-card fade">
+    <div class="eyebrow">Governance Layer</div>
+    <h2>The In-Ground <em>Trigger</em></h2>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:1rem">Cast your anonymous vote on the fundamental question facing Australia's resource sector.</p>
+    <div class="toggle-wrap"><button class="tog" id="dte" onclick="svote('e')">⛏ Extraction First</button><button class="tog" id="dts" onclick="svote('s')">🌿 Stewardship First</button></div>
+    <p id="dsres" class="hint" style="text-align:center;margin-top:8px"></p>
+  </div>
+
+  <!-- NEWS DESKTOP -->
+  <div class="desk-card fade">
+    <div class="eyebrow">State of the Hunt — Interactive</div>
+    <h2>React to the <em>news</em></h2>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:1.25rem">Your responses are counted anonymously. Only your COG$ number and vote are stored.</p>
+    <div id="dNewsFeed"></div>
+  </div>
+
+  <!-- DISPATCHES DESKTOP -->
+  <div class="desk-card fade">
+    <div class="eyebrow">Foundation Dispatches</div>
+    <h2>From the <em>Foundation</em></h2>
+    <div id="dDisp"></div>
+  </div>
+
+  <!-- REGULATORY DESKTOP -->
+  <div class="desk-card fade">
+    <div class="eyebrow">Regulatory Progress</div>
+    <h2>ASIC &amp; ATO <em>Status</em></h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:.75rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bc2);border-radius:var(--r);border:1px solid var(--br)"><span style="font-size:13px;color:var(--tm)">ASIC Innovation Hub</span><span class="nbadge">Engaged ✓</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bc2);border-radius:var(--r);border:1px solid var(--br)"><span style="font-size:13px;color:var(--tm)">ATO Class Ruling</span><span class="nbadge">In Progress ✓</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bc2);border-radius:var(--r);border:1px solid var(--br)"><span style="font-size:13px;color:var(--tm)">Foundation Day</span><span class="nbadge">14 May ✓</span></div>
+    </div>
+  </div>
+
+  <!-- FAQ DESKTOP -->
+  <div class="desk-card fade">
+    <div class="eyebrow">Frequently Asked Questions</div>
+    <h2 style="margin-bottom:1rem">Your questions <em>answered</em></h2>
+    <div id="dFaqList"></div>
+  </div>
+
+  <!-- CONTACT DESKTOP -->
+  <div class="desk-card fade">
+    <div class="eyebrow">Contact</div>
+    <h2 style="margin-bottom:.75rem">Get in <em>touch</em></h2>
+    <a href="mailto:COGsAustralia@gmail.com?subject=Independence Vault Enquiry" class="btn btn-p" style="text-decoration:none">Email the Foundation</a>
+    <a href="https://cogsaustralia.org" target="_blank" class="btn btn-s" style="text-decoration:none">Visit cogsaustralia.org</a>
+    <div class="hint" style="margin-top:8px">COGsAustralia@gmail.com · ABN: 61 734 327 831</div>
+  </div>
+
+  <div style="text-align:center;padding-top:2rem;border-top:1px solid var(--br);font-size:11px;color:var(--tf);line-height:1.8">
+    COG$ Community Resources Wealth Foundation · ABN: 61 734 327 831<br>
+    Thomas Cunliffe, Project Coordinator · C/- Drake Village Resource Centre, Drake Village NSW 2469<br>
+    <a href="https://cogsaustralia.org/privacy.html" style="color:var(--tf)">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="https://cogsaustralia.org/terms.html" style="color:var(--tf)">Terms of Use</a>
+  </div>
+
+</div>
+</div>
+</div><!-- /desktopRoot -->
+
+<!-- ══════════════════════════════════════════════════
+     MOBILE WALLET APP (≤640px)
+══════════════════════════════════════════════════ -->
+<div id="mobileShell">
+
+  <!-- MOBILE LOGIN -->
+  <div id="mLoginWrap">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <img src="logo_webcir.png" alt="COG$" style="width:72px;height:72px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 4px 16px rgba(200,144,26,0.4));margin-bottom:12px">
+      <div class="m-eyebrow">COG$ Community Foundation</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--tx);line-height:1.1;margin-bottom:4px">Independence <em style="color:var(--gl);font-style:italic">Vault</em></div>
+      <div style="font-size:11px;color:var(--tf);margin-top:6px;line-height:1.6">Your personal wallet · voting &amp; communication platform<br>Update your COG$ reservation anytime</div>
+    </div>
+    <div class="m-login-card">
+      <form id="mLoginForm" autocomplete="on" onsubmit="event.preventDefault();doLogin('m')">
+      <div style="font-size:10px;color:var(--tm);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Email or Mobile</div>
+      <input class="iv-input" id="mlc" placeholder="you@email.com or 04XX XXX XXX" style="margin-top:0" autocomplete="username" name="username">
+      <div style="font-size:10px;color:var(--tm);margin-top:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">COG$ Number</div>
+      <input class="iv-input" id="mlid" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" style="margin-top:0;letter-spacing:.1em" autocomplete="off" name="member-number" onblur="showPwHint(this.value.replace(/\s/g,''))">
+      <div class="hint">16-digit number from your reservation confirmation</div>
+      <div class="hint" id="mPwHint" style="color:var(--gl);font-style:italic;margin-top:2px"></div>
+      <div style="font-size:10px;color:var(--tm);margin-top:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Password</div>
+      <input class="iv-input" id="mlpw" type="password" placeholder="8–16 characters" style="margin-top:0" autocomplete="current-password" name="password">
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+        <input type="checkbox" id="mRemember" style="width:auto;margin:0;accent-color:var(--gd)">
+        <label for="mRemember" style="font-size:12px;color:var(--tm);margin:0;cursor:pointer">Remember me on this device</label>
+      </div>
+      <div id="mlerr" class="err"></div>
+      <button type="submit" class="btn btn-p" id="mLoginBtn" style="margin-top:16px;padding:14px;font-size:15px;border-radius:14px">Enter Independence Vault</button>
+      </form>
+    </div>
+    <div style="text-align:center;margin-top:.75rem;display:flex;flex-direction:column;gap:5px">
+      <button onclick="showRecovery('password')" style="background:none;border:none;color:var(--tf);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">Forgot password?</button>
+      <button onclick="showRecovery('number')" style="background:none;border:none;color:var(--tf);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">Lost my COG$ member number</button>
+    </div>
+    <div style="text-align:center;font-size:10px;color:var(--tf);margin-top:.75rem;line-height:1.7">
+      Registration &amp; governance dashboard only<br>ABN: 61 734 327 831
+    </div>
+  </div>
+
+  <!-- RECOVERY MODAL — password / member number -->
+  <div id="recoveryModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:1.5rem">
+    <div style="background:var(--bc);border:1px solid var(--brs);border-radius:var(--rl);padding:1.75rem 1.5rem;width:100%;max-width:420px;position:relative">
+      <button onclick="closeRecovery()" style="position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--tf);font-size:20px;cursor:pointer;line-height:1">×</button>
+      <div style="font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:.4rem" id="recoveryEyebrow">Account Recovery</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--tx);margin-bottom:.75rem" id="recoveryTitle">Forgot <em style="color:var(--gl);font-style:italic">password?</em></div>
+      <div style="font-size:13px;color:var(--tm);line-height:1.7;margin-bottom:1rem" id="recoveryBody">Enter your COG$ member number and registered email. The Foundation will send you a reset link within 24 hours.</div>
+      <div id="recoveryForm">
+        <div style="font-size:11px;color:var(--tm);margin-bottom:4px" id="recoveryField1Label">COG$ Member Number</div>
+        <input class="iv-input" id="recoveryId" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" style="margin-top:0;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--tm);margin-bottom:4px">Email address on your reservation</div>
+        <input class="iv-input" id="recoveryEmail" type="email" placeholder="your@email.com" style="margin-top:0;margin-bottom:4px">
+        <div style="font-size:11px;color:var(--tm);margin-bottom:4px">Mobile number on your reservation</div>
+        <input class="iv-input" id="recoveryMobile" type="tel" placeholder="+61 4xx xxx xxx" style="margin-top:0">
+        <div id="recoveryErr" style="color:#ff6b6b;font-size:11px;margin-top:6px"></div>
+        <button onclick="sendRecovery()" class="btn btn-p" style="margin-top:14px;width:100%">Send recovery request</button>
+        <div id="recoverySuccess" style="display:none;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);color:#2ecc71;border-radius:8px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.6">
+          ✓ Your request has been sent to the Foundation team at COGsAustralia@gmail.com. You will be contacted within 24 hours.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE APP SHELL (shown after login) -->
+  <div id="mAppShell" class="hidden" style="display:none;flex-direction:column;height:100dvh">
+
+    <!-- App Header -->
+    <div class="app-header">
+      <div>
+        <div class="app-header-brand">COG$ <em style="font-family:'DM Serif Display',serif;font-style:italic;color:var(--tm);font-size:13px">Vault</em></div>
+        <div class="app-header-sub" id="mHeaderSub">Personal wallet · voting · governance</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="app-header-badge" id="mNavBadge"></span>
+        <button style="background:none;border:none;color:var(--tf);font-size:11px;cursor:pointer;font-family:inherit" onclick="doLogout('m')">out</button>
+      </div>
+    </div>
+
+    <!-- Screens -->
+    <div class="app-screens">
+
+      <!-- SCREEN: WALLET (home) -->
+      <div class="app-screen active" id="scWallet">
+
+        <!-- Wallet hero card -->
+        <div class="wallet-hero fade">
+          <div class="wallet-total-label">Total COG$ Reserved</div>
+          <div class="wallet-total-num" id="mTotal">0</div>
+          <div class="wallet-total-sub">Your personal COG$ vault</div>
+          <img src="cogs_coin_web.png" alt="COG$ Token" class="wallet-coin-img">
+        </div>
+
+        <!-- Token chips -->
+        <div class="chip-row fade">
+          <div class="chip">🪙 NFT <strong id="mNft">1</strong></div>
+          <div class="chip">💛 Invest <strong id="mInv">0</strong></div>
+          <div class="chip">🌿 Land <strong id="mLnd">0</strong></div>
+          <div class="chip">🤝 Donate <strong id="mDon">0</strong></div>
+        </div>
+
+        <!-- Value card -->
+        <div class="m-card accent fade" style="margin-top:.75rem">
+          <div class="m-topbar"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="m-eyebrow">Estimated reservation value</div>
+              <div style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--gl)" id="mVal">$4.00</div>
+            </div>
+            <div style="text-align:right">
+              <div class="m-eyebrow">Member ID</div>
+              <div style="font-size:11px;color:var(--tm);letter-spacing:.06em" id="mMemberId">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Community vault -->
+        <div class="m-card fade">
+          <div class="m-eyebrow">COG$ Community Vault</div>
+          <div class="m-section-title">All members <em>total</em></div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--gl);margin:.25rem 0" id="mComm">—</div>
+          <div class="vbw"><div class="vbf" id="mCommBar" style="width:0%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--tf);margin-top:4px"><span>0</span><span>Target: 1,000,000</span></div>
+        </div>
+
+        <!-- Regulatory status -->
+        <div class="m-card fade">
+          <div class="m-eyebrow">Regulatory Status</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:.4rem">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--tm)">ASIC Innovation Hub</span><span class="status-pill">Engaged ✓</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--tm)">ATO Class Ruling</span><span class="status-pill">In Progress ✓</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--tm)">Foundation Day</span><span class="status-pill">14 May ✓</span></div>
+          </div>
+        </div>
+
+      </div><!-- /scWallet -->
+
+      <!-- SCREEN: MANAGE (update reservation) -->
+      <div class="app-screen" id="scManage">
+        <div class="m-eyebrow" style="margin-bottom:.3rem">Update Your Reservation</div>
+        <div class="m-section-title" style="margin-bottom:.5rem">Adjust <em>COG$ tokens</em></div>
+        <p style="font-size:12px;color:var(--tm);margin-bottom:1rem;line-height:1.6">Update your COG$ reservation at any time before Foundation Day. Your Personal NFT (1) is fixed — adjust Investment, Landholder, and Donation tokens below.</p>
+
+        <div class="m-card fade">
+          <div class="m-eyebrow">Investment COG$</div>
+          <div class="m-stepper">
+            <button class="m-sb" onclick="mStep('inv',-100)">−−</button>
+            <button class="m-sb" onclick="mStep('inv',-1)">−</button>
+            <div class="cnt" id="mAInv">0</div>
+            <button class="m-sb" onclick="mStep('inv',1)">+</button>
+            <button class="m-sb" onclick="mStep('inv',100)">++</button>
+          </div>
+          <div style="font-size:10px;color:var(--tf);margin-top:5px">More dividends from the community basket</div>
+        </div>
+
+        <div class="m-card fade">
+          <div class="m-eyebrow">Landholder COG$</div>
+          <div class="m-stepper">
+            <button class="m-sb" onclick="mStep('lnd',-100)">−−</button>
+            <button class="m-sb" onclick="mStep('lnd',-1)">−</button>
+            <div class="cnt" id="mALnd">0</div>
+            <button class="m-sb" onclick="mStep('lnd',1)">+</button>
+            <button class="m-sb" onclick="mStep('lnd',100)">++</button>
+          </div>
+          <div style="font-size:10px;color:var(--tf);margin-top:5px">Weighted votes for resource decisions on your land</div>
+        </div>
+
+        <div class="m-card fade">
+          <div class="m-eyebrow">Donation COG$</div>
+          <div class="m-stepper">
+            <button class="m-sb" onclick="mStep('don',-100)">−−</button>
+            <button class="m-sb" onclick="mStep('don',-1)">−</button>
+            <div class="cnt" id="mADon">0</div>
+            <button class="m-sb" onclick="mStep('don',1)">+</button>
+            <button class="m-sb" onclick="mStep('don',100)">++</button>
+          </div>
+          <div style="font-size:10px;color:var(--tf);margin-top:5px">Philanthropic community benefit contribution</div>
+        </div>
+
+        <button class="btn btn-p" id="mSaveBtn" onclick="saveAdj()" style="border-radius:14px;padding:14px;font-size:15px">Save Reservation</button>
+
+        <div style="margin-top:1.5rem;background:rgba(139,32,32,0.08);border:1px solid rgba(139,32,32,0.3);border-radius:var(--rl);padding:1rem">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#ff6b6b;margin-bottom:.4rem">Delete Registration</div>
+          <p style="font-size:11px;color:var(--tf);margin-bottom:.75rem;line-height:1.6">Permanently removes your registration and vault. Cannot be undone.</p>
+          <button class="btn btn-d" onclick="delNFT()" style="margin-top:0">Delete NFT COG$ — Remove Registration</button>
+        </div>
+      </div><!-- /scManage -->
+
+      <!-- SCREEN: VOTE / NEWS -->
+      <div class="app-screen" id="scVote">
+        <div class="m-eyebrow" style="margin-bottom:.3rem">Governance &amp; News</div>
+        <div class="m-section-title" style="margin-bottom:1rem">Your <em>voice</em></div>
+
+        <!-- Stewardship toggle -->
+        <div class="m-card accent fade">
+          <div class="m-topbar"></div>
+          <div class="m-eyebrow">In-Ground Trigger Vote</div>
+          <div style="font-size:13px;color:var(--tx);font-family:'DM Serif Display',serif;margin-bottom:.4rem">Extraction vs Stewardship</div>
+          <div style="font-size:11px;color:var(--tm);margin-bottom:.75rem">Your anonymous vote guides the Foundation's strategic position on Australia's resource sector.</div>
+          <div class="toggle-wrap"><button class="tog" id="mte" onclick="svote('e')">⛏ Extraction First</button><button class="tog" id="mts" onclick="svote('s')">🌿 Stewardship First</button></div>
+          <p id="msres" class="hint" style="text-align:center;margin-top:6px"></p>
+        </div>
+
+        <!-- News items -->
+        <div class="m-eyebrow" style="margin:.75rem 0 .4rem">State of the Hunt</div>
+        <div id="mNewsFeed"></div>
+      </div><!-- /scVote -->
+
+      <!-- SCREEN: COMMS (dispatches + FAQ + contact) -->
+      <div class="app-screen" id="scComms">
+        <div class="m-eyebrow" style="margin-bottom:.3rem">Communications</div>
+        <div class="m-section-title" style="margin-bottom:1rem">From the <em>Foundation</em></div>
+
+        <div class="m-card fade">
+          <div class="m-eyebrow">Foundation Dispatches</div>
+          <div id="mDisp"></div>
+        </div>
+
+        <div class="m-card fade">
+          <div class="m-eyebrow" style="margin-bottom:.75rem">Frequently Asked Questions</div>
+          <div id="mFaqList"></div>
+        </div>
+
+        <div class="m-card fade">
+          <div class="m-eyebrow" style="margin-bottom:.5rem">Contact the Foundation</div>
+          <a href="mailto:COGsAustralia@gmail.com?subject=Independence Vault Enquiry" class="btn btn-p" style="text-decoration:none;border-radius:14px">Email the Foundation</a>
+          <a href="https://cogsaustralia.org" target="_blank" class="btn btn-s" style="text-decoration:none;margin-top:8px">Visit cogsaustralia.org</a>
+          <div class="hint" style="margin-top:8px">COGsAustralia@gmail.com · ABN: 61 734 327 831</div>
+        </div>
+
+        <div style="text-align:center;padding:1.5rem 0;font-size:10px;color:var(--tf);line-height:1.8;border-top:1px solid var(--br)">
+          COG$ Community Resources Wealth Foundation<br>ABN: 61 734 327 831 · Thomas Cunliffe<br>Drake Village NSW 2469
+        </div>
+      </div><!-- /scComms -->
+
+    </div><!-- /app-screens -->
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="bn-item active" id="bn0" onclick="goScreen('wallet',0)">
+        <span class="bn-icon">💰</span><span>Wallet</span>
+      </button>
+      <button class="bn-item" id="bn1" onclick="goScreen('manage',1)">
+        <span class="bn-icon">✏️</span><span>Manage</span>
+      </button>
+      <button class="bn-item" id="bn2" onclick="goScreen('vote',2)">
+        <span class="bn-icon">🗳️</span><span>Vote</span>
+      </button>
+      <button class="bn-item" id="bn3" onclick="goScreen('comms',3)">
+        <span class="bn-icon">📡</span><span>Comms</span>
+      </button>
+    </div>
+
+  </div><!-- /mAppShell -->
+
+</div><!-- /mobileShell -->
+
+
+<script>
+// ═══ DATA ═════════════════════════════════════════════
+var RE=/^\d{16}$/,MID=null;
+var FIRST_LOGIN_ID=null; // set when arriving from thankyou page
+// News, dispatches and questions loaded live from Firebase
+// Fallbacks shown until Firebase responds
+var NEWS=[
+  {id:'n1',date:'March 2026',title:'ASIC Innovation Hub progressing',body:"The Foundation's ASIC Innovation Hub engagement is advancing — helping clarify the regulatory classification of COG$ tokens.",q:'Should community-owned resource governance be fast-tracked by regulators?',status:'voting'},
+  {id:'n2',date:'March 2026',title:'LGM Phase 1 acquisition underway',body:'The Foundation is acquiring shares in Legacy Minerals Ltd — tenements include the Clarence River and Timbara River corridors in northern NSW.',q:'Should the Foundation prioritise ESG stewardship over extraction value from LGM tenements?',status:'voting'},
+  {id:'n3',date:'Feb 2026',title:'ATO Class Ruling submitted',body:'The ATO Class Ruling application has been formally submitted. All rulings will be published to members before Foundation Day.',q:"Are you satisfied with the Foundation's transparency on regulatory matters?",status:'voting'},
+  {id:'n4',date:'Feb 2026',title:'Foundation Day — 14 May confirmed',body:'Foundation Day is confirmed for 14 May. Reservation holders may exercise some, all, or none of their reserved tokens.',q:'Are you planning to exercise your full reservation on Foundation Day?',status:'voting'}
+];
+var DISP=[
+  {date:'March 2026',title:'Welcome to the Independence Vault',body:"This vault is your personal window into the COG$ Foundation. As we move toward Foundation Day on 14 May, we will use this channel to keep you informed of all material developments — regulatory, strategic, and operational.",status:'live'},
+  {date:'March 2026',title:'Your reservation is secure',body:'Your reservation creates no financial obligation and requires no payment until Foundation Day. You may adjust or withdraw at any time.',status:'live'},
+  {date:'Feb 2026',title:'Information asymmetry ends here',body:"One of our core commitments is eliminating the information gap between ordinary Australians and the resource companies operating on their land.",status:'live'}
+];
+var QUESTIONS=[];  // loaded from Firebase
+var FAQS=[
+  {q:'What is the Independence Vault?',a:'Your personal wallet, voting platform and communication channel with the COG$ Community Foundation. Displays your token reservation, governance tools, and Foundation updates. No financial value — registration and communication only.'},
+  {q:'What is my COG$ Number?',a:'A unique 16-digit member identifier issued after your reservation at cogsaustralia.org. Check your confirmation email or contact COGsAustralia@gmail.com.'},
+  {q:'Can I update my reservation?',a:'Yes — use the Manage tab to increase or decrease Investment, Landholder, and Donation COG$ tokens at any time before Foundation Day. Your Personal NFT is fixed at 1 per person.'},
+  {q:'What happens if I delete my NFT COG$?',a:'This permanently removes your entire registration. Cannot be undone from this vault. Re-register at cogsaustralia.org if you change your mind.'},
+  {q:'Are my votes anonymous?',a:'Yes. Only your COG$ number is associated with votes — no name, email, or personal details stored alongside your responses.'},
+  {q:'When will I need to pay?',a:'No payment until Foundation Day — 14 May. You choose then whether to proceed. If not, your reservation expires with no penalty.'}
+];
+
+// ═══ STORAGE ══════════════════════════════════════════
+function gs(k,d){try{var v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch(e){return d}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function mk(s){return'cogs_'+MID+'_'+s}
+function ct(id){return(gs('cogs_'+id+'_nft',1))+(gs('cogs_'+id+'_inv',0))+(gs('cogs_'+id+'_lnd',0))+(gs('cogs_'+id+'_don',0))}
+
+// ═══ CREDIT CARD FORMATTING ════════════════════════════
+['dlid','mlid'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('input',function(){
+    var r=this.value.replace(/\D/g,'').slice(0,16);
+    this.value=r.match(/.{1,4}/g)?r.match(/.{1,4}/g).join(' '):r;
+  });
+});
+
+// ═══ AUTH ════════════════════════════════════════════
+// Simple one-way hash — same function used in setup
+function simpleHash(str){
+  var h=0;
+  for(var i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}
+  return 'ch_'+Math.abs(h).toString(36)+'_'+btoa(str).slice(0,8);
+}
+
+// Show password hint beneath the member number field on login
+function showPwHint(id){
+  var hintEl=document.getElementById('dPwHint')||document.getElementById('mPwHint');
+  if(!id||!RE.test(id))return;
+  var hint=gs('cogs_hint_'+id,null);
+  ['dPwHint','mPwHint'].forEach(function(hid){
+    var el=document.getElementById(hid);
+    if(el)el.textContent=hint?'Hint: '+hint:'';
+  });
+}
+function doLogin(mode){
+  var contactEl=mode==='d'?'dlc':'mlc';
+  var idEl=mode==='d'?'dlid':'mlid';
+  var pwEl=mode==='d'?'dlpw':'mlpw';
+  var errEl=mode==='d'?'dlerr':'mlerr';
+  var c=document.getElementById(contactEl).value.trim();
+  var id=document.getElementById(idEl).value.replace(/\s/g,'').trim();
+  var pw=document.getElementById(pwEl).value;
+  var e=document.getElementById(errEl);
+  e.textContent='';
+
+  if(!c){e.textContent='Please enter your email or mobile.';return}
+  if(!RE.test(id)){e.textContent='Please enter your 16-digit COG$ member number.';return}
+  if(pw.length<8||pw.length>16){e.textContent='Password must be 8–16 characters.';return}
+
+  // Show loading state on button
+  var btn=document.getElementById(mode==='d'?'dLoginBtn':'mLoginBtn');
+  if(btn){btn.textContent='Checking…';btn.disabled=true;}
+
+  function grantAccess(){
+    MID=id;
+    var pwHash=simpleHash(pw);
+    var rememberEl=document.getElementById(mode==='d'?'dRemember':'mRemember');
+    var remember=rememberEl&&rememberEl.checked;
+    ss('cogs_pw_'+id, pwHash);
+    if(remember){
+      ss('cogs_session',{id:id,contact:c,pw:pwHash,remember:true});
+    } else {
+      try{sessionStorage.setItem('cogs_sess_temp',JSON.stringify({id:id,contact:c}));}catch(ex){}
+      ss('cogs_session',{id:id,contact:c,remember:false});
+    }
+    if(!gs(mk('nft'),null)){
+      ss(mk('nft'),1);ss(mk('inv'),0);ss(mk('lnd'),0);ss(mk('don'),0);
+    }
+    if(btn){btn.textContent='Enter Independence Vault';btn.disabled=false;}
+    enterApp(mode);
+  }
+
+  function denyAccess(msg){
+    e.textContent=msg||'Member number not found. Check your reservation confirmation email.';
+    if(btn){btn.textContent='Enter Independence Vault';btn.disabled=false;}
+  }
+
+  // Check stored password for returning member
+  var storedPw=gs('cogs_pw_'+id,null);
+  if(storedPw){
+    if(storedPw===simpleHash(pw)){grantAccess();return;}
+    else{denyAccess('Incorrect password. Please try again.');return;}
+  }
+
+  // First time: verify member exists in Firebase
+  if(fbDB){
+    fbDB.ref('/members/'+id).once('value')
+      .then(function(snap){
+        if(snap.exists()){
+          grantAccess();
+        } else {
+          // Check localStorage (same device as registration)
+          if(gs('cogs_'+id+'_nft',null)!==null){
+            grantAccess();
+          } else {
+            denyAccess('Member number not found. Use the number from your reservation confirmation email.');
+          }
+        }
+      })
+      .catch(function(){
+        // Firebase unavailable — try localStorage
+        if(gs('cogs_'+id+'_nft',null)!==null){grantAccess();}
+        else{denyAccess('Unable to verify. Check your connection and try again.');}
+      });
+  } else {
+    // No Firebase — localStorage only
+    if(gs('cogs_'+id+'_nft',null)!==null){grantAccess();}
+    else{denyAccess('Member number not found.');}
+  }
+}
+
+function enterApp(mode){
+  var fmt=MID.replace(/(\d{4})/g,'$1 ').trim();
+  if(mode==='d'||window.innerWidth>640){
+    document.getElementById('dLogin').classList.add('hidden');
+    document.getElementById('dNav').classList.remove('hidden');
+    document.getElementById('dApp').classList.remove('hidden');
+    document.getElementById('dNavBadge').textContent='Member '+fmt;
+    document.getElementById('dVid').textContent='COG$ Member · '+fmt;
+    loadDeskAdj();renderD();
+  } else {
+    document.getElementById('mLoginWrap').style.display='none';
+    var shell=document.getElementById('mAppShell');
+    shell.style.display='flex';shell.classList.remove('hidden');
+    document.getElementById('mNavBadge').textContent=fmt;
+    document.getElementById('mMemberId').textContent=fmt;
+    loadMobileAdj();renderM();renderMVote();renderMDisp();renderMFaq();
+  }
+  fbWriteCommunity(); fbWriteMember();
+}
+
+function doLogout(mode){
+  ss('cogs_session',null);MID=null;
+  if(mode==='d'){
+    document.getElementById('dApp').classList.add('hidden');
+    document.getElementById('dNav').classList.add('hidden');
+    document.getElementById('dLogin').classList.remove('hidden');
+  } else {
+    document.getElementById('mAppShell').style.display='none';
+    document.getElementById('mLoginWrap').style.display='flex';
+  }
+}
+
+window.onload=function(){
+  // Check if arriving from thankyou page (new registration)
+  var hash=window.location.hash;
+  if(hash&&hash.startsWith('#new=')){
+    var newId=hash.slice(5).replace(/\s/g,'');
+    if(RE.test(newId)){
+      FIRST_LOGIN_ID=newId;
+      showFirstLoginScreen(newId);
+      window.history.replaceState(null,'',window.location.pathname);
+      return;
+    }
+  }
+  var s=gs('cogs_session',null);
+  // Only auto-login if "Remember me" was checked, or session still active
+  if(s&&s.id){
+    if(s.remember===false){
+      // Check sessionStorage — if tab was closed, sessionStorage is gone
+      try{
+        var temp=sessionStorage.getItem('cogs_sess_temp');
+        if(!temp){ss('cogs_session',null);return;} // clear stale non-remember session
+      }catch(ex){}
+    }
+    MID=s.id;enterApp(window.innerWidth<=640?'m':'d');
+  }
+};
+
+// ═══ HOLDINGS ════════════════════════════════════════
+function renderD(){
+  var n=gs(mk('nft'),1),i=gs(mk('inv'),0),l=gs(mk('lnd'),0),d=gs(mk('don'),0),t=n+i+l+d;
+  document.getElementById('dTotal').textContent=t.toLocaleString();
+  document.getElementById('dNft').textContent=n;
+  document.getElementById('dInv').textContent=i.toLocaleString();
+  document.getElementById('dLnd').textContent=l.toLocaleString();
+  document.getElementById('dDon').textContent=d.toLocaleString();
+  document.getElementById('dVal').textContent='$'+(t*4).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+  renderDComm();renderSV(false);renderDNews();renderDDisp();renderDFaq();
+}
+function renderM(){
+  var n=gs(mk('nft'),1),i=gs(mk('inv'),0),l=gs(mk('lnd'),0),d=gs(mk('don'),0),t=n+i+l+d;
+  setEl('mTotal',t.toLocaleString());setEl('mNft',n);setEl('mInv',i.toLocaleString());
+  setEl('mLnd',l.toLocaleString());setEl('mDon',d.toLocaleString());
+  setEl('mVal','$'+(t*4).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}));
+  renderMComm();
+}
+function setEl(id,v){var e=document.getElementById(id);if(e)e.textContent=v}
+
+// ═══ ADJUST ══════════════════════════════════════════
+function loadDeskAdj(){
+  document.getElementById('ainv').value=gs(mk('inv'),0);
+  document.getElementById('alnd').value=gs(mk('lnd'),0);
+  document.getElementById('adon').value=gs(mk('don'),0);
+}
+function step(f,d){var el=document.getElementById('a'+f);el.value=Math.max(0,(parseInt(el.value)||0)+d)}
+
+function loadMobileAdj(){
+  setEl('mAInv',gs(mk('inv'),0));
+  setEl('mALnd',gs(mk('lnd'),0));
+  setEl('mADon',gs(mk('don'),0));
+}
+function mStep(f,d){
+  var val=Math.max(0,(parseInt(document.getElementById('mA'+f.charAt(0).toUpperCase()+f.slice(1)).textContent)||0)+d);
+  setEl('mA'+f.charAt(0).toUpperCase()+f.slice(1),val);
+}
+
+function saveAdj(){
+  var isMobile=window.innerWidth<=640;
+  var inv,lnd,don,old=ct(MID);
+  if(isMobile){
+    inv=Math.max(0,parseInt(document.getElementById('mAInv').textContent)||0);
+    lnd=Math.max(0,parseInt(document.getElementById('mALnd').textContent)||0);
+    don=Math.max(0,parseInt(document.getElementById('mADon').textContent)||0);
+  } else {
+    inv=Math.max(0,parseInt(document.getElementById('ainv').value)||0);
+    lnd=Math.max(0,parseInt(document.getElementById('alnd').value)||0);
+    don=Math.max(0,parseInt(document.getElementById('adon').value)||0);
+  }
+  // Calculate deltas BEFORE saving new values
+  var prevInv=gs(mk('inv'),0), prevLnd=gs(mk('lnd'),0), prevDon=gs(mk('don'),0);
+  var dInv2=inv-prevInv, dLnd2=lnd-prevLnd, dDon2=don-prevDon;
+  ss(mk('inv'),inv);ss(mk('lnd'),lnd);ss(mk('don'),don);
+  var newTot=ct(MID);
+  ss('cogs_comm',Math.max(0,gs('cogs_comm',0)+(newTot-old)));
+  // Update community token breakdown with correct deltas
+  ss('cogs_comm_inv', Math.max(0, gs('cogs_comm_inv',0) + dInv2));
+  ss('cogs_comm_lnd', Math.max(0, gs('cogs_comm_lnd',0) + dLnd2));
+  ss('cogs_comm_don', Math.max(0, gs('cogs_comm_don',0) + dDon2));
+  if(isMobile){renderM()}else{renderD()}
+  fbWriteCommunity(); fbWriteMember();
+  var b=document.getElementById(isMobile?'mSaveBtn':'dSaveBtn'),o=b.textContent;
+  b.textContent='✓ Saved';b.style.background='#2a6e2a';
+  setTimeout(function(){b.textContent=o;b.style.background=''},2000);
+}
+
+function delNFT(){
+  if(!confirm('Permanently delete COG$ registration '+MID+'? This cannot be undone.'))return;
+  // Decrement community totals while member data still accessible
+  ss('cogs_comm',         Math.max(0,gs('cogs_comm',0)-ct(MID)));
+  ss('cogs_member_count', Math.max(0,gs('cogs_member_count',0)-1));
+  ss('cogs_comm_nft',     Math.max(0,gs('cogs_comm_nft',0)-gs(mk('nft'),1)));
+  ss('cogs_comm_inv',     Math.max(0,gs('cogs_comm_inv',0)-gs(mk('inv'),0)));
+  ss('cogs_comm_lnd',     Math.max(0,gs('cogs_comm_lnd',0)-gs(mk('lnd'),0)));
+  ss('cogs_comm_don',     Math.max(0,gs('cogs_comm_don',0)-gs(mk('don'),0)));
+  // Write updated community totals to Firebase BEFORE clearing member data
+  fbWriteCommunity();
+  if(fbDB&&MID){fbDB.ref('/members/'+MID).remove();}
+  // Now clear member-specific data
+  ['nft','inv','lnd','don'].forEach(function(k){localStorage.removeItem('cogs_'+MID+'_'+k);});
+  ss('cogs_session',null);MID=null;location.reload();
+}
+
+// ═══ COMMUNITY VAULT ═════════════════════════════════
+function renderDComm(){var t=gs('cogs_comm',0);setEl('dComm',t.toLocaleString()+' COG$');var b=document.getElementById('dCommBar');if(b)b.style.width=Math.min(t/1000000*100,100)+'%'}
+function renderMComm(){var t=gs('cogs_comm',0);setEl('mComm',t.toLocaleString()+' COG$');var b=document.getElementById('mCommBar');if(b)b.style.width=Math.min(t/1000000*100,100)+'%'}
+
+// ═══ STEWARDSHIP VOTE ════════════════════════════════
+function svote(c){
+  var v=gs('cogs_sv',{e:0,s:0}),p=gs('cogs_sm',null);
+  if(p===c){v[c]=Math.max(0,v[c]-1);ss('cogs_sm',null)}
+  else{if(p)v[p]=Math.max(0,v[p]-1);v[c]++;ss('cogs_sm',c)}
+  ss('cogs_sv',v);renderSV(true);
+  fbWriteVote('steward', v); fbWriteCommunity();
+}
+function renderSV(both){
+  var m=gs('cogs_sm',null),v=gs('cogs_sv',{e:0,s:0}),t=v.e+v.s;
+  var txt=t>0?'Community: '+Math.round(v.s/t*100)+'% Stewardship · '+Math.round(v.e/t*100)+'% Extraction ('+t+' votes)':'No votes yet — be the first.';
+  ['d','m'].forEach(function(p){
+    var te=document.getElementById(p+'te'),ts=document.getElementById(p+'ts'),r=document.getElementById(p+'sres');
+    if(te)te.className='tog'+(m==='e'?' on':'');
+    if(ts)ts.className='tog'+(m==='s'?' on':'');
+    if(r)r.textContent=txt;
+  });
+}
+
+// ═══ NEWS FEEDS ══════════════════════════════════════
+function renderNewsTo(containerId,compact){
+  var c=document.getElementById(containerId);if(!c)return;c.innerHTML='';
+  NEWS.forEach(function(x){
+    var vd=gs('cogs_v_'+x.id,null),vt=gs('cogs_vt_'+x.id,{y:0,n:0,u:0}),tot=vt.y+vt.n+vt.u;
+    // Status: 'voting' = accept votes, 'closed' = show results frozen, 'live' = no voting
+    var canVote=(x.status==='voting')&&(x.question||x.q);
+    var isClosed=(x.status==='closed');
+    var question=x.question||x.q||'';
+    var closedTag=isClosed?'<span style="font-size:9px;background:rgba(150,150,150,.12);color:#888;border:1px solid #555;border-radius:10px;padding:1px 7px;margin-left:5px">Results final</span>':'';
+    var d=document.createElement('div');
+    d.className=compact?'m-card fade':'ni';
+    if(compact){
+      d.innerHTML='<div class="m-eyebrow">'+x.date+closedTag+'</div>'+
+        '<div style="font-size:13px;color:var(--tx);font-weight:500;margin-bottom:4px">'+x.title+'</div>'+
+        '<div style="font-size:12px;color:var(--tm);line-height:1.6;margin-bottom:6px">'+x.body+'</div>'+
+        (question?'<div style="font-size:10px;color:var(--tf);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">'+question+'</div>':'')+
+        (canVote?'<div class="vote-compact">'+
+          '<button class="vc-btn'+(vd==='y'?' on':'')+'" onclick="cv(\''+x.id+'\',\'y\')">✅ Yes</button>'+
+          '<button class="vc-btn'+(vd==='n'?' on':'')+'" onclick="cv(\''+x.id+'\',\'n\')">❌ No</button>'+
+          '<button class="vc-btn'+(vd==='u'?' on':'')+'" onclick="cv(\''+x.id+'\',\'u\')">🤔 Unsure</button>'+
+        '</div>':'')+
+        (tot>0?'<div style="font-size:10px;color:var(--tf);margin-top:6px;font-style:italic">'+(isClosed?'Final result — ':'Community: ')+'Yes '+vt.y+' · No '+vt.n+' · Unsure '+vt.u+'</div>':'');
+    } else {
+      d.innerHTML='<div class="nd">'+x.date+closedTag+'</div><div class="nt">'+x.title+'</div><div class="nb">'+x.body+'</div>'+
+        (question?'<div class="nvl">'+question+'</div>':'')+
+        (canVote?'<div class="btn-vote-row">'+
+          '<button class="bv'+(vd==='y'?' on':'')+'" onclick="cv(\''+x.id+'\',\'y\')">✅ Yes</button>'+
+          '<button class="bv'+(vd==='n'?' on':'')+'" onclick="cv(\''+x.id+'\',\'n\')">❌ No</button>'+
+          '<button class="bv'+(vd==='u'?' on':'')+'" onclick="cv(\''+x.id+'\',\'u\')">🤔 Not Sure</button>'+
+        '</div>':'')+
+        (tot>0?'<div class="vr">'+(isClosed?'Final result — ':'Community: ')+'Yes '+vt.y+' · No '+vt.n+' · Not Sure '+vt.u+'</div>':
+          (canVote?'<div class="vr">Be the first to respond.</div>':''));
+    }
+    // Disable buttons if voting is closed
+    if(isClosed){
+      d.querySelectorAll('button').forEach(function(btn){
+        btn.disabled=true;btn.style.opacity='0.5';btn.style.cursor='not-allowed';
+      });
+    }
+    c.appendChild(d);
+  });
+}
+function renderDNews(){renderNewsTo('dNewsFeed',false)}
+function renderMVote(){renderSV(true);renderNewsTo('mNewsFeed',true)}
+function cv(id,ch){
+  // Guard: do not accept votes on closed items
+  var item=NEWS.find(function(x){return x.id===id;});
+  if(item&&item.status==='closed'){return;}
+  var p=gs('cogs_v_'+id,null),t=gs('cogs_vt_'+id,{y:0,n:0,u:0});
+  if(p===ch){t[ch]=Math.max(0,t[ch]-1);ss('cogs_v_'+id,null)}
+  else{if(p)t[p]=Math.max(0,t[p]-1);t[ch]++;ss('cogs_v_'+id,ch)}
+  ss('cogs_vt_'+id,t);renderDNews();renderMVote();
+  fbWriteVote('news', {id:id, tally:t}); fbWriteCommunity();
+}
+
+// ═══ DISPATCHES ══════════════════════════════════════
+function renderDispTo(id){
+  var c=document.getElementById(id);if(!c)return;c.innerHTML='';
+  DISP.forEach(function(d){
+    var el=document.createElement('div');el.className='ni';
+    el.innerHTML='<div class="nd">'+d.date+'</div><div class="nt">'+d.title+'</div><div class="nb">'+d.body+'</div>';
+    c.appendChild(el);
+  });
+}
+function renderDDisp(){renderDispTo('dDisp')}
+function renderMDisp(){renderDispTo('mDisp')}
+
+// ═══ FAQ ════════════════════════════════════════════
+function renderFaqTo(id){
+  var c=document.getElementById(id);if(!c)return;c.innerHTML='';
+  FAQS.forEach(function(f){
+    var el=document.createElement('div');el.className='faq-item';
+    el.innerHTML='<div class="faq-q" onclick="tfaq(this)">'+f.q+'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>'+
+      '<div class="faq-a"><div style="padding-top:4px">'+f.a+'</div></div>';
+    c.appendChild(el);
+  });
+}
+function renderDFaq(){renderFaqTo('dFaqList')}
+function renderMFaq(){renderFaqTo('mFaqList')}
+function tfaq(el){
+  var item=el.parentElement,ans=item.querySelector('.faq-a'),was=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(o){o.classList.remove('open');o.querySelector('.faq-a').style.maxHeight='0'});
+  if(!was){item.classList.add('open');ans.style.maxHeight=ans.scrollHeight+'px'}
+}
+
+// ═══ ACCOUNT RECOVERY ════════════════════════════════
+var RECOVERY_TYPE = 'password';
+
+function showRecovery(type){
+  RECOVERY_TYPE = type;
+  var modal = document.getElementById('recoveryModal');
+  if(!modal) return;
+  var idField = document.getElementById('recoveryId');
+  // Pre-fill member number if typed in login
+  var midVal = (document.getElementById('dlid')||document.getElementById('mlid')||{}).value||'';
+  if(idField && midVal) idField.value = midVal;
+  document.getElementById('recoveryErr').textContent = '';
+  document.getElementById('recoverySuccess').style.display = 'none';
+  if(type==='password'){
+    document.getElementById('recoveryEyebrow').textContent = 'Account Recovery';
+    document.getElementById('recoveryTitle').innerHTML = 'Forgot <em style="color:var(--gl);font-style:italic">password?</em>';
+    document.getElementById('recoveryBody').textContent = 'Enter your COG$ member number and reservation details. The Foundation will verify your identity and issue you a new password within 24 hours.';
+    document.getElementById('recoveryField1Label').textContent = 'COG$ Member Number';
+    document.getElementById('recoveryId').placeholder = '0000 0000 0000 0000';
+    document.getElementById('recoveryId').style.display = '';
+  } else {
+    document.getElementById('recoveryEyebrow').textContent = 'Member Number Recovery';
+    document.getElementById('recoveryTitle').innerHTML = 'Lost your <em style="color:var(--gl);font-style:italic">member number?</em>';
+    document.getElementById('recoveryBody').textContent = 'Provide your name, email and mobile from your reservation. The Foundation will look up your record and resend your 16-digit COG$ member number.';
+    document.getElementById('recoveryField1Label').textContent = 'Your full name (as on reservation)';
+    document.getElementById('recoveryId').placeholder = 'Full legal name';
+    document.getElementById('recoveryId').removeAttribute('inputmode');
+    document.getElementById('recoveryId').removeAttribute('maxlength');
+    document.getElementById('recoveryId').style.display = '';
+  }
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRecovery(){
+  var modal = document.getElementById('recoveryModal');
+  if(modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function sendRecovery(){
+  var idVal     = (document.getElementById('recoveryId')    ||{}).value||'';
+  var emailVal  = (document.getElementById('recoveryEmail') ||{}).value||'';
+  var mobileVal = (document.getElementById('recoveryMobile')||{}).value||'';
+  var errEl     = document.getElementById('recoveryErr');
+  errEl.textContent = '';
+
+  if(!idVal.trim())    {errEl.textContent='Please fill in the first field.';return;}
+  if(!emailVal.trim()) {errEl.textContent='Please enter your email address.';return;}
+
+  // Build mailto — sends to Foundation inbox with all recovery details
+  var subject = RECOVERY_TYPE==='password'
+    ? 'COG$ Password Reset Request — Member #' + idVal.trim()
+    : 'COG$ Member Number Recovery Request';
+
+  var body = RECOVERY_TYPE==='password'
+    ? 'PASSWORD RESET REQUEST
+
+Member Number: ' + idVal.trim()
+        + '
+Email: ' + emailVal.trim()
+        + '
+Mobile: ' + mobileVal.trim()
+        + '
+
+Please verify my identity and issue a new password for my Independence Vault.'
+    : 'MEMBER NUMBER RECOVERY REQUEST
+
+Full Name: ' + idVal.trim()
+        + '
+Email: ' + emailVal.trim()
+        + '
+Mobile: ' + mobileVal.trim()
+        + '
+
+Please look up my reservation and resend my 16-digit COG$ member number.';
+
+  // Open mailto (sends via member's own email client — no server needed)
+  var mailto = 'mailto:COGsAustralia@gmail.com'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+
+  window.open(mailto, '_blank');
+
+  // Also write recovery request to Firebase for admin visibility
+  if(fbDB){
+    try{
+      fbDB.ref('/recovery_requests').push({
+        type:       RECOVERY_TYPE,
+        identifier: idVal.trim(),
+        email:      emailVal.trim(),
+        mobile:     mobileVal.trim(),
+        timestamp:  new Date().toISOString(),
+        status:     'pending'
+      });
+    }catch(ex){}
+  }
+
+  // Show success message
+  document.getElementById('recoverySuccess').style.display = 'block';
+  document.getElementById('recoveryErr').textContent = '';
+}
+
+// Close modal on backdrop click
+document.addEventListener('click', function(e){
+  var modal = document.getElementById('recoveryModal');
+  if(modal && e.target === modal) closeRecovery();
+});
+
+// ═══ FIRST LOGIN — PASSWORD SETUP ════════════════════
+function showFirstLoginScreen(memberId){
+  // Hide all other screens
+  var dRoot=document.getElementById('desktopRoot');
+  var mShell=document.getElementById('mobileShell');
+  var flScreen=document.getElementById('screenFirstLogin');
+  if(dRoot)dRoot.classList.add('hidden');
+  if(mShell)mShell.classList.add('hidden');
+  if(flScreen){flScreen.classList.remove('hidden');flScreen.style.display='flex';}
+
+  // Display formatted member number
+  var fmt=memberId.replace(/(\d{4})/g,'$1 ').trim();
+  var el=document.getElementById('setupMemberNum');
+  if(el)el.textContent=fmt;
+
+  // Pre-fill email if stored from registration
+  var storedEmail=localStorage.getItem('cogs_pending_email')||'';
+  var emailEl=document.getElementById('setupEmail');
+  if(emailEl&&storedEmail)emailEl.value=storedEmail;
+}
+
+function checkPwStrength(){
+  var pw=document.getElementById('setupPw1').value;
+  var fill=document.getElementById('pwFill');
+  var label=document.getElementById('pwStrengthLabel');
+  if(!fill||!label)return;
+  var score=0;
+  if(pw.length>=8)score++;
+  if(pw.length>=12)score++;
+  if(/[A-Z]/.test(pw))score++;
+  if(/[0-9]/.test(pw))score++;
+  if(/[^A-Za-z0-9]/.test(pw))score++;
+  var colours=['#e74c3c','#e67e22','#f39c12','#2ecc71','#27ae60'];
+  var labels=['Too short','Weak','Fair','Good','Strong'];
+  var idx=Math.max(0,Math.min(score-1,4));
+  fill.style.width=((score/5)*100)+'%';
+  fill.style.background=colours[idx]||colours[0];
+  label.textContent=pw.length===0?'Enter a password':labels[idx]||labels[0];
+  label.style.color=colours[idx]||colours[0];
+}
+
+function doFirstLogin(){
+  var id   =FIRST_LOGIN_ID;
+  var email=document.getElementById('setupEmail').value.trim();
+  var pw1  =document.getElementById('setupPw1').value;
+  var pw2  =document.getElementById('setupPw2').value;
+  var hint =document.getElementById('setupHint').value.trim();
+  var secQ =document.getElementById('setupSecQ').value;
+  var secA =document.getElementById('setupSecA').value.trim();
+  var err  =document.getElementById('setupErr');
+  var btn  =document.getElementById('setupBtn');
+  err.textContent='';
+
+  if(!id||!RE.test(id)){err.textContent='Member number error. Please return to the thank you page.';return;}
+  if(!email){err.textContent='Please enter your email address.';return;}
+  if(pw1.length<8||pw1.length>16){err.textContent='Password must be 8–16 characters.';return;}
+  if(pw1!==pw2){err.textContent='Passwords do not match.';return;}
+  if(!secQ){err.textContent='Please select a security question.';return;}
+  if(!secA){err.textContent='Please provide your security answer.';return;}
+
+  btn.textContent='Setting up…';btn.disabled=true;
+
+  // Simple one-way hash for password — stronger than btoa but no server needed
+  function simpleHash(str){
+    var h=0;
+    for(var i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}
+    return 'ch_'+Math.abs(h).toString(36)+'_'+btoa(str).slice(0,8);
+  }
+
+  function completeSetup(){
+    var pwHash=simpleHash(pw1);
+    // Store password hash locally for login
+    ss('cogs_pw_'+id, pwHash);
+    ss('cogs_session',{id:id,contact:email,pw:pwHash,remember:true});
+    // Store hint locally so it shows on login screen
+    ss('cogs_hint_'+id, hint);
+    MID=id;
+    if(!gs(mk('nft'),null)){ss(mk('nft'),1);ss(mk('inv'),0);ss(mk('lnd'),0);ss(mk('don'),0);}
+
+    // Write security data to Firebase — stored under /members/{id}/security
+    // Not publicly readable (Firebase rules block .read on /members)
+    // Admin can see this in Firebase console to verify identity for resets
+    if(fbDB){
+      try{
+        fbDB.ref('/members/'+id).update({
+          firstLogin:   true,
+          pwHint:       hint||'No hint set',
+          securityQ:    secQ,
+          securityA:    secA.toLowerCase().trim(), // lowercase for easier matching
+          pwSetAt:      new Date().toISOString(),
+          // Store a recoverable form so admin can assist — NOT the plain password
+          // This is a one-way hash — admin cannot reverse it, but can confirm match
+          pwHash:       pwHash
+        });
+      }catch(ex){console.log('Firebase security write error (non-critical):',ex);}
+    }
+
+    btn.textContent='Create password & enter vault';btn.disabled=false;
+    document.getElementById('screenFirstLogin').style.display='none';
+    document.getElementById('screenFirstLogin').classList.add('hidden');
+    var mode=window.innerWidth<=640?'m':'d';
+    document.getElementById('desktopRoot').classList.remove('hidden');
+    document.getElementById('mobileShell').classList.remove('hidden');
+    enterApp(mode);
+  }
+
+  if(fbDB){
+    fbDB.ref('/members/'+id).once('value')
+      .then(function(snap){
+        if(snap.exists()){
+          var stored=snap.val();
+          if(stored.email&&email.toLowerCase()!==stored.email.toLowerCase()){
+            err.textContent='Email does not match your reservation. Please check and try again.';
+            btn.textContent='Create password & enter vault';btn.disabled=false;
+            return;
+          }
+          completeSetup();
+        } else {
+          err.textContent='Member number not found. Please use the link from your confirmation email.';
+          btn.textContent='Create password & enter vault';btn.disabled=false;
+        }
+      })
+      .catch(function(){completeSetup();});
+  } else {
+    completeSetup();
+  }
+}
+
+// ═══ FIREBASE INTEGRATION ════════════════════════════
+var FB_CONFIG = {
+  apiKey: "AIzaSyCvpRdc9SK_jaUuTQ62DbQArylu0hX6FvA",
+  authDomain: "cogs-australia.firebaseapp.com",
+  databaseURL: "https://cogs-australia-default-rtdb.firebaseio.com",
+  projectId: "cogs-australia",
+  storageBucket: "cogs-australia.firebasestorage.app",
+  messagingSenderId: "918224691358",
+  appId: "1:918224691358:web:4b5e4d8345252edc461b8f",
+  measurementId: "G-Z5734BP4XY"
+};
+var fbDB = null;
+
+(function initFB() {
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+    fbDB = firebase.database();
+    startContentListeners();
+  } catch(e) { fbDB = null; }
+})();
+
+// Live content listeners — news, dispatches, questions update instantly when admin changes them
+function startContentListeners() {
+  if (!fbDB) return;
+
+  // News feed
+  fbDB.ref('/content/news').on('value', function(snap) {
+    var data = snap.val();
+    if (!data) return;
+    var items = Object.values(data)
+      .filter(function(x) { return x.status === 'voting' || x.status === 'live' || x.status === 'closed'; })
+      .sort(function(a,b) { return (b.createdAt||0)-(a.createdAt||0); });
+    if (items.length > 0) {
+      NEWS = items;
+      renderDNews(); renderMVote();
+    }
+  });
+
+  // Dispatches
+  fbDB.ref('/content/dispatches').on('value', function(snap) {
+    var data = snap.val();
+    if (!data) return;
+    var items = Object.values(data)
+      .filter(function(x) { return x.status === 'live'; })
+      .sort(function(a,b) { return (b.createdAt||0)-(a.createdAt||0); });
+    if (items.length > 0) {
+      DISP = items;
+      renderDDisp(); renderMDisp();
+    }
+  });
+
+  // Governance questions
+  fbDB.ref('/content/questions').on('value', function(snap) {
+    var data = snap.val();
+    if (!data) return;
+    QUESTIONS = Object.values(data)
+      .filter(function(x) { return x.status === 'voting' || x.status === 'closed'; })
+      .sort(function(a,b) { return (b.createdAt||0)-(a.createdAt||0); });
+    renderDNews(); renderMVote();
+  });
+
+  // Stewardship voting enabled/disabled
+  fbDB.ref('/settings/stewardVoting').on('value', function(snap) {
+    var enabled = snap.val();
+    if (enabled === false) {
+      // Hide stewardship toggle in both desktop and mobile
+      ['dte','dts','dsres','mte','mts','msres'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && el.parentElement) el.parentElement.style.display = 'none';
+      });
+    } else {
+      ['dte','dts','dsres','mte','mts','msres'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && el.parentElement) el.parentElement.style.display = '';
+      });
+    }
+  });
+}
+
+// Write community totals to Firebase
+function fbWriteCommunity() {
+  if (!fbDB) return;
+  try {
+    fbDB.ref('/community').set({
+      memberCount:  gs('cogs_member_count', 0),
+      totalCogs:    gs('cogs_comm', 0),
+      totalNft:     gs('cogs_comm_nft', 0),
+      totalInvest:  gs('cogs_comm_inv', 0),
+      totalLand:    gs('cogs_comm_lnd', 0),
+      totalDonate:  gs('cogs_comm_don', 0),
+      stewardVotes: gs('cogs_sv', {e:0,s:0}),
+      newsVotes: {
+        n1: gs('cogs_vt_n1', {y:0,n:0,u:0}),
+        n2: gs('cogs_vt_n2', {y:0,n:0,u:0}),
+        n3: gs('cogs_vt_n3', {y:0,n:0,u:0}),
+        n4: gs('cogs_vt_n4', {y:0,n:0,u:0})
+      },
+      lastUpdated: new Date().toISOString()
+    });
+  } catch(e) {}
+}
+
+// Write member's own token data to Firebase (anonymous — keyed by member number)
+function fbWriteMember() {
+  if (!fbDB || !MID) return;
+  try {
+    fbDB.ref('/members/' + MID).set({
+      nft:    gs(mk('nft'),    1),
+      invest: gs(mk('inv'),    0),
+      land:   gs(mk('lnd'),    0),
+      donate: gs(mk('don'),    0),
+      total:  ct(MID),
+      updatedAt: new Date().toISOString()
+    });
+  } catch(e) {}
+}
+
+// Write anonymous vote to Firebase
+function fbWriteVote(type, data) {
+  if (!fbDB) return;
+  try {
+    if (type === 'steward') {
+      fbDB.ref('/community/stewardVotes').set(data);
+    } else if (type === 'news') {
+      fbDB.ref('/community/newsVotes/' + data.id).set(data.tally);
+    }
+  } catch(e) {}
+}
+
+// ═══ MOBILE NAVIGATION ═══════════════════════════════
+var SCREENS=['wallet','manage','vote','comms'];
+function goScreen(name,idx){
+  SCREENS.forEach(function(s,i){
+    var sc=document.getElementById('sc'+s.charAt(0).toUpperCase()+s.slice(1));
+    var bn=document.getElementById('bn'+i);
+    if(sc)sc.className='app-screen'+(i===idx?' active':'');
+    if(bn)bn.className='bn-item'+(i===idx?' active':'');
+  });
+  if(name==='vote')renderMVote();
+  if(name==='comms'){renderMDisp();renderMFaq()}
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COG$ Admin — Content Manager</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C8901A;--gl:#F0B429;--bg:#0F0D09;--bc:#221E14;--bc2:#2A2418;
+  --tx:#F0E8D6;--tm:#C4B49A;--tf:#9A8A74;
+  --br:rgba(200,144,26,0.15);--brs:rgba(200,144,26,0.35);
+  --r:10px;--rl:16px;--danger:#8B2020;--success:#1e6e2e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;font-size:14px;font-weight:300;background:var(--bg);color:var(--tx);min-height:100vh}
+.hidden{display:none!important}
+/* ── TOP BAR ── */
+.topbar{background:rgba(15,13,9,.98);border-bottom:1px solid var(--brs);padding:0 2rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'DM Serif Display',serif;font-size:17px;color:var(--gl)}
+.logo span{font-size:11px;color:var(--tf);font-family:'Outfit',sans-serif;font-weight:300;margin-left:8px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;margin-right:5px;transition:background .3s}
+.status-dot.live{background:#2ecc71;box-shadow:0 0 6px #2ecc71}
+.nav-right{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--tf)}
+button.logout{background:none;border:1px solid var(--br);color:var(--tf);padding:5px 12px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px}
+button.logout:hover{border-color:var(--brs);color:var(--tm)}
+/* ── LOGIN ── */
+#loginWrap{max-width:420px;margin:0 auto;padding:4rem 1.5rem}
+.login-card{background:var(--bc);border:1px solid var(--brs);border-radius:var(--rl);padding:2rem}
+.login-card h2{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--tx);margin-bottom:.25rem}
+.login-card h2 em{color:var(--gl);font-style:italic}
+.login-card p{font-size:12px;color:var(--tf);margin-bottom:1.5rem}
+/* ── LAYOUT ── */
+.page{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 5rem;display:grid;grid-template-columns:220px 1fr;gap:1.5rem}
+@media(max-width:800px){
+  .page{grid-template-columns:1fr;padding:0 0 4rem}
+  .sidebar{position:static;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:0;background:rgba(15,13,9,.97);border-bottom:1px solid var(--brs);padding:0;-webkit-overflow-scrolling:touch}
+  .sidebar-section{display:contents}
+  .sidebar-label{display:none}
+  .nav-item{flex-shrink:0;border-radius:0;padding:.65rem .9rem;font-size:12px;border-bottom:2px solid transparent;white-space:nowrap}
+  .nav-item.active{border-bottom-color:var(--gold);background:rgba(200,144,26,.08)}
+  .nav-item .badge{margin-left:4px;font-size:9px;padding:1px 5px}
+}
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .topbar{padding:0 1rem}
+  .card{padding:1rem}
+  .btn-row{flex-direction:column}
+  .btn-row .btn{width:100%}
+  .item-actions{flex-direction:column}
+  .item-actions .btn{width:100%;justify-content:center}
+}
+/* ── SIDEBAR NAV ── */
+.sidebar{position:sticky;top:70px;align-self:start}
+.sidebar-section{margin-bottom:.25rem}
+.sidebar-label{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--tf);padding:.75rem 1rem .35rem}
+.nav-item{display:flex;align-items:center;gap:9px;padding:.6rem 1rem;border-radius:8px;cursor:pointer;font-size:13px;color:var(--tm);transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.nav-item:hover{background:rgba(200,144,26,.06);color:var(--tx)}
+.nav-item.active{background:rgba(200,144,26,.12);color:var(--gl);font-weight:500}
+.nav-item .badge{margin-left:auto;background:var(--gold);color:#0F0D09;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;min-width:20px;text-align:center}
+/* ── PANELS ── */
+.panel{display:none}
+.panel.active{display:block}
+/* ── CARDS ── */
+.card{background:var(--bc);border:1px solid var(--br);border-radius:var(--rl);padding:1.25rem 1.5rem;margin-bottom:1rem}
+.card.accent{border-color:var(--brs)}
+.card-topbar{height:3px;background:linear-gradient(90deg,var(--gold),var(--gl));border-radius:var(--rl) var(--rl) 0 0;margin:-1.25rem -1.5rem 1.1rem}
+.panel-title{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--tx);margin-bottom:.2rem}
+.panel-title em{color:var(--gl);font-style:italic}
+.panel-sub{font-size:12px;color:var(--tf);margin-bottom:1.5rem;line-height:1.6}
+/* ── FORMS ── */
+label{font-size:11px;color:var(--tm);display:block;margin-bottom:4px;margin-top:12px}
+input[type=text],input[type=password],textarea,select{width:100%;padding:10px 13px;border-radius:var(--r);border:1px solid var(--brs);background:rgba(0,0,0,.4);color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:border-color .2s;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--gl)}
+input::placeholder,textarea::placeholder{color:var(--tf)}
+textarea{min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+/* ── STATUS TOGGLE ── */
+.status-toggle{display:flex;align-items:center;gap:10px;margin-top:12px;background:var(--bc2);padding:10px 14px;border-radius:var(--r)}
+.status-toggle label{margin:0;color:var(--tx);font-size:13px;cursor:pointer}
+.toggle-track{width:42px;height:22px;background:#444;border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle-track.on{background:var(--gold)}
+.toggle-thumb{width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s}
+.toggle-track.on .toggle-thumb{left:23px}
+.status-badge{font-size:10px;font-weight:500;padding:2px 9px;border-radius:10px;margin-left:auto}
+.status-badge.live{background:rgba(46,204,113,.15);color:#2ecc71;border:1px solid rgba(46,204,113,.3)}
+.status-badge.voting{background:rgba(200,144,26,.15);color:var(--gl);border:1px solid var(--brs)}
+.status-badge.closed{background:rgba(150,150,150,.1);color:#888;border:1px solid #444}
+.status-badge.draft{background:rgba(100,100,100,.15);color:#888;border:1px solid #555}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:500;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-primary{background:var(--gold);color:#0F0D09}.btn-primary:hover{background:var(--gl)}
+.btn-secondary{background:transparent;color:var(--tm);border:1px solid var(--brs)}.btn-secondary:hover{border-color:var(--gold);color:var(--gl)}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#a02525}
+.btn-success{background:var(--success);color:#fff}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+/* ── ITEM CARDS (list view) ── */
+.item-card{background:var(--bc2);border:1px solid var(--br);border-radius:var(--r);padding:1rem 1.2rem;margin-bottom:.75rem;transition:border-color .15s}
+.item-card:hover{border-color:var(--brs)}
+.item-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.5rem}
+.item-title{font-size:13px;font-weight:500;color:var(--tx)}
+.item-meta{font-size:11px;color:var(--tf);margin-top:2px}
+.item-body{font-size:12px;color:var(--tm);line-height:1.6;margin-bottom:.6rem}
+.item-question{font-size:11px;color:var(--gl);margin-bottom:.6rem;font-style:italic}
+.item-actions{display:flex;gap:6px;flex-wrap:wrap}
+/* ── VOTE STATS ── */
+.vote-mini{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.vote-chip{font-size:11px;color:var(--tm);background:rgba(200,144,26,.07);border:1px solid var(--br);border-radius:6px;padding:3px 9px}
+/* ── ALERTS ── */
+.alert{padding:10px 14px;border-radius:var(--r);font-size:12px;margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.alert-success{background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);color:#2ecc71}
+.alert-error{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);color:#e74c3c}
+/* ── DIVIDER ── */
+.divr{border:none;border-top:1px solid var(--br);margin:1.25rem 0}
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.stat-box{background:var(--bc2);border:1px solid var(--br);border-radius:var(--r);padding:.9rem 1rem;text-align:center}
+.stat-num{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--gl);line-height:1}
+.stat-label{font-size:10px;color:var(--tf);margin-top:3px;text-transform:uppercase;letter-spacing:.08em}
+/* ── err ── */
+.err{color:#e74c3c;font-size:11px;margin-top:5px}
+</style>
+</head>
+<body>
+
+<div style="background:rgba(200,144,26,0.12);border-bottom:2px solid var(--gold);padding:6px 20px;text-align:center;font-size:11px;font-weight:500;color:var(--gl);letter-spacing:.06em">⚙ BETA — Testing Phase 2 &nbsp;·&nbsp; Admin Console &nbsp;·&nbsp; Full deployment pending secured App testing &amp; compliance</div>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div style="text-align:center;margin-bottom:2rem;padding-top:2rem">
+    <div style="font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gl);margin-bottom:.5rem">COG$ of Australia Foundation</div>
+    <h1 style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--tx);line-height:1.1">Admin <em style="color:var(--gl);font-style:italic">Console</em></h1>
+    <p style="font-size:12px;color:var(--tf);margin-top:.5rem">Content manager · News feed · Questions · Governance</p>
+  </div>
+  <div class="login-card">
+    <h2>Sign <em>in</em></h2>
+    <p>Foundation administrators only. This console manages live content delivered to all member wallets.</p>
+    <label>Admin Password</label>
+    <input type="password" id="adminPw" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')checkLogin()">
+    <div id="loginErr" class="err"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkLogin()" style="width:100%;justify-content:center;padding:12px">Enter Admin Console</button>
+    </div>
+    <div style="margin-top:1.25rem;text-align:center">
+      <a href="index.html" style="font-size:11px;color:var(--tf);text-decoration:none">← Back to COG$ Foundation</a>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp" class="hidden">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="logo">COG$ Admin <span>Content Manager</span></div>
+    <div class="nav-right">
+      <span><span class="status-dot" id="fbDot"></span><span id="fbStatus">Connecting…</span></span>
+      <button class="logout" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Overview</div>
+        <button class="nav-item active" onclick="showPanel('dashboard',this)">📊 Dashboard</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Member Comms</div>
+        <button class="nav-item" onclick="showPanel('news',this)">📰 News Feed <span class="badge" id="badgeNews">0</span></button>
+        <button class="nav-item" onclick="showPanel('dispatches',this)">📡 Dispatches <span class="badge" id="badgeDisp">0</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Governance</div>
+        <button class="nav-item" onclick="showPanel('questions',this)">🗳 Questions <span class="badge" id="badgeQ">0</span></button>
+        <button class="nav-item" onclick="showPanel('steward',this)">⚖ Stewardship</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Support</div>
+        <button class="nav-item" onclick="showPanel('recovery',this)">🆘 Recovery Requests <span class="badge" id="badgeRecov">0</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Links</div>
+        <button class="nav-item" onclick="window.open('vault.html','_blank')">🏛 Community Vault ↗</button>
+        <button class="nav-item" onclick="window.open('wallet.html','_blank')">💰 Wallet ↗</button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div>
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="panel-title">Dashboard <em>overview</em></div>
+        <div class="panel-sub">Live data from Firebase. All figures update in real time.</div>
+
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-num" id="dashMembers">—</div><div class="stat-label">Members</div></div>
+          <div class="stat-box"><div class="stat-num" id="dashCogs">—</div><div class="stat-label">Total COG$</div></div>
+          <div class="stat-box"><div class="stat-num" id="dashValue">—</div><div class="stat-label">Value ($AUD)</div></div>
+          <div class="stat-box"><div class="stat-num" id="dashNewsItems">—</div><div class="stat-label">News Items</div></div>
+          <div class="stat-box"><div class="stat-num" id="dashDispItems">—</div><div class="stat-label">Dispatches</div></div>
+          <div class="stat-box"><div class="stat-num" id="dashQItems">—</div><div class="stat-label">Questions</div></div>
+        </div>
+
+        <div class="card accent">
+          <div class="card-topbar"></div>
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.5rem">Quick actions</div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="showPanel('news',document.querySelector('[onclick*=\"news\"]'))">+ Add news item</button>
+            <button class="btn btn-secondary" onclick="showPanel('questions',document.querySelector('[onclick*=\"questions\"]'))">+ Add question</button>
+            <button class="btn btn-secondary" onclick="showPanel('dispatches',document.querySelector('[onclick*=\"dispatches\"]'))">+ Add dispatch</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem">Stewardship vote totals</div>
+          <div id="dashSteward" style="font-size:13px;color:var(--tm)">Loading…</div>
+        </div>
+      </div>
+
+      <!-- ══ NEWS FEED ══ -->
+      <div class="panel hidden" id="panel-news">
+        <div class="panel-title">News <em>Feed</em></div>
+        <div class="panel-sub">News items appear in member wallets under "State of the Hunt". Each item can carry an optional voting question. Set status to <strong>Live + Voting</strong> to accept votes, <strong>Live (closed)</strong> to show results only, or <strong>Draft</strong> to hide.</div>
+
+        <!-- Add/Edit form -->
+        <div class="card accent" id="newsFormCard">
+          <div class="card-topbar"></div>
+          <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem" id="newsFormTitle">Add new news item</div>
+          <input type="hidden" id="newsEditId">
+          <div class="form-row">
+            <div>
+              <label>Date label</label>
+              <input type="text" id="newsDate" placeholder="e.g. March 2026">
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="newsStatus">
+                <option value="draft">Draft — hidden from wallets</option>
+                <option value="live">Live — visible, no voting</option>
+                <option value="voting" selected>Live + Voting — members can respond</option>
+                <option value="closed">Closed — results shown, no new votes</option>
+              </select>
+            </div>
+          </div>
+          <label>Headline</label>
+          <input type="text" id="newsTitle" placeholder="News headline">
+          <label>Body text</label>
+          <textarea id="newsBody" placeholder="News content shown to members…" style="min-height:90px"></textarea>
+          <label>Voting question (optional — leave blank for no voting)</label>
+          <input type="text" id="newsQ" placeholder="e.g. Do you support this regulatory approach?">
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveNewsItem()">Save news item</button>
+            <button class="btn btn-secondary" onclick="clearNewsForm()">Clear form</button>
+          </div>
+          <div id="newsAlert"></div>
+        </div>
+
+        <div class="divr"></div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--tf);margin-bottom:.75rem">All news items</div>
+        <div id="newsList"><div style="font-size:13px;color:var(--tf)">Loading…</div></div>
+      </div>
+
+      <!-- ══ DISPATCHES ══ -->
+      <div class="panel hidden" id="panel-dispatches">
+        <div class="panel-title">Foundation <em>Dispatches</em></div>
+        <div class="panel-sub">One-way messages from the Foundation to all member wallets. No voting. Set to <strong>Live</strong> to publish, <strong>Draft</strong> to hold.</div>
+
+        <div class="card accent" id="dispFormCard">
+          <div class="card-topbar"></div>
+          <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem" id="dispFormTitle">Add new dispatch</div>
+          <input type="hidden" id="dispEditId">
+          <div class="form-row">
+            <div>
+              <label>Date label</label>
+              <input type="text" id="dispDate" placeholder="e.g. March 2026">
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="dispStatus">
+                <option value="draft">Draft — hidden from wallets</option>
+                <option value="live" selected>Live — visible to all members</option>
+              </select>
+            </div>
+          </div>
+          <label>Title</label>
+          <input type="text" id="dispTitle" placeholder="Dispatch title">
+          <label>Message body</label>
+          <textarea id="dispBody" placeholder="Message to all members…" style="min-height:100px"></textarea>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveDispatch()">Publish dispatch</button>
+            <button class="btn btn-secondary" onclick="clearDispForm()">Clear form</button>
+          </div>
+          <div id="dispAlert"></div>
+        </div>
+
+        <div class="divr"></div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--tf);margin-bottom:.75rem">All dispatches</div>
+        <div id="dispList"><div style="font-size:13px;color:var(--tf)">Loading…</div></div>
+      </div>
+
+      <!-- ══ QUESTIONS ══ -->
+      <div class="panel hidden" id="panel-questions">
+        <div class="panel-title">Governance <em>Questions</em></div>
+        <div class="panel-sub">Standalone governance questions shown in member wallets. Set to <strong>Voting open</strong> to accept responses, then <strong>Voting closed</strong> to freeze results and display them as a static record. Members see live vote tallies.</div>
+
+        <div class="card accent">
+          <div class="card-topbar"></div>
+          <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem" id="qFormTitle">Add new question</div>
+          <input type="hidden" id="qEditId">
+          <div class="form-row">
+            <div>
+              <label>Date label</label>
+              <input type="text" id="qDate" placeholder="e.g. March 2026">
+            </div>
+            <div>
+              <label>Voting status</label>
+              <select id="qStatus">
+                <option value="draft">Draft — hidden from wallets</option>
+                <option value="voting" selected>Voting open — members can respond</option>
+                <option value="closed">Voting closed — results frozen &amp; displayed</option>
+              </select>
+            </div>
+          </div>
+          <label>Category / topic</label>
+          <input type="text" id="qCat" placeholder="e.g. Regulatory, Governance, Strategy">
+          <label>Question text</label>
+          <textarea id="qText" placeholder="The question members will see and vote on…" style="min-height:80px"></textarea>
+          <label>Context (optional — shown below the question)</label>
+          <textarea id="qContext" placeholder="Background information to help members respond…" style="min-height:70px"></textarea>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveQuestion()">Save question</button>
+            <button class="btn btn-secondary" onclick="clearQForm()">Clear form</button>
+          </div>
+          <div id="qAlert"></div>
+        </div>
+
+        <div class="divr"></div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--tf);margin-bottom:.75rem">All questions</div>
+        <div id="qList"><div style="font-size:13px;color:var(--tf)">Loading…</div></div>
+      </div>
+
+      <!-- ══ STEWARDSHIP ══ -->
+      <div class="panel hidden" id="panel-steward">
+        <div class="panel-title">Stewardship <em>Trigger</em></div>
+        <div class="panel-sub">The foundational Extraction vs Stewardship governance vote. Manage its status and view live results.</div>
+
+        <div class="card accent">
+          <div class="card-topbar"></div>
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem">Current status</div>
+          <div class="status-toggle">
+            <div class="toggle-track" id="svToggle" onclick="toggleSteward()"><div class="toggle-thumb"></div></div>
+            <label onclick="toggleSteward()" style="cursor:pointer">Stewardship voting <span id="svToggleLabel">enabled</span></label>
+            <span class="status-badge voting" id="svBadge">Voting open</span>
+          </div>
+          <div style="font-size:11px;color:var(--tf);margin-top:8px">When disabled, the toggle is hidden from wallets. When enabled, members can vote.</div>
+          <div class="btn-row">
+            <button class="btn btn-danger btn-sm" onclick="resetStewardVotes()">Reset all stewardship votes</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem">Live results</div>
+          <div id="svResults" style="font-size:13px;color:var(--tm)">Loading…</div>
+        </div>
+      </div>
+
+      <!-- ══ RECOVERY REQUESTS ══ -->
+      <div class="panel hidden" id="panel-recovery">
+        <div class="panel-title">Recovery <em>Requests</em></div>
+        <div class="panel-sub">Password reset and member number recovery requests submitted by members from the Independence Vault login screen. Each request includes the member's email — reply directly to assist them.</div>
+
+        <div class="card accent">
+          <div class="card-topbar"></div>
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.5rem">How to respond</div>
+          <div style="font-size:13px;color:var(--tm);line-height:1.7">
+            <strong style="color:var(--tx)">Password reset:</strong> Verify identity against the member register, then reply to their email with a temporary password. Ask them to change it on first login.<br><br>
+            <strong style="color:var(--tx)">Member number recovery:</strong> Look up their name/email in the COG$ member database Excel file, find their 16-digit number, and reply with it securely.
+          </div>
+        </div>
+
+        <div class="divr"></div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--tf);margin-bottom:.75rem">Pending requests</div>
+        <div id="recoveryList"><div style="font-size:13px;color:var(--tf)">Loading…</div></div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /page -->
+</div><!-- /adminApp -->
+
+
+<script>
+// ══ FIREBASE CONFIG ══
+var FB_CONFIG = {
+  apiKey: "AIzaSyCvpRdc9SK_jaUuTQ62DbQArylu0hX6FvA",
+  authDomain: "cogs-australia.firebaseapp.com",
+  databaseURL: "https://cogs-australia-default-rtdb.firebaseio.com",
+  projectId: "cogs-australia",
+  storageBucket: "cogs-australia.firebasestorage.app",
+  messagingSenderId: "918224691358",
+  appId: "1:918224691358:web:4b5e4d8345252edc461b8f",
+  measurementId: "G-Z5734BP4XY"
+};
+var db = null;
+var ADMIN_PW = 'COGS2026admin'; // ← Change this to your preferred password
+
+// ══ AUTH ══
+function checkLogin() {
+  var pw = document.getElementById('adminPw').value;
+  if (pw !== ADMIN_PW) {
+    document.getElementById('loginErr').textContent = 'Incorrect password.';
+    return;
+  }
+  sessionStorage.setItem('cogs_admin', '1');
+  document.getElementById('loginWrap').classList.add('hidden');
+  document.getElementById('adminApp').classList.remove('hidden');
+  initFirebase();
+}
+function doLogout() {
+  sessionStorage.removeItem('cogs_admin');
+  location.reload();
+}
+if (sessionStorage.getItem('cogs_admin') === '1') {
+  document.getElementById('loginWrap').classList.add('hidden');
+  document.getElementById('adminApp').classList.remove('hidden');
+}
+document.getElementById('adminPw') && document.getElementById('adminPw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkLogin();
+});
+
+// ══ FIREBASE ══
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+    db = firebase.database();
+    document.getElementById('fbDot').classList.add('live');
+    document.getElementById('fbStatus').textContent = 'Firebase connected';
+    startListeners();
+  } catch(e) {
+    document.getElementById('fbStatus').textContent = 'Connection error';
+  }
+}
+if (sessionStorage.getItem('cogs_admin') === '1') {
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+    db = firebase.database();
+    document.getElementById('fbDot') && document.getElementById('fbDot').classList.add('live');
+    document.getElementById('fbStatus') && (document.getElementById('fbStatus').textContent = 'Firebase connected');
+    setTimeout(startListeners, 100);
+  } catch(e) {}
+}
+
+// ══ PANEL NAV ══
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); p.classList.add('hidden'); });
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
+  var p = document.getElementById('panel-' + name);
+  if (p) { p.classList.add('active'); p.classList.remove('hidden'); }
+  if (btn) btn.classList.add('active');
+}
+
+// ══ GENERATE ID ══
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+// ══ ALERT HELPER ══
+function showAlert(elId, msg, isError) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = '<div class="alert alert-' + (isError ? 'error' : 'success') + '">' + msg + '</div>';
+  setTimeout(function() { el.innerHTML = ''; }, 3500);
+}
+
+// ══ STATUS BADGE HTML ══
+function statusBadge(status) {
+  var map = {
+    draft:  ['draft',   'Draft'],
+    live:   ['live',    'Live'],
+    voting: ['voting',  'Voting open'],
+    closed: ['closed',  'Closed — results frozen']
+  };
+  var s = map[status] || map.draft;
+  return '<span class="status-badge ' + s[0] + '">' + s[1] + '</span>';
+}
+
+// ══════════════════════════════════════════════════════
+// NEWS FEED
+// ══════════════════════════════════════════════════════
+function saveNewsItem() {
+  var id     = document.getElementById('newsEditId').value || genId();
+  var date   = document.getElementById('newsDate').value.trim();
+  var status = document.getElementById('newsStatus').value;
+  var title  = document.getElementById('newsTitle').value.trim();
+  var body   = document.getElementById('newsBody').value.trim();
+  var q      = document.getElementById('newsQ').value.trim();
+  if (!title || !body) { showAlert('newsAlert','Please fill in headline and body text.',true); return; }
+  var item = { id:id, date:date||'', status:status, title:title, body:body, question:q, createdAt: Date.now() };
+  db.ref('/content/news/' + id).set(item)
+    .then(function() { showAlert('newsAlert','✓ News item saved and pushed to wallets'); clearNewsForm(); })
+    .catch(function(e) { showAlert('newsAlert','Error: '+e.message,true); });
+}
+function editNews(id) {
+  db.ref('/content/news/' + id).once('value').then(function(snap) {
+    var d = snap.val(); if (!d) return;
+    document.getElementById('newsEditId').value  = id;
+    document.getElementById('newsDate').value    = d.date  || '';
+    document.getElementById('newsStatus').value  = d.status|| 'voting';
+    document.getElementById('newsTitle').value   = d.title || '';
+    document.getElementById('newsBody').value    = d.body  || '';
+    document.getElementById('newsQ').value       = d.question||'';
+    document.getElementById('newsFormTitle').textContent = 'Edit news item';
+    document.getElementById('newsFormCard').scrollIntoView({behavior:'smooth'});
+  });
+}
+function deleteNews(id) {
+  if (!confirm('Delete this news item?')) return;
+  db.ref('/content/news/' + id).remove()
+    .then(function() { showAlert('newsAlert','Deleted'); })
+    .catch(function(e) { showAlert('newsAlert','Error: '+e.message,true); });
+}
+function setNewsStatus(id, status) {
+  db.ref('/content/news/' + id + '/status').set(status)
+    .then(function() { showAlert('newsAlert','✓ Status updated — wallets will reflect this immediately'); })
+    .catch(function(e) { showAlert('newsAlert','Error: '+e.message,true); });
+}
+function clearNewsForm() {
+  ['newsEditId','newsDate','newsTitle','newsBody','newsQ'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('newsStatus').value = 'voting';
+  document.getElementById('newsFormTitle').textContent = 'Add new news item';
+}
+function renderNewsList(items) {
+  var el = document.getElementById('newsList');
+  if (!items || Object.keys(items).length === 0) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--tf);padding:.5rem 0">No news items yet. Add one above.</div>'; return;
+  }
+  var sorted = Object.values(items).sort(function(a,b) { return (b.createdAt||0)-(a.createdAt||0); });
+  document.getElementById('badgeNews').textContent = sorted.length;
+  document.getElementById('dashNewsItems').textContent = sorted.length;
+  el.innerHTML = '';
+  sorted.forEach(function(item) {
+    var votes = item.votes || {y:0,n:0,u:0};
+    var tot = (votes.y||0)+(votes.n||0)+(votes.u||0);
+    var d = document.createElement('div');
+    d.className = 'item-card';
+    d.innerHTML =
+      '<div class="item-header"><div><div class="item-title">' + item.title + '</div>' +
+      '<div class="item-meta">' + (item.date||'No date') + '</div></div>' +
+      statusBadge(item.status) + '</div>' +
+      '<div class="item-body">' + (item.body||'').slice(0,120) + (item.body&&item.body.length>120?'…':'') + '</div>' +
+      (item.question ? '<div class="item-question">🗳 ' + item.question + '</div>' : '') +
+      (tot > 0 ? '<div class="vote-mini"><span class="vote-chip">✅ Yes: ' + (votes.y||0) + '</span><span class="vote-chip">❌ No: ' + (votes.n||0) + '</span><span class="vote-chip">🤔 Unsure: ' + (votes.u||0) + '</span><span class="vote-chip">Total: ' + tot + '</span></div>' : '') +
+      '<div class="item-actions" style="margin-top:.75rem">' +
+        '<button class="btn btn-secondary btn-sm" onclick="editNews(\'' + item.id + '\')">✏ Edit</button>' +
+        (item.status !== 'voting' ? '<button class="btn btn-sm" style="background:rgba(200,144,26,.15);color:var(--gl);border:1px solid var(--brs)" onclick="setNewsStatus(\'' + item.id + '\',\'voting\')">▶ Open voting</button>' : '') +
+        (item.status === 'voting' ? '<button class="btn btn-sm" style="background:rgba(150,150,150,.1);color:#aaa;border:1px solid #555" onclick="setNewsStatus(\'' + item.id + '\',\'closed\')">⏹ Close voting</button>' : '') +
+        (item.status !== 'live' && item.status !== 'voting' ? '<button class="btn btn-sm" style="background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.3)" onclick="setNewsStatus(\'' + item.id + '\',\'live\')">📢 Make live</button>' : '') +
+        '<button class="btn btn-danger btn-sm" onclick="deleteNews(\'' + item.id + '\')">🗑 Delete</button>' +
+      '</div>';
+    el.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// DISPATCHES
+// ══════════════════════════════════════════════════════
+function saveDispatch() {
+  var id     = document.getElementById('dispEditId').value || genId();
+  var date   = document.getElementById('dispDate').value.trim();
+  var status = document.getElementById('dispStatus').value;
+  var title  = document.getElementById('dispTitle').value.trim();
+  var body   = document.getElementById('dispBody').value.trim();
+  if (!title || !body) { showAlert('dispAlert','Please fill in title and message.',true); return; }
+  var item = { id:id, date:date||'', status:status, title:title, body:body, createdAt:Date.now() };
+  db.ref('/content/dispatches/' + id).set(item)
+    .then(function() { showAlert('dispAlert','✓ Dispatch saved — live items push to all wallets immediately'); clearDispForm(); })
+    .catch(function(e) { showAlert('dispAlert','Error: '+e.message,true); });
+}
+function editDisp(id) {
+  db.ref('/content/dispatches/' + id).once('value').then(function(snap) {
+    var d = snap.val(); if (!d) return;
+    document.getElementById('dispEditId').value  = id;
+    document.getElementById('dispDate').value    = d.date  ||'';
+    document.getElementById('dispStatus').value  = d.status||'live';
+    document.getElementById('dispTitle').value   = d.title ||'';
+    document.getElementById('dispBody').value    = d.body  ||'';
+    document.getElementById('dispFormTitle').textContent = 'Edit dispatch';
+    document.getElementById('dispFormCard').scrollIntoView({behavior:'smooth'});
+  });
+}
+function deleteDisp(id) {
+  if (!confirm('Delete this dispatch?')) return;
+  db.ref('/content/dispatches/' + id).remove();
+}
+function clearDispForm() {
+  ['dispEditId','dispDate','dispTitle','dispBody'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('dispStatus').value = 'live';
+  document.getElementById('dispFormTitle').textContent = 'Add new dispatch';
+}
+function renderDispList(items) {
+  var el = document.getElementById('dispList');
+  if (!items || Object.keys(items).length===0) { el.innerHTML='<div style="font-size:13px;color:var(--tf)">No dispatches yet.</div>'; return; }
+  var sorted = Object.values(items).sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+  document.getElementById('badgeDisp').textContent = sorted.length;
+  document.getElementById('dashDispItems').textContent = sorted.length;
+  el.innerHTML='';
+  sorted.forEach(function(item){
+    var d=document.createElement('div'); d.className='item-card';
+    d.innerHTML='<div class="item-header"><div><div class="item-title">'+item.title+'</div><div class="item-meta">'+(item.date||'No date')+'</div></div>'+statusBadge(item.status)+'</div>'+
+      '<div class="item-body">'+(item.body||'').slice(0,140)+(item.body&&item.body.length>140?'…':'')+'</div>'+
+      '<div class="item-actions" style="margin-top:.75rem">'+
+        '<button class="btn btn-secondary btn-sm" onclick="editDisp(\''+item.id+'\')">✏ Edit</button>'+
+        (item.status==='draft'?'<button class="btn btn-sm" style="background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.3)" onclick="db.ref(\'/content/dispatches/'+item.id+'/status\').set(\'live\')">📢 Publish</button>':'<button class="btn btn-sm" style="background:rgba(100,100,100,.1);color:#888;border:1px solid #555" onclick="db.ref(\'/content/dispatches/'+item.id+'/status\').set(\'draft\')">⏸ Draft</button>')+
+        '<button class="btn btn-danger btn-sm" onclick="deleteDisp(\''+item.id+'\')">🗑 Delete</button>'+
+      '</div>';
+    el.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// QUESTIONS
+// ══════════════════════════════════════════════════════
+function saveQuestion() {
+  var id      = document.getElementById('qEditId').value || genId();
+  var date    = document.getElementById('qDate').value.trim();
+  var status  = document.getElementById('qStatus').value;
+  var cat     = document.getElementById('qCat').value.trim();
+  var text    = document.getElementById('qText').value.trim();
+  var context = document.getElementById('qContext').value.trim();
+  if (!text) { showAlert('qAlert','Please enter a question.',true); return; }
+  var item = { id:id, date:date||'', status:status, category:cat, question:text, context:context, createdAt:Date.now() };
+  db.ref('/content/questions/' + id).set(item)
+    .then(function() { showAlert('qAlert','✓ Question saved — members see it when status is Voting open or Closed'); clearQForm(); })
+    .catch(function(e) { showAlert('qAlert','Error: '+e.message,true); });
+}
+function editQ(id) {
+  db.ref('/content/questions/' + id).once('value').then(function(snap) {
+    var d = snap.val(); if (!d) return;
+    document.getElementById('qEditId').value   = id;
+    document.getElementById('qDate').value     = d.date    ||'';
+    document.getElementById('qStatus').value   = d.status  ||'voting';
+    document.getElementById('qCat').value      = d.category||'';
+    document.getElementById('qText').value     = d.question||'';
+    document.getElementById('qContext').value  = d.context ||'';
+    document.getElementById('qFormTitle').textContent = 'Edit question';
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+}
+function deleteQ(id) {
+  if (!confirm('Delete this question?')) return;
+  db.ref('/content/questions/' + id).remove();
+}
+function setQStatus(id, status) {
+  db.ref('/content/questions/' + id + '/status').set(status)
+    .then(function() { showAlert('qAlert','✓ Status updated'); })
+    .catch(function(e) { showAlert('qAlert','Error: '+e.message,true); });
+}
+function clearQForm() {
+  ['qEditId','qDate','qCat','qText','qContext'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('qStatus').value='voting';
+  document.getElementById('qFormTitle').textContent='Add new question';
+}
+function renderQList(items) {
+  var el = document.getElementById('qList');
+  if (!items||Object.keys(items).length===0){el.innerHTML='<div style="font-size:13px;color:var(--tf)">No questions yet.</div>';return;}
+  var sorted=Object.values(items).sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+  document.getElementById('badgeQ').textContent=sorted.length;
+  document.getElementById('dashQItems').textContent=sorted.length;
+  el.innerHTML='';
+  sorted.forEach(function(item){
+    var v=item.votes||{y:0,n:0,u:0}; var tot=(v.y||0)+(v.n||0)+(v.u||0);
+    var d=document.createElement('div');d.className='item-card';
+    d.innerHTML='<div class="item-header"><div>'+
+        (item.category?'<div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:3px">'+item.category+'</div>':'')+
+        '<div class="item-title">'+item.question+'</div>'+
+        '<div class="item-meta">'+(item.date||'No date')+'</div></div>'+statusBadge(item.status)+'</div>'+
+      (item.context?'<div class="item-body">'+item.context.slice(0,120)+'…</div>':'')+
+      (tot>0?'<div class="vote-mini"><span class="vote-chip">✅ Yes: '+(v.y||0)+'</span><span class="vote-chip">❌ No: '+(v.n||0)+'</span><span class="vote-chip">🤔 Unsure: '+(v.u||0)+'</span><span class="vote-chip">Total: '+tot+'</span></div>':'')+
+      '<div class="item-actions" style="margin-top:.75rem">'+
+        '<button class="btn btn-secondary btn-sm" onclick="editQ(\''+item.id+'\')">✏ Edit</button>'+
+        (item.status!=='voting'?'<button class="btn btn-sm" style="background:rgba(200,144,26,.15);color:var(--gl);border:1px solid var(--brs)" onclick="setQStatus(\''+item.id+'\',\'voting\')">▶ Open voting</button>':'')+
+        (item.status==='voting'?'<button class="btn btn-sm" style="background:rgba(150,150,150,.1);color:#aaa;border:1px solid #555" onclick="setQStatus(\''+item.id+'\',\'closed\')">⏹ Close voting — freeze results</button>':'')+
+        (item.status==='draft'?'<button class="btn btn-sm" style="background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.3)" onclick="setQStatus(\''+item.id+'\',\'voting\')">▶ Publish &amp; open voting</button>':'')+
+        '<button class="btn btn-danger btn-sm" onclick="deleteQ(\''+item.id+'\')">🗑 Delete</button>'+
+      '</div>';
+    el.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// STEWARDSHIP
+// ══════════════════════════════════════════════════════
+var svEnabled = true;
+function toggleSteward() {
+  svEnabled = !svEnabled;
+  var t = document.getElementById('svToggle');
+  var l = document.getElementById('svToggleLabel');
+  var b = document.getElementById('svBadge');
+  t.classList.toggle('on', svEnabled);
+  l.textContent = svEnabled ? 'enabled' : 'disabled';
+  b.textContent = svEnabled ? 'Voting open' : 'Voting disabled';
+  b.className = 'status-badge ' + (svEnabled ? 'voting' : 'closed');
+  db.ref('/settings/stewardVoting').set(svEnabled);
+}
+function resetStewardVotes() {
+  if (!confirm('Reset ALL stewardship votes to zero? This cannot be undone.')) return;
+  db.ref('/community/stewardVotes').set({e:0,s:0});
+  db.ref('/community/stewardVotes').set({e:0,s:0});
+  showAlert('qAlert','Stewardship votes reset');
+}
+
+// ══════════════════════════════════════════════════════
+// FIREBASE LISTENERS
+// ══════════════════════════════════════════════════════
+function startListeners() {
+  if (!db) return;
+
+  // Community stats
+  db.ref('/community').on('value', function(snap) {
+    var d = snap.val() || {};
+    document.getElementById('dashMembers').textContent = (d.memberCount||0).toLocaleString();
+    document.getElementById('dashCogs').textContent    = (d.totalCogs||0).toLocaleString();
+    var val = (d.totalCogs||0)*4;
+    document.getElementById('dashValue').textContent   = val>0?'$'+val.toLocaleString('en-AU',{maximumFractionDigits:0}):'$0';
+    var sv = d.stewardVotes||{e:0,s:0};
+    var tot = (sv.e||0)+(sv.s||0);
+    document.getElementById('dashSteward').innerHTML =
+      '<div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:13px">' +
+      '<span>⛏ Extraction: <strong style="color:var(--tx)">'+(sv.e||0)+'</strong></span>' +
+      '<span>🌿 Stewardship: <strong style="color:var(--tx)">'+(sv.s||0)+'</strong></span>' +
+      '<span style="color:var(--tf)">Total: '+tot+' votes</span>' +
+      (tot>0?'<span style="color:var(--gl)">'+Math.round((sv.s||0)/tot*100)+'% Stewardship</span>':'') + '</div>';
+    document.getElementById('svResults').innerHTML = tot>0
+      ? '<div style="font-size:1.5rem;font-family:\'DM Serif Display\',serif;color:var(--gl);margin-bottom:.5rem">'+tot+' votes cast</div>'+
+        '<div style="display:flex;gap:1rem;font-size:13px;color:var(--tm)"><span>⛏ Extraction: '+(sv.e||0)+'</span><span>🌿 Stewardship: '+(sv.s||0)+'</span></div>'
+      : '<div style="color:var(--tf)">No votes yet.</div>';
+  });
+
+  // News
+  db.ref('/content/news').on('value', function(snap) {
+    renderNewsList(snap.val());
+  });
+
+  // Dispatches
+  db.ref('/content/dispatches').on('value', function(snap) {
+    renderDispList(snap.val());
+  });
+
+  // Questions
+  db.ref('/content/questions').on('value', function(snap) {
+    renderQList(snap.val());
+  });
+
+  // Recovery requests
+  db.ref('/recovery_requests').on('value', function(snap) {
+    renderRecoveryList(snap.val());
+  });
+
+  // Stewardship setting
+  db.ref('/settings/stewardVoting').on('value', function(snap) {
+    var val = snap.val();
+    svEnabled = (val === null || val === true);
+    document.getElementById('svToggle').classList.toggle('on', svEnabled);
+    document.getElementById('svToggleLabel').textContent = svEnabled?'enabled':'disabled';
+    document.getElementById('svBadge').textContent = svEnabled?'Voting open':'Voting disabled';
+    document.getElementById('svBadge').className = 'status-badge '+(svEnabled?'voting':'closed');
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// RECOVERY REQUESTS
+// ══════════════════════════════════════════════════════
+function renderRecoveryList(items) {
+  var el = document.getElementById('recoveryList');
+  if (!items || Object.keys(items).length === 0) {
+    document.getElementById('badgeRecov').textContent = '0';
+    el.innerHTML = '<div style="font-size:13px;color:var(--tf);padding:.5rem 0">No pending recovery requests.</div>';
+    return;
+  }
+  var arr = Object.entries(items).sort(function(a,b){
+    return (b[1].timestamp||'') > (a[1].timestamp||'') ? 1 : -1;
+  });
+  var pending = arr.filter(function(x){return x[1].status==='pending';}).length;
+  document.getElementById('badgeRecov').textContent = pending;
+  el.innerHTML = '';
+  arr.forEach(function(entry){
+    var key = entry[0], req = entry[1];
+    var isPw = req.type === 'password';
+    var ts = req.timestamp ? new Date(req.timestamp).toLocaleString('en-AU') : 'Unknown';
+    var d = document.createElement('div');
+    d.className = 'item-card';
+    d.innerHTML =
+      '<div class="item-header"><div>' +
+        '<div class="item-title">' + (isPw ? '🔑 Password Reset' : '🔢 Member Number Recovery') + '</div>' +
+        '<div class="item-meta">' + ts + '</div>' +
+      '</div>' +
+      '<span class="status-badge ' + (req.status==='pending'?'voting':'closed') + '">' +
+        (req.status==='pending'?'Pending':'Resolved') +
+      '</span></div>' +
+      '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:.75rem">' +
+        '<div style="font-size:13px;color:var(--tm)"><strong style="color:var(--tf);font-size:11px;letter-spacing:.05em;text-transform:uppercase">Identifier: </strong>' + (req.identifier||'—') + '</div>' +
+        '<div style="font-size:13px;color:var(--tm)"><strong style="color:var(--tf);font-size:11px;letter-spacing:.05em;text-transform:uppercase">Email: </strong>' + (req.email||'—') + '</div>' +
+        '<div style="font-size:13px;color:var(--tm)"><strong style="color:var(--tf);font-size:11px;letter-spacing:.05em;text-transform:uppercase">Mobile: </strong>' + (req.mobile||'—') + '</div>' +
+      '</div>' +
+      '<div class="item-actions">' +
+        '<div id="secdata_'+key+'" style="background:rgba(200,144,26,0.06);border:1px solid var(--br);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:var(--tm);display:none">' +
+          '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--gl);margin-bottom:5px">Security verification data</div>' +
+          '<div id="secq_'+key+'"></div>' +
+          '<div id="seca_'+key+'"></div>' +
+          '<div id="sech_'+key+'"></div>' +
+        '</div>' +
+        '<button class="btn btn-secondary btn-sm" onclick="loadSecData(''+key+'',''+req.identifier+'')" style="margin-bottom:6px">🔍 Load security data</button><br>' +
+        '<a href="mailto:' + (req.email||'') + '?subject=' + encodeURIComponent(isPw?'COG$ Password Reset — Your Request':'COG$ Member Number Recovery') + '" class="btn btn-primary btn-sm" style="text-decoration:none">📧 Reply by email</a>' +
+        (req.status==='pending' ?
+          '<button class="btn btn-secondary btn-sm" onclick="resolveRecovery('' + key + '')">✓ Mark resolved</button>' :
+          '') +
+        '<button class="btn btn-danger btn-sm" onclick="deleteRecovery('' + key + '')">🗑 Delete</button>' +
+      '</div>';
+    el.appendChild(d);
+  });
+}
+function loadSecData(reqKey, memberId) {
+  if (!memberId || !db) return;
+  var cleanId = memberId.replace(/\s/g,'');
+  db.ref('/members/' + cleanId).once('value').then(function(snap) {
+    var panel = document.getElementById('secdata_'+reqKey);
+    var qEl   = document.getElementById('secq_'+reqKey);
+    var aEl   = document.getElementById('seca_'+reqKey);
+    var hEl   = document.getElementById('sech_'+reqKey);
+    if (!panel) return;
+    if (!snap.exists()) {
+      panel.style.display = 'block';
+      if (qEl) qEl.innerHTML = '<span style="color:#e74c3c">Member not found in database.</span>';
+      return;
+    }
+    var d = snap.val();
+    panel.style.display = 'block';
+    if (qEl) qEl.innerHTML = '<strong style="color:var(--tf)">Security Q:</strong> ' + (d.securityQ||'Not set');
+    if (aEl) aEl.innerHTML = '<strong style="color:var(--tf)">Answer:</strong> ' + (d.securityA||'Not set');
+    if (hEl) hEl.innerHTML = '<strong style="color:var(--tf)">Password hint:</strong> ' + (d.pwHint||'None set');
+  }).catch(function(e) {
+    console.log('Error loading security data:', e.message);
+  });
+}
+
+function resolveRecovery(key) {
+  db.ref('/recovery_requests/' + key + '/status').set('resolved');
+}
+function deleteRecovery(key) {
+  if (!confirm('Delete this recovery request?')) return;
+  db.ref('/recovery_requests/' + key).remove();
+}
+</script>
+</body>
+</html>

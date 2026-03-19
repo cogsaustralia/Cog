@@ -9,6 +9,9 @@
 <title>COG$ — Reservation Confirmed</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -349,11 +352,39 @@
 
     <div class="next-steps">
       <h2>What happens next</h2>
+      <!-- MEMBER NUMBER REVEAL — populated by JS from sessionStorage -->
+      <div id="memberReveal" style="background:linear-gradient(135deg,var(--bg-card) 0%,#1a1508 100%);border:1px solid var(--border-strong);border-radius:var(--radius-lg);padding:1.75rem;margin-bottom:1.5rem;display:none">
+        <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.5rem">Your COG$ Member Number</div>
+        <div id="memberNumDisplay" style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--gold-light);letter-spacing:.18em;margin-bottom:.5rem">—</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6">Keep this number safe — it is your unique identifier for the COG$ Independence Vault. It has also been included in your confirmation email.</div>
+
+        <!-- Token summary -->
+        <div style="background:rgba(200,144,26,0.06);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.75rem">Your Reservation Summary</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🪙 Personal NFT Membership</span><span id="rNft" style="font-family:'DM Serif Display',serif;color:var(--gold-light)">1</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">💛 Investment COG$</span><span id="rInvest" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🌿 Landholder COG$</span><span id="rLand" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🤝 Donation COG$</span><span id="rDonate" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;font-size:14px;font-weight:500"><span style="color:var(--text)">Estimated reservation value</span><span id="rTotal" style="font-family:'DM Serif Display',serif;color:var(--gold-light);font-size:1.2rem">$4.00</span></div>
+        </div>
+
+        <!-- Wallet link -->
+        <div style="background:rgba(200,144,26,0.08);border:1px solid var(--border-strong);border-radius:var(--radius);padding:1rem;margin-bottom:0">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.5rem">Enter Your Independence Vault</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:.85rem;line-height:1.65">Your personal wallet, voting and communication platform is ready. Create your password using your COG$ number, email and mobile — then access your reservation, governance votes and Foundation updates.</p>
+          <a id="walletLink" href="https://cogsaustralia.org/wallet.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#0F0D09;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;letter-spacing:.02em">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            Open COG$ Independence Vault
+          </a>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:.6rem">cogsaustralia.org/wallet.html &nbsp;·&nbsp; Use your COG$ number to log in</div>
+        </div>
+      </div>
+
       <div class="next-step">
         <div class="next-step-num">1</div>
         <div>
-          <h3>Check your email</h3>
-          <p>You'll receive a confirmation email shortly. Keep an eye on your inbox — including your spam folder — for updates from COGsAustralia@gmail.com.</p>
+          <h3>Check your email — your COG$ number is on its way</h3>
+          <p>Your confirmation email includes your unique 16-digit COG$ member number. Keep it safe — you'll use it to log in to your Independence Vault above. Check your spam folder if it doesn't arrive within a few minutes.</p>
         </div>
       </div>
       <div class="next-step">
@@ -425,6 +456,127 @@
       setTimeout(function() { label.textContent = 'Copy link'; }, 2000);
     });
   }
+</script>
+<script>
+// Populate member number reveal from sessionStorage (set by index.html on submit)
+(function() {
+  try {
+    // Read from localStorage (survives FormSubmit redirect)
+    // Also check URL ?m= param as secondary fallback
+    var mn   = localStorage.getItem('cogs_pending_num');
+    var name = localStorage.getItem('cogs_pending_name');
+    var tot  = localStorage.getItem('cogs_pending_total');
+    var nft  = localStorage.getItem('cogs_pending_nft')     || '1';
+    var inv  = localStorage.getItem('cogs_pending_invest')  || '0';
+    var lnd  = localStorage.getItem('cogs_pending_land')    || '0';
+    var don  = localStorage.getItem('cogs_pending_donate')  || '0';
+    var email= localStorage.getItem('cogs_pending_email')   || '';
+    var mob  = localStorage.getItem('cogs_pending_mobile')  || '';
+
+    // Check URL param fallback
+    if (!mn) {
+      try {
+        var urlMn = new URLSearchParams(window.location.search).get('m');
+        if (urlMn) mn = urlMn;
+      } catch(ex) {}
+    }
+
+    // Check timestamp — only show if submitted within 30 minutes
+    var stamp = parseInt(localStorage.getItem('cogs_pending_stamp') || '0');
+    var age   = Date.now() - stamp;
+    if (!mn || age > 1800000) return; // no data or too old
+
+    // Format member number: XXXX XXXX XXXX XXXX
+    var fmt = mn.replace(/(\d{4})/g, '$1 ').trim();
+
+    // Show the reveal block
+    var reveal = document.getElementById('memberReveal');
+    if (reveal) reveal.style.display = 'block';
+
+    // Populate fields
+    var el = function(id) { return document.getElementById(id); };
+    if (el('memberNumDisplay')) el('memberNumDisplay').textContent = fmt;
+    if (el('rNft'))    el('rNft').textContent    = parseInt(nft).toLocaleString();
+    if (el('rInvest')) el('rInvest').textContent = parseInt(inv).toLocaleString();
+    if (el('rLand'))   el('rLand').textContent   = parseInt(lnd).toLocaleString();
+    if (el('rDonate')) el('rDonate').textContent = parseInt(don).toLocaleString();
+    if (el('rTotal'))  el('rTotal').textContent  = tot || '$4.00';
+
+    // Wallet link with member number pre-filled via URL hash
+    if (el('walletLink')) {
+      // Pass member number in URL hash so wallet can pre-fill it
+      el('walletLink').href = 'https://cogsaustralia.org/wallet.html#new=' + mn;
+    }
+
+    // Update page heading if name is available
+    if (name) {
+      var h1 = document.querySelector('h1 em');
+      if (h1) h1.textContent = 'Welcome, ' + name.split(' ')[0] + '.';
+    }
+
+    // Increment global member count in localStorage
+    try {
+      var mc = parseInt(localStorage.getItem('cogs_member_count') || '0') || 0;
+      localStorage.setItem('cogs_member_count', mc + 1);
+    } catch(ex2) {}
+
+    // Write new registration to Firebase
+    try {
+      var fbCfg = {
+  apiKey: "AIzaSyCvpRdc9SK_jaUuTQ62DbQArylu0hX6FvA",
+  authDomain: "cogs-australia.firebaseapp.com",
+  databaseURL: "https://cogs-australia-default-rtdb.firebaseio.com",
+  projectId: "cogs-australia",
+  storageBucket: "cogs-australia.firebasestorage.app",
+  messagingSenderId: "918224691358",
+  appId: "1:918224691358:web:4b5e4d8345252edc461b8f",
+  measurementId: "G-Z5734BP4XY"
+};
+      if (!firebase.apps.length) firebase.initializeApp(fbCfg);
+      var db = firebase.database();
+
+      // Write anonymous member token record
+      if (mn) {
+        db.ref('/members/' + mn.replace(/\s/g,'')).set({
+          nft:          1,
+          invest:       parseInt(inv) || 0,
+          land:         parseInt(lnd) || 0,
+          donate:       parseInt(don) || 0,
+          total:        1 + (parseInt(inv)||0) + (parseInt(lnd)||0) + (parseInt(don)||0),
+          email:        email,
+          mobile:       mob,
+          memberName:   name,
+          memberNumFmt: (mn||'').replace(/(\d{4})/g,'$1 ').trim(),
+          firstLogin:   false,
+          registeredAt: new Date().toISOString()
+        });
+      }
+
+      // Update community totals in Firebase
+      db.ref('/community/memberCount').transaction(function(cur) { return (cur||0)+1; });
+      db.ref('/community/totalNft').transaction(function(cur) { return (cur||0)+1; });
+
+      var inv2  = parseInt(inv) || 0;
+      var lnd2  = parseInt(lnd) || 0;
+      var don2  = parseInt(don) || 0;
+      var tot2  = 1 + inv2 + lnd2 + don2;
+
+      if (inv2 > 0) db.ref('/community/totalInvest').transaction(function(c) { return (c||0)+inv2; });
+      if (lnd2 > 0) db.ref('/community/totalLand').transaction(function(c)   { return (c||0)+lnd2; });
+      if (don2 > 0) db.ref('/community/totalDonate').transaction(function(c) { return (c||0)+don2; });
+      db.ref('/community/totalCogs').transaction(function(c) { return (c||0)+tot2; });
+      db.ref('/community/lastUpdated').set(new Date().toISOString());
+
+    } catch(fbErr) { console.log('Firebase write failed (non-critical):', fbErr); }
+
+    // Clear localStorage pending data so refresh doesn't re-show
+    ['cogs_pending_num','cogs_pending_name','cogs_pending_email','cogs_pending_mobile',
+     'cogs_pending_total','cogs_pending_nft','cogs_pending_invest','cogs_pending_land',
+     'cogs_pending_donate','cogs_pending_stamp'].forEach(function(k){
+      localStorage.removeItem(k);
+    });
+  } catch(ex) {}
+})();
 </script>
 </body>
 </html>

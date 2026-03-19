@@ -852,6 +852,8 @@
   <a href="#regulatory" onclick="document.getElementById('mobileMenu').classList.remove('open')">Regulatory</a>
   <a href="#faq" onclick="document.getElementById('mobileMenu').classList.remove('open')">FAQ</a>
   <a href="#reserve" onclick="document.getElementById('mobileMenu').classList.remove('open')" style="color: var(--gold-light);">Reserve your place</a>
+  <a href="vault.html" onclick="document.getElementById('mobileMenu').classList.remove('open')" style="color: var(--gold-light);">Community Vault</a>
+  <a href="wallet.html" onclick="document.getElementById('mobileMenu').classList.remove('open')">Independence Vault</a>
 </div>
 
 <div class="page" id="top">
@@ -1564,6 +1566,7 @@
           <input type="text" name="_honey" style="display:none">
           <!-- Total reservation value — populated by JS before submit -->
           <input type="hidden" name="Total Reservation Value" id="hidden-total-value" value="$4.00">
+          <input type="hidden" name="COG$ Member Number" id="hidden-member-number" value="">
           <input type="hidden" name="NFT Tokens Reserved" id="hidden-nft-count" value="1">
 
         <div class="form-grid">
@@ -1780,6 +1783,8 @@
           <li><a href="#faq">FAQ</a></li>
           <li><a href="#reserve">Reserve your place</a></li>
           <li><a href="goldencogs.html">Golden COG$ in the Community</a></li>
+          <li><a href="vault.html">Community Vault</a></li>
+          <li><a href="wallet.html">Independence Vault</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -2104,6 +2109,41 @@
       var prevStored = parseInt(localStorage.getItem('cogs_extra_shares') || '0') || 0;
       localStorage.setItem('cogs_extra_shares', prevStored + formSharesNow);
     } catch(e) {}
+
+    // Generate unique 16-digit COG$ member number
+    // Format: 3 digits timestamp + 13 random digits
+    var ts = Date.now().toString().slice(-6);
+    var rand = '';
+    for (var i = 0; i < 10; i++) rand += Math.floor(Math.random() * 10);
+    var memberNum = ts + rand; // 16 digits
+    // Format with spaces: XXXX XXXX XXXX XXXX
+    var memberNumFmt = memberNum.replace(/(\d{4})/g, '$1 ').trim();
+
+    // Store in hidden field (sent in email)
+    var hmn = document.getElementById('hidden-member-number');
+    if (hmn) hmn.value = memberNumFmt;
+
+    // Update subject to include member number
+    if (subjectField) subjectField.value = 'COG$ Reservation — ' + name + ' — ' + totalText + ' — #' + memberNumFmt;
+
+    // Save member data to localStorage — survives FormSubmit redirect
+    // sessionStorage does NOT survive the FormSubmit.co server-side redirect
+    try {
+      localStorage.setItem('cogs_pending_num',    memberNum);
+      localStorage.setItem('cogs_pending_name',   name);
+      localStorage.setItem('cogs_pending_email',  email);
+      localStorage.setItem('cogs_pending_mobile', mobile);
+      localStorage.setItem('cogs_pending_total',  totalText);
+      localStorage.setItem('cogs_pending_nft',    document.getElementById('hidden-nft-count') ? document.getElementById('hidden-nft-count').value : '1');
+      localStorage.setItem('cogs_pending_invest', document.getElementById('invest') ? (document.getElementById('invest').value || '0') : '0');
+      localStorage.setItem('cogs_pending_land',   document.getElementById('landval') ? (document.getElementById('landval').value || '0') : '0');
+      localStorage.setItem('cogs_pending_donate', document.getElementById('donate') ? (document.getElementById('donate').value || '0') : '0');
+      localStorage.setItem('cogs_pending_stamp',  Date.now().toString()); // expire after 30 min
+    } catch(ex) {}
+
+    // Update _next URL to include member number for display
+    var nextField = document.querySelector('input[name="_next"]');
+    if (nextField) nextField.value = 'https://cogsaustralia.org/thankyou.html?m=' + memberNum;
 
     // All good — FormSubmit.co takes it from here
   });
