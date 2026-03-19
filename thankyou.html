@@ -271,8 +271,13 @@
     transition: border-color 0.2s, color 0.2s;
     cursor: pointer;
   }
-  .share-btn:hover { border-color: var(--gold); color: var(--gold-light); }
-  .share-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+  .share-btn:hover { transform: translateY(-1px); }
+  .share-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .share-whatsapp:hover { background:#25D366; border-color:#25D366; color:#fff; }
+  .share-facebook:hover { background:#1877F2; border-color:#1877F2; color:#fff; }
+  .share-x:hover        { background:#000;    border-color:#333;    color:#fff; }
+  .share-sms:hover      { background:#2196F3; border-color:#2196F3; color:#fff; }
+  .share-copy:hover     { border-color:var(--gold); color:var(--gold-light); }
 
   /* CTA */
   .btn-primary {
@@ -354,9 +359,22 @@
       <h2>What happens next</h2>
       <!-- MEMBER NUMBER REVEAL — populated by JS from sessionStorage -->
       <div id="memberReveal" style="background:linear-gradient(135deg,var(--bg-card) 0%,#1a1508 100%);border:1px solid var(--border-strong);border-radius:var(--radius-lg);padding:1.75rem;margin-bottom:1.5rem;display:none">
-        <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.5rem">Your COG$ Member Number</div>
-        <div id="memberNumDisplay" style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--gold-light);letter-spacing:.18em;margin-bottom:.5rem">—</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6">Keep this number safe — it is your unique identifier for the COG$ Independence Vault. It has also been included in your confirmation email.</div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.85rem">Your COG$ Member Number</div>
+
+        <!-- Member number card -->
+        <div style="background:var(--bg);border:2px solid var(--border-strong);border-radius:12px;padding:1.5rem 1rem;text-align:center;margin-bottom:.75rem;position:relative">
+          <div style="font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.6rem">16-digit unique member number</div>
+          <div id="memberNumDisplay" style="font-family:'Courier New',Courier,monospace;font-size:clamp(1.1rem,4vw,1.5rem);color:var(--gold-light);letter-spacing:.22em;font-weight:700;word-spacing:.5em;line-height:1.4;margin-bottom:.85rem">—</div>
+          <button id="copyMemberBtn" onclick="copyMemberNum()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(200,144,26,.1);border:1px solid var(--border-strong);color:var(--gold-light);padding:7px 18px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span id="copyMemberLabel">Copy number</span>
+          </button>
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.65;text-align:center">
+          Keep this number safe — it is your unique identifier for the COG$ Independence Vault.<br>
+          <span style="color:var(--gold-light)">✓ Also included in your confirmation email</span>
+        </div>
 
         <!-- Token summary -->
         <div style="background:rgba(200,144,26,0.06);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem">
@@ -371,12 +389,14 @@
         <!-- Wallet link -->
         <div style="background:rgba(200,144,26,0.08);border:1px solid var(--border-strong);border-radius:var(--radius);padding:1rem;margin-bottom:0">
           <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.5rem">Enter Your Independence Vault</div>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:.85rem;line-height:1.65">Your personal wallet, voting and communication platform is ready. Create your password using your COG$ number, email and mobile — then access your reservation, governance votes and Foundation updates.</p>
-          <a id="walletLink" href="https://cogsaustralia.org/wallet.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#0F0D09;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;letter-spacing:.02em">
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:.85rem;line-height:1.65">Click below to open your vault and <strong style="color:var(--text)">create your password</strong>. Your member number is pre-filled automatically — just confirm your email and set a password to get started.</p>
+          <a id="walletLink" href="https://cogsaustralia.org/wallet.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#0F0D09;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;letter-spacing:.02em;width:100%;justify-content:center">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-            Open COG$ Independence Vault
+            Set up my vault &amp; create password →
           </a>
-          <div style="font-size:11px;color:var(--text-faint);margin-top:.6rem">cogsaustralia.org/wallet.html &nbsp;·&nbsp; Use your COG$ number to log in</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:.6rem;line-height:1.6">
+            Your member number is embedded in this link. If this link stops working, go to <span style="color:var(--gold-light)">cogsaustralia.org/wallet.html</span> and use the member number shown above.
+          </div>
         </div>
       </div>
 
@@ -424,16 +444,34 @@
     <div class="share-section">
       <p class="share-label">Help grow the community — share COG$ with people you know</p>
       <div class="share-buttons">
-        <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=https://cogsaustralia.org" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-          Share on Facebook
+
+        <!-- WhatsApp — most used in Australian community sharing -->
+        <a class="share-btn share-whatsapp" href="https://wa.me/?text=I%20just%20reserved%20my%20place%20in%20COG%24%20%E2%80%94%20Australia%27s%20first%20community%20resources%20wealth%20foundation.%20Own%20a%20share%20of%20Australia%27s%20natural%20resources.%20Foundation%20Day%2014%20May.%20%F0%9F%87%A6%F0%9F%87%BA%20Find%20out%20more%3A%20https%3A%2F%2Fcogsaustralia.org" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" style="fill:currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.847L.057 23.998l6.304-1.537A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.875 9.875 0 0 1-5.032-1.376l-.36-.214-3.742.912.944-3.637-.235-.374A9.867 9.867 0 0 1 2.106 12C2.106 6.578 6.578 2.106 12 2.106c5.421 0 9.894 4.472 9.894 9.894 0 5.421-4.473 9.894-9.894 9.894z"/></svg>
+          WhatsApp
         </a>
-        <a class="share-btn" href="https://twitter.com/intent/tweet?text=I%20just%20reserved%20my%20place%20in%20COG%24%20%E2%80%94%20Australia%27s%20first%20community%20resources%20wealth%20foundation.%20Own%20a%20share%20of%20Australia%27s%20resources.%20Foundation%20Day%2014%20May.&url=https://cogsaustralia.org" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M4 4l16 16M4 20L20 4"/></svg>
+
+        <!-- Facebook -->
+        <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://cogsaustralia.org&quote=I%20just%20reserved%20my%20place%20in%20COG%24%20%E2%80%94%20Australia%27s%20first%20community%20resources%20wealth%20foundation." target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" style="fill:currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          Facebook
+        </a>
+
+        <!-- X / Twitter — correct X logo path -->
+        <a class="share-btn share-x" href="https://twitter.com/intent/tweet?text=I%20just%20reserved%20my%20place%20in%20COG%24%20%E2%80%94%20Australia%27s%20first%20community%20resources%20wealth%20foundation.%20Own%20a%20share%20of%20Australia%27s%20resources.%20Foundation%20Day%2014%20May.&url=https%3A%2F%2Fcogsaustralia.org&hashtags=COGSAustralia,CommunityOwnership" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" style="fill:currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           Share on X
         </a>
-        <button class="share-btn" onclick="copyLink()">
-          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+
+        <!-- SMS — great for mobile sharing -->
+        <a class="share-btn share-sms" href="sms:?&body=I%20just%20reserved%20my%20place%20in%20COG%24%20%E2%80%94%20Australia%27s%20first%20community%20resources%20wealth%20foundation.%20Own%20a%20share%20of%20Australia%27s%20resources.%20Foundation%20Day%2014%20May.%20Find%20out%20more%3A%20https%3A%2F%2Fcogsaustralia.org">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="fill:none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Send SMS
+        </a>
+
+        <!-- Copy link -->
+        <button class="share-btn share-copy" onclick="copyLink()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="fill:none"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           <span id="copy-label">Copy link</span>
         </button>
       </div>
@@ -450,11 +488,46 @@
 
 <script>
   function copyLink() {
-    navigator.clipboard.writeText('https://cogsaustralia.org').then(function() {
-      var label = document.getElementById('copy-label');
-      label.textContent = 'Copied!';
-      setTimeout(function() { label.textContent = 'Copy link'; }, 2000);
-    });
+    var url = 'https://cogsaustralia.org';
+    var label = document.getElementById('copy-label');
+    function onDone() {
+      if (label) { label.textContent = '✓ Copied!'; setTimeout(function(){label.textContent='Copy link';},2500); }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(onDone).catch(function(){
+        var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();
+        try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);onDone();
+      });
+    } else {
+      var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);onDone();
+    }
+  }
+
+  function copyMemberNum() {
+    var numEl = document.getElementById('memberNumDisplay');
+    if (!numEl) return;
+    var num = numEl.textContent.replace(/[^0-9 ]/g,'').trim();
+    if (!num) return;
+    var btn = document.getElementById('copyMemberBtn');
+    var label = document.getElementById('copyMemberLabel');
+    function onDone() {
+      if (label) label.textContent = '✓ Copied!';
+      if (btn) { btn.style.background='rgba(46,204,113,.15)';btn.style.borderColor='rgba(46,204,113,.4)';btn.style.color='#2ecc71'; }
+      setTimeout(function(){
+        if (label) label.textContent='Copy number';
+        if (btn) { btn.style.background='';btn.style.borderColor='';btn.style.color=''; }
+      },2500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(num).then(onDone).catch(function(){
+        var ta=document.createElement('textarea');ta.value=num;document.body.appendChild(ta);ta.select();
+        try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);onDone();
+      });
+    } else {
+      var ta=document.createElement('textarea');ta.value=num;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);onDone();
+    }
   }
 </script>
 <script>
@@ -519,6 +592,14 @@
       var mc = parseInt(localStorage.getItem('cogs_member_count') || '0') || 0;
       localStorage.setItem('cogs_member_count', mc + 1);
     } catch(ex2) {}
+
+    // Store member number in a persistent key (24hr) as backup for wallet first-login
+    // This survives the pending data clear below
+    try {
+      localStorage.setItem('cogs_new_member_id',    mn.replace(/\s/g,''));
+      localStorage.setItem('cogs_new_member_email', email);
+      localStorage.setItem('cogs_new_member_stamp', Date.now().toString());
+    } catch(ex3) {}
 
     // Write new registration to Firebase
     try {

@@ -494,7 +494,8 @@ iv-label{font-size:12px;color:var(--tm);display:block;margin-top:10px}
       <input class="iv-input" id="mlc" placeholder="you@email.com or 04XX XXX XXX" style="margin-top:0" autocomplete="username" name="username">
       <div style="font-size:10px;color:var(--tm);margin-top:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">COG$ Number</div>
       <input class="iv-input" id="mlid" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" style="margin-top:0;letter-spacing:.1em" autocomplete="off" name="member-number" onblur="showPwHint(this.value.replace(/\s/g,''))">
-      <div class="hint">16-digit number from your reservation confirmation</div>
+      <div class="hint">16-digit number from your reservation confirmation email</div>
+      <div style="font-size:11px;color:rgba(200,144,26,0.7);margin-top:3px">Just registered? Check your inbox — your number was emailed to you.</div>
       <div class="hint" id="mPwHint" style="color:var(--gl);font-style:italic;margin-top:2px"></div>
       <div style="font-size:10px;color:var(--tm);margin-top:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Password</div>
       <input class="iv-input" id="mlpw" type="password" placeholder="8–16 characters" style="margin-top:0" autocomplete="current-password" name="password">
@@ -861,7 +862,7 @@ function doLogin(mode){
       .catch(function(){
         // Firebase unavailable — try localStorage
         if(gs('cogs_'+id+'_nft',null)!==null){grantAccess();}
-        else{denyAccess('Unable to verify. Check your connection and try again.');}
+        else{denyAccess('Unable to connect to verify your account. Check your internet connection and try again, or email COGsAustralia@gmail.com for manual assistance.');}
       });
   } else {
     // No Firebase — localStorage only
@@ -914,6 +915,32 @@ window.onload=function(){
       return;
     }
   }
+  // Manual access link (sent by admin to members who had redirect issues)
+  // wallet.html#access=MEMBERNUM — skips Firebase check, goes to password setup
+  if(hash&&hash.startsWith('#access=')){
+    var accessId=hash.slice(8).replace(/\s/g,'');
+    if(RE.test(accessId)){
+      FIRST_LOGIN_ID=accessId;
+      showFirstLoginScreen(accessId);
+      window.history.replaceState(null,'',window.location.pathname);
+      return;
+    }
+  }
+  // Fallback: check localStorage backup from thankyou page (24hr window)
+  // Catches cases where browser strips URL hash
+  var backupId    = localStorage.getItem('cogs_new_member_id');
+  var backupStamp = parseInt(localStorage.getItem('cogs_new_member_stamp')||'0');
+  var backupAge   = Date.now() - backupStamp;
+  if(backupId && RE.test(backupId) && backupAge < 86400000 && !gs('cogs_pw_'+backupId,null)){
+    // New member who hasn't set a password yet — show setup screen
+    FIRST_LOGIN_ID = backupId;
+    showFirstLoginScreen(backupId);
+    localStorage.removeItem('cogs_new_member_id');
+    localStorage.removeItem('cogs_new_member_email');
+    localStorage.removeItem('cogs_new_member_stamp');
+    return;
+  }
+
   var s=gs('cogs_session',null);
   // Only auto-login if "Remember me" was checked, or session still active
   if(s&&s.id){
@@ -1245,8 +1272,9 @@ function showFirstLoginScreen(memberId){
   var el=document.getElementById('setupMemberNum');
   if(el)el.textContent=fmt;
 
-  // Pre-fill email if stored from registration
-  var storedEmail=localStorage.getItem('cogs_pending_email')||'';
+  // Pre-fill email from backup registration data
+  var storedEmail=localStorage.getItem('cogs_new_member_email')
+                ||localStorage.getItem('cogs_pending_email')||'';
   var emailEl=document.getElementById('setupEmail');
   if(emailEl&&storedEmail)emailEl.value=storedEmail;
 }

@@ -188,6 +188,10 @@ textarea{min-height:80px}
         <button class="nav-item" onclick="showPanel('recovery',this)">🆘 Recovery Requests <span class="badge" id="badgeRecov">0</span></button>
       </div>
       <div class="sidebar-section">
+        <div class="sidebar-label">Members</div>
+        <button class="nav-item" onclick="showPanel('members',this)">👤 Member Lookup</button>
+      </div>
+      <div class="sidebar-section">
         <div class="sidebar-label">Links</div>
         <button class="nav-item" onclick="window.open('vault.html','_blank')">🏛 Community Vault ↗</button>
         <button class="nav-item" onclick="window.open('wallet.html','_blank')">💰 Wallet ↗</button>
@@ -371,6 +375,30 @@ textarea{min-height:80px}
         <div class="card">
           <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem">Live results</div>
           <div id="svResults" style="font-size:13px;color:var(--tm)">Loading…</div>
+        </div>
+      </div>
+
+      <!-- ══ MEMBER LOOKUP ══ -->
+      <div class="panel hidden" id="panel-members">
+        <div class="panel-title">Member <em>Lookup</em></div>
+        <div class="panel-sub">Search for a member by their 16-digit COG$ number. View their registration details and current password — for use when a member contacts the Foundation for account assistance.</div>
+
+        <div class="card accent">
+          <div class="card-topbar"></div>
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.75rem">Find member</div>
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <div style="flex:1">
+              <label>COG$ Member Number</label>
+              <input type="text" id="lookupId" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" style="margin-top:5px">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="adminLookupMember()" style="margin-top:0;height:42px;margin-bottom:0">Search</button>
+          </div>
+          <div id="memberLookupResult" style="margin-top:1rem"></div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:.5rem">Important — password security</div>
+          <p style="font-size:13px;color:var(--tm);line-height:1.7">Passwords are stored as reversible base64 encoding to allow admin recovery. When assisting a member, provide their password securely (phone call or in-person if possible) and ask them to change it on next login. This system is for BETA use only — a full hashed authentication system will be implemented before full deployment.</p>
         </div>
       </div>
 
@@ -822,6 +850,7 @@ function renderRecoveryList(items) {
         '</div>' +
         '<button class="btn btn-secondary btn-sm" onclick="loadSecData(''+key+'',''+req.identifier+'')" style="margin-bottom:6px">🔍 Load security data</button><br>' +
         '<a href="mailto:' + (req.email||'') + '?subject=' + encodeURIComponent(isPw?'COG$ Password Reset — Your Request':'COG$ Member Number Recovery') + '" class="btn btn-primary btn-sm" style="text-decoration:none">📧 Reply by email</a>' +
+        (isPw&&req.identifier ? '<button class="btn btn-secondary btn-sm" onclick="lookupPassword(''+req.identifier+'')" style="background:rgba(200,144,26,.08)">🔑 Look up password</button>' : '') +
         (req.status==='pending' ?
           '<button class="btn btn-secondary btn-sm" onclick="resolveRecovery('' + key + '')">✓ Mark resolved</button>' :
           '') +
@@ -854,8 +883,77 @@ function loadSecData(reqKey, memberId) {
   });
 }
 
+function adminLookupMember() {
+  var raw = document.getElementById('lookupId').value.replace(/\s/g,'');
+  var result = document.getElementById('memberLookupResult');
+  result.innerHTML = '<div style="font-size:13px;color:var(--tf)">Searching…</div>';
+
+  if(!raw || raw.length !== 16 || isNaN(raw)){
+    result.innerHTML = '<div class="alert alert-error">Please enter a valid 16-digit member number.</div>';
+    return;
+  }
+
+  db.ref('/members/' + raw).once('value').then(function(snap) {
+    if(!snap.exists()){
+      result.innerHTML = '<div class="alert alert-error">Member not found. They may not have completed registration via the website.</div>';
+      return;
+    }
+    var d = snap.val();
+    var pw = d.passwordHash ? atob(d.passwordHash) : null;
+    result.innerHTML =
+      '<div style="background:var(--bc2);border:1px solid var(--brs);border-radius:var(--r);padding:1.1rem 1.25rem">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1.5rem;margin-bottom:1rem">' +
+          '<div><div class="eyebrow" style="font-size:9px">Name</div><div style="font-size:13px;color:var(--tx)">'+(d.memberName||'—')+'</div></div>' +
+          '<div><div class="eyebrow" style="font-size:9px">Member number</div><div style="font-size:12px;color:var(--gl);letter-spacing:.1em;font-family:monospace">'+(d.memberNumFmt||raw)+'</div></div>' +
+          '<div><div class="eyebrow" style="font-size:9px">Email</div><div style="font-size:13px;color:var(--tx)">'+(d.email||'—')+'</div></div>' +
+          '<div><div class="eyebrow" style="font-size:9px">Mobile</div><div style="font-size:13px;color:var(--tx)">'+(d.mobile||'—')+'</div></div>' +
+          '<div><div class="eyebrow" style="font-size:9px">Registered</div><div style="font-size:12px;color:var(--tm)">'+(d.registeredAt?new Date(d.registeredAt).toLocaleString('en-AU'):'—')+'</div></div>' +
+          '<div><div class="eyebrow" style="font-size:9px">Last login</div><div style="font-size:12px;color:var(--tm)">'+(d.lastLogin?new Date(d.lastLogin).toLocaleString('en-AU'):'Never — first login not completed')+'</div></div>' +
+        '</div>' +
+        '<div style="border-top:1px solid var(--br);padding-top:.85rem">' +
+          '<div class="eyebrow" style="font-size:9px;margin-bottom:.3rem">Current password</div>' +
+          (pw
+            ? '<div style="font-size:1.2rem;font-family:monospace;color:var(--gl);letter-spacing:.1em;background:rgba(200,144,26,.07);border:1px solid var(--brs);border-radius:6px;padding:8px 14px;display:inline-block">'+pw+'</div>' +
+              '<div style="font-size:11px;color:var(--tf);margin-top:6px">Provide this to the member securely. Ask them to change it on next login.</div>'
+            : '<div style="font-size:13px;color:var(--tf)">No password set yet — member has not completed first vault login.</div>' +
+              '<div style="font-size:11px;color:var(--tf);margin-top:4px">Send them this link: <span style="color:var(--gl)">cogsaustralia.org/wallet.html#access='+raw+'</span></div>'
+          ) +
+        '</div>' +
+        '<div class="btn-row" style="margin-top:.85rem">' +
+          (d.email?'<a href="mailto:'+d.email+'?subject=COG%24%20Independence%20Vault%20%E2%80%94%20Account%20Assistance&body=Hi%20'+encodeURIComponent(d.memberName||'')+'%2C%0A%0AYour%20COG%24%20member%20number%20is%3A%20'+encodeURIComponent(d.memberNumFmt||raw)+(pw?'%0A%0AYour%20current%20password%20is%3A%20'+encodeURIComponent(pw):'')+'%0A%0APlease%20log%20in%20and%20change%20your%20password.%0A%0ARegards%2C%0ACOG%24%20Foundation" class="btn btn-primary btn-sm" style="text-decoration:none">📧 Email member</a>':'') +
+        '</div>' +
+      '</div>';
+  }).catch(function(e){
+    result.innerHTML = '<div class="alert alert-error">Firebase error: '+e.message+'</div>';
+  });
+}
+
 function resolveRecovery(key) {
   db.ref('/recovery_requests/' + key + '/status').set('resolved');
+}
+
+function lookupPassword(memberId) {
+  if(!memberId){alert('No member ID provided.');return;}
+  var cleanId = memberId.replace(/\s/g,'');
+  db.ref('/members/' + cleanId).once('value').then(function(snap) {
+    if(!snap.exists()){
+      alert('Member ' + memberId + ' not found in database.');
+      return;
+    }
+    var data = snap.val();
+    var pw = data.passwordHash ? atob(data.passwordHash) : null;
+    var info =
+      'Member: ' + (data.memberName||'—') + '\n' +
+      'Number: ' + (data.memberNumFmt||memberId) + '\n' +
+      'Email:  ' + (data.email||'—') + '\n' +
+      'Mobile: ' + (data.mobile||'—') + '\n' +
+      'Registered: ' + (data.registeredAt ? new Date(data.registeredAt).toLocaleString('en-AU') : '—') + '\n' +
+      'Last login: ' + (data.lastLogin ? new Date(data.lastLogin).toLocaleString('en-AU') : 'Never') + '\n\n' +
+      (pw ? 'Current password: ' + pw + '\n\nSend this to the member securely and ask them to change it on next login.' : 'No password set yet — member has not completed first login.');
+    alert(info);
+  }).catch(function(e){
+    alert('Error: ' + e.message);
+  });
 }
 function deleteRecovery(key) {
   if (!confirm('Delete this recovery request?')) return;

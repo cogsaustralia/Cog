@@ -820,6 +820,9 @@
     .btn-primary, .btn-secondary { text-align: center; }
   }
 </style>
+<!-- Firebase SDK for pre-submission member write -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -1562,6 +1565,8 @@
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_next" value="https://cogsaustralia.org/thankyou.html">
+          <input type="hidden" name="_autoresponse" id="autoresponse-field" value="Thank you for reserving your COG$ membership. Your unique member number will appear on the next page and is also included in this email for your records. Keep it safe — you will need it to log in to your COG$ Independence Vault at cogsaustralia.org/wallet.html. Your reservation creates no financial obligation. Foundation Day is 14 May. — COG$ Community Foundation, ABN: 61 734 327 831">
+          <input type="hidden" name="_replyto" id="replyto-field" value="">
           <!-- Honeypot spam trap -->
           <input type="text" name="_honey" style="display:none">
           <!-- Total reservation value — populated by JS before submit -->
@@ -2126,6 +2131,14 @@
     // Update subject to include member number
     if (subjectField) subjectField.value = 'COG$ Reservation — ' + name + ' — ' + totalText + ' — #' + memberNumFmt;
 
+    // Wire reply-to so auto-response goes to the member's email
+    var replyToField = document.getElementById('replyto-field');
+    if (replyToField) replyToField.value = email;
+
+    // Update auto-response to include member number
+    var arField = document.getElementById('autoresponse-field');
+    if (arField) arField.value = 'Thank you for reserving your COG$ membership, ' + name.split(' ')[0] + '. Your unique 16-digit COG$ member number is: ' + memberNumFmt + '. Keep this number safe — you will need it to log in to your COG$ Independence Vault at cogsaustralia.org/wallet.html. No payment is required until Foundation Day on 14 May. — COG$ Community Foundation, ABN: 61 734 327 831';
+
     // Save member data to localStorage — survives FormSubmit redirect
     // sessionStorage does NOT survive the FormSubmit.co server-side redirect
     try {
@@ -2144,6 +2157,44 @@
     // Update _next URL to include member number for display
     var nextField = document.querySelector('input[name="_next"]');
     if (nextField) nextField.value = 'https://cogsaustralia.org/thankyou.html?m=' + memberNum;
+
+    // Write member to Firebase NOW before form submits
+    // This ensures member exists in database even if thankyou redirect fails
+    try {
+      var fbCfgIdx = {
+        apiKey: "AIzaSyCvpRdc9SK_jaUuTQ62DbQArylu0hX6FvA",
+        authDomain: "cogs-australia.firebaseapp.com",
+        databaseURL: "https://cogs-australia-default-rtdb.firebaseio.com",
+        projectId: "cogs-australia",
+        storageBucket: "cogs-australia.firebasestorage.app",
+        messagingSenderId: "918224691358",
+        appId: "1:918224691358:web:4b5e4d8345252edc461b8f"
+      };
+      var fbApp = (typeof firebase !== 'undefined')
+        ? (firebase.apps.length ? firebase.app() : firebase.initializeApp(fbCfgIdx))
+        : null;
+      if (fbApp) {
+        var fbDb = firebase.database();
+        var cleanId = memberNum; // already 16 digits, no spaces
+        fbDb.ref('/members/' + cleanId).set({
+          nft:          1,
+          invest:       parseInt(document.getElementById('invest') ? document.getElementById('invest').value : '0') || 0,
+          land:         parseInt(document.getElementById('landval') ? document.getElementById('landval').value : '0') || 0,
+          donate:       parseInt(document.getElementById('donate') ? document.getElementById('donate').value : '0') || 0,
+          total:        1,
+          email:        email,
+          mobile:       mobile,
+          memberName:   name,
+          memberNumFmt: memberNumFmt,
+          firstLogin:   false,
+          registeredAt: new Date().toISOString()
+        });
+        // Increment community counter
+        fbDb.ref('/community/memberCount').transaction(function(c){return(c||0)+1;});
+        fbDb.ref('/community/totalCogs').transaction(function(c){return(c||0)+1;});
+        fbDb.ref('/community/totalNft').transaction(function(c){return(c||0)+1;});
+      }
+    } catch(fbEx) { console.log('Firebase pre-write failed (non-critical):', fbEx); }
 
     // All good — FormSubmit.co takes it from here
   });
