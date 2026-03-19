@@ -378,29 +378,57 @@
           <span style="color:var(--gold-light)">✓ Also included in your confirmation email</span>
         </div>
 
-        <!-- Token summary -->
-        <div style="background:rgba(200,144,26,0.06);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem">
-          <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.75rem">Your Reservation Summary</div>
+        <!-- Token summary — clean card layout -->
+        <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem">
 
-          <!-- Total COG$ and $ value — prominent hero row -->
-          <div style="display:flex;gap:1rem;margin-bottom:.85rem;flex-wrap:wrap">
-            <div style="flex:1;background:rgba(200,144,26,0.1);border:1px solid var(--border-strong);border-radius:8px;padding:.75rem 1rem;text-align:center;min-width:120px">
-              <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:4px">Total COG$ Reserved</div>
-              <div id="rTotalCogs" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--gold-light);line-height:1">1</div>
-              <div style="font-size:10px;color:var(--text-faint);margin-top:2px">tokens</div>
+          <!-- Hero totals row -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;background:rgba(200,144,26,0.08);border-bottom:1px solid var(--border-strong)">
+            <div style="padding:1rem;text-align:center;border-right:1px solid var(--border-strong);overflow:hidden;min-width:0">
+              <div style="font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.4rem">Total COG$</div>
+              <div id="rTotalCogs" style="font-family:'DM Serif Display',serif;font-size:clamp(1.2rem,6vw,2rem);color:var(--gold-light);line-height:1.1;word-break:break-word">1</div>
+              <div style="font-size:10px;color:var(--text-faint);margin-top:3px">tokens reserved</div>
             </div>
-            <div style="flex:1;background:rgba(200,144,26,0.1);border:1px solid var(--border-strong);border-radius:8px;padding:.75rem 1rem;text-align:center;min-width:120px">
-              <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:4px">Estimated Value</div>
-              <div id="rTotalValue" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--gold-light);line-height:1">$4.00</div>
-              <div style="font-size:10px;color:var(--text-faint);margin-top:2px">at $4 per token</div>
+            <div style="padding:1rem;text-align:center;overflow:hidden;min-width:0">
+              <div style="font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.4rem">Est. Value</div>
+              <div id="rTotalValue" style="font-family:'DM Serif Display',serif;font-size:clamp(0.95rem,4.5vw,2rem);color:var(--gold-light);line-height:1.1;word-break:break-word">$4.00</div>
+              <div style="font-size:10px;color:var(--text-faint);margin-top:3px">at $4 per token</div>
             </div>
           </div>
-          <div style="border-top:1px solid var(--border);padding-top:.75rem">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🪙 Personal NFT Membership</span><span id="rNft" style="font-family:'DM Serif Display',serif;color:var(--gold-light)">1</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">💛 Investment COG$</span><span id="rInvest" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🌿 Landholder COG$</span><span id="rLand" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🤝 Donation COG$</span><span id="rDonate" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;font-size:13px;color:var(--text-muted)"><span>Estimated reservation value</span><span id="rTotal" style="font-family:'DM Serif Display',serif;color:var(--gold-light);font-size:1.1rem">$4.00</span></div>
+
+          <!-- Token breakdown rows -->
+          <div style="padding:.75rem 1rem">
+            <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.6rem">Breakdown</div>
+            <div style="display:flex;flex-direction:column;gap:0">
+
+              <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+                <span style="font-size:15px;margin-right:8px;flex-shrink:0">🪙</span>
+                <span style="font-size:13px;color:var(--text-muted);flex:1">Personal NFT Membership</span>
+                <span id="rNft" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--gold-light);margin-left:8px;flex-shrink:0">1</span>
+              </div>
+
+              <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+                <span style="font-size:15px;margin-right:8px;flex-shrink:0">💛</span>
+                <span style="font-size:13px;color:var(--text-muted);flex:1">Investment COG$</span>
+                <span id="rInvest" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-left:8px;flex-shrink:0">0</span>
+              </div>
+
+              <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+                <span style="font-size:15px;margin-right:8px;flex-shrink:0">🌿</span>
+                <span style="font-size:13px;color:var(--text-muted);flex:1">Landholder COG$</span>
+                <span id="rLand" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-left:8px;flex-shrink:0">0</span>
+              </div>
+
+              <div style="display:flex;align-items:center;padding:7px 0">
+                <span style="font-size:15px;margin-right:8px;flex-shrink:0">🤝</span>
+                <span style="font-size:13px;color:var(--text-muted);flex:1">Donation COG$</span>
+                <span id="rDonate" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-left:8px;flex-shrink:0">0</span>
+              </div>
+
+            </div>
+            <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border-strong);display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:12px;font-weight:500;color:var(--text)">Estimated reservation value</span>
+              <span id="rTotal" style="font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--gold-light);flex-shrink:0;margin-left:8px">$4.00</span>
+            </div>
           </div>
         </div>
 
@@ -588,7 +616,7 @@
     var el = function(id) { return document.getElementById(id); };
     if (el('memberNumDisplay')) el('memberNumDisplay').textContent = fmt;
     if (el('rNft'))    el('rNft').textContent    = parseInt(nft).toLocaleString();
-    var totalCogs = 1 + (parseInt(inv)||0) + (parseInt(lnd)||0) + (parseInt(don)||0);
+    var totalCogs = (parseInt(nft)||1) + (parseInt(inv)||0) + (parseInt(lnd)||0) + (parseInt(don)||0);
     // Also check pre-calculated values saved by index.html
     var savedTotalCogs    = localStorage.getItem('cogs_pending_totalcogs');
     var savedTotalDollars = localStorage.getItem('cogs_pending_totaldollars');
