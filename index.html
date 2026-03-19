@@ -942,7 +942,7 @@
     <div class="hero-eyebrow">Australia's first community resources wealth foundation</div>
     <h1>Own a share of<br><em>Australia's resources.</em><br>Have your say.</h1>
     <p class="hero-sub">
-      The COG$ Community Resources Wealth Foundation is a not-for-profit foundation that enables Australians to participate in the stewardship, governance, and profits of the nation's resource sector — together.
+      The The Trustee of COG$ of Australia Foundation is a not-for-profit foundation that enables Australians to participate in the stewardship, governance, and profits of the nation's resource sector — together.
     </p>
     <div class="hero-actions">
       <a href="#reserve" class="btn-primary">Reserve your place</a>
@@ -980,7 +980,7 @@
     <div class="letter-card">
       <div class="letter-text">
         <p>For generations, the natural wealth of Australia has flowed primarily to corporations and governments. The people whose communities sit above these resources rarely hold direct ownership, and have little to no say in the operations of companies extracting those resources — or whether those resources get extracted at all.</p>
-        <p>COG$ allows the community to become stewards of their local resources and environment. Through the Community Resources Wealth Foundation, members collectively accumulate ownership, stewardship, and legally enforceable governance of Australian resource companies. We participate directly in governance and share in any realised profit.</p>
+        <p>COG$ allows the community to become stewards of their local resources and environment. Through the The Trustee of COG$ of Australia Foundation, members collectively accumulate ownership, stewardship, and legally enforceable governance of Australian resource companies. We participate directly in governance and share in any realised profit.</p>
         <p>The goal is not short-term speculation or a meaningless gesture. It is the creation of a permanent community governance and wealth structure that compounds across days, years, and generations.</p>
         <p>COG$ started with a simple step: people are now reserving their place, and communities are demonstrating collective support ahead of Foundation Day, 14 May.</p>
       </div>
@@ -1146,7 +1146,7 @@
   <section class="fade-in">
     <div class="section-eyebrow">Foundation structure</div>
     <h2 class="section-title">A not-for-profit Foundation — <em>locked for the community.</em></h2>
-    <p class="section-intro mb-md">The Community Resources Wealth Foundation is a not-for-profit entity. Its rules are locked in the founding Foundation Deed. The Foundation cannot be privately owned, sold, or captured.</p>
+    <p class="section-intro mb-md">The The Trustee of COG$ of Australia Foundation is a not-for-profit entity. Its rules are locked in the founding Foundation Deed. The Foundation cannot be privately owned, sold, or captured.</p>
 
     <div class="card-grid">
       <div class="card">
@@ -1467,7 +1467,7 @@
           <span style="font-size:12px; font-weight:500; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">In progress</span>
         </div>
         <h3>Foundation Deed drafting</h3>
-        <p>The Community Resources Wealth Foundation Deed is being drafted by legal advisors to ensure the not-for-profit community governance structure is legally enforceable, robust, and permanent before any member commits funds.</p>
+        <p>The The Trustee of COG$ of Australia Foundation Deed is being drafted by legal advisors to ensure the not-for-profit community governance structure is legally enforceable, robust, and permanent before any member commits funds.</p>
       </div>
       <div class="card">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
@@ -1636,8 +1636,11 @@
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_next" value="https://cogsaustralia.org/thankyou.html">
-          <input type="hidden" name="_autoresponse" id="autoresponse-field" value="Thank you for reserving your COG$ membership. Your unique member number will appear on the next page and is also included in this email for your records. Keep it safe — you will need it to log in to your COG$ Independence Vault at cogsaustralia.org/wallet.html. Your reservation creates no financial obligation. Foundation Day is 14 May. — COG$ Community Foundation, ABN: 61 734 327 831">
+          <!-- _replyto + hidden email field: both populated by JS so FormSubmit knows where to send auto-response -->
           <input type="hidden" name="_replyto" id="replyto-field" value="">
+          <input type="hidden" name="email" id="hidden-email-copy" value="">
+          <!-- Auto-response: updated by JS to include member number + wallet setup link -->
+          <input type="hidden" name="_autoresponse" id="autoresponse-field" value="Thank you for reserving your COG$ membership.">
           <!-- Honeypot spam trap -->
           <input type="text" name="_honey" style="display:none">
           <!-- Total reservation value — populated by JS before submit -->
@@ -1663,8 +1666,32 @@
             <input type="tel" id="mobile" name="Mobile" placeholder="+61 4xx xxx xxx" required>
           </div>
           <div class="form-group full">
-            <label for="address">Residential address *</label>
-            <input type="text" id="address" name="Residential Address" placeholder="Street address, suburb, state, postcode" required>
+            <label for="address">Street address *</label>
+            <input type="text" id="address" name="Street Address" placeholder="e.g. 42 River Road" required>
+            <div class="address-grid" style="display:grid;grid-template-columns:1fr 120px 90px;gap:10px;margin-top:10px">
+              <div>
+                <label for="suburb" style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px">Suburb *</label>
+                <input type="text" id="suburb" name="Suburb" placeholder="Suburb" required>
+              </div>
+              <div>
+                <label for="state" style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px">State *</label>
+                <select id="state" name="State" required style="width:100%;padding:11px 10px;border-radius:var(--radius);border:1px solid var(--border-strong);background:var(--bg-card);color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none">
+                  <option value="">—</option>
+                  <option value="NSW">NSW</option>
+                  <option value="VIC">VIC</option>
+                  <option value="QLD">QLD</option>
+                  <option value="WA">WA</option>
+                  <option value="SA">SA</option>
+                  <option value="TAS">TAS</option>
+                  <option value="ACT">ACT</option>
+                  <option value="NT">NT</option>
+                </select>
+              </div>
+              <div>
+                <label for="postcode" style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px">Postcode *</label>
+                <input type="text" id="postcode" name="Postcode" placeholder="0000" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required>
+              </div>
+            </div>
           </div>
 
           <div class="form-group full">
@@ -1777,20 +1804,13 @@
       <div>
         <div class="card mb-md">
           <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">Reservation progress</p>
-          <div class="card-num">124</div>
+          <div class="card-num" id="liveReservationCount">124</div>
           <div class="card-label mb-md">reservations recorded ahead of Foundation Day</div>
           <div class="progress-track">
-            <div class="progress-fill" style="width: 12.4%;"></div>
+            <div class="progress-fill" id="reservationProgressBar" style="width: 12.4%;"></div>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:6px;">Target: 1,000 reservations before Foundation Day — 14 May</p>
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
-            <span style="font-size:12px; color:var(--text-muted);">NFT tokens in this reservation</span>
-            <span id="live-nft-count" style="font-size:1.1rem; font-weight:600; font-family:'DM Serif Display',serif; color:var(--gold-light);">1</span>
-          </div>
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.6rem; padding-top:0.6rem; border-top:1px solid var(--border);">
-            <span style="font-size:12px; color:var(--text-muted);">Total NFT tokens reserved (this device)</span>
-            <span id="cumulative-nft-count" style="font-size:1.1rem; font-weight:600; font-family:'DM Serif Display',serif; color:var(--gold-light);">—</span>
-          </div>
+
         </div>
 
         <div class="card mb-md">
@@ -1875,7 +1895,7 @@
     </div>
     <div class="footer-bottom">
       <div>
-        <span>COG$ Community Resources Wealth Foundation</span>
+        <span>The Trustee of COG$ of Australia Foundation</span>
         &nbsp;·&nbsp;
         <span>ABN: 61 734 327 831</span>
         &nbsp;·&nbsp;
@@ -2152,12 +2172,18 @@
     var email   = document.getElementById('email').value.trim();
     var mobile  = document.getElementById('mobile').value.trim();
     var address = document.getElementById('address').value.trim();
+    var suburb  = document.getElementById('suburb')   ? document.getElementById('suburb').value.trim()   : '';
+    var state   = document.getElementById('state')    ? document.getElementById('state').value.trim()    : '';
+    var postcode= document.getElementById('postcode') ? document.getElementById('postcode').value.trim() : '';
     var confirm = document.getElementById('confirm').checked;
 
     if (!name)    { e.preventDefault(); alert('Please enter your full name.'); return; }
     if (!email)   { e.preventDefault(); alert('Please enter your email address.'); return; }
     if (!mobile)  { e.preventDefault(); alert('Please enter your mobile number.'); return; }
-    if (!address) { e.preventDefault(); alert('Please enter your residential address.'); return; }
+    if (!address)  { e.preventDefault(); alert('Please enter your street address.'); return; }
+    if (!suburb)   { e.preventDefault(); alert('Please enter your suburb.'); return; }
+    if (!state)    { e.preventDefault(); alert('Please select your state.'); return; }
+    if (!postcode) { e.preventDefault(); alert('Please enter your postcode.'); return; }
     if (!confirm) { e.preventDefault(); alert('Please confirm you understand this is a no-obligation reservation.'); return; }
 
     // Stamp the final total into the hidden field and update email subject
@@ -2202,13 +2228,79 @@
     // Update subject to include member number
     if (subjectField) subjectField.value = 'COG$ Reservation — ' + name + ' — ' + totalText + ' — #' + memberNumFmt;
 
-    // Wire reply-to so auto-response goes to the member's email
+    // Populate BOTH reply-to fields so FormSubmit reliably sends the auto-response
     var replyToField = document.getElementById('replyto-field');
     if (replyToField) replyToField.value = email;
+    // Hidden "email" field — FormSubmit uses field named "email" as the reply-to address
+    var hiddenEmailCopy = document.getElementById('hidden-email-copy');
+    if (hiddenEmailCopy) hiddenEmailCopy.value = email;
 
-    // Update auto-response to include member number
+    // Read token quantities and values at submit time
+    var nftCount     = 1; // always 1 per member
+    var investCount  = parseInt((document.getElementById('invest')   || {}).value)  || 0;
+    var donateCount  = parseInt((document.getElementById('donate')   || {}).value)  || 0;
+    var landCount    = parseInt((document.getElementById('landval')  || {}).value)  || 0;
+    var totalCogTokens = nftCount + investCount + donateCount + landCount;
+    var totalDollarValue = totalCogTokens * 4;
+
+    // Format as AUD
+    function audFmt(n){ return '$' + n.toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+    // Build detailed reservation breakdown lines
+    var tokenLines = '';
+    tokenLines += '\n  Personal NFT Membership:  1 token   = ' + audFmt(4);
+    if (investCount > 0)  tokenLines += '\n  Investment COG$:          ' + investCount + ' token' + (investCount>1?'s':'') + '  = ' + audFmt(investCount * 4);
+    if (landCount   > 0)  tokenLines += '\n  Landholder COG$:          ' + landCount   + ' token' + (landCount>1?'s':'')   + '  = ' + audFmt(landCount   * 4);
+    if (donateCount > 0)  tokenLines += '\n  Donation COG$:            ' + donateCount + ' token' + (donateCount>1?'s':'') + '  = ' + audFmt(donateCount * 4);
+    tokenLines += '\n  ─────────────────────────────────────────────';
+    tokenLines += '\n  TOTAL COG$ RESERVED:       ' + totalCogTokens + ' token' + (totalCogTokens>1?'s':'') + '  = ' + audFmt(totalDollarValue);
+
+    // Build full auto-response email
+    var walletSetupUrl = 'https://cogsaustralia.org/wallet.html#new=' + memberNum;
+    var autoResponseText =
+      'Hi ' + name.split(' ')[0] + ',' +
+      '\n\nThank you for reserving your COG$ membership.' +
+      '\n\n════════════════════════════════════════' +
+      '\nYOUR COG$ MEMBER NUMBER' +
+      '\n════════════════════════════════════════' +
+      '\n\n  ' + memberNumFmt +
+      '\n\nKeep this number safe. You will need it every time you log in to your Independence Vault.' +
+      '\n\n════════════════════════════════════════' +
+      '\nSET UP YOUR INDEPENDENCE VAULT' +
+      '\n════════════════════════════════════════' +
+      '\n\nClick or copy this link to create your password and access your personal vault:' +
+      '\n\n  ' + walletSetupUrl +
+      '\n\nThis link takes you directly to the password setup screen with your member number pre-filled.' +
+      '\n\nIf the link above does not work, visit:' +
+      '\n  https://cogsaustralia.org/wallet.html' +
+      '\nand enter your member number when prompted: ' + memberNumFmt +
+      '\n\n════════════════════════════════════════' +
+      '\nYOUR RESERVATION SUMMARY' +
+      '\n════════════════════════════════════════' +
+      tokenLines +
+      '\n\nFoundation Day: 14 May' +
+      '\nNo payment required until Foundation Day.' +
+      '\nYou may adjust or withdraw your reservation at any time before Foundation Day.' +
+      '\n\n════════════════════════════════════════' +
+      '\n\nQuestions? Reply to this email or contact us:' +
+      '\nCOGsAustralia@gmail.com' +
+      '\ncogsaustralia.org' +
+      '\n\nThe Trustee of COG$ of Australia Foundation' +
+      '\nABN: 61 734 327 831' +
+      '\nC/- Drake Village Resource Centre, Drake Village NSW 2469';
+
     var arField = document.getElementById('autoresponse-field');
-    if (arField) arField.value = 'Thank you for reserving your COG$ membership, ' + name.split(' ')[0] + '. Your unique 16-digit COG$ member number is: ' + memberNumFmt + '. Keep this number safe — you will need it to log in to your COG$ Independence Vault at cogsaustralia.org/wallet.html. No payment is required until Foundation Day on 14 May. — COG$ Community Foundation, ABN: 61 734 327 831';
+    if (arField) arField.value = autoResponseText;
+
+    // Read token counts from form for email + localStorage
+    var investCount = parseInt(document.getElementById('invest')   ? (document.getElementById('invest').value   || '0') : '0') || 0;
+    var landCount   = parseInt(document.getElementById('landval')  ? (document.getElementById('landval').value  || '0') : '0') || 0;
+    var donateCount = parseInt(document.getElementById('donate')   ? (document.getElementById('donate').value   || '0') : '0') || 0;
+    var nftCount    = parseInt(document.getElementById('hidden-nft-count') ? (document.getElementById('hidden-nft-count').value || '1') : '1') || 1;
+    var totalCogs   = nftCount + investCount + landCount + donateCount;
+    // Parse total $ value — use sum-total if available, else calculate
+    var totalRawNum = parseFloat((document.getElementById('sum-total') ? document.getElementById('sum-total').textContent : '$4').replace(/[^0-9.]/g,'')) || 4;
+    var totalDollars = '$' + (totalRawNum).toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2});
 
     // Save member data to localStorage — survives FormSubmit redirect
     // sessionStorage does NOT survive the FormSubmit.co server-side redirect
@@ -2218,10 +2310,12 @@
       localStorage.setItem('cogs_pending_email',  email);
       localStorage.setItem('cogs_pending_mobile', mobile);
       localStorage.setItem('cogs_pending_total',  totalText);
-      localStorage.setItem('cogs_pending_nft',    document.getElementById('hidden-nft-count') ? document.getElementById('hidden-nft-count').value : '1');
-      localStorage.setItem('cogs_pending_invest', document.getElementById('invest') ? (document.getElementById('invest').value || '0') : '0');
-      localStorage.setItem('cogs_pending_land',   document.getElementById('landval') ? (document.getElementById('landval').value || '0') : '0');
-      localStorage.setItem('cogs_pending_donate', document.getElementById('donate') ? (document.getElementById('donate').value || '0') : '0');
+      localStorage.setItem('cogs_pending_nft',    nftCount.toString());
+      localStorage.setItem('cogs_pending_invest', investCount.toString());
+      localStorage.setItem('cogs_pending_land',   landCount.toString());
+      localStorage.setItem('cogs_pending_donate', donateCount.toString());
+      localStorage.setItem('cogs_pending_totalcogs', totalCogs.toString());
+      localStorage.setItem('cogs_pending_totaldollars', totalDollars);
       localStorage.setItem('cogs_pending_stamp',  Date.now().toString()); // expire after 30 min
     } catch(ex) {}
 
@@ -2269,6 +2363,30 @@
 
     // All good — FormSubmit.co takes it from here
   });
+
+  // ── LIVE RESERVATION COUNT FROM FIREBASE ──
+  (function loadLiveCount(){
+    try {
+      var fbCfgCount = {
+        apiKey: "AIzaSyCvpRdc9SK_jaUuTQ62DbQArylu0hX6FvA",
+        databaseURL: "https://cogs-australia-default-rtdb.firebaseio.com",
+        projectId: "cogs-australia",
+        appId: "1:918224691358:web:4b5e4d8345252edc461b8f"
+      };
+      var fbA = (typeof firebase !== 'undefined')
+        ? (firebase.apps.length ? firebase.app() : firebase.initializeApp(fbCfgCount))
+        : null;
+      if (!fbA) return;
+      var fbD = firebase.database();
+      fbD.ref('/community/memberCount').on('value', function(snap){
+        var count = snap.val() || 124; // fallback to last known
+        var el = document.getElementById('liveReservationCount');
+        var bar = document.getElementById('reservationProgressBar');
+        if (el) el.textContent = count.toLocaleString();
+        if (bar) bar.style.width = Math.min(count / 1000 * 100, 100).toFixed(1) + '%';
+      });
+    } catch(ex) {}
+  })();
 </script>
 </body>
 </html>

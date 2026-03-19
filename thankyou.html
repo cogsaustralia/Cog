@@ -305,7 +305,9 @@
 
   @media (max-width: 480px) {
     .info-grid { grid-template-columns: 1fr 1fr; }
-    .share-buttons { flex-direction: column; align-items: center; }
+    .share-buttons { flex-direction: column; align-items: stretch; }
+    .share-btn { justify-content: center; }
+    #memberNumDisplay { font-size: 1rem !important; letter-spacing: .14em !important; }
   }
 </style>
 </head>
@@ -379,11 +381,27 @@
         <!-- Token summary -->
         <div style="background:rgba(200,144,26,0.06);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem">
           <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.75rem">Your Reservation Summary</div>
+
+          <!-- Total COG$ and $ value — prominent hero row -->
+          <div style="display:flex;gap:1rem;margin-bottom:.85rem;flex-wrap:wrap">
+            <div style="flex:1;background:rgba(200,144,26,0.1);border:1px solid var(--border-strong);border-radius:8px;padding:.75rem 1rem;text-align:center;min-width:120px">
+              <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:4px">Total COG$ Reserved</div>
+              <div id="rTotalCogs" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--gold-light);line-height:1">1</div>
+              <div style="font-size:10px;color:var(--text-faint);margin-top:2px">tokens</div>
+            </div>
+            <div style="flex:1;background:rgba(200,144,26,0.1);border:1px solid var(--border-strong);border-radius:8px;padding:.75rem 1rem;text-align:center;min-width:120px">
+              <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:4px">Estimated Value</div>
+              <div id="rTotalValue" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--gold-light);line-height:1">$4.00</div>
+              <div style="font-size:10px;color:var(--text-faint);margin-top:2px">at $4 per token</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:.75rem">
           <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🪙 Personal NFT Membership</span><span id="rNft" style="font-family:'DM Serif Display',serif;color:var(--gold-light)">1</span></div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">💛 Investment COG$</span><span id="rInvest" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🌿 Landholder COG$</span><span id="rLand" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">🤝 Donation COG$</span><span id="rDonate" style="font-family:'DM Serif Display',serif;color:var(--text)">0</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;font-size:14px;font-weight:500"><span style="color:var(--text)">Estimated reservation value</span><span id="rTotal" style="font-family:'DM Serif Display',serif;color:var(--gold-light);font-size:1.2rem">$4.00</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;font-size:13px;color:var(--text-muted)"><span>Estimated reservation value</span><span id="rTotal" style="font-family:'DM Serif Display',serif;color:var(--gold-light);font-size:1.1rem">$4.00</span></div>
+          </div>
         </div>
 
         <!-- Wallet link -->
@@ -483,7 +501,7 @@
 </main>
 
 <footer>
-  COG$ Community Resources Wealth Trust Foundation &nbsp;·&nbsp; Reservation only — no financial product offered &nbsp;·&nbsp; <a href="index.html" style="color:var(--text-faint);">cogsaustralia.org</a>
+  The Trustee of COG$ of Australia Foundation &nbsp;·&nbsp; Reservation only — no financial product offered &nbsp;·&nbsp; <a href="index.html" style="color:var(--text-faint);">cogsaustralia.org</a>
 </footer>
 
 <script>
@@ -570,10 +588,18 @@
     var el = function(id) { return document.getElementById(id); };
     if (el('memberNumDisplay')) el('memberNumDisplay').textContent = fmt;
     if (el('rNft'))    el('rNft').textContent    = parseInt(nft).toLocaleString();
-    if (el('rInvest')) el('rInvest').textContent = parseInt(inv).toLocaleString();
-    if (el('rLand'))   el('rLand').textContent   = parseInt(lnd).toLocaleString();
-    if (el('rDonate')) el('rDonate').textContent = parseInt(don).toLocaleString();
-    if (el('rTotal'))  el('rTotal').textContent  = tot || '$4.00';
+    var totalCogs = 1 + (parseInt(inv)||0) + (parseInt(lnd)||0) + (parseInt(don)||0);
+    // Also check pre-calculated values saved by index.html
+    var savedTotalCogs    = localStorage.getItem('cogs_pending_totalcogs');
+    var savedTotalDollars = localStorage.getItem('cogs_pending_totaldollars');
+    if (savedTotalCogs) totalCogs = parseInt(savedTotalCogs) || totalCogs;
+    var totalValue = savedTotalDollars || ('$' + (totalCogs * 4).toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}));
+    if (el('rInvest'))     el('rInvest').textContent     = parseInt(inv).toLocaleString();
+    if (el('rLand'))       el('rLand').textContent       = parseInt(lnd).toLocaleString();
+    if (el('rDonate'))     el('rDonate').textContent     = parseInt(don).toLocaleString();
+    if (el('rTotal'))      el('rTotal').textContent      = tot || '$4.00';
+    if (el('rTotalCogs'))  el('rTotalCogs').textContent  = totalCogs.toLocaleString();
+    if (el('rTotalValue')) el('rTotalValue').textContent = totalValue;
 
     // Wallet link with member number pre-filled via URL hash
     if (el('walletLink')) {
@@ -653,7 +679,7 @@
     // Clear localStorage pending data so refresh doesn't re-show
     ['cogs_pending_num','cogs_pending_name','cogs_pending_email','cogs_pending_mobile',
      'cogs_pending_total','cogs_pending_nft','cogs_pending_invest','cogs_pending_land',
-     'cogs_pending_donate','cogs_pending_stamp'].forEach(function(k){
+     'cogs_pending_donate','cogs_pending_stamp','cogs_pending_totalcogs','cogs_pending_totaldollars'].forEach(function(k){
       localStorage.removeItem(k);
     });
   } catch(ex) {}

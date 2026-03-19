@@ -465,7 +465,7 @@ iv-label{font-size:12px;color:var(--tm);display:block;margin-top:10px}
   </div>
 
   <div style="text-align:center;padding-top:2rem;border-top:1px solid var(--br);font-size:11px;color:var(--tf);line-height:1.8">
-    COG$ Community Resources Wealth Foundation · ABN: 61 734 327 831<br>
+    The Trustee of COG$ of Australia Foundation · ABN: 61 734 327 831<br>
     Thomas Cunliffe, Project Coordinator · C/- Drake Village Resource Centre, Drake Village NSW 2469<br>
     <a href="https://cogsaustralia.org/privacy.html" style="color:var(--tf)">Privacy Policy</a> &nbsp;·&nbsp;
     <a href="https://cogsaustralia.org/terms.html" style="color:var(--tf)">Terms of Use</a>
@@ -706,7 +706,7 @@ iv-label{font-size:12px;color:var(--tm);display:block;margin-top:10px}
         </div>
 
         <div style="text-align:center;padding:1.5rem 0;font-size:10px;color:var(--tf);line-height:1.8;border-top:1px solid var(--br)">
-          COG$ Community Resources Wealth Foundation<br>ABN: 61 734 327 831 · Thomas Cunliffe<br>Drake Village NSW 2469
+          The Trustee of COG$ of Australia Foundation<br>ABN: 61 734 327 831 · Thomas Cunliffe<br>Drake Village NSW 2469
         </div>
       </div><!-- /scComms -->
 
@@ -849,9 +849,21 @@ function doLogin(mode){
     fbDB.ref('/members/'+id).once('value')
       .then(function(snap){
         if(snap.exists()){
-          grantAccess();
+          var memberData = snap.val();
+          // If member hasn't set their password yet, send to setup screen
+          if(memberData && memberData.firstLogin === false && !gs('cogs_pw_'+id,null)){
+            if(btn){btn.textContent='Enter Independence Vault';btn.disabled=false;}
+            FIRST_LOGIN_ID = id;
+            // Pre-fill stored email
+            var storedEmail = (memberData.email||'');
+            localStorage.setItem('cogs_new_member_email', storedEmail);
+            localStorage.setItem('cogs_new_member_id', id);
+            showFirstLoginScreen(id);
+          } else {
+            grantAccess();
+          }
         } else {
-          // Check localStorage (same device as registration)
+          // Check localStorage (same device as registration — handles offline/delay)
           if(gs('cogs_'+id+'_nft',null)!==null){
             grantAccess();
           } else {
