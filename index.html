@@ -32,6 +32,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
+  html { overflow-x: hidden; }
   body {
     background: var(--bg);
     color: var(--text);
@@ -39,6 +40,7 @@
     font-size: 16px;
     line-height: 1.7;
     font-weight: 300;
+    overflow-x: hidden;
   }
 
   /* LEGAL BANNER */
@@ -58,8 +60,13 @@
     font-weight: 300;
     text-transform: none;
     letter-spacing: 0;
-    margin-left: 12px;
+    margin-left: 8px;
     font-size: 11px;
+    display: inline;
+  }
+  @media (max-width: 600px) {
+    .legal-banner { font-size: 10px; padding: 7px 12px; }
+    .legal-banner span { display: block; margin-left: 0; margin-top: 2px; font-size: 10px; }
   }
 
   /* NAV */
@@ -110,7 +117,9 @@
   .hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px; }
 
   /* PAGE WRAPPER */
-  .page { max-width: 1100px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
+  .page { max-width: 1100px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem);   box-sizing: border-box;
+  width: 100%;
+}
 
   /* HERO */
   .hero {
@@ -205,6 +214,7 @@
   .stat-item {
     padding: 0 2rem;
     border-right: 1px solid var(--border);
+    min-width: 0;
   }
   .stat-item:last-child { border-right: none; }
   .stat-item:first-child { padding-left: 0; }
@@ -243,6 +253,8 @@
     color: var(--text);
     margin-bottom: 1.25rem;
     letter-spacing: -0.02em;
+    word-break: break-word;
+  overflow-wrap: break-word;
   }
   .section-title em { font-style: italic; color: var(--gold-light); }
   .section-intro {
@@ -263,7 +275,7 @@
   .two-col-60 {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
-    gap: 4rem;
+    gap: clamp(1.5rem, 4vw, 4rem);
     align-items: start;
   }
 
@@ -273,10 +285,11 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 1.75rem;
+    overflow-wrap: break-word;
   }
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
     gap: 1rem;
   }
   .card-grid-3 {
@@ -459,6 +472,8 @@
     border-radius: var(--radius);
     padding: 1rem 1.25rem;
     text-align: center;
+    min-width: 0;
+    overflow-wrap: break-word;
   }
   .gov-tier-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
   .gov-tier-sub { font-size: 12px; color: var(--text-muted); }
@@ -469,6 +484,10 @@
     line-height: 1;
   }
   .gov-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 480px) {
+    .gov-split { grid-template-columns: 1fr; }
+    .gov-diagram { padding: 1.25rem; }
+  }
 
   /* DIVIDEND FLOW */
   .dividend-flow {
@@ -495,6 +514,8 @@
     font-size: 13px;
     font-weight: 400;
     color: var(--text-muted);
+    overflow-wrap: break-word;
+    min-width: 0;
   }
   .flow-box.accent {
     border-color: var(--border-strong);
@@ -508,6 +529,12 @@
     flex-shrink: 0;
     min-width: 48px;
     text-align: center;
+  }
+  @media (max-width: 480px) {
+    .dividend-flow { padding: 1.25rem; }
+    .flow-row { gap: 0.5rem; padding: 0.65rem 0; }
+    .flow-box { font-size: 12px; padding: 0.6rem 0.75rem; }
+    .flow-pct { font-size: 1.2rem; min-width: 38px; }
   }
 
   /* FAQ */
@@ -547,6 +574,8 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 2.5rem;
+    max-width: 100%;
+  overflow-x: hidden;
   }
   .form-notice {
     background: rgba(200,144,26,0.06);
@@ -746,6 +775,7 @@
     padding: 1.25rem 1.5rem;
     border-radius: 0 var(--radius) var(--radius) 0;
     margin: 1.5rem 0;
+    box-sizing: border-box;
   }
   .highlight-box p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
   .highlight-box strong { color: var(--gold-light); font-weight: 500; }
@@ -801,7 +831,7 @@
   @media (max-width: 768px) {
     .nav-links { display: none; }
     .hamburger { display: block; }
-    .two-col, .two-col-60 { grid-template-columns: 1fr; gap: 2rem; }
+    .two-col, .two-col-60 { grid-template-columns: 1fr; gap: 1.5rem; }
     .form-grid { grid-template-columns: 1fr; }
     .phases { grid-template-columns: 1fr 1fr; }
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
@@ -812,13 +842,54 @@
     .letter-card { padding: 1.75rem; }
     .form-card { padding: 1.5rem; }
     .hero { padding: 4rem 0 3rem; }
+    /* gov-split: stays side-by-side at tablet, collapses at mobile */
+    .gov-split { gap: 0.75rem; }
+    /* card-grid: reduce min so 2 cols work on tablets down to 500px */
+    .card-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    /* flow diagram: allow wrapping */
+    .flow-row { flex-wrap: wrap; }
+    /* Reduce section padding */
+    .section { padding: 3rem 0; }
   }
   @media (max-width: 480px) {
     .phases { grid-template-columns: 1fr; }
+    .phase { border-right: none; border-bottom: 1px solid var(--border); }
+    .phase:last-child { border-bottom: none; }
     .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
     .hero-actions { flex-direction: column; align-items: stretch; }
     .btn-primary, .btn-secondary { text-align: center; }
+    /* gov-split: stack on small screens */
+    .gov-split { grid-template-columns: 1fr; }
+    /* stat strip: 2x2 on small */
+    .stats-strip { grid-template-columns: 1fr 1fr; }
+    /* reduce page horizontal padding */
+    .page { padding: 0 1rem; }
+    /* step and principle: tighten icon gap */
+    .step { gap: 1rem; }
+    .principle { gap: 0.75rem; }
+    /* section title */
+    .section-title { font-size: clamp(1.5rem, 5vw, 2.2rem); }
+    /* flow diagram: stack on phone */
+    .flow-row { flex-direction: column; gap: 0.5rem; }
+    .flow-arrow { display: none; }
+    /* FAQ items: full padding */
+    .faq-item { padding: 1rem 0; }
+    /* tracker card: center on mobile */
+    .tracker-card { text-align: center; }
+    /* Reduce hero padding further */
+    .hero { padding: 3rem 0 2.5rem; }
   }
+
+  @media (max-width: 360px) {
+    .stats-strip { grid-template-columns: 1fr; }
+    .stat-item { border-right: none; }
+    .phases { grid-template-columns: 1fr; }
+    .page { padding: 0 0.85rem; }
+    .section-title { font-size: 1.4rem; }
+    .card { padding: 1rem; }
+    .form-card { padding: 1rem; }
+  }
+
 </style>
 <!-- Firebase SDK for pre-submission member write -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1042,7 +1113,7 @@
         <div style="text-align:center; margin-bottom:1.5rem;">
           <img src="cogs_coin_web.png"
                alt="COG$ Community Foundation Token"
-               style="width: clamp(180px, 32vw, 280px); height: auto; display:inline-block; filter: drop-shadow(0 8px 28px rgba(200,144,26,0.55));">
+               style="width: clamp(120px, 32vw, 280px); height: auto; display:inline-block; filter: drop-shadow(0 8px 28px rgba(200,144,26,0.55));">
           <p style="font-size:11px; color:var(--gold-light); margin-top:0.6rem; letter-spacing:0.08em; text-transform:uppercase;">The COG$ Community Token</p>
         </div>
 
@@ -1484,7 +1555,7 @@
       <div style="text-align:center; flex-shrink:0;">
         <img src="cogs_coin_web.png"
              alt="COG$ Community Foundation Token Coin"
-             style="width: clamp(220px, 28vw, 360px); height: auto; display:block;
+             style="width: clamp(140px, 28vw, 360px); height: auto; display:block;
                     filter: drop-shadow(0 10px 38px rgba(200,144,26,0.6));">
       </div>
       <div style="text-align:right;">
@@ -1510,7 +1581,7 @@
       <div style="text-align:center; flex-shrink:0;">
         <img src="cogs_coin_web.png"
              alt="COG$ Community Foundation Token Coin"
-             style="width: clamp(200px, 28vw, 340px); height: auto; display:block; filter: drop-shadow(0 10px 38px rgba(200,144,26,0.6));">
+             style="width: clamp(130px, 28vw, 340px); height: auto; display:block; filter: drop-shadow(0 10px 38px rgba(200,144,26,0.6));">
       </div>
       <div>
         <div style="font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-light); margin-bottom:0.75rem;">The COG$ Community Token</div>
@@ -1679,13 +1750,13 @@
               <span id="sum-kids-label">Kids NFT (0)</span><span id="sum-kids-val" style="color:var(--text);">$0.00</span>
             </div>
             <div id="sum-invest" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span id="sum-invest-label">Investment COG$ tokens (0)</span><span id="sum-invest-val" style="color:var(--text);">$0.00</span>
+              <span id="sum-invest-label">Investment COG$ tokens (0)</span><span id="sum-invest-val" style="color:var(--text);white-space:nowrap">$0.00</span>
             </div>
             <div id="sum-donate" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span id="sum-donate-label">Donation COG$ tokens (0)</span><span id="sum-donate-val" style="color:var(--text);">$0.00</span>
+              <span id="sum-donate-label">Donation COG$ tokens (0)</span><span id="sum-donate-val" style="color:var(--text);white-space:nowrap">$0.00</span>
             </div>
             <div id="sum-land" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span id="sum-land-label">Landholder COG$ tokens (0)</span><span id="sum-land-val" style="color:var(--text);">$0.00</span>
+              <span id="sum-land-label">Landholder COG$ tokens (0)</span><span id="sum-land-val" style="color:var(--text);white-space:nowrap">$0.00</span>
             </div>
           </div>
           <div style="border-top:1px solid var(--border-strong); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:baseline;">
