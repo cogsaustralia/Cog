@@ -246,7 +246,7 @@ iv-label{font-size:12px;color:var(--tm);display:block;margin-top:10px}
      DESKTOP VERSION (>640px) — layout unchanged
 ══════════════════════════════════════════════════ -->
 <!-- ══ FIRST LOGIN — PASSWORD SETUP (new registrations) ══ -->
-<div id="screenFirstLogin" class="hidden" style="min-height:100vh;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.25rem">
+<div id="screenFirstLogin" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.25rem;overflow-y:auto;-webkit-overflow-scrolling:touch">
   <div style="width:100%;max-width:440px">
     <div style="text-align:center;margin-bottom:1.75rem">
       <img src="logo_webcir.png" alt="COG$" style="width:70px;height:70px;border-radius:50%;object-fit:cover;margin-bottom:12px;filter:drop-shadow(0 4px 14px rgba(200,144,26,0.4))">
@@ -495,6 +495,7 @@ iv-label{font-size:12px;color:var(--tm);display:block;margin-top:10px}
       <div style="font-size:10px;color:var(--tm);margin-top:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">COG$ Number</div>
       <input class="iv-input" id="mlid" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" style="margin-top:0;letter-spacing:.1em" autocomplete="off" name="member-number" onblur="showPwHint(this.value.replace(/\s/g,''))">
       <div class="hint">16-digit number from your reservation confirmation email</div>
+      <div style="font-size:11px;color:var(--gl);margin-top:4px">Just registered? Check your inbox — your number was emailed to you.</div>
       <div style="font-size:11px;color:rgba(200,144,26,0.7);margin-top:3px">Just registered? Check your inbox — your number was emailed to you.</div>
       <div class="hint" id="mPwHint" style="color:var(--gl);font-style:italic;margin-top:2px"></div>
       <div style="font-size:10px;color:var(--tm);margin-top:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Password</div>
@@ -1276,8 +1277,13 @@ function showFirstLoginScreen(memberId){
   var mShell=document.getElementById('mobileShell');
   var flScreen=document.getElementById('screenFirstLogin');
   if(dRoot)dRoot.classList.add('hidden');
-  if(mShell)mShell.classList.add('hidden');
-  if(flScreen){flScreen.classList.remove('hidden');flScreen.style.display='flex';}
+  // Don't hide mobileShell — screenFirstLogin now uses position:fixed z-index:10000
+  // Simply show the setup screen on top
+  if(flScreen){
+    flScreen.classList.remove('hidden');
+    flScreen.style.removeProperty('display'); // clear any inline display:none
+    flScreen.style.display='flex';
+  }
 
   // Display formatted member number
   var fmt=memberId.replace(/(\d{4})/g,'$1 ').trim();
@@ -1368,11 +1374,11 @@ function doFirstLogin(){
     }
 
     btn.textContent='Create password & enter vault';btn.disabled=false;
-    document.getElementById('screenFirstLogin').style.display='none';
-    document.getElementById('screenFirstLogin').classList.add('hidden');
+    var flEl=document.getElementById('screenFirstLogin');
+    if(flEl){flEl.style.display='none';flEl.classList.add('hidden');}
     var mode=window.innerWidth<=640?'m':'d';
     document.getElementById('desktopRoot').classList.remove('hidden');
-    document.getElementById('mobileShell').classList.remove('hidden');
+    // mobileShell was never hidden — just enter the app
     enterApp(mode);
   }
 

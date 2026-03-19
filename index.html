@@ -484,6 +484,16 @@
     line-height: 1;
   }
   .gov-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) {
+    .coin-feature-grid {
+      grid-template-columns: 1fr !important;
+      text-align: center;
+    }
+    .coin-feature-grid img {
+      margin: 0 auto;
+      width: clamp(160px, 55vw, 260px) !important;
+    }
+  }
   @media (max-width: 480px) {
     .gov-split { grid-template-columns: 1fr; }
     .gov-diagram { padding: 1.25rem; }
@@ -1572,16 +1582,16 @@
       background: linear-gradient(135deg, var(--bg-card) 0%, #1a1508 100%);
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-lg);
-      padding: clamp(2rem, 4vw, 3rem);
+      padding: clamp(1.5rem, 4vw, 3rem);
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: clamp(1.5rem, 4vw, 3rem);
+      gap: clamp(1.25rem, 3vw, 3rem);
       align-items: center;
-    ">
+    " class="coin-feature-grid">
       <div style="text-align:center; flex-shrink:0;">
         <img src="cogs_coin_web.png"
              alt="COG$ Community Foundation Token Coin"
-             style="width: clamp(130px, 28vw, 340px); height: auto; display:block; filter: drop-shadow(0 10px 38px rgba(200,144,26,0.6));">
+             style="width: clamp(110px, 22vw, 280px); height: auto; display:block; filter: drop-shadow(0 10px 38px rgba(200,144,26,0.6));">
       </div>
       <div>
         <div style="font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-light); margin-bottom:0.75rem;">The COG$ Community Token</div>
@@ -1640,7 +1650,7 @@
           <input type="hidden" name="_replyto" id="replyto-field" value="">
           <input type="hidden" name="email" id="hidden-email-copy" value="">
           <!-- Auto-response: updated by JS to include member number + wallet setup link -->
-          <input type="hidden" name="_autoresponse" id="autoresponse-field" value="Thank you for reserving your COG$ membership.">
+          <input type="hidden" name="_autoresponse" id="autoresponse-field" value="Thank you for reserving your COG$ membership with COG$ Community Resources Wealth Foundation (ABN: 61 734 327 831). Your unique 16-digit member number and wallet setup link will be displayed on screen. Foundation Day is 14 May — no payment required until then. Visit cogsaustralia.org/wallet.html to access your Independence Vault. Questions? Email COGsAustralia@gmail.com">
           <!-- Honeypot spam trap -->
           <input type="text" name="_honey" style="display:none">
           <!-- Total reservation value — populated by JS before submit -->

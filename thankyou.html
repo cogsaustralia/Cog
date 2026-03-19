@@ -357,6 +357,57 @@
       </div>
     </div>
 
+    <!-- YOUR RESERVATION SUMMARY — standalone card shown to all visitors -->
+    <div id="reservationSummaryCard" style="display:none;background:var(--bg-card);border:1px solid var(--border-strong);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:2rem">
+
+      <div style="background:rgba(200,144,26,0.1);padding:.75rem 1.25rem;border-bottom:1px solid var(--border-strong)">
+        <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light)">Your COG$ Reservation</div>
+      </div>
+
+      <!-- Two totals side by side -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border-strong)">
+        <div style="padding:1.1rem;text-align:center;border-right:1px solid var(--border-strong);overflow:hidden;min-width:0">
+          <div style="font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.35rem">Total COG$</div>
+          <div id="rTotalCogs" style="font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,7vw,2.2rem);color:var(--gold-light);line-height:1;word-break:break-word">1</div>
+          <div style="font-size:10px;color:var(--text-faint);margin-top:3px">tokens reserved</div>
+        </div>
+        <div style="padding:1.1rem;text-align:center;overflow:hidden;min-width:0">
+          <div style="font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.35rem">Est. Value</div>
+          <div id="rTotalValue" style="font-family:'DM Serif Display',serif;font-size:clamp(1rem,5vw,2.2rem);color:var(--gold-light);line-height:1;word-break:break-word">$4.00</div>
+          <div style="font-size:10px;color:var(--text-faint);margin-top:3px">at $4 per token</div>
+        </div>
+      </div>
+
+      <!-- Breakdown -->
+      <div style="padding:.85rem 1.25rem">
+        <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.5rem">Breakdown</div>
+        <div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:15px;margin-right:8px;flex-shrink:0">🪙</span>
+          <span style="font-size:13px;color:var(--text-muted);flex:1">Personal NFT Membership</span>
+          <span id="rNft" style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--gold-light);flex-shrink:0">1</span>
+        </div>
+        <div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:15px;margin-right:8px;flex-shrink:0">💛</span>
+          <span style="font-size:13px;color:var(--text-muted);flex:1">Investment COG$</span>
+          <span id="rInvest" style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--text);flex-shrink:0">0</span>
+        </div>
+        <div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:15px;margin-right:8px;flex-shrink:0">🌿</span>
+          <span style="font-size:13px;color:var(--text-muted);flex:1">Landholder COG$</span>
+          <span id="rLand" style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--text);flex-shrink:0">0</span>
+        </div>
+        <div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:15px;margin-right:8px;flex-shrink:0">🤝</span>
+          <span style="font-size:13px;color:var(--text-muted);flex:1">Donation COG$</span>
+          <span id="rDonate" style="font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--text);flex-shrink:0">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0 0">
+          <span style="font-size:12px;font-weight:500;color:var(--text)">Estimated reservation value</span>
+          <span id="rTotal" style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--gold-light);flex-shrink:0;margin-left:8px">$4.00</span>
+        </div>
+      </div>
+    </div>
+
     <div class="next-steps">
       <h2>What happens next</h2>
       <!-- MEMBER NUMBER REVEAL — populated by JS from sessionStorage -->
@@ -376,60 +427,6 @@
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.65;text-align:center">
           Keep this number safe — it is your unique identifier for the COG$ Independence Vault.<br>
           <span style="color:var(--gold-light)">✓ Also included in your confirmation email</span>
-        </div>
-
-        <!-- Token summary — clean card layout -->
-        <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem">
-
-          <!-- Hero totals row -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;background:rgba(200,144,26,0.08);border-bottom:1px solid var(--border-strong)">
-            <div style="padding:1rem;text-align:center;border-right:1px solid var(--border-strong);overflow:hidden;min-width:0">
-              <div style="font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.4rem">Total COG$</div>
-              <div id="rTotalCogs" style="font-family:'DM Serif Display',serif;font-size:clamp(1.2rem,6vw,2rem);color:var(--gold-light);line-height:1.1;word-break:break-word">1</div>
-              <div style="font-size:10px;color:var(--text-faint);margin-top:3px">tokens reserved</div>
-            </div>
-            <div style="padding:1rem;text-align:center;overflow:hidden;min-width:0">
-              <div style="font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.4rem">Est. Value</div>
-              <div id="rTotalValue" style="font-family:'DM Serif Display',serif;font-size:clamp(0.95rem,4.5vw,2rem);color:var(--gold-light);line-height:1.1;word-break:break-word">$4.00</div>
-              <div style="font-size:10px;color:var(--text-faint);margin-top:3px">at $4 per token</div>
-            </div>
-          </div>
-
-          <!-- Token breakdown rows -->
-          <div style="padding:.75rem 1rem">
-            <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.6rem">Breakdown</div>
-            <div style="display:flex;flex-direction:column;gap:0">
-
-              <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-                <span style="font-size:15px;margin-right:8px;flex-shrink:0">🪙</span>
-                <span style="font-size:13px;color:var(--text-muted);flex:1">Personal NFT Membership</span>
-                <span id="rNft" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--gold-light);margin-left:8px;flex-shrink:0">1</span>
-              </div>
-
-              <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-                <span style="font-size:15px;margin-right:8px;flex-shrink:0">💛</span>
-                <span style="font-size:13px;color:var(--text-muted);flex:1">Investment COG$</span>
-                <span id="rInvest" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-left:8px;flex-shrink:0">0</span>
-              </div>
-
-              <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-                <span style="font-size:15px;margin-right:8px;flex-shrink:0">🌿</span>
-                <span style="font-size:13px;color:var(--text-muted);flex:1">Landholder COG$</span>
-                <span id="rLand" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-left:8px;flex-shrink:0">0</span>
-              </div>
-
-              <div style="display:flex;align-items:center;padding:7px 0">
-                <span style="font-size:15px;margin-right:8px;flex-shrink:0">🤝</span>
-                <span style="font-size:13px;color:var(--text-muted);flex:1">Donation COG$</span>
-                <span id="rDonate" style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-left:8px;flex-shrink:0">0</span>
-              </div>
-
-            </div>
-            <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border-strong);display:flex;justify-content:space-between;align-items:center">
-              <span style="font-size:12px;font-weight:500;color:var(--text)">Estimated reservation value</span>
-              <span id="rTotal" style="font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--gold-light);flex-shrink:0;margin-left:8px">$4.00</span>
-            </div>
-          </div>
         </div>
 
         <!-- Wallet link -->
@@ -611,6 +608,9 @@
     // Show the reveal block
     var reveal = document.getElementById('memberReveal');
     if (reveal) reveal.style.display = 'block';
+    // Also show the standalone reservation summary card
+    var sumCard = document.getElementById('reservationSummaryCard');
+    if (sumCard) sumCard.style.display = 'block';
 
     // Populate fields
     var el = function(id) { return document.getElementById(id); };
