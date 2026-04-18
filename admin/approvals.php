@@ -4,6 +4,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/admin_paths.php';
 require_once __DIR__ . '/includes/ops_workflow.php';
 require_once __DIR__ . '/includes/admin_sidebar.php';
+if (file_exists(__DIR__ . '/includes/LedgerEmitter.php'))     require_once __DIR__ . '/includes/LedgerEmitter.php';
+if (file_exists(__DIR__ . '/includes/AccountingHooks.php'))   require_once __DIR__ . '/includes/AccountingHooks.php';
 
 ops_require_admin();
 $pdo = ops_db();
@@ -152,6 +154,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             if (function_exists('ops_asset_backing_sync_approval_state')) { ops_asset_backing_sync_approval_state($pdo, (int)$req['id']); }
             $needsBacking = function_exists('ops_asset_backing_status_for_approval') ? !empty(ops_asset_backing_status_for_approval($pdo, (int)$req['id'])['required']) : false;
+
+            // P-Class Stage 2 — emit Godley allocation entries when a PAY_IT_FORWARD_COG is approved
+            // and a recipient member is specified. Moves $1 from P-CLASS-SUSPENSE → STA-PARTNERS-POOL.
+            if ($meta['code'] === 'PAY_IT_FORWARD_COG' && !$needsBacking) {
+                $recipientMemberId = (int)($_POST['pclass_recipient_member_id'] ?? 0);
+                if ($recipientMemberId > 0 && class_exists('AccountingHooks')) {
+                    $paymentId = (int)(one($pdo, "SELECT id FROM payments WHERE member_id=? AND payment_status='paid' ORDER BY id DESC LIMIT 1", [(int)$req['member_id']])['id'] ?? 0);
+                    if ($paymentId > 0) {
+                        AccountingHooks::onPayItForwardAllocated($pdo, $paymentId, $recipientMemberId, $adminId ?: null);
+                    }
+                }
+            }
+
             $flash = $needsBacking ? 'COG$ approved. This stewardship class now needs asset backing before it can move into execution.' : 'COG$ approved and the flow chain has been advanced.';
 
         } elseif ($action === 'hold') {
@@ -281,12 +296,22 @@ function action_form(array $r, string $view): string {
     $mid  = h((string)($r['member_id'] ?? ''));
     $tcid = h((string)($r['token_class_id'] ?? ''));
     $back = h("?view={$view}");
+    $classCode = (string)($r['class_code'] ?? '');
+    $pclassField = '';
+    if ($classCode === 'PAY_IT_FORWARD_COG') {
+        $pclassField = "<div style='margin-top:8px;padding:10px;background:rgba(212,178,92,.06);border:1px solid rgba(212,178,92,.2);border-radius:8px;font-size:12px'>"
+            . "<label style='color:#d4b25c;font-weight:700;display:block;margin-bottom:4px'>P-Class Stage 2 — Recipient member ID (optional)</label>"
+            . "<input type='number' name='pclass_recipient_member_id' min='1' placeholder='Member ID — triggers Stage 2 Godley allocation' style='background:#0f1720;border:1px solid rgba(255,255,255,.12);color:#eef2f7;padding:6px 9px;border-radius:7px;font:inherit;font-size:12px;width:100%'>"
+            . "<div style='color:#9fb0c1;font-size:11px;margin-top:4px'>If supplied, emits P-CLASS-SUSPENSE → STA-PARTNERS-POOL Godley entry on approval (cl.26.6).</div>"
+            . "</div>";
+    }
     return "<form method='post' action='{$back}'>
       <input type='hidden' name='_csrf' value='{$csrf}'>
       <input type='hidden' name='request_id' value='{$rid}'>
       <input type='hidden' name='member_id' value='{$mid}'>
       <input type='hidden' name='token_class_id' value='{$tcid}'>
       <textarea name='notes' placeholder='Optional note'></textarea>
+      {$pclassField}
       <div class='btns' style='margin-top:8px'>
         <button type='submit' name='action' value='approve' class='btn-approve'>Approve</button>
         <button type='submit' name='action' value='hold' class='btn-hold'>Hold</button>

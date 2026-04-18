@@ -51,6 +51,8 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'ledger.php') return 'accounting';
         if ($script === 'expenses.php') return 'expenses';
         if ($script === 'trust_income.php') return 'trust_income';
+        if ($script === 'stb_distributions.php') return 'stb_distributions';
+        if ($script === 'grants.php') return 'grants';
         if ($script === 'session-check.php') return 'session_check';
         if ($script === 'legacy-dependencies.php') return 'legacy_dependencies';
         if ($script === 'operator_security.php') return 'operator_security';
@@ -192,6 +194,8 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'reconciliation',    'label' => '🤖  Reconciliation Agent',    'href' => './reconciliation_agent.php'],
                 ['key' => 'expenses',          'label' => '🧾  Expenses',                'href' => './expenses.php'],
                 ['key' => 'trust_income',      'label' => '💰  Trust Income',            'href' => './trust_income.php'],
+                ['key' => 'stb_distributions', 'label' => '📤  STB Distributions',       'href' => './stb_distributions.php'],
+                ['key' => 'grants',            'label' => '🌿  Sub-Trust C Grants',      'href' => './grants.php'],
                 ['key' => 'doc_downloads',     'label' => '📥  Doc Downloads',           'href' => './doc-downloads.php'],
                 ['key' => 'email_access',      'label' => '📮  Email Access',            'href' => './email_access.php'],
                 ['key' => 'operator_security', 'label' => '🔐  Operator Security',       'href' => './operator_security.php'],
