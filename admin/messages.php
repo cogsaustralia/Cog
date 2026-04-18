@@ -603,15 +603,14 @@ ob_start();
 ?>
 <div class="row-grid">
   <div class="card">
-  <div class="card-head"><h2>Email templates</h2></div>
-  <div class="card-body">
-    <div class="table-wrap"><table><thead><tr><th>Key</th><th>Subject</th><th>Status</th><th>Terms</th><th></th></tr></thead><tbody>
+    <div class="card-head"><h2>Email templates</h2></div>
+    <div class="card-body table-wrap"><table><thead><tr><th>Key</th><th>Subject</th><th>Status</th><th>Terms</th><th></th></tr></thead><tbody>
       <?php if (!$templates): ?><tr><td colspan="5" class="empty">No templates found.</td></tr><?php endif; ?>
       <?php foreach ($templates as $row): $terms = array_unique(array_merge(msg_flagged_terms((string)$row['subject_line']), msg_flagged_terms((string)$row['body_text']))); ?>
       <tr>
         <td class="code"><?= h($row['template_key']) ?></td>
         <td><?= h($row['subject_line']) ?></td>
-        <td><?= !empty($row['is_active']) ? 'active' : 'inactive' ?></td>
+        <td><?= !empty($row['is_active']) ? '<span class="st st-ok">Active</span>' : '<span class="st st-dim">Inactive</span>' ?></td>
         <td><?= $terms ? h(implode(', ', $terms)) : '—' ?></td>
         <td><a class="btn-secondary" href="./messages.php?section=email_templates&edit=<?= (int)$row['id'] ?>">Edit</a></td>
       </tr>
@@ -619,8 +618,9 @@ ob_start();
     </tbody></table></div>
   </div>
   <div class="card">
-    <h3 style="margin-top:0"><?= !empty($t['id']) ? 'Edit template' : 'New template' ?></h3>
-    <?php if ($templateTerms): ?><div class="msg warn"><?= h(msg_warning_html($templateTerms)) ?></div><?php endif; ?>
+    <div class="card-head"><h2><?= !empty($t['id']) ? 'Edit template' : 'New template' ?></h2></div>
+    <div class="card-body">
+    <?php if ($templateTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($templateTerms)) ?></div><?php endif; ?>
     <form method="post">
       <input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>">
       <input type="hidden" name="action" value="save_template">
@@ -629,8 +629,9 @@ ob_start();
       <div class="field"><label>Subject line</label><input name="subject_line" value="<?= h((string)($t['subject_line'] ?? '')) ?>"></div>
       <div class="field"><label>Body text</label><textarea name="body_text"><?= h((string)($t['body_text'] ?? '')) ?></textarea></div>
       <div class="field"><label><input type="checkbox" name="is_active" value="1" <?= !empty($t['is_active']) ? 'checked' : '' ?>> Active</label></div>
-      <button class="btn" type="submit">Save template</button>
+      <button class="btn btn-gold" type="submit">Save template</button>
     </form>
+    </div>
   </div>
 </div>
 <?php endif; ?>
