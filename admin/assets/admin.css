@@ -50,9 +50,10 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(180deg, var(--panel), var(--panel2));
   border: 1px solid var(--line);
   border-radius: var(--r);
-  overflow: hidden;
   margin-bottom: 18px;
 }
+/* Children that need clipped corners use this */
+.card > table, .card > .table-wrap { overflow: hidden; }
 .card-head {
   display: flex;
   justify-content: space-between;
