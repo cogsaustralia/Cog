@@ -203,26 +203,22 @@ if (isset($_GET['saved'])) $flash = 'COG$ Class saved.';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>COG$ Classes</title>
+<title>COG$ Token / Unit Classes — Admin</title>
 <style>
-:root{--bg:#0f1720;--panel:#17212b;--panel2:#1f2c38;--text:#eef2f7;--muted:#9fb0c1;--line:rgba(255,255,255,.08);--gold:#d4b25c;--ok:#b8efc8;--bad:#ffb4be}
-*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#0c1319,#121d27 24%,#0f1720);color:var(--text)}
-a{color:inherit}.main{padding:20px;min-width:0}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:16px}
-.table-wrap{overflow:auto;max-width:100%} table{width:100%;border-collapse:collapse} th,td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,.08);text-align:left;vertical-align:top} th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
-tr.clickable{cursor:pointer} tr.clickable:hover{background:rgba(255,255,255,.035)}
-.kicker{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}.muted{color:var(--muted)}
+tr.clickable{cursor:pointer}
+tr.clickable:hover{background:rgba(255,255,255,.035)}
+.kicker{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .chip{display:inline-block;padding:.35rem .6rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:12px}
-.notice{padding:12px 14px;border-radius:14px;margin-bottom:12px}.ok{background:rgba(47,143,87,.12);color:var(--ok);border:1px solid rgba(47,143,87,.35)}.err{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
-.btn{display:inline-block;padding:.82rem .98rem;border-radius:14px;border:1px solid rgba(212,178,92,.35);background:linear-gradient(180deg,#d4b25c,#b98b2f);color:#201507;font-weight:800;text-decoration:none;cursor:pointer}
-.btn.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
-.actions{display:flex;gap:10px;flex-wrap:wrap}
+.notice{padding:12px 14px;border-radius:14px;margin-bottom:12px}
 .overlay{position:fixed;inset:0;background:rgba(3,8,14,.62);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:flex-end;padding:24px;z-index:1000}
-.overlay.open{display:flex}.drawer{width:min(560px, 100%);max-height:calc(100vh - 48px);overflow:auto;background:linear-gradient(180deg,#16212b,#1d2a36);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.38)}
-.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.xbtn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);border-radius:12px;padding:.6rem .8rem;cursor:pointer}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.span-2{grid-column:1 / -1}
-label{font-size:13px;color:var(--muted)} input,select{width:100%;background:#0f1720;border:1px solid var(--line);color:var(--text);padding:.86rem .92rem;border-radius:12px;font:inherit}
-.help{font-size:12px;color:var(--muted);line-height:1.45}
-@media(max-width:980px){.main{padding:14px}.form-grid{grid-template-columns:1fr}.overlay{padding:12px}}
+.overlay.open{display:flex}
+.drawer{width:min(560px,100%);max-height:calc(100vh - 48px);overflow:auto;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.38)}
+.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.xbtn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);border-radius:12px;padding:.6rem .8rem;cursor:pointer}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.span-2{grid-column:1 / -1}
+@media(max-width:980px){.form-grid{grid-template-columns:1fr}.overlay{padding:12px}}
 </style>
 </head>
 <body>
@@ -230,26 +226,30 @@ label{font-size:13px;color:var(--muted)} input,select{width:100%;background:#0f1
 <?php admin_sidebar_render('classes'); ?>
 <main class="main">
   <?php ops_admin_help_assets_once(); ?>
-  <?= ops_admin_info_panel('Token class administration', 'What this page does', 'Use this page to define and maintain the COG$ class catalog used across reservation, issuance, wallet visibility, approval requirements, and admin processing. It is a structural page, so edits here affect how classes behave everywhere else in the system.', [
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    ops_admin_info_panel('Token class administration', 'What this page does', 'Use this page to define and maintain the COG$ class catalog used across reservation, issuance, wallet visibility, approval requirements, and admin processing. It is a structural page, so edits here affect how classes behave everywhere else in the system.', [
       'Use the table to review the current catalog and click a row to edit its configuration.',
       'Use the drawer to add or update class settings such as price, limits, visibility, and approval posture.',
-      'Identity classes keep their hard limits and should be changed with particular care.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'Class changes should be controlled because they affect reservation, issuance, wallet display, and operational rules.', [
+      'Identity classes keep their hard limits and should be changed with particular care.',
+    ]),
+    ops_admin_workflow_panel('Typical workflow', 'Class changes should be controlled because they affect reservation, issuance, wallet display, and operational rules.', [
       ['title' => 'Review the current catalog', 'body' => 'Check the class code, type, prices, totals, and active status before making a change.'],
       ['title' => 'Open the correct class', 'body' => 'Click an existing row to edit it or start a new class when the catalog genuinely needs expansion.'],
       ['title' => 'Save and verify downstream impact', 'body' => 'After saving, confirm that the affected wallet, approval, or admin flows still behave as expected.'],
-  ]) ?>
-  <?= ops_admin_status_panel('How to read this page', 'The class table is a compact summary of structural class settings and activity totals.', [
+    ]),
+    ops_admin_status_panel('How to read this page', 'The class table is a compact summary of structural class settings and activity totals.', [
       ['label' => 'Order', 'body' => 'Display order used when the class catalog is rendered in admin or wallet contexts.'],
       ['label' => 'Code / Type', 'body' => 'The machine/admin code and whether the class behaves like an NFT-style identity class or a fungible class.'],
       ['label' => 'Totals', 'body' => 'Activity totals tied to reservation or issuance depending on the class type.'],
       ['label' => 'Status', 'body' => 'Whether the class is active and whether it is locked for editing/operational purposes.'],
+    ]),
   ]) ?>
   <div class="card">
-    <div class="kicker">Advanced operations</div>
-    <h1 style="margin:0 0 8px">COG$ Classes<?= ops_admin_help_button('COG$ Classes', 'This page manages the structural token-class catalog used by the system. It is not just descriptive: class settings here affect prices, limits, approval posture, wallet display, and processing rules.') ?></h1>
-    <p class="muted" style="margin:0">Click a class row to edit it. The editor now opens as a popout instead of staying permanently visible.</p>
+    <div class="card-body">
+    <div class="kicker">Token administration</div>
+    <h1 style="margin:0 0 8px">COG$ Token / Unit Classes <?= ops_admin_help_button('COG$ Token / Unit Classes', 'This page manages the structural token-class catalog used by the system. Class settings here affect prices, limits, approval posture, wallet display, and processing rules.') ?></h1>
+    <p class="muted" style="margin:0">Click a class row to edit it. The editor opens as a popout panel.</p>
+    </div>
   </div>
 
   <?php if ($flash): ?><div class="notice ok"><?=h($flash)?></div><?php endif; ?>
@@ -322,8 +322,8 @@ label{font-size:13px;color:var(--muted)} input,select{width:100%;background:#0f1
   <div class="drawer">
     <div class="drawer-head">
       <div>
-        <div class="kicker">Edit code class</div>
-        <h2 style="margin:0" id="drawerTitle"><?= (int)($editRow['id'] ?? 0) > 0 ? 'Edit COG$ Class' : 'Add COG$ Class' ?></h2>
+        <div class="kicker">Edit token / unit class</div>
+        <h2 style="margin:0" id="drawerTitle"><?= (int)($editRow['id'] ?? 0) > 0 ? 'Edit Token Class' : 'Add Token Class' ?></h2>
       </div>
       <button type="button" class="xbtn" id="closeOverlay">Close</button>
     </div>
