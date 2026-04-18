@@ -597,9 +597,11 @@ ob_start();
     ['label' => 'Terms warning', 'body' => 'The subject or body contains legacy or regulatory language that should be reviewed.'],
   ]),
 ]) ?>
+<?php
     $templates = msg_rows($pdo, 'SELECT * FROM email_templates ORDER BY id ASC');
     $t = $editTemplate ?: ['id'=>'','template_key'=>'','subject_line'=>'','body_text'=>'','is_active'=>1];
     $templateTerms = array_unique(array_merge(msg_flagged_terms((string)($t['subject_line'] ?? '')), msg_flagged_terms((string)($t['body_text'] ?? ''))));
+?>
 ?>
 <div class="row-grid">
   <div class="card">
