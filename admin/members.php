@@ -238,35 +238,39 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Partner Registry</title>
-<style>.shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
-.main{padding:20px;min-width:0}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:16px;min-width:0}
+<style>
+/* ── Members page specific ── */
 .table-wrap{overflow:auto;max-width:100%}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,.08);text-align:left;vertical-align:top}
-th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
-button,a.btn{display:inline-block;background:#d4b25c;color:#201507;border:1px solid rgba(212,178,92,.35);padding:.62rem .82rem;border-radius:12px;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}
-a.btn.secondary,button.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
 .btns{display:flex;gap:8px;flex-wrap:wrap}
 .btns form{display:inline-flex}
-.msg{padding:12px 14px;border-radius:14px;margin-bottom:12px}
-.ok{background:rgba(47,143,87,.12);color:var(--ok);border:1px solid rgba(47,143,87,.35)}
-.err{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
 .hint{font-size:12px;color:var(--muted)}
-.segmented{display:flex;gap:10px;flex-wrap:wrap}
-.segmented a{text-decoration:none;color:var(--text);padding:.7rem .95rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);font-weight:700}
-.segmented a.active{background:#d4b25c;color:#201507;border-color:rgba(212,178,92,.35)}
+.segmented{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.segmented a{text-decoration:none;color:var(--text);padding:.7rem .95rem;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);font-weight:700;font-size:13px}
+.segmented a.active{background:rgba(212,178,92,.12);color:var(--gold);border-color:rgba(212,178,92,.3)}
 .progress-stack{display:grid;gap:8px;min-width:240px}
 .progress-pill{display:inline-block;padding:.35rem .6rem;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:12px}
 .progress-meters{display:grid;gap:6px}
 .progress-row{display:grid;grid-template-columns:120px minmax(0,1fr) 70px;gap:10px;align-items:center}
-.meter{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
-.meter > span{display:block;height:100%;background:#d4b25c}
-.kpi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.kpi{padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
-.kpi .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
-.kpi .value{font-size:24px;font-weight:800;margin-top:6px}
-@media(max-width:980px){.shell{grid-template-columns:1fr}.main{padding:14px}.kpi-grid{grid-template-columns:1fr}.progress-row{grid-template-columns:1fr}.progress-row .meter{order:3}}
+.meter{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.meter > span{display:block;height:100%;background:var(--gold)}
+.kpi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi-box{padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.kpi-box .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.kpi-box .value{font-size:1.6rem;font-weight:800}
+/* ── Summary grid ── */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.summary-card{border-color:rgba(212,178,92,.2)}
+.summary-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.summary-card-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em}
+.summary-card-count{font-size:1.8rem;font-weight:800;margin-top:4px}
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mini-stat{padding:10px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;text-align:center}
+.mini-stat-val{font-size:1.1rem;font-weight:800}
+.mini-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;margin-top:2px}
+.mini-stat.ok .mini-stat-val{color:var(--ok)}
+.mini-stat.warn .mini-stat-val{color:var(--warn)}
+.mini-stat.gold .mini-stat-val{color:var(--gold)}
+@media(max-width:980px){.summary-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr}.progress-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -320,35 +324,35 @@ a.btn.secondary,button.secondary{background:rgba(255,255,255,.04);color:var(--te
   <?php if($error): ?><div class="msg err"><?=h($error)?></div><?php endif; ?>
 
 <?php if($showSummary): ?>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-    <div class="card" style="border-color:rgba(212,178,92,.2)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div><div style="font-size:11px;font-weight:700;color:#d4b25c;text-transform:uppercase;letter-spacing:.08em">Personal Partners (S-NFT)</div><div style="font-size:28px;font-weight:800;margin-top:4px"><?=$snftTotal?></div></div>
-        <a href="./members.php?type=personal" class="btn secondary" style="font-size:12px">View all →</a>
+  <div class="summary-grid">
+    <div class="card summary-card">
+      <div class="summary-card-header">
+        <div><div class="summary-card-title">Personal Partners (S-NFT)</div><div class="summary-card-count"><?=$snftTotal?></div></div>
+        <a href="./members.php?type=personal" class="btn btn-sm">View all →</a>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-        <div style="padding:10px;background:rgba(82,184,122,.06);border:1px solid rgba(82,184,122,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#7ee0a0"><?=$snftPaid?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">Entry paid</div></div>
-        <div style="padding:10px;background:rgba(96,212,184,.06);border:1px solid rgba(96,212,184,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#60d4b8"><?=$snftGnaf?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">G-NAF</div></div>
-        <div style="padding:10px;background:rgba(90,158,212,.06);border:1px solid rgba(90,158,212,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#5a9ed4"><?=$snftIdV?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">ID Verified</div></div>
-        <div style="padding:10px;background:rgba(212,178,92,.06);border:1px solid rgba(212,178,92,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#d4b25c"><?=$snftActive?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">Active</div></div>
+      <div class="mini-stats">
+        <div class="mini-stat ok"><div class="mini-stat-val"><?=$snftPaid?></div><div class="mini-stat-label">Entry paid</div></div>
+        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--blue)"><?=$snftGnaf?></div><div class="mini-stat-label">G-NAF</div></div>
+        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--purple)"><?=$snftIdV?></div><div class="mini-stat-label">ID Verified</div></div>
+        <div class="mini-stat gold"><div class="mini-stat-val"><?=$snftActive?></div><div class="mini-stat-label">Active</div></div>
       </div>
     </div>
-    <div class="card" style="border-color:rgba(96,212,184,.2)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div><div style="font-size:11px;font-weight:700;color:#60d4b8;text-transform:uppercase;letter-spacing:.08em">Business Partners (B-NFT)</div><div style="font-size:28px;font-weight:800;margin-top:4px"><?=$bnftTotal?></div></div>
-        <a href="./businesses.php" class="btn secondary" style="font-size:12px">View all →</a>
+    <div class="card summary-card" style="border-color:rgba(96,212,184,.2)">
+      <div class="summary-card-header">
+        <div><div class="summary-card-title" style="color:#60d4b8">Business Partners (B-NFT)</div><div class="summary-card-count"><?=$bnftTotal?></div></div>
+        <a href="./businesses.php" class="btn btn-sm">View all →</a>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-        <div style="padding:10px;background:rgba(82,184,122,.06);border:1px solid rgba(82,184,122,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#7ee0a0"><?=$bnftPaid?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">Paid ($40)</div></div>
-        <div style="padding:10px;background:rgba(96,212,184,.06);border:1px solid rgba(96,212,184,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#60d4b8"><?=$bnftGnaf?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">G-NAF</div></div>
-        <div style="padding:10px;background:rgba(212,178,92,.06);border:1px solid rgba(212,178,92,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#d4b25c"><?=$bnftSteward?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">Stewardship</div></div>
-        <div style="padding:10px;background:rgba(96,212,184,.06);border:1px solid rgba(96,212,184,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:800;color:#60d4b8"><?=$bnftActive?></div><div style="font-size:10px;color:#9fb0c1;text-transform:uppercase;margin-top:2px">Active</div></div>
+      <div class="mini-stats">
+        <div class="mini-stat ok"><div class="mini-stat-val"><?=$bnftPaid?></div><div class="mini-stat-label">Paid ($40)</div></div>
+        <div class="mini-stat"><div class="mini-stat-val" style="color:#60d4b8"><?=$bnftGnaf?></div><div class="mini-stat-label">G-NAF</div></div>
+        <div class="mini-stat gold"><div class="mini-stat-val"><?=$bnftSteward?></div><div class="mini-stat-label">Stewardship</div></div>
+        <div class="mini-stat"><div class="mini-stat-val" style="color:#60d4b8"><?=$bnftActive?></div><div class="mini-stat-label">Active</div></div>
       </div>
     </div>
   </div>
   <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-size:13px;font-weight:700">Recent Personal Members</div><a href="./members.php?type=personal" style="font-size:12px;color:#d4b25c;text-decoration:none">View all →</a></div>
-    <div class="table-wrap"><table><thead><tr><th>Name</th><th>Partner / Member # <?= ops_admin_help_button('Partner / Member number', 'This is the primary record reference. Use the Partner number where available for operator-facing support, while the legacy member number remains the underlying technical identifier.') ?></th><th>Payment</th><th>G-NAF</th><th>ID</th><th>Status <?= ops_admin_help_button('Status', 'Status combines wallet and registry readiness signals. Read it with JVPA, contribution, and approval context before taking any action.') ?></th><th>Joined</th></tr></thead><tbody>
+    <div class="card-head"><h2>Recent Personal Members</h2><a href="./members.php?type=personal">View all →</a></div>
+    <div class="card-body table-wrap"><table><thead><tr><th>Name</th><th>Partner / Member # <?= ops_admin_help_button('Partner / Member number', 'This is the primary record reference. Use the Partner number where available for operator-facing support, while the legacy member number remains the underlying technical identifier.') ?></th><th>Payment</th><th>G-NAF</th><th>ID</th><th>Status <?= ops_admin_help_button('Status', 'Status combines wallet and registry readiness signals. Read it with JVPA, contribution, and approval context before taking any action.') ?></th><th>Joined</th></tr></thead><tbody>
     <?php foreach($recentSnft as $s): $sPaid=($s['signup_payment_status']??'')=='paid'; $sGnaf=!empty($s['gnaf_pid']); $sIdV=((int)($s['id_verified']??0)===1)||in_array($s['kyc_status']??'',['verified','address_verified'],true); $sAcc=$recentSnftAcceptance[(int)($s['id']??0)]??null; $sAccLabel=function_exists('ops_acceptance_status_label')?ops_acceptance_status_label($sAcc):'—'; $sAccTone=function_exists('ops_acceptance_status_tone')?ops_acceptance_status_tone($sAcc):'warn'; ?>
       <tr><td><strong style="font-size:13px"><?=h($s['full_name']??'')?></strong><div style="font-size:11px;color:#9fb0c1"><?=h($s['email']??'')?></div></td><td style="font-family:monospace;font-size:12px;color:#9fb0c1"><?=h($s['member_number']??'')?></td><td><?=$sPaid?'<span style="color:#7ee0a0;font-size:11px;font-weight:700">✓ Paid</span>':'<span style="color:#ffb4be;font-size:11px">Pending</span>'?></td><td><span style="font-size:11px;color:<?= $sAccTone==='ok' ? '#7ee0a0' : ($sAccTone==='warn' ? '#d4b25c' : '#ffb4be') ?>"><?=h($sAccLabel)?></span></td><td><?=$sGnaf?'<span style="color:#60d4b8;font-size:11px">✓</span>':'<span style="color:#9fb0c1;font-size:11px">—</span>'?></td><td><?=$sIdV?'<span style="color:#5a9ed4;font-size:11px">✓</span>':'<span style="color:#9fb0c1;font-size:11px">—</span>'?></td><td><span style="font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.04);color:#9fb0c1"><?=h($s['wallet_status']??'')?></span></td><td style="font-size:11px;color:#9fb0c1"><?=h(substr($s['created_at']??'',0,10))?></td></tr>
     <?php endforeach; if(!$recentSnft):?><tr><td colspan="8" style="color:#9fb0c1;text-align:center;padding:16px">No personal members yet.</td></tr><?php endif;?>
