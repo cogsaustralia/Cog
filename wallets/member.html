@@ -2739,6 +2739,8 @@ window.switchOtpChannel = switchOtpChannel;
 ════════════════════════════ */
 function coinTransition(href, label){
   label = label || 'Opening…';
+  // Mark as intentional navigation so the pagehide sendBeacon logout does not fire
+  window._vaultNavigating = true;
   const overlay = document.createElement('div');
   overlay.className = 'coin-transition';
   overlay.innerHTML =

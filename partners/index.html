@@ -692,7 +692,7 @@
             <div class="part-areas-tags" id="participation-areas-tags" style="display:none"></div>
           </div>
 
-              <a href="#" class="vault-btn" onclick="openBusinessVault(event)">Business →</a>
+              <a href="#" class="vault-btn" id="business-vault-btn" onclick="openBusinessVault(event)" style="display:none">Business →</a>
               <button class="btn-logout" id="logout-btn">Log out</button>
             </div>
           </div>
@@ -1475,6 +1475,14 @@ function enterCommunity(data){
   setInterval(loadCommunityStats, 60000);
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState === 'visible') loadCommunityStats();
+  });
+
+  // Show Business vault button only if this Partner has a linked business
+  api('vault/member-business').then(function(r){
+    var btn = document.getElementById('business-vault-btn');
+    if(btn) btn.style.display = (r && r.has_business) ? '' : 'none';
+  }).catch(function(){
+    // Non-fatal — button stays hidden
   });
 }
 
