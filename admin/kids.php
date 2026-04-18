@@ -585,48 +585,23 @@ if ($guardianSearch !== '') {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Kids kS-NFT Registrations</title>
-<style>.main{padding:20px;max-width:1200px}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
+<style>
 .stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .stat{flex:1;min-width:110px;padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;text-align:center}
-.stat .sv{font-size:24px;font-weight:800;color:var(--gold)}
+.stat .sv{font-size:1.5rem;font-weight:800;color:var(--gold)}
 .stat .sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
-.badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
-.badge-pending{background:rgba(212,178,92,.12);color:var(--gold);border:1px solid rgba(212,178,92,.2)}
-.badge-verified{background:rgba(82,184,122,.12);color:#7ee0a0;border:1px solid rgba(82,184,122,.25)}
-.badge-issued{background:rgba(90,158,212,.12);color:#8ecef0;border:1px solid rgba(90,158,212,.25)}
-.badge-converted{background:rgba(180,120,200,.12);color:#d4a8e8;border:1px solid rgba(180,120,200,.25)}
-.badge-rejected{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
-.badge-doc_required{background:rgba(255,165,0,.12);color:#ffa040;border:1px solid rgba(255,165,0,.25)}
-table{width:100%;border-collapse:collapse}
-th,td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.05);text-align:left;vertical-align:middle;font-size:13px}
-th{color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:600;letter-spacing:.04em;padding-bottom:10px}
-tr:hover{background:rgba(255,255,255,.02)}
-label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px;font-weight:600}
-input,textarea,select{width:100%;background:#0f1720;border:1px solid var(--line);color:var(--text);padding:.65rem .75rem;border-radius:10px;font:inherit;font-size:13px}
-textarea{min-height:70px;resize:vertical}
-button,.btn{display:inline-block;background:var(--gold);color:#201507;border:1px solid rgba(212,178,92,.35);padding:.6rem .8rem;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;width:auto;text-decoration:none}
-.btn.secondary,.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
-.btn.danger{background:rgba(200,61,75,.15);color:var(--bad);border-color:rgba(200,61,75,.35)}
-.btn.sm,.sm{padding:5px 12px;font-size:12px;border-radius:8px}
-.btn:hover{opacity:.85}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.msg{padding:10px 14px;border-radius:12px;margin-bottom:12px;font-size:13px}
-.ok{background:rgba(47,143,87,.12);color:var(--ok);border:1px solid rgba(47,143,87,.35)}
-.err{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
-.muted{color:var(--muted)}
-.spacer{height:12px}
 .info-box{padding:10px 14px;border-radius:10px;background:rgba(212,178,92,.06);border:1px solid rgba(212,178,92,.15);font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.warning-box{padding:10px 14px;border-radius:10px;background:rgba(200,61,75,.08);border:1px solid rgba(200,61,75,.2);font-size:12px;color:var(--bad);margin-bottom:12px}
+.conversion-alert{color:#ffa040;font-weight:700}
 .drawer-bg{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);backdrop-filter:blur(3px)}
 .drawer-bg.show{display:block}
 .drawer{position:fixed;top:0;right:-520px;width:480px;max-width:92vw;height:100vh;background:var(--panel);border-left:1px solid var(--line);z-index:201;overflow-y:auto;padding:24px;transition:right .25s ease}
 .drawer-bg.show .drawer{right:0}
 .drawer h3{margin:0 0 16px;font-size:16px}
 .close-x{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
-.warning-box{padding:10px 14px;border-radius:10px;background:rgba(200,61,75,.08);border:1px solid rgba(200,61,75,.2);font-size:12px;color:var(--bad);margin-bottom:12px}
-.conversion-alert{color:#ffa040;font-weight:700}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}.main{padding:14px}.drawer{width:100%}}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}.drawer{width:100%}}
 </style>
 <script>
 function openDrawer(id){ document.getElementById(id)?.classList.add('show'); }
@@ -659,47 +634,47 @@ function searchGuardian(){
 <main class="main">
 
 <!-- Header -->
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;padding:14px 18px;background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px">
-  <div>
-    <h1 style="margin:0;font-size:18px">👶 Kids kS-NFT Registrations <?= ops_admin_help_button('Kids kS-NFT registrations', 'Use this page to register, verify, issue, and monitor child-linked kS-NFT records. It is the operator surface for guardian relationships, child status, conversion timing, and token issue state.') ?></h1>
-    <p class="muted" style="margin:4px 0 0;font-size:12px">Verify guardian relationships and manage kS-NFT tokens — MD clauses 25.1–25.5</p>
+<div class="card">
+  <div class="card-head">
+    <h1 style="margin:0;font-size:1.2rem">👶 Kids kS-NFT Registrations <?= ops_admin_help_button('Kids kS-NFT registrations', 'Use this page to register, verify, issue, and monitor child-linked kS-NFT records. It is the operator surface for guardian relationships, child status, conversion timing, and token issue state.') ?></h1>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-sm" onclick="openDrawer('register-drawer')">+ Register Child</button><?= ops_admin_help_button('Register Child', 'Use this to create a new child registration directly from admin when needed.') ?>
+      <form method="post" style="display:inline">
+        <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+        <input type="hidden" name="action" value="run_conversions">
+        <button type="submit" class="btn btn-sm" onclick="return confirm('Run age-18 conversion check now?')" title="Auto-converts tokens for children who have turned 18">⟳ Age-18 Check</button><?= ops_admin_help_button('Run Age-18 Check', 'This checks whether any child records have reached the conversion point and need lifecycle handling.') ?>
+      </form>
+    </div>
   </div>
-  <div style="display:flex;gap:8px">
-    <button class="btn secondary sm" onclick="openDrawer('register-drawer')">+ Register Child</button><?= ops_admin_help_button('Register Child', 'Use this to create a new child registration directly from admin when needed.') ?>
-    <form method="post" style="display:inline">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
-      <input type="hidden" name="action" value="run_conversions">
-      <button type="submit" class="btn secondary sm" onclick="return confirm('Run age-18 conversion check now?')"
-        title="Auto-converts tokens for children who have turned 18">⟳ Run Age-18 Check</button><?= ops_admin_help_button('Run Age-18 Check', 'This checks whether any child records have reached the conversion point and need lifecycle handling.') ?>
-    </form>
+  <div class="card-body" style="padding-top:8px">
+    <p class="muted small" style="margin:0">Verify guardian relationships and manage kS-NFT tokens — MD clauses 25.1–25.5</p>
   </div>
 </div>
 
-<?= ops_admin_info_panel('Stage 4 · Children and guardians', 'What this page does', 'This page manages children linked to a guardian Partner record. It is where you register the child, verify the guardian relationship, issue the child-linked token, and monitor future conversion to the adult pathway.', [
-  'Use this page when a guardian submits child details through the vault or when an operator needs to create the record directly.',
-  'Verification here is about guardian relationship and child record integrity, not about later execution or governance publishing.',
-  'The age-18 conversion check is a lifecycle task for child records that are approaching adulthood.'
-]) ?>
-
-<?= ops_admin_workflow_panel('Typical workflow', 'Kids registrations follow a clear lifecycle from submission to token issue.', [
-  ['title' => 'Review the submission', 'body' => 'Check the guardian, the child details, the relationship type, and whether supporting documentation is required.'],
-  ['title' => 'Register the child formally', 'body' => 'Create the kS-NFT registration record from the vault submission or direct admin entry.'],
-  ['title' => 'Verify the record', 'body' => 'Verify only when the guardian relationship and child details are satisfactory.'],
-  ['title' => 'Issue and monitor', 'body' => 'Issue the token after verification, then monitor the future age-18 conversion timeline.']
-]) ?>
-
-<?= ops_admin_guide_panel('How to use this page', 'The page is split into intake, active registrations, and lifecycle management.', [
-  ['title' => 'Vault submissions', 'body' => 'These are member-submitted child applications waiting for formal admin registration.'],
-  ['title' => 'All registrations', 'body' => 'These are the authoritative child records after registration has been created.'],
-  ['title' => 'Verification and token issue', 'body' => 'Only verified records should proceed to child-member-number generation and token issue.'],
-  ['title' => 'Conversion monitoring', 'body' => 'Use the age-18 check and conversion indicators to watch records approaching adulthood.']
-]) ?>
-
-<?= ops_admin_status_panel('Field and status guide', 'These are the most important statuses and concepts on the kids page.', [
-  ['label' => 'Pending review', 'body' => 'The child record exists but still needs operator review or verification.'],
-  ['label' => 'Verified', 'body' => 'The guardian relationship and child details have been accepted by the operator.'],
-  ['label' => 'Tokens issued', 'body' => 'A child-linked token has been issued against the verified registration.'],
-  ['label' => 'Converted (18+)', 'body' => 'The child has reached adulthood and the record has been processed into the next lifecycle state.']
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 4 · Children and guardians', 'What this page does', 'This page manages children linked to a guardian Partner record. It is where you register the child, verify the guardian relationship, issue the child-linked token, and monitor future conversion to the adult pathway.', [
+    'Use this page when a guardian submits child details through the vault or when an operator needs to create the record directly.',
+    'Verification here is about guardian relationship and child record integrity, not about later execution or governance publishing.',
+    'The age-18 conversion check is a lifecycle task for child records that are approaching adulthood.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Kids registrations follow a clear lifecycle from submission to token issue.', [
+    ['title' => 'Review the submission', 'body' => 'Check the guardian, the child details, the relationship type, and whether supporting documentation is required.'],
+    ['title' => 'Register the child formally', 'body' => 'Create the kS-NFT registration record from the vault submission or direct admin entry.'],
+    ['title' => 'Verify the record', 'body' => 'Verify only when the guardian relationship and child details are satisfactory.'],
+    ['title' => 'Issue and monitor', 'body' => 'Issue the token after verification, then monitor the future age-18 conversion timeline.'],
+  ]),
+  ops_admin_guide_panel('How to use this page', 'The page is split into intake, active registrations, and lifecycle management.', [
+    ['title' => 'Vault submissions', 'body' => 'These are member-submitted child applications waiting for formal admin registration.'],
+    ['title' => 'All registrations', 'body' => 'These are the authoritative child records after registration has been created.'],
+    ['title' => 'Verification and token issue', 'body' => 'Only verified records should proceed to child-member-number generation and token issue.'],
+    ['title' => 'Conversion monitoring', 'body' => 'Use the age-18 check and conversion indicators to watch records approaching adulthood.'],
+  ]),
+  ops_admin_status_panel('Field and status guide', 'These are the most important statuses and concepts on the kids page.', [
+    ['label' => 'Pending review', 'body' => 'The child record exists but still needs operator review or verification.'],
+    ['label' => 'Verified', 'body' => 'The guardian relationship and child details have been accepted by the operator.'],
+    ['label' => 'Tokens issued', 'body' => 'A child-linked token has been issued against the verified registration.'],
+    ['label' => 'Converted (18+)', 'body' => 'The child has reached adulthood and the record has been processed into the next lifecycle state.'],
+  ]),
 ]) ?>
 
 <?php if($flash): ?><div class="msg ok"><?=h($flash)?></div><?php endif; ?>
@@ -733,10 +708,10 @@ $vaultSubmissions = q_rows($pdo,
 );
 if (!empty($vaultSubmissions)):
 ?>
-<div class="card" style="padding:0;overflow:hidden;border:1px solid rgba(212,178,92,.3);margin-bottom:14px">
-  <div style="padding:14px 18px;border-bottom:1px solid rgba(212,178,92,.15);background:rgba(212,178,92,.06);display:flex;justify-content:space-between;align-items:center">
-    <h2 style="margin:0;font-size:15px;font-weight:700;color:#d4b25c">⚠ Vault Submissions — Awaiting Admin Registration (<?=count($vaultSubmissions)?>)</h2>
-    <span style="font-size:11px;color:var(--muted)">Members submitted via wallet — click Register to create the formal kS-NFT record</span>
+<div class="card" style="border-color:rgba(212,178,92,.3);margin-bottom:14px">
+  <div class="card-head" style="background:rgba(212,178,92,.06);border-color:rgba(212,178,92,.15)">
+    <h2 style="margin:0;color:var(--gold)">⚠ Vault Submissions — Awaiting Admin Registration (<?=count($vaultSubmissions)?>)</h2>
+    <span class="muted small">Members submitted via wallet — click Register to create the formal kS-NFT record</span>
   </div>
   <div style="overflow-x:auto">
     <table>
