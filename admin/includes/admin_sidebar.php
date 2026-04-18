@@ -20,6 +20,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'rwa_assets.php') return 'rwa_assets';
         if ($script === 'rwa_valuations.php') return 'rwa_valuations';
         if ($script === 'governance.php') return 'governance';
+        if ($script === 'operations.php') return 'operations';
         if ($script === 'foundation_day.php') return 'foundation_day';
         if ($script === 'infrastructure.php') return 'infrastructure';
         if ($script === 'zones.php') return 'zones';
@@ -172,6 +173,7 @@ if (!function_exists('admin_sidebar_render')) {
             ],
             'Governance & Evidence' => [
                 ['key' => 'governance',        'label' => '🗳  Governance',              'href' => './governance.php'],
+                ['key' => 'operations',        'label' => '🤝  Partner Operations',      'href' => './operations.php'],
                 ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',           'href' => './foundation_day.php'],
                 ['key' => 'communications',    'label' => '📣  Communications',          'href' => './messages.php'],
                 ['key' => 'zones',             'label' => '📍  Zones & Eligibility',     'href' => './zones.php'],
