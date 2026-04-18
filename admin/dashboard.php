@@ -358,8 +358,8 @@ function activity_label(string $type): string {
       <!-- Member funnel -->
       <div class="card">
         <div class="card-head">
-          <h2>Member pipeline<?= ops_admin_help_button('Member pipeline', 'This card shows the high-level journey from reservation to active wallet state. It helps the operator understand where the current intake is accumulating before opening a deeper registry or intake page.') ?></h2>
-          <a href="./members.php">View all →</a>
+<div class="card-body">          <h2>Member pipeline<?= ops_admin_help_button('Member pipeline', 'This card shows the high-level journey from reservation to active wallet state. It helps the operator understand where the current intake is accumulating before opening a deeper registry or intake page.') ?></h2>
+          <a href="./members.php">View all →</a></div>
         </div>
         <div class="funnel">
           <div class="funnel-step">
@@ -391,8 +391,8 @@ function activity_label(string $type): string {
       <!-- Compliance intake -->
       <div class="card">
         <div class="card-head">
-          <h2>Compliance intake<?= ops_admin_help_button('Compliance intake', 'This section highlights JVPA and KYC status for recent partner intake so the operator can see which records still need compliance attention.') ?></h2>
-          <a href="./members.php">Partner Registry →</a>
+<div class="card-body">          <h2>Compliance intake<?= ops_admin_help_button('Compliance intake', 'This section highlights JVPA and KYC status for recent partner intake so the operator can see which records still need compliance attention.') ?></h2>
+          <a href="./members.php">Partner Registry →</a></div>
         </div>
         <div class="card-body">
           <div class="compliance-grid" style="margin-bottom:14px">
@@ -431,8 +431,8 @@ function activity_label(string $type): string {
       <!-- Activity feed -->
       <div class="card">
         <div class="card-head">
-          <h2>Recent activity<?= ops_admin_help_button('Recent activity', 'This feed provides a quick operator-readable trace of what the admin system has recorded recently. Use Audit for the deeper evidence trail.') ?></h2>
-          <a href="./audit.php">Full audit log →</a>
+<div class="card-body">          <h2>Recent activity<?= ops_admin_help_button('Recent activity', 'This feed provides a quick operator-readable trace of what the admin system has recorded recently. Use Audit for the deeper evidence trail.') ?></h2>
+          <a href="./audit.php">Full audit log →</a></div>
         </div>
         <div class="card-body" style="padding:0 20px">
           <?php if (empty($recentActivity)): ?>

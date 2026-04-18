@@ -207,13 +207,13 @@ if (isset($_GET['saved'])) $flash = 'COG$ Class saved.';
 <style>
 :root{--bg:#0f1720;--panel:#17212b;--panel2:#1f2c38;--text:#eef2f7;--muted:#9fb0c1;--line:rgba(255,255,255,.08);--gold:#d4b25c;--ok:#b8efc8;--bad:#ffb4be}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#0c1319,#121d27 24%,#0f1720);color:var(--text)}
-a{color:inherit}.main{padding:20px;min-width:0}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:16px}
-.table-wrap{overflow:auto;max-width:100%} table{width:100%;border-collapse:collapse} th,td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,.08);text-align:left;vertical-align:top} th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+a{color:inherit}
+   
 tr.clickable{cursor:pointer} tr.clickable:hover{background:rgba(255,255,255,.035)}
 .kicker{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}.muted{color:var(--muted)}
 .chip{display:inline-block;padding:.35rem .6rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:12px}
-.notice{padding:12px 14px;border-radius:14px;margin-bottom:12px}.ok{background:rgba(47,143,87,.12);color:var(--ok);border:1px solid rgba(47,143,87,.35)}.err{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
-.btn{display:inline-block;padding:.82rem .98rem;border-radius:14px;border:1px solid rgba(212,178,92,.35);background:linear-gradient(180deg,#d4b25c,#b98b2f);color:#201507;font-weight:800;text-decoration:none;cursor:pointer}
+.notice{padding:12px 14px;border-radius:14px;margin-bottom:12px}
+
 .btn.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
 .actions{display:flex;gap:10px;flex-wrap:wrap}
 .overlay{position:fixed;inset:0;background:rgba(3,8,14,.62);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:flex-end;padding:24px;z-index:1000}
@@ -222,7 +222,7 @@ tr.clickable{cursor:pointer} tr.clickable:hover{background:rgba(255,255,255,.035
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.span-2{grid-column:1 / -1}
 label{font-size:13px;color:var(--muted)} input,select{width:100%;background:#0f1720;border:1px solid var(--line);color:var(--text);padding:.86rem .92rem;border-radius:12px;font:inherit}
 .help{font-size:12px;color:var(--muted);line-height:1.45}
-@media(max-width:980px){.main{padding:14px}.form-grid{grid-template-columns:1fr}.overlay{padding:12px}}
+@media(max-width:980px){.form-grid{grid-template-columns:1fr}.overlay{padding:12px}}
 </style>
 </head>
 <body>
@@ -230,21 +230,23 @@ label{font-size:13px;color:var(--muted)} input,select{width:100%;background:#0f1
 <?php admin_sidebar_render('classes'); ?>
 <main class="main">
   <?php ops_admin_help_assets_once(); ?>
-  <?= ops_admin_info_panel('Token class administration', 'What this page does', 'Use this page to define and maintain the COG$ class catalog used across reservation, issuance, wallet visibility, approval requirements, and admin processing. It is a structural page, so edits here affect how classes behave everywhere else in the system.', [
-      'Use the table to review the current catalog and click a row to edit its configuration.',
-      'Use the drawer to add or update class settings such as price, limits, visibility, and approval posture.',
-      'Identity classes keep their hard limits and should be changed with particular care.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'Class changes should be controlled because they affect reservation, issuance, wallet display, and operational rules.', [
-      ['title' => 'Review the current catalog', 'body' => 'Check the class code, type, prices, totals, and active status before making a change.'],
-      ['title' => 'Open the correct class', 'body' => 'Click an existing row to edit it or start a new class when the catalog genuinely needs expansion.'],
-      ['title' => 'Save and verify downstream impact', 'body' => 'After saving, confirm that the affected wallet, approval, or admin flows still behave as expected.'],
-  ]) ?>
-  <?= ops_admin_status_panel('How to read this page', 'The class table is a compact summary of structural class settings and activity totals.', [
-      ['label' => 'Order', 'body' => 'Display order used when the class catalog is rendered in admin or wallet contexts.'],
-      ['label' => 'Code / Type', 'body' => 'The machine/admin code and whether the class behaves like an NFT-style identity class or a fungible class.'],
-      ['label' => 'Totals', 'body' => 'Activity totals tied to reservation or issuance depending on the class type.'],
-      ['label' => 'Status', 'body' => 'Whether the class is active and whether it is locked for editing/operational purposes.'],
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    <?= ops_admin_info_panel('Token class administration', 'What this page does', 'Use this page to define and maintain the COG$ class catalog used across reservation, issuance, wallet visibility, approval requirements, and admin processing. It is a structural page, so edits here affect how classes behave everywhere else in the system.', [
+          'Use the table to review the current catalog and click a row to edit its configuration.',
+          'Use the drawer to add or update class settings such as price, limits, visibility, and approval posture.',
+          'Identity classes keep their hard limits and should be changed with particular care.'
+      ]) ?>
+      <?= ops_admin_workflow_panel('Typical workflow', 'Class changes should be controlled because they affect reservation, issuance, wallet display, and operational rules.', [
+          ['title' => 'Review the current catalog', 'body' => 'Check the class code, type, prices, totals, and active status before making a change.'],
+          ['title' => 'Open the correct class', 'body' => 'Click an existing row to edit it or start a new class when the catalog genuinely needs expansion.'],
+          ['title' => 'Save and verify downstream impact', 'body' => 'After saving, confirm that the affected wallet, approval, or admin flows still behave as expected.'],
+      ]) ?>
+      <?= ops_admin_status_panel('How to read this page', 'The class table is a compact summary of structural class settings and activity totals.', [
+          ['label' => 'Order', 'body' => 'Display order used when the class catalog is rendered in admin or wallet contexts.'],
+          ['label' => 'Code / Type', 'body' => 'The machine/admin code and whether the class behaves like an NFT-style identity class or a fungible class.'],
+          ['label' => 'Totals', 'body' => 'Activity totals tied to reservation or issuance depending on the class type.'],
+          ['label' => 'Status', 'body' => 'Whether the class is active and whether it is locked for editing/operational purposes.'],
+      ]) ?>
   ]) ?>
   <div class="card">
     <div class="kicker">Advanced operations</div>
@@ -256,9 +258,9 @@ label{font-size:13px;color:var(--muted)} input,select{width:100%;background:#0f1
   <?php if ($error): ?><div class="notice err"><?=h($error)?></div><?php endif; ?>
 
   <div class="card">
-    <div class="actions" style="margin-bottom:12px">
+<div class="card-body">    <div class="actions" style="margin-bottom:12px">
       <button type="button" class="btn" id="openCreate">Add COG$ Class</button><?= ops_admin_help_button('Add COG$ Class', 'Use this when the catalog genuinely needs a new class. Creating a class changes the system-level configuration, so only add one when the legal and operational model supports it.') ?>
-      <span class="help">NFT rows show total issued. FT rows show total reserved and total issued.</span>
+      <span class="help">NFT rows show total issued. FT rows show total reserved and total issued.</span></div>
     </div>
     <div class="table-wrap">
       <table>

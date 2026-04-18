@@ -133,56 +133,57 @@ ops_admin_help_assets_once(); ?>
 .field input,.field select,.field textarea{width:100%;padding:.85rem 1rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text)}
 .field textarea{min-height:88px;resize:vertical}
 .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.stat{padding:16px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+
 .stat strong{display:block;font-size:1.45rem}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 @media (max-width:980px){.form-grid,.ops-grid,.stat-grid{grid-template-columns:1fr}}
 </style>
-<?= ops_admin_info_panel(
-    'Stage 7 — Audit, diagnostics, and control review',
-    'What this page does',
-    'Audit / Recovery is the authoritative control-review page for audit runs, snapshot verification, recovery drills, migration rehearsals, and discrepancy logging. Use it to record structured control evidence and test resilience, not to perform the operational fix itself.',
-    [
-        'Create audit runs when you need a formal review trail for governance, execution, infrastructure, zones, or the whole stack.',
-        'Record snapshot verifications when a state root, vote snapshot, eligibility snapshot, or execution snapshot has been checked against source evidence.',
-        'Use recovery and migration forms to document rehearsal activity, not just production incidents.',
-    ]
-) ?>
-
-<?= ops_admin_workflow_panel(
-    'Typical workflow',
-    'This page records control activity. It usually sits beside another operational page rather than replacing it.',
-    [
-        ['title' => 'Open a review object', 'body' => 'Create the audit run, verification, drill, migration record, or discrepancy.'],
-        ['title' => 'Perform the real check', 'body' => 'Carry out the governance, execution, infrastructure, or data review on the relevant operational page.'],
-        ['title' => 'Record the outcome', 'body' => 'Update the audit object here so the review trail is visible and reusable.'],
-        ['title' => 'Use bridge activity only diagnostically', 'body' => 'Legacy wallet/admin activity below is retained for traceability, not as the authoritative ledger.'],
-    ]
-) ?>
-
-<?= ops_admin_guide_panel(
-    'How to use this page',
-    'Each form below creates a different kind of control-review record. Choose the one that matches the review you are performing.',
-    [
-        ['title' => 'Create audit run', 'body' => 'Use for broad control reviews such as governance, execution, infrastructure, zones, or full-stack checks.'],
-        ['title' => 'Snapshot verification', 'body' => 'Use when a specific snapshot or hash needs to be checked and recorded.'],
-        ['title' => 'Recovery drill', 'body' => 'Use for controlled resilience or restoration practice.'],
-        ['title' => 'Migration rehearsal', 'body' => 'Use when testing movement between environments or ledger infrastructure.'],
-        ['title' => 'Ledger discrepancy', 'body' => 'Use when the recorded state does not reconcile and a tracked issue must be opened.'],
-    ]
-) ?>
-
-<?= ops_admin_status_panel(
-    'Status guide',
-    'These statuses show whether the review object is still open, actively being worked, or has reached a settled result.',
-    [
-        ['label' => 'opened / collecting / tested', 'body' => 'The review is still active and evidence gathering or checking is in progress.'],
-        ['label' => 'verified / remediated / closed', 'body' => 'The review reached a settled outcome and no longer needs active operator focus.'],
-        ['label' => 'pending / matched / mismatch / waived', 'body' => 'Snapshot verification states showing whether a record still needs checking or has a confirmed result.'],
-        ['label' => 'completed / failed / rolled_back', 'body' => 'Recovery and migration outcomes showing whether the rehearsal succeeded or had to be stopped.'],
-    ]
-) ?>
-
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    <?= ops_admin_info_panel(
+        'Stage 7 — Audit, diagnostics, and control review',
+        'What this page does',
+        'Audit / Recovery is the authoritative control-review page for audit runs, snapshot verification, recovery drills, migration rehearsals, and discrepancy logging. Use it to record structured control evidence and test resilience, not to perform the operational fix itself.',
+        [
+            'Create audit runs when you need a formal review trail for governance, execution, infrastructure, zones, or the whole stack.',
+            'Record snapshot verifications when a state root, vote snapshot, eligibility snapshot, or execution snapshot has been checked against source evidence.',
+            'Use recovery and migration forms to document rehearsal activity, not just production incidents.',
+        ]
+    ) ?>
+    
+    <?= ops_admin_workflow_panel(
+        'Typical workflow',
+        'This page records control activity. It usually sits beside another operational page rather than replacing it.',
+        [
+            ['title' => 'Open a review object', 'body' => 'Create the audit run, verification, drill, migration record, or discrepancy.'],
+            ['title' => 'Perform the real check', 'body' => 'Carry out the governance, execution, infrastructure, or data review on the relevant operational page.'],
+            ['title' => 'Record the outcome', 'body' => 'Update the audit object here so the review trail is visible and reusable.'],
+            ['title' => 'Use bridge activity only diagnostically', 'body' => 'Legacy wallet/admin activity below is retained for traceability, not as the authoritative ledger.'],
+        ]
+    ) ?>
+    
+    <?= ops_admin_guide_panel(
+        'How to use this page',
+        'Each form below creates a different kind of control-review record. Choose the one that matches the review you are performing.',
+        [
+            ['title' => 'Create audit run', 'body' => 'Use for broad control reviews such as governance, execution, infrastructure, zones, or full-stack checks.'],
+            ['title' => 'Snapshot verification', 'body' => 'Use when a specific snapshot or hash needs to be checked and recorded.'],
+            ['title' => 'Recovery drill', 'body' => 'Use for controlled resilience or restoration practice.'],
+            ['title' => 'Migration rehearsal', 'body' => 'Use when testing movement between environments or ledger infrastructure.'],
+            ['title' => 'Ledger discrepancy', 'body' => 'Use when the recorded state does not reconcile and a tracked issue must be opened.'],
+        ]
+    ) ?>
+    
+    <?= ops_admin_status_panel(
+        'Status guide',
+        'These statuses show whether the review object is still open, actively being worked, or has reached a settled result.',
+        [
+            ['label' => 'opened / collecting / tested', 'body' => 'The review is still active and evidence gathering or checking is in progress.'],
+            ['label' => 'verified / remediated / closed', 'body' => 'The review reached a settled outcome and no longer needs active operator focus.'],
+            ['label' => 'pending / matched / mismatch / waived', 'body' => 'Snapshot verification states showing whether a record still needs checking or has a confirmed result.'],
+            ['label' => 'completed / failed / rolled_back', 'body' => 'Recovery and migration outcomes showing whether the rehearsal succeeded or had to be stopped.'],
+        ]
+    ) ?>
+  ]) ?>
 <div class="card">
   <h2 style="margin:0 0 8px">Audit / recovery<?= ops_admin_help_button('Audit / recovery', 'This page is the authoritative control-review surface for audit runs, snapshot verifications, drills, rehearsals, and discrepancy records.') ?></h2>
   <p class="muted">This is the authoritative audit and recovery page for audit runs, snapshot verification, recovery drills, migration rehearsals, and discrepancy logging. Use legacy bridge screens for diagnostics only, not as the operational audit path.</p>

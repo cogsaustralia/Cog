@@ -315,6 +315,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
   <div class="alert alert-amber">AccountingHooks.php not loaded. Upload to admin/includes/ for full automation.</div>
 <?php endif; ?>
 
+<?= ops_admin_collapsible_help('Page guide & workflow', [
 <?php echo ops_admin_info_panel(
     'Finance control surface',
     'What this page does',
@@ -359,7 +360,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['label' => 'Overdue / Failed / Cancelled', 'body' => 'The item requires review because timing has been missed, the action failed, or it is no longer proceeding.'],
     ]
 ); ?>
-
+]) ?>
 <?php if (count($overdue)): ?>
   <div class="alert alert-red"><?php echo count($overdue); ?> overdue transfer<?php echo count($overdue) !== 1 ? 's' : ''; ?> — compliance deadline breached</div>
 <?php else: ?>

@@ -67,26 +67,28 @@ ob_start(); ?>
 @media (max-width:760px){.form-grid{grid-template-columns:1fr}}
 </style>
 <div class="group-stack">
-  <?= ops_admin_info_panel('System configuration', 'What this page does', 'Use this page to manage the shared settings that shape admin labels, bridge posture, control-plane mode, sender identity, and rollout behavior. This page changes how the system behaves, so operators should understand the impact before saving.', [
-      'Change labels here when admin-generated wording needs to change globally.',
-      'Use bridge and execution settings carefully because they affect operator workflow visibility and live process behavior.',
-      'Treat this as a platform-level configuration page, not a routine work queue.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'Settings changes should be deliberate and traceable. Use this sequence before saving platform-level changes.', [
-      ['title' => 'Review the current state', 'body' => 'Confirm which label, bridge, or rollout setting needs to change and why.'],
-      ['title' => 'Change only the intended fields', 'body' => 'Avoid broad edits when a single setting is enough.'],
-      ['title' => 'Save and verify', 'body' => 'After saving, confirm that the relevant admin pages and outputs now behave as expected.'],
-      ['title' => 'Record the operational reason', 'body' => 'Treat settings changes as controlled operational decisions, especially where they affect execution or bridge mode.'],
-  ]) ?>
-  <?= ops_admin_status_panel('How to read this page', 'The setting groups below are organized by operational purpose so you can see which changes are cosmetic labels and which change how the platform behaves.', [
-      ['label' => 'Public / internal labels', 'body' => 'These settings influence how admin-generated and public-facing text is described.'],
-      ['label' => 'Control-plane and rollout settings', 'body' => 'These change bridge posture, execution mode, evidence posture, and rollout status.'],
-      ['label' => 'Sender identity', 'body' => 'These settings affect the identity shown on outbound communications.'],
-  ]) ?>
-  <?= ops_admin_guide_panel('Settings section guide', 'Use this guide to understand the level of caution needed for each settings group.', [
-      ['title' => 'Labels', 'body' => 'Use when wording should change without renaming the database or technical identifiers.'],
-      ['title' => 'Control plane', 'body' => 'Use only when the operating posture of the admin system genuinely needs to change.'],
-      ['title' => 'Sender identity', 'body' => 'Use when the display name or sender address for system email needs updating.'],
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    <?= ops_admin_info_panel('System configuration', 'What this page does', 'Use this page to manage the shared settings that shape admin labels, bridge posture, control-plane mode, sender identity, and rollout behavior. This page changes how the system behaves, so operators should understand the impact before saving.', [
+          'Change labels here when admin-generated wording needs to change globally.',
+          'Use bridge and execution settings carefully because they affect operator workflow visibility and live process behavior.',
+          'Treat this as a platform-level configuration page, not a routine work queue.'
+      ]) ?>
+      <?= ops_admin_workflow_panel('Typical workflow', 'Settings changes should be deliberate and traceable. Use this sequence before saving platform-level changes.', [
+          ['title' => 'Review the current state', 'body' => 'Confirm which label, bridge, or rollout setting needs to change and why.'],
+          ['title' => 'Change only the intended fields', 'body' => 'Avoid broad edits when a single setting is enough.'],
+          ['title' => 'Save and verify', 'body' => 'After saving, confirm that the relevant admin pages and outputs now behave as expected.'],
+          ['title' => 'Record the operational reason', 'body' => 'Treat settings changes as controlled operational decisions, especially where they affect execution or bridge mode.'],
+      ]) ?>
+      <?= ops_admin_status_panel('How to read this page', 'The setting groups below are organized by operational purpose so you can see which changes are cosmetic labels and which change how the platform behaves.', [
+          ['label' => 'Public / internal labels', 'body' => 'These settings influence how admin-generated and public-facing text is described.'],
+          ['label' => 'Control-plane and rollout settings', 'body' => 'These change bridge posture, execution mode, evidence posture, and rollout status.'],
+          ['label' => 'Sender identity', 'body' => 'These settings affect the identity shown on outbound communications.'],
+      ]) ?>
+      <?= ops_admin_guide_panel('Settings section guide', 'Use this guide to understand the level of caution needed for each settings group.', [
+          ['title' => 'Labels', 'body' => 'Use when wording should change without renaming the database or technical identifiers.'],
+          ['title' => 'Control plane', 'body' => 'Use only when the operating posture of the admin system genuinely needs to change.'],
+          ['title' => 'Sender identity', 'body' => 'Use when the display name or sender address for system email needs updating.'],
+      ]) ?>
   ]) ?>
   <div class="section">
     <h2 style="margin-top:0">Phase 1 labels and control-plane settings<?= ops_admin_help_button('Phase 1 labels and control-plane settings', 'These settings drive admin labels, bridge posture, execution mode, rollout posture, and sender identity. Some settings are cosmetic; others materially change how operators see and use the control plane.') ?></h2>

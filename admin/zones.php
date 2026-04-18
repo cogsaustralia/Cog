@@ -124,41 +124,43 @@ foreach ($signoffs as $s) if (($s['status'] ?? '') === 'pending') $openSignoffs+
 ob_start(); ?>
 <?php ops_admin_help_assets_once(); ?>
 <style>
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.ops-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.field{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}.field label{font-weight:700;color:#d8e0ea}.field input,.field select,.field textarea{background:#0f1720;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;color:#eef2f7}.field textarea{min-height:120px;resize:vertical}.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:10px}.table-wrap{overflow:auto}.table-wrap table{width:100%;border-collapse:collapse}.table-wrap th,.table-wrap td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}.table-wrap th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:#8f9caf}.muted{color:#9fb0c1}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.stat{padding:18px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}.stat strong{display:block;font-size:2rem;margin-top:6px}.card h2,.card h3{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.bridge-note{padding:14px 16px;border-radius:16px;background:rgba(212,178,92,.08);border:1px solid rgba(212,178,92,.2);margin-bottom:18px}.small{font-size:.88rem}.empty-note{font-size:.9rem;color:#9fb0c1}@media(max-width:980px){.ops-grid,.form-grid,.stats{grid-template-columns:1fr}} </style>
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.ops-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.field{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}.field label{font-weight:700;color:#d8e0ea}.field input,.field select,.field textarea{background:#0f1720;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;color:#eef2f7}.field textarea{min-height:120px;resize:vertical}.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:10px}.table-wrap .table-wrap th,.table-wrap td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}.table-wrap .muted{color:#9fb0c1}.stat strong{display:block;font-size:2rem;margin-top:6px}.card h2,.card h3{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.bridge-note{padding:14px 16px;border-radius:16px;background:rgba(212,178,92,.08);border:1px solid rgba(212,178,92,.2);margin-bottom:18px}.small{font-size:.88rem}.empty-note{font-size:.9rem;color:#9fb0c1}@media(max-width:980px){.ops-grid,.form-grid,} </style>
 
 <div class="grid" style="margin-bottom:18px;gap:16px">
-  <?= ops_admin_info_panel('Stage 6 · Zones & eligibility', 'What this page does', 'Zones and eligibility is the operator page for the geographic and evidentiary controls that determine who is in scope for place-based governance. Use it to manage evidence packets, FNAC reviews, board signoffs, eligibility snapshots, and challenges to zone boundaries or inclusion logic.', [
-    'An affected zone is the governed area that determines who is in scope for local eligibility or place-based decisions.',
-    'Evidence packets hold the source material that supports why a zone exists and how it was defined.',
-    'FNAC reviews and board signoffs show the cultural and governance approvals required before a zone can be treated as settled.',
-    'Eligibility snapshots freeze who was in scope at a point in time so later disputes and audits can be checked against a stable record.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'Zones usually move through the same evidence and approval chain.', [
-    ['title' => 'Define or review the zone', 'body' => 'Start with the zone queue and confirm which affected area is being worked on.'],
-    ['title' => 'Collect evidence', 'body' => 'Create or update an evidence packet that records source layers, rationale, and evidence hash material.'],
-    ['title' => 'Record FNAC review', 'body' => 'Capture the relevant cultural review outcome and whether endorsement has been granted.'],
-    ['title' => 'Open Board signoff', 'body' => 'Once the evidence and FNAC stage are ready, open the formal board signoff request for the zone.'],
-    ['title' => 'Create eligibility snapshot', 'body' => 'Freeze the in-scope member set so the zone can later support governance, audit, or dispute resolution.'],
-    ['title' => 'Handle challenges', 'body' => 'Use the challenge workflow when a Partner disputes inclusion, exclusion, or the basis of the zone itself.']
-  ]) ?>
-  <?= ops_admin_guide_panel('How to use this page', 'Read the page in three passes: the live queue, the control actions, then the trace tables.', [
-    ['title' => 'Zone governance queue', 'body' => 'This is the quickest live view of the current zone state: status, FNAC, board, packet count, and ledger reference.'],
-    ['title' => 'Control actions', 'body' => 'These forms are how you add or update the evidence, review, signoff, snapshot, and challenge records.'],
-    ['title' => 'Trace tables', 'body' => 'The lower tables show what has already been recorded so you can explain and audit the current state.'],
-    ['title' => 'Address verification activity', 'body' => 'Use this section to connect member-level address checks back to zone inclusion and eligibility.']
-  ]) ?>
-  <?= ops_admin_status_panel('Status guide', 'These labels appear throughout the zone workflow.', [
-    ['label' => 'Active zone', 'body' => 'The zone is currently in force and may affect eligibility or governance scope.'],
-    ['label' => 'FNAC pending / endorsed / rejected', 'body' => 'Shows whether cultural review has not started, is complete and positive, or has been refused.'],
-    ['label' => 'Board pending / executed', 'body' => 'Shows whether the formal governance signoff is still open or has been completed.'],
-    ['label' => 'Evidence packet draft / ready / approved', 'body' => 'Shows whether the evidentiary basis is still being assembled or is settled enough for the next stage.'],
-    ['label' => 'Open challenge', 'body' => 'A Partner or operator has raised a dispute that still requires review.']
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    <?= ops_admin_info_panel('Stage 6 · Zones & eligibility', 'What this page does', 'Zones and eligibility is the operator page for the geographic and evidentiary controls that determine who is in scope for place-based governance. Use it to manage evidence packets, FNAC reviews, board signoffs, eligibility snapshots, and challenges to zone boundaries or inclusion logic.', [
+        'An affected zone is the governed area that determines who is in scope for local eligibility or place-based decisions.',
+        'Evidence packets hold the source material that supports why a zone exists and how it was defined.',
+        'FNAC reviews and board signoffs show the cultural and governance approvals required before a zone can be treated as settled.',
+        'Eligibility snapshots freeze who was in scope at a point in time so later disputes and audits can be checked against a stable record.'
+      ]) ?>
+      <?= ops_admin_workflow_panel('Typical workflow', 'Zones usually move through the same evidence and approval chain.', [
+        ['title' => 'Define or review the zone', 'body' => 'Start with the zone queue and confirm which affected area is being worked on.'],
+        ['title' => 'Collect evidence', 'body' => 'Create or update an evidence packet that records source layers, rationale, and evidence hash material.'],
+        ['title' => 'Record FNAC review', 'body' => 'Capture the relevant cultural review outcome and whether endorsement has been granted.'],
+        ['title' => 'Open Board signoff', 'body' => 'Once the evidence and FNAC stage are ready, open the formal board signoff request for the zone.'],
+        ['title' => 'Create eligibility snapshot', 'body' => 'Freeze the in-scope member set so the zone can later support governance, audit, or dispute resolution.'],
+        ['title' => 'Handle challenges', 'body' => 'Use the challenge workflow when a Partner disputes inclusion, exclusion, or the basis of the zone itself.']
+      ]) ?>
+      <?= ops_admin_guide_panel('How to use this page', 'Read the page in three passes: the live queue, the control actions, then the trace tables.', [
+        ['title' => 'Zone governance queue', 'body' => 'This is the quickest live view of the current zone state: status, FNAC, board, packet count, and ledger reference.'],
+        ['title' => 'Control actions', 'body' => 'These forms are how you add or update the evidence, review, signoff, snapshot, and challenge records.'],
+        ['title' => 'Trace tables', 'body' => 'The lower tables show what has already been recorded so you can explain and audit the current state.'],
+        ['title' => 'Address verification activity', 'body' => 'Use this section to connect member-level address checks back to zone inclusion and eligibility.']
+      ]) ?>
+      <?= ops_admin_status_panel('Status guide', 'These labels appear throughout the zone workflow.', [
+        ['label' => 'Active zone', 'body' => 'The zone is currently in force and may affect eligibility or governance scope.'],
+        ['label' => 'FNAC pending / endorsed / rejected', 'body' => 'Shows whether cultural review has not started, is complete and positive, or has been refused.'],
+        ['label' => 'Board pending / executed', 'body' => 'Shows whether the formal governance signoff is still open or has been completed.'],
+        ['label' => 'Evidence packet draft / ready / approved', 'body' => 'Shows whether the evidentiary basis is still being assembled or is settled enough for the next stage.'],
+        ['label' => 'Open challenge', 'body' => 'A Partner or operator has raised a dispute that still requires review.']
+      ]) ?>
   ]) ?>
 </div>
 
 <div class="card">
-  <h2>Zones & eligibility control plane<?= ops_admin_help_button('Zones & eligibility control plane', 'Use this page to explain why a zone exists, what approval state it is in, who is in scope, and whether any open challenge or missing evidence is preventing the zone from being treated as settled.') ?></h2>
-  <p class="muted">This page turns the zone workflow into plain-English operator steps: evidence, FNAC, board, eligibility snapshot, then challenge handling if needed.</p>
+<div class="card-body">  <h2>Zones & eligibility control plane<?= ops_admin_help_button('Zones & eligibility control plane', 'Use this page to explain why a zone exists, what approval state it is in, who is in scope, and whether any open challenge or missing evidence is preventing the zone from being treated as settled.') ?></h2>
+  <p class="muted">This page turns the zone workflow into plain-English operator steps: evidence, FNAC, board, eligibility snapshot, then challenge handling if needed.</p></div>
 </div>
 
 <div class="card">

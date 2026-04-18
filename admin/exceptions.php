@@ -112,45 +112,46 @@ ops_admin_help_assets_once();
 .field textarea{min-height:96px;resize:vertical}
 @media (max-width:980px){.exception-grid,.exception-meta,.exception-form-grid{grid-template-columns:1fr}}
 </style>
-<?= ops_admin_info_panel(
-    'Stage 7 — Audit, diagnostics, and control review',
-    'What this page does',
-    'Exceptions is the structured work queue for issues that need human review. Use it to log, triage, investigate, and close operational, compliance, and ledger-related anomalies.',
-    [
-        'Refresh from system to pull in newly detected issues that the platform can identify automatically.',
-        'Use create / update when an operator needs to record a manual issue, escalate severity, or close a resolved item.',
-        'Treat this page as the exceptions register, not as the source page where the underlying operational fix is performed.',
-    ]
-) ?>
-
-<?= ops_admin_workflow_panel(
-    'Typical workflow',
-    'A clean exception workflow keeps the control plane auditable. The exception is recorded here, but the corrective action usually happens on another page such as Payments, Approvals, Execution, Governance, or Audit.',
-    [
-        ['title' => 'Identify', 'body' => 'Refresh from system or create a manual exception when an issue is found.'],
-        ['title' => 'Triage', 'body' => 'Set severity and status so operators can see what needs urgent action.'],
-        ['title' => 'Investigate', 'body' => 'Use the member link and details text to gather evidence and determine the cause.'],
-        ['title' => 'Resolve', 'body' => 'Update the record to resolved once the root cause has been addressed on the relevant admin page.'],
-    ]
-) ?>
-
-<?= ops_admin_guide_panel(
-    'How to use this page',
-    'This page has two jobs: maintain the live exceptions queue and let operators create or update exception records cleanly.',
-    [
-        ['title' => 'Exceptions work queue', 'body' => 'Read this top to bottom. Open and critical items are the main operator focus.'],
-        ['title' => 'Refresh from system', 'body' => 'Use this to collect new automatically-detected issues without creating duplicates for already-open items.'],
-        ['title' => 'Create / update exception', 'body' => 'Use this form for manual issues, status changes, severity escalation, or recording a final resolution.'],
-        ['title' => 'Linked member', 'body' => 'Attach a Partner only when the exception is truly about that specific person or account.'],
-    ]
-) ?>
-
-<?= ops_admin_status_panel(
-    'Status guide',
-    'These statuses tell operators whether an exception is still waiting for action or has already been closed.',
-    $statusItems
-) ?>
-
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    <?= ops_admin_info_panel(
+        'Stage 7 — Audit, diagnostics, and control review',
+        'What this page does',
+        'Exceptions is the structured work queue for issues that need human review. Use it to log, triage, investigate, and close operational, compliance, and ledger-related anomalies.',
+        [
+            'Refresh from system to pull in newly detected issues that the platform can identify automatically.',
+            'Use create / update when an operator needs to record a manual issue, escalate severity, or close a resolved item.',
+            'Treat this page as the exceptions register, not as the source page where the underlying operational fix is performed.',
+        ]
+    ) ?>
+    
+    <?= ops_admin_workflow_panel(
+        'Typical workflow',
+        'A clean exception workflow keeps the control plane auditable. The exception is recorded here, but the corrective action usually happens on another page such as Payments, Approvals, Execution, Governance, or Audit.',
+        [
+            ['title' => 'Identify', 'body' => 'Refresh from system or create a manual exception when an issue is found.'],
+            ['title' => 'Triage', 'body' => 'Set severity and status so operators can see what needs urgent action.'],
+            ['title' => 'Investigate', 'body' => 'Use the member link and details text to gather evidence and determine the cause.'],
+            ['title' => 'Resolve', 'body' => 'Update the record to resolved once the root cause has been addressed on the relevant admin page.'],
+        ]
+    ) ?>
+    
+    <?= ops_admin_guide_panel(
+        'How to use this page',
+        'This page has two jobs: maintain the live exceptions queue and let operators create or update exception records cleanly.',
+        [
+            ['title' => 'Exceptions work queue', 'body' => 'Read this top to bottom. Open and critical items are the main operator focus.'],
+            ['title' => 'Refresh from system', 'body' => 'Use this to collect new automatically-detected issues without creating duplicates for already-open items.'],
+            ['title' => 'Create / update exception', 'body' => 'Use this form for manual issues, status changes, severity escalation, or recording a final resolution.'],
+            ['title' => 'Linked member', 'body' => 'Attach a Partner only when the exception is truly about that specific person or account.'],
+        ]
+    ) ?>
+    
+    <?= ops_admin_status_panel(
+        'Status guide',
+        'These statuses tell operators whether an exception is still waiting for action or has already been closed.',
+        $statusItems
+    ) ?>
+  ]) ?>
 <div class="card">
   <div class="exception-header">
     <div>
