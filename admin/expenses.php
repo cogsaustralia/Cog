@@ -247,7 +247,6 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
   </div>
 </div>
 
-<?= ops_admin_collapsible_help('Page guide & workflow', [
 <?php echo ops_admin_info_panel(
     'Finance operations',
     'What this page does',
@@ -291,7 +290,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['label' => 'Cancelled', 'body' => 'The item should not proceed and should no longer be treated as payable.'],
     ]
 ); ?>
-]) ?>
+
 <?php if (!$hasTable): ?>
   <div class="msg err">Accounting tables not found. Run cogs_accounting_schema.sql first.</div>
 <?php else: ?>
@@ -310,7 +309,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
 <div class="card">
   <div class="card-head"><h2>Record new expense<?php echo ops_admin_help_button('Record new expense', 'Use this form to create a new expense record. Enter the commercial facts accurately first; payment confirmation can be completed later if needed.'); ?></h2></div>
   <div class="card-body">
-<div class="card-body">    <form method="post">
+    <form method="post">
       <input type="hidden" name="_csrf" value="<?php echo ex_h(admin_csrf_token()); ?>">
       <input type="hidden" name="action" value="add_expense">
       <div class="form-grid">
@@ -320,7 +319,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
             <?php foreach ($categories as $k => $v): ?>
               <option value="<?php echo ex_h($k); ?>"><?php echo ex_h($v); ?></option>
             <?php endforeach; ?>
-          </select></div>
+          </select>
         </div>
         <div class="field">
           <label>Expense date</label>

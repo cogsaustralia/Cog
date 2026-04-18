@@ -431,24 +431,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
 
 <title>Payments | COG$ Admin</title>
 <style>.shell{display:grid;grid-template-columns:238px minmax(0,1fr);min-height:100vh}
-
+.main{padding:24px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px;flex-wrap:wrap}
+.topbar h1{margin:0;font-size:1.8rem}
 .eyebrow{display:block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px}
 .member-block{border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden}
 .member-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:14px 18px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px}
 .member-hd-left strong{display:block;font-size:.98rem}
 .member-hd-left .meta{font-size:.78rem;color:var(--muted);margin-top:2px}
 .member-hd-right{display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap}
 .total-due{font-family:Georgia,serif;font-size:1.15rem;font-weight:600;color:var(--gold)}
-.lines-
+.lines-table{width:100%;border-collapse:collapse}
 .lines-table th,.lines-table td{padding:9px 14px;text-align:left;border-bottom:1px dashed rgba(255,255,255,.07);font-size:.85rem;vertical-align:middle}
-.lines-table 
+.lines-table th{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .lines-table tr:last-child td{border-bottom:none}
 .chip{display:inline-block;padding:2px 9px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:.72rem}
 .chip.identity{border-color:rgba(212,178,92,.35);color:var(--gold)}
 .chip.donation{border-color:rgba(82,184,122,.35);color:#b8efc8}
 .chip.pif{border-color:rgba(86,147,220,.3);color:rgba(160,200,240,.9)}
-
+.btn{display:inline-block;padding:.6rem .95rem;border-radius:10px;font-weight:700;border:1px solid rgba(212,178,92,.35);background:linear-gradient(180deg,#d4b25c,#b98b2f);color:#201507;cursor:pointer;font:inherit;font-size:.78rem;white-space:nowrap}
 .btn.secondary{background:rgba(255,255,255,.05);color:var(--text);border-color:var(--line)}
 .btn.sm{padding:.45rem .75rem;font-size:.73rem}
 .mark-paid-form{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
@@ -457,9 +459,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
 .mark-paid-form input::placeholder{color:var(--muted);opacity:.7}
 .bulk-form{padding:12px 14px;border-top:1px solid var(--line);background:rgba(255,255,255,.02);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .bulk-form label{font-size:.78rem;color:var(--muted)}
-
+.msg{padding:12px 14px;border-radius:12px;margin-bottom:14px}
+.ok{background:rgba(47,143,87,.12);border:1px solid rgba(47,143,87,.35);color:var(--ok)}
+.err{background:rgba(200,61,75,.12);border:1px solid rgba(200,61,75,.35);color:var(--bad)}
+.empty{color:var(--muted);font-size:.88rem;padding:16px 0}
 .ref-tag{font-family:monospace;font-size:.75rem;color:var(--muted)}
-@media(max-width:1100px){.shell{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:1100px){.shell{grid-template-columns:minmax(0,1fr)}.main{padding:16px;padding-top:54px}}
 </style>
 </head>
 <body>
@@ -478,27 +483,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
     </div>
     <a class="btn secondary" href="<?=h(admin_url('dashboard.php'))?>">Dashboard</a>
   </div>
-  <?= ops_admin_collapsible_help('Page guide & workflow', [
-    <?= ops_admin_info_panel('Intake · Step 1', 'What this page does', 'Record payment that has actually been received for paid-now lines. Use it when money has cleared and you need the Partner record to move into the approval lane.', [
-        'Use this page for S-NFT, Kids S-NFT, B-NFT, Donation COG$, and Pay It Forward COG$.',
-        'Do not use this page to approve reservation-only classes such as ASX, RWA, or Landholder COG$.',
-        'After payment is recorded, the next operator page is Approvals.'
-      ]) ?>
-    
-      <?= ops_admin_workflow_panel('Typical workflow', 'This page is the first live operator step in the intake path.', [
-        ['title' => 'Confirm intake evidence', 'body' => 'Check JVPA, KYC, and any supporting intake status before taking payment.'],
-        ['title' => 'Record payment', 'body' => 'Choose the payment method, reference, amount, and units actually received.'],
-        ['title' => 'Advance to approvals', 'body' => 'Once payment is recorded, use Approvals to sign off the reservation line.'],
-        ['title' => 'Send to execution later', 'body' => 'Execution happens only after approvals are complete.']
-      ]) ?>
-    
-      <?= ops_admin_status_panel('Field and status guide', 'Use these notes to interpret the most important fields on this page.', [
-        ['label' => 'Signup payment', 'body' => 'Shows whether the entry payment required to open the Partner record is complete.'],
-        ['label' => 'JVPA acceptance', 'body' => 'Shows whether the backend acceptance trail is complete enough to support taking payment.'],
-        ['label' => 'Outstanding', 'body' => 'The remaining units still waiting for payment on this line.'],
-        ['label' => 'Mark paid', 'body' => 'Use only after funds are actually received. This records payment; it does not approve or publish anything.']
-      ]) ?>
+
+  <?= ops_admin_info_panel('Intake · Step 1', 'What this page does', 'Record payment that has actually been received for paid-now lines. Use it when money has cleared and you need the Partner record to move into the approval lane.', [
+    'Use this page for S-NFT, Kids S-NFT, B-NFT, Donation COG$, and Pay It Forward COG$.',
+    'Do not use this page to approve reservation-only classes such as ASX, RWA, or Landholder COG$.',
+    'After payment is recorded, the next operator page is Approvals.'
   ]) ?>
+
+  <?= ops_admin_workflow_panel('Typical workflow', 'This page is the first live operator step in the intake path.', [
+    ['title' => 'Confirm intake evidence', 'body' => 'Check JVPA, KYC, and any supporting intake status before taking payment.'],
+    ['title' => 'Record payment', 'body' => 'Choose the payment method, reference, amount, and units actually received.'],
+    ['title' => 'Advance to approvals', 'body' => 'Once payment is recorded, use Approvals to sign off the reservation line.'],
+    ['title' => 'Send to execution later', 'body' => 'Execution happens only after approvals are complete.']
+  ]) ?>
+
+  <?= ops_admin_status_panel('Field and status guide', 'Use these notes to interpret the most important fields on this page.', [
+    ['label' => 'Signup payment', 'body' => 'Shows whether the entry payment required to open the Partner record is complete.'],
+    ['label' => 'JVPA acceptance', 'body' => 'Shows whether the backend acceptance trail is complete enough to support taking payment.'],
+    ['label' => 'Outstanding', 'body' => 'The remaining units still waiting for payment on this line.'],
+    ['label' => 'Mark paid', 'body' => 'Use only after funds are actually received. This records payment; it does not approve or publish anything.']
+  ]) ?>
+
   <?php if ($flash): ?><div class="msg ok"><?=h($flash)?></div><?php endif; ?>
   <?php if ($error): ?><div class="msg err"><?=h($error)?></div><?php endif; ?>
 

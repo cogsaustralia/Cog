@@ -40,43 +40,41 @@ $stats = [
 ob_start(); ?>
 <?php ops_admin_help_assets_once(); ?>
 <style>
-.stat-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}.muted{color:#8f9caf}.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.badge-open{background:rgba(34,197,94,.14);color:#90f0b1}.badge-closed{background:rgba(148,163,184,.16);color:#d5dbe4}.badge-draft{background:rgba(212,178,92,.15);color:#d4b25c}.table-wrap .table-wrap th,.table-wrap td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}.table-wrap .row-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.small{font-size:.88rem}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}.legend-note{font-size:.9rem;color:#9fb0c1;line-height:1.55}.bridge-note{padding:14px 16px;border-radius:16px;background:rgba(212,178,92,.08);border:1px solid rgba(212,178,92,.2);margin-bottom:18px}.stats-card strong{display:block;font-size:2rem;font-weight:800;color:#eef2f7}.stats-card span{display:block;text-transform:uppercase;font-size:.78rem;color:#8f9caf}.section-title{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:0}.empty-note{font-size:.9rem;color:#9fb0c1}@media(max-width:900px){.row-grid,.stat-grid{grid-template-columns:1fr 1fr}}@media(max-width:640px){.row-grid,.stat-grid{grid-template-columns:1fr}}</style>
+.stat-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}.card{margin-bottom:18px}.muted{color:#8f9caf}.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.badge-open{background:rgba(34,197,94,.14);color:#90f0b1}.badge-closed{background:rgba(148,163,184,.16);color:#d5dbe4}.badge-draft{background:rgba(212,178,92,.15);color:#d4b25c}.table-wrap{overflow:auto}.table-wrap table{width:100%;border-collapse:collapse}.table-wrap th,.table-wrap td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}.table-wrap th{font-size:.78rem;text-transform:uppercase;color:#8f9caf;letter-spacing:.04em}.row-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.small{font-size:.88rem}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}.legend-note{font-size:.9rem;color:#9fb0c1;line-height:1.55}.bridge-note{padding:14px 16px;border-radius:16px;background:rgba(212,178,92,.08);border:1px solid rgba(212,178,92,.2);margin-bottom:18px}.stats-card strong{display:block;font-size:2rem;font-weight:800;color:#eef2f7}.stats-card span{display:block;text-transform:uppercase;font-size:.78rem;color:#8f9caf}.section-title{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:0}.empty-note{font-size:.9rem;color:#9fb0c1}@media(max-width:900px){.row-grid,.stat-grid{grid-template-columns:1fr 1fr}}@media(max-width:640px){.row-grid,.stat-grid{grid-template-columns:1fr}}</style>
 
 <div class="grid" style="margin-bottom:18px;gap:16px">
-  <?= ops_admin_collapsible_help('Page guide & workflow', [
-    <?= ops_admin_info_panel('Stage 6 · Governance', 'What this page does', 'Governance is the authoritative operator page for formal poll records, the proposal register, governance directions, proxy-vote instructions, board execution records, and certified vote snapshots. Use this page to understand what the partnership has formally decided, what still needs direction, and what governance evidence already exists.', [
-        'Partners Polls are the formal governance instrument. They are the result you should rely on when checking live governance state.',
-        'The proposal register shows initiation and pre-poll objects. It is not the final voting record by itself.',
-        'Governance directions show what operational instruction should be carried out after governance has spoken.',
-        'Proxy instructions and vote snapshots are evidence objects that support the live governance trail.'
-      ]) ?>
-      <?= ops_admin_workflow_panel('Typical workflow', 'Governance moves through a clear sequence from initiation to evidence.', [
-        ['title' => 'Proposal / initiation', 'body' => 'A governance topic is opened and tracked in the proposal register.'],
-        ['title' => 'Formal poll', 'body' => 'The matter becomes a Partners Poll and the eligible voting group is opened.'],
-        ['title' => 'Result / direction', 'body' => 'Once the result is declared, a governance direction may be created for operational follow-through.'],
-        ['title' => 'Execution / proxy / publication', 'body' => 'The board execution record, proxy instruction, or downstream control action shows how the decision was carried out.'],
-        ['title' => 'Snapshot / evidence', 'body' => 'Vote snapshots and governance-control evidence preserve the auditable record of what happened.']
-      ]) ?>
-      <?= ops_admin_guide_panel('How to use this page', 'Each section answers a different operator question.', [
-        ['title' => 'Governance control status', 'body' => 'Use this first to see whether any governance controls are missing evidence or carrying open exceptions.'],
-        ['title' => 'Partners Polls', 'body' => 'This is the formal voting record. Check poll title, eligibility scope, current status, and close time.'],
-        ['title' => 'Proposal register', 'body' => 'Use this to understand where a matter started and whether it has already been linked to a formal poll.'],
-        ['title' => 'Directions and execution', 'body' => 'Use these two sections together to confirm whether a governance outcome has been carried into an operational action.'],
-        ['title' => 'Proxy instructions and vote snapshots', 'body' => 'Use these when checking investment stewardship, vote evidence, or certification history.']
-      ]) ?>
-      <?= ops_admin_status_panel('Status guide', 'These terms appear repeatedly across the governance page.', [
-        ['label' => 'Draft / proposed / pending', 'body' => 'The matter exists, but the formal governance or review step is not complete yet.'],
-        ['label' => 'Open / active', 'body' => 'The poll, review, or instruction is live and still requires operator attention.'],
-        ['label' => 'Declared / confirmed / executed', 'body' => 'The relevant governance or execution step has been completed and can be used as part of the audit record.'],
-        ['label' => 'Closed / archived / retired', 'body' => 'The record remains part of history, but it is no longer an active operator task.'],
-        ['label' => 'Legacy bridge', 'body' => 'Visible for compatibility and retirement checks only. Do not treat legacy proposal threads or wallet polls as the primary live governance surface.']
-      ]) ?>
+  <?= ops_admin_info_panel('Stage 6 · Governance', 'What this page does', 'Governance is the authoritative operator page for formal poll records, the proposal register, governance directions, proxy-vote instructions, board execution records, and certified vote snapshots. Use this page to understand what the partnership has formally decided, what still needs direction, and what governance evidence already exists.', [
+    'Partners Polls are the formal governance instrument. They are the result you should rely on when checking live governance state.',
+    'The proposal register shows initiation and pre-poll objects. It is not the final voting record by itself.',
+    'Governance directions show what operational instruction should be carried out after governance has spoken.',
+    'Proxy instructions and vote snapshots are evidence objects that support the live governance trail.'
+  ]) ?>
+  <?= ops_admin_workflow_panel('Typical workflow', 'Governance moves through a clear sequence from initiation to evidence.', [
+    ['title' => 'Proposal / initiation', 'body' => 'A governance topic is opened and tracked in the proposal register.'],
+    ['title' => 'Formal poll', 'body' => 'The matter becomes a Partners Poll and the eligible voting group is opened.'],
+    ['title' => 'Result / direction', 'body' => 'Once the result is declared, a governance direction may be created for operational follow-through.'],
+    ['title' => 'Execution / proxy / publication', 'body' => 'The board execution record, proxy instruction, or downstream control action shows how the decision was carried out.'],
+    ['title' => 'Snapshot / evidence', 'body' => 'Vote snapshots and governance-control evidence preserve the auditable record of what happened.']
+  ]) ?>
+  <?= ops_admin_guide_panel('How to use this page', 'Each section answers a different operator question.', [
+    ['title' => 'Governance control status', 'body' => 'Use this first to see whether any governance controls are missing evidence or carrying open exceptions.'],
+    ['title' => 'Partners Polls', 'body' => 'This is the formal voting record. Check poll title, eligibility scope, current status, and close time.'],
+    ['title' => 'Proposal register', 'body' => 'Use this to understand where a matter started and whether it has already been linked to a formal poll.'],
+    ['title' => 'Directions and execution', 'body' => 'Use these two sections together to confirm whether a governance outcome has been carried into an operational action.'],
+    ['title' => 'Proxy instructions and vote snapshots', 'body' => 'Use these when checking investment stewardship, vote evidence, or certification history.']
+  ]) ?>
+  <?= ops_admin_status_panel('Status guide', 'These terms appear repeatedly across the governance page.', [
+    ['label' => 'Draft / proposed / pending', 'body' => 'The matter exists, but the formal governance or review step is not complete yet.'],
+    ['label' => 'Open / active', 'body' => 'The poll, review, or instruction is live and still requires operator attention.'],
+    ['label' => 'Declared / confirmed / executed', 'body' => 'The relevant governance or execution step has been completed and can be used as part of the audit record.'],
+    ['label' => 'Closed / archived / retired', 'body' => 'The record remains part of history, but it is no longer an active operator task.'],
+    ['label' => 'Legacy bridge', 'body' => 'Visible for compatibility and retirement checks only. Do not treat legacy proposal threads or wallet polls as the primary live governance surface.']
   ]) ?>
 </div>
 
 <div class="card">
-<div class="card-body">  <h2 class="section-title">Governance control plane<?= ops_admin_help_button('Governance control plane', 'Use this page to read and explain live governance state. This is the page operators should reach for when they need to answer: what polls exist, what governance directions are live, what was executed, and what evidence supports the result?') ?></h2>
-  <p class="muted" style="margin:0">This page is designed to make the governance stack readable in plain English. Start at the governance control status, then review the live Partners Polls, then follow any resulting directions and evidence objects.</p></div>
+  <h2 class="section-title">Governance control plane<?= ops_admin_help_button('Governance control plane', 'Use this page to read and explain live governance state. This is the page operators should reach for when they need to answer: what polls exist, what governance directions are live, what was executed, and what evidence supports the result?') ?></h2>
+  <p class="muted" style="margin:0">This page is designed to make the governance stack readable in plain English. Start at the governance control status, then review the live Partners Polls, then follow any resulting directions and evidence objects.</p>
 </div>
 
 <div class="stat-grid">
