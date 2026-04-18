@@ -515,28 +515,56 @@ function msg_paginate(PDO $pdo, string $table, string $sql, array $params, int $
 ob_start();
 ?>
 <style>
-.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{margin-bottom:18px}.muted{color:#8f9caf}.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.badge-open{background:rgba(34,197,94,.14);color:#90f0b1}.badge-closed{background:rgba(148,163,184,.16);color:#d5dbe4}.badge-draft{background:rgba(212,178,92,.15);color:#d4b25c}.row-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}.table-wrap{overflow:auto}.table-wrap table{width:100%;border-collapse:collapse}.table-wrap th,.table-wrap td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}.table-wrap th{font-size:.78rem;text-transform:uppercase;color:#8f9caf;letter-spacing:.04em}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tabs a{text-decoration:none;border:1px solid rgba(255,255,255,.08);padding:8px 12px;border-radius:10px;color:#e8ecf3;background:rgba(255,255,255,.03)}.tabs a.active{background:#d4b25c;color:#201507;border-color:#d4b25c}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn,.btn-secondary{display:inline-block;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.08)}.btn{background:#d4b25c;color:#201507;border-color:#d4b25c}.btn-secondary{background:rgba(255,255,255,.03);color:#eef2f7}.msg{padding:12px 14px;border-radius:12px;margin-bottom:14px}.ok{background:rgba(34,197,94,.14);color:#baf4cc}.err{background:rgba(239,68,68,.14);color:#ffc1c1}.warn{background:rgba(245,158,11,.14);color:#ffe2a9}.field{margin-bottom:12px}.field label{display:block;font-size:.84rem;margin-bottom:6px;color:#d7dde7;font-weight:600}.field input,.field textarea,.field select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(10,14,20,.45);color:#eef2f7}.field textarea{min-height:110px;resize:vertical}.empty{padding:20px;color:#8f9caf;text-align:center}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}.small{font-size:.88rem}@media(max-width:900px){.row-grid,.stat-grid{grid-template-columns:1fr}}</style>
+.badge-open{background:rgba(34,197,94,.14);color:#90f0b1}
+.badge-closed{background:rgba(148,163,184,.16);color:#d5dbe4}
+.badge-draft{background:rgba(212,178,92,.15);color:var(--gold)}
+.row-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tabs a{text-decoration:none;border:1px solid var(--line);padding:8px 14px;border-radius:10px;color:var(--text);background:rgba(255,255,255,.03);font-weight:600;font-size:13px}
+.tabs a.active{background:rgba(212,178,92,.12);color:var(--gold);border-color:rgba(212,178,92,.3)}
+.tabs a:hover:not(.active){background:rgba(255,255,255,.05)}
+.btn-secondary{display:inline-block;padding:6px 12px;border-radius:9px;text-decoration:none;font-weight:700;font-size:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text)}
+.btn-secondary:hover{background:rgba(255,255,255,.06)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.84rem;margin-bottom:6px;color:var(--sub);font-weight:600}
+.field textarea{min-height:110px;resize:vertical}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+.section-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:16px 20px;text-decoration:none;color:inherit;display:block;transition:border-color .15s}
+.section-card:hover{border-color:var(--line2)}
+@media(max-width:900px){.row-grid,.stat-grid{grid-template-columns:1fr}}
+</style>
 <div class="card">
-  <h2 style="margin:0 0 8px">Communications</h2>
-  <p class="muted" style="margin:0">This is the authoritative communications and governance surface for current notices, proposals, and community polls. Legacy notice, proposal, and wallet-poll records remain available as bridge compatibility data while parallel records are maintained where required.</p>
+  <div class="card-head">
+    <h1 style="margin:0;font-size:1.3rem">Communications <?= ops_admin_help_button('Communications', 'The authoritative communications and governance surface for notices, proposals, and polls.') ?></h1>
+  </div>
+  <div class="card-body" style="padding-top:8px">
+    <p class="muted small" style="margin:0">Manage Partner-facing notices, announcements, templates, proposal threads, and formal poll publishing.</p>
+  </div>
 </div>
-<?php if ($flash): ?><div class="msg ok"><?=h($flash)?></div><?php endif; ?>
-<?php if ($error): ?><div class="msg err"><?=h($error)?></div><?php endif; ?>
-<?php if ($warning): ?><div class="msg warn"><?=h($warning)?></div><?php endif; ?>
-<?= ops_admin_info_panel('Communications surface', 'What this page does', 'Use this page to manage Partner-facing notices, announcements, templates, proposal threads, and formal poll publishing surfaces. It is the main operator page for drafting, reviewing, and updating communications before they reach Partners.', ['Use Partner Notices for targeted wallet-facing updates.', 'Use Announcements for broader community-wide notices.', 'Use Proposal Threads and Community Polls for governance-facing publishing.', 'Use Language Audit before publishing if you want to catch stale member, scheme, or AFSL phrasing.']) ?>
-<?= ops_admin_workflow_panel('Typical workflow', 'Work from message type to publication path so operators do not mix drafting, review, and live publishing.', [
-    ['title' => 'Choose the communication lane', 'body' => 'Select Partner Notices, Announcements, Proposal Threads, Community Polls, Templates, or Language Audit depending on who should see the content.'],
-    ['title' => 'Draft and review the content', 'body' => 'Complete the title, body, timing, and scope fields, then review the warning banner if any stale legal or legacy terms are detected.'],
-    ['title' => 'Open, schedule, or close the item', 'body' => 'Use the status and timing fields to control whether the communication is still a draft, should open later, is live now, or is closed.'],
-    ['title' => 'Check downstream delivery', 'body' => 'Use Email Access for queue-backed outbound email actions and use Language Audit if you need to clean wording before it reaches Partners.'],
-]) ?>
-<?= ops_admin_guide_panel('Admin section guide', 'Each communications area has a different audience and operational purpose.', [
-    ['title' => 'Partner Notices', 'body' => 'Short, targeted wallet notices for active Partners and specific audience scopes.'],
-    ['title' => 'Announcements', 'body' => 'Broader updates and community notices that may stay visible over a date range.'],
-    ['title' => 'Proposal Threads', 'body' => 'Consultation-style or legacy proposal discussion surfaces that are distinct from formal poll publication.'],
-    ['title' => 'Community Polls', 'body' => 'Formal poll publishing/admin records, including bridge-linked poll data where relevant.'],
-    ['title' => 'Email Templates and Email Access', 'body' => 'Reusable outbound email content plus the queue-backed delivery and resend tools.'],
-    ['title' => 'Language Audit', 'body' => 'A review surface that helps catch stale legal, regulatory, or membership-era phrasing before publication.'],
+<?php if ($flash): ?><div class="alert alert-ok"><?=h($flash)?></div><?php endif; ?>
+<?php if ($error): ?><div class="alert alert-err"><?=h($error)?></div><?php endif; ?>
+<?php if ($warning): ?><div class="alert alert-warn"><?=h($warning)?></div><?php endif; ?>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Communications surface', 'What this page does', 'Use this page to manage Partner-facing notices, announcements, templates, proposal threads, and formal poll publishing surfaces. It is the main operator page for drafting, reviewing, and updating communications before they reach Partners.', [
+    'Use Partner Notices for targeted wallet-facing updates.',
+    'Use Announcements for broader community-wide notices.',
+    'Use Proposal Threads and Community Polls for governance-facing publishing.',
+    'Use Language Audit before publishing if you want to catch stale member, scheme, or AFSL phrasing.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Work from message type to publication path so operators do not mix drafting, review, and live publishing.', [
+    ['title' => 'Choose the communication lane', 'body' => 'Select Partner Notices, Announcements, Proposal Threads, Community Polls, Templates, or Language Audit.'],
+    ['title' => 'Draft and review the content', 'body' => 'Complete the title, body, timing, and scope fields.'],
+    ['title' => 'Open, schedule, or close the item', 'body' => 'Use the status and timing fields to control visibility.'],
+    ['title' => 'Check downstream delivery', 'body' => 'Use Email Access for queue-backed outbound email actions.'],
+  ]),
+  ops_admin_guide_panel('Admin section guide', 'Each communications area has a different audience and operational purpose.', [
+    ['title' => 'Partner Notices', 'body' => 'Short, targeted wallet notices for active Partners.'],
+    ['title' => 'Announcements', 'body' => 'Broader updates and community notices visible over a date range.'],
+    ['title' => 'Proposal Threads', 'body' => 'Consultation-style or legacy proposal discussion surfaces.'],
+    ['title' => 'Community Polls', 'body' => 'Formal poll publishing/admin records.'],
+    ['title' => 'Email Templates and Email Access', 'body' => 'Reusable outbound email content plus the queue-backed delivery tools.'],
+    ['title' => 'Language Audit', 'body' => 'Catches stale legal, regulatory, or membership-era phrasing before publication.'],
+  ]),
 ]) ?>
 <div class="tabs">
   <a class="<?= $section === '' ? 'active' : '' ?>" href="./messages.php">Selector</a>
@@ -545,15 +573,15 @@ ob_start();
   <?php endforeach; ?>
 </div>
 <?php if ($section === ''): ?>
-<div class="stat-grid">
-  <div class="card"><div class="muted">Partner notices</div><div style="font-size:2rem;font-weight:800"><?= msg_val($pdo, 'SELECT COUNT(*) FROM wallet_messages') ?></div></div>
-  <div class="card"><div class="muted">Announcements</div><div style="font-size:2rem;font-weight:800"><?= msg_val($pdo, 'SELECT COUNT(*) FROM announcements') ?></div></div>
-  <div class="card"><div class="muted">Proposal bridge rows</div><div style="font-size:2rem;font-weight:800"><?= msg_val($pdo, 'SELECT COUNT(*) FROM proposal_register') ?></div></div>
-  <div class="card"><div class="muted">Community polls</div><div style="font-size:2rem;font-weight:800"><?= msg_val($pdo, 'SELECT COUNT(*) FROM community_polls') ?></div></div>
+<div class="stat-grid" style="margin-bottom:18px">
+  <div class="card"><div class="card-body"><div class="stat-label">Partner notices</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM wallet_messages') ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">Announcements</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM announcements') ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">Proposal bridge rows</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM proposal_register') ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">Community polls</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM community_polls') ?></div></div></div>
 </div>
 <div class="row-grid">
   <?php foreach ($cards as $key => $card): if ($key === 'email_access') continue; ?>
-    <a class="card" style="display:block;text-decoration:none;color:inherit" href="./messages.php?section=<?= urlencode($key) ?>">
+    <a class="section-card" href="./messages.php?section=<?= urlencode($key) ?>">
       <strong style="display:block;font-size:1rem;margin-bottom:6px"><?= h($card['ico']) ?> <?= h($card['label']) ?></strong>
       <div class="muted small"><?= h($card['desc']) ?></div>
     </a>
@@ -561,11 +589,13 @@ ob_start();
 </div>
 <?php endif; ?>
 <?php if ($section === 'email_templates'): ?>
-<?= ops_admin_info_panel('Template editor', 'What this section does', 'Email Templates is where you manage reusable outbound email content such as thank-you emails, setup emails, resets, and admin alerts. Edit templates here before they are used by queue-backed email actions.', ['Template key identifies the system template.', 'Subject is what recipients see first.', 'Body text is the reusable email content.', 'Language review warnings should be resolved before template changes go live.']) ?>
-<?= ops_admin_status_panel('How to use this section', 'Treat templates as controlled source content rather than one-off campaign messages.', [
-    ['label' => 'Create or edit', 'body' => ' to update reusable email copy that may be sent many times from operational actions.'],
-    ['label' => 'Active', 'body' => ' means the template is available for queue-backed sending.'],
-    ['label' => 'Terms warning', 'body' => ' means the subject or body still contains legacy or regulatory language that should be reviewed.'],
+<?= ops_admin_collapsible_help('Email Templates guide', [
+  ops_admin_info_panel('Template editor', 'What this section does', 'Email Templates is where you manage reusable outbound email content. Edit templates here before they are used by queue-backed email actions.', ['Template key identifies the system template.', 'Subject is what recipients see first.', 'Language review warnings should be resolved before template changes go live.']),
+  ops_admin_status_panel('How to use this section', 'Treat templates as controlled source content rather than one-off campaign messages.', [
+    ['label' => 'Create or edit', 'body' => 'Update reusable email copy that may be sent many times from operational actions.'],
+    ['label' => 'Active', 'body' => 'The template is available for queue-backed sending.'],
+    ['label' => 'Terms warning', 'body' => 'The subject or body contains legacy or regulatory language that should be reviewed.'],
+  ]),
 ]) ?>
     $templates = msg_rows($pdo, 'SELECT * FROM email_templates ORDER BY id ASC');
     $t = $editTemplate ?: ['id'=>'','template_key'=>'','subject_line'=>'','body_text'=>'','is_active'=>1];
@@ -573,7 +603,8 @@ ob_start();
 ?>
 <div class="row-grid">
   <div class="card">
-    <h3 style="margin-top:0">Email templates</h3>
+  <div class="card-head"><h2>Email templates</h2></div>
+  <div class="card-body">
     <div class="table-wrap"><table><thead><tr><th>Key</th><th>Subject</th><th>Status</th><th>Terms</th><th></th></tr></thead><tbody>
       <?php if (!$templates): ?><tr><td colspan="5" class="empty">No templates found.</td></tr><?php endif; ?>
       <?php foreach ($templates as $row): $terms = array_unique(array_merge(msg_flagged_terms((string)$row['subject_line']), msg_flagged_terms((string)$row['body_text']))); ?>
@@ -604,11 +635,13 @@ ob_start();
 </div>
 <?php endif; ?>
 <?php if ($section === 'wallet_messages'): ?>
-<?= ops_admin_info_panel('Partner notices', 'What this section does', 'Partner Notices are targeted wallet-facing messages. Use this section when you need a Partner to see a notice inside the live vault experience rather than by email.', ['Audience controls who sees the notice.', 'Open and close timing control visibility.', 'Draft, open, and closed states change how the notice appears in the wallet.']) ?>
-<?= ops_admin_workflow_panel('Typical workflow', 'Use Partner Notices for operational updates that should appear inside the Partner wallet.', [
+<?= ops_admin_collapsible_help('Partner Notices guide', [
+  ops_admin_info_panel('Partner notices', 'What this section does', 'Partner Notices are targeted wallet-facing messages visible inside the live vault experience rather than by email.', ['Audience controls who sees the notice.', 'Open and close timing control visibility.', 'Draft, open, and closed states change how the notice appears in the wallet.']),
+  ops_admin_workflow_panel('Typical workflow', 'Use Partner Notices for operational updates that should appear inside the Partner wallet.', [
     ['title' => 'Draft the notice', 'body' => 'Set the audience, title, body, and timing.'],
     ['title' => 'Review scope and language', 'body' => 'Check that the correct Partner audience is selected and that the text matches current JV language.'],
     ['title' => 'Open or schedule', 'body' => 'Use the status and open time to control whether the notice is visible immediately or later.'],
+  ]),
 ]) ?>
     $wmPaged = msg_paginate($pdo, 'wallet_messages', 'SELECT * FROM wallet_messages ORDER BY id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'wallet_messages'));
     $rows = $wmPaged['rows'];
@@ -617,7 +650,8 @@ ob_start();
 ?>
 <div class="row-grid">
   <div class="card">
-    <h3 style="margin-top:0">Partner notices</h3>
+  <div class="card-head"><h2>Partner notices</h2></div>
+  <div class="card-body">
     <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Read</th><th>Sent / expires</th><th>Terms</th><th></th></tr></thead><tbody>
       <?php if (!$rows): ?><tr><td colspan="7" class="empty">No notices found.</td></tr><?php endif; ?>
       <?php foreach ($rows as $row):
@@ -761,7 +795,9 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 
 <?php endif; ?>
 <?php if ($section === 'announcements'): ?>
-<?= ops_admin_info_panel('Announcements', 'What this section does', 'Announcements are broader community-wide notices. Use them for updates that should remain visible over time and may be opened or closed on a schedule.', ['Audience controls whether the update is broad or targeted.', 'Open and close dates define the visibility window.', 'Status helps distinguish draft, scheduled, open, and closed announcements.']) ?>
+<?= ops_admin_collapsible_help('Announcements guide', [
+  ops_admin_info_panel('Announcements', 'What this section does', 'Announcements are broader community-wide notices visible over a date range.', ['Audience controls whether the update is broad or targeted.', 'Open and close dates define the visibility window.', 'Status helps distinguish draft, scheduled, open, and closed announcements.']),
+]) ?>
     $annPaged = msg_paginate($pdo, 'announcements', 'SELECT * FROM announcements ORDER BY id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'announcements'));
     $rows = $annPaged['rows'];
     $r = $editAnnouncement ?: ['id'=>'','audience'=>'all','title'=>'','body'=>'','status'=>'draft','opens_at'=>'','closes_at'=>''];
@@ -769,7 +805,8 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 ?>
 <div class="row-grid">
   <div class="card">
-    <h3 style="margin-top:0">Announcements</h3>
+  <div class="card-head"><h2>Announcements</h2></div>
+  <div class="card-body">
     <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Opens / closes</th><th>Terms</th><th></th></tr></thead><tbody>
       <?php if (!$rows): ?><tr><td colspan="6" class="empty">No announcements found.</td></tr><?php endif; ?>
       <?php foreach ($rows as $row): $uiStatus = $annHasStatus ? msg_schedule_status_to_ui((string)$row['status']) : 'draft'; $terms = array_unique(array_merge(msg_flagged_terms((string)$row['title']), msg_flagged_terms((string)$row['body']))); ?>
@@ -798,7 +835,9 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 </div>
 <?php endif; ?>
 <?php if ($section === 'proposals'): ?>
-<?= ops_admin_info_panel('Proposal threads', 'What this section does', 'Proposal Threads are the consultation and discussion side of governance publishing. Use this section for proposal-style content and bridge-linked proposal records, not for live execution or control-plane actions.', ['Proposal status affects whether Partners can see or engage with the thread.', 'Audience scope controls which Partner group the thread targets.', 'Bridge-linked records may also appear in governance support tables elsewhere.']) ?>
+<?= ops_admin_collapsible_help('Proposal Threads guide', [
+  ops_admin_info_panel('Proposal threads', 'What this section does', 'Proposal Threads are the consultation and discussion side of governance publishing. Use for proposal-style content and bridge-linked proposal records.', ['Proposal status affects whether Partners can see or engage with the thread.', 'Audience scope controls which Partner group the thread targets.']),
+]) ?>
     $vpPaged = msg_paginate($pdo, 'vote_proposals', 'SELECT vp.*, pr.status AS bridge_status, pr.id AS bridge_id FROM vote_proposals vp LEFT JOIN proposal_register pr ON pr.proposal_key = vp.proposal_key ORDER BY vp.id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'vote_proposals'));
     $rows = $vpPaged['rows'];
     $r = $editProposal ?: ['id'=>'','audience_scope'=>'all','title'=>'','body'=>'','status'=>'draft','starts_at'=>'','closes_at'=>''];
@@ -806,7 +845,8 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 ?>
 <div class="row-grid">
   <div class="card">
-    <h3 style="margin-top:0">Proposal threads</h3>
+  <div class="card-head"><h2>Proposal threads</h2></div>
+  <div class="card-body">
     <p class="muted small">Legacy <span class="code">vote_proposals</span> remain available for wallet/admin compatibility. Bridge rows are maintained in <span class="code">proposal_register</span> while the control plane remains in parallel mode.</p>
     <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Legacy</th><th>Bridge</th><th>Opens / closes</th><th></th></tr></thead><tbody>
       <?php if (!$rows): ?><tr><td colspan="6" class="empty">No proposals found.</td></tr><?php endif; ?>
@@ -836,11 +876,13 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 </div>
 <?php endif; ?>
 <?php if ($section === 'community_polls'): ?>
-<?= ops_admin_info_panel('Community polls', 'What this section does', 'Community Polls is the poll publishing/admin surface. Use it to create or update formal poll records, choices, schedule windows, and bridge-linked community poll data.', ['Question is the Partner-facing poll title.', 'Choices become the ballot options.', 'Open and close times define the active voting window.', 'Bridge records may also write to community poll support tables.']) ?>
-<?= ops_admin_status_panel('Status guide', 'Use statuses to understand whether a poll is still being prepared or is already live.', [
-    ['label' => 'Draft', 'body' => ' means the poll is not yet open to Partners.'],
-    ['label' => 'Open', 'body' => ' means the poll is live now or scheduled to open based on the timing fields.'],
-    ['label' => 'Closed', 'body' => ' means the poll is no longer active and should be treated as historical.'],
+<?= ops_admin_collapsible_help('Community Polls guide', [
+  ops_admin_info_panel('Community polls', 'What this section does', 'Community Polls is the poll publishing/admin surface for formal poll records, choices, and schedule windows.', ['Question is the Partner-facing poll title.', 'Choices become the ballot options.', 'Open and close times define the active voting window.']),
+  ops_admin_status_panel('Status guide', 'Use statuses to understand whether a poll is still being prepared or is already live.', [
+    ['label' => 'Draft', 'body' => 'The poll is not yet open to Partners.'],
+    ['label' => 'Open', 'body' => 'The poll is live now or scheduled to open based on the timing fields.'],
+    ['label' => 'Closed', 'body' => 'The poll is no longer active and should be treated as historical.'],
+  ]),
 ]) ?>
     $wpPaged = msg_paginate($pdo, 'wallet_polls', 'SELECT wp.*, cp.status AS bridge_status, cp.id AS bridge_id FROM wallet_polls wp LEFT JOIN community_polls cp ON cp.id = wp.community_poll_id OR cp.poll_key = wp.poll_key ORDER BY wp.id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'wallet_polls'));
     $rows = $wpPaged['rows'];
@@ -849,7 +891,8 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 ?>
 <div class="row-grid">
   <div class="card">
-    <h3 style="margin-top:0">Community polls</h3>
+  <div class="card-head"><h2>Community polls</h2></div>
+  <div class="card-body">
     <p class="muted small">Legacy <span class="code">wallet_polls</span> remain available for live wallet compatibility. Bridge rows are maintained in <span class="code">community_polls</span> and <span class="code">poll_options</span> while the control plane remains in parallel mode.</p>
     <div class="table-wrap"><table><thead><tr><th>Question</th><th>Audience</th><th>Legacy</th><th>Bridge</th><th>Opens / closes</th><th></th></tr></thead><tbody>
       <?php if (!$rows): ?><tr><td colspan="6" class="empty">No community polls found.</td></tr><?php endif; ?>
@@ -880,11 +923,14 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 </div>
 <?php endif; ?>
 <?php if ($section === 'stewardship_responses'): ?>
-<?= ops_admin_info_panel('Stewardship responses', 'What this section does', 'Stewardship Responses helps operators review submitted stewardship or outreach responses and decide where follow-up is needed.', ['Use this section as a review queue.', 'Look at audience, timing, and content together before follow-up.', 'Treat it as a response-management surface rather than a publishing editor.']) ?>
+<?= ops_admin_collapsible_help('Stewardship guide', [
+  ops_admin_info_panel('Stewardship responses', 'What this section does', 'Stewardship Responses helps operators review submitted stewardship or outreach responses and decide where follow-up is needed.', ['Use this section as a review queue.', 'Look at audience, timing, and content together before follow-up.']),
+]) ?>
     $rows = ops_has_table($pdo, 'member_stewardship_responses') ? msg_rows($pdo, "SELECT msr.*, m.full_name, m.email FROM member_stewardship_responses msr LEFT JOIN members m ON m.id = msr.member_id ORDER BY msr.id DESC LIMIT 200") : [];
 ?>
 <div class="card">
-  <h3 style="margin-top:0">Stewardship responses</h3>
+  <div class="card-head"><h2>Stewardship responses</h2></div>
+  <div class="card-body">
   <div class="table-wrap"><table><thead><tr><th><?= h($internalMemberLabel) ?></th><th>Email</th><th>Response</th><th>Created</th></tr></thead><tbody>
     <?php if (!$rows): ?><tr><td colspan="4" class="empty">No stewardship responses found.</td></tr><?php endif; ?>
     <?php foreach ($rows as $row): ?><tr><td><?= h((string)($row['full_name'] ?? '—')) ?></td><td><?= h((string)($row['email'] ?? '—')) ?></td><td><?= h((string)($row['question_key'] ?? '')) ?> = <?= h((string)($row['answer_value'] ?? '')) ?></td><td><?= h((string)($row['completed_at'] ?? '')) ?></td></tr><?php endforeach; ?>
@@ -892,9 +938,12 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 </div>
 <?php endif; ?>
 <?php if ($section === 'language_audit'): ?>
-<?= ops_admin_info_panel('Language audit', 'What this section does', 'Language Audit scans templates, notices, announcements, and proposal text for stale wording such as member, membership, scheme, AFSL, PDS, or managed-investment phrasing.', ['Use it before publishing or after bulk copy changes.', 'Each row links back to the source record for cleanup.', 'This is a review surface, not a delivery surface.']) ?>
+<?= ops_admin_collapsible_help('Language Audit guide', [
+  ops_admin_info_panel('Language audit', 'What this section does', 'Language Audit scans templates, notices, announcements, and proposal text for stale wording such as member, scheme, AFSL, or managed-investment phrasing.', ['Use it before publishing or after bulk copy changes.', 'Each row links back to the source record for cleanup.']),
+]) ?>
 <div class="card">
-  <h3 style="margin-top:0">Language audit</h3>
+  <div class="card-head"><h2>Language audit</h2></div>
+  <div class="card-body">
   <p class="muted small">This audit scans communications records for stale legacy or regulatory terms such as member, membership, scheme, fund, AFSL, PDS, and MIS before they reach <?= h($partnerLabel) ?>s.</p>
   <div class="table-wrap"><table><thead><tr><th>Source</th><th>Reference</th><th>Title</th><th>Flagged terms</th><th></th></tr></thead><tbody>
     <?php if (!$languageAuditRows): ?><tr><td colspan="5" class="empty">No flagged records found.</td></tr><?php endif; ?>
