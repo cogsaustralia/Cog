@@ -1359,6 +1359,15 @@ const API  = ROOT + '_app/api/index.php?route=';
 // that parameter only governs the redirect-in messaging, not the post-login
 // destination.
 function afterLoginSuccess(vault){
+  // Save login identity for prefill on next visit
+  try {
+    var identity = {};
+    if(_loginCreds.mobile) identity.mobile = _loginCreds.mobile;
+    if(_loginCreds.email)  identity.email  = _loginCreds.email;
+    if(identity.mobile || identity.email){
+      localStorage.setItem('cogs_login_identity', JSON.stringify(identity));
+    }
+  } catch(e){}
   // Clean ?next and ?reason from the URL so a refresh doesn't re-trigger the
   // "Please sign in to access your vault" message.
   try {
@@ -1682,6 +1691,20 @@ setTimeout(dismissSplash, 4000);
         flash('login-fl', 'You have been signed out. Sign in to continue.', 'info');
       }
     } catch(ex){}
+
+    // ── Prefill login form from last successful login ──
+    // Runs whenever the auth gate is shown (not logged in).
+    // Skipped if ?welcome=1 (setup flow handles its own prefill below).
+    var prefillParams = new URLSearchParams(window.location.search);
+    if(prefillParams.get('welcome') !== '1'){
+      try {
+        var savedIdentity = JSON.parse(localStorage.getItem('cogs_login_identity')||'{}');
+        var loginMobile = document.querySelector('#f-login input[name="mobile"]');
+        var loginEmail  = document.querySelector('#f-login input[name="email"]');
+        if(loginMobile && savedIdentity.mobile) loginMobile.value = savedIdentity.mobile;
+        if(loginEmail  && savedIdentity.email)  loginEmail.value  = savedIdentity.email;
+      } catch(ex){}
+    }
 
     // ── Welcome handoff from join form ──
     var params = new URLSearchParams(window.location.search);
