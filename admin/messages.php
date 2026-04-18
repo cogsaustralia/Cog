@@ -896,6 +896,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 <?= ops_admin_collapsible_help('Stewardship guide', [
   ops_admin_info_panel('Stewardship responses', 'What this section does', 'Stewardship Responses helps operators review submitted stewardship or outreach responses and decide where follow-up is needed.', ['Use this section as a review queue.', 'Look at audience, timing, and content together before follow-up.']),
 ]) ?>
+<?php
     $rows = ops_has_table($pdo, 'member_stewardship_responses') ? msg_rows($pdo, "SELECT msr.*, m.full_name, m.email FROM member_stewardship_responses msr LEFT JOIN members m ON m.id = msr.member_id ORDER BY msr.id DESC LIMIT 200") : [];
 ?>
 <div class="card">
@@ -905,6 +906,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
     <?php if (!$rows): ?><tr><td colspan="4" class="empty">No stewardship responses found.</td></tr><?php endif; ?>
     <?php foreach ($rows as $row): ?><tr><td><?= h((string)($row['full_name'] ?? '—')) ?></td><td><?= h((string)($row['email'] ?? '—')) ?></td><td><?= h((string)($row['question_key'] ?? '')) ?> = <?= h((string)($row['answer_value'] ?? '')) ?></td><td><?= h((string)($row['completed_at'] ?? '')) ?></td></tr><?php endforeach; ?>
   </tbody></table></div>
+  </div>
 </div>
 <?php endif; ?>
 <?php if ($section === 'language_audit'): ?>
