@@ -815,7 +815,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="panel on" id="tab-overview">
     <div class="pg">
 
-      <!-- A: Status strip — name + number + one status pill -->
+      <!-- A: Status strip — name + number + paid/unpaid chip -->
       <div class="ov-strip">
         <div class="ov-strip-id">
           <div class="ov-strip-name" id="id-name">Loading…</div>
@@ -826,12 +826,13 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <span id="id-mobile" style="display:none"></span>
       </div>
 
-      <!-- B: Outstanding action prompts — conditional, populated by renderTabOverview.
-           Only shown when something requires the Partner's attention. -->
+      <!-- B: Business pill — shown/hidden by renderTabOverview based on vault/member-business -->
+      <div id="ov-business-pill" style="display:none;margin-bottom:12px"></div>
+
+      <!-- C: Open polls — only conditional item remaining in Overview -->
       <div id="ov-action-prompts"></div>
 
-      <!-- C: Participation pathways — always visible once participation_completed.
-           Renamed "Where you are active". Each pill opens an info popout only. -->
+      <!-- D: Participation pathways — always visible, all 9 pills open showInfo only -->
       <div class="ov-path-wrap" id="ov-pathways" style="display:none">
         <div class="ov-path-hd">
           <h3 id="ov-path-title">Where you are active</h3>
@@ -840,55 +841,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div class="ov-path-grid" id="ov-path-grid"></div>
       </div>
 
-      <!-- D: Invite a Partner — always visible once paid -->
-      <div id="ov-invite-anchor"></div>
-      <div id="invite-wrap" style="display:none"></div>
-
-      <!-- E: Kids S-NFT identity card — shown when any kS-NFT exists or KYC outstanding -->
-      <div id="ov-ksnft-card" style="display:none;margin-top:14px">
-        <div class="sec-divider" style="margin-top:6px">Kids S-NFT &mdash; Guardian Identity Card <i class="info-ico" onclick="showInfo('snft-token')">?</i></div>
-        <div class="card">
-          <div class="card-hd">
-            <h3>Kids S-NFT <span style="font-family:var(--mono);font-size:.72rem;font-weight:400;color:var(--text3)">Class kS</span> <i class="info-ico" onclick="showInfo('ksnft-guardian')" style="margin-left:4px">?</i></h3>
-            <span class="chip chip-gold"><span class="chip-dot"></span>Guardian-held</span>
-          </div>
-          <div class="card-bd" style="padding-bottom:0">
-            <p style="font-size:.82rem;color:var(--text3);line-height:1.65;margin-bottom:14px">Each kS-NFT is an additional soulbound token held by you as guardian until the child turns 18, at which point it automatically converts to a full Class S Personal S-NFT with all adult governance rights. $1 per child.</p>
-            <!-- KYC gate — visible here, not in hidden stubs -->
-            <div id="kyc-cta" style="margin-bottom:12px">
-              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--amber-bg);border:1px solid var(--amber-bdr);border-radius:var(--r2)">
-                <span style="font-size:1rem;color:var(--amber)">&#9888;</span>
-                <span style="font-size:.82rem;color:var(--amber);flex:1">Identity verification required before Kids S-NFTs can be issued.</span>
-                <button class="btn btn-sm" style="border-color:var(--amber-bdr);color:var(--amber);background:none;flex-shrink:0" onclick="openKycPanel()">Verify ID &rarr;</button>
-              </div>
-            </div>
-            <div id="kyc-panel" style="display:none;padding:16px 18px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border2);margin-bottom:14px">
-              <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:12px">Identity Verification &mdash; Medicare Card</div>
-              <div class="form-group"><label class="form-label">Full name (as on Medicare card)</label><input class="form-input" id="kyc-name" autocomplete="name"></div>
-              <div style="display:grid;grid-template-columns:1fr 70px 120px;gap:10px">
-                <div class="form-group"><label class="form-label">Medicare number (10 digits)</label><input class="form-input" id="kyc-number" inputmode="numeric" maxlength="10" placeholder="2000 00000 0"></div>
-                <div class="form-group"><label class="form-label">IRN</label><input class="form-input" id="kyc-irn" inputmode="numeric" maxlength="1" placeholder="1"></div>
-                <div class="form-group"><label class="form-label">Expiry (MM/YYYY)</label><input class="form-input" id="kyc-expiry" placeholder="01/2026"></div>
-              </div>
-              <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:.74rem;color:var(--text3);margin-bottom:12px">
-                <input type="checkbox" id="kyc-decl" style="margin-top:2px;flex-shrink:0">
-                I consent to this information being used for identity verification only, in accordance with the Privacy Act 1988.
-              </label>
-              <div style="display:flex;gap:8px">
-                <button class="btn btn-gold btn-sm" id="kyc-submit-btn" onclick="submitKyc()">Submit for verification</button>
-                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('kyc-panel').style.display='none';document.getElementById('kyc-cta').style.display=''">Cancel</button>
-              </div>
-              <div class="flash" id="kyc-fl"></div>
-            </div>
-            <!-- Family block — populated by renderHoldings; contains stepper, registered children list -->
-            <div id="classs-family-block"></div>
-          </div>
-        </div>
-      </div>
-
       <!-- ══ HIDDEN STUBS ══
-           IDs required by renderBasket, renderIdentity (ent-list, jvpa-wrap),
-           legacy holdings summary, and removed KPI elements. Not visible. -->
+           All identity/invite/kS-NFT management moved to Partners Hub.
+           IDs preserved here for JS compatibility — nothing visible. -->
       <div id="ov-hidden-stubs" style="display:none">
         <div id="ent-list"></div>
         <div id="jvpa-wrap"></div>
@@ -896,12 +851,22 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <span id="b-total-cogs">—</span>
         <span id="b-total-value">—</span>
         <table><tbody id="basket-tokens"></tbody></table>
-        <!-- Removed KPI / rights stubs — JS still writes to these -->
         <span id="ov-kpi-cc"></span>
         <span id="ov-kpi-res"></span>
         <span id="ov-kpi-give"></span>
         <span id="b-partners">—</span>
         <span id="ov-right-snft"></span>
+        <!-- kS-NFT / invite stubs -->
+        <div id="ov-ksnft-card"></div>
+        <div id="ov-invite-anchor"></div>
+        <div id="invite-wrap"></div>
+        <div id="kyc-cta"></div>
+        <div id="kyc-panel"></div>
+        <div id="classs-family-block"></div>
+        <input id="kyc-name"><input id="kyc-number"><input id="kyc-irn"><input id="kyc-expiry">
+        <input type="checkbox" id="kyc-decl">
+        <button id="kyc-submit-btn"></button>
+        <div id="kyc-fl"></div>
       </div>
 
     </div>
@@ -3190,111 +3155,54 @@ function renderTabOverview(d){
 
   /* Hidden KPI stubs — keep in sync so other render paths don't throw */
   var fmtA2 = function(n){ return '$'+parseFloat(n||0).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };
-  var ccBalance  = parseFloat(d.community_tokens||0)||0;
-  var don        = parseInt(d.donation_tokens||0,10)||0;
-  var pif        = parseInt(d.pay_it_forward_tokens||0,10)||0;
-  var givingTotal= (don + pif) * 4;
-  var asx        = parseFloat(d.investment_tokens||0)||0;
-  var rwa        = parseFloat(d.rwa_tokens||0)||0;
-  var lh         = parseFloat(d.landholder_tokens||0)||0;
-  var resTotal   = asx + rwa + lh;
-  var kpiCc  = document.getElementById('ov-kpi-cc');   if(kpiCc)   kpiCc.textContent   = fmtDp(ccBalance);
-  var kpiGive= document.getElementById('ov-kpi-give'); if(kpiGive) kpiGive.textContent = fmtA2(givingTotal);
-  var kpiRes = document.getElementById('ov-kpi-res');  if(kpiRes)  kpiRes.textContent  = fmtDp(resTotal);
+  var kpiCc  = document.getElementById('ov-kpi-cc');   if(kpiCc)   kpiCc.textContent   = fmtDp(parseFloat(d.community_tokens||0)||0);
+  var kpiGive= document.getElementById('ov-kpi-give'); if(kpiGive) kpiGive.textContent = fmtA2(((parseInt(d.donation_tokens||0,10)||0)+(parseInt(d.pay_it_forward_tokens||0,10)||0))*4);
+  var kpiRes = document.getElementById('ov-kpi-res');  if(kpiRes)  kpiRes.textContent  = fmtDp((parseFloat(d.investment_tokens||0)||0)+(parseFloat(d.rwa_tokens||0)||0)+(parseFloat(d.landholder_tokens||0)||0));
   var ref    = document.getElementById('pay-modal-ref');
   if(ref && d.member_number) ref.textContent = (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
 
-  /* ── C: Participation pathways — always render, uses showInfo only ── */
+  /* ── B: Business pill — silent check ── */
+  window.api('vault/member-business').then(function(r){
+    var bpill = document.getElementById('ov-business-pill');
+    if(!bpill) return;
+    if(r && r.has_business){
+      bpill.style.display = '';
+      bpill.innerHTML = '<a class="btn btn-ghost btn-sm" style="display:inline-flex;align-items:center;gap:6px" href="../wallets/business.html" onclick="coinTransition(\'../wallets/business.html\');return false;">&#9656; '+esc(r.trading_name||r.legal_name||'My Business')+'</a>';
+    } else {
+      bpill.style.display = '';
+      bpill.innerHTML = '<a class="btn btn-ghost btn-sm" style="display:inline-flex;align-items:center;gap:6px;color:var(--text3)" href="../join/business.html">&#43; Register a business &rarr;</a>';
+    }
+  }).catch(function(){});
+
+  /* ── D: Participation pathways ── */
   try{ renderParticipationPathways(d); }catch(e){}
 
-  /* ── B: Outstanding action prompts — conditional only ── */
+  /* ── C: Open polls only — everything else moved to Partners Hub ── */
   var prompts = document.getElementById('ov-action-prompts');
   if(!prompts) return;
   var html = '';
 
-  /* 1. JVPA not accepted — amber, shown first */
-  var jvpa = d.jvpa_acceptance||null;
-  if(!jvpa || !(jvpa.accepted_at||jvpa.checkbox_confirmed)){
-    html += '<div class="ov-prompt ov-prompt-amber" onclick="tab(\'governance\')">'
-      + '<div class="ov-prompt-ico">&#9998;</div>'
-      + '<div class="ov-prompt-body"><div class="ov-prompt-title">Partnership Agreement acknowledgement pending</div>'
-      + '<div class="ov-prompt-sub">Your JVPA acceptance has not been recorded. Visit Governance to complete.</div></div>'
-      + '<div class="ov-prompt-arrow">&#8594;</div></div>';
-  }
-
-  /* 2. Payment outstanding — red */
-  if(!paid){
-    html += '<div class="ov-prompt ov-prompt-red" onclick="openPayModal()">'
-      + '<div class="ov-prompt-ico">&#9889;</div>'
-      + '<div class="ov-prompt-body"><div class="ov-prompt-title">$4 entry contribution required</div>'
-      + '<div class="ov-prompt-sub">Your Class S Unit is reserved. Complete the $4 payment to issue it and activate your governance vote.</div></div>'
-      + '<div class="ov-prompt-arrow">&#8594;</div></div>';
-  }
-
-  /* 3. Participation areas not chosen */
-  if(!d.participation_completed){
-    html += '<div class="ov-prompt ov-prompt-amber" onclick="goToParticipation()">'
-      + '<div class="ov-prompt-ico">&#9776;</div>'
-      + '<div class="ov-prompt-body"><div class="ov-prompt-title">Choose your participation areas</div>'
-      + '<div class="ov-prompt-sub">Tell the Partnership where you\'ll be actively involved. Takes one minute on the Partners Hub.</div></div>'
-      + '<div class="ov-prompt-arrow">&#8594;</div></div>';
-  }
-
-  /* 4. Open polls */
   var polls = Array.isArray(d.polls) ? d.polls : [];
   polls.filter(function(p){ return p.status==='open'||p.status==='scheduled'; }).forEach(function(p){
-    var tally = p.tally||p.tallies||{};
+    var tally  = p.tally||p.tallies||{};
     var myVote = p.my_vote||null;
-    var isProposal = (p.poll_type||'').indexOf('proposal')>=0 || (p.poll_type||'')==='member_resolution';
+    var isProposal = (p.poll_type||'').indexOf('proposal')>=0||(p.poll_type||'')=='member_resolution';
     var choices = isProposal ? ['yes','maybe','no'] : ['yes','no'];
     var pillHtml = choices.map(function(c){
       var votes = (tally[c]||{}).votes||(tally[c]||0)||0;
-      var cls = c==='yes'?'yes':c==='no'?'no':'maybe';
-      var voted = myVote && (myVote.choice||myVote)===c ? ' &#10003;' : '';
-      return '<span class="ov-ppill '+cls+'">'+c.toUpperCase()+voted+' &middot; '+votes+'</span>';
+      var cls   = c==='yes'?'yes':c==='no'?'no':'maybe';
+      var voted = myVote&&(myVote.choice||myVote)===c?' &#10003;':''
+      return '<span class="ov-ppill '+cls+'>">'+c.toUpperCase()+voted+' &middot; '+votes+'</span>';
     }).join('');
     html += '<div class="ov-prompt ov-prompt-gold" onclick="tab(\'governance\')">'
       + '<div class="ov-prompt-ico">&#10022;</div>'
-      + '<div class="ov-prompt-body">'
-      + '<div class="ov-prompt-title">' + esc(p.title||'Partners Poll open') + '</div>'
-      + '<div class="ov-poll-pills">' + pillHtml + '</div>'
-      + '</div></div>';
+      + '<div class="ov-prompt-body"><div class="ov-prompt-title">'+esc(p.title||'Partners Poll open')+'</div>'
+      + '<div class="ov-poll-pills">'+pillHtml+'</div></div></div>';
   });
 
-  /* 5. Unread notices */
-  var allNotices = (Array.isArray(d.notices) ? d.notices : []).concat(Array.isArray(d.announcements) ? d.announcements : []);
-  var unreadNotices = allNotices.filter(function(n){ return !n.is_read; });
-  if(unreadNotices.length > 0){
-    var latest = unreadNotices[0];
-    var preview = esc((latest.summary||latest.body||'').replace(/<[^>]*>/g,'')).substring(0,100);
-    if(preview.length===100) preview += '&#8230;';
-    html += '<div class="ov-prompt ov-prompt-dim" onclick="tab(\'news\')">'
-      + '<div class="ov-prompt-ico">&#9685;</div>'
-      + '<div class="ov-prompt-body">'
-      + '<div class="ov-prompt-title">' + esc(latest.title||latest.subject||'Important Notice') + '</div>'
-      + (preview ? '<div class="ov-prompt-sub">'+preview+'</div>' : '')
-      + (unreadNotices.length > 1 ? '<div class="ov-prompt-sub" style="margin-top:4px;color:var(--text3)">+'+(unreadNotices.length-1)+' more unread</div>' : '')
-      + '</div><div class="ov-prompt-arrow">&#8594;</div></div>';
-  }
-
-  /* 6. Pending payments */
-  var unpaidLines = Array.isArray(d.gift_pool_unpaid_lines) ? d.gift_pool_unpaid_lines : [];
-  if(unpaidLines.length > 0){
-    var unpaidTotal = unpaidLines.reduce(function(s,r){ return s + Number(r.amount||0); }, 0);
-    var labels = unpaidLines.map(function(r){
-      var m = {kids_tokens:'Kids S-NFT',donation_tokens:'Donation COG$',pay_it_forward_tokens:'Pay It Forward'};
-      return (m[r.token_class]||r.token_class||'Order')+' \u00d7'+(r.units||1);
-    }).join(', ');
-    html += '<div class="ov-prompt ov-prompt-amber" onclick="tab(\'give\')">'
-      + '<div class="ov-prompt-ico">&#128179;</div>'
-      + '<div class="ov-prompt-body"><div class="ov-prompt-title">Payment pending &mdash; $'+unpaidTotal.toFixed(2)+'</div>'
-      + '<div class="ov-prompt-sub">'+esc(labels)+' &middot; Use your Partner number as reference.</div></div>'
-      + '<div class="ov-prompt-arrow">&#8594;</div></div>';
-  }
-
-  /* No outstanding items — show nothing (pathways and invite are always visible) */
   prompts.innerHTML = html;
 }
+
 
 function renderTabHoldings(d){
   var resRows = document.getElementById('hd-res-rows');

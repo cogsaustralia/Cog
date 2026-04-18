@@ -539,6 +539,80 @@
     .pe-fl.err{color:#f0857a}
     .pe-hint{font-size:.74rem;color:var(--muted);margin-bottom:14px;text-align:center}
 
+    /* ══ Hub sections — Identity · Governance · Communications · Invite ══ */
+    .hub-sections{display:flex;flex-direction:column;gap:18px;margin-top:24px}
+    .hub-card{background:linear-gradient(135deg,rgba(28,22,10,.85),rgba(14,11,5,.7));border:1px solid var(--gold-rim);border-radius:14px;overflow:hidden}
+    .hub-card-hd{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--gold-rim)}
+    .hub-card-ico{font-size:1rem;color:var(--gold-1);flex-shrink:0;width:20px;text-align:center}
+    .hub-card-title{font-size:.88rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text);flex:1}
+    .hub-card-badge{font-size:.66rem;padding:2px 8px;border-radius:99px;background:rgba(240,130,20,.18);border:1px solid rgba(240,130,20,.5);color:#f0c070;font-weight:600;letter-spacing:.04em}
+    .hub-card-link{font-size:.72rem;color:var(--gold-2);text-decoration:none;font-weight:500;white-space:nowrap}
+    .hub-card-link:hover{color:var(--gold-1);text-decoration:underline}
+    .hub-card-bd{padding:14px 18px}
+    /* Identity rows */
+    .hub-id-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap}
+    .hub-id-row:last-child{border-bottom:none}
+    .hub-id-label{font-size:.76rem;font-weight:600;color:var(--text2);flex:1;min-width:0}
+    .hub-id-sub{font-size:.68rem;color:var(--muted);margin-top:2px;line-height:1.4}
+    .hub-id-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap}
+    .hub-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:99px;font-size:.68rem;font-weight:700;letter-spacing:.04em;border:1px solid}
+    .hub-chip-green{background:rgba(62,200,100,.08);border-color:rgba(62,200,100,.3);color:#52c87a}
+    .hub-chip-red{background:rgba(220,80,80,.08);border-color:rgba(220,80,80,.3);color:#f07a7a}
+    .hub-chip-amber{background:rgba(240,154,60,.08);border-color:rgba(240,154,60,.3);color:#f0b870}
+    .hub-chip-gold{background:rgba(240,190,80,.08);border-color:rgba(240,190,80,.3);color:#f0d070}
+    .hub-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;font-size:.76rem;font-weight:600;cursor:pointer;border:1px solid;font-family:inherit;transition:all .15s;text-decoration:none}
+    .hub-btn-gold{background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#0a0804;border-color:transparent}
+    .hub-btn-gold:hover{opacity:.88}
+    .hub-btn-amber{background:rgba(240,154,60,.1);border-color:rgba(240,154,60,.4);color:#f0b870}
+    .hub-btn-amber:hover{background:rgba(240,154,60,.18)}
+    .hub-btn-ghost{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);color:var(--text2)}
+    .hub-btn-ghost:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
+    .hub-btn-red{background:rgba(220,80,80,.1);border-color:rgba(220,80,80,.4);color:#f07a7a}
+    /* Visual divider between sub-sections */
+    .hub-sub-divider{display:flex;align-items:center;gap:10px;margin:14px 0 10px;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .hub-sub-divider::before,.hub-sub-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
+    /* Child pills */
+    .hub-child-pill{display:flex;align-items:center;gap:8px;padding:7px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;font-size:.76rem;margin-bottom:6px}
+    .hub-child-name{flex:1;font-weight:600;color:var(--text)}
+    /* Poll/proposal rows on hub */
+    .hub-poll-item{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+    .hub-poll-item:last-child{border-bottom:none}
+    .hub-poll-title{font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.35}
+    .hub-poll-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+    .hub-poll-tally{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+    .hub-tally-pill{font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:4px}
+    .hub-tally-yes{background:rgba(62,200,100,.1);color:#52c87a;border:1px solid rgba(62,200,100,.25)}
+    .hub-tally-no{background:rgba(220,80,80,.1);color:#f07a7a;border:1px solid rgba(220,80,80,.25)}
+    .hub-tally-neutral{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
+    /* Invite section */
+    .hub-invite-meta{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 12px;padding:10px 0;border-top:1px solid rgba(240,190,80,.12);border-bottom:1px solid rgba(240,190,80,.12)}
+    .hub-invite-block .hub-invite-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .hub-invite-block .hub-invite-val{font-size:.88rem;font-weight:700;color:var(--text);font-family:var(--mono);letter-spacing:.08em;margin-top:2px}
+    .hub-invite-block .hub-invite-names{font-size:.76rem;color:var(--text2);font-weight:400;letter-spacing:0;font-family:inherit}
+    .hub-invite-actions{display:flex;gap:8px;flex-wrap:wrap}
+    /* KYC inline form on hub */
+    .hub-kyc-form{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-top:10px}
+    .hub-kyc-form .hub-field{margin-bottom:10px}
+    .hub-kyc-form label{display:block;font-size:.7rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .hub-kyc-form input{width:100%;padding:8px 11px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-size:.84rem}
+    .hub-kyc-form input:focus{outline:none;border-color:rgba(240,190,80,.5)}
+    .hub-kyc-grid{display:grid;grid-template-columns:1fr 60px 110px;gap:8px}
+    .hub-kyc-decl{display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.5}
+    .hub-fl{font-size:.78rem;padding:6px 0;display:none}
+    .hub-fl.show{display:block}
+    .hub-fl.ok{color:#52c87a}
+    .hub-fl.err{color:#f07a7a}
+    .hub-fl.info{color:#f0c070}
+    /* Announcement (news) row — no read tracking */
+    .hub-news-item{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+    .hub-news-item:last-child{border-bottom:none}
+    .hub-news-hd{display:flex;align-items:center;gap:8px;cursor:pointer;flex-wrap:wrap}
+    .hub-news-title{font-size:.82rem;font-weight:600;color:var(--text2);flex:1;min-width:0}
+    .hub-news-date{font-size:.66rem;color:var(--muted);flex-shrink:0}
+    .hub-news-chev{font-size:.68rem;color:var(--muted);flex-shrink:0;transition:transform .2s}
+    .hub-news-body{display:none;font-size:.76rem;color:var(--text2);line-height:1.55;padding-top:8px;margin-top:4px;border-top:1px solid rgba(255,255,255,.05)}
+    @media(max-width:600px){.hub-kyc-grid{grid-template-columns:1fr;}}
+
   </style>
 </head>
 <body data-root="../">
@@ -707,15 +781,63 @@
             <div class="comm-pill"><span class="comm-pill-val is-money" id="cs-value">—</span><span class="comm-pill-lbl">Reservation Value</span></div>
           </div>
 
-          <!-- ══ Important Notices — fed from wallet notices ══ -->
-          <div class="important-news" id="important-news" style="display:none;margin-top:28px">
-            <div class="in-header">
-              <span class="in-icon" aria-hidden="true">◎</span>
-              <span class="in-title">Important Notice</span>
-              <span class="in-badge" id="in-badge" style="display:none"></span>
-              <a class="in-view-all" href="../wallets/member.html#s-news" onclick="coinTransition(this);return false;">View all in vault →</a>
+          <!-- ══ Hub sections — Identity · Governance · Communications · Invite ══ -->
+          <div class="hub-sections" id="hub-sections" style="display:none">
+
+            <!-- Section 1: Identity card -->
+            <div class="hub-card" id="hub-identity-card">
+              <div class="hub-card-hd">
+                <span class="hub-card-ico">&#9672;</span>
+                <span class="hub-card-title">Identity &amp; Membership</span>
+              </div>
+              <div class="hub-card-bd" id="hub-identity-bd">
+                <!-- populated by renderHubIdentity() -->
+              </div>
             </div>
-            <div class="in-list" id="in-list"></div>
+
+            <!-- Section 2: Governance — Polls & Proposals -->
+            <div class="hub-card" id="hub-governance-card" style="display:none">
+              <div class="hub-card-hd">
+                <span class="hub-card-ico">&#10022;</span>
+                <span class="hub-card-title">Governance</span>
+                <span class="hub-card-badge" id="hub-gov-badge" style="display:none"></span>
+                <a class="hub-card-link" href="../wallets/member.html" onclick="hubCoinTransition('../wallets/member.html');return false;">Vote in vault &rarr;</a>
+              </div>
+              <div class="hub-card-bd" id="hub-governance-bd">
+                <!-- populated by renderHubGovernance() -->
+              </div>
+            </div>
+
+            <!-- Section 3: Communications — Notices + News -->
+            <div class="hub-card" id="hub-comms-card">
+              <div class="hub-card-hd">
+                <span class="hub-card-ico">&#9685;</span>
+                <span class="hub-card-title">Communications</span>
+                <span class="hub-card-badge" id="hub-comms-badge" style="display:none"></span>
+                <a class="hub-card-link" href="../wallets/member.html" onclick="hubCoinTransition('../wallets/member.html');return false;">View all in vault &rarr;</a>
+              </div>
+              <div class="hub-card-bd" id="hub-comms-bd">
+                <!-- populated by renderHubComms() -->
+              </div>
+            </div>
+
+            <!-- Section 4: Invite a Partner -->
+            <div class="hub-card" id="hub-invite-card" style="display:none">
+              <div class="hub-card-hd">
+                <span class="hub-card-ico">&#128279;</span>
+                <span class="hub-card-title">Invite a Partner</span>
+              </div>
+              <div class="hub-card-bd" id="hub-invite-bd">
+                <!-- populated by renderHubInvite() -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Legacy important-news element kept as hidden stub — renderImportantNews still references it -->
+          <div id="important-news" style="display:none" aria-hidden="true">
+            <div id="in-badge"></div>
+            <div id="in-list"></div>
           </div>
         </div>
       </section>
@@ -1469,7 +1591,12 @@ function enterCommunity(data){
   // • Immediate refresh when user returns to this browser tab
   renderParticipationPill(data);
   window._hubNoticeData = data; // referenced by hubMarkRead
-  renderImportantNews(data);
+  renderHubIdentity(data);
+  renderHubGovernance(data);
+  renderHubComms(data);
+  renderHubInvite(data);
+  var hubSections = document.getElementById('hub-sections');
+  if(hubSections) hubSections.style.display = '';
   renderFoundationHoldings(data);
   loadCommunityStats();
   setInterval(loadCommunityStats, 60000);
@@ -2192,6 +2319,428 @@ function renderParticipationPill(data){
 }
 
 // ── Important News (wallet notices on hub) ──
+/* ════════════════════════════════════════════════════════════
+   HUB SECTION RENDERERS
+════════════════════════════════════════════════════════════ */
+
+function hubCoinTransition(href){
+  var overlay = document.createElement('div');
+  overlay.className = 'coin-transition';
+  overlay.innerHTML = '<img src="../assets/cogs_coin_web.png" alt="" class="coin-spin-anim"><div class="coin-label">Opening…</div>';
+  document.body.appendChild(overlay);
+  requestAnimationFrame(function(){ overlay.classList.add('active'); });
+  setTimeout(function(){ window.location.href = href; }, 1800);
+}
+
+function esc2(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function hubFmtDate(s){
+  if(!s) return '';
+  try{ var d=new Date(String(s).replace(' ','T')); return isNaN(d)?s:d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return s; }
+}
+
+/* ── Section 1: Identity ── */
+function renderHubIdentity(data){
+  var bd = document.getElementById('hub-identity-bd');
+  if(!bd) return;
+  var paid = (data.payment_status||'pending').toLowerCase() === 'paid';
+  var kyc  = data.kyc_status || 'none';
+  var kidsCount = parseInt(data.kids_tokens||0,10)||0;
+  var kidsRegistered = Array.isArray(data.kids_registered) ? data.kids_registered : [];
+  var unpaidKids = (data.gift_pool_unpaid_lines||[]).filter(function(r){ return r.token_class==='kids_tokens'; });
+  var unpaidKidsTotal = unpaidKids.reduce(function(s,r){ return s+Number(r.amount||0); }, 0);
+  var unpaidKidsUnits = unpaidKids.reduce(function(s,r){ return s+(parseInt(r.units||0,10)||0); }, 0);
+  var kycLabels = { verified:'Identity verified', pending:'Verification pending', rejected:'Verification rejected', none:'Not yet verified' };
+  var kycChips  = { verified:'hub-chip-green', pending:'hub-chip-amber', rejected:'hub-chip-red', none:'hub-chip-amber' };
+  var unregisteredCount = Math.max(0, kidsCount - kidsRegistered.length);
+  var html = '';
+
+  /* S-NFT row */
+  html += '<div class="hub-id-row">'
+    + '<div><div class="hub-id-label">Personal S-NFT — Class S</div>'
+    + '<div class="hub-id-sub">Soulbound &middot; one equal national governance vote</div></div>'
+    + '<div class="hub-id-right">'
+    + (paid
+      ? '<span class="hub-chip hub-chip-green">&#10003; Secured</span>'
+      : '<span class="hub-chip hub-chip-red">&#9889; $4 required</span>'
+      + '<button class="hub-btn hub-btn-red" onclick="hubPayNow()">Pay $4 &rarr;</button>')
+    + '</div></div>';
+
+  /* KYC row */
+  var kycChip = '<span class="hub-chip '+kycChips[kyc]+'">'+esc2(kycLabels[kyc]||'Unknown')+'</span>';
+  html += '<div class="hub-id-row" id="hub-kyc-row">'
+    + '<div><div class="hub-id-label">Identity verification</div>'
+    + '<div class="hub-id-sub">Required to register Kids S-NFTs</div></div>'
+    + '<div class="hub-id-right">'
+    + kycChip
+    + (kyc !== 'verified' && kyc !== 'pending'
+      ? '<button class="hub-btn hub-btn-amber" onclick="hubToggleKyc()">Verify ID &rarr;</button>'
+      : '')
+    + '</div></div>';
+
+  /* KYC inline form — hidden until button clicked */
+  if(kyc !== 'verified'){
+    html += '<div id="hub-kyc-form" style="display:none" class="hub-kyc-form">'
+      + '<div class="hub-field"><label>Full name (as on Medicare card)</label><input id="hkyc-name" autocomplete="name" placeholder="JANE CITIZEN"></div>'
+      + '<div class="hub-kyc-grid">'
+      +   '<div class="hub-field"><label>Medicare number</label><input id="hkyc-number" inputmode="numeric" maxlength="10" placeholder="2000 00000 0"></div>'
+      +   '<div class="hub-field"><label>IRN</label><input id="hkyc-irn" inputmode="numeric" maxlength="1" placeholder="1"></div>'
+      +   '<div class="hub-field"><label>Expiry</label><input id="hkyc-expiry" placeholder="01/2028"></div>'
+      + '</div>'
+      + '<label class="hub-kyc-decl"><input type="checkbox" id="hkyc-decl" style="flex-shrink:0;margin-top:2px"> I consent to this information being used for identity verification only, in accordance with the Privacy Act 1988.</label>'
+      + '<div style="display:flex;gap:8px">'
+      +   '<button class="hub-btn hub-btn-gold" id="hkyc-submit-btn" onclick="hubSubmitKyc()">Submit for verification</button>'
+      +   '<button class="hub-btn hub-btn-ghost" onclick="hubToggleKyc()">Cancel</button>'
+      + '</div>'
+      + '<div class="hub-fl" id="hkyc-fl"></div>'
+      + '</div>';
+  }
+
+  /* Outstanding kids payment */
+  if(unpaidKidsUnits > 0){
+    html += '<div class="hub-id-row" style="background:rgba(220,80,80,.05);border-radius:8px;padding:10px 12px;margin-top:4px">'
+      + '<div><div class="hub-id-label" style="color:#f07a7a">&#9889; Payment outstanding — '+unpaidKidsUnits+' Kids S-NFT'+(unpaidKidsUnits!==1?'s':'')+'</div>'
+      + '<div class="hub-id-sub">$'+unpaidKidsTotal.toFixed(2)+' due &middot; PayID 0494 578 706 &middot; use your Partner number as reference</div></div>'
+      + '<div class="hub-id-right"><button class="hub-btn hub-btn-red" onclick="hubPayKidsCard()">Pay now &rarr;</button></div>'
+      + '</div>';
+  }
+
+  /* kS-NFT sub-section */
+  html += '<div class="hub-sub-divider">Kids S-NFT <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.7rem;margin-left:6px">for parents, grandparents &amp; guardians <button style="background:none;border:1px solid rgba(240,190,80,.3);color:rgba(240,190,80,.7);border-radius:99px;padding:1px 8px;font-size:.66rem;cursor:pointer;font-family:inherit;margin-left:4px" onclick="hubShowKsnftInfo()">?</button></span></div>';
+
+  /* Registered children */
+  if(kidsRegistered.length > 0){
+    html += kidsRegistered.map(function(k){
+      var statusChip = k.status==='issued' ? '<span class="hub-chip hub-chip-green">Issued</span>' : '<span class="hub-chip hub-chip-amber">Pending</span>';
+      return '<div class="hub-child-pill"><span class="hub-child-name">'+esc2(k.name||'Unnamed child')+'</span>'+(k.dob?'<span style="font-size:.7rem;color:var(--muted);font-family:var(--mono)">'+esc2(k.dob)+'</span>':'')+statusChip+'</div>';
+    }).join('');
+  }
+  if(unregisteredCount > 0){
+    html += '<div style="padding:7px 12px;background:rgba(240,154,60,.07);border:1px solid rgba(240,154,60,.2);border-radius:8px;font-size:.74rem;color:#f0b870;margin-bottom:8px">'+unregisteredCount+' ordered token'+(unregisteredCount!==1?'s':'')+' pending admin registration — payment confirmation required.</div>';
+  }
+  if(kidsCount === 0 && kidsRegistered.length === 0){
+    html += '<div style="font-size:.76rem;color:var(--muted);padding:4px 0 8px">No Kids S-NFTs registered yet.</div>';
+  }
+
+  /* Add Kids stepper */
+  var kycOk = kyc === 'verified';
+  html += '<div class="hub-id-row" style="padding-top:10px">'
+    + '<div><div class="hub-id-label">Add Kids S-NFT</div>'
+    + '<div class="hub-id-sub">$1 per child &middot; Class kS &middot; guardian-held until age 18</div></div>'
+    + '<div class="hub-id-right">'
+    + (kycOk
+      ? '<button class="hub-btn hub-btn-ghost" onclick="hubAdjustKids(-1)" style="width:28px;padding:4px;text-align:center">&#8722;</button>'
+      + '<input id="hub-kids-qty" type="number" min="0" value="0" style="width:52px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--text);font:inherit;font-size:.82rem;padding:4px">'
+      + '<button class="hub-btn hub-btn-ghost" onclick="hubAdjustKids(1)" style="width:28px;padding:4px;text-align:center">&#43;</button>'
+      + '<button class="hub-btn hub-btn-gold" onclick="hubOrderKids()">+ Add</button>'
+      : '<span style="font-size:.74rem;color:var(--muted)">Verify identity first</span>')
+    + '</div></div>'
+    + '<div class="hub-fl" id="hub-kids-fl"></div>';
+
+  bd.innerHTML = html;
+}
+
+/* ── Section 2: Governance — Polls & Proposals ── */
+function renderHubGovernance(data){
+  var card = document.getElementById('hub-governance-card');
+  var bd   = document.getElementById('hub-governance-bd');
+  var badge= document.getElementById('hub-gov-badge');
+  if(!card || !bd) return;
+
+  var polls       = Array.isArray(data.polls) ? data.polls : [];
+  var proposals   = Array.isArray(data.proposals) ? data.proposals : [];
+  var initiations = Array.isArray(data.poll_initiations) ? data.poll_initiations : [];
+
+  var activePolls = polls.filter(function(p){ return p.status==='open'||p.status==='scheduled'; });
+  var activeProps = proposals.filter(function(p){ return p.status==='submitted'||p.status==='sponsored'||p.status==='open'||p.status==='deliberation'; });
+  var activeInits = initiations.filter(function(i){ return i.status==='submitted'||i.status==='sponsored'; });
+
+  var totalActive = activePolls.length + activeProps.length + activeInits.length;
+
+  if(totalActive === 0){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  if(badge){
+    badge.textContent = totalActive + ' active';
+    badge.style.display = '';
+  }
+
+  var html = '';
+
+  /* Partners Polls sub-section */
+  if(activePolls.length > 0){
+    html += '<div class="hub-sub-divider">Partners Polls</div>';
+    html += activePolls.map(function(p){
+      var tally = p.tally||{};
+      var mv    = p.my_vote;
+      var yesV  = (tally.yes||{}).votes||0;
+      var noV   = (tally.no||{}).votes||0;
+      var statusBadge = p.status==='open'
+        ? '<span class="hub-chip hub-chip-green">Open</span>'
+        : '<span class="hub-chip hub-chip-amber">Deliberation</span>';
+      return '<div class="hub-poll-item">'
+        + '<div class="hub-poll-meta">'+statusBadge+(p.closes_at?'<span style="font-size:.68rem;color:var(--muted)">Closes '+hubFmtDate(p.closes_at)+'</span>':'')+'</div>'
+        + '<div class="hub-poll-title">'+esc2(p.title||'Partners Poll')+'</div>'
+        + '<div class="hub-poll-tally">'
+        +   '<span class="hub-tally-pill hub-tally-yes">Yes &middot; '+yesV+'</span>'
+        +   '<span class="hub-tally-pill hub-tally-no">No &middot; '+noV+'</span>'
+        +   (mv ? '<span class="hub-tally-pill hub-tally-neutral">&#10003; Voted '+esc2(mv.choice||'')+'</span>' : '')
+        + '</div>'
+        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" style="font-size:.74rem">Vote in vault &rarr;</a>'
+        + '</div>';
+    }).join('');
+  }
+
+  /* Proposals & Initiations sub-section */
+  if(activeProps.length + activeInits.length > 0){
+    html += '<div class="hub-sub-divider">Governance Proposals</div>';
+    html += activeInits.map(function(p){
+      var met = !!p.is_threshold_met;
+      var joined = p.my_initiation_status === 'joined';
+      return '<div class="hub-poll-item">'
+        + '<div class="hub-poll-meta"><span class="hub-chip hub-chip-amber">Initiation in progress</span>'
+        + '<span style="font-size:.68rem;color:var(--muted)">'+(p.initiator_count||0)+' / '+(p.initiation_threshold||0)+' Partners</span></div>'
+        + '<div class="hub-poll-title">'+esc2(p.title||'')+'</div>'
+        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" style="font-size:.74rem">'+(joined?'View in vault':'Join in vault')+' &rarr;</a>'
+        + '</div>';
+    }).join('');
+    html += activeProps.map(function(p){
+      return '<div class="hub-poll-item">'
+        + '<div class="hub-poll-meta"><span class="hub-chip hub-chip-amber">'+esc2(p.status||'Proposal')+'</span></div>'
+        + '<div class="hub-poll-title">'+esc2(p.title||'')+'</div>'
+        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" style="font-size:.74rem">View in vault &rarr;</a>'
+        + '</div>';
+    }).join('');
+  }
+
+  bd.innerHTML = html;
+}
+
+/* ── Section 3: Communications — Notices + News ── */
+function renderHubComms(data){
+  var bd    = document.getElementById('hub-comms-bd');
+  var badge = document.getElementById('hub-comms-badge');
+  if(!bd) return;
+
+  var notices = Array.isArray(data.notices) ? data.notices : [];
+  var anns    = Array.isArray(data.announcements) ? data.announcements : [];
+  var unreadCount = notices.filter(function(n){ return !n.is_read; }).length;
+
+  if(badge){
+    if(unreadCount > 0){ badge.textContent = unreadCount+' unread'; badge.style.display=''; }
+    else badge.style.display='none';
+  }
+
+  var html = '';
+
+  /* ── Important Notices — tracked, Mark as read ── */
+  html += '<div class="hub-sub-divider">Important Notices</div>';
+  if(notices.length === 0){
+    html += '<div style="font-size:.76rem;color:var(--muted);padding:4px 0 8px">No current notices.</div>';
+  } else {
+    var sorted = notices.slice().sort(function(a,b){ return a.is_read===b.is_read?0:a.is_read?1:-1; });
+    html += sorted.slice(0,5).map(function(n,i){
+      var unread = !n.is_read;
+      var itemId = 'hn-item-'+i;
+      var bodyId = 'hn-body-'+i;
+      var priority = String(n.priority||'normal').toLowerCase();
+      var priorityBadge = priority==='critical' ? '<span class="in-priority-badge critical">Critical</span>'
+        : priority==='high' ? '<span class="in-priority-badge high">High</span>' : '';
+      var body = esc2(n.body||n.summary||'');
+      return '<div class="in-item'+(unread?' unread':' read')+'" id="'+itemId+'">'
+        + '<div class="in-item-hd" onclick="hubToggleItem(\''+itemId+'\',\''+bodyId+'\')" style="cursor:pointer">'
+        + (unread?'<span class="in-item-unread-dot"></span>':'')
+        + '<span class="in-item-title">'+esc2(n.subject||n.title||'Notice')+'</span>'
+        + priorityBadge
+        + (n.sent_at?'<span class="in-item-date">'+hubFmtDate(n.sent_at)+'</span>':'')
+        + '<span style="font-size:.68rem;color:var(--muted);margin-left:auto;transition:transform .2s" id="hn-chev-'+i+'">&#9662;</span>'
+        + '</div>'
+        + '<div id="'+bodyId+'" style="display:none">'
+        + (body?'<div class="in-item-body" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)">'+body+'</div>':'')
+        + (unread
+          ? '<button class="in-mark-read" onclick="hubMarkNoticeRead('+n.id+',\''+itemId+'\')" style="margin-top:8px;background:none;border:1px solid rgba(240,180,70,.35);color:rgba(240,180,70,.8);padding:3px 11px;border-radius:99px;font-size:.76rem;font-weight:600;cursor:pointer;font-family:inherit">&#10003; Mark as read</button>'
+          : '<span style="font-size:.72rem;color:var(--muted);margin-top:6px;display:inline-block">Read</span>')
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  /* ── News — announcements, no read-tracking, expand/collapse only ── */
+  html += '<div class="hub-sub-divider" style="margin-top:18px">News</div>';
+  if(anns.length === 0){
+    html += '<div style="font-size:.76rem;color:var(--muted);padding:4px 0">No current news.</div>';
+  } else {
+    html += anns.slice(0,5).map(function(a,i){
+      var newsBodyId = 'ha-body-'+i;
+      var body = esc2(a.body||'');
+      return '<div class="hub-news-item">'
+        + '<div class="hub-news-hd" onclick="hubToggleNews(\''+newsBodyId+'\',this)">'
+        + '<span class="hub-news-title">'+esc2(a.title||'')+'</span>'
+        + (a.created_at?'<span class="hub-news-date">'+hubFmtDate(a.created_at)+'</span>':'')
+        + '<span class="hub-news-chev">&#9662;</span>'
+        + '</div>'
+        + (body?'<div class="hub-news-body" id="'+newsBodyId+'">'+body+'</div>':'')
+        + '</div>';
+    }).join('');
+  }
+
+  bd.innerHTML = html;
+}
+
+/* ── Section 4: Invite a Partner ── */
+function renderHubInvite(data){
+  var card = document.getElementById('hub-invite-card');
+  var bd   = document.getElementById('hub-invite-bd');
+  if(!card || !bd) return;
+
+  var invite = data.invite_code || null;
+  if(!invite || !invite.code){ card.style.display='none'; return; }
+  var paid = (data.payment_status||'pending').toLowerCase()==='paid';
+  if(!paid){ card.style.display='none'; return; }
+
+  card.style.display = '';
+  var code   = esc2(invite.code||'');
+  var link   = invite.invite_link || invite.share_url || '';
+  var uses   = Number(invite.use_count||0);
+  var recent = Array.isArray(invite.recent) ? invite.recent : [];
+  var names  = recent.slice(0,8).map(function(r){ return esc2(r.first_name||(r.name||'').split(' ')[0]||''); }).filter(Boolean);
+  var namesLine = names.length
+    ? names.join(' &middot; ')+(recent.length>8?' &middot; +'+(recent.length-8)+' more':'')
+    : '<span style="color:var(--muted);font-style:italic">No Partners invited yet</span>';
+
+  var escA = function(s){ return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); };
+
+  bd.innerHTML = '<p style="font-size:.78rem;color:var(--text2);line-height:1.65;margin-bottom:12px">Your governance vote is equal to every other Partner\'s. The collective leverage of the Partnership grows with every Partner you bring in. Each new Partner strengthens the community&apos;s voice at an ASX AGM, in an FPIC process, and across Country.</p>'
+    + '<div class="hub-invite-meta">'
+    +   '<div class="hub-invite-block"><div class="hub-invite-lbl">Your invite code</div><div class="hub-invite-val">'+code+'</div></div>'
+    +   '<div class="hub-invite-block"><div class="hub-invite-lbl">Partners invited</div><div class="hub-invite-val" style="letter-spacing:0">'+uses+'</div></div>'
+    +   '<div class="hub-invite-block" style="flex:1;min-width:160px"><div class="hub-invite-lbl">Joined so far</div><div class="hub-invite-names">'+namesLine+'</div></div>'
+    + '</div>'
+    + '<div class="hub-invite-actions">'
+    +   '<button class="hub-btn hub-btn-gold" onclick="hubCopyText(\''+escA(link||code)+'\',this)">Copy invite link</button>'
+    +   '<button class="hub-btn hub-btn-ghost" onclick="hubShareInvite(\''+escA(code)+'\',\''+escA(link)+'\')">Share</button>'
+    +   '<button class="hub-btn hub-btn-ghost" onclick="hubCopyText(\''+escA(code)+'\',this)">Copy code</button>'
+    + '</div>';
+}
+
+/* ── Hub helper functions ── */
+function hubToggleItem(itemId, bodyId){
+  var body = document.getElementById(bodyId);
+  if(!body) return;
+  var open = body.style.display==='none';
+  body.style.display = open?'':'none';
+  var item = document.getElementById(itemId);
+  if(item){ var chev=item.querySelector('[id^="hn-chev-"]'); if(chev) chev.style.transform=open?'rotate(180deg)':''; }
+}
+function hubToggleNews(bodyId, hd){
+  var body = document.getElementById(bodyId);
+  if(!body) return;
+  var open = body.style.display==='none';
+  body.style.display = open?'':'none';
+  if(hd){ var chev=hd.querySelector('.hub-news-chev'); if(chev) chev.style.transform=open?'rotate(180deg)':''; }
+}
+function hubMarkNoticeRead(noticeId, itemId){
+  var hubData = window._hubNoticeData;
+  if(!hubData||!hubData.notices) return;
+  var n = hubData.notices.find(function(x){ return x.id===noticeId; });
+  if(n) n.is_read=true;
+  var item = document.getElementById(itemId);
+  if(item){
+    item.classList.remove('unread'); item.classList.add('read');
+    var btn = item.querySelector('.in-mark-read');
+    if(btn) btn.outerHTML='<span style="font-size:.72rem;color:var(--muted);margin-top:6px;display:inline-block">Read</span>';
+    var dot = item.querySelector('.in-item-unread-dot'); if(dot) dot.remove();
+  }
+  renderHubComms(hubData);
+  api('vault/mark-read',{method:'POST',body:JSON.stringify({notice_id:noticeId})}).catch(function(){});
+}
+function hubToggleKyc(){
+  var form = document.getElementById('hub-kyc-form');
+  if(!form) return;
+  form.style.display = form.style.display==='none' ? '' : 'none';
+}
+async function hubSubmitKyc(){
+  var name   = (document.getElementById('hkyc-name')||{}).value||'';
+  var num    = ((document.getElementById('hkyc-number')||{}).value||'').replace(/\D/g,'');
+  var irn    = (document.getElementById('hkyc-irn')||{}).value||'';
+  var expiry = (document.getElementById('hkyc-expiry')||{}).value||'';
+  var decl   = (document.getElementById('hkyc-decl')||{}).checked;
+  var fl = document.getElementById('hkyc-fl');
+  function setFl(msg,cls){ if(!fl)return; fl.textContent=msg; fl.className='hub-fl show '+(cls||'info'); }
+  if(!name.trim()){ setFl('Enter your full name as on your Medicare card.','err'); return; }
+  if(num.length!==10){ setFl('Medicare number must be 10 digits.','err'); return; }
+  if(!/^[1-9]$/.test(irn.trim())){ setFl('IRN must be a single digit 1–9.','err'); return; }
+  if(!/^(0[1-9]|1[0-2])\/\d{4}$/.test(expiry.trim())){ setFl('Enter expiry as MM/YYYY.','err'); return; }
+  if(!decl){ setFl('Please accept the privacy declaration.','err'); return; }
+  var btn = document.getElementById('hkyc-submit-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Submitting…'; }
+  try{
+    var r = await api('kyc/submit-medicare',{method:'POST',body:JSON.stringify({
+      medicare_card_name:name.trim().toUpperCase(), medicare_number:num, medicare_irn:irn.trim(),
+      medicare_expiry:expiry.trim(), purpose:'member_identity', declaration_accepted:true
+    })});
+    setFl(r.message||'Submitted for review.','ok');
+    if(btn){ btn.disabled=false; btn.textContent='Submit for verification'; }
+  }catch(e){
+    setFl(e.message||'Submission failed.','err');
+    if(btn){ btn.disabled=false; btn.textContent='Submit for verification'; }
+  }
+}
+function hubShowKsnftInfo(){
+  if(typeof showInfo==='function') showInfo('ksnft-guardian');
+  else alert('Kids S-NFT (Class kS) — for parents, grandparents and guardians. $1 per child. Guardian-held until the child turns 18, then automatically converts to a full Class S Personal S-NFT.');
+}
+function hubAdjustKids(delta){
+  var inp = document.getElementById('hub-kids-qty');
+  if(!inp) return;
+  inp.value = Math.max(0, (parseInt(inp.value||0,10)||0)+delta);
+}
+async function hubOrderKids(){
+  var qty = Math.max(0, parseInt((document.getElementById('hub-kids-qty')||{}).value||0,10)||0);
+  var fl  = document.getElementById('hub-kids-fl');
+  function setFl(msg,cls){ if(!fl)return; fl.textContent=msg; fl.className='hub-fl show '+(cls||'info'); }
+  if(qty<1){ setFl('Enter how many Kids S-NFTs to add.','err'); return; }
+  var btn = document.querySelector('button[onclick="hubOrderKids()"]');
+  if(btn){ btn.disabled=true; btn.textContent='Recording…'; }
+  try{
+    await api('vault/payment-intent',{method:'POST',body:JSON.stringify({token_class:'kids_tokens',units:qty,tax_disclaimer_agreed:true})});
+    setFl(qty+' Kids S-NFT order recorded. Pay $'+qty+'.00 via PayID 0494 578 706 using your Partner number as reference.','ok');
+    if(document.getElementById('hub-kids-qty')) document.getElementById('hub-kids-qty').value='0';
+    var vault = await api('vault/member');
+    window._hubNoticeData = vault;
+    window._communityData = vault;
+    renderHubIdentity(vault);
+  }catch(e){
+    setFl(e.message||'Could not record order.','err');
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='+ Add'; }
+  }
+}
+function hubPayNow(){
+  hubCoinTransition('../wallets/member.html');
+}
+function hubPayKidsCard(){
+  hubCoinTransition('../wallets/member.html');
+}
+function hubCopyText(text, btn){
+  navigator.clipboard.writeText(text).then(function(){
+    var orig=btn.textContent; btn.textContent='Copied ✓';
+    setTimeout(function(){ btn.textContent=orig; },2000);
+  }).catch(function(){
+    var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    var orig=btn.textContent; btn.textContent='Copied ✓';
+    setTimeout(function(){ btn.textContent=orig; },2000);
+  });
+}
+function hubShareInvite(code, link){
+  var msg='Join the COG$ Joint Venture Partnership with my invite code '+code+': '+link;
+  if(navigator.share){ navigator.share({title:'Join me in the COG$',text:msg,url:link}).catch(function(){}); return; }
+  hubCopyText(link,{textContent:''}); // fallback
+}
+
 // Reads data.announcements[] from the vault/member response (same source as the
 // wallet's News & Notices section) and surfaces the most recent unread items on
 // the hub. Unread notices are highlighted; read ones are dimmer. "View all in
