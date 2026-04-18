@@ -224,3 +224,85 @@ tr:hover { background: rgba(255,255,255,.02); }
 .pager a { color:var(--text); text-decoration:none; }
 .pager a:hover { background:rgba(255,255,255,.07); }
 .pager .pg-current { background:rgba(212,178,92,.12); border-color:rgba(212,178,92,.3); color:var(--gold); }
+
+/* ── Help / Info button ──────────────────────────────────────────────────── */
+.admin-help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,178,92,.35);
+  background: rgba(212,178,92,.08);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  vertical-align: middle;
+  margin-left: 6px;
+  transition: background .15s, border-color .15s;
+  flex-shrink: 0;
+}
+.admin-help-btn:hover {
+  background: rgba(212,178,92,.18);
+  border-color: rgba(212,178,92,.6);
+}
+
+/* ── Help modal overlay ──────────────────────────────────────────────────── */
+.help-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.help-modal-overlay.open {
+  display: flex;
+}
+.help-modal {
+  background: var(--panel);
+  border: 1px solid rgba(212,178,92,.25);
+  border-radius: var(--r);
+  padding: 28px 28px 24px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0,0,0,.5);
+  position: relative;
+}
+.help-modal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 12px;
+  padding-right: 32px;
+}
+.help-modal-body {
+  font-size: 13px;
+  color: var(--sub);
+  line-height: 1.6;
+}
+.help-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line2);
+  background: var(--panel2);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+.help-modal-close:hover { background: rgba(255,255,255,.08); }

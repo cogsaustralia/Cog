@@ -406,3 +406,65 @@ createApp({
     </div>
   `
 }).mount('#app');
+
+/* ── Help button modal handler ───────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  // Create the modal once and reuse it
+  function ensureModal() {
+    let overlay = document.getElementById('cogs-help-modal-overlay');
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.id = 'cogs-help-modal-overlay';
+    overlay.className = 'help-modal-overlay';
+    overlay.innerHTML =
+      '<div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="cogs-help-modal-title">' +
+        '<button class="help-modal-close" id="cogs-help-modal-close" aria-label="Close">&#x2715;</button>' +
+        '<div class="help-modal-title" id="cogs-help-modal-title"></div>' +
+        '<div class="help-modal-body" id="cogs-help-modal-body"></div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    // Close on X button
+    document.getElementById('cogs-help-modal-close').addEventListener('click', closeModal);
+
+    // Close on overlay click (outside modal)
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    return overlay;
+  }
+
+  function openModal(title, body) {
+    var overlay = ensureModal();
+    document.getElementById('cogs-help-modal-title').textContent = title;
+    document.getElementById('cogs-help-modal-body').textContent = body;
+    overlay.classList.add('open');
+    document.getElementById('cogs-help-modal-close').focus();
+  }
+
+  function closeModal() {
+    var overlay = document.getElementById('cogs-help-modal-overlay');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  // Delegate click handler — works for dynamically added buttons too
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.admin-help-btn');
+    if (!btn) return;
+    e.preventDefault();
+    var title = btn.getAttribute('data-help-title') || 'Information';
+    var body  = btn.getAttribute('data-help-body')  || '';
+    openModal(title, body);
+  });
+
+})();
