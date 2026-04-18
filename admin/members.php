@@ -174,6 +174,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lastActionSummary = qrow($pdo, $qid);
             log_partner_support_event($pdo, $memberId, 'partner_both_notices_resent', $adminUserId, ['queue_id'=>$qid]);
             $flash = 'Partner welcome email and admin notice sent.';
+        } elseif ($action === 'update_address') {
+            $street  = trim((string)($_POST['street_address'] ?? ''));
+            $suburb  = trim((string)($_POST['suburb'] ?? ''));
+            $state   = strtoupper(trim((string)($_POST['state_code'] ?? '')));
+            $postcode = trim((string)($_POST['postcode'] ?? ''));
+            if ($street === '') throw new RuntimeException('Street address is required.');
+            if ($suburb === '') throw new RuntimeException('Suburb is required.');
+            if ($state === '')  throw new RuntimeException('State is required.');
+            // Clear G-NAF verification so it re-runs on next login/check
+            $pdo->prepare("UPDATE members SET street_address=?, suburb=?, state_code=?, postcode=?,
+                gnaf_pid=NULL, address_verified_at=NULL, updated_at=NOW() WHERE id=?")
+                ->execute([$street, $suburb, $state, $postcode, $memberId]);
+            // Mirror to snft_memberships if column exists
+            if (ops_has_table($pdo, 'snft_memberships')) {
+                try {
+                    $pdo->prepare("UPDATE snft_memberships SET street_address=?, suburb=?, state_code=?, postcode=?, updated_at=NOW() WHERE member_number=?")
+                        ->execute([$street, $suburb, $state, $postcode, (string)$m['member_number']]);
+                } catch (Throwable $ignored) {}
+            }
+            log_partner_support_event($pdo, $memberId, 'address_corrected_by_admin', $adminUserId, [
+                'street' => $street, 'suburb' => $suburb, 'state' => $state, 'postcode' => $postcode,
+                'gnaf_cleared' => true,
+            ]);
+            $flash = 'Address updated. G-NAF verification cleared — will re-run on next address check.';
         }
     } catch (Throwable $e) {
         $error = $e->getMessage();
@@ -556,6 +580,23 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
                   type="button"
                 ><?=empty($r['gnaf_pid']) ? 'Run G-NAF Verification' : 'Re-verify Address'?></button>
                 <div id="gnaf-result-<?=(int)$r['id']?>" style="margin-top:8px;font-size:12px;display:none"></div>
+                <details style="margin-top:10px">
+                  <summary style="font-size:12px;color:var(--muted);cursor:pointer">Edit address</summary>
+                  <form method="post" style="margin-top:10px">
+                    <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+                    <input type="hidden" name="action" value="update_address">
+                    <input type="hidden" name="member_id" value="<?=(int)$r['id']?>">
+                    <div style="display:grid;gap:6px">
+                      <input name="street_address" value="<?=h($r['street_address'] ?? '')?>" placeholder="Street address" style="width:100%;font:inherit;font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
+                      <div style="display:grid;grid-template-columns:1fr auto auto;gap:6px">
+                        <input name="suburb" value="<?=h($r['suburb'] ?? '')?>" placeholder="Suburb" style="font:inherit;font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
+                        <input name="state_code" value="<?=h($r['state_code'] ?? '')?>" placeholder="State" maxlength="3" style="width:56px;font:inherit;font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
+                        <input name="postcode" value="<?=h($r['postcode'] ?? '')?>" placeholder="Postcode" maxlength="4" style="width:72px;font:inherit;font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
+                      </div>
+                      <button type="submit" class="secondary" style="font-size:12px;padding:6px 14px">Save address &amp; clear G-NAF</button>
+                    </div>
+                  </form>
+                </details>
               </div>
               <?php endif; ?>
                 <!-- Landholder Parcel Verification -->
