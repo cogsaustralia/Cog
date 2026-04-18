@@ -11,6 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// ── Cache layer (5-minute TTL) ────────────────────────────────────────────────
+require_once __DIR__ . '/../services/SimpleCache.php';
+$cache     = new SimpleCache('/tmp/cogs_cache');
+$cacheKey  = 'community_stats';
+$cached    = $cache->get($cacheKey);
+if ($cached !== null) {
+    echo json_encode($cached);
+    exit;
+}
+
 try {
     $db = getDB();
     $w = "signup_payment_status IN ('paid','pending')";
@@ -82,7 +92,7 @@ try {
                   + (int)$btok['b_reserved']+ (int)$btok['b_donation']
                   + (int)$btok['b_pif']     + (int)$btok['b_landholder']) * 4.0;
 
-    echo json_encode([
+    $result = [
         'success' => true,
         'data' => [
             'founding_members' => $members + $businesses,
@@ -108,7 +118,9 @@ try {
                 'suburbs_count'   => $suburbs,
             ],
         ]
-    ]);
+    ];
+    $cache->set($cacheKey, $result, 300); // cache for 5 minutes
+    echo json_encode($result);
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
