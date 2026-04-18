@@ -73,36 +73,21 @@ $stewardCount = count(array_filter($rows, fn($r) => !empty($r['stewardship_hash'
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Business Members | COGs Admin</title>
 <style>
-:root{--line:rgba(255,255,255,.08);--muted:#9fb0c1}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#0c1018;color:#eef2f7;min-height:100vh;font-size:14px}
-.main{padding:20px}
-.card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:14px}
-.msg{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:10px}
-.msg.ok{background:rgba(82,184,122,.08);border:1px solid rgba(82,184,122,.25);color:#7ee0a0}
-.msg.err{background:rgba(200,60,60,.08);border:1px solid rgba(200,60,60,.25);color:#ffb4be}
-table{width:100%;border-collapse:collapse}
-th{text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:2px solid var(--line)}
-td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.kpi{padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:4px}
+.kpi{padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
 .kpi .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
-.kpi .value{font-size:24px;font-weight:800;margin-top:6px}
+.kpi .value{font-size:1.6rem;font-weight:800;margin-top:6px}
 .chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
 .chip-ok{background:rgba(82,184,122,.12);color:#7ee0a0}
-.chip-warn{background:rgba(212,160,60,.12);color:#d4b25c}
-.chip-dim{background:rgba(255,255,255,.04);color:#9fb0c1}
+.chip-warn{background:rgba(212,160,60,.12);color:var(--gold)}
+.chip-dim{background:rgba(255,255,255,.04);color:var(--muted)}
 .chip-teal{background:rgba(96,212,184,.12);color:#60d4b8}
-.btn{font-size:12px;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;font-family:inherit}
 .btn-ok{background:#2d7a4f;color:#e0fce8}.btn-ok:hover{background:#348f5c}
-.btn-gold{background:#b98b2f;color:#201507}.btn-gold:hover{background:#d4a03c}
-.secondary{font-size:12px;padding:5px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#eef2f7;cursor:pointer}
-.secondary:hover{background:rgba(255,255,255,.08)}
-.detail-panel{padding:16px;background:rgba(255,255,255,.02);border-top:1px solid rgba(255,255,255,.06)}
+.detail-panel{padding:16px;background:rgba(255,255,255,.02);border-top:1px solid var(--line)}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
-.detail-section{margin-top:10px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:12px}
+.detail-section{margin-top:10px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:12px}
 .dlabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-@media(max-width:980px){.shell{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:1fr}}
+@media(max-width:980px){.kpi-grid{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -111,35 +96,36 @@ td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align
 <?php admin_sidebar_render('businesses'); ?>
 <main class="main">
   <div class="card">
+    <div class="card-body">
     <h1 style="margin:0 0 8px">Business Registry (B-NFT) <?= ops_admin_help_button('Business Registry', 'Use this page to understand each business partner record, its responsible person, payment state, address verification, stewardship evidence, and whether the business wallet can be activated. This page explains the record; later pages still handle approvals and execution.') ?></h1>
-    <p style="color:#9fb0c1;margin:0 0 14px">All registered B-NFT business memberships from <code>bnft_memberships</code>. Linked to their responsible person's S-NFT membership.</p>
+    <p class="muted" style="margin:0 0 14px">All registered B-NFT business memberships from <code>bnft_memberships</code>. Linked to their responsible person's S-NFT membership.</p>
+    </div>
   </div>
 
-  <?= ops_admin_info_panel('Stage 4 · Business entities', 'What this page does', 'The Business Registry is the operator view of BNFT-linked business records. It shows business identity, responsible-person linkage, entry contribution state, address verification, stewardship evidence, and whether the business wallet is active.', [
-    'Use this page to understand the record before taking support actions such as marking the entry contribution as received or activating the wallet.',
-    'Do not use this page to perform later approval or execution tasks; those remain on the Approvals and Execution pages.',
-    'Responsible-person linkage matters because a business record depends on a valid personal Partner pathway behind it.'
-  ]) ?>
-
-  <?= ops_admin_workflow_panel('Typical workflow', 'Use this page as the explanatory and support surface for business records.', [
-    ['title' => 'Review identity', 'body' => 'Check ABN, legal name, trading name, entity type, and the responsible person linkage.'],
-    ['title' => 'Check payment and evidence', 'body' => 'Confirm the $40 entry contribution, G-NAF status, and any stewardship attestation or wallet prerequisites.'],
-    ['title' => 'Use support actions', 'body' => 'Mark paid only when the contribution is actually received. Approve only when the record is ready to be active in the wallet.'],
-    ['title' => 'Move to later operations', 'body' => 'After the record is sound, later stages such as approvals, governance, or execution happen on their dedicated pages.']
-  ]) ?>
-
-  <?= ops_admin_guide_panel('How to read the business registry', 'Each visible field answers a different operator question about the business record.', [
-    ['title' => 'Business identity', 'body' => 'Tells you what entity the record actually belongs to and how it presents publicly.'],
-    ['title' => 'Responsible person', 'body' => 'Shows which personal Partner is linked to the business record and acts as the responsible human pathway.'],
-    ['title' => 'Payment', 'body' => 'Shows whether the entry contribution has been received; it does not by itself approve all other classes.'],
-    ['title' => 'Stewardship', 'body' => 'Shows whether the stewardship questionnaire/attestation trail is present for this business.']
-  ]) ?>
-
-  <?= ops_admin_status_panel('Field and status guide', 'These are the main statuses operators need to read correctly on this page.', [
-    ['label' => 'Paid', 'body' => 'Shows whether the business entry contribution has been recorded as received.'],
-    ['label' => 'G-NAF verified', 'body' => 'Shows whether the business address has been normalised or linked to a verified address reference.'],
-    ['label' => 'Stewardship done', 'body' => 'Shows whether stewardship attestation data exists for the business.'],
-    ['label' => 'Wallet active', 'body' => 'Shows whether the business vault is active. It is a wallet-state indicator, not a substitute for broader operational approval.']
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    ops_admin_info_panel('Stage 4 · Business entities', 'What this page does', 'The Business Registry is the operator view of BNFT-linked business records. It shows business identity, responsible-person linkage, entry contribution state, address verification, stewardship evidence, and whether the business wallet is active.', [
+      'Use this page to understand the record before taking support actions such as marking the entry contribution as received or activating the wallet.',
+      'Do not use this page to perform later approval or execution tasks; those remain on the Approvals and Execution pages.',
+      'Responsible-person linkage matters because a business record depends on a valid personal Partner pathway behind it.',
+    ]),
+    ops_admin_workflow_panel('Typical workflow', 'Use this page as the explanatory and support surface for business records.', [
+      ['title' => 'Review identity', 'body' => 'Check ABN, legal name, trading name, entity type, and the responsible person linkage.'],
+      ['title' => 'Check payment and evidence', 'body' => 'Confirm the $40 entry contribution, G-NAF status, and any stewardship attestation or wallet prerequisites.'],
+      ['title' => 'Use support actions', 'body' => 'Mark paid only when the contribution is actually received. Approve only when the record is ready to be active in the wallet.'],
+      ['title' => 'Move to later operations', 'body' => 'After the record is sound, later stages such as approvals, governance, or execution happen on their dedicated pages.'],
+    ]),
+    ops_admin_guide_panel('How to read the business registry', 'Each visible field answers a different operator question about the business record.', [
+      ['title' => 'Business identity', 'body' => 'Tells you what entity the record actually belongs to and how it presents publicly.'],
+      ['title' => 'Responsible person', 'body' => 'Shows which personal Partner is linked to the business record.'],
+      ['title' => 'Payment', 'body' => 'Shows whether the entry contribution has been received.'],
+      ['title' => 'Stewardship', 'body' => 'Shows whether the stewardship questionnaire/attestation trail is present for this business.'],
+    ]),
+    ops_admin_status_panel('Field and status guide', 'These are the main statuses operators need to read correctly on this page.', [
+      ['label' => 'Paid', 'body' => 'Shows whether the business entry contribution has been recorded as received.'],
+      ['label' => 'G-NAF verified', 'body' => 'Shows whether the business address has been normalised or linked to a verified address reference.'],
+      ['label' => 'Stewardship done', 'body' => 'Shows whether stewardship attestation data exists for the business.'],
+      ['label' => 'Wallet active', 'body' => 'Shows whether the business vault is active.'],
+    ]),
   ]) ?>
 
 
@@ -147,11 +133,13 @@ td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align
   <?php if($error): ?><div class="msg err"><?=h($error)?></div><?php endif; ?>
 
   <div class="card">
+    <div class="card-body">
     <div class="kpi-grid">
       <div class="kpi"><div class="label">Total Businesses</div><div class="value"><?=$totalBiz?></div></div>
       <div class="kpi"><div class="label">Paid ($40)</div><div class="value" style="color:#7ee0a0"><?=$paidCount?></div></div>
       <div class="kpi"><div class="label">G-NAF Verified</div><div class="value" style="color:#60d4b8"><?=$gnafCount?></div></div>
       <div class="kpi"><div class="label">Stewardship Done</div><div class="value" style="color:#d4b25c"><?=$stewardCount?></div></div>
+    </div>
     </div>
   </div>
 
