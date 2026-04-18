@@ -2725,7 +2725,8 @@ function cancelGiftOrder(): void {
         apiError('Specify a valid token_class or cancel_all: true.');
     }
 
-    // Look up the ID to use as payments.member_id
+    // Look up the member — must resolve BOTH members.id and snft_memberships.member_number
+    // because payments may be keyed on either depending on when they were created.
     if ($isBusiness) {
         $mStmt = $db->prepare('SELECT id, abn AS member_number, legal_name AS full_name FROM bnft_memberships WHERE id = ? LIMIT 1');
         $mStmt->execute([(int)$principal['principal_id']]);
@@ -2739,6 +2740,15 @@ function cancelGiftOrder(): void {
     $memberNumber = (string)$member['member_number'];
     $memberName   = (string)($member['full_name'] ?? '');
 
+    // Also get snft_memberships.id for payment rows created by createPaymentIntent
+    $snftId = $membersId; // default — same for most members
+    if (!$isBusiness) {
+        $snftStmt = $db->prepare('SELECT id FROM snft_memberships WHERE member_number = ? LIMIT 1');
+        $snftStmt->execute([$memberNumber]);
+        $snftRow = $snftStmt->fetch();
+        if ($snftRow) $snftId = (int)$snftRow['id'];
+    }
+
     $codes = $cancelAll
         ? array_values($classCodeMap)
         : [$classCodeMap[$tokenClass]];
@@ -2748,7 +2758,6 @@ function cancelGiftOrder(): void {
 
     try {
         foreach ($codes as $code) {
-            // Look up unit price from token_classes (needed for value decrement even if no line)
             $tcStmt = $db->prepare("SELECT id, unit_price_cents FROM token_classes WHERE class_code = ? LIMIT 1");
             $tcStmt->execute([$code]);
             $tc = $tcStmt->fetch();
@@ -2756,7 +2765,7 @@ function cancelGiftOrder(): void {
             $tcId = (int)($tc['id'] ?? 0);
 
             $label = ['DONATION_COG' => 'Donation COG$', 'PAY_IT_FORWARD_COG' => 'Pay It Forward COG$', 'KIDS_SNFT' => 'Kids S-NFT COG$'][$code] ?? $code;
-            $legacyCol = array_search($code, $classCodeMap); // e.g. 'kids_tokens'
+            $legacyCol = array_search($code, $classCodeMap);
 
             // ── Path A: reservation_line exists ──────────────────────────────
             $stmt = $db->prepare("
@@ -2776,44 +2785,32 @@ function cancelGiftOrder(): void {
                 $db->prepare('DELETE FROM member_reservation_lines WHERE id = ?')
                    ->execute([(int)$line['id']]);
 
-                // Only decrement snft_memberships for personal members
-                if (!$isBusiness && $legacyCol !== false) {
-                    try {
-                        $db->prepare("UPDATE snft_memberships SET {$legacyCol} = GREATEST(0, {$legacyCol} - ?), tokens_total = GREATEST(0, tokens_total - ?), reservation_value = GREATEST(0, reservation_value - ?), updated_at = UTC_TIMESTAMP() WHERE member_number = ?")
-                           ->execute([$units, $units, $valueDecrement, $memberNumber]);
-                    } catch (Throwable $e) {
-                        error_log('[cancel-gift-order] snft_memberships update failed: ' . $e->getMessage());
-                    }
-                }
-
-                // Cancel the matching pending payment record
                 try {
-                    $db->prepare("UPDATE payments SET payment_status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ' [Cancelled by member]'), updated_at = UTC_TIMESTAMP() WHERE member_id = ? AND payment_status = 'pending' AND notes LIKE ? ORDER BY id DESC LIMIT 1")
-                       ->execute([$membersId, '%' . $label . '%']);
+                    $db->prepare("UPDATE payments SET payment_status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ' [Cancelled by member]'), updated_at = UTC_TIMESTAMP() WHERE member_id IN (?,?) AND payment_status = 'pending' AND notes LIKE ? ORDER BY id DESC LIMIT 1")
+                       ->execute([$membersId, $snftId, '%' . $label . '%']);
                 } catch (Throwable $e) { /* non-fatal */ }
 
                 $cancelled[] = ['class_code' => $code, 'units_cancelled' => $units];
+                // Correction applied below after loop
                 continue;
             }
 
             // ── Path B: no reservation_line — cancel ALL pending payments for this
-            // class in one pass. There may be multiple stale payment intents for the
-            // same class (e.g. from repeated testing). Cancelling just LIMIT 1 leaves
-            // others showing in the vault as pending orders.
+            // class. Use both member IDs to catch rows created by either code path.
             try {
                 $payStmt = $db->prepare(
                     "SELECT id, amount_cents, notes FROM payments
-                      WHERE member_id = ? AND payment_status = 'pending'
+                      WHERE member_id IN (?,?) AND payment_status = 'pending'
                         AND notes LIKE ? AND received_at IS NULL
                       ORDER BY id ASC"
                 );
-                $payStmt->execute([$membersId, '%' . $label . '%']);
+                $payStmt->execute([$membersId, $snftId, '%' . $label . '%']);
                 $allPays = $payStmt->fetchAll();
 
                 if (!empty($allPays)) {
-                    $totalUnitsB    = 0;
-                    $totalValueB    = 0.0;
-                    $cancelledIds   = [];
+                    $totalUnitsB  = 0;
+                    $totalValueB  = 0.0;
+                    $cancelledIds = [];
 
                     foreach ($allPays as $pay) {
                         $u = 0;
@@ -2828,7 +2825,6 @@ function cancelGiftOrder(): void {
                         $cancelledIds[] = (int)$pay['id'];
                     }
 
-                    // Cancel all matching payments in one UPDATE
                     $idList = implode(',', $cancelledIds);
                     $db->exec(
                         "UPDATE payments SET payment_status = 'cancelled',
@@ -2837,20 +2833,70 @@ function cancelGiftOrder(): void {
                           WHERE id IN ({$idList})"
                     );
 
-                    // Decrement snft_memberships for personal members only
-                    if (!$isBusiness && $legacyCol !== false && $totalUnitsB > 0) {
-                        try {
-                            $db->prepare("UPDATE snft_memberships SET {$legacyCol} = GREATEST(0, {$legacyCol} - ?), tokens_total = GREATEST(0, tokens_total - ?), reservation_value = GREATEST(0, reservation_value - ?), updated_at = UTC_TIMESTAMP() WHERE member_number = ?")
-                               ->execute([$totalUnitsB, $totalUnitsB, $totalValueB, $memberNumber]);
-                        } catch (Throwable $e) {
-                            error_log('[cancel-gift-order] path-b snft update failed: ' . $e->getMessage());
-                        }
-                    }
-
                     $cancelled[] = ['class_code' => $code, 'units_cancelled' => $totalUnitsB];
                 }
+                // Whether or not there were pending rows, always correct snft_memberships
+                // below to account for any stale increments from prior cancelled intents.
             } catch (Throwable $e) {
                 error_log('[cancel-gift-order] path-b payment cancel failed: ' . $e->getMessage());
+            }
+        }
+
+        // ── Correction pass: recalculate each token column in snft_memberships
+        // directly from the payments table rather than trusting delta arithmetic.
+        // This handles cases where stale intents were manually cancelled without
+        // decrementing snft_memberships, leaving orphaned counts.
+        if (!$isBusiness) {
+            foreach ($codes as $code) {
+                $legacyCol = array_search($code, $classCodeMap);
+                if ($legacyCol === false) continue;
+
+                $label = ['DONATION_COG' => 'Donation COG$', 'PAY_IT_FORWARD_COG' => 'Pay It Forward COG$', 'KIDS_SNFT' => 'Kids S-NFT COG$'][$code] ?? $code;
+                $tcStmt = $db->prepare("SELECT unit_price_cents FROM token_classes WHERE class_code = ? LIMIT 1");
+                $tcStmt->execute([$code]);
+                $tc2 = $tcStmt->fetch();
+                $unitCents2 = (int)($tc2['unit_price_cents'] ?? 400);
+
+                // Count units still genuinely pending after this cancellation
+                $pendingStmt = $db->prepare(
+                    "SELECT amount_cents, notes FROM payments
+                      WHERE member_id IN (?,?) AND payment_status = 'pending'
+                        AND notes LIKE ? AND received_at IS NULL"
+                );
+                $pendingStmt->execute([$membersId, $snftId, '%' . $label . '%']);
+                $pendingRows = $pendingStmt->fetchAll();
+
+                $correctUnits = 0;
+                foreach ($pendingRows as $pr) {
+                    $u = 0;
+                    if (preg_match('/(\d+)\s*x\s+/i', (string)$pr['notes'], $nm)) {
+                        $u = (int)$nm[1];
+                    }
+                    if ($u < 1 && $unitCents2 > 0) {
+                        $u = (int)round((int)$pr['amount_cents'] / $unitCents2);
+                    }
+                    $correctUnits += max(1, $u);
+                }
+
+                // Fetch current value and compute delta to fix tokens_total as well
+                $curStmt = $db->prepare("SELECT {$legacyCol} FROM snft_memberships WHERE member_number = ? LIMIT 1");
+                $curStmt->execute([$memberNumber]);
+                $curRow = $curStmt->fetch();
+                $currentVal = (int)($curRow[$legacyCol] ?? 0);
+                $delta = $currentVal - $correctUnits; // amount to subtract from tokens_total
+
+                if ($delta !== 0 || $currentVal !== $correctUnits) {
+                    try {
+                        $db->prepare("UPDATE snft_memberships
+                                         SET {$legacyCol}   = ?,
+                                             tokens_total   = GREATEST(0, tokens_total - ?),
+                                             updated_at     = UTC_TIMESTAMP()
+                                       WHERE member_number  = ?")
+                           ->execute([$correctUnits, max(0, $delta), $memberNumber]);
+                    } catch (Throwable $e) {
+                        error_log('[cancel-gift-order] correction pass failed for ' . $legacyCol . ': ' . $e->getMessage());
+                    }
+                }
             }
         }
 
@@ -2869,7 +2915,6 @@ function cancelGiftOrder(): void {
     recordWalletEvent($db, $subjectType, $memberNumber, 'gift_order_cancelled',
         'Cancelled ' . $totalUnits . ' unpaid gift pool token(s): ' . implode(', ', array_column($cancelled, 'class_code')));
 
-    // ── Notify admin that a gift order was cancelled ──────────────────────────
     try {
         $adminEmail = MAIL_ADMIN_EMAIL ?: 'members@cogsaustralia.org';
         if ($adminEmail !== '' && strtolower($adminEmail) !== strtolower(MAIL_FROM_EMAIL ?? '')) {
@@ -2892,7 +2937,7 @@ function cancelGiftOrder(): void {
     }
 
     apiSuccess([
-        'cancelled' => $cancelled,
+        'cancelled'       => $cancelled,
         'total_cancelled' => $totalUnits,
     ]);
 }
