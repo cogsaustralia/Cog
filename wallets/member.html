@@ -2473,44 +2473,23 @@ This is the live Community COG$ exchange pathway inside the partnership. Locked 
 
 /* ── NEWS ── */
 function renderNews(d){
+  /* Deferred to renderTabNews (block 3) which handles both d.announcements
+     and d.notices. This stub keeps the window.renderNews export valid. */
+  if(typeof renderTabNews === 'function'){ renderTabNews(d); return; }
+  // Fallback if block 3 hasn't loaded yet
   const items = d.announcements||[];
-  const unread = d.announcement_unread||0;
-
-  el('s-news-chip').innerHTML = unread > 0
-    ? chip(unread+' unread','amber')
-    : chip('All read','dim');
-  el('news-count').textContent = items.length + ' notice' + (items.length!==1?'s':'');
-
+  if(!el('news-list')) return;
   if(items.length === 0){
     el('news-list').innerHTML = '<div class="placeholder"><strong>No notices</strong>Partner communications will appear here.</div>';
     return;
   }
-
   el('news-list').innerHTML = items.map((a,i) =>
-    `<div class="notice-card">
-      <div class="notice-hd" onclick="toggleNotice(${i})">
-        ${!a.is_read ? '<span class="notice-unread-dot"></span>' : ''}
-        <span class="notice-date">${dt(a.created_at)}</span>
-        <span class="notice-title">${esc(a.title||'')}</span>
-        <span style="color:var(--text3);font-size:.72rem;flex-shrink:0">▾</span>
-      </div>
-      <div class="notice-body" id="notice-${i}">${esc(a.body||'').replace(/\n/g,'<br>')}</div>
+    `<div class="news-item ${a.is_read?'':'unread'}">
+      <div class="news-meta">${!a.is_read?'<span class="ndot"></span>':''}<span class="ndate">${dt(a.created_at)}</span></div>
+      <div class="nsubj">${esc(a.title||'')}</div>
+      <div class="nbody">${esc(a.body||'').replace(/\n/g,'<br>')}</div>
     </div>`
   ).join('');
-}
-
-function toggleNotice(i){
-  const b = el('notice-'+i);
-  if(!b) return;
-  b.classList.toggle('open');
-  // Mark read
-  if(b.classList.contains('open') && window._vaultData){
-    const ann = (window._vaultData.announcements||[])[i];
-    if(ann && !ann.is_read){
-      ann.is_read = true;
-      api('vault/mark-read',{method:'POST',body:JSON.stringify({announcement_id:ann.id})}).catch(()=>{});
-    }
-  }
 }
 
 async function markAllRead(){

@@ -618,13 +618,26 @@ ob_start();
 <div class="row-grid">
   <div class="card">
     <h3 style="margin-top:0">Partner notices</h3>
-    <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Sent / expires</th><th>Terms</th><th></th></tr></thead><tbody>
-      <?php if (!$rows): ?><tr><td colspan="6" class="empty">No notices found.</td></tr><?php endif; ?>
-      <?php foreach ($rows as $row): $uiStatus = msg_wallet_status_to_ui((string)$row['status']); $terms = array_unique(array_merge(msg_flagged_terms((string)$row['title']), msg_flagged_terms((string)($row['summary'] . ' ' . $row['body'])))); ?>
+    <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Read</th><th>Sent / expires</th><th>Terms</th><th></th></tr></thead><tbody>
+      <?php if (!$rows): ?><tr><td colspan="7" class="empty">No notices found.</td></tr><?php endif; ?>
+      <?php foreach ($rows as $row):
+        $uiStatus = msg_wallet_status_to_ui((string)$row['status']);
+        $terms = array_unique(array_merge(msg_flagged_terms((string)$row['title']), msg_flagged_terms((string)($row['summary'] . ' ' . $row['body']))));
+        // Read count for this notice
+        $readCount = 0;
+        if (ops_has_table($pdo, 'wallet_message_reads')) {
+            try {
+                $rc = $pdo->prepare('SELECT COUNT(DISTINCT member_id) FROM wallet_message_reads WHERE message_id = ?');
+                $rc->execute([(int)$row['id']]);
+                $readCount = (int)$rc->fetchColumn();
+            } catch (Throwable $ignored) {}
+        }
+      ?>
       <tr>
         <td><?= h($row['title']) ?></td>
         <td><?= h($row['audience_scope'] ?? msg_scope_from_legacy_audience($row['audience'] ?? 'all')) ?></td>
         <td><?= msg_status_badge($uiStatus) ?></td>
+        <td><a href="./messages.php?section=wallet_messages&read_track=<?= (int)$row['id'] ?>" style="font-size:.8rem"><?= $readCount ?> read</a></td>
         <td class="small"><?= h((string)($row['sent_at'] ?? '—')) ?><br><?= h((string)($row['expires_at'] ?? '—')) ?></td>
         <td><?= $terms ? h(implode(', ', $terms)) : '—' ?></td>
         <td class="actions"><a class="btn-secondary" href="./messages.php?section=wallet_messages&edit=<?= (int)$row['id'] ?>">Edit</a><form method="post" style="display:inline"><input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="close_early"><input type="hidden" name="target" value="wallet_messages"><input type="hidden" name="id" value="<?= (int)$row['id'] ?>"><button class="btn-secondary" type="submit">Close</button></form></td>
@@ -648,6 +661,104 @@ ob_start();
     </form>
   </div>
 </div>
+
+<?php
+// ── Read tracking panel — shown when ?read_track=<notice_id> ─────────────────
+$trackId = (int)($_GET['read_track'] ?? 0);
+if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table($pdo, 'wallet_messages')):
+    $trackNotice = msg_one($pdo, 'SELECT id, title, audience_scope, sent_at FROM wallet_messages WHERE id = ? LIMIT 1', [$trackId]);
+    if ($trackNotice):
+        // Partners who have read it
+        $readRows = [];
+        $unreadRows = [];
+        try {
+            $readStmt = $pdo->prepare('
+                SELECT m.id AS member_id, m.full_name, m.email, m.mobile,
+                       wmr.read_at
+                FROM wallet_message_reads wmr
+                JOIN snft_memberships m ON m.id = wmr.member_id
+                WHERE wmr.message_id = ?
+                ORDER BY wmr.read_at DESC
+            ');
+            $readStmt->execute([$trackId]);
+            $readRows = $readStmt->fetchAll();
+
+            // Partners who should have seen it but haven't read it
+            $scope = (string)($trackNotice['audience_scope'] ?? 'all');
+            $unreadQuery = '
+                SELECT m.id AS member_id, m.full_name, m.email, m.mobile
+                FROM snft_memberships m
+                WHERE m.id NOT IN (
+                    SELECT member_id FROM wallet_message_reads WHERE message_id = ?
+                )
+            ';
+            if ($scope === 'personal') {
+                $unreadQuery .= " AND m.member_type = 'personal'";
+            } elseif ($scope === 'business') {
+                $unreadQuery .= " AND m.member_type = 'business'";
+            }
+            $unreadQuery .= ' ORDER BY m.full_name ASC';
+            $unreadStmt = $pdo->prepare($unreadQuery);
+            $unreadStmt->execute([$trackId]);
+            $unreadRows = $unreadStmt->fetchAll();
+        } catch (Throwable $e) {
+            // Fail gracefully
+        }
+?>
+<div class="card" style="margin-top:18px">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+    <div>
+      <h3 style="margin:0 0 4px">Read tracking — <?= h($trackNotice['title']) ?></h3>
+      <div style="font-size:.8rem;color:var(--muted)">Audience: <?= h($trackNotice['audience_scope'] ?? 'all') ?> &middot; Sent: <?= h((string)($trackNotice['sent_at'] ?? 'not sent')) ?></div>
+    </div>
+    <a href="./messages.php?section=wallet_messages" class="btn-secondary" style="font-size:.8rem">Back to notices</a>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+    <!-- READ -->
+    <div>
+      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px">
+        Read &mdash; <?= count($readRows) ?> Partner<?= count($readRows)!==1?'s':'' ?>
+      </div>
+      <?php if (!$readRows): ?>
+        <div style="font-size:.84rem;color:var(--muted);padding:10px 0">No Partners have read this notice yet.</div>
+      <?php else: ?>
+        <div class="table-wrap"><table><thead><tr><th>Partner</th><th>Email / mobile</th><th>Read at</th></tr></thead><tbody>
+          <?php foreach ($readRows as $rr): ?>
+          <tr>
+            <td><?= h($rr['full_name'] ?? '—') ?></td>
+            <td class="small"><?= h($rr['email'] ?? '—') ?><br><?= h($rr['mobile'] ?? '') ?></td>
+            <td class="small"><?= h((string)($rr['read_at'] ?? '—')) ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody></table></div>
+      <?php endif; ?>
+    </div>
+
+    <!-- NOT READ -->
+    <div>
+      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px">
+        Not read &mdash; <?= count($unreadRows) ?> Partner<?= count($unreadRows)!==1?'s':'' ?>
+      </div>
+      <?php if (!$unreadRows): ?>
+        <div style="font-size:.84rem;color:var(--muted);padding:10px 0">All eligible Partners have read this notice.</div>
+      <?php else: ?>
+        <div class="table-wrap" style="max-height:400px;overflow-y:auto"><table><thead><tr><th>Partner</th><th>Email / mobile</th></tr></thead><tbody>
+          <?php foreach ($unreadRows as $ur): ?>
+          <tr>
+            <td><?= h($ur['full_name'] ?? '—') ?></td>
+            <td class="small"><?= h($ur['email'] ?? '—') ?><br><?= h($ur['mobile'] ?? '') ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody></table></div>
+      <?php endif; ?>
+    </div>
+
+  </div>
+</div>
+<?php endif; endif; ?>
+
 <?php endif; ?>
 <?php if ($section === 'announcements'): ?>
 <?= ops_admin_info_panel('Announcements', 'What this section does', 'Announcements are broader community-wide notices. Use them for updates that should remain visible over time and may be opened or closed on a schedule.', ['Audience controls whether the update is broad or targeted.', 'Open and close dates define the visibility window.', 'Status helps distinguish draft, scheduled, open, and closed announcements.']) ?>
