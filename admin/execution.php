@@ -399,49 +399,57 @@ $batchRows = ex_rows($pdo, "SELECT eb.*, q.id AS quorum_request_id, q.status AS 
 ob_start(); ?>
 <?php ops_admin_help_assets_once(); ?>
 <style>
-.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{margin-bottom:18px}.actions{display:flex;gap:8px;flex-wrap:wrap}.mini-form{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}.mini-input{width:200px;padding:.55rem .7rem;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0c1319;color:#eef2f7}.small-btn{padding:.55rem .8rem;border-radius:10px;font-size:.9rem}.muted-note{font-size:.9rem;color:#9fb0c1}@media(max-width:760px){.stat-grid{grid-template-columns:1fr 1fr}}</style>
-<div class="grid" style="margin-bottom:18px;gap:16px">
-  <?= ops_admin_info_panel('Stage 5 · Execution workflow', 'What this page does', 'Execution is the authoritative operator workflow for moving approved items into controlled batches, confirming quorum, recording submission, marking finality, and publishing the resulting state. Use this page for live operator actions. Treat legacy mint and handoff pages as supporting bridge records unless you are checking compatibility or traceability.', [
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.mini-form{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mini-input{width:200px;padding:.55rem .7rem;border-radius:10px;border:1px solid var(--line2);background:var(--panel2);color:var(--text)}
+.small-btn{padding:.55rem .8rem;border-radius:10px;font-size:.9rem;border:1px solid var(--line2);background:var(--panel3);color:var(--text);cursor:pointer;font:inherit;font-weight:700}
+.muted-note{font-size:.85rem;color:var(--muted)}
+@media(max-width:760px){.stat-grid{grid-template-columns:1fr 1fr}}
+</style>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 5 · Execution workflow', 'What this page does', 'Execution is the authoritative operator workflow for moving approved items into controlled batches, confirming quorum, recording submission, marking finality, and publishing the resulting state.', [
     'Create execution requests only from approved items that are genuinely ready to move forward.',
     'Batch groups related execution requests into one governed processing bundle.',
     'Quorum and submission controls sit on the batch, not on each individual request.',
-    'Publishing is the final operator step that exposes the settled result to downstream wallet state.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'A normal execution cycle moves left to right through the same operator sequence every time.', [
+    'Publishing is the final operator step that exposes the settled result to downstream wallet state.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'A normal execution cycle moves left to right through the same operator sequence every time.', [
     ['title' => 'Create request', 'body' => 'Turn an approved intake/approval item into an execution request once it is ready for operational handling.'],
-    ['title' => 'Batch', 'body' => 'Group one or more execution requests into a single processing bundle that will move through quorum, submission, finality, and publication together.'],
-    ['title' => 'Open quorum', 'body' => 'Open the formal review/sign-off stage for that batch. This does not submit anything externally.'],
-    ['title' => 'Quorum met', 'body' => 'Record that the required operator review/signature threshold has been met so the batch can move to submission.'],
-    ['title' => 'Submitted → Finalised → Published', 'body' => 'Record the submission, then settlement, then publication. Publish only after the batch is genuinely complete and ready to appear as live state.' ],
-  ]) ?>
-  <?= ops_admin_guide_panel('How to read this page', 'There are four distinct working areas on the execution console.', [
-    ['title' => 'Approvals ready', 'body' => 'Items that can become execution requests. Nothing has been batched yet.'],
-    ['title' => 'Execution requests', 'body' => 'The request-level queue. Use this table to select items that should move into the same batch.'],
-    ['title' => 'Execution batches', 'body' => 'The live operator controls. This is where Batch, Quorum, Submitted, Finalised, and Publish actions occur.'],
-    ['title' => 'Legacy execution bridge', 'body' => 'Read-only compatibility and traceability view showing how the current execution state maps to older mint/handoff records.']
-  ]) ?>
-  <?= ops_admin_status_panel('Status guide', 'Use these meanings consistently when moving a batch through the operator workflow.', [
-    ['label' => 'Approved / drafted / reviewed', 'body' => 'The request exists and can be prepared for batching or has been internally reviewed, but it is not yet submitted.'],
-    ['label' => 'Batch created', 'body' => 'Requests are grouped into one processing bundle. This is the point where operators manage them together.'],
-    ['label' => 'Quorum requested / met', 'body' => 'The batch is in the formal sign-off stage. Nothing should be submitted until quorum is actually met.'],
-    ['label' => 'Submitted', 'body' => 'The batch has been recorded as submitted and may optionally carry a ledger transaction reference.'],
-    ['label' => 'Finalised', 'body' => 'The submission is settled from an operator perspective and should no longer be treated as provisional.'],
-    ['label' => 'Published', 'body' => 'The batch is complete and the resulting state has been pushed to downstream wallet/publication views.']
-  ]) ?>
-</div>
+    ['title' => 'Batch', 'body' => 'Group one or more execution requests into a single processing bundle.'],
+    ['title' => 'Open quorum', 'body' => 'Open the formal review/sign-off stage for that batch.'],
+    ['title' => 'Quorum met', 'body' => 'Record that the required operator review/signature threshold has been met.'],
+    ['title' => 'Submitted → Finalised → Published', 'body' => 'Record the submission, then settlement, then publication.'],
+  ]),
+  ops_admin_guide_panel('How to read this page', 'There are four distinct working areas on the execution console.', [
+    ['title' => 'Approvals ready', 'body' => 'Items that can become execution requests.'],
+    ['title' => 'Execution requests', 'body' => 'The request-level queue.'],
+    ['title' => 'Execution batches', 'body' => 'The live operator controls.'],
+    ['title' => 'Legacy execution bridge', 'body' => 'Read-only compatibility and traceability view.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'Use these meanings consistently when moving a batch through the operator workflow.', [
+    ['label' => 'Approved / drafted / reviewed', 'body' => 'The request exists and can be prepared for batching.'],
+    ['label' => 'Batch created', 'body' => 'Requests are grouped into one processing bundle.'],
+    ['label' => 'Quorum requested / met', 'body' => 'The batch is in the formal sign-off stage.'],
+    ['label' => 'Submitted', 'body' => 'The batch has been recorded as submitted.'],
+    ['label' => 'Finalised', 'body' => 'The submission is settled from an operator perspective.'],
+    ['label' => 'Published', 'body' => 'The batch is complete and the resulting state has been pushed to downstream wallet/publication views.'],
+  ]),
+]) ?>
 <div class="card">
+  <div class="card-body">
   <h2 style="margin:0 0 8px">Execution console<?= ops_admin_help_button('Execution console', 'Use this page for live execution operations only. The normal operator flow is: create request, batch, open quorum, mark quorum met, mark submitted, mark finalised, then publish. Legacy bridge tables remain visible below for diagnostics and traceability, but they are not the primary operator workflow.') ?></h2>
   <p class="muted">This is the authoritative execution surface for batching, quorum, submission, finality, and publication. Legacy mint and chain-handoff pages remain available as bridge diagnostics and compatibility traces only.</p>
+  </div>
 </div>
 <div class="stat-grid">
   <?php foreach ($counts as $label => $val): ?>
-    <div class="card"><div class="muted" style="text-transform:uppercase;font-size:.78rem"><?= ops_h($label) ?></div><div style="font-size:2rem;font-weight:800"><?= (int)$val ?></div></div>
+    <div class="card"><div class="card-body"><div class="stat-label"><?= ops_h($label) ?></div><div class="stat-value"><?= (int)$val ?></div></div></div>
   <?php endforeach; ?>
 </div>
 
 <div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h2 style="margin:0">Approvals ready to become execution requests<?= ops_admin_help_button('Approvals ready', 'These rows are the intake items that are eligible to become execution requests. Creating an execution request does not batch, submit, or publish anything. It simply moves the approved item into the execution workflow so it can later be selected into a batch.') ?></h2><span class="muted">Bridge source: approval_requests → execution_requests</span></div>
-  <div class="table-wrap" style="margin-top:12px"><table>
+  <div class="card-head"><h2>Approvals ready to become execution requests<?= ops_admin_help_button('Approvals ready', 'These rows are the intake items that are eligible to become execution requests. Creating an execution request does not batch, submit, or publish anything. It simply moves the approved item into the execution workflow so it can later be selected into a batch.') ?></h2><span class="muted small">approval_requests → execution_requests</span></div>
+  <div class="table-wrap"><table>
     <thead><tr><th>Approval</th><th><?= ops_h($partnerLabel) ?></th><th>Member #</th><th>Class<?= ops_admin_help_button('Class', 'The token/class being moved into the execution workflow. Use this to confirm that the correct class is being advanced.') ?></th><th>Units<?= ops_admin_help_button('Units', 'The quantity approved for this execution item. Confirm this before creating the execution request.') ?></th><th>Action<?= ops_admin_help_button('Create execution request', 'This creates the request-level execution record. It does not yet create a batch or change live wallet state.') ?></th></tr></thead>
     <tbody>
       <?php if (!$readyApprovals): ?><tr><td colspan="6">No approved items are waiting for execution request creation.</td></tr><?php endif; ?>
@@ -478,7 +486,7 @@ ob_start(); ?>
 </div>
 
 <div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 style="margin:0">Execution requests<?= ops_admin_help_button('Execution requests', 'This is the request-level queue. Select compatible requests here and batch them together when they should move through quorum, submission, finality, and publication as one operator bundle.') ?></h2><span class="muted">Read source: v_phase1_execution_console · authoritative operator view</span></div>
+  <div class="card-head"><h2>Execution requests<?= ops_admin_help_button('Execution requests', 'This is the request-level queue. Select compatible requests here and batch them together when they should move through quorum, submission, finality, and publication as one operator bundle.') ?></h2><span class="muted small">v_phase1_execution_console</span></div>
   <form method="post">
     <input type="hidden" name="_csrf" value="<?= ops_h($csrf) ?>">
     <input type="hidden" name="action" value="batch_requests">
@@ -510,7 +518,7 @@ ob_start(); ?>
 </div>
 
 <div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 style="margin:0">Execution batches<?= ops_admin_help_button('Execution batches', 'This is the live control area for execution. Once requests are batched, all major operator actions happen here: open quorum, mark quorum met, mark submitted, mark finalised, and publish.') ?></h2><span class="muted">Operational controls</span></div>
+  <div class="card-head"><h2>Execution batches<?= ops_admin_help_button('Execution batches', 'This is the live control area for execution. Once requests are batched, all major operator actions happen here: open quorum, mark quorum met, mark submitted, mark finalised, and publish.') ?></h2><span class="muted small">Operational controls</span></div>
   <div class="table-wrap" style="margin-top:12px"><table>
     <thead><tr><th>Batch<?= ops_admin_help_button('Batch key', 'The unique reference for the governed processing bundle. Use it to trace the bundle across execution, submission, and publication.') ?></th><th>Status<?= ops_admin_help_button('Batch status', "Shows the batch's current stage in the operator lifecycle. Read this together with Quorum and Submission to understand what can happen next.") ?></th><th>Items</th><th>Quorum<?= ops_admin_help_button('Quorum', 'Open quorum starts the formal sign-off stage. Mark quorum met only when the required operator/signer threshold has actually been satisfied.') ?></th><th>Submission<?= ops_admin_help_button('Submission', 'This shows whether the batch has been formally recorded as submitted and whether it is still provisional or already finalised.') ?></th><th>Actions<?= ops_admin_help_button('Batch actions', 'Use these in order. Batch actions are stage-gated so that you cannot legitimately submit, finalise, or publish a batch out of order.') ?></th></tr></thead>
     <tbody>
@@ -554,7 +562,7 @@ ob_start(); ?>
 </div>
 
 <div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 style="margin:0">Legacy execution bridge<?= ops_admin_help_button('Legacy execution bridge', 'This table is diagnostic. It shows how the current execution path maps to older mint queue / handoff records while bridge mode remains enabled. Use it to confirm traceability, not as the primary operator surface.') ?></h2><span class="muted">Read source: v_phase1_legacy_execution_bridge</span></div>
+  <div class="card-head"><h2>Legacy execution bridge<?= ops_admin_help_button('Legacy execution bridge', 'This table is diagnostic. It shows how the current execution path maps to older mint queue / handoff records while bridge mode remains enabled. Use it to confirm traceability, not as the primary operator surface.') ?></h2><span class="muted small">v_phase1_legacy_execution_bridge</span></div>
   <div class="table-wrap" style="margin-top:12px"><table>
     <thead><tr><th>Mint queue</th><th>Legacy queue status</th><th>Execution request</th><th>Execution status</th><th>Batch</th><th>Handoff</th><th>Submission</th></tr></thead>
     <tbody>
