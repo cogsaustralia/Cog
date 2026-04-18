@@ -2076,41 +2076,112 @@ function renderHoldings(d){
   const kidsCount = parseInt(d.kids_tokens||0,10) || 0;
   const kidsRegistered = Array.isArray(d.kids_registered) ? d.kids_registered : [];
   const kycOk = (d.kyc_status||'') === 'verified';
-  el('classs-family-block').innerHTML = `
-    <div style="display:grid;gap:10px">
-      <div style="padding:12px 14px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
-        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">
-          <div>
-            <div style="font-size:.82rem;font-weight:600;color:var(--text)">Personal S-NFT</div>
-            <div style="font-size:.76rem;color:var(--text3);margin-top:4px">One fixed Class S Unit — your equal national governance position.</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div style="font-family:var(--mono);font-size:.9rem;color:var(--text)">${fmt(parseInt(d.reserved_tokens||0,10)||1)}</div>${(d.payment_status==='paid') ? chip('Secured','green') : chip('$4 payment required','red')}</div>
-        </div>
-      </div>
-      <div style="padding:12px 14px;background:${kycOk ? 'rgba(255,255,255,.02)' : 'var(--amber-bg)'};border-radius:8px;border:1px solid ${kycOk ? 'var(--border)' : 'var(--amber-bdr)'}">
-        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px">
-          <div>
-            <div style="font-size:.82rem;font-weight:600;color:var(--text)">Kids S-NFT</div>
-            <div style="font-size:.76rem;color:var(--text3);margin-top:4px">Legacy family pathway only. Children are added here, not through reservations or transfer tools.</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div style="font-family:var(--mono);font-size:.9rem;color:var(--text)">${fmt(kidsCount)} recorded</div>${kycOk ? chip('KYC ready','green') : chip('KYC still required','amber')}</div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:10px">
-          <div style="padding:10px 12px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)"><div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Recorded kids</div><div style="font-family:var(--mono);font-size:.92rem;color:var(--text);margin-top:6px">${fmt(kidsCount)}</div></div>
-          <div style="padding:10px 12px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)"><div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Children registered</div><div style="font-family:var(--mono);font-size:.92rem;color:var(--text);margin-top:6px">${fmt(kidsRegistered.length)}</div></div>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
-          <button class="btn btn-ghost btn-sm" type="button" onclick="adjustGiftQty('kids-order-qty-h',-1)">−</button>
-          <input class="form-input" id="kids-order-qty-h" type="number" min="0" value="0" style="max-width:88px;text-align:center;font-family:var(--mono)">
-          <button class="btn btn-ghost btn-sm" type="button" onclick="adjustGiftQty('kids-order-qty-h',1)">+</button>
-          <span style="font-size:.76rem;color:var(--text3)">× $1 each</span>
-          <button class="btn btn-gold btn-sm" type="button" id="kids-order-btn-h" onclick="document.getElementById('kids-order-qty').value=document.getElementById('kids-order-qty-h').value;submitKidsOrder();">Register kids S-NFT</button>
-        </div>
-        <div style="font-size:.74rem;color:var(--text3);line-height:1.55">${kycOk ? 'Medicare verification is active. Order Kids S-NFTs below.' : 'Medicare verification is required \u2014 complete the identity verification above.'}</div>
-        ${kidsRegistered.length ? `<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px"><div style="font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Recorded children</div>${kidsRegistered.map(k => `<div style="font-size:.76rem;color:var(--text2);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)"><strong style="color:var(--text)">${esc(k.name||'Unnamed child')}</strong>${k.dob ? ` · ${esc(k.dob)}` : ''}${k.status ? ` · ${esc(k.status)}` : ''}</div>`).join('')}</div>` : ''}
-        <div class="flash" id="kids-fl-h"></div>
-      </div>
-    </div>`;
+  const kycStatus = d.kyc_status || 'none';
+  const paid = (d.payment_status||'pending').toLowerCase() === 'paid';
+
+  // Outstanding kids payments from gift_pool_unpaid_lines
+  const unpaidKids = (d.gift_pool_unpaid_lines||[]).filter(function(r){ return r.token_class === 'kids_tokens'; });
+  const unpaidKidsTotal = unpaidKids.reduce(function(s,r){ return s + Number(r.amount||0); }, 0);
+  const unpaidKidsUnits = unpaidKids.reduce(function(s,r){ return s + (parseInt(r.units||0,10)||0); }, 0);
+
+  // KYC status display
+  const kycMap = {
+    verified: { label:'Identity verified', chipType:'green', detail:'Medicare card verified. You can register Kids S-NFTs.' },
+    pending:  { label:'Verification pending', chipType:'amber', detail:'Your Medicare details are under review. You will be notified when verified.' },
+    rejected: { label:'Verification rejected', chipType:'red', detail:'Your verification was rejected. Please resubmit with correct details.' },
+    none:     { label:'Identity not verified', chipType:'amber', detail:'Medicare card verification is required before Kids S-NFTs can be issued.' }
+  };
+  const kycInfo = kycMap[kycStatus] || kycMap['none'];
+
+  // Registered children pills
+  const childPills = kidsRegistered.map(function(k){
+    const statusChip = k.status === 'issued' ? chip('Issued','green') : k.status === 'pending' ? chip('Pending','amber') : chip(k.status||'Recorded','dim');
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">'
+      + '<span style="font-size:.82rem;font-weight:600;color:var(--text);flex:1;min-width:0">' + esc(k.name||'Unnamed child') + '</span>'
+      + (k.dob ? '<span style="font-size:.72rem;color:var(--text3);font-family:var(--mono)">' + esc(k.dob) + '</span>' : '')
+      + statusChip
+      + '</div>';
+  }).join('');
+
+  // Unregistered ordered tokens (paid/pending but not yet registered as named children)
+  const unregisteredCount = Math.max(0, kidsCount - kidsRegistered.length);
+
+  el('classs-family-block').innerHTML = '<div style="display:flex;flex-direction:column;gap:10px">'
+
+    // ── Row 1: Guardian S-NFT status ──
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">'
+    +   '<div><div style="font-size:.82rem;font-weight:600;color:var(--text)">Personal S-NFT</div>'
+    +   '<div style="font-size:.74rem;color:var(--text3);margin-top:2px">Class S &middot; One equal national governance vote</div></div>'
+    +   '<div style="display:flex;align-items:center;gap:6px">'
+    +     (paid ? chip('Secured','green') : '<button class="btn btn-sm" style="background:var(--red-bg);border-color:var(--red-bdr);color:var(--red)" onclick="openPayModal()">$4 required &rarr;</button>')
+    +   '</div>'
+    + '</div>'
+
+    // ── Row 2: KYC status ──
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:' + (kycOk ? 'rgba(255,255,255,.02)' : 'var(--amber-bg)') + ';border:1px solid ' + (kycOk ? 'var(--border)' : 'var(--amber-bdr)') + ';border-radius:8px;flex-wrap:wrap">'
+    +   '<div style="flex:1;min-width:0">'
+    +     '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
+    +       '<span style="font-size:.82rem;font-weight:600;color:var(--text)">Identity verification</span>'
+    +       chip(kycInfo.label, kycInfo.chipType)
+    +     '</div>'
+    +     '<div style="font-size:.74rem;color:var(--text3);line-height:1.5">' + esc(kycInfo.detail) + '</div>'
+    +   '</div>'
+    +   (!kycOk && kycStatus !== 'pending'
+      ? '<button class="btn btn-gold btn-sm" style="flex-shrink:0;margin-left:8px" onclick="openKycPanel()">Verify ID &rarr;</button>'
+      : '')
+    + '</div>'
+
+    // ── Row 3: Outstanding payment pill (if any unpaid kids orders) ──
+    + (unpaidKidsUnits > 0
+      ? '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--red-bg);border:1px solid var(--red-bdr);border-radius:8px;flex-wrap:wrap">'
+      +   '<div style="flex:1;min-width:0">'
+      +     '<div style="font-size:.82rem;font-weight:600;color:var(--red);margin-bottom:2px">Payment outstanding &mdash; ' + unpaidKidsUnits + ' Kids S-NFT' + (unpaidKidsUnits!==1?'s':'') + '</div>'
+      +     '<div style="font-size:.74rem;color:var(--text3)">$' + unpaidKidsTotal.toFixed(2) + ' due &middot; pay via PayID <span style="font-family:var(--mono);color:var(--text2)">0494 578 706</span> using your Partner number as reference</div>'
+      +   '</div>'
+      +   '<button class="btn btn-sm" style="background:var(--red);color:#fff;border:none;flex-shrink:0" onclick="payGiftPoolByCard(window._giftPoolCardItems||[])">Pay now &rarr;</button>'
+      + '</div>'
+      : '')
+
+    // ── Row 4: Existing kS-NFTs ──
+    + (kidsCount > 0 || kidsRegistered.length > 0
+      ? '<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">'
+      +   '<div style="padding:8px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px">'
+      +     '<span style="font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)">Kids S-NFT tokens</span>'
+      +     '<div style="display:flex;gap:6px">'
+      +       (kidsRegistered.length > 0 ? chip(kidsRegistered.length + ' registered','green') : '')
+      +       (unregisteredCount > 0 ? chip(unregisteredCount + ' pending registration','amber') : '')
+      +     '</div>'
+      +   '</div>'
+      +   '<div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">'
+      +     (kidsRegistered.length > 0 ? childPills : '')
+      +     (unregisteredCount > 0
+          ? '<div style="padding:8px 12px;background:var(--amber-bg);border:1px solid var(--amber-bdr);border-radius:8px;font-size:.76rem;color:var(--amber)">'
+          +   unregisteredCount + ' ordered token' + (unregisteredCount!==1?'s':'') + ' not yet registered &mdash; admin will issue once payment is confirmed.'
+          + '</div>'
+          : '')
+      +   '</div>'
+      + '</div>'
+      : '')
+
+    // ── Row 5: Add Kids pill ──
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--s1);border:1px solid ' + (kycOk ? 'var(--gold-bdr)' : 'var(--border)') + ';border-radius:8px;flex-wrap:wrap">'
+    +   '<div style="flex:1;min-width:0">'
+    +     '<div style="font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:2px">Add Kids S-NFT</div>'
+    +     '<div style="font-size:.74rem;color:var(--text3)">$1 per child &middot; Class kS &middot; guardian-held until age 18</div>'
+    +   '</div>'
+    +   '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+    +     (kycOk
+        ? '<button class="btn btn-ghost btn-sm" type="button" onclick="adjustGiftQty(\'kids-order-qty-h\',-1)" style="width:28px;padding:4px;text-align:center">&#8722;</button>'
+        + '<input class="form-input" id="kids-order-qty-h" type="number" min="0" value="0" style="width:60px;text-align:center;font-family:var(--mono);padding:4px 6px">'
+        + '<button class="btn btn-ghost btn-sm" type="button" onclick="adjustGiftQty(\'kids-order-qty-h\',1)" style="width:28px;padding:4px;text-align:center">&#43;</button>'
+        + '<button class="btn btn-gold btn-sm" type="button" id="kids-order-btn-h" onclick="document.getElementById(\'kids-order-qty\').value=document.getElementById(\'kids-order-qty-h\').value;submitKidsOrder();">+ Add</button>'
+        : '<button class="btn btn-sm" style="background:none;border-color:var(--border);color:var(--text3);cursor:default" disabled title="Verify identity first">Verify ID first</button>')
+    +   '</div>'
+    + '</div>'
+
+    // KYC flash
+    + '<div class="flash" id="kids-fl-h"></div>'
+    + '</div>';
 
   if (el('charity-pathway-summary')) {
     el('charity-pathway-summary').innerHTML = [
