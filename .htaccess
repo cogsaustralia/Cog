@@ -184,6 +184,11 @@ form-action 'self'"
     Require all granted
   </FilesMatch>
 </Directory>
+<Directory "/home*/*/public_html/webhook">
+  <FilesMatch "\.php$">
+    Require all granted
+  </FilesMatch>
+</Directory>
 
 # ── MIME types ────────────────────────────────────────────────────────────────
 <IfModule mod_mime.c>
