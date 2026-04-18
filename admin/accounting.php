@@ -169,7 +169,7 @@ $adminBalColor = ($adminFundBal > 0) ? 'var(--ok)' : 'var(--err)';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.css">
+<link rel="stylesheet" href="./assets/admin.min.css">
 <title>Trust Accounting | COG$ Admin</title>
 <?php ops_admin_help_assets_once(); ?>
 <style>.main { padding:24px 28px; min-width:0; }
