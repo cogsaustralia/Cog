@@ -279,6 +279,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 <?php admin_sidebar_render('members'); ?>
 <main class="main">
   <div class="card">
+    <div class="card-body">
     <h1 style="margin:0 0 8px">Partner Registry <?= ops_admin_help_button('Partner Registry', 'Use this page to understand where a person or entity sits in the registry journey. It shows identity, wallet readiness, JVPA acceptance, reservation mix, and whether the record is ready to move into later operational pages such as Payments, Approvals, and Execution.') ?></h1>
     <?php if($showSummary): ?>
     <p style="color:#9fb0c1;margin:0 0 14px">Overview of the authoritative partner registry across personal and business pathways.</p>
@@ -289,6 +290,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
       <a href="./members.php" class="<?=$showSummary?'active':''?>">Summary</a>
       <a href="./members.php?type=personal" class="<?=$type==='personal'?'active':''?>">Personal registry</a>
       <a href="./businesses.php">Business (B-NFT)</a>
+    </div>
     </div>
   </div>
 
@@ -346,7 +348,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
   </div>
 <?php else: /* LIST VIEW */ ?>
   <?php if($lastActionSummary): ?>
-    <div class="card"><strong>Latest queue result</strong><div class="hint" style="margin-top:6px">#<?= (int)$lastActionSummary['id'] ?> · <?=h($lastActionSummary['recipient'])?> · <?=h($lastActionSummary['template_key'])?> · <?=h($lastActionSummary['status'])?><?php if(!empty($lastActionSummary['last_error'])): ?> · <?=h($lastActionSummary['last_error'])?><?php endif; ?></div></div>
+    <div class="card"><div class="card-body"><strong>Latest queue result</strong><div class="hint" style="margin-top:6px">#<?= (int)$lastActionSummary['id'] ?> · <?=h($lastActionSummary['recipient'])?> · <?=h($lastActionSummary['template_key'])?> · <?=h($lastActionSummary['status'])?><?php if(!empty($lastActionSummary['last_error'])): ?> · <?=h($lastActionSummary['last_error'])?><?php endif; ?></div></div></div>
   <?php endif; ?>
 
   <form method="get" style="margin-bottom:0">
@@ -367,14 +369,19 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
   </form>
 
   <div class="card">
+    <div class="card-body">
     <div class="kpi-grid">
-      <div class="kpi"><div class="label">Personal records shown</div><div class="value"><?=count($rows)?></div></div>
-      <div class="kpi"><div class="label">What "reserved" means</div><div class="hint" style="margin-top:8px">The member has asked for those classes or units in the reservation mix.</div></div>
-      <div class="kpi"><div class="label">What "approved / live-ready" means</div><div class="hint" style="margin-top:8px">Admin has approved the relevant lines.</div></div>
+      <div class="kpi-box"><div class="label">Personal records shown</div><div class="value"><?=count($rows)?></div></div>
+      <div class="kpi-box"><div class="label">What "reserved" means</div><div class="hint" style="margin-top:8px">The member has asked for those classes or units in the reservation mix.</div></div>
+      <div class="kpi-box"><div class="label">What "approved / live-ready" means</div><div class="hint" style="margin-top:8px">Admin has approved the relevant lines.</div></div>
+    </div>
     </div>
   </div>
 
   <div class="card">
+    <div class="card-head">
+      <h2><?= $type === 'business' ? 'Business Registry' : 'Personal Registry' ?></h2>
+    </div>
     <div class="table-wrap">
       <table>
         <thead>
