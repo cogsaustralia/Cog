@@ -800,53 +800,20 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 <?php endif; ?>
 <?php if ($section === 'proposals'): ?>
 <?= ops_admin_collapsible_help('Proposal Threads guide', [
-  ops_admin_info_panel('Proposal threads', 'What this section does', 'Proposal Threads are the consultation and discussion side of governance publishing. Use this section for proposal-style content and bridge-linked proposal records.', [
-    'Proposal status affects whether Partners can see or engage with the thread.',
-    'Audience scope controls which Partner group the thread targets.',
-    'Bridge-linked records may also appear in governance support tables elsewhere.',
-  ]),
+  ops_admin_info_panel('Proposal threads', 'What this section does', 'Proposal Threads are the consultation and discussion side of governance publishing. Use for proposal-style content and bridge-linked proposal records.', ['Proposal status affects whether Partners can see or engage with the thread.', 'Audience scope controls which Partner group the thread targets.']),
 ]) ?>
-<?php
-    $vpPaged = msg_paginate($pdo, 'vote_proposals', 'SELECT vp.*, pr.status AS bridge_status, pr.id AS bridge_id FROM vote_proposals vp LEFT JOIN proposal_register pr ON pr.vote_proposal_id = vp.id ORDER BY vp.id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'vote_proposals'));
+    $vpPaged = msg_paginate($pdo, 'vote_proposals', 'SELECT vp.*, pr.status AS bridge_status, pr.id AS bridge_id FROM vote_proposals vp LEFT JOIN proposal_register pr ON pr.proposal_key = vp.proposal_key ORDER BY vp.id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'vote_proposals'));
     $rows = $vpPaged['rows'];
     $r = $editProposal ?: ['id'=>'','audience_scope'=>'all','title'=>'','body'=>'','status'=>'draft','starts_at'=>'','closes_at'=>''];
     $proposalTerms = array_unique(array_merge(msg_flagged_terms((string)($r['title'] ?? '')), msg_flagged_terms((string)($r['body'] ?? ''))));
 ?>
 <div class="row-grid">
   <div class="card">
-    <div class="card-head"><h2>Proposal threads</h2></div>
-    <div class="card-body table-wrap">
-    <p class="muted small" style="margin:0 0 12px">Legacy <span class="code">vote_proposals</span> remain available for wallet/admin compatibility while bridge records exist in <span class="code">proposal_register</span>.</p>
-    <table><thead><tr><th>Title</th><th>Audience</th><th>Legacy</th><th>Bridge</th><th>Opens / closes</th><th></th></tr></thead><tbody>
+  <div class="card-head"><h2>Proposal threads</h2></div>
+  <div class="card-body">
+    <p class="muted small">Legacy <span class="code">vote_proposals</span> remain available for wallet/admin compatibility. Bridge rows are maintained in <span class="code">proposal_register</span> while the control plane remains in parallel mode.</p>
+    <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Legacy</th><th>Bridge</th><th>Opens / closes</th><th></th></tr></thead><tbody>
       <?php if (!$rows): ?><tr><td colspan="6" class="empty">No proposals found.</td></tr><?php endif; ?>
-      <?php foreach ($rows as $row): ?>
-      <tr>
-        <td><?= h($row['title']) ?></td><td><?= h($row['audience_scope']) ?></td><td><?= msg_status_badge(msg_schedule_status_to_ui((string)$row['status'])) ?></td><td><?= !empty($row['bridge_id']) ? '<span class="st st-ok">linked</span>' : '<span class="muted small">—</span>' ?></td><td class="small"><?= h((string)($row['starts_at'] ?? '—')) ?><br><?= h((string)($row['closes_at'] ?? '—')) ?></td>
-        <td class="actions"><a class="btn-secondary" href="./messages.php?section=proposals&edit=<?= (int)$row['id'] ?>">Edit</a><form method="post" style="display:inline"><input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="close_early"><input type="hidden" name="target" value="vote_proposals"><input type="hidden" name="id" value="<?= (int)$row['id'] ?>"><button class="btn-secondary" type="submit">Close</button></form></td>
-      </tr>
-      <?php endforeach; ?>
-    </tbody></table>
-    <?= render_pager(msg_section_pager_base('proposals'), $vpPaged['page'], $vpPaged['totalPages'], $vpPaged['total'], 'proposal') ?>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit proposal thread' : 'New proposal thread' ?></h2></div>
-    <div class="card-body">
-    <?php if ($proposalTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($proposalTerms)) ?></div><?php endif; ?>
-    <form method="post">
-      <input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="save_proposal"><input type="hidden" name="id" value="<?= h((string)$r['id']) ?>">
-      <div class="field"><label>Audience</label><select name="audience"><option value="all" <?= (($r['audience_scope'] ?? 'all') === 'all') ? 'selected' : '' ?>>All Partners</option><option value="personal" <?= (($r['audience_scope'] ?? '') === 'personal') ? 'selected' : '' ?>>Personal only</option><option value="business" <?= (($r['audience_scope'] ?? '') === 'business') ? 'selected' : '' ?>>Business only</option></select></div>
-      <div class="field"><label>Title</label><input name="title" value="<?= h((string)($r['title'] ?? '')) ?>"></div>
-      <div class="field"><label>Body / description</label><textarea name="body"><?= h((string)($r['body'] ?? '')) ?></textarea></div>
-      <div class="field"><label>Status</label><select name="status"><option value="draft" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'draft' ? 'selected' : '' ?>>Draft</option><option value="open" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'open' ? 'selected' : '' ?>>Open</option><option value="closed" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'closed' ? 'selected' : '' ?>>Closed</option></select></div>
-      <div class="field"><label>Open at (Sydney)</label><input type="datetime-local" name="open_at" value="<?= !empty($r['starts_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['starts_at']))) : '' ?>"></div>
-      <div class="field"><label>Close at (Sydney)</label><input type="datetime-local" name="close_at" value="<?= !empty($r['closes_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['closes_at']))) : '' ?>"></div>
-      <button class="btn btn-gold" type="submit">Save proposal</button>
-    </form>
-    </div>
-  </div>
-</div>
-<?php endif; ?>
       <?php foreach ($rows as $row): ?>
       <tr>
         <td><?= h($row['title']) ?></td><td><?= h($row['audience_scope']) ?></td><td><?= msg_status_badge(msg_schedule_status_to_ui((string)$row['status'])) ?></td><td><?= h((string)($row['bridge_status'] ?? '—')) ?></td><td class="small"><?= h((string)($row['starts_at'] ?? '—')) ?><br><?= h((string)($row['closes_at'] ?? '—')) ?></td>
