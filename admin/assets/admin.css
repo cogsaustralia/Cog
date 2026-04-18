@@ -373,3 +373,40 @@ tr:hover { background: rgba(255,255,255,.02); }
 .action-pill.low    { background:var(--blueb); color:var(--blue); border:1px solid rgba(90,158,212,.2); }
 .action-pill.low::before { background:var(--blue); }
 .strip-clear { font-size:12px; color:var(--ok); font-weight:600; padding:5px 10px; background:var(--okb); border:1px solid rgba(82,184,122,.2); border-radius:999px; }
+
+/* ── Collapsible help section ────────────────────────────────────────────── */
+.help-section {
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.help-section summary {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sub);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.help-section summary::-webkit-details-marker { display: none; }
+.help-section summary::before {
+  content: '▶';
+  font-size: 9px;
+  color: var(--dim);
+  transition: transform .2s;
+}
+.help-section[open] summary::before { transform: rotate(90deg); }
+.help-section summary:hover { color: var(--text); }
+.help-section-body {
+  padding: 0 16px 16px;
+  display: grid;
+  gap: 12px;
+}

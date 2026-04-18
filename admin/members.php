@@ -292,35 +292,13 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
     </div>
   </div>
 
-  <?= ops_admin_info_panel('Stage 4 · Registry management', 'What this page does', 'The registry pages are the operator view of who is in the system, what evidence exists for them, what their current state is, and what should happen next. Use them to read a record clearly before taking action somewhere else.', [
-    'Summary view is for orientation and health checks across the whole registry.',
-    'Personal registry shows the active Partner record, JVPA state, reservation mix, and readiness signals for each person.',
-    'Business records are managed on the dedicated Business Registry page, while children stay on the Kids kS-NFT page.'
-  ]) ?>
-
-  <?= ops_admin_workflow_panel('Typical workflow', 'The registry itself is mostly a reading and support surface. It tells you where the record should go next.', [
-    ['title' => 'Locate the record', 'body' => 'Open summary for a health check, or open the personal registry for a specific Partner record.'],
-    ['title' => 'Read the evidence trail', 'body' => 'Check JVPA acceptance, wallet status, contribution state, G-NAF, and KYC markers before acting.'],
-    ['title' => 'Use the correct next page', 'body' => 'Go to Payments to record money, Approvals to sign off lines, KYC for identity review, and Execution only after approval.'],
-    ['title' => 'Use support actions carefully', 'body' => 'Lock, unlock, resend emails, and activation toggles are support functions, not governance or execution actions.']
-  ]) ?>
-
-  <?= ops_admin_guide_panel('How to read the registry', 'Each view answers a different operator question.', [
-    ['title' => 'Summary', 'body' => 'Use Summary to understand the size and health of the registry at a glance.'],
-    ['title' => 'Personal registry', 'body' => 'Use this for partner-by-partner review, support actions, and readiness checks before later operational steps.'],
-    ['title' => 'Business registry', 'body' => 'Use the dedicated business page when you need BNFT identity, responsible-person, stewardship, and payment context.'],
-    ['title' => 'Kids page', 'body' => 'Use the dedicated kids page for child registrations, guardian verification, and age-18 conversion status.']
-  ]) ?>
-
-  <?= ops_admin_status_panel('Field and status guide', 'These terms appear repeatedly across the registry pages.', [
-    ['label' => 'Wallet status', 'body' => 'Shows whether the record can currently access the wallet surface. It does not by itself approve reservations or publish execution outcomes.'],
-    ['label' => 'JVPA acceptance', 'body' => 'Shows whether the partnership acceptance trail is present and usable in the backend.'],
-    ['label' => 'Reserved', 'body' => 'Shows how many units are recorded in the reservation mix. Reserved does not mean approved or live.'],
-    ['label' => 'Execution-ready', 'body' => 'Means the record has moved beyond reservation and payment into an approved state that can be processed later.']
-  ]) ?>
-
-
-  <?php if($flash): ?><div class="msg ok"><?=h($flash)?></div><?php endif; ?>
+  <details class="help-section">
+    <summary>Page guide &amp; workflow</summary>
+    <div class="help-section-body">
+      <?= ops_admin_info_panel('Stage 4 · Registry management', 'What this page does', 'The registry pages are the operator view of who is in the system, what evidence exists for them, what their current state is, and what should happen next.', ['Summary view is for orientation and health checks.', 'Personal registry shows Partner records, JVPA state, and readiness signals.', 'Business records are on the Business Registry page; children on the Kids page.']) ?>
+      <?= ops_admin_workflow_panel('Typical workflow', '', [['title'=>'Locate the record','body'=>'Open summary for a health check, or open the personal registry for a specific Partner.'], ['title'=>'Read the evidence trail','body'=>'Check JVPA, wallet status, contribution, G-NAF, and KYC before acting.'], ['title'=>'Use the correct next page','body'=>'Payments for money, Approvals for sign-off, KYC for identity, Execution after approval.']]) ?>
+    </div>
+  </details>
   <?php if($error): ?><div class="msg err"><?=h($error)?></div><?php endif; ?>
 
 <?php if($showSummary): ?>
