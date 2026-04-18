@@ -113,29 +113,27 @@ function handleLogin(): void {
         clearAuthRateLimit($db, 'login');
 
         // ── 12-hour OTP window ──────────────────────────────────────────────────
-        // If this member has a verified OTP session within the last 12 hours
-        // on the same device (matching IP), skip OTP and create a new session directly.
-        // This covers inactivity lockouts and tab-close re-logins within the window.
+        // If this member completed OTP within the last 12 hours, skip OTP and
+        // create a new session directly. Queries otp_verifications (a persistent
+        // log that survives logout/session deletion) rather than sessions.
+        // Covers: inactivity lockouts, tab-close re-logins, browser refreshes.
         try {
-            $clientIp   = getClientIp();
             $windowCutoff = gmdate('Y-m-d H:i:s', time() - (12 * 3600));
             $recentStmt = $db->prepare(
-                "SELECT id FROM sessions
+                "SELECT id FROM otp_verifications
                   WHERE principal_id = ?
                     AND user_type    = 'snft'
-                    AND otp_verified = 1
-                    AND otp_verified_at >= ?
-                    AND expires_at   > UTC_TIMESTAMP()
+                    AND verified_at  >= ?
                   LIMIT 1"
             );
             $recentStmt->execute([(int)$row['id'], $windowCutoff]);
             if ($recentStmt->fetch()) {
-                // Within window — skip OTP, create fresh session with otp_verified = true
+                // Within window — skip OTP, create fresh fully-authenticated session
                 createSession($db, 'snft', (int)$row['id'], (string)$row['member_number'], true);
                 apiSuccess(['authenticated' => true, 'otp_skipped' => true]);
             }
         } catch (Throwable $windowErr) {
-            // Fail open — proceed to standard OTP if window check fails
+            // Fail open — proceed to standard OTP if table missing or query fails
             error_log('[2FA] 12h window check failed: ' . $windowErr->getMessage());
         }
 
@@ -848,5 +846,19 @@ function createSession(PDO $db, string $userType, int $principalId, string $subj
         $db->prepare('INSERT INTO sessions (id, user_type, principal_id, subject_ref, expires_at) VALUES (?,?,?,?,?)')
            ->execute([$sessionId, $userType, $principalId, $subjectRef, $expiresAt]);
     }
+
+    // Write persistent OTP verification log entry when OTP was verified.
+    // This record is never deleted on logout and powers the 12-hour re-login skip window.
+    if ($otpVerified) {
+        try {
+            $db->prepare(
+                'INSERT INTO otp_verifications (principal_id, user_type, verified_at, ip_address) VALUES (?,?,UTC_TIMESTAMP(),?)'
+            )->execute([$principalId, $userType, getClientIp()]);
+        } catch (Throwable $logErr) {
+            // Non-fatal — table may not exist yet on first deploy; window check will fail open
+            error_log('[2FA] otp_verifications insert failed: ' . $logErr->getMessage());
+        }
+    }
+
     setcookie(SESSION_COOKIE_NAME, $sessionId, cookieOptions());
 }
