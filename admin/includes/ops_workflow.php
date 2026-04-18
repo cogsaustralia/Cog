@@ -746,6 +746,14 @@ HTML;
     }
 }
 
+if (!function_exists('ops_admin_collapsible_help')) {
+    function ops_admin_collapsible_help(string $label, array $panels): string {
+        $inner = implode("\n", array_filter($panels));
+        return '<details class="help-section"><summary>' . ops_h($label) . '</summary>'
+             . '<div class="help-section-body">' . $inner . '</div></details>';
+    }
+}
+
 if (!function_exists('ops_admin_help_button')) {
     function ops_admin_help_button(string $title, string $body, string $label = '?'): string {
         return '<button type="button" class="admin-help-btn" data-help-title="' . ops_h($title) . '" data-help-body="' . ops_h($body) . '" aria-label="More information about ' . ops_h($title) . '">' . ops_h($label) . '</button>';
