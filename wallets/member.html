@@ -826,76 +826,25 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <span id="id-mobile" style="display:none"></span>
       </div>
 
-      <!-- B: Action spotlight — populated by renderTabOverview -->
+      <!-- B: Outstanding action prompts — conditional, populated by renderTabOverview.
+           Only shown when something requires the Partner's attention. -->
       <div id="ov-action-prompts"></div>
 
-      <!-- C: 3 rights cards — tap to open info popout -->
-      <div class="ov-rights-row">
-        <div class="ov-right" onclick="showInfo('snft-token')">
-          <div class="ov-right-ico gold">◈</div>
-          <div class="ov-right-name">Class S Unit</div>
-          <div class="ov-right-stat" id="ov-right-snft">—</div>
-        </div>
-        <div class="ov-right" onclick="showInfo('governance-vote')">
-          <div class="ov-right-ico blue">✦</div>
-          <div class="ov-right-name">Governance vote</div>
-          <div class="ov-right-stat">Active · 14 May 2026</div>
-        </div>
-        <div class="ov-right" onclick="showInfo('subtrust-b')">
-          <div class="ov-right-ico green">⅄</div>
-          <div class="ov-right-name">Income unit</div>
-          <div class="ov-right-stat">Active</div>
-        </div>
-      </div>
-
-      <!-- D: Foundation snapshot — 2×2 grid of 4 numbers -->
-      <div class="ov-snapshot">
-        <div class="ov-snap">
-          <div class="ov-snap-val">
-            <picture>
-              <source srcset="../assets/cogs_coin_web.webp" type="image/webp">
-              <img src="../assets/cogs_coin_web.png" alt="" class="cc-ico">
-            </picture>
-            <span id="ov-kpi-cc">—</span>
-          </div>
-          <div class="ov-snap-lbl">Partnership COG$</div>
-          <div class="ov-snap-sub">Your live balance</div>
-        </div>
-        <div class="ov-snap">
-          <div class="ov-snap-val" id="ov-kpi-res">—</div>
-          <div class="ov-snap-lbl">COG$ Reserved</div>
-          <div class="ov-snap-sub">No obligation</div>
-        </div>
-        <div class="ov-snap">
-          <div class="ov-snap-val" id="ov-kpi-give">—</div>
-          <div class="ov-snap-lbl">Given to the Foundation</div>
-          <div class="ov-snap-sub">Donation + Pay It Forward</div>
-        </div>
-        <div class="ov-snap">
-          <div class="ov-snap-val" id="b-partners">—</div>
-          <div class="ov-snap-lbl">Foundation Partners</div>
-          <div class="ov-snap-sub">SNFT + BNFT total</div>
-        </div>
-      </div>
-
-      <!-- E: Participation pathways — populated from d.participation_areas -->
+      <!-- C: Participation pathways — always visible once participation_completed.
+           Renamed "Where you are active". Each pill opens an info popout only. -->
       <div class="ov-path-wrap" id="ov-pathways" style="display:none">
         <div class="ov-path-hd">
-          <h3 id="ov-path-title">Where you said you'll be active</h3>
-          <a href="../partners/#participation" id="ov-path-manage">Manage on Partners Hub &rarr;</a>
+          <h3 id="ov-path-title">Where you are active</h3>
+          <a href="../partners/#participation" id="ov-path-manage">Update on Partners Hub &rarr;</a>
         </div>
         <div class="ov-path-grid" id="ov-path-grid"></div>
       </div>
 
-      <!-- F: Stag Hunt invite — renderInviteCard writes into #invite-wrap,
-           wrapped by renderInviteCard_stag in block 3 to use this layout -->
+      <!-- D: Invite a Partner — always visible once paid -->
       <div id="ov-invite-anchor"></div>
       <div id="invite-wrap" style="display:none"></div>
 
-      <!-- G: Kids S-NFT identity card — canonical home for all kS-NFT management.
-           classs-family-block is populated by renderHoldings (unchanged).
-           KYC controls surface here so the guardian can verify and register
-           children from the same card as their own S-NFT. -->
+      <!-- E: Kids S-NFT identity card — shown when any kS-NFT exists or KYC outstanding -->
       <div id="ov-ksnft-card" style="display:none;margin-top:14px">
         <div class="sec-divider" style="margin-top:6px">Kids S-NFT &mdash; Guardian Identity Card <i class="info-ico" onclick="showInfo('snft-token')">?</i></div>
         <div class="card">
@@ -939,7 +888,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- ══ HIDDEN STUBS ══
            IDs required by renderBasket, renderIdentity (ent-list, jvpa-wrap),
-           and legacy holdings summary. Not visible. -->
+           legacy holdings summary, and removed KPI elements. Not visible. -->
       <div id="ov-hidden-stubs" style="display:none">
         <div id="ent-list"></div>
         <div id="jvpa-wrap"></div>
@@ -947,6 +896,12 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <span id="b-total-cogs">—</span>
         <span id="b-total-value">—</span>
         <table><tbody id="basket-tokens"></tbody></table>
+        <!-- Removed KPI / rights stubs — JS still writes to these -->
+        <span id="ov-kpi-cc"></span>
+        <span id="ov-kpi-res"></span>
+        <span id="ov-kpi-give"></span>
+        <span id="b-partners">—</span>
+        <span id="ov-right-snft"></span>
       </div>
 
     </div>
@@ -3216,21 +3171,10 @@ function resetReservations(){
 
 /* ══ TAB-AWARE RENDERING (called after openVault) ══ */
 function renderTabOverview(d){
-  var ccBalance = parseFloat(d.community_tokens||0)||0;
-  var don = parseInt(d.donation_tokens||0,10)||0;
-  var pif = parseInt(d.pay_it_forward_tokens||0,10)||0;
-  var givingTotal = (don + pif) * 4;
-  var asx = parseFloat(d.investment_tokens||0)||0;
-  var rwa = parseFloat(d.rwa_tokens||0)||0;
-  var lh  = parseFloat(d.landholder_tokens||0)||0;
-  var resTotal = asx + rwa + lh;
-  var fmt   = function(n){ return (+n||0).toLocaleString('en-AU'); };
-  var fmtA2 = function(n){ return '$'+parseFloat(n||0).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };
   var esc   = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var paid  = (d.payment_status||'pending').toLowerCase()==='paid';
 
-  var paid = (d.payment_status||'pending').toLowerCase()==='paid';
-
-  /* ── A: Status strip — ONE pill only ─────────────────────────────── */
+  /* ── A: Status strip pill ── */
   var pill = document.getElementById('ov-status-pill');
   if(pill){
     pill.innerHTML = paid
@@ -3238,42 +3182,31 @@ function renderTabOverview(d){
       : '<span class="chip chip-red"><span class="chip-dot"></span>$4 Payment Required</span>';
   }
 
-  /* ── C: 3 rights cards — update Class S Unit stat only ───────────── */
-  var snftStat = document.getElementById('ov-right-snft');
-  if(snftStat) snftStat.innerHTML = paid
-    ? '<span style="color:var(--green)">Secured</span>'
-    : '<span style="color:var(--amber)">$4 required</span>';
-
-  /* ── D: Foundation snapshot — 4 numbers ──────────────────────────── */
-  var kpiCc   = document.getElementById('ov-kpi-cc');
-  var kpiGive = document.getElementById('ov-kpi-give');
-  var kpiRes  = document.getElementById('ov-kpi-res');
-  if(kpiCc)   kpiCc.textContent   = fmtDp(ccBalance);
-  if(kpiGive) kpiGive.textContent = fmtA2(givingTotal);
-  if(kpiRes)  kpiRes.textContent  = fmtDp(resTotal);
-
-  /* Pay modal reference (hidden in Overview but kept in sync) */
-  var ref = document.getElementById('pay-modal-ref');
+  /* Hidden KPI stubs — keep in sync so other render paths don't throw */
+  var fmtA2 = function(n){ return '$'+parseFloat(n||0).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var ccBalance  = parseFloat(d.community_tokens||0)||0;
+  var don        = parseInt(d.donation_tokens||0,10)||0;
+  var pif        = parseInt(d.pay_it_forward_tokens||0,10)||0;
+  var givingTotal= (don + pif) * 4;
+  var asx        = parseFloat(d.investment_tokens||0)||0;
+  var rwa        = parseFloat(d.rwa_tokens||0)||0;
+  var lh         = parseFloat(d.landholder_tokens||0)||0;
+  var resTotal   = asx + rwa + lh;
+  var kpiCc  = document.getElementById('ov-kpi-cc');   if(kpiCc)   kpiCc.textContent   = fmtDp(ccBalance);
+  var kpiGive= document.getElementById('ov-kpi-give'); if(kpiGive) kpiGive.textContent = fmtA2(givingTotal);
+  var kpiRes = document.getElementById('ov-kpi-res');  if(kpiRes)  kpiRes.textContent  = fmtDp(resTotal);
+  var ref    = document.getElementById('pay-modal-ref');
   if(ref && d.member_number) ref.textContent = (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
 
-  /* ── E: Participation pathways — render only when selection complete */
+  /* ── C: Participation pathways — always render, uses showInfo only ── */
   try{ renderParticipationPathways(d); }catch(e){}
 
-  /* ── B: Action spotlight — dynamic prompts in priority order ─────── */
+  /* ── B: Outstanding action prompts — conditional only ── */
   var prompts = document.getElementById('ov-action-prompts');
   if(!prompts) return;
   var html = '';
 
-  /* 1. Payment outstanding — red */
-  if(!paid){
-    html += '<div class="ov-prompt ov-prompt-red" onclick="openPayModal()">'
-      + '<div class="ov-prompt-ico">&#9889;</div>'
-      + '<div class="ov-prompt-body"><div class="ov-prompt-title">$4 entry contribution required</div>'
-      + '<div class="ov-prompt-sub">Your Class S Unit is reserved. Complete the $4 payment to issue it and activate your governance vote.</div></div>'
-      + '<div class="ov-prompt-arrow">&#8594;</div></div>';
-  }
-
-  /* 2. JVPA not accepted — amber */
+  /* 1. JVPA not accepted — amber, shown first */
   var jvpa = d.jvpa_acceptance||null;
   if(!jvpa || !(jvpa.accepted_at||jvpa.checkbox_confirmed)){
     html += '<div class="ov-prompt ov-prompt-amber" onclick="tab(\'governance\')">'
@@ -3283,16 +3216,25 @@ function renderTabOverview(d){
       + '<div class="ov-prompt-arrow">&#8594;</div></div>';
   }
 
-  /* 2a. Participation areas not chosen — amber, routes to Hub */
+  /* 2. Payment outstanding — red */
+  if(!paid){
+    html += '<div class="ov-prompt ov-prompt-red" onclick="openPayModal()">'
+      + '<div class="ov-prompt-ico">&#9889;</div>'
+      + '<div class="ov-prompt-body"><div class="ov-prompt-title">$4 entry contribution required</div>'
+      + '<div class="ov-prompt-sub">Your Class S Unit is reserved. Complete the $4 payment to issue it and activate your governance vote.</div></div>'
+      + '<div class="ov-prompt-arrow">&#8594;</div></div>';
+  }
+
+  /* 3. Participation areas not chosen */
   if(!d.participation_completed){
     html += '<div class="ov-prompt ov-prompt-amber" onclick="goToParticipation()">'
       + '<div class="ov-prompt-ico">&#9776;</div>'
       + '<div class="ov-prompt-body"><div class="ov-prompt-title">Choose your participation areas</div>'
-      + '<div class="ov-prompt-sub">Tell the Partnership where you\'ll be actively involved &mdash; governance, ESG, First Nations, community projects, and six more. Takes one minute on the Partners Hub.</div></div>'
+      + '<div class="ov-prompt-sub">Tell the Partnership where you\'ll be actively involved. Takes one minute on the Partners Hub.</div></div>'
       + '<div class="ov-prompt-arrow">&#8594;</div></div>';
   }
 
-  /* 3. Open polls — gold, one card per poll with static YES/NO (+MAYBE for proposals) tally pills */
+  /* 4. Open polls */
   var polls = Array.isArray(d.polls) ? d.polls : [];
   polls.filter(function(p){ return p.status==='open'||p.status==='scheduled'; }).forEach(function(p){
     var tally = p.tally||p.tallies||{};
@@ -3303,7 +3245,7 @@ function renderTabOverview(d){
       var votes = (tally[c]||{}).votes||(tally[c]||0)||0;
       var cls = c==='yes'?'yes':c==='no'?'no':'maybe';
       var voted = myVote && (myVote.choice||myVote)===c ? ' &#10003;' : '';
-      return '<span class="ov-ppill '+cls+'">'+c.toUpperCase()+voted+' &middot; '+fmt(votes)+'</span>';
+      return '<span class="ov-ppill '+cls+'">'+c.toUpperCase()+voted+' &middot; '+votes+'</span>';
     }).join('');
     html += '<div class="ov-prompt ov-prompt-gold" onclick="tab(\'governance\')">'
       + '<div class="ov-prompt-ico">&#10022;</div>'
@@ -3313,23 +3255,23 @@ function renderTabOverview(d){
       + '</div></div>';
   });
 
-  /* 4. Latest unread notice — title + 100-char preview, "+N more" if multiple */
-  var notices = Array.isArray(d.announcements) ? d.announcements : [];
-  var unread = notices.filter(function(n){ return !n.is_read; });
-  if(unread.length > 0){
-    var latest = unread[0];
+  /* 5. Unread notices */
+  var allNotices = (Array.isArray(d.notices) ? d.notices : []).concat(Array.isArray(d.announcements) ? d.announcements : []);
+  var unreadNotices = allNotices.filter(function(n){ return !n.is_read; });
+  if(unreadNotices.length > 0){
+    var latest = unreadNotices[0];
     var preview = esc((latest.summary||latest.body||'').replace(/<[^>]*>/g,'')).substring(0,100);
     if(preview.length===100) preview += '&#8230;';
     html += '<div class="ov-prompt ov-prompt-dim" onclick="tab(\'news\')">'
       + '<div class="ov-prompt-ico">&#9685;</div>'
       + '<div class="ov-prompt-body">'
-      + '<div class="ov-prompt-title">' + esc(latest.title||latest.subject||'Foundation notice') + '</div>'
+      + '<div class="ov-prompt-title">' + esc(latest.title||latest.subject||'Important Notice') + '</div>'
       + (preview ? '<div class="ov-prompt-sub">'+preview+'</div>' : '')
-      + (unread.length > 1 ? '<div class="ov-prompt-sub" style="margin-top:4px;color:var(--text3)">+'+(unread.length-1)+' more unread</div>' : '')
+      + (unreadNotices.length > 1 ? '<div class="ov-prompt-sub" style="margin-top:4px;color:var(--text3)">+'+(unreadNotices.length-1)+' more unread</div>' : '')
       + '</div><div class="ov-prompt-arrow">&#8594;</div></div>';
   }
 
-  /* 5. Pending gift pool payments — amber */
+  /* 6. Pending payments */
   var unpaidLines = Array.isArray(d.gift_pool_unpaid_lines) ? d.gift_pool_unpaid_lines : [];
   if(unpaidLines.length > 0){
     var unpaidTotal = unpaidLines.reduce(function(s,r){ return s + Number(r.amount||0); }, 0);
@@ -3344,11 +3286,7 @@ function renderTabOverview(d){
       + '<div class="ov-prompt-arrow">&#8594;</div></div>';
   }
 
-  /* 6. All clear — single quiet green line, no card, no icon */
-  if(!html){
-    html = '<div style="padding:8px 2px;color:var(--green);font-size:.78rem;margin-bottom:10px">&#10003; All clear &middot; your Partnership is up to date.</div>';
-  }
-
+  /* No outstanding items — show nothing (pathways and invite are always visible) */
   prompts.innerHTML = html;
 }
 
@@ -3798,34 +3736,40 @@ function renderParticipationPathways(d){
   var title = document.getElementById('ov-path-title');
   if(!wrap || !grid) return;
 
-  var completed = !!d.participation_completed;
   var areas = Array.isArray(d.participation_areas) ? d.participation_areas : [];
 
-  if(!completed || areas.length === 0){
-    // Not set — hide the section; the action prompt 2a drives them to the Hub.
-    wrap.style.display = 'none';
-    return;
-  }
+  // Always show all 9 pathways — section is permanently visible
   wrap.style.display = '';
-  if(title) title.textContent = 'Where you said you\u2019ll be active';
+  if(title) title.textContent = 'Where you are active';
 
-  // Preserve the order declared in _PATHWAYS so cards are consistent visit to visit
-  var ordered = Object.keys(_PATHWAYS).filter(function(k){ return areas.indexOf(k) >= 0; });
-  // Any unknown keys (future-proof) appended at the end
-  areas.forEach(function(k){ if(ordered.indexOf(k) < 0 && !_PATHWAYS[k]) ordered.push(k); });
+  // Map each pathway key to its info popout key
+  var infoKeys = {
+    operations_oversight:  'governance-tab',
+    governance_polls:      'governance-vote',
+    esg_proxy_voting:      'esg-proxy',
+    first_nations:         'first-nations',
+    community_projects:    'donation-pif',
+    technology_blockchain: 'technology-blockchain',
+    financial_oversight:   'financial-oversight',
+    place_based_decisions: 'place-based',
+    education_outreach:    'snft-token',
+  };
 
   var esc = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
-  grid.innerHTML = ordered.map(function(k){
-    var cfg = _PATHWAYS[k] || {label:k.replace(/_/g,' '),status:'future'};
-    var sub = pathwaySubLine(k, d) || {text:'', dotClass:null};
-    // dotClass override > base status
-    var dotCls = sub.dotClass || cfg.status;
-    return '<div class="ov-path" onclick="openPathway(\u0027'+k+'\u0027)">'
+
+  // Show all 9 in _PATHWAYS order; selected areas get 'live' dot, others dim
+  var allKeys = Object.keys(_PATHWAYS);
+  grid.innerHTML = allKeys.map(function(k){
+    var cfg    = _PATHWAYS[k] || {label:k.replace(/_/g,' '),status:'future'};
+    var active = areas.indexOf(k) >= 0;
+    var dotCls = active ? 'live' : 'future';
+    var infoKey = infoKeys[k] || 'governance-tab';
+    return '<div class="ov-path" onclick="showInfo(\''+infoKey+'\')" title="'+esc(cfg.label)+'">'
       + '<div class="ov-path-top">'
       +   '<span class="ov-path-dot '+dotCls+'"></span>'
       +   '<span class="ov-path-name">'+esc(cfg.label)+'</span>'
       + '</div>'
-      + '<div class="ov-path-sub">'+esc(sub.text)+'</div>'
+      + (active ? '<div class="ov-path-sub">Active</div>' : '<div class="ov-path-sub" style="color:var(--text4)">Tap to learn more</div>')
       + '</div>';
   }).join('');
 }
