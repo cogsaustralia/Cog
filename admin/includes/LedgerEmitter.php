@@ -42,12 +42,17 @@ class LedgerEmitter
         'sta_transit', 'donation_direct_c',
         // Dividend flows
         'dividend_receipt', 'bds_split', 'dds_split', 'reinvest_internal',
+        'interest_income',   // interest and general income to STA-OPERATING
         // Sub-Trust B distributions
         'stb_distribution', 'bonus_election_netting',
         // Sub-Trust C flows
         'grant_disbursement', 'gift_received',
         // ASX
         'asx_acquisition', 'asset_swap',
+        // kS-NFT conversion (proxy vote release on child turning 18)
+        'ks_conversion',
+        // Correction / reversal journals
+        'correction_reversal',
         // Exit paths (permitted MEMBER ← STA only under I9 exceptions)
         'lawful_extinguishment', 'winding_up', 'p_class_allocation',
     ];
@@ -546,6 +551,70 @@ class LedgerEmitter
              'classification' => 'asset',   'flow_category' => 'trustee_fee'],
             ['account_key' => 'EXTERNAL-VENDOR','type' => 'debit', 'amount_cents' => $feeCents,
              'classification' => 'expense', 'flow_category' => 'trustee_fee'],
+        ];
+    }
+
+    /**
+     * Members Bonus Election — Schedule S4.2A.
+     * Partner elects to reinvest their STB distribution back into Class A Units.
+     * STB-OPERATING → STA-OPERATING (new unit consideration) → STA-PARTNERS-POOL.
+     * The new A-Class unit carry a fresh 12-month Stewardship Season lock (I12).
+     */
+    public static function buildMembersBonusElectionEntries(int $electionCents, int $recipientMemberId): array
+    {
+        return [
+            // STB releases the distribution amount
+            ['account_key' => 'STB-OPERATING',     'type' => 'credit', 'amount_cents' => $electionCents,
+             'classification' => 'asset',   'flow_category' => 'bonus_election_netting'],
+            // STA-OPERATING receives as new unit consideration
+            ['account_key' => 'STA-OPERATING',     'type' => 'debit',  'amount_cents' => $electionCents,
+             'classification' => 'asset',   'flow_category' => 'bonus_election_netting'],
+            // Transit to Partners Pool (100% to investment — Tier 2 A-class no admin cut)
+            ['account_key' => 'STA-OPERATING',     'type' => 'credit', 'amount_cents' => $electionCents,
+             'classification' => 'asset',   'flow_category' => 'sta_transit'],
+            ['account_key' => 'STA-PARTNERS-POOL', 'type' => 'debit',  'amount_cents' => $electionCents,
+             'classification' => 'asset',   'flow_category' => 'bonus_election_netting'],
+            // Member equity claim created for the new A-class unit
+            ['account_key' => "MEMBER-{$recipientMemberId}", 'type' => 'credit', 'amount_cents' => $electionCents,
+             'classification' => 'equity',  'flow_category' => 'bonus_election_netting'],
+        ];
+    }
+
+    /**
+     * Gift received via DGR pathway — SubTrustC cl.11.
+     * External donor contributes to STC-GIFT-FUND (segregated DGR account).
+     */
+    public static function buildGiftReceivedEntries(int $giftCents): array
+    {
+        return [
+            ['account_key' => 'EXTERNAL-VENDOR', 'type' => 'credit', 'amount_cents' => $giftCents,
+             'classification' => 'income',  'flow_category' => 'gift_received'],
+            ['account_key' => 'STC-GIFT-FUND',   'type' => 'debit',  'amount_cents' => $giftCents,
+             'classification' => 'asset',   'flow_category' => 'gift_received'],
+        ];
+    }
+
+    /**
+     * Asset swap — Holding X → Holding Y within Partners Pool (amended I6).
+     * Disposal proceeds and acquisition costs remain inside STA-PARTNERS-POOL.
+     * Brokerage is recorded separately via buildOperatingExpenseEntries.
+     *
+     * @param int $disposalCents  Net disposal proceeds (after brokerage deducted)
+     * @param int $acquisitionCents  Cost of new holding (net, matching disposal net)
+     */
+    public static function buildAssetSwapEntries(int $disposalCents, int $acquisitionCents): array
+    {
+        return [
+            // Disposal leg: Partners Pool → EXTERNAL-ASX (market counterparty)
+            ['account_key' => 'STA-PARTNERS-POOL', 'type' => 'credit', 'amount_cents' => $disposalCents,
+             'classification' => 'asset',   'flow_category' => 'asset_swap'],
+            ['account_key' => 'EXTERNAL-ASX',       'type' => 'debit',  'amount_cents' => $disposalCents,
+             'classification' => 'asset',   'flow_category' => 'asset_swap'],
+            // Acquisition leg: EXTERNAL-ASX → Partners Pool
+            ['account_key' => 'EXTERNAL-ASX',       'type' => 'credit', 'amount_cents' => $acquisitionCents,
+             'classification' => 'asset',   'flow_category' => 'asset_swap'],
+            ['account_key' => 'STA-PARTNERS-POOL', 'type' => 'debit',  'amount_cents' => $acquisitionCents,
+             'classification' => 'asset',   'flow_category' => 'asset_swap'],
         ];
     }
 

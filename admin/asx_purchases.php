@@ -110,11 +110,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $status = (string)($_POST['status'] ?? 'pending');
             if ($tradeId < 1) throw new RuntimeException('Trade ID missing.');
             if (!in_array($status, ['pending','settled','failed'], true)) $status = 'pending';
-            $row = ops_fetch_one($pdo, 'SELECT id, holding_id FROM asx_trades WHERE id = ? LIMIT 1', [$tradeId]);
+            $row = ops_fetch_one($pdo, 'SELECT id, holding_id, total_cost_cents, brokerage_cents, trade_date, status FROM asx_trades WHERE id = ? LIMIT 1', [$tradeId]);
             if (!$row) throw new RuntimeException('Trade lot not found.');
+            $prevStatus = (string)$row['status'];
             $pdo->prepare('UPDATE asx_trades SET status=?, updated_at=NOW() WHERE id=?')->execute([$status, $tradeId]);
             ap_recalc_holding($pdo, (int)$row['holding_id']);
-            $flash = 'Trade status updated.';
+
+            // Emit Godley ASX acquisition entry when status transitions to 'settled'
+            if ($status === 'settled' && $prevStatus !== 'settled') {
+                $totalCostCents = (int)round((float)$row['total_cost_cents']);
+                $brokerageCents = (int)round((float)$row['brokerage_cents']);
+                $tradeDate      = (string)$row['trade_date'];
+                $godleyRef      = 'GDLY-ASX-SETTLE-' . $tradeId . '-' . date('Ymd');
+                $ledgerEmitter  = __DIR__ . '/includes/LedgerEmitter.php';
+                if (file_exists($ledgerEmitter)) {
+                    require_once $ledgerEmitter;
+                    if (class_exists('LedgerEmitter')) {
+                        // Acquisition cost (shares acquired)
+                        $res = LedgerEmitter::emitTransaction(
+                            $pdo, $godleyRef, 'asx_trades', $tradeId,
+                            LedgerEmitter::buildASXAcquisitionEntries($totalCostCents),
+                            $tradeDate
+                        );
+                        if ($res['status'] === 'error') {
+                            $flash = 'Status updated but Godley emission failed: ' . $res['message'];
+                        }
+                        // Brokerage recorded as operating expense from Admin Fund
+                        if ($brokerageCents > 0) {
+                            $brokerageRef = $godleyRef . '-BROK';
+                            LedgerEmitter::emitTransaction(
+                                $pdo, $brokerageRef, 'asx_trades', $tradeId,
+                                LedgerEmitter::buildOperatingExpenseEntries($brokerageCents, 0),
+                                $tradeDate
+                            );
+                        }
+                    }
+                }
+            }
+
+            $flash = $flash ?: 'Trade status updated' . ($status === 'settled' ? ' — Godley acquisition entries emitted.' : '.');
             header('Location: ./asx_purchases.php?holding_id=' . (int)$row['holding_id']); exit;
         }
     } catch (Throwable $e) {

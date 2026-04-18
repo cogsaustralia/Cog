@@ -22,6 +22,7 @@ $categories = [
     'governance'        => 'Governance / AGM / FNAC',
     'administration'    => 'General administration',
     'stripe_fees'       => 'Stripe processing fees',
+    'trustee_fee'       => 'Trustee fee (from DDS admin pool)',
     'tax_withholding'   => 'Tax / withholding',
     'other'             => 'Other',
 ];
@@ -88,7 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $hasTable) {
                 require_once $ledgerEmitter;
                 if (class_exists('LedgerEmitter')) {
                     $godleyRef = "GDLY-{$expRef}";
-                    $entries = LedgerEmitter::buildOperatingExpenseEntries($amountCents, $gstCents);
+                    // Trustee fees are paid from TRUSTEE-ADMIN (DDS 25% pool), not STA-ADMIN-FUND
+                    $entries = ($cat === 'trustee_fee')
+                        ? LedgerEmitter::buildTrusteeFeeEntries($amountCents)
+                        : LedgerEmitter::buildOperatingExpenseEntries($amountCents, $gstCents);
                     $res = LedgerEmitter::emitTransaction(
                         $pdo, $godleyRef, 'trust_expenses', $newExpenseId, $entries, $expDate
                     );
