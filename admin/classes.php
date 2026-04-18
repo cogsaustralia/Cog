@@ -256,9 +256,12 @@ tr.clickable:hover{background:rgba(255,255,255,.035)}
   <?php if ($error): ?><div class="notice err"><?=h($error)?></div><?php endif; ?>
 
   <div class="card">
-    <div class="actions" style="margin-bottom:12px">
-      <button type="button" class="btn" id="openCreate">Add COG$ Class</button><?= ops_admin_help_button('Add COG$ Class', 'Use this when the catalog genuinely needs a new class. Creating a class changes the system-level configuration, so only add one when the legal and operational model supports it.') ?>
-      <span class="help">NFT rows show total issued. FT rows show total reserved and total issued.</span>
+    <div class="card-head">
+      <h2>Token / Unit Class Catalog</h2>
+      <div class="actions">
+        <button type="button" class="btn btn-gold btn-sm" id="openCreate">Add Token Class</button><?= ops_admin_help_button('Add Token Class', 'Use this when the catalog genuinely needs a new class. Creating a class changes the system-level configuration, so only add one when the legal and operational model supports it.') ?>
+        <span class="muted small">NFT rows show total issued. FT rows show reserved and issued.</span>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
