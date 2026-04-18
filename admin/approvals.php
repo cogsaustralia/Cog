@@ -417,9 +417,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Approvals</title>
-<style>.main{padding:20px;min-width:0}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:16px}
-
+<style>
 /* View toggle */
 .view-tabs{display:flex;gap:0;margin-bottom:20px;border:1px solid var(--line);border-radius:12px;overflow:hidden;width:fit-content}
 .view-tab{padding:9px 22px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;border-right:1px solid var(--line);transition:all .15s}
@@ -427,7 +425,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
 .view-tab.active{background:rgba(212,178,92,.15);color:var(--gold)}
 .view-tab:hover:not(.active){background:rgba(255,255,255,.04);color:var(--text)}
 
-/* Accordion member/token cards */
+/* Accordion cards */
 .acc-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden}
 .acc-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s}
 .acc-header:hover{background:rgba(255,255,255,.03)}
@@ -437,25 +435,18 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
 .acc-body{display:none;padding:16px 18px}
 .acc-body.open{display:block}
 
-/* Member header info */
+/* Member/token header info */
 .member-name{font-size:15px;font-weight:600}
 .member-ref{font-size:12px;color:var(--muted);margin-top:2px}
 .member-chips{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto;margin-right:12px}
-
-/* Token header info */
 .token-name{font-size:15px;font-weight:600}
 .token-sub{font-size:12px;color:var(--muted);margin-top:2px}
 
 /* Section label */
 .section-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px;padding-top:10px;border-top:1px solid var(--line)}
 .section-label:first-child{margin-top:0;padding-top:0;border-top:none}
-
-/* COG$ table */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th,td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;vertical-align:top;font-size:13px}
-th{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-td.sub{color:var(--muted);font-size:12px}
+.section-hd{display:flex;align-items:center;gap:10px;margin:20px 0 10px}
+.section-hd h2{margin:0;font-size:16px}
 
 /* Tags / chips */
 .chip{display:inline-block;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:11px;margin:2px 3px 2px 0;white-space:nowrap}
@@ -467,27 +458,14 @@ td.sub{color:var(--muted);font-size:12px}
 .count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(212,178,92,.15);color:var(--gold);border:1px solid rgba(212,178,92,.2)}
 .count-badge.pending{background:rgba(200,144,26,.15);color:var(--warn);border-color:rgba(200,144,26,.25)}
 
-/* Action forms */
-textarea{width:100%;background:#0f1720;border:1px solid var(--line);color:var(--text);padding:.7rem .8rem;border-radius:10px;font:inherit;min-height:56px;resize:vertical}
+/* Action buttons */
 .btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
-button{padding:7px 14px;border-radius:9px;font:inherit;font-weight:700;font-size:12px;cursor:pointer;border:1px solid transparent;transition:opacity .15s}
-button:hover{opacity:.82}
-.btn-approve{background:#d4b25c;color:#201507}
+.btn-approve{background:var(--gold);color:#201507;border:none}
 .btn-hold{background:rgba(255,255,255,.07);color:var(--text);border-color:var(--line)}
 .btn-reject{background:var(--errb);color:var(--err);border-color:rgba(196,96,96,.25)}
-
-/* Feedback */
-.msg{padding:12px 14px;border-radius:14px;margin-bottom:14px;font-size:13px}
-.ok{background:var(--okb);color:var(--ok);border:1px solid rgba(82,184,122,.3)}
-.err{background:var(--errb);color:var(--err);border:1px solid rgba(196,96,96,.3)}
 .empty-row{color:var(--muted);font-size:13px;padding:8px 0;margin:0}
-.sub{color:var(--muted);font-size:12px}
 
-/* Section summary counts */
-.section-hd{display:flex;align-items:center;gap:10px;margin:20px 0 10px}
-.section-hd h2{margin:0;font-size:16px}
-
-@media(max-width:820px){.member-chips{display:none}.main{padding:12px}}
+@media(max-width:820px){.member-chips{display:none}}
 </style>
 </head>
 <body>
@@ -497,33 +475,34 @@ button:hover{opacity:.82}
 <main class="main">
 
   <div class="card">
+    <div class="card-body">
     <h1 style="margin:0 0 6px">COG$ Approvals <?= ops_admin_help_button('Approvals', 'Use Approvals to review and sign off reservation lines once intake and payment requirements are satisfied. This page does not record money received and it does not publish ledger outcomes. After approval, the next live operator page is Execution.') ?></h1>
-    <p class="sub">This is the authoritative approvals surface for reservation sign-off before execution. Switch between Partner view (one card per partner, COG$ listed inside) and COG$ view (one card per token class, partners listed inside).</p>
+    <p class="muted">This is the authoritative approvals surface for reservation sign-off before execution. Switch between Partner view (one card per partner, COG$ listed inside) and COG$ view (one card per token class, partners listed inside).</p>
+    </div>
   </div>
 
-  <?= ops_admin_info_panel('Intake · Step 2', 'What this page does', 'Use this page to decide whether a reservation line is ready to progress into execution. It sits after payment or evidence collection and before any execution batch is created.', [
-    'Approve when the line is ready to move into execution.',
-    'Hold when more evidence or operator review is needed.',
-    'Reject when the line should not proceed in its current state.'
-  ]) ?>
-
-  <?= ops_admin_workflow_panel('Typical workflow', 'Approvals is the sign-off lane between intake and execution.', [
-    ['title' => 'Check intake status', 'body' => 'Confirm payment, JVPA, KYC, and other evidence is in a usable state.'],
-    ['title' => 'Review the line', 'body' => 'Assess the COG$ line in either Partner view or COG$ view.'],
-    ['title' => 'Approve, hold, or reject', 'body' => 'Record the decision with notes so later operators know why the line moved or stopped.'],
-    ['title' => 'Move to execution', 'body' => 'Approved lines can then be turned into execution requests and batched.']
-  ]) ?>
-
-  <?= ops_admin_guide_panel('How to use the two views', 'Both views act on the same underlying approval records.', [
-    ['title' => 'By Partner', 'body' => 'Best when you want to review one Partner\'s full intake picture and all lines together.'],
-    ['title' => 'By COG$', 'body' => 'Best when you want to review one token class across many Partners in one pass.']
-  ]) ?>
-
-  <?= ops_admin_status_panel('Status guide', 'These indicators tell you whether the line is operationally ready.', [
-    ['label' => 'Wallet / Stewardship', 'body' => 'Shows the broader member record state around the approval lane.'],
-    ['label' => 'Payment', 'body' => 'Shows whether any paid-now requirement has been satisfied before approval.'],
-    ['label' => 'JVPA', 'body' => 'Shows whether the backend partnership acceptance trail is complete enough to support the approval.'],
-    ['label' => 'Approve / Hold / Reject', 'body' => 'Approve moves the line forward, Hold pauses it for more review, Reject closes it out in its current form.']
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    ops_admin_info_panel('Intake · Step 2', 'What this page does', 'Use this page to decide whether a reservation line is ready to progress into execution. It sits after payment or evidence collection and before any execution batch is created.', [
+      'Approve when the line is ready to move into execution.',
+      'Hold when more evidence or operator review is needed.',
+      'Reject when the line should not proceed in its current state.',
+    ]),
+    ops_admin_workflow_panel('Typical workflow', 'Approvals is the sign-off lane between intake and execution.', [
+      ['title' => 'Check intake status', 'body' => 'Confirm payment, JVPA, KYC, and other evidence is in a usable state.'],
+      ['title' => 'Review the line', 'body' => 'Assess the COG$ line in either Partner view or COG$ view.'],
+      ['title' => 'Approve, hold, or reject', 'body' => 'Record the decision with notes so later operators know why the line moved or stopped.'],
+      ['title' => 'Move to execution', 'body' => 'Approved lines can then be turned into execution requests and batched.'],
+    ]),
+    ops_admin_guide_panel('How to use the two views', 'Both views act on the same underlying approval records.', [
+      ['title' => 'By Partner', 'body' => 'Best when you want to review one Partner\'s full intake picture and all lines together.'],
+      ['title' => 'By COG$', 'body' => 'Best when you want to review one token class across many Partners in one pass.'],
+    ]),
+    ops_admin_status_panel('Status guide', 'These indicators tell you whether the line is operationally ready.', [
+      ['label' => 'Wallet / Stewardship', 'body' => 'Shows the broader member record state around the approval lane.'],
+      ['label' => 'Payment', 'body' => 'Shows whether any paid-now requirement has been satisfied before approval.'],
+      ['label' => 'JVPA', 'body' => 'Shows whether the backend partnership acceptance trail is complete enough to support the approval.'],
+      ['label' => 'Approve / Hold / Reject', 'body' => 'Approve moves the line forward, Hold pauses it for more review, Reject closes it out in its current form.'],
+    ]),
   ]) ?>
 
   <?php if ($flash): ?><div class="msg ok"><?=h($flash)?></div><?php endif; ?>
