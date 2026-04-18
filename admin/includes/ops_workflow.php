@@ -870,7 +870,7 @@ if (!function_exists('ops_admin_status_panel')) {
 <link rel="stylesheet" href="./assets/admin.css">
 <title><?php echo ops_h($title); ?> | COG$ Admin</title>
 <style>
-.shell{display:grid;grid-template-columns:var(--sidebar-open,238px) minmax(0,1fr);min-height:100vh;width:100%;max-width:100%}
+.shell{display:grid;grid-template-columns:var(--sidebar-open,200px) minmax(0,1fr);min-height:100vh;width:100%;max-width:100%}
 .sidebar{background:linear-gradient(180deg,#121a23,#16212b);border-right:1px solid var(--line);padding:24px 18px}
 .brand{display:flex;gap:12px;align-items:center;margin-bottom:24px}
 .brand img{width:44px;height:44px;border-radius:50%}
@@ -899,7 +899,7 @@ th{color:var(--muted);font-weight:600}
 input,select,textarea,button{font:inherit}
 button,.mini-btn{display:inline-block;background:#d4b25c;color:#201507;border:1px solid rgba(212,178,92,.35);padding:.8rem 1rem;border-radius:12px;font-weight:700;text-decoration:none;cursor:pointer}
 .mini-btn.secondary,button.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
-@media (max-width:1100px){.shell{grid-template-columns:minmax(0,1fr)}.main{padding:18px;padding-top:58px}}
+@media (max-width:900px){.shell{grid-template-columns:minmax(0,1fr)}.main{padding:18px;padding-top:58px}}
 </style>
 </head>
 <body>

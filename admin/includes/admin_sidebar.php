@@ -80,7 +80,7 @@ if (!function_exists('admin_sidebar_styles_once')) {
         $printed = true;
         echo '<link rel="stylesheet" href="./assets/admin.min.css">';
         echo '<style>
-:root{--sidebar-w:220px;--sidebar-collapsed:56px}
+:root{--sidebar-w:200px;--sidebar-collapsed:52px}
 .admin-shell,.shell{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);min-height:100vh}
 .sidebar{background:linear-gradient(180deg,var(--bg),var(--panel));border-right:1px solid var(--line);padding:10px 8px;min-width:0;overflow:hidden;position:relative;transition:width .2s ease,padding .2s ease}
 .sidebar .brand{display:flex;gap:8px;align-items:center;margin:0 0 14px;padding:4px 4px 14px;border-bottom:1px solid var(--line)}
@@ -107,7 +107,7 @@ if (!function_exists('admin_sidebar_styles_once')) {
 .sidebar.is-collapsed .brand div,.sidebar.is-collapsed .side-section,.sidebar.is-collapsed .card{display:none}
 .sidebar.is-collapsed .brand{justify-content:center;margin-top:20px;border-bottom:none}
 .sidebar.is-collapsed .brand img{display:block}
-@media(max-width:700px){.admin-shell,.shell{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid var(--line);max-height:350px;overflow-y:auto}.sidebar-toggle{display:none}}
+@media(max-width:900px){.admin-shell,.shell{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid var(--line);max-height:350px;overflow-y:auto}.sidebar-toggle{display:none}}
 @media(min-width:701px){.sidebar{height:100vh;overflow-y:auto;position:sticky;top:0}}
 </style>
 <script>

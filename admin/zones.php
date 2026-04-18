@@ -242,7 +242,7 @@ ob_start(); ?>
     </div>
   </form>
 
-  <form method="post" class="card">
+  <form method="post" class="card" style="grid-column:1/-1">
     <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
     <input type="hidden" name="action" value="open_zone_challenge">
     <div class="card-head"><h2>Open zone challenge <?= ops_admin_help_button('Open zone challenge', 'Formally track a dispute about a zone boundary or inclusion logic.') ?></h2></div>
