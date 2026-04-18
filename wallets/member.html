@@ -2514,14 +2514,23 @@ function toggleNotice(i){
 }
 
 async function markAllRead(){
-  const items = (window._vaultData||{}).announcements||[];
-  for(const a of items){
+  const d = window._vaultData||{};
+  const anns = d.announcements||[];
+  const notices = d.notices||[];
+  for(const a of anns){
     if(!a.is_read){
       a.is_read = true;
       await api('vault/mark-read',{method:'POST',body:JSON.stringify({announcement_id:a.id})}).catch(()=>{});
     }
   }
-  if(window._vaultData) renderNews(window._vaultData);
+  for(const n of notices){
+    if(!n.is_read){
+      n.is_read = true;
+      await api('vault/mark-read',{method:'POST',body:JSON.stringify({notice_id:n.id})}).catch(()=>{});
+    }
+  }
+  if(window._vaultData) renderTabNews(window._vaultData);
+  if(window._vaultData) updateTabBadges(window._vaultData);
 }
 
 /* ── EVENT LOG ── */
@@ -3509,7 +3518,9 @@ function renderTabExchange(d){
 }
 
 function updateTabBadges(d){
-  var newsUnread = d.announcement_unread||0;
+  var annUnread    = (d.announcement_unread||0);
+  var noticeUnread = (d.notices||[]).filter(function(n){ return !n.is_read; }).length;
+  var newsUnread   = annUnread + noticeUnread;
   var nbadge = document.getElementById('news-badge');
   if(nbadge){ nbadge.textContent = newsUnread; nbadge.className = 'tnb-badge'+(newsUnread>0?' show':''); }
   /* rail news badge */
@@ -3578,7 +3589,19 @@ function _runTabRenders(d){
 
 /* ══ ENHANCED NEWS RENDER (tab-based) ══ */
 function renderTabNews(d){
-  var items = d.announcements||[];
+  // Merge announcements (from `announcements` table) and notices (from `wallet_messages`)
+  // Tag each with _src so markOneRead calls the right endpoint.
+  var anns = (d.announcements||[]).map(function(a){
+    return Object.assign({}, a, {_src:'announcement', _dateField: a.created_at||a.sent_at||''});
+  });
+  var notices = (d.notices||[]).map(function(n){
+    return Object.assign({}, n, {_src:'notice', _dateField: n.sent_at||n.created_at||'',
+      title: n.title||n.subject||'', type: n.message_type||n.type||'announcement'});
+  });
+  // Combine and sort newest-first
+  var items = anns.concat(notices).sort(function(a,b){
+    return new Date(b._dateField||0) - new Date(a._dateField||0);
+  });
   var unread = items.filter(function(a){ return !a.is_read; });
   var read   = items.filter(function(a){ return  a.is_read; });
   var list   = document.getElementById('news-list');
@@ -3586,50 +3609,74 @@ function renderTabNews(d){
   if(!list) return;
   if(count) count.textContent = items.length + ' notice'+(items.length!==1?'s':'');
   if(items.length === 0){
-    list.innerHTML = '<div class="placeholder"><strong>No notices</strong><p>Partner communications appear here.</p></div>';
+    list.innerHTML = '<div class="placeholder"><strong>No notices</strong><p>Partner communications will appear here when published.</p></div>';
     return;
   }
   var esc2 = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
   var dt2 = function(s){ if(!s) return '—'; try{ return new Date(s).toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return s; } };
   var typeLabel = function(t){
-    var m = {announcement:'<span class="ntype ntype-ann">Announcement</span>',governance:'<span class="ntype ntype-gov">Governance</span>',approval:'<span class="ntype ntype-appr">Approval</span>',payment:'<span class="ntype ntype-pay">Payment</span>',system:'<span class="ntype ntype-sys">System</span>'};
+    var m = {
+      announcement:'<span class="ntype ntype-ann">Announcement</span>',
+      governance:  '<span class="ntype ntype-gov">Governance</span>',
+      approval:    '<span class="ntype ntype-appr">Approval</span>',
+      payment:     '<span class="ntype ntype-pay">Payment</span>',
+      system:      '<span class="ntype ntype-sys">System</span>',
+      info:        '<span class="ntype ntype-sys">Info</span>',
+      action:      '<span class="ntype ntype-appr">Action Required</span>',
+    };
     return m[t] || '<span class="ntype ntype-ann">Notice</span>';
   };
+  // Encode src+id as a composite key for markOneRead
+  var itemKey = function(a){ return a._src + ':' + a.id; };
 
   var html = '';
-  unread.forEach(function(a,i){
-    html += '<div class="news-item unread">'+
-      '<div class="news-meta"><span class="ndot"></span>'+typeLabel(a.type||a.notice_type||'announcement')+'<span class="ndate">'+dt2(a.created_at)+'</span></div>'+
-      '<div class="nsubj">'+esc2(a.title||'')+'</div>'+
-      '<div class="nbody">'+esc2(a.body||'').replace(/\n/g,'<br>')+'</div>'+
-      '<button class="n-read" onclick="markOneRead('+a.id+',this)">Mark as read</button>'+
-      '</div>';
+  unread.forEach(function(a){
+    var body = a.body||a.summary||'';
+    html += '<div class="news-item unread">'
+      + '<div class="news-meta"><span class="ndot"></span>'+typeLabel(a.type||a.message_type||'announcement')+'<span class="ndate">'+dt2(a._dateField)+'</span></div>'
+      + '<div class="nsubj">'+esc2(a.title||'')+'</div>'
+      + (body ? '<div class="nbody">'+esc2(body).replace(/\n/g,'<br>')+'</div>' : '')
+      + '<button class="n-read" onclick="markOneRead(\''+itemKey(a)+'\',this)">Mark as read</button>'
+      + '</div>';
   });
   if(read.length > 0){
     html += '<div class="acc-section" id="news-read-acc"><div class="acc-hd" onclick="toggleAcc(\'news-read-acc\')"><h4>Read messages <span class="acc-count">'+read.length+'</span></h4><span class="acc-chev">▼</span></div><div class="acc-body">';
-    read.forEach(function(a,i){
-      html += '<div class="news-compact" onclick="this.classList.toggle(\'open\');var b=this.nextElementSibling;b&&b.classList.toggle(\'open\')">'+
-        '<span class="news-compact-type">'+typeLabel(a.type||a.notice_type||'announcement')+'</span>'+
-        '<span class="news-compact-subj">'+esc2(a.title||'')+'</span>'+
-        '<span class="news-compact-date">'+dt2(a.created_at)+'</span>'+
-        '<span class="news-compact-chev">▼</span>'+
-        '</div>'+
-        '<div class="news-expand-body">'+esc2(a.body||'').replace(/\n/g,'<br>')+'</div>';
+    read.forEach(function(a){
+      var body = a.body||a.summary||'';
+      html += '<div class="news-compact" onclick="this.classList.toggle(\'open\');var b=this.nextElementSibling;b&&b.classList.toggle(\'open\')">'
+        + '<span class="news-compact-type">'+typeLabel(a.type||a.message_type||'announcement')+'</span>'
+        + '<span class="news-compact-subj">'+esc2(a.title||'')+'</span>'
+        + '<span class="news-compact-date">'+dt2(a._dateField)+'</span>'
+        + '<span class="news-compact-chev">▼</span>'
+        + '</div>'
+        + '<div class="news-expand-body">'+(body ? esc2(body).replace(/\n/g,'<br>') : '')+'</div>';
     });
     html += '</div></div>';
   }
   list.innerHTML = html;
 }
 
-function markOneRead(id, btn){
-  if(window._vaultData){
-    var ann = (window._vaultData.announcements||[]).find(function(a){ return a.id===id; });
-    if(ann && !ann.is_read){
-      ann.is_read = true;
-      window.api('vault/mark-read',{method:'POST',body:JSON.stringify({announcement_id:id})}).catch(function(){});
-      renderTabNews(window._vaultData);
-      updateTabBadges(window._vaultData);
-    }
+function _markReadApi(item){
+  // Call the right mark-read payload depending on source
+  if(!item) return;
+  var payload = item._src === 'notice'
+    ? {notice_id: item.id}
+    : {announcement_id: item.id};
+  window.api('vault/mark-read', {method:'POST', body:JSON.stringify(payload)}).catch(function(){});
+}
+
+function markOneRead(key, btn){
+  if(!window._vaultData) return;
+  // key = 'announcement:123' or 'notice:456'
+  var parts = String(key).split(':');
+  var src = parts[0], id = parseInt(parts[1]||0,10);
+  var arr = src === 'notice' ? (window._vaultData.notices||[]) : (window._vaultData.announcements||[]);
+  var item = arr.find(function(a){ return a.id===id; });
+  if(item && !item.is_read){
+    item.is_read = true;
+    _markReadApi(Object.assign({_src:src}, item));
+    renderTabNews(window._vaultData);
+    updateTabBadges(window._vaultData);
   }
 }
 

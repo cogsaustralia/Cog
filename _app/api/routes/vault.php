@@ -2083,8 +2083,29 @@ function markAnnouncementReadVault(): void {
     if (!$principal) apiError('Authentication required', 401);
     $db = getDB();
     $body = jsonBody();
+
+    $memberId = (int)$principal['principal_id'];
+
+    // ── Wallet message / notice ──────────────────────────────────────────────
+    // If notice_id is provided, write to wallet_message_reads instead.
+    $noticeId = (int)($body['notice_id'] ?? 0);
+    if ($noticeId > 0) {
+        try {
+            $db->prepare(
+                'INSERT INTO wallet_message_reads (message_id, member_id, read_at)
+                 VALUES (?, ?, NOW())
+                 ON DUPLICATE KEY UPDATE read_at = NOW()'
+            )->execute([$noticeId, $memberId]);
+        } catch (Throwable $e) {
+            // Table may not exist — fail silently so vault doesn't break
+            error_log('[mark-read notice] ' . $e->getMessage());
+        }
+        apiSuccess(['notice_id' => $noticeId, 'read' => true]);
+    }
+
+    // ── Announcement ─────────────────────────────────────────────────────────
     $announcementId = (int)($body['announcement_id'] ?? 0);
-    if ($announcementId < 1) apiError('Announcement ID required.');
+    if ($announcementId < 1) apiError('Announcement ID or notice ID required.');
 
     // If for_business flag set, use business identity so read status matches fetchAnnouncementsForSubject
     $forBusiness = !empty($body['for_business']);
