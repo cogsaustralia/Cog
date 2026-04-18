@@ -704,6 +704,57 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
 <!-- ══ VAULT DASHBOARD ══ -->
 <div id="vault" style="display:none;min-height:100vh">
+<div class="vault-shell">
+
+  <!-- ── Desktop sidebar rail (hidden on mobile via CSS media query) ── -->
+  <aside class="app-rail" id="app-rail" aria-label="Navigation">
+    <div class="rail-brand">
+      <img src="../assets/logo_webcir.png" alt="COG$">
+      <div>
+        <div class="rail-brand-name">Partner Vault</div>
+        <div class="rail-brand-sub">COG$ Foundation</div>
+      </div>
+    </div>
+
+    <div class="rail-section">Self</div>
+    <button class="rail-item on" data-rail="overview" onclick="tab('overview')">
+      <span class="rail-ico">&#9672;</span> Overview
+    </button>
+    <button class="rail-item" data-rail="holdings" onclick="tab('holdings')">
+      <span class="rail-ico">&#9671;</span> Holdings
+    </button>
+    <button class="rail-item" data-rail="exchange" onclick="tab('exchange')">
+      <span class="rail-ico">&#8644;</span> Exchange
+    </button>
+
+    <div class="rail-section">Governance</div>
+    <button class="rail-item" data-rail="governance" onclick="tab('governance')">
+      <span class="rail-ico">&#10022;</span> Polling
+      <span class="rail-badge" id="rail-polls-badge" style="display:none"></span>
+    </button>
+    <button class="rail-item" data-rail="news" onclick="tab('news')">
+      <span class="rail-ico">&#9685;</span> News
+      <span class="rail-badge" id="rail-news-badge" style="display:none"></span>
+    </button>
+
+    <div class="rail-section">Community</div>
+    <button class="rail-item" data-rail="give" onclick="tab('give')">
+      <span class="rail-ico">&#9825;</span> Give
+    </button>
+    <button class="rail-item" data-rail="activity" onclick="tab('activity')">
+      <span class="rail-ico">&#9672;</span> Activity
+    </button>
+
+    <div class="rail-foot">
+      <div class="rail-foot-chain">
+        <span class="rail-foot-dot"></span> Cryptographic DB · Active
+      </div>
+      <div>Foundation Day 14 May 2026</div>
+    </div>
+  </aside>
+
+  <!-- ── Main content area ── -->
+  <div class="vault-content">
 
   <!-- Topbar -->
   <header class="topbar">
@@ -841,39 +892,57 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div id="ov-invite-anchor"></div>
       <div id="invite-wrap" style="display:none"></div>
 
+      <!-- G: Kids S-NFT identity card — canonical home for all kS-NFT management.
+           classs-family-block is populated by renderHoldings (unchanged).
+           KYC controls surface here so the guardian can verify and register
+           children from the same card as their own S-NFT. -->
+      <div id="ov-ksnft-card" style="display:none;margin-top:14px">
+        <div class="sec-divider" style="margin-top:6px">Kids S-NFT &mdash; Guardian Identity Card <i class="info-ico" onclick="showInfo('snft-token')">?</i></div>
+        <div class="card">
+          <div class="card-hd">
+            <h3>Kids S-NFT <span style="font-family:var(--mono);font-size:.72rem;font-weight:400;color:var(--text3)">Class kS</span></h3>
+            <span class="chip chip-gold"><span class="chip-dot"></span>Guardian-held</span>
+          </div>
+          <div class="card-bd" style="padding-bottom:0">
+            <p style="font-size:.82rem;color:var(--text3);line-height:1.65;margin-bottom:14px">Each kS-NFT is an additional soulbound token held by you as guardian until the child turns 18, at which point it automatically converts to a full Class S Personal S-NFT with all adult governance rights. $1 per child.</p>
+            <!-- KYC gate — visible here, not in hidden stubs -->
+            <div id="kyc-cta" style="margin-bottom:12px">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--amber-bg);border:1px solid var(--amber-bdr);border-radius:var(--r2)">
+                <span style="font-size:1rem;color:var(--amber)">&#9888;</span>
+                <span style="font-size:.82rem;color:var(--amber);flex:1">Identity verification required before Kids S-NFTs can be issued.</span>
+                <button class="btn btn-sm" style="border-color:var(--amber-bdr);color:var(--amber);background:none;flex-shrink:0" onclick="openKycPanel()">Verify ID &rarr;</button>
+              </div>
+            </div>
+            <div id="kyc-panel" style="display:none;padding:16px 18px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border2);margin-bottom:14px">
+              <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:12px">Identity Verification &mdash; Medicare Card</div>
+              <div class="form-group"><label class="form-label">Full name (as on Medicare card)</label><input class="form-input" id="kyc-name" autocomplete="name"></div>
+              <div style="display:grid;grid-template-columns:1fr 70px 120px;gap:10px">
+                <div class="form-group"><label class="form-label">Medicare number (10 digits)</label><input class="form-input" id="kyc-number" inputmode="numeric" maxlength="10" placeholder="2000 00000 0"></div>
+                <div class="form-group"><label class="form-label">IRN</label><input class="form-input" id="kyc-irn" inputmode="numeric" maxlength="1" placeholder="1"></div>
+                <div class="form-group"><label class="form-label">Expiry (MM/YYYY)</label><input class="form-input" id="kyc-expiry" placeholder="01/2026"></div>
+              </div>
+              <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:.74rem;color:var(--text3);margin-bottom:12px">
+                <input type="checkbox" id="kyc-decl" style="margin-top:2px;flex-shrink:0">
+                I consent to this information being used for identity verification only, in accordance with the Privacy Act 1988.
+              </label>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-gold btn-sm" id="kyc-submit-btn" onclick="submitKyc()">Submit for verification</button>
+                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('kyc-panel').style.display='none';document.getElementById('kyc-cta').style.display=''">Cancel</button>
+              </div>
+              <div class="flash" id="kyc-fl"></div>
+            </div>
+            <!-- Family block — populated by renderHoldings; contains stepper, registered children list -->
+            <div id="classs-family-block"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- ══ HIDDEN STUBS ══
-           All these IDs must exist in the DOM for existing JS (renderIdentity,
-           renderBasket, KYC flow, JVPA modal, invite flow) to function without
-           modification. They are NOT visible in the Overview. The KYC panel
-           still toggles itself to display via openKycPanel()/submitKyc() — it
-           simply renders from this hidden block when opened. -->
+           IDs required by renderBasket, renderIdentity (ent-list, jvpa-wrap),
+           and legacy holdings summary. Not visible. -->
       <div id="ov-hidden-stubs" style="display:none">
         <div id="ent-list"></div>
         <div id="jvpa-wrap"></div>
-
-        <div id="kyc-cta">
-          <button class="btn btn-sm" style="background:var(--gold-bg);border-color:var(--gold-bdr);color:var(--gold)" onclick="openKycPanel()">Verify ID (Medicare) →</button>
-          <span style="font-size:.72rem;color:var(--text3);margin-left:10px">Required to register Kids S-NFTs</span>
-        </div>
-        <div id="kyc-panel" style="padding:16px 18px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border2)">
-          <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:12px">Identity Verification — Medicare Card</div>
-          <div class="form-group"><label class="form-label">Full name (as on Medicare card)</label><input class="form-input" id="kyc-name" autocomplete="name"></div>
-          <div style="display:grid;grid-template-columns:1fr 70px 120px;gap:10px">
-            <div class="form-group"><label class="form-label">Medicare number (10 digits)</label><input class="form-input" id="kyc-number" inputmode="numeric" maxlength="10" placeholder="2000 00000 0"></div>
-            <div class="form-group"><label class="form-label">IRN</label><input class="form-input" id="kyc-irn" inputmode="numeric" maxlength="1" placeholder="1"></div>
-            <div class="form-group"><label class="form-label">Expiry (MM/YYYY)</label><input class="form-input" id="kyc-expiry" placeholder="01/2026"></div>
-          </div>
-          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:.74rem;color:var(--text3);margin-bottom:12px">
-            <input type="checkbox" id="kyc-decl" style="margin-top:2px;flex-shrink:0">
-            I consent to this information being used for identity verification only, in accordance with the Privacy Act 1988.
-          </label>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-gold btn-sm" id="kyc-submit-btn" onclick="submitKyc()">Submit for verification</button>
-            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('kyc-panel').style.display='none';document.getElementById('kyc-cta').style.display=''">Cancel</button>
-          </div>
-          <div class="flash" id="kyc-fl"></div>
-        </div>
-
         <span id="b-states">—</span>
         <span id="b-total-cogs">—</span>
         <span id="b-total-value">—</span>
@@ -893,18 +962,31 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="card" style="margin-bottom:12px">
         <!-- Personal S-NFT -->
         <div class="tr">
-          <div class="tr-ico">◈</div>
+          <div class="tr-ico">&#9672;</div>
           <div class="tr-inf">
             <div class="tr-name">Personal S-NFT</div>
-            <div class="tr-cls">Class S · Soulbound · One equal national governance vote</div>
+            <div class="tr-cls">Class S &middot; Soulbound &middot; One equal national governance vote</div>
           </div>
           <div class="tr-val">
             <div class="tr-amt" style="font-size:1.2rem">1</div>
             <div class="tr-amt-label">permanent</div>
           </div>
         </div>
-        <!-- Kids S-NFT block -->
-        <div id="classs-family-block"></div>
+        <!-- kS-NFT summary row — read-only count. Full management is in Overview identity card.
+             classs-family-block lives in Overview; renderHoldings writes into it there. -->
+        <div id="hd-ksnft-summary" style="display:none">
+          <div class="tr" style="background:rgba(232,184,75,.03)">
+            <div class="tr-ico" style="font-size:.75rem;font-weight:700;letter-spacing:-.02em">kS</div>
+            <div class="tr-inf">
+              <div class="tr-name">Kids S-NFT <span style="font-size:.72rem;font-weight:400;color:var(--text3)">&mdash; managed in Overview</span></div>
+              <div class="tr-cls">Class kS &middot; Guardian-held soulbound token &middot; converts to Class S on child&apos;s 18th birthday</div>
+            </div>
+            <div class="tr-val">
+              <div class="tr-amt" id="hd-ksnft-count" style="font-size:1.2rem">0</div>
+              <div class="tr-amt-label">issued</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- RESERVATIONS -->
@@ -1011,28 +1093,33 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         </div>
       </div>
 
-      <!-- Kids S-NFT inline -->
+      <!-- Kids S-NFT — managed in Overview identity card.
+           All IDs kept as hidden stubs so renderTabGive / submitKidsOrder continue to work. -->
       <div class="card">
         <div class="card-hd">
           <h3>Kids S-NFT</h3>
-          <span style="font-size:.72rem;color:var(--text3)">$1 per child · Class kS</span>
+          <span style="font-size:.72rem;color:var(--text3)">$1 per child &middot; Class kS</span>
         </div>
         <div class="card-bd">
-          <p style="font-size:.84rem;color:var(--text3);margin-bottom:14px;line-height:1.65">Each child under 18 receives a permanent Partner number, a soulbound kS-NFT, and a proportional Sub-Trust B income unit — on equal terms with every other Partner.</p>
-          <div id="give-kyc-notice" style="display:none;padding:10px 14px;background:var(--amber-bg);border:1px solid var(--amber-bdr);border-radius:var(--r2);font-size:.82rem;color:var(--amber);margin-bottom:14px">
-            ⚠ Medicare identity verification is required before Kids S-NFTs can be issued. <button class="btn btn-ghost btn-sm" style="margin-left:8px;border-color:var(--amber-bdr);color:var(--amber)" onclick="tab('overview');setTimeout(function(){openKycPanel();},200)">Verify ID →</button>
+          <p style="font-size:.84rem;color:var(--text3);margin-bottom:14px;line-height:1.65">Each child under 18 receives a permanent Partner number, a soulbound kS-NFT token, and a proportional Sub-Trust B income unit &mdash; on equal terms with every other Partner. The kS-NFT is additional to the guardian&apos;s own S-NFT and held by the guardian until the child turns 18.</p>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--gold-bg);border:1px solid var(--gold-bdr);border-radius:var(--r2);cursor:pointer" onclick="tab('overview')">
+            <span style="font-size:1.3rem;color:var(--gold)">&#9672;</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:2px">Register Kids S-NFTs in your identity card</div>
+              <div style="font-size:.76rem;color:var(--text3);line-height:1.5">KYC verification, ordering, and child records are managed from your Overview tab identity section, alongside your own S-NFT.</div>
+            </div>
+            <span style="color:var(--gold);font-size:1rem;flex-shrink:0">&#8594;</span>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
-            <button class="stepper-btn" onclick="adjustGiftQty('kids-order-qty',-1)">−</button>
-            <input class="stepper-input" id="kids-order-qty" type="number" min="0" value="0">
-            <button class="stepper-btn" onclick="adjustGiftQty('kids-order-qty',1)">+</button>
-            <span class="give-price-note">× $1 each</span>
-            <button class="btn btn-gold btn-sm" id="kids-order-btn" onclick="submitKidsOrder()">Record order</button>
+          <!-- Hidden stubs — IDs required by renderTabGive, submitKidsOrder, cancelGiftOrderByClass -->
+          <div style="display:none">
+            <div id="give-kyc-notice"></div>
+            <button id="kids-order-btn" onclick="submitKidsOrder()"></button>
+            <input id="kids-order-qty" type="number" value="0">
           </div>
-          <p style="font-size:.76rem;color:var(--text3);line-height:1.55">After placing the order, pay $1 per child by bank transfer using your Partner number as the reference. Admin verifies and issues the kS-NFT.</p>
-          <div id="kids-pending-actions" style="display:none;margin-top:10px;padding:10px 0;border-top:1px solid var(--border)">
-            <div style="font-size:.76rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Pending — awaiting payment</div>
+          <div id="kids-pending-actions" style="display:none;margin-top:14px;padding:10px 0;border-top:1px solid var(--border)">
+            <div style="font-size:.76rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Pending &mdash; awaiting payment</div>
             <div id="kids-pending-lines"></div>
+            <div style="font-size:.76rem;color:var(--text3);margin-top:8px;line-height:1.55">Pay $1 per child by bank transfer using your Partner number as reference. Use PayID <span style="font-family:var(--mono);color:var(--text2)">0494 578 706</span>.</div>
           </div>
           <div class="flash" id="kids-fl" style="margin-top:10px"></div>
         </div>
@@ -1207,6 +1294,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     </div>
   </div>
 
+  </div><!-- /#vault main content -->
+</div><!-- /.vault-shell -->
 </div><!-- /#vault -->
 
 <!-- ══ PROFILE DRAWER ══ -->
@@ -2035,9 +2124,9 @@ function renderHoldings(d){
           <input class="form-input" id="kids-order-qty-h" type="number" min="0" value="0" style="max-width:88px;text-align:center;font-family:var(--mono)">
           <button class="btn btn-ghost btn-sm" type="button" onclick="adjustGiftQty('kids-order-qty-h',1)">+</button>
           <span style="font-size:.76rem;color:var(--text3)">× $1 each</span>
-          <button class="btn btn-gold btn-sm" type="button" id="kids-order-btn-h" onclick="document.getElementById('kids-order-qty').value=document.getElementById('kids-order-qty-h').value;submitKidsOrder();">Add kids using legacy pathway</button>
+          <button class="btn btn-gold btn-sm" type="button" id="kids-order-btn-h" onclick="document.getElementById('kids-order-qty').value=document.getElementById('kids-order-qty-h').value;submitKidsOrder();">Register kids S-NFT</button>
         </div>
-        <div style="font-size:.74rem;color:var(--text3);line-height:1.55">${kycOk ? 'Medicare verification is active. Use the Give tab to order Kids S-NFTs.' : 'Medicare verification is required — see Give tab to verify and order.'}</div>
+        <div style="font-size:.74rem;color:var(--text3);line-height:1.55">${kycOk ? 'Medicare verification is active. Order Kids S-NFTs below.' : 'Medicare verification is required \u2014 complete the identity verification above.'}</div>
         ${kidsRegistered.length ? `<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px"><div style="font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Recorded children</div>${kidsRegistered.map(k => `<div style="font-size:.76rem;color:var(--text2);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)"><strong style="color:var(--text)">${esc(k.name||'Unnamed child')}</strong>${k.dob ? ` · ${esc(k.dob)}` : ''}${k.status ? ` · ${esc(k.status)}` : ''}</div>`).join('')}</div>` : ''}
         <div class="flash" id="kids-fl-h"></div>
       </div>
@@ -3007,6 +3096,10 @@ function tab(name){
   if(panel) panel.classList.add('on');
   var btn = document.querySelector('.tnb[data-tab="'+name+'"]');
   if(btn) btn.classList.add('on');
+  /* sync desktop sidebar rail */
+  document.querySelectorAll('.rail-item').forEach(function(b){ b.classList.remove('on'); });
+  var railBtn = document.querySelector('.rail-item[data-rail="'+name+'"]');
+  if(railBtn) railBtn.classList.add('on');
   window._activeTab = name;
 }
 
@@ -3368,15 +3461,16 @@ function updateTabBadges(d){
   var newsUnread = d.announcement_unread||0;
   var nbadge = document.getElementById('news-badge');
   if(nbadge){ nbadge.textContent = newsUnread; nbadge.className = 'tnb-badge'+(newsUnread>0?' show':''); }
+  /* rail news badge */
+  var rnbadge = document.getElementById('rail-news-badge');
+  if(rnbadge){ rnbadge.textContent = newsUnread; rnbadge.style.display = newsUnread>0?'':'none'; }
 
   var pollCount = (d.open_polls||0)+(d.open_proposals||0);
   var pbadge = document.getElementById('polls-badge');
   if(pbadge){ pbadge.textContent = pollCount; pbadge.className = 'tnb-badge'+(pollCount>0?' show':''); }
-
-  // Auto-switch to relevant tab if there are unread notices or open polls
-  if(newsUnread > 0 && window._activeTab === 'overview') {
-    // subtle indicator only, don't force tab switch
-  }
+  /* rail polls badge */
+  var rpbadge = document.getElementById('rail-polls-badge');
+  if(rpbadge){ rpbadge.textContent = pollCount; rpbadge.style.display = pollCount>0?'':'none'; }
 }
 
 function trToggle(id){
@@ -3399,6 +3493,7 @@ function _runTabRenders(d){
   renderTabGive(d);
   renderTabExchange(d);
   updateTabBadges(d);
+  renderKsnftIdentityCard(d);
 
   // Show past polls section if any exist
   var pp = (d.proposals||[]).filter(function(p){ return p.status==='closed'||p.status==='certified'; });
@@ -3752,6 +3847,55 @@ window.pathwaySubLine    = pathwaySubLine;
 window.goToParticipation = goToParticipation;
 window.scrollToInvite    = scrollToInvite;
 window.renderParticipationPathways = renderParticipationPathways;
+
+/* ══ kS-NFT IDENTITY CARD — show/hide + Holdings summary sync ══
+   Called from _runTabRenders after every openVault.
+   Shows ov-ksnft-card on Overview whenever:
+     - Partner has kids_tokens > 0 (any registered), OR
+     - Partner has kids_tokens = 0 but KYC is not yet verified
+       (so they can complete KYC and register children here).
+   Always hides the old classs-family-block entry in Holdings
+   and instead updates the read-only hd-ksnft-summary row. */
+function renderKsnftIdentityCard(d){
+  var kidsCount  = parseInt(d.kids_tokens||0,10)||0;
+  var kyc        = d.kyc_status||'none';
+  var card       = document.getElementById('ov-ksnft-card');
+  var kycCta     = document.getElementById('kyc-cta');
+  var kycPanel   = document.getElementById('kyc-panel');
+
+  // Show the card if there are kids OR KYC is not done (so guardian can start here)
+  if(card) card.style.display = '';
+
+  // KYC gate visibility
+  if(kycCta){
+    if(kyc === 'verified'){
+      kycCta.style.display = 'none';
+    } else {
+      kycCta.style.display = '';
+      // Update gate text to reflect KYC state
+      var gateSpan = kycCta.querySelector('span:not(.btn)');
+      if(gateSpan){
+        if(kyc === 'pending')  gateSpan.textContent = 'Identity verification is pending review.';
+        if(kyc === 'rejected') gateSpan.textContent = 'Identity verification was rejected — please resubmit.';
+      }
+    }
+  }
+
+  // Holdings summary row — show count only, no management UI
+  var hdSummary  = document.getElementById('hd-ksnft-summary');
+  var hdCount    = document.getElementById('hd-ksnft-count');
+  if(hdSummary) hdSummary.style.display = kidsCount > 0 ? '' : 'none';
+  if(hdCount)   hdCount.textContent = kidsCount.toLocaleString('en-AU');
+}
+window.renderKsnftIdentityCard = renderKsnftIdentityCard;
+
+/* Patch openKycPanel to ensure the kS-NFT card is visible first */
+var _origOpenKycPanel = window.openKycPanel;
+window.openKycPanel = function(){
+  var card = document.getElementById('ov-ksnft-card');
+  if(card && card.style.display === 'none') card.style.display = '';
+  if(typeof _origOpenKycPanel === 'function') _origOpenKycPanel();
+};
 </script>
 <!-- ══ PARTICIPATION GATE ══ -->
 <div class="participation-gate" id="participation-gate" style="display:none">
