@@ -75,35 +75,36 @@ if (!function_exists('admin_sidebar_styles_once')) {
         static $printed = false;
         if ($printed) return;
         $printed = true;
+        echo '<link rel="stylesheet" href="./assets/admin.min.css">';
         echo '<style>
-:root{--sidebar-w:210px;--sidebar-collapsed:56px}
+:root{--sidebar-w:220px;--sidebar-collapsed:56px}
 .admin-shell,.shell{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);min-height:100vh}
-.sidebar{background:linear-gradient(180deg,#121a23,#16212b);border-right:1px solid rgba(255,255,255,.08);padding:10px 8px;min-width:0;overflow:hidden;position:relative;transition:width .2s ease,padding .2s ease}
-.sidebar .brand{display:flex;gap:8px;align-items:center;margin:0 0 12px}
+.sidebar{background:linear-gradient(180deg,var(--bg),var(--panel));border-right:1px solid var(--line);padding:10px 8px;min-width:0;overflow:hidden;position:relative;transition:width .2s ease,padding .2s ease}
+.sidebar .brand{display:flex;gap:8px;align-items:center;margin:0 0 14px;padding:4px 4px 14px;border-bottom:1px solid var(--line)}
 .sidebar .brand img{width:32px;height:32px;border-radius:50%;flex-shrink:0}
-.sidebar .brand strong{display:block;font-size:12px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sidebar .brand span{color:#9fb0c1;font-size:11px}
+.sidebar .brand strong{display:block;font-size:12px;line-height:1.2;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar .brand span{color:var(--muted);font-size:10px}
 .sidebar .side-section{margin-bottom:4px}
-.sidebar .side-toggle{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;margin:0 0 2px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(255,255,255,.02);cursor:pointer;user-select:none;transition:background .15s,border-color .15s}
-.sidebar .side-toggle:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}
-.sidebar .side-toggle .side-label{font-size:11px;font-weight:700;color:#9fb0c1;text-transform:uppercase;letter-spacing:.06em;margin:0;white-space:nowrap;overflow:hidden}
-.sidebar .side-toggle .side-chev{font-size:9px;color:#9fb0c1;transition:transform .2s;flex-shrink:0}
-.sidebar .side-section.open .side-toggle{border-color:rgba(212,178,92,.2);background:rgba(212,178,92,.04)}
-.sidebar .side-section.open .side-toggle .side-label{color:#d4b25c}
+.sidebar .side-toggle{display:flex;align-items:center;justify-content:space-between;padding:6px 9px;margin:0 0 2px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);cursor:pointer;user-select:none;transition:background .15s,border-color .15s}
+.sidebar .side-toggle:hover{background:rgba(255,255,255,.04);border-color:var(--line2)}
+.sidebar .side-toggle .side-label{font-size:10.5px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin:0;white-space:nowrap;overflow:hidden}
+.sidebar .side-toggle .side-chev{font-size:9px;color:var(--dim);transition:transform .2s;flex-shrink:0}
+.sidebar .side-section.open .side-toggle{border-color:var(--goldb);background:rgba(212,178,92,.04)}
+.sidebar .side-section.open .side-toggle .side-label{color:var(--gold)}
 .sidebar .side-section.open .side-chev{transform:rotate(180deg)}
-.sidebar .nav{display:none;padding:2px 0 6px 8px}
-.sidebar .side-section.open .nav{display:grid;gap:3px}
-.sidebar .nav a{display:block;text-decoration:none;color:#eef2f7;padding:6px 9px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(255,255,255,.02);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .12s,border-color .12s}
-.sidebar .nav a:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
-.sidebar .nav a.active{background:linear-gradient(180deg,#d4b25c,#b98b2f);color:#201507;border-color:rgba(212,178,92,.35);font-weight:800}
-.sidebar .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px}
-.sidebar-toggle{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#eef2f7;cursor:pointer;font-size:14px;line-height:28px;text-align:center}
+.sidebar .nav{display:none;padding:2px 0 6px 6px}
+.sidebar .side-section.open .nav{display:grid;gap:2px}
+.sidebar .nav a{display:block;text-decoration:none;color:var(--sub);padding:6px 9px;border:1px solid transparent;border-radius:8px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .12s,color .12s}
+.sidebar .nav a:hover{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
+.sidebar .nav a.active{background:rgba(212,178,92,.1);color:var(--gold);border-color:rgba(212,178,92,.25);font-weight:700}
+.sidebar .card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:12px}
+.sidebar-toggle{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer;font-size:14px;line-height:26px;text-align:center}
 .admin-shell.is-collapsed,.shell.is-collapsed{grid-template-columns:var(--sidebar-collapsed) minmax(0,1fr)}
 .sidebar.is-collapsed{padding-inline:6px}
 .sidebar.is-collapsed .brand div,.sidebar.is-collapsed .side-section,.sidebar.is-collapsed .card{display:none}
-.sidebar.is-collapsed .brand{justify-content:center;margin-top:20px}
+.sidebar.is-collapsed .brand{justify-content:center;margin-top:20px;border-bottom:none}
 .sidebar.is-collapsed .brand img{display:block}
-@media(max-width:700px){.admin-shell,.shell{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);max-height:350px;overflow-y:auto}.sidebar-toggle{display:none}}
+@media(max-width:700px){.admin-shell,.shell{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid var(--line);max-height:350px;overflow-y:auto}.sidebar-toggle{display:none}}
 @media(min-width:701px){.sidebar{height:100vh;overflow-y:auto;position:sticky;top:0}}
 </style>
 <script>
