@@ -2907,6 +2907,7 @@ function esc(s){
    All functions called from inline HTML onclick= attrs must be on window.
    They are defined inside this IIFE and are not accessible otherwise.
 ════════════════════════════ */
+window.api              = api;  // exported so block 3 (_markReadApi, markOneRead) can call vault endpoints
 window.toggleSection    = toggleSection;
 // castVote defined in block 3 after IIFE
 window.joinPollInitiation = joinPollInitiation;
@@ -3636,7 +3637,6 @@ function renderTabNews(d){
 }
 
 function _markReadApi(item){
-  // Call the right mark-read payload depending on source
   if(!item) return;
   var payload = item._src === 'notice'
     ? {notice_id: item.id}

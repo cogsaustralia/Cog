@@ -707,11 +707,11 @@
             <div class="comm-pill"><span class="comm-pill-val is-money" id="cs-value">—</span><span class="comm-pill-lbl">Reservation Value</span></div>
           </div>
 
-          <!-- ══ Important News — fed from wallet notices ══ -->
+          <!-- ══ Important Notices — fed from wallet notices ══ -->
           <div class="important-news" id="important-news" style="display:none;margin-top:28px">
             <div class="in-header">
               <span class="in-icon" aria-hidden="true">◎</span>
-              <span class="in-title">Important News</span>
+              <span class="in-title">Important Notice</span>
               <span class="in-badge" id="in-badge" style="display:none"></span>
               <a class="in-view-all" href="../wallets/member.html#s-news" onclick="coinTransition(this);return false;">View all in vault →</a>
             </div>
@@ -1468,6 +1468,7 @@ function enterCommunity(data){
   // • Auto-refresh every 60 s while page is open
   // • Immediate refresh when user returns to this browser tab
   renderParticipationPill(data);
+  window._hubNoticeData = data; // referenced by hubMarkRead
   renderImportantNews(data);
   renderFoundationHoldings(data);
   loadCommunityStats();
@@ -2200,13 +2201,11 @@ function renderImportantNews(data){
   var badge = document.getElementById('in-badge');
   if(!list) return;
 
-  var items = (data && Array.isArray(data.notices)) ? data.notices : [];
-  var unreadCount = (data && typeof data.notices_unread === 'number')
-    ? data.notices_unread
-    : items.filter(function(n){ return !n.is_read; }).length;
+  var _hubData = data; // keep reference for re-renders
 
-  // Always visible — every login should surface this window, even when empty,
-  // so the Partner knows where to look for Foundation notices.
+  var items = (data && Array.isArray(data.notices)) ? data.notices : [];
+  var unreadCount = items.filter(function(n){ return !n.is_read; }).length;
+
   wrap.style.display = '';
   wrap.classList.toggle('has-unread', unreadCount > 0);
 
@@ -2220,43 +2219,87 @@ function renderImportantNews(data){
   }
 
   if(items.length === 0){
-    list.innerHTML = '<div class="in-empty">No current notices. Foundation Partner Notices and Partners Poll updates will appear here.</div>';
+    list.innerHTML = '<div class="in-empty">No current notices. Foundation Partner Notices will appear here.</div>';
     return;
   }
 
-  // Backend already orders by priority then sent_at, but re-surface unread
-  // on top within that ordering so returning Partners see what's new first.
+  // Unread first, then by date
   var sorted = items.slice().sort(function(a, b){
     if(a.is_read !== b.is_read) return a.is_read ? 1 : -1;
-    return 0; // preserve backend's priority/date ordering within each read-state bucket
+    return 0;
   });
-  var shown = sorted.slice(0, 3);
+  var shown = sorted.slice(0, 5);
 
-  list.innerHTML = shown.map(function(n){
+  function esc2(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  list.innerHTML = shown.map(function(n, i){
     var unread = !n.is_read;
-    // wallet_messages uses `subject` (aliased to `title` in backend) and `summary`
-    var title    = esc(n.subject || n.title || 'Partner notice');
-    var preview  = esc(n.summary || n.body || '');
-    if(preview.length > 180) preview = preview.substring(0, 180).trimEnd() + '…';
+    var title    = esc2(n.subject || n.title || 'Important Notice');
+    var body     = esc2(n.body || n.summary || '');
     var when     = n.sent_at ? formatNewsDate(n.sent_at) : (n.created_at ? formatNewsDate(n.created_at) : '');
     var priority = String(n.priority || 'normal').toLowerCase();
     var priorityClass = (priority === 'critical' || priority === 'high') ? (' in-priority-' + priority) : '';
     var priorityBadge = '';
-    if(priority === 'critical'){
-      priorityBadge = '<span class="in-priority-badge critical">Critical</span>';
-    } else if(priority === 'high'){
-      priorityBadge = '<span class="in-priority-badge high">High</span>';
-    }
-    return '<div class="in-item' + (unread ? ' unread' : '') + priorityClass + '">'
-         + '<div class="in-item-hd">'
-         + (unread ? '<span class="in-item-unread-dot" aria-hidden="true"></span>' : '')
-         + '<span class="in-item-title">' + title + '</span>'
-         + priorityBadge
-         + (when ? '<span class="in-item-date">' + esc(when) + '</span>' : '')
-         + '</div>'
-         + (preview ? '<div class="in-item-body">' + preview + '</div>' : '')
-         + '</div>';
+    if(priority === 'critical') priorityBadge = '<span class="in-priority-badge critical">Critical</span>';
+    else if(priority === 'high') priorityBadge = '<span class="in-priority-badge high">High</span>';
+
+    var itemId = 'in-item-' + i;
+    var bodyId = 'in-body-' + i;
+
+    return '<div class="in-item' + (unread ? ' unread' : ' read') + priorityClass + '" id="' + itemId + '">'
+      + '<div class="in-item-hd" onclick="toggleInItem(\'' + itemId + '\',\'' + bodyId + '\')" style="cursor:pointer">'
+      + (unread ? '<span class="in-item-unread-dot" aria-hidden="true"></span>' : '')
+      + '<span class="in-item-title">' + title + '</span>'
+      + priorityBadge
+      + (when ? '<span class="in-item-date">' + esc2(when) + '</span>' : '')
+      + '<span class="in-item-chev" id="chev-' + i + '" style="font-size:.72rem;color:var(--muted);margin-left:auto;transition:transform .2s">▾</span>'
+      + '</div>'
+      + '<div class="in-item-expand" id="' + bodyId + '" style="display:none">'
+      + (body ? '<div class="in-item-body" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.07)">' + body + '</div>' : '')
+      + (unread
+        ? '<button class="in-mark-read" onclick="hubMarkRead(' + n.id + ',\'' + itemId + '\')" style="margin-top:10px;background:none;border:1px solid rgba(240,180,70,.35);color:rgba(240,180,70,.8);padding:4px 12px;border-radius:99px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s">✓ Mark as read</button>'
+        : '<span style="font-size:.76rem;color:var(--muted);margin-top:8px;display:inline-block">Read</span>')
+      + '</div>'
+      + '</div>';
   }).join('');
+}
+
+function toggleInItem(itemId, bodyId){
+  var body = document.getElementById(bodyId);
+  if(!body) return;
+  var open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  // rotate chevron
+  var item = document.getElementById(itemId);
+  if(item){
+    var chev = item.querySelector('[id^="chev-"]');
+    if(chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+  }
+}
+
+function hubMarkRead(noticeId, itemId){
+  // Mark read in memory and re-render
+  var hubData = window._hubNoticeData;
+  if(!hubData || !hubData.notices) return;
+  var notice = hubData.notices.find(function(n){ return n.id === noticeId; });
+  if(notice) notice.is_read = true;
+
+  // Collapse the item visually
+  var item = document.getElementById(itemId);
+  if(item){
+    item.classList.remove('unread');
+    item.classList.add('read');
+    var btn = item.querySelector('.in-mark-read');
+    if(btn){ btn.outerHTML = '<span style="font-size:.76rem;color:var(--muted);margin-top:8px;display:inline-block">Read</span>'; }
+    var dot = item.querySelector('.in-item-unread-dot');
+    if(dot) dot.remove();
+  }
+
+  // Update badge
+  renderImportantNews(hubData);
+
+  // Persist to backend
+  api('vault/mark-read', {method:'POST', body:JSON.stringify({notice_id: noticeId})}).catch(function(){});
 }
 
 function formatNewsDate(s){
