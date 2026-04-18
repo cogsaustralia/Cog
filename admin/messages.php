@@ -802,6 +802,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 <?= ops_admin_collapsible_help('Proposal Threads guide', [
   ops_admin_info_panel('Proposal threads', 'What this section does', 'Proposal Threads are the consultation and discussion side of governance publishing. Use for proposal-style content and bridge-linked proposal records.', ['Proposal status affects whether Partners can see or engage with the thread.', 'Audience scope controls which Partner group the thread targets.']),
 ]) ?>
+<?php
     $vpPaged = msg_paginate($pdo, 'vote_proposals', 'SELECT vp.*, pr.status AS bridge_status, pr.id AS bridge_id FROM vote_proposals vp LEFT JOIN proposal_register pr ON pr.proposal_key = vp.proposal_key ORDER BY vp.id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'vote_proposals'));
     $rows = $vpPaged['rows'];
     $r = $editProposal ?: ['id'=>'','audience_scope'=>'all','title'=>'','body'=>'','status'=>'draft','starts_at'=>'','closes_at'=>''];
@@ -824,8 +825,9 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
     <?= render_pager(msg_section_pager_base('proposals'), $vpPaged['page'], $vpPaged['totalPages'], $vpPaged['total'], 'proposal') ?>
   </div>
   <div class="card">
-    <h3 style="margin-top:0"><?= !empty($r['id']) ? 'Edit proposal thread' : 'New proposal thread' ?></h3>
-    <?php if ($proposalTerms): ?><div class="msg warn"><?= h(msg_warning_html($proposalTerms)) ?></div><?php endif; ?>
+    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit proposal thread' : 'New proposal thread' ?></h2></div>
+    <div class="card-body">
+    <?php if ($proposalTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($proposalTerms)) ?></div><?php endif; ?>
     <form method="post">
       <input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="save_proposal"><input type="hidden" name="id" value="<?= h((string)$r['id']) ?>">
       <div class="field"><label>Audience</label><select name="audience"><option value="all" <?= (($r['audience_scope'] ?? 'all') === 'all') ? 'selected' : '' ?>>All <?= h($partnerLabel) ?>s</option><option value="personal" <?= (($r['audience_scope'] ?? '') === 'personal') ? 'selected' : '' ?>>Personal only</option><option value="business" <?= (($r['audience_scope'] ?? '') === 'business') ? 'selected' : '' ?>>Business only</option><option value="landholder" <?= (($r['audience_scope'] ?? '') === 'landholder') ? 'selected' : '' ?>>Landholder only</option></select></div>
@@ -834,8 +836,9 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
       <div class="field"><label>Status</label><select name="status"><option value="draft" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'draft' ? 'selected' : '' ?>>Draft</option><option value="open" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'open' ? 'selected' : '' ?>>Open</option><option value="closed" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'closed' ? 'selected' : '' ?>>Closed</option></select></div>
       <div class="field"><label>Open at (Sydney)</label><input type="datetime-local" name="open_at" value="<?= !empty($r['starts_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['starts_at']))) : '' ?>"></div>
       <div class="field"><label>Close at (Sydney)</label><input type="datetime-local" name="close_at" value="<?= !empty($r['closes_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['closes_at']))) : '' ?>"></div>
-      <button class="btn" type="submit">Save proposal</button>
+      <button class="btn btn-gold" type="submit">Save proposal</button>
     </form>
+    </div>
   </div>
 </div>
 <?php endif; ?>
