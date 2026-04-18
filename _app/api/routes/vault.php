@@ -65,6 +65,12 @@ if ($action === 'participation') {
 if ($action === 'accept-jvpa') {
     acceptJvpa();
 }
+if ($action === 'kids-order') {
+    createKidsOrder();
+}
+if ($action === 'cancel-kids-order') {
+    cancelKidsOrder();
+}
 apiError('Unknown vault endpoint', 404);
 
 function memberVault(): void {
@@ -207,17 +213,15 @@ function memberVault(): void {
             $gpStmt->execute([$memberId]);
             $gpRows = $gpStmt->fetchAll();
 
-            // Map notes display names → frontend field key (what cancelGiftOrderByClass expects)
+            // Map notes display names → frontend field key (Donation and PIF only)
+            // Kids S-NFT uses its own pathway: payment_type='kids_snft', read via kids_pending_orders
             $labelToFrontend = [
-                'kids s-nft cog$'        => 'kids_tokens',
-                'kids s-nft'             => 'kids_tokens',
                 'donation cog$'          => 'donation_tokens',
                 'donation'               => 'donation_tokens',
                 'pay it forward cog$'    => 'pay_it_forward_tokens',
                 'pay it forward'         => 'pay_it_forward_tokens',
             ];
             $frontendToLabel = [
-                'kids_tokens'           => 'Kids S-NFT COG$',
                 'donation_tokens'       => 'Donation COG$',
                 'pay_it_forward_tokens' => 'Pay It Forward COG$',
             ];
@@ -241,11 +245,10 @@ function memberVault(): void {
                 if ($frontendClass === '' || $units < 1) continue;
 
                 $giftPoolOutstanding += $cents / 100;
-                $pathway = $frontendClass === 'kids_tokens' ? 'family' : 'community_charity';
-                $pathwayLabel = $pathway === 'family' ? 'Class S Unit & Family' : 'Community & Charity';
+                $pathway = 'community_charity';
+                $pathwayLabel = 'Community & Charity';
                 $pathwayNoteMap = [
-                    'kids_tokens' => 'Family pathway — additional Kids S-NFT records wait here until payment is settled.',
-                    'donation_tokens' => 'Community & Charity pathway — direct community-project support waiting for settlement.',
+                    'donation_tokens'       => 'Community & Charity pathway — direct community-project support waiting for settlement.',
                     'pay_it_forward_tokens' => 'Community & Charity pathway — sponsors another Partner entry once settled.',
                 ];
                 $giftPoolUnpaidLines[] = [
@@ -496,6 +499,7 @@ function memberVault(): void {
         'amount_due' => $amountDue,
         'gift_pool_outstanding' => $giftPoolOutstanding,
         'gift_pool_unpaid_lines' => $giftPoolUnpaidLines,
+        'kids_pending_orders'   => fetchKidsPendingOrders($db, (int)($member['id'] ?? 0), (int)($legacy['id'] ?? 0)),
         'kids_registered' => $kidsRegistered,
         'binding_status' => 'joining_fee_now_other_classes_reserved',
         'intent_status' => $intentStatus,
@@ -1015,11 +1019,10 @@ function businessVault(): void {
                 if ($frontendClass === '' || $units < 1) continue;
 
                 $giftPoolOutstanding += $cents / 100;
-                $pathway = $frontendClass === 'kids_tokens' ? 'family' : 'community_charity';
-                $pathwayLabel = $pathway === 'family' ? 'Class S Unit & Family' : 'Community & Charity';
+                $pathway = 'community_charity';
+                $pathwayLabel = 'Community & Charity';
                 $pathwayNoteMap = [
-                    'kids_tokens' => 'Family pathway — additional Kids S-NFT records wait here until payment is settled.',
-                    'donation_tokens' => 'Community & Charity pathway — direct community-project support waiting for settlement.',
+                    'donation_tokens'       => 'Community & Charity pathway — direct community-project support waiting for settlement.',
                     'pay_it_forward_tokens' => 'Community & Charity pathway — sponsors another Partner entry once settled.',
                 ];
                 $giftPoolUnpaidLines[] = [
@@ -2208,17 +2211,16 @@ function createPaymentIntent(): void {
     $units       = max(1, (int)($body['units'] ?? 0));
     $agreed      = (bool)($body['tax_disclaimer_agreed'] ?? false);
 
-    // Business members can only buy D/PIF; personal members can also buy kids
-    $allowedPay  = $isBusiness
-        ? ['donation_tokens', 'pay_it_forward_tokens']
-        : ['donation_tokens', 'pay_it_forward_tokens', 'kids_tokens'];
+    // Both business and personal members can buy Donation and PIF via this endpoint.
+    // Kids S-NFT uses vault/kids-order — its own dedicated pathway.
+    $allowedPay  = ['donation_tokens', 'pay_it_forward_tokens'];
 
-    if (!in_array($tokenClass, $allowedPay, true)) apiError('Only Donation and Pay It Forward tokens can be purchased via payment.');
+    if (!in_array($tokenClass, $allowedPay, true)) apiError('Donation and Pay It Forward tokens only. Kids S-NFT uses vault/kids-order.');
     if ($units < 1)  apiError('At least 1 unit is required.');
     if (!$agreed)    apiError('You must agree to the tax disclaimer before proceeding.');
 
     // Look up pricing from token_classes
-    $classCodeMap = ['donation_tokens' => 'DONATION_COG', 'pay_it_forward_tokens' => 'PAY_IT_FORWARD_COG', 'kids_tokens' => 'KIDS_SNFT'];
+    $classCodeMap = ['donation_tokens' => 'DONATION_COG', 'pay_it_forward_tokens' => 'PAY_IT_FORWARD_COG'];
     $classCode    = $classCodeMap[$tokenClass];
     $priceStmt    = $db->prepare('SELECT unit_price_cents, display_name FROM token_classes WHERE class_code = ? AND is_active = 1 LIMIT 1');
     $priceStmt->execute([$classCode]);
@@ -2289,54 +2291,6 @@ function createPaymentIntent(): void {
         ]);
     } catch (Throwable $e) {
         error_log('createPaymentIntent payment record failed: ' . $e->getMessage());
-    }
-
-    // ── Kids S-NFT: increment kids_tokens immediately so the vault reflects the
-    // reservation and the "Verify Kids ID" pill and form remain accessible.
-    // The count is incremented on intent (not on payment confirmation) because
-    // the kids details form must be submitted before admin can verify identity.
-    // Admin controls actual token issuance separately via kids.php.
-    if ($tokenClass === 'kids_tokens') {
-        try {
-            $db->prepare(
-                'UPDATE snft_memberships
-                    SET kids_tokens = kids_tokens + ?,
-                        tokens_total = tokens_total + ?,
-                        updated_at = UTC_TIMESTAMP()
-                  WHERE id = ?'
-            )->execute([$units, $units, (int)$member['id']]);
-
-            // Also upsert the member_reservation_lines entry so memberVault()
-            // reads the correct kids token count via the reservation lines join.
-            $mRow = $db->prepare(
-                'SELECT id FROM members WHERE member_number = ? AND member_type = ? LIMIT 1'
-            );
-            $mRow->execute([(string)$member['member_number'], 'personal']);
-            $mId = (int)($mRow->fetchColumn() ?: 0);
-
-            if ($mId > 0) {
-                $tcRow = $db->prepare(
-                    "SELECT id FROM token_classes WHERE class_code = 'KIDS_SNFT' LIMIT 1"
-                );
-                $tcRow->execute();
-                $tcId = (int)($tcRow->fetchColumn() ?: 0);
-
-                if ($tcId > 0) {
-                    $db->prepare(
-                        "INSERT INTO member_reservation_lines
-                             (member_id, token_class_id, requested_units, approved_units, paid_units,
-                              approval_status, payment_status, created_at, updated_at)
-                         VALUES (?, ?, ?, 0, 0, 'pending', 'pending', UTC_TIMESTAMP(), UTC_TIMESTAMP())
-                         ON DUPLICATE KEY UPDATE
-                             requested_units = requested_units + VALUES(requested_units),
-                             payment_status  = 'pending',
-                             updated_at      = UTC_TIMESTAMP()"
-                    )->execute([$mId, $tcId, $units]);
-                }
-            }
-        } catch (Throwable $e) {
-            error_log('[createPaymentIntent] kids_tokens update failed: ' . $e->getMessage());
-        }
     }
 
     // Queue thank-you / payment-instructions email to member
@@ -2437,11 +2391,11 @@ function createStripeCheckout(): void {
     $items = is_array($body['items'] ?? null) ? $body['items'] : [];
     if (empty($items)) apiError('No items provided.');
 
-    $allowedPay = ['donation_tokens', 'pay_it_forward_tokens', 'kids_tokens'];
+    // Kids S-NFT uses vault/cancel-kids-order — its own dedicated cancel pathway.
+    $allowedPay = ['donation_tokens', 'pay_it_forward_tokens'];
     $classCodeMap = [
         'donation_tokens'       => 'DONATION_COG',
         'pay_it_forward_tokens' => 'PAY_IT_FORWARD_COG',
-        'kids_tokens'           => 'KIDS_SNFT',
     ];
 
     // Fetch member
@@ -2714,11 +2668,11 @@ function cancelGiftOrder(): void {
     $isBusiness = ($principal['user_type'] ?? '') === 'bnft';
     $cancelAll  = (bool)($body['cancel_all'] ?? false);
     $tokenClass = sanitize((string)($body['token_class'] ?? ''));
-    $allowedPay = ['donation_tokens', 'pay_it_forward_tokens', 'kids_tokens'];
+    // Kids S-NFT uses vault/cancel-kids-order — its own dedicated cancel pathway.
+    $allowedPay = ['donation_tokens', 'pay_it_forward_tokens'];
     $classCodeMap = [
         'donation_tokens'       => 'DONATION_COG',
         'pay_it_forward_tokens' => 'PAY_IT_FORWARD_COG',
-        'kids_tokens'           => 'KIDS_SNFT',
     ];
 
     if (!$cancelAll && !in_array($tokenClass, $allowedPay, true)) {
@@ -3447,5 +3401,269 @@ function vaultParticipation(): void
         'participation_completed' => true,
         'participation_areas'     => $areas,
         'first_submission'        => !$alreadyDone,
+    ]);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KIDS S-NFT ORDER PATHWAY — dedicated functions
+   Separate from the Donation/PIF gift pool pathway.
+   payment_type = 'kids_snft' (distinct from 'adjustment').
+   Kids tokens are incremented on order, decremented on cancel.
+═══════════════════════════════════════════════════════════════ */
+
+/**
+ * Fetch pending Kids S-NFT orders for a personal member.
+ * Reads payment_type = 'kids_snft' rows, keyed on both members.id
+ * and snft_memberships.id to handle dual-ID writes.
+ */
+function fetchKidsPendingOrders(PDO $db, int $membersId, int $snftId): array {
+    $out = [];
+    try {
+        $ids = array_unique(array_filter([$membersId, $snftId]));
+        if (empty($ids)) return [];
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $db->prepare(
+            "SELECT id, external_reference, amount_cents, notes, created_at
+               FROM payments
+              WHERE member_id IN ({$placeholders})
+                AND payment_type = 'kids_snft'
+                AND payment_status = 'pending'
+                AND received_at IS NULL
+              ORDER BY id ASC"
+        );
+        $stmt->execute($ids);
+        foreach ($stmt->fetchAll() as $row) {
+            $cents = (int)$row['amount_cents'];
+            $units = 0;
+            if (preg_match('/(\d+)\s*x\s+/i', (string)$row['notes'], $nm)) {
+                $units = (int)$nm[1];
+            }
+            if ($units < 1 && $cents > 0) $units = (int)round($cents / 100); // $1 each
+            $out[] = [
+                'payment_id' => (int)$row['id'],
+                'reference'  => (string)($row['external_reference'] ?? ''),
+                'units'      => $units,
+                'amount'     => round($cents / 100, 2),
+                'created_at' => (string)($row['created_at'] ?? ''),
+            ];
+        }
+    } catch (Throwable $e) {
+        error_log('[fetchKidsPendingOrders] ' . $e->getMessage());
+    }
+    return $out;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   POST vault/kids-order
+   Creates a pending Kids S-NFT payment record.
+   Increments kids_tokens in snft_memberships immediately (on order,
+   not on payment) so the vault shows the pending count.
+   KYC verified status enforced server-side.
+═══════════════════════════════════════════════════════════════ */
+function createKidsOrder(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db = getDB();
+    $body = jsonBody();
+
+    $units  = max(1, (int)($body['units'] ?? 0));
+    $agreed = (bool)($body['tax_disclaimer_agreed'] ?? false);
+
+    if ($units < 1)  apiError('At least 1 Kids S-NFT is required.');
+    if (!$agreed)    apiError('You must agree to the tax disclaimer before proceeding.');
+
+    // KYC gate — must be verified before ordering
+    $kycStmt = $db->prepare('SELECT id, member_number, full_name, email, kyc_status FROM snft_memberships WHERE id = ? LIMIT 1');
+    $kycStmt->execute([(int)$principal['principal_id']]);
+    $member = $kycStmt->fetch();
+    if (!$member) apiError('Member not found.');
+    if ((string)($member['kyc_status'] ?? '') !== 'verified') {
+        apiError('Identity verification is required before ordering Kids S-NFTs. Please complete Medicare card verification first.', 403);
+    }
+
+    // Look up price ($1 per kS-NFT)
+    $tcStmt = $db->prepare("SELECT unit_price_cents, display_name FROM token_classes WHERE class_code = 'KIDS_SNFT' AND is_active = 1 LIMIT 1");
+    $tcStmt->execute();
+    $tc = $tcStmt->fetch();
+    if (!$tc) apiError('Kids S-NFT token class not found or inactive.');
+
+    $unitCents   = (int)$tc['unit_price_cents'];
+    $totalCents  = $unitCents * $units;
+    $totalAmount = round($totalCents / 100, 2);
+    $className   = (string)$tc['display_name'];
+
+    $ref = 'KIDS-' . strtoupper(substr(hash('sha256', $member['member_number'] . $units . time()), 0, 8));
+
+    $db->beginTransaction();
+    try {
+        // Insert pending payment with distinct type 'kids_snft'
+        $db->prepare(
+            "INSERT INTO payments (member_id, payment_type, amount_cents, currency_code, payment_status, external_reference, notes, created_at, updated_at)
+             VALUES (?, 'kids_snft', ?, 'AUD', 'pending', ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())"
+        )->execute([
+            (int)$member['id'],
+            $totalCents,
+            $ref,
+            "Kids S-NFT order: {$units} x {$className}. Reference: {$ref}",
+        ]);
+
+        // Increment kids_tokens immediately so vault shows pending count
+        $db->prepare(
+            'UPDATE snft_memberships SET kids_tokens = kids_tokens + ?, tokens_total = tokens_total + ?, updated_at = UTC_TIMESTAMP() WHERE id = ?'
+        )->execute([$units, $units, (int)$member['id']]);
+
+        $db->commit();
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        error_log('[kids-order] ' . $e->getMessage());
+        apiError('Could not record order. Please try again.', 500);
+    }
+
+    // Queue payment instructions email
+    $payId = (string)env('BANK_PAYID', 'members@cogsaustralia.org');
+    try {
+        queueEmail($db, 'snft_member', (int)$member['id'], $member['email'],
+            'payment_intent_member',
+            "Kids S-NFT Order — {$ref}",
+            [
+                'full_name'     => $member['full_name'],
+                'email'         => $member['email'],
+                'member_number' => $member['member_number'],
+                'token_class'   => $className,
+                'units'         => $units,
+                'amount'        => number_format($totalAmount, 2),
+                'reference'     => $ref,
+                'pay_id'        => $payId,
+                'is_donation'   => false,
+            ]
+        );
+        $adminEmail = MAIL_ADMIN_EMAIL ?: 'members@cogsaustralia.org';
+        queueEmail($db, 'snft_member', (int)$member['id'], $adminEmail,
+            'payment_intent_admin',
+            "Kids S-NFT order — {$ref} — {$member['full_name']}",
+            [
+                'full_name'     => $member['full_name'],
+                'member_number' => $member['member_number'],
+                'token_class'   => $className,
+                'units'         => $units,
+                'amount'        => number_format($totalAmount, 2),
+                'reference'     => $ref,
+            ]
+        );
+    } catch (Throwable $e) {
+        error_log('[kids-order] email queue failed: ' . $e->getMessage());
+    }
+
+    recordWalletEvent($db, 'snft_member', (string)$member['member_number'], 'kids_order_created',
+        "Kids S-NFT order: {$units} x {$className} = \${$totalAmount}. Ref: {$ref}");
+
+    apiSuccess([
+        'reference'  => $ref,
+        'units'      => $units,
+        'amount'     => $totalAmount,
+        'pay_id'     => $payId,
+        'recorded_at'=> nowUtc(),
+    ]);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   POST vault/cancel-kids-order
+   Cancels pending Kids S-NFT orders (payment_type = 'kids_snft').
+   Recalculates kids_tokens from the payments table after cancel
+   so orphaned counts from any prior stale rows are also corrected.
+═══════════════════════════════════════════════════════════════ */
+function cancelKidsOrder(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db = getDB();
+
+    // Resolve both member IDs
+    $mStmt = $db->prepare('SELECT id, member_number, full_name FROM members WHERE member_number = ? LIMIT 1');
+    $mStmt->execute([(string)$principal['subject_ref']]);
+    $member = $mStmt->fetch();
+    if (!$member) apiError('Member not found.');
+    $membersId    = (int)$member['id'];
+    $memberNumber = (string)$member['member_number'];
+
+    $snftId = $membersId;
+    $snftStmt = $db->prepare('SELECT id FROM snft_memberships WHERE member_number = ? LIMIT 1');
+    $snftStmt->execute([$memberNumber]);
+    $snftRow = $snftStmt->fetch();
+    if ($snftRow) $snftId = (int)$snftRow['id'];
+
+    $db->beginTransaction();
+    try {
+        // Find all pending kids_snft rows for this member
+        $payStmt = $db->prepare(
+            "SELECT id, amount_cents, notes FROM payments
+              WHERE member_id IN (?,?) AND payment_type = 'kids_snft'
+                AND payment_status = 'pending' AND received_at IS NULL
+              ORDER BY id ASC"
+        );
+        $payStmt->execute([$membersId, $snftId]);
+        $rows = $payStmt->fetchAll();
+
+        if (empty($rows)) {
+            $db->rollBack();
+            apiError('No pending Kids S-NFT orders found to cancel.');
+        }
+
+        $totalUnits = 0;
+        $cancelIds  = [];
+        foreach ($rows as $r) {
+            $u = 0;
+            if (preg_match('/(\d+)\s*x\s+/i', (string)$r['notes'], $nm)) $u = (int)$nm[1];
+            if ($u < 1) $u = (int)round((int)$r['amount_cents'] / 100);
+            $totalUnits += max(1, $u);
+            $cancelIds[] = (int)$r['id'];
+        }
+
+        $idList = implode(',', $cancelIds);
+        $db->exec(
+            "UPDATE payments SET payment_status = 'cancelled',
+                    notes = CONCAT(COALESCE(notes,''), ' [Cancelled by member]'),
+                    updated_at = UTC_TIMESTAMP()
+              WHERE id IN ({$idList})"
+        );
+
+        // Correction pass: set kids_tokens to exact count of still-pending orders
+        // (handles any orphaned increments from prior stale rows)
+        $stillPendingStmt = $db->prepare(
+            "SELECT amount_cents, notes FROM payments
+              WHERE member_id IN (?,?) AND payment_type = 'kids_snft'
+                AND payment_status = 'pending' AND received_at IS NULL"
+        );
+        $stillPendingStmt->execute([$membersId, $snftId]);
+        $correctUnits = 0;
+        foreach ($stillPendingStmt->fetchAll() as $pr) {
+            $u = 0;
+            if (preg_match('/(\d+)\s*x\s+/i', (string)$pr['notes'], $nm)) $u = (int)$nm[1];
+            if ($u < 1) $u = (int)round((int)$pr['amount_cents'] / 100);
+            $correctUnits += max(1, $u);
+        }
+
+        $curStmt = $db->prepare('SELECT kids_tokens FROM snft_memberships WHERE member_number = ? LIMIT 1');
+        $curStmt->execute([$memberNumber]);
+        $curRow = $curStmt->fetch();
+        $currentKids = (int)($curRow['kids_tokens'] ?? 0);
+        $delta = $currentKids - $correctUnits;
+
+        $db->prepare(
+            'UPDATE snft_memberships SET kids_tokens = ?, tokens_total = GREATEST(0, tokens_total - ?), updated_at = UTC_TIMESTAMP() WHERE member_number = ?'
+        )->execute([$correctUnits, max(0, $delta), $memberNumber]);
+
+        $db->commit();
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        error_log('[cancel-kids-order] ' . $e->getMessage());
+        apiError('Cancellation failed: ' . $e->getMessage(), 500);
+    }
+
+    recordWalletEvent($db, 'snft_member', $memberNumber, 'kids_order_cancelled',
+        "Cancelled {$totalUnits} pending Kids S-NFT order(s).");
+
+    apiSuccess([
+        'units_cancelled' => $totalUnits,
+        'kids_tokens_now' => $correctUnits,
     ]);
 }
