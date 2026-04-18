@@ -505,6 +505,156 @@ img{max-width:100%;height:auto}
 .ov-stag-btn.primary:hover{filter:brightness(1.08)}
 @media(max-width:480px){.ov-stag-meta{gap:12px}.ov-stag-hd{font-size:.95rem}}
 @media(max-width:480px){.ov-rights-row{grid-template-columns:1fr}.ov-snapshot{grid-template-columns:1fr}}
+
+/* ══════════════════════════════════════════════════════
+   PHASE 1 — PROTOTYPE DESIGN SYSTEM EXTENSIONS
+   Ported from COGS CHAIN Wallet prototype (18 Apr 2026).
+   All existing classes and vars preserved unchanged.
+   New vars, density modes, wallet components, rail,
+   QR tile, seg-tabs, and section-header utilities added.
+══════════════════════════════════════════════════════ */
+
+/* ── Extended design tokens ── */
+:root{
+  --s4:#2a2a2a;
+  --border3:rgba(255,255,255,.24);
+  --text4:rgba(255,255,255,.35);
+  --gold3:#8a6210;
+  --violet:#b58cf0;--violet-bg:rgba(181,140,240,.08);--violet-bdr:rgba(181,140,240,.22);
+  --r3:22px;
+  --sh-gold:0 18px 60px rgba(232,184,75,.14);
+  --pad-x:28px;
+  --gap:18px;
+}
+
+/* ── Density modes (Tweak-driven, matches prototype) ── */
+body[data-density="compact"]{--pad-x:18px;--gap:12px;font-size:14px}
+body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-.02em}
+
+/* ── Utility classes from prototype ── */
+.txt-gold{color:var(--gold)}
+.txt-green{color:var(--green)}
+.txt-red{color:var(--red)}
+.txt-amber{color:var(--amber)}
+.muted{color:var(--text3)}
+.muted2{color:var(--text4)}
+.serif{font-family:var(--serif);letter-spacing:-.01em}
+.uc{text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;font-weight:700}
+
+/* ── Section header (eyebrow + title + right slot) ── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sec-hd-left{}
+.sec-hd-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.sec-hd-title{font-family:var(--serif);font-size:1.6rem;font-weight:500;color:var(--text);line-height:1.1}
+
+/* ── Segmented tab control (wallet sub-views) ── */
+.seg-tabs{display:flex;gap:2px;background:rgba(255,255,255,.05);border-radius:99px;padding:3px}
+.seg-tab{padding:5px 14px;border-radius:99px;font:inherit;font-size:.8rem;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.seg-tab.on{background:var(--s2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.seg-tab:hover:not(.on){color:var(--text2)}
+
+/* ── Wallet hero card ── */
+.wallet-hero{margin-bottom:16px}
+.wallet-card{background:linear-gradient(135deg,rgba(18,18,18,.97),rgba(10,10,10,.95));border:1px solid var(--border2);border-radius:var(--r);padding:22px 20px;position:relative;overflow:hidden;box-shadow:var(--sh-gold)}
+.wallet-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 5%,var(--gold) 50%,transparent 95%);opacity:.6}
+.wallet-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.wallet-balance{font-family:var(--serif);font-size:3.2rem;font-weight:600;color:var(--gold);line-height:1;letter-spacing:-.02em;margin-bottom:4px}
+.wallet-balance .unit{font-size:1.2rem;font-weight:400;color:var(--gold2);margin-left:8px;letter-spacing:.04em}
+.wallet-balance-sub{font-size:.76rem;color:var(--text3);margin-bottom:16px;font-family:var(--mono)}
+.wallet-row-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.wallet-meta{display:flex;gap:18px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border)}
+.wallet-meta-blk{}
+.wallet-meta-blk .uc{display:block;margin-bottom:3px}
+.wallet-meta-blk .v{font-family:var(--mono);font-size:.78rem;color:var(--text2)}
+
+/* ── QR tile ── */
+.wallet-qr-grid{display:grid;width:120px;height:120px;gap:0;flex-shrink:0}
+.wallet-qr-grid i{background:var(--text);border-radius:1px}
+.wallet-qr-grid i.w{background:transparent}
+.qr-big{display:grid;width:200px;height:200px;gap:0;position:relative}
+.qr-big i{background:var(--text);border-radius:1px}
+.qr-big i.w{background:transparent}
+.qr-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg);border-radius:6px;padding:4px;display:flex;align-items:center;justify-content:center}
+.qr-center-coin{width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+
+/* ── Desktop sidebar rail ── */
+/* Rail is hidden by default; Phase 2 will activate it on ≥900px.
+   Classes defined here so Phase 2 HTML works without another CSS deploy. */
+.app-rail{display:none;background:#050505;border-right:1px solid var(--border);padding:22px 14px;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh;overflow-y:auto;width:248px;flex-shrink:0}
+.rail-brand{display:flex;align-items:center;gap:10px;padding:4px 10px 18px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.rail-brand img{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);box-shadow:0 0 0 3px rgba(232,184,75,.07)}
+.rail-brand-name{font-family:var(--serif);font-size:1.05rem;color:var(--gold);line-height:1}
+.rail-brand-sub{font-family:var(--mono);font-size:.62rem;color:var(--text3);letter-spacing:.14em;margin-top:3px;text-transform:uppercase}
+.rail-section{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--text4);padding:14px 12px 6px}
+.rail-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--text3);border:1px solid transparent;background:none;width:100%;font-size:.92rem;font-weight:500;text-align:left;cursor:pointer;font-family:inherit;transition:all .14s}
+.rail-item:hover{color:var(--text2);background:rgba(255,255,255,.03)}
+.rail-item.on{color:var(--text);background:linear-gradient(90deg,rgba(232,184,75,.12),rgba(232,184,75,0));border-color:var(--gold-bdr);box-shadow:inset 2px 0 0 var(--gold)}
+.rail-ico{font-size:1.05rem;width:20px;text-align:center;color:var(--gold)}
+.rail-item:not(.on) .rail-ico{color:var(--text3)}
+.rail-badge{margin-left:auto;font-size:.68rem;font-weight:700;background:var(--gold);color:#0a0a0a;padding:1px 7px;border-radius:99px;min-width:18px;text-align:center}
+.rail-foot{margin-top:auto;padding:12px;font-size:.74rem;color:var(--text4);border-top:1px solid var(--border);line-height:1.5}
+.rail-foot-chain{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:var(--green);font-weight:600;font-size:.78rem}
+.rail-foot-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(62,207,110,.15);animation:pulse-dot 1.6s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── App shell (rail + content) — activated in Phase 2 ── */
+/* On desktop, vault wraps into grid. Rail left, content right. */
+@media(min-width:900px){
+  .vault-shell{display:flex;min-height:100vh}
+  .app-rail{display:flex}
+  /* When rail is present, topbar and tab-nav shift right to content area */
+  .vault-content{flex:1;min-width:0;display:flex;flex-direction:column}
+}
+
+/* ── Amplitude pulse on status dots (news, chain) ── */
+@keyframes ndot-pulse-slow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
+
+/* ── Wallet sub-view panels ── */
+.wv-panel{display:none}
+.wv-panel.on{display:block}
+
+/* ── Chain/explorer status row ── */
+.chain-status-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);font-size:.78rem;color:var(--text3);margin-bottom:12px}
+.chain-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(62,207,110,.15);animation:pulse-dot 1.6s ease-in-out infinite;flex-shrink:0}
+.chain-dot.amber{background:var(--amber);box-shadow:0 0 0 3px rgba(224,154,66,.15)}
+.chain-dot.dim{background:var(--text3);box-shadow:none;animation:none}
+
+/* ── Hash display pill ── */
+.hash-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.72rem;color:var(--text3);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:4px 10px;word-break:break-all}
+.hash-pill.gold{color:var(--gold);border-color:var(--gold-bdr);background:var(--gold-bg)}
+.hash-pill.green{color:var(--green);border-color:var(--green-bdr);background:var(--green-bg)}
+
+/* ── Mnemonic key display (Identity tab, Phase 4) ── */
+.mnemonic-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}
+.mnemonic-word{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:.72rem;color:var(--text2)}
+.mnemonic-word span{display:block;font-size:.6rem;color:var(--text4);margin-bottom:2px}
+
+/* ── Comms message bubbles (Comms tab, Phase 5) ── */
+.msg-bubble-row{display:flex;gap:10px;margin-bottom:12px;align-items:flex-end}
+.msg-bubble-row.out{flex-direction:row-reverse}
+.msg-bubble{max-width:75%;padding:10px 14px;border-radius:var(--r2);font-size:.88rem;line-height:1.55}
+.msg-bubble-row.in  .msg-bubble{background:var(--s2);border:1px solid var(--border);color:var(--text2);border-radius:var(--r2) var(--r2) var(--r2) 2px}
+.msg-bubble-row.out .msg-bubble{background:var(--gold-bg);border:1px solid var(--gold-bdr);color:var(--text);border-radius:var(--r2) var(--r2) 2px var(--r2)}
+.msg-meta{font-size:.66rem;color:var(--text4);margin-top:4px;white-space:nowrap}
+.msg-avatar{width:28px;height:28px;border-radius:50%;background:var(--s3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text3);flex-shrink:0}
+
+/* ── Ledger / document layout for comms ── */
+.ledger-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.84rem;gap:12px}
+.ledger-row:last-child{border-bottom:none}
+.ledger-from{color:var(--text3);flex-shrink:0;font-family:var(--mono);font-size:.72rem}
+.ledger-subj{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)}
+.ledger-date{font-size:.7rem;color:var(--text4);flex-shrink:0}
+
+/* ── Responsive adjustments for new components ── */
+@media(max-width:640px){
+  .wallet-balance{font-size:2.4rem}
+  .wallet-row-btns .btn{flex:1;justify-content:center}
+  .mnemonic-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:400px){
+  .wallet-balance{font-size:2rem}
+  .mnemonic-grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 <script>
 /* Splash failsafe — hides splash if boot hasn't fired within 6s */
