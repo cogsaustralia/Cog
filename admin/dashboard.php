@@ -177,7 +177,7 @@ function activity_label(string $type): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.min.css">
+<link rel="stylesheet" href="./assets/admin.css">
 <title>Admin Dashboard | COG$ of Australia Foundation</title>
 <style>
 /* ── Design tokens ── *//* ── Layout ── */

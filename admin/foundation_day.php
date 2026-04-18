@@ -341,7 +341,7 @@ $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.min.css">
+<link rel="stylesheet" href="./assets/admin.css">
 <title>Foundation Day Readiness | COG$ Admin</title>
 <?php ops_admin_help_assets_once(); ?>
 <style>.main { padding:24px 28px; }

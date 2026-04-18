@@ -236,7 +236,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.min.css">
+<link rel="stylesheet" href="./assets/admin.css">
 <title>Partner Registry</title>
 <style>.shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
 .main{padding:20px;min-width:0}

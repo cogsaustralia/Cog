@@ -390,7 +390,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.min.css">
+<link rel="stylesheet" href="./assets/admin.css">
 <title>Approvals</title>
 <style>.main{padding:20px;min-width:0}
 .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:16px}

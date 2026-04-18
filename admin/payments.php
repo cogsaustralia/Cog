@@ -428,7 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.min.css">
+<link rel="stylesheet" href="./assets/admin.css">
 <title>Payments | COG$ Admin</title>
 <style>.shell{display:grid;grid-template-columns:238px minmax(0,1fr);min-height:100vh}
 .main{padding:24px;min-width:0}

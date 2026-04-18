@@ -859,7 +859,7 @@ if (!function_exists('ops_admin_status_panel')) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.min.css">
+<link rel="stylesheet" href="./assets/admin.css">
 <title><?php echo ops_h($title); ?> | COG$ Admin</title>
 <style>
 .shell{display:grid;grid-template-columns:var(--sidebar-open,238px) minmax(0,1fr);min-height:100vh;width:100%;max-width:100%}

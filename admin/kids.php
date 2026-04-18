@@ -583,7 +583,7 @@ if ($guardianSearch !== '') {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.min.css">
+<link rel="stylesheet" href="./assets/admin.css">
 <title>Kids kS-NFT Registrations</title>
 <style>.main{padding:20px;max-width:1200px}
 .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
