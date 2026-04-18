@@ -169,26 +169,7 @@ form-action 'self'"
   Require all denied
 </FilesMatch>
 
-# ── Block PHP execution outside _app and admin ────────────────────────────────
-# PHP should never execute from assets/, wallets/, join/ etc.
-<FilesMatch "\.php$">
-  Require all denied
-</FilesMatch>
-<Directory "/home*/*/public_html/_app">
-  <FilesMatch "\.php$">
-    Require all granted
-  </FilesMatch>
-</Directory>
-<Directory "/home*/*/public_html/admin">
-  <FilesMatch "\.php$">
-    Require all granted
-  </FilesMatch>
-</Directory>
-<Directory "/home*/*/public_html/webhook">
-  <FilesMatch "\.php$">
-    Require all granted
-  </FilesMatch>
-</Directory>
+# ── PHP execution controlled per-directory via each folder's own .htaccess ────
 
 # ── MIME types ────────────────────────────────────────────────────────────────
 <IfModule mod_mime.c>
