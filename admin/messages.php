@@ -422,7 +422,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $cards = [
     'wallet_messages' => ['label' => 'Partner Notices', 'desc' => 'Targeted operational notices for Partners and wallets.', 'ico' => '✉'],
-    'announcements' => ['label' => 'Announcements', 'desc' => 'Broad updates and community notices for Partners.', 'ico' => '📢'],
+    'announcements' => ['label' => 'News', 'desc' => 'General community news and updates — no individual read tracking required.', 'ico' => '📰'],
     'proposals' => ['label' => 'Proposal Threads', 'desc' => 'Legacy/community proposal threads with new proposal-register bridge status.', 'ico' => '🗳'],
     'community_polls' => ['label' => 'Community Polls', 'desc' => 'Binding poll administration with legacy wallet-poll and new community-poll bridge.', 'ico' => '⚖'],
     'stewardship_responses' => ['label' => 'Stewardship Responses', 'desc' => 'Review stewardship responses for targeted outreach and follow-up.', 'ico' => '◈'],
@@ -575,7 +575,7 @@ ob_start();
 <?php if ($section === ''): ?>
 <div class="stat-grid" style="margin-bottom:18px">
   <div class="card"><div class="card-body"><div class="stat-label">Partner notices</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM wallet_messages') ?></div></div></div>
-  <div class="card"><div class="card-body"><div class="stat-label">Announcements</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM announcements') ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">News items</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM announcements') ?></div></div></div>
   <div class="card"><div class="card-body"><div class="stat-label">Proposal bridge rows</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM proposal_register') ?></div></div></div>
   <div class="card"><div class="card-body"><div class="stat-label">Community polls</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM community_polls') ?></div></div></div>
 </div>
@@ -752,9 +752,14 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 
 <?php endif; ?>
 <?php if ($section === 'announcements'): ?>
-<?= ops_admin_collapsible_help('Announcements guide', [
-  ops_admin_info_panel('Announcements', 'What this section does', 'Announcements are broader community-wide notices visible over a date range.', ['Audience controls whether the update is broad or targeted.', 'Open and close dates define the visibility window.', 'Status helps distinguish draft, scheduled, open, and closed announcements.']),
+<?= ops_admin_collapsible_help('News guide', [
+  ops_admin_info_panel('News', 'What this section does', 'News items are general community-wide notices. Unlike Partner Notices, News items do not require a Partner-linked read record — they are broadcast updates visible to all without individual read tracking.', [
+    'Use News for general community updates, announcements, and information.',
+    'Use Partner Notices when you need individual read verification and Partner-linked records.',
+    'Open and close dates define the visibility window.',
+  ]),
 ]) ?>
+<?php
     $annPaged = msg_paginate($pdo, 'announcements', 'SELECT * FROM announcements ORDER BY id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'announcements'));
     $rows = $annPaged['rows'];
     $r = $editAnnouncement ?: ['id'=>'','audience'=>'all','title'=>'','body'=>'','status'=>'draft','opens_at'=>'','closes_at'=>''];
@@ -762,32 +767,34 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 ?>
 <div class="row-grid">
   <div class="card">
-  <div class="card-head"><h2>Announcements</h2></div>
-  <div class="card-body">
-    <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Opens / closes</th><th>Terms</th><th></th></tr></thead><tbody>
-      <?php if (!$rows): ?><tr><td colspan="6" class="empty">No announcements found.</td></tr><?php endif; ?>
-      <?php foreach ($rows as $row): $uiStatus = $annHasStatus ? msg_schedule_status_to_ui((string)$row['status']) : 'draft'; $terms = array_unique(array_merge(msg_flagged_terms((string)$row['title']), msg_flagged_terms((string)$row['body']))); ?>
+    <div class="card-head"><h2>News items</h2></div>
+    <div class="card-body table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Opens / closes</th><th>Terms</th><th></th></tr></thead><tbody>
+      <?php if (!$rows): ?><tr><td colspan="6" class="empty">No news items found.</td></tr><?php endif; ?>
+      <?php foreach ($rows as $row): $uiStatus = $annHasStatus ? msg_schedule_status_to_ui((string)$row['status']) : 'draft'; ?>
       <tr>
-        <td><?= h($row['title']) ?></td><td><?= h($row['audience']) ?></td><td><?= msg_status_badge($uiStatus) ?></td><td class="small"><?= h((string)($row['opens_at'] ?? '—')) ?><br><?= h((string)($row['closes_at'] ?? '—')) ?></td><td><?= $terms ? h(implode(', ', $terms)) : '—' ?></td>
+        <td><?= h($row['title']) ?></td><td><?= h($row['audience']) ?></td><td><?= msg_status_badge($uiStatus) ?></td><td class="small"><?= h((string)($row['opens_at'] ?? '—')) ?><br><?= h((string)($row['closes_at'] ?? '—')) ?></td>
         <td class="actions"><a class="btn-secondary" href="./messages.php?section=announcements&edit=<?= (int)$row['id'] ?>">Edit</a><form method="post" style="display:inline"><input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="close_early"><input type="hidden" name="target" value="announcements"><input type="hidden" name="id" value="<?= (int)$row['id'] ?>"><button class="btn-secondary" type="submit">Close</button></form></td>
       </tr>
       <?php endforeach; ?>
-    </tbody></table></div>
-    <?= render_pager(msg_section_pager_base('announcements'), $annPaged['page'], $annPaged['totalPages'], $annPaged['total'], 'announcement') ?>
+    </tbody></table>
+    <?= render_pager(msg_section_pager_base('announcements'), $annPaged['page'], $annPaged['totalPages'], $annPaged['total'], 'news item') ?>
+    </div>
   </div>
   <div class="card">
-    <h3 style="margin-top:0"><?= !empty($r['id']) ? 'Edit announcement' : 'New announcement' ?></h3>
-    <?php if ($annTerms): ?><div class="msg warn"><?= h(msg_warning_html($annTerms)) ?></div><?php endif; ?>
+    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit news item' : 'New news item' ?></h2></div>
+    <div class="card-body">
+    <?php if ($annTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($annTerms)) ?></div><?php endif; ?>
     <form method="post">
       <input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="save_announcement"><input type="hidden" name="id" value="<?= h((string)$r['id']) ?>">
-      <div class="field"><label>Audience</label><select name="audience"><option value="all" <?= (($r['audience'] ?? 'all') === 'all') ? 'selected' : '' ?>>All <?= h($partnerLabel) ?>s</option><option value="snft" <?= (($r['audience'] ?? '') === 'snft') ? 'selected' : '' ?>>Personal only</option><option value="bnft" <?= (($r['audience'] ?? '') === 'bnft') ? 'selected' : '' ?>>Business only</option></select></div>
+      <div class="field"><label>Audience</label><select name="audience"><option value="all" <?= (($r['audience'] ?? 'all') === 'all') ? 'selected' : '' ?>>All Partners</option><option value="personal" <?= (($r['audience'] ?? '') === 'personal') ? 'selected' : '' ?>>Personal only</option><option value="business" <?= (($r['audience'] ?? '') === 'business') ? 'selected' : '' ?>>Business only</option></select></div>
       <div class="field"><label>Title</label><input name="title" value="<?= h((string)($r['title'] ?? '')) ?>"></div>
       <div class="field"><label>Body</label><textarea name="body"><?= h((string)($r['body'] ?? '')) ?></textarea></div>
       <div class="field"><label>Status</label><select name="status"><option value="draft" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'draft' ? 'selected' : '' ?>>Draft</option><option value="open" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'open' ? 'selected' : '' ?>>Open</option><option value="closed" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'closed' ? 'selected' : '' ?>>Closed</option></select></div>
       <div class="field"><label>Open at (Sydney)</label><input type="datetime-local" name="open_at" value="<?= !empty($r['opens_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['opens_at']))) : '' ?>"></div>
       <div class="field"><label>Close at (Sydney)</label><input type="datetime-local" name="close_at" value="<?= !empty($r['closes_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['closes_at']))) : '' ?>"></div>
-      <button class="btn" type="submit">Save announcement</button>
+      <button class="btn btn-gold" type="submit">Save news item</button>
     </form>
+    </div>
   </div>
 </div>
 <?php endif; ?>
