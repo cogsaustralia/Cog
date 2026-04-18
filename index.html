@@ -1,2402 +1,756 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Cache control: always serve fresh version -->
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>COG$™ — Community Owned Gold &amp; Silver | Community Operated Governance Structure™</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --gold: #C8901A;
-    --gold-light: #F0B429;
-    --gold-pale: #F5E6C0;
-    --earth: #8B5E2A;
-    --bg: #0F0D09;
-    --bg-surface: #1C1710;
-    --bg-card: #221E14;
-    --bg-card2: #2A2418;
-    --text: #F0E8D6;
-    --text-muted: #C4B49A;
-    --text-faint: #9A8A74;
-    --border: rgba(200,144,26,0.15);
-    --border-strong: rgba(200,144,26,0.35);
-    --radius: 10px;
-    --radius-lg: 16px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  html { overflow-x: hidden; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
-    line-height: 1.7;
-    font-weight: 300;
-    overflow-x: hidden;
-  }
-
-  /* LEGAL BANNER */
-  .legal-banner {
-    background: #1a1308;
-    border-bottom: 1px solid var(--border-strong);
-    padding: 8px 24px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--gold);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .legal-banner span {
-    color: #B8A888;
-    font-weight: 300;
-    text-transform: none;
-    letter-spacing: 0;
-    margin-left: 8px;
-    font-size: 11px;
-    display: inline;
-  }
-  @media (max-width: 600px) {
-    .legal-banner { font-size: 10px; padding: 7px 12px; }
-    .legal-banner span { display: block; margin-left: 0; margin-top: 2px; font-size: 10px; }
-  }
-
-  /* NAV */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(15,13,9,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 clamp(1.5rem, 5vw, 4rem);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-  }
-  .nav-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    color: var(--gold-light);
-    text-decoration: none;
-    letter-spacing: -0.02em;
-  }
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-  .nav-links a {
-    color: #C4B49A;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--gold-light); }
-  .nav-cta {
-    background: var(--gold);
-    color: #0F0D09 !important;
-    padding: 7px 18px;
-    border-radius: 6px;
-    font-weight: 500 !important;
-    font-size: 13px !important;
-    transition: background 0.2s !important;
-  }
-  .nav-cta:hover { background: var(--gold-light) !important; color: #0F0D09 !important; }
-  .hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px; }
-
-  /* PAGE WRAPPER */
-  .page { max-width: 1100px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem);   box-sizing: border-box;
-  width: 100%;
-}
-
-  /* HERO */
-  .hero {
-    padding: 7rem 0 5rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -100px; right: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(ellipse, rgba(200,144,26,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--gold-light);
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .hero-eyebrow::before {
-    content: '';
-    display: block;
-    width: 28px;
-    height: 1px;
-    background: var(--gold-light);
-  }
-  .hero h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.8rem, 6vw, 5.5rem);
-    line-height: 1.05;
-    color: var(--text);
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.02em;
-  }
-  .hero h1 em {
-    font-style: italic;
-    color: var(--gold-light);
-  }
-  .hero-sub {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--text);
-    max-width: 580px;
-    margin-bottom: 2.5rem;
-    line-height: 1.75;
-    font-weight: 300;
-    opacity: 0.8;
-  }
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
-  .btn-primary {
-    background: var(--gold);
-    color: #0F0D09;
-    text-decoration: none;
-    padding: 14px 32px;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 500;
-    transition: background 0.2s, transform 0.1s;
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-  }
-  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
-  .btn-secondary {
-    color: var(--text-muted);
-    text-decoration: none;
-    padding: 14px 24px;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 400;
-    border: 1px solid var(--border-strong);
-    transition: border-color 0.2s, color 0.2s;
-    display: inline-block;
-  }
-  .btn-secondary:hover { border-color: var(--gold); color: var(--gold-light); }
-
-  /* STATS STRIP */
-  .stats-strip {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 2rem 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 0;
-  }
-  .stat-item {
-    padding: 0 2rem;
-    border-right: 1px solid var(--border);
-    min-width: 0;
-  }
-  .stat-item:last-child { border-right: none; }
-  .stat-item:first-child { padding-left: 0; }
-  .stat-num {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.2rem;
-    color: var(--gold-light);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .stat-label {
-    font-size: 12px;
-    color: var(--text);
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    opacity: 0.7;
-  }
-
-  /* SECTION SPACING */
-  section { padding: 5rem 0; }
-  section + section { border-top: 1px solid var(--border); }
-
-  /* SECTION HEADERS */
-  .section-eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gold-light);
-    margin-bottom: 1rem;
-  }
-  .section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.15;
-    color: var(--text);
-    margin-bottom: 1.25rem;
-    letter-spacing: -0.02em;
-    word-break: break-word;
-  overflow-wrap: break-word;
-  }
-  .section-title em { font-style: italic; color: var(--gold-light); }
-  .section-intro {
-    font-size: 1.05rem;
-    color: var(--text);
-    max-width: 600px;
-    line-height: 1.75;
-    opacity: 0.8;
-  }
-
-  /* TWO COLUMN */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-  .two-col-60 {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: clamp(1.5rem, 4vw, 4rem);
-    align-items: start;
-  }
-
-  /* CARDS */
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.75rem;
-    overflow-wrap: break-word;
-  }
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-    gap: 1rem;
-  }
-  .card-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-  }
-  .card-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: rgba(200,144,26,0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-  }
-  .card-icon svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
-  .card h3 {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    line-height: 1.35;
-  }
-  .card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
-  .card-num {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.5rem;
-    color: var(--gold);
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-  .card-label { font-size: 13px; color: var(--text-muted); }
-
-  /* HOW IT WORKS - STEPS */
-  .steps { display: flex; flex-direction: column; gap: 0; }
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 1.5rem;
-    padding: 1.75rem 0;
-    border-bottom: 1px solid var(--border);
-    align-items: start;
-  }
-  .step:last-child { border-bottom: none; }
-  .step-num {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid var(--border-strong);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px;
-    color: var(--gold);
-    flex-shrink: 0;
-  }
-  .step h3 { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 0.35rem; }
-  .step p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
-  .step-price {
-    display: inline-block;
-    background: rgba(200,144,26,0.12);
-    color: var(--gold-light);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 4px;
-    margin-top: 6px;
-  }
-
-  /* LETTER */
-  .letter-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem 3rem;
-    position: relative;
-  }
-  .letter-card::before {
-    content: '\201C';
-    font-family: 'DM Serif Display', serif;
-    font-size: 120px;
-    color: rgba(200,144,26,0.08);
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    line-height: 1;
-  }
-  .letter-text {
-    font-size: 1.05rem;
-    color: var(--text);
-    line-height: 1.85;
-    font-weight: 300;
-    opacity: 0.85;
-  }
-  .letter-text p + p { margin-top: 1rem; }
-  .letter-sig {
-    margin-top: 1.75rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .letter-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 2px solid var(--border-strong);
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .letter-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .letter-sig-name { font-size: 15px; font-weight: 500; color: var(--text); }
-  .letter-sig-title { font-size: 13px; color: var(--text-muted); }
-
-  /* PRINCIPLES */
-  .principle {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 1rem;
-    padding: 1.25rem 0;
-    border-bottom: 1px solid var(--border);
-    align-items: start;
-  }
-  .principle:last-child { border-bottom: none; }
-  .principle-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--gold);
-    margin-top: 9px;
-  }
-  .principle p { font-size: 15px; color: var(--text-muted); line-height: 1.65; }
-  .principle strong { color: var(--text); font-weight: 500; }
-
-  /* PHASES */
-  .phases {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0;
-  }
-  .phase {
-    padding: 1.75rem;
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .phase:nth-child(n+5) { border-bottom: none; }
-  .phase-tag {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.75rem;
-  }
-  .phase h3 { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
-  .phase p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
-
-  /* GOVERNANCE DIAGRAM */
-  .gov-diagram {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 2rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-  }
-  .gov-tier {
-    background: var(--bg-card2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    text-align: center;
-    min-width: 0;
-    overflow-wrap: break-word;
-  }
-  .gov-tier-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-  .gov-tier-sub { font-size: 12px; color: var(--text-muted); }
-  .gov-arrow {
-    text-align: center;
-    color: var(--gold);
-    font-size: 20px;
-    line-height: 1;
-  }
-  .gov-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  @media (max-width: 640px) {
-    .coin-feature-grid {
-      grid-template-columns: 1fr !important;
-      text-align: center;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COG$ of Australia Foundation | Community Joint Venture Partnership</title>
+  <meta name="description" content="COG$ of Australia Foundation — a community joint venture business partnership where Partners collectively direct governance, stewardship, and real-asset participation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(24,17,8,.84);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.93);--muted:rgba(240,225,196,.88);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
     }
-    .coin-feature-grid img {
-      margin: 0 auto;
-      width: clamp(160px, 55vw, 260px) !important;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    /* ── Background ── */
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('assets/logo_web.png') center center/cover no-repeat;opacity:.28;filter:sepia(.6) saturate(.9) brightness(.85)}
+    .bg-vignette{position:absolute;inset:0;background:
+      radial-gradient(ellipse 80% 70% at 50% 40%,transparent 30%,rgba(10,8,4,.55) 75%,rgba(10,8,4,.75) 100%),
+      linear-gradient(to bottom,rgba(10,8,4,.55) 0%,transparent 18%,transparent 65%,rgba(10,8,4,.45) 100%)}
+
+    .site-shell{position:relative;z-index:1}
+    .container{max-width:880px;margin:0 auto;padding:0 22px}
+
+    /* ── Header ── */
+    .site-header{display:flex;align-items:center;justify-content:space-between;padding:13px 26px;border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:200}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
+    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block;flex-shrink:0}
+    .brand-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
+    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .brand-sub{font-size:.72rem;color:rgba(255,248,232,.92);letter-spacing:.04em;line-height:1.2}
+    .brand-tag{font-size:.70rem;color:rgba(240,225,196,.90);letter-spacing:.04em;line-height:1.25}
+    .header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .btn-ghost{font-size:.73rem;font-weight:600;color:var(--text);text-decoration:none;letter-spacing:.07em;text-transform:uppercase;border:1px solid rgba(240,209,138,.34);padding:9px 16px;border-radius:99px;transition:color .2s,border-color .2s,background .2s,transform .18s;white-space:nowrap}
+    .btn-ghost:hover,.btn-ghost:focus-visible{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale);transform:translateY(-1px)}
+    .btn-vault{display:inline-flex;align-items:center;gap:10px;padding:9px 14px 9px 10px;border:1px solid rgba(201,151,61,.45);border-radius:12px;background:rgba(6,4,2,.88);box-shadow:0 6px 18px rgba(0,0,0,.32);color:var(--text);text-decoration:none;transition:border-color .2s,background .2s,box-shadow .2s;white-space:nowrap}
+    .btn-vault:hover,.btn-vault:focus-visible{border-color:rgba(240,209,138,.75);background:rgba(12,9,3,.95);box-shadow:0 8px 24px rgba(0,0,0,.40)}
+    .btn-vault-shield{font-size:1.1rem;line-height:1;flex-shrink:0;filter:sepia(.4) saturate(1.6) brightness(1.1)}
+    .btn-vault-copy{display:flex;flex-direction:column;gap:2px}
+    .btn-vault-label{font-family:var(--serif);font-size:.82rem;font-weight:600;color:var(--gold-1);line-height:1.15;white-space:nowrap;letter-spacing:.01em}
+    .btn-vault-sub{font-size:.6rem;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:rgba(201,151,61,.72);line-height:1.2;white-space:nowrap}
+
+    /* ── Hero ── */
+    .hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:50px 22px 0}
+    .eyebrow{display:inline-block;font-size:.67rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:26px;animation:fadeUp .6s .05s both}
+
+    /* ── Coin — frame-sequence sprite ── */
+    .coin-wrap{position:relative;width:180px;height:180px;margin:0 auto 28px;perspective:800px;animation:fadeUp .6s .1s both}
+    .coin-glow{position:absolute;inset:-30px;border-radius:50%;background:radial-gradient(circle,rgba(201,151,61,.42) 0%,transparent 68%);animation:breathe 3.8s ease-in-out infinite;z-index:0}
+    .coin-wrap .quote-logo{width:180px;height:180px;border:none}
+    .coin-img{width:200px;height:200px;position:relative;z-index:1;display:block;filter:drop-shadow(0 8px 36px rgba(180,130,40,.55));opacity:0;transition:opacity .4s ease}
+    .coin-img.loaded{opacity:1;animation:heroEntrance 2s cubic-bezier(.25,.46,.45,.94) .2s both,coinFloat 6s ease-in-out 2.5s infinite}
+    @keyframes heroEntrance{
+      0%{transform:perspective(800px) scale(.3) rotateY(-180deg) rotateX(15deg);opacity:0;filter:drop-shadow(0 0 0 rgba(240,209,138,0))}
+      20%{opacity:1}
+      45%{transform:perspective(800px) scale(1.08) rotateY(45deg) rotateX(-3deg);filter:drop-shadow(0 0 40px rgba(240,209,138,.5))}
+      65%{transform:perspective(800px) scale(1) rotateY(350deg) rotateX(0deg)}
+      80%{transform:perspective(800px) scale(.98) rotateY(365deg) rotateX(1deg);filter:drop-shadow(0 8px 36px rgba(180,130,40,.55))}
+      100%{transform:perspective(800px) scale(1) rotateY(360deg) rotateX(0deg);filter:drop-shadow(0 8px 36px rgba(180,130,40,.55))}
     }
-  }
-  @media (max-width: 480px) {
-    .gov-split { grid-template-columns: 1fr; }
-    .gov-diagram { padding: 1.25rem; }
-  }
+    @keyframes coinFloat{
+      0%,100%{transform:perspective(800px) rotateY(360deg) translateY(0)}
+      25%{transform:perspective(800px) rotateY(366deg) translateY(-6px)}
+      50%{transform:perspective(800px) rotateY(360deg) translateY(0)}
+      75%{transform:perspective(800px) rotateY(354deg) translateY(-4px)}
+    }
+    @keyframes breathe{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
 
-  /* DIVIDEND FLOW */
-  .dividend-flow {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-  }
-  .flow-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .flow-row:last-child { border-bottom: none; }
-  .flow-box {
-    flex: 1;
-    background: var(--bg-card2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 0.75rem 1rem;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--text-muted);
-    overflow-wrap: break-word;
-    min-width: 0;
-  }
-  .flow-box.accent {
-    border-color: var(--border-strong);
-    color: var(--gold-light);
-  }
-  .flow-arrow { color: var(--gold); font-size: 18px; flex-shrink: 0; }
-  .flow-pct {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.5rem;
-    color: var(--gold);
-    flex-shrink: 0;
-    min-width: 48px;
-    text-align: center;
-  }
-  @media (max-width: 480px) {
-    .dividend-flow { padding: 1.25rem; }
-    .flow-row { gap: 0.5rem; padding: 0.65rem 0; }
-    .flow-box { font-size: 12px; padding: 0.6rem 0.75rem; }
-    .flow-pct { font-size: 1.2rem; min-width: 38px; }
-  }
+    .hero-title{font-family:var(--serif);font-size:clamp(2.25rem,5.4vw,3.85rem);font-weight:500;line-height:1.08;letter-spacing:-.02em;color:var(--text);margin-bottom:16px;animation:fadeUp .6s .3s both}
+    .hero-title em{font-style:italic;color:var(--gold-1)}
+    .hero-lead{font-size:1rem;font-weight:400;color:var(--text2);line-height:1.78;max-width:620px;margin:0 auto 24px;animation:fadeUp .6s .37s both}
+    .hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:0 auto 16px;animation:fadeUp .6s .41s both}
+    .btn-primary{display:inline-flex;align-items:center;justify-content:center;min-width:180px;padding:12px 18px;border-radius:999px;border:1px solid rgba(240,209,138,.48);background:linear-gradient(145deg,rgba(66,47,18,.98),rgba(30,21,8,.96));color:var(--text);text-decoration:none;font-size:.84rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 12px 28px rgba(0,0,0,.35);transition:transform .18s,border-color .2s,background .2s}
+    .btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.72);background:linear-gradient(145deg,rgba(78,56,22,1),rgba(36,25,9,.98))}
+    .btn-secondary{display:inline-flex;align-items:center;justify-content:center;min-width:180px;padding:12px 18px;border-radius:999px;border:1px solid rgba(240,209,138,.28);background:rgba(240,209,138,.08);color:var(--text);text-decoration:none;font-size:.84rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:transform .18s,border-color .2s,background .2s}
+    .btn-secondary:hover,.btn-secondary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.54);background:rgba(240,209,138,.14)}
+    .btn-tertiary{display:inline-flex;align-items:center;justify-content:center;min-width:180px;padding:12px 18px;border-radius:999px;border:1px solid rgba(240,209,138,.24);background:transparent;color:var(--text);text-decoration:none;font-size:.84rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:transform .18s,border-color .2s,color .2s,background .2s}
+    .btn-tertiary:hover,.btn-tertiary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.56);color:var(--gold-1);background:rgba(240,209,138,.06)}
+    .hero-note{font-size:.90rem;color:rgba(255,248,232,.92);line-height:1.72;max-width:740px;margin:0 auto 22px;animation:fadeUp .6s .43s both}
+    .pillars{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-bottom:30px;animation:fadeUp .6s .44s both}
+    .pillar{font-size:.76rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,248,232,.93);border:1px solid rgba(240,209,138,.24);padding:6px 13px;border-radius:99px}
 
-  /* FAQ */
-  .faq-item {
-    border-bottom: 1px solid var(--border);
-    padding: 1.25rem 0;
-  }
-  .faq-item:first-child { border-top: 1px solid var(--border); }
-  .faq-q {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    user-select: none;
-  }
-  .faq-q svg { flex-shrink: 0; transition: transform 0.25s; stroke: var(--gold); }
-  .faq-a {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.75;
-    height: 0;
-    overflow: hidden;
-    padding-top: 0;
-    padding-bottom: 0;
-    transition: height 0.45s ease;
-  }
-  .faq-item.open .faq-q svg { transform: rotate(45deg); }
-  .faq-item.open .faq-a { padding-top: 0; }
+    /* ── Countdown ── */
+    .countdown{width:100%;max-width:380px;margin:0 auto 46px;animation:fadeUp .6s .5s both}
+    .cd-title{font-family:var(--serif);font-size:.82rem;font-weight:500;color:var(--gold-1);text-align:center;margin-bottom:4px;letter-spacing:.01em}
+    .cd-subtitle{font-size:.74rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--gold-1);text-align:center;margin-bottom:10px}
+    .cd-expired{display:none;text-align:center;font-family:var(--serif);font-size:1.2rem;font-style:italic;color:var(--gold-1);padding:10px 0}
+    .cd-inner{background:linear-gradient(160deg,rgba(24,17,8,.92),rgba(16,11,5,.88));border:1px solid var(--line2);border-radius:16px;padding:16px 18px 12px;backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.50),inset 0 1px 0 rgba(240,209,138,.06)}
+    .cd-days-row{text-align:center;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}
+    .cd-days-val{font-family:var(--serif);font-size:2.8rem;font-weight:500;color:var(--gold-1);line-height:1;display:block;text-shadow:0 0 20px rgba(240,209,138,.25)}
+    .cd-days-lbl{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,248,232,.92);display:block;margin-top:5px}
+    .cd-hms{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;padding-top:2px}
+    .cd-cell{text-align:center;padding:4px 0}
+    .cd-hval{font-family:var(--serif);font-size:1.1rem;font-weight:400;color:var(--gold-1);line-height:1;display:block}
+    .cd-hlbl{font-size:.68rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:rgba(255,248,232,.92);display:block;margin-top:4px}
+    .cd-dot{display:flex;align-items:center;justify-content:center;padding-bottom:7px;font-size:.8rem;color:var(--gold-3)}
+    .cd-label{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-1);text-align:center;margin-bottom:8px}
 
-  /* FORM */
-  .form-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem;
-    max-width: 100%;
-  overflow-x: hidden;
-  }
-  .form-notice {
-    background: rgba(200,144,26,0.06);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    padding: 0.85rem 1.25rem;
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 2rem;
-    line-height: 1.6;
-  }
-  .form-notice strong { color: var(--gold); font-weight: 500; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group.full { grid-column: 1 / -1; }
-  label {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-  }
-  input[type=text], input[type=email], input[type=tel], input[type=date], input[type=number], select, textarea {
-    background: var(--bg-card2);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    font-weight: 300;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
-  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
-  select { cursor: pointer; }
-  option { background: var(--bg-card2); }
-  .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 0.5rem; }
-  .checkbox-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
-  .checkbox-item input[type=checkbox] { margin-top: 3px; accent-color: var(--gold); cursor: pointer; flex-shrink: 0; }
-  .checkbox-item span { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
-  .checkbox-item span strong { color: var(--text); font-weight: 500; }
-  .form-sub { grid-column: 1 / -1; margin-top: 0.5rem; }
-  .form-submit { margin-top: 1.5rem; width: 100%; font-size: 16px; padding: 16px; }
+    /* ── Sections ── */
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 22px 54px}
+    .section{padding:0 0 58px}
+    .kicker{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-1);margin-bottom:12px}
+    .section-title{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.5rem);font-weight:500;line-height:1.12;letter-spacing:-.022em;color:var(--text);margin-bottom:12px}
+    .section-body{font-size:1rem;color:var(--text2);line-height:1.8;max-width:720px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
 
-  /* Token calculator fields */
-  .token-field {
-    display: flex;
-    gap: 8px;
-    align-items: stretch;
-  }
-  .token-field input {
-    flex: 1;
-    min-width: 0;
-  }
-  .token-value {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 90px;
-    padding: 10px 12px;
-    background: rgba(200,144,26,0.08);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--gold-light);
-    white-space: nowrap;
-    transition: background 0.2s;
-    flex-shrink: 0;
-  }
-  .token-value.active {
-    background: rgba(200,144,26,0.15);
-  }
-  .token-hint {
-    font-size: 11px;
-    color: var(--text-faint);
-    margin-top: 4px;
-    letter-spacing: 0.02em;
-  }
-  .form-legal { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 1rem; line-height: 1.6; }
-  .form-legal a { color: var(--gold-light); }
+    /* ── Quote band ── */
+    .quote-band{display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center;padding:34px 38px}
+    .quote-band blockquote{font-family:var(--serif);font-size:clamp(1.25rem,3vw,1.85rem);font-style:italic;font-weight:400;color:var(--gold-1);line-height:1.28;letter-spacing:-.018em;margin-bottom:12px}
+    .quote-band p{font-size:.92rem;color:var(--text2);line-height:1.78}
+    .quote-logo{width:140px;height:140px;flex-shrink:0;border-radius:50%;border:2px solid var(--gold-rim2);object-fit:cover;filter:drop-shadow(0 6px 22px rgba(180,130,40,.55)) sepia(.3) saturate(1.2);animation:floatLogo 5s ease-in-out infinite}
+    @keyframes floatLogo{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-10px) rotate(1.5deg)}}
 
-  /* CASE STUDIES */
-  .case-study {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    text-decoration: none;
-    display: block;
-    transition: border-color 0.2s;
-  }
-  .case-study:hover { border-color: var(--border-strong); }
-  .case-tag {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gold);
-    background: rgba(200,144,26,0.1);
-    padding: 3px 8px;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 0.75rem;
-  }
-  .case-study h3 { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
-  .case-study p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    /* ── What grid ── */
+    .what-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}
+    .what-card{padding:24px 22px;background:linear-gradient(160deg,rgba(32,23,10,.90),rgba(16,11,5,.82));border:1px solid var(--line);border-radius:var(--r);box-shadow:0 10px 30px rgba(0,0,0,.44)}
+    .what-icon{font-size:1.2rem;display:block;margin-bottom:12px}
+    .what-title{font-family:var(--serif);font-size:1.04rem;font-weight:600;color:var(--gold-1);margin-bottom:8px}
+    .what-body{font-size:.94rem;color:var(--text2);line-height:1.76}
+    .two-coin-wrap{grid-column:1/-1;border-radius:var(--r);overflow:hidden;position:relative;min-height:210px}
+    .two-coin-img{width:100%;display:block;object-fit:cover;border-radius:var(--r);border:1px solid var(--line2);opacity:.9}
+    .two-coin-caption{position:absolute;inset:0;background:linear-gradient(to right,rgba(10,8,4,.82) 42%,transparent 80%);display:flex;flex-direction:column;justify-content:center;padding:32px 36px;border-radius:var(--r)}
+    .two-coin-caption .kicker{display:block;margin-bottom:8px}
+    .two-coin-caption h3{font-family:var(--serif);font-size:clamp(1.1rem,2.5vw,1.65rem);font-weight:500;line-height:1.2;color:var(--text);max-width:340px;margin-bottom:10px}
+    .two-coin-caption p{font-size:.94rem;color:var(--text2);line-height:1.76;max-width:380px}
 
-  /* PROGRESS */
-  .progress-track {
-    background: var(--bg-card2);
-    border-radius: 100px;
-    height: 6px;
-    overflow: hidden;
-    margin: 0.5rem 0;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 100px;
-    background: linear-gradient(90deg, var(--gold), var(--gold-light));
-    transition: width 1s ease;
-  }
+    /* ── Path grid ── */
+    .path-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:28px}
+    .path-card{display:flex;align-items:flex-start;gap:14px;padding:20px 18px;background:linear-gradient(155deg,rgba(34,24,10,.88),rgba(18,13,5,.84));border:1px solid var(--line);border-radius:var(--r);text-decoration:none;color:var(--text);backdrop-filter:blur(8px);transition:border-color .22s,background .22s,transform .18s}
+    .path-card:hover{border-color:var(--gold-rim2);background:linear-gradient(155deg,rgba(50,36,14,.94),rgba(28,20,8,.90));transform:translateY(-2px)}
+    .path-card.is-primary{grid-column:1/-1;border-color:rgba(240,209,138,.28);background:linear-gradient(145deg,rgba(52,37,15,.90),rgba(22,16,6,.86))}
+    .path-card.is-primary:hover{border-color:rgba(240,209,138,.52);background:linear-gradient(145deg,rgba(66,47,18,.96),rgba(30,22,8,.92))}
+    .path-icon{width:42px;height:42px;border-radius:13px;border:1px solid var(--gold-rim);background:var(--gold-pale);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;margin-top:1px}
+    .path-card.is-primary .path-icon{border-color:var(--gold-rim2);background:rgba(240,209,138,.15)}
+    .path-body{flex:1}
+    .path-tag{font-size:.70rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,248,232,.90);margin-bottom:5px}
+    .path-card.is-primary .path-tag{color:var(--gold-2)}
+    .path-title{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--text);margin-bottom:4px}
+    .path-card.is-primary .path-title{font-size:1.18rem}
+    .path-desc{font-size:.93rem;color:var(--text2);line-height:1.72}
+    .path-arrow{font-size:.85rem;color:var(--gold-2);margin-top:9px;display:inline-block;opacity:0;transform:translateX(-5px);transition:opacity .2s,transform .2s}
+    .path-card:hover .path-arrow,.path-card.is-primary .path-arrow{opacity:.6}
+    .path-card:hover .path-arrow{opacity:1;transform:translateX(0)}
+    .browse-link{text-align:center;margin-top:20px}
+    .browse-link a{font-size:.92rem;color:rgba(255,248,232,.92);text-decoration:none;border-bottom:1px solid rgba(240,209,138,.40);padding-bottom:2px;transition:color .2s,border-color .2s}
+    .browse-link a:hover{color:var(--gold-1);border-color:var(--gold-rim2)}
 
-  /* TEAM */
-  .team-placeholder {
-    background: var(--bg-card);
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem;
-    text-align: center;
-  }
-  .team-placeholder p { color: var(--text-muted); font-size: 14px; }
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 3rem 0 2rem;
-    margin-top: 2rem;
-  }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 3rem;
-    margin-bottom: 2.5rem;
-  }
-  .footer-brand {
-    font-family: 'DM Serif Display', serif;
-    font-size: 24px;
-    color: var(--gold-light);
-    margin-bottom: 0.75rem;
-  }
-  .footer-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; max-width: 280px; }
-  .footer-col h4 { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; }
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-  .footer-col ul a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
-  .footer-col ul a:hover { color: var(--gold-light); }
-  .footer-bottom {
-    border-top: 1px solid var(--border);
-    padding-top: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-  .footer-bottom a { color: var(--text-muted); text-decoration: none; }
-  .footer-bottom a:hover { color: var(--text); }
+    .structure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    .structure-card{padding:22px 18px;background:linear-gradient(160deg,rgba(30,21,9,.90),rgba(16,11,5,.84));border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.32)}
+    .structure-step{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid rgba(240,209,138,.30);background:rgba(240,209,138,.08);font-size:.82rem;font-weight:700;color:var(--gold-1);margin-bottom:12px}
+    .structure-title{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px}
+    .structure-body{font-size:.94rem;color:var(--text2);line-height:1.74}
+    .structure-note{margin-top:14px;font-size:.95rem;color:var(--text2);line-height:1.76}
+    .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}
+    .step-card{padding:24px 20px;background:linear-gradient(160deg,rgba(30,21,9,.90),rgba(16,11,5,.84));border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.32)}
+    .step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(240,209,138,.34);background:rgba(240,209,138,.10);font-size:.85rem;font-weight:700;color:var(--gold-1);margin-bottom:12px}
+    .step-title{font-family:var(--serif);font-size:1.04rem;font-weight:600;color:var(--text);margin-bottom:8px}
+    .step-body{font-size:.94rem;color:var(--text2);line-height:1.74}
+    .doc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:22px}
+    .doc-card{padding:22px 18px;background:linear-gradient(160deg,rgba(30,21,9,.90),rgba(16,11,5,.84));border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.32);display:flex;flex-direction:column;gap:10px}
+    .doc-order{font-size:.74rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--gold-1)}
+    .doc-title{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--text);line-height:1.25}
+    .doc-copy{font-size:.90rem;color:var(--text2);line-height:1.7;flex:1}
+    .doc-link{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;font-weight:700;color:var(--gold-1);text-decoration:none;border-bottom:1px solid rgba(240,209,138,.35);padding-bottom:2px;width:max-content}
+    .doc-link:hover{color:var(--text);border-color:rgba(240,209,138,.65)}
 
-  /* UTILITY */
-  .gold { color: var(--gold-light); }
-  .muted { color: var(--text-muted); }
-  .tag-badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    padding: 3px 10px;
-    border-radius: 100px;
-    background: rgba(200,144,26,0.1);
-    color: var(--gold);
-    border: 1px solid var(--border-strong);
-  }
-  .mt-sm { margin-top: 0.75rem; }
-  .mt-md { margin-top: 1.5rem; }
-  .mt-lg { margin-top: 2.5rem; }
-  .mb-sm { margin-bottom: 0.75rem; }
-  .mb-md { margin-bottom: 1.5rem; }
-  .divider-line { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-  .text-small { font-size: 13px; }
-  .highlight-box {
-    background: rgba(200,144,26,0.05);
-    border-left: 3px solid var(--gold);
-    padding: 1.25rem 1.5rem;
-    border-radius: 0 var(--radius) var(--radius) 0;
-    margin: 1.5rem 0;
-    box-sizing: border-box;
-  }
-  .highlight-box p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
-  .highlight-box strong { color: var(--gold-light); font-weight: 500; }
+    /* ── Footer ── */
+    .site-footer{border-top:1px solid var(--line);padding:36px 28px 38px;background:rgba(8,6,2,1)}
+    .footer-inner{max-width:880px;margin:0 auto;display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:32px;align-items:start}
+    .footer-name{font-family:var(--serif);font-size:.9rem;color:var(--gold-1);margin-bottom:8px;font-weight:600}
+    .footer-detail{font-size:.82rem;color:rgba(255,248,232,.90);line-height:1.82}
+    .footer-col h4{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-1);margin-bottom:12px}
+    .footer-links{display:flex;flex-direction:column;gap:7px}
+    .footer-links a{font-size:.88rem;color:rgba(255,248,232,.92);text-decoration:none;line-height:1.5;transition:color .2s}
+    .footer-links a:hover{color:var(--gold-1)}
+    .footer-link-locked{display:flex;align-items:center;gap:6px;font-size:.88rem;color:rgba(255,248,232,.92);text-decoration:none;line-height:1.5;transition:color .2s}
+    .footer-link-locked:hover{color:var(--gold-1)}
+    .lock-badge{display:inline-flex;align-items:center;gap:3px;font-size:.58rem;font-weight:500;letter-spacing:.08em;color:var(--gold-3);background:rgba(120,80,20,.25);border:1px solid rgba(140,100,30,.35);padding:1px 6px;border-radius:4px;white-space:nowrap}
+    .footer-bottom{max-width:880px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+    .footer-bottom-left{font-size:.80rem;color:rgba(255,248,232,.84);line-height:1.76}
+    .footer-bottom-right{font-size:.80rem;color:rgba(255,248,232,.84);letter-spacing:.04em;text-align:right;line-height:1.8}
 
-  /* REGULATORY STATUS BADGE */
-  .reg-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(200,144,26,0.08);
-    border: 1px solid var(--border-strong);
-    border-radius: 100px;
-    padding: 5px 14px 5px 10px;
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 1rem;
-  }
-  .reg-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #4ade80;
-    animation: pulse 2s infinite;
-    flex-shrink: 0;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
+    /* ── Animations ── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.in{opacity:1;transform:translateY(0)}
 
-  /* ANIMATION */
-  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .fade-in.visible { opacity: 1; transform: none; }
+    /* ── Responsive ── */
+    @media(max-width:900px){
+      .structure-grid,.steps-grid,.doc-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:760px){
+      .footer-inner{grid-template-columns:1fr 1fr;gap:24px}
+      .footer-inner>div:first-child{grid-column:1/-1}
+      .btn-vault .label-full{display:none}
+    }
+    @media(max-width:660px){
+      .site-header{padding:12px 16px;gap:12px}
+      .brand-name{font-size:.88rem}
+      .brand-sub{font-size:.70rem}
+      .brand-tag{display:none}
+      .steps-grid,.doc-grid{grid-template-columns:1fr}
+      .btn-vault{padding:10px 13px;font-size:.74rem}
+      .hero{padding:38px 16px 0}
+      .hero-actions{gap:10px}
+      .btn-primary,.btn-secondary,.btn-tertiary{min-width:unset;width:100%}
+      .coin-wrap,.coin-wrap .quote-logo{width:140px;height:140px}
+      .quote-band{grid-template-columns:1fr}
+      .quote-logo{width:110px;height:110px;margin:0 auto}
+      .what-layout{grid-template-columns:1fr}
+      .two-coin-caption{padding:22px}
+      .path-grid{grid-template-columns:1fr}
+      .path-card.is-primary{grid-column:1}
+      .footer-inner{grid-template-columns:1fr}
+      .footer-inner>div:first-child{grid-column:1}
+      .footer-bottom{flex-direction:column;align-items:flex-start}
+      .footer-bottom-right{text-align:left}
+    }
 
-  /* MOBILE NAV */
-  .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(10,8,5,0.97);
-    z-index: 200;
-    padding: 2rem;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 1.5rem;
-  }
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a { font-size: 1.5rem; color: var(--text); text-decoration: none; font-family: 'DM Serif Display', serif; }
-  .mobile-close { position: absolute; top: 1.5rem; right: 2rem; background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .nav-links { display: none; }
-    .hamburger { display: block; }
-    .two-col, .two-col-60 { grid-template-columns: 1fr; gap: 1.5rem; }
-    .form-grid { grid-template-columns: 1fr; }
-    .phases { grid-template-columns: 1fr 1fr; }
-    .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .stats-strip { grid-template-columns: 1fr 1fr; }
-    .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
-    .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
-    .stat-item:last-child, .stat-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
-    .letter-card { padding: 1.75rem; }
-    .form-card { padding: 1.5rem; }
-    .hero { padding: 4rem 0 3rem; }
-    /* gov-split: stays side-by-side at tablet, collapses at mobile */
-    .gov-split { gap: 0.75rem; }
-    /* card-grid: reduce min so 2 cols work on tablets down to 500px */
-    .card-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-    /* flow diagram: allow wrapping */
-    .flow-row { flex-wrap: wrap; }
-    /* Reduce section padding */
-    .section { padding: 3rem 0; }
-  }
-  @media (max-width: 480px) {
-    .phases { grid-template-columns: 1fr; }
-    .phase { border-right: none; border-bottom: 1px solid var(--border); }
-    .phase:last-child { border-bottom: none; }
-    .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
-    .hero-actions { flex-direction: column; align-items: stretch; }
-    .btn-primary, .btn-secondary { text-align: center; }
-    /* gov-split: stack on small screens */
-    .gov-split { grid-template-columns: 1fr; }
-    /* stat strip: 2x2 on small */
-    .stats-strip { grid-template-columns: 1fr 1fr; }
-    /* reduce page horizontal padding */
-    .page { padding: 0 1rem; }
-    /* step and principle: tighten icon gap */
-    .step { gap: 1rem; }
-    .principle { gap: 0.75rem; }
-    /* section title */
-    .section-title { font-size: clamp(1.5rem, 5vw, 2.2rem); }
-    /* flow diagram: stack on phone */
-    .flow-row { flex-direction: column; gap: 0.5rem; }
-    .flow-arrow { display: none; }
-    /* FAQ items: full padding */
-    .faq-item { padding: 1rem 0; }
-    /* tracker card: center on mobile */
-    .tracker-card { text-align: center; }
-    /* Reduce hero padding further */
-    .hero { padding: 3rem 0 2.5rem; }
-  }
-
-  @media (max-width: 360px) {
-    .stats-strip { grid-template-columns: 1fr; }
-    .stat-item { border-right: none; }
-    .phases { grid-template-columns: 1fr; }
-    .page { padding: 0 0.85rem; }
-    .section-title { font-size: 1.4rem; }
-    .card { padding: 1rem; }
-    .form-card { padding: 1rem; }
-  }
-
-</style>
-<!-- Firebase SDK for pre-submission member write -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    /* Page load splash */
+    .page-splash{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease}
+    .page-splash.fade-out{opacity:0;pointer-events:none}
+    .page-splash img{width:80px;height:80px;animation:splashSpin 1.6s cubic-bezier(.25,.46,.45,.94) forwards;filter:drop-shadow(0 0 28px rgba(240,209,138,.35))}
+    .page-splash .splash-text{font-family:var(--serif);font-size:1rem;color:var(--gold-1);opacity:0;margin-top:20px;letter-spacing:.04em;animation:splashFade .5s ease .7s forwards}
+    .page-splash .splash-sub{font-size:.7rem;color:var(--muted);opacity:0;margin-top:6px;animation:splashFade .4s ease 1s forwards}
+    @keyframes splashSpin{
+      0%{transform:perspective(800px) scale(.2) rotateY(-90deg);opacity:0}
+      15%{opacity:1}
+      35%{transform:perspective(800px) scale(.9) rotateY(90deg)}
+      55%{transform:perspective(800px) scale(1.08) rotateY(270deg)}
+      75%{transform:perspective(800px) scale(1) rotateY(360deg)}
+      90%{transform:perspective(800px) scale(.98) rotateY(380deg)}
+      100%{transform:perspective(800px) scale(1) rotateY(360deg);opacity:1}
+    }
+    @keyframes splashFade{to{opacity:1}}
+  </style>
 </head>
-<body>
+<body data-root="./" data-page="home">
 
-<!-- LEGALLY REQUIRED BANNER -->
-<div class="legal-banner">
-  Not for public disclosure — Private community use only
-  <span>Reservation only. No financial product offered. ASIC &amp; ATO regulatory engagement ongoing.</span>
+<!-- Page load splash -->
+<div class="page-splash" id="page-splash">
+  <img src="assets/cogs_coin_web.png" alt="">
+  <div class="splash-text">COG$ of Australia Foundation</div>
+  <div class="splash-sub">Community Operated Governance Structure™</div>
+  <div class="splash-sub" style="animation-delay:1.2s">Community Owned Gold &amp; Silver™</div>
+</div>
+<script>
+// Dismiss splash after animation + brief hold
+setTimeout(function(){
+  var s=document.getElementById('page-splash');
+  if(s){s.classList.add('fade-out');setTimeout(function(){s.remove()},700);}
+}, 2600);
+</script>
+<script>
+/* ── Invite referral capture / join-link propagation ── */
+(function(){
+  var STORAGE_KEY = 'cogs_partner_invite_v1';
+  var MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+  function normaliseInvite(value){
+    value = String(value || '').trim();
+    return value ? value.toUpperCase() : '';
+  }
+
+  function readStoredInvite(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return null;
+      var parsed = JSON.parse(raw);
+      if(!parsed || !parsed.code || !parsed.stored_at) return null;
+      var age = Date.now() - new Date(parsed.stored_at).getTime();
+      if(!isFinite(age) || age < 0 || age > MAX_AGE_MS){
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+      return parsed;
+    }catch(e){
+      try{ localStorage.removeItem(STORAGE_KEY); }catch(_e){}
+      return null;
+    }
+  }
+
+  function storeInvite(code, source){
+    code = normaliseInvite(code);
+    if(!code) return null;
+    var payload = { code: code, stored_at: new Date().toISOString(), source: source || 'landing' };
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }catch(e){}
+    return payload;
+  }
+
+  function getInviteFromUrl(){
+    var params = new URLSearchParams(window.location.search);
+    return normaliseInvite(
+      params.get('invite') ||
+      params.get('invite_token') ||
+      params.get('ref') ||
+      params.get('code') ||
+      params.get('partner_code')
+    );
+  }
+
+  function withInvite(url, invite){
+    if(!invite) return url;
+    try{
+      var target = new URL(url, window.location.origin);
+      target.searchParams.set('invite', invite);
+      return target.pathname + target.search + target.hash;
+    }catch(e){
+      var glue = url.indexOf('?') === -1 ? '?' : '&';
+      return url + glue + 'invite=' + encodeURIComponent(invite);
+    }
+  }
+
+  function updateJoinLinks(invite){
+    if(!invite) return;
+    document.querySelectorAll('a[href]').forEach(function(link){
+      var href = link.getAttribute('href') || '';
+      if(href.indexOf('join/index.html') === -1) return;
+      link.setAttribute('href', withInvite(href, invite));
+    });
+  }
+
+  var urlInvite = getInviteFromUrl();
+  var stored = urlInvite ? storeInvite(urlInvite, 'landing_url') : readStoredInvite();
+  var invite = stored && stored.code ? stored.code : '';
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ updateJoinLinks(invite); });
+  } else {
+    updateJoinLinks(invite);
+  }
+
+  window.COGSInvite = {
+    key: STORAGE_KEY,
+    read: readStoredInvite,
+    store: storeInvite,
+    clear: function(){ try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} },
+    currentCode: function(){
+      var current = readStoredInvite();
+      return current && current.code ? current.code : '';
+    }
+  };
+})();
+</script>
+
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-img"></div>
+  <div class="bg-vignette"></div>
 </div>
 
-<!-- NAV -->
-<nav>
-  <a href="#top" class="nav-logo" title="Community Owned Gold &amp; Silver™ | Community Operated Governance Structure™">COG$<sup style="font-size:0.55em; vertical-align:super; letter-spacing:0;">™</sup></a>
-  <ul class="nav-links">
-    <li><a href="#how-it-works">How it works</a></li>
-    <li><a href="#governance">Governance</a></li>
-    <li><a href="#acquisition">First acquisition</a></li>
-    <li><a href="#regulatory">Regulatory</a></li>
-    <li><a href="#faq">FAQ</a></li>
-    <li><a href="#reserve" class="nav-cta">Reserve your place</a></li>
-  </ul>
-  <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="Menu">&#9776;</button>
-</nav>
+<div class="site-shell">
 
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')" aria-label="Close">&#215;</button>
-  <a href="#how-it-works" onclick="document.getElementById('mobileMenu').classList.remove('open')">How it works</a>
-  <a href="#governance" onclick="document.getElementById('mobileMenu').classList.remove('open')">Governance</a>
-  <a href="#acquisition" onclick="document.getElementById('mobileMenu').classList.remove('open')">First acquisition</a>
-  <a href="#regulatory" onclick="document.getElementById('mobileMenu').classList.remove('open')">Regulatory</a>
-  <a href="#faq" onclick="document.getElementById('mobileMenu').classList.remove('open')">FAQ</a>
-  <a href="#reserve" onclick="document.getElementById('mobileMenu').classList.remove('open')" style="color: var(--gold-light);">Reserve your place</a>
-  <a href="vault.html" onclick="document.getElementById('mobileMenu').classList.remove('open')" style="color: var(--gold-light);">Community Vault</a>
-  <a href="wallet.html" onclick="document.getElementById('mobileMenu').classList.remove('open')">Independence Vault</a>
-</div>
-
-<div class="page" id="top">
-
-  <!-- HERO -->
-  <section class="hero fade-in">
-    <img src="logo_webcir.png" alt="COG$ — The World with COG$" style="display:block; margin: 0 auto 2.5rem; width: clamp(120px, 22vw, 200px); border-radius: 50%; opacity: 0.95;">
-    <div style="text-align:left; margin-bottom:1rem;">
-      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--gold-light); letter-spacing:0.01em; line-height:1.4;">Community Owned Gold &amp; Silver™</div>
-      <div style="font-family:'DM Serif Display',serif; font-size:clamp(0.95rem,2vw,1.15rem); color:var(--text-muted); letter-spacing:0.01em; line-height:1.4; opacity:0.85;">Community Operated Governance Structure™</div>
-    </div>
-    <div class="hero-eyebrow">Australia's first community resources wealth foundation</div>
-    <h1>Own a share of<br><em>Australia's resources.</em><br>Have your say.</h1>
-    <p class="hero-sub">
-      The The Trustee of COG$ of Australia Foundation is a not-for-profit foundation that enables Australians to participate in the stewardship, governance, and profits of the nation's resource sector — together.
-    </p>
-    <div class="hero-actions">
-      <a href="#reserve" class="btn-primary">Reserve your place</a>
-      <a href="#how-it-works" class="btn-secondary">Learn how it works</a>
-    </div>
-    <div class="reg-status">
-      <div class="reg-dot"></div>
-      Regulatory engagement active — ASIC Innovation Hub &amp; ATO Class Rulings underway
-    </div>
-  </section>
-
-  <!-- STATS -->
-  <div class="stats-strip fade-in">
-    <div class="stat-item">
-      <div class="stat-num">124</div>
-      <div class="stat-label">Reservations recorded</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">14 May</div>
-      <div class="stat-label">Foundation Day</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">$4</div>
-      <div class="stat-label">Membership cost — forever</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">9,000 km²</div>
-      <div class="stat-label">First acquisition target</div>
-    </div>
-  </div>
-
-  <!-- LETTER FROM THOMAS -->
-  <section class="fade-in">
-    <div class="section-eyebrow">A message from the project coordinator</div>
-    <div class="letter-card">
-      <div class="letter-text">
-        <p>For generations, the natural wealth of Australia has flowed primarily to corporations and governments. The people whose communities sit above these resources rarely hold direct ownership, and have little to no say in the operations of companies extracting those resources — or whether those resources get extracted at all.</p>
-        <p>COG$ allows the community to become stewards of their local resources and environment. Through the The Trustee of COG$ of Australia Foundation, members collectively accumulate ownership, stewardship, and legally enforceable governance of Australian resource companies. We participate directly in governance and share in any realised profit.</p>
-        <p>The goal is not short-term speculation or a meaningless gesture. It is the creation of a permanent community governance and wealth structure that compounds across days, years, and generations.</p>
-        <p>COG$ started with a simple step: people are now reserving their place, and communities are demonstrating collective support ahead of Foundation Day, 14 May.</p>
+  <!-- ── Header — no full nav on landing ── -->
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="assets/logo_webcir.png" alt="COG$ of Australia Foundation">
+      <div class="brand-copy">
+        <span class="brand-name">COG$ of Australia Foundation</span>
+        <span class="brand-sub">Community Joint Venture Partnership</span>
+        <span class="brand-tag">Community Owned Gold &amp; Silver™ · Partner Operated Governance</span>
       </div>
-      <div class="letter-sig">
-        <div class="letter-avatar"><img src="tcavatar.png" alt="Thomas Cunliffe"></div>
-        <div>
-          <div class="letter-sig-name">Thomas Cunliffe</div>
-          <div class="letter-sig-title">Project Coordinator, COG$ Foundation</div>
-        </div>
-      </div>
+    </a>
+    <div class="header-actions">
+      <a class="btn-vault" href="partners/index.html" aria-label="Partner's Vault — secure Partner access">
+        <span class="btn-vault-shield">&#x1F6E1;&#xFE0E;</span>
+        <span class="btn-vault-copy">
+          <span class="btn-vault-label">Partner's Vault</span>
+          <span class="btn-vault-sub">Secure Partner access</span>
+        </span>
+      </a>
     </div>
-  </section>
 
-  <!-- WHY NOW -->
-  <section id="why-now" class="fade-in">
-    <div class="two-col">
-      <div>
-        <div class="section-eyebrow">Why now</div>
-        <h2 class="section-title">The imbalance is <em>structural.</em> So is our solution.</h2>
-        <p class="section-intro">Every sovereign wealth fund in history has been created and controlled by governments. Norway's Sovereign Wealth Fund. Australia's Future Fund. While they manage enormous national wealth, the people whose land and resources produce that wealth hold no direct share in the assets and have little say in the decisions.</p>
-        <div class="highlight-box mt-md">
-          <p>COG$ introduces a different model. <strong>Instead of government ownership and corporate control, the community becomes a governing shareholder.</strong> Members participate directly in governance via the Foundation and share in the stewardship and benefits generated by Australia's natural resources.</p>
-        </div>
+  </header>
+
+  <main>
+
+    <!-- ══ HERO ══════════════════════════════════════════ -->
+    <section class="hero">
+      <span class="eyebrow">Founding Partners · Governance Foundation Day · 14 May 2026</span>
+
+      <!-- Coin -->
+      <div class="coin-wrap" aria-hidden="true">
+        <div class="coin-glow"></div>
+        <picture>
+          <source srcset="assets/cogs_coin_web.webp" type="image/webp">
+          <img class="quote-logo" src="assets/cogs_coin_web.png" alt="COGs of Australia Foundation">
+        </picture>
       </div>
-      <div>
-        <div class="card-grid-3" style="margin-top:0.5rem;">
-          <div class="card">
-            <div class="card-num">100%</div>
-            <div class="card-label">of shares held directly on the ASX CHESS register in the Foundation's name</div>
+
+      <h1 class="hero-title"><em>You have been<br>invited to become a Partner</em><br>in Australia’s biggest joint venture.</h1>
+      <p class="hero-lead">COG$ is a community joint venture business partnership where Partners collectively own and operate the governance system, while the Trustee holds legal title, handles compliance-facing work, and processes fiat on behalf of the partnership. The Joint Venture Partnership Agreement is the controlling instrument. The goal is simple: real assets, transparent stewardship, and community control built to last.</p>
+
+      <div class="hero-actions">
+        <a class="btn-primary" href="join/index.html">Become a Partner</a>
+        <a class="btn-tertiary" href="tell-me-more/index.html">Tell me more</a>
+      </div>
+
+      <p class="hero-note">One partnership contribution. Permanent Partner status. One national governance vote through the Personal S-NFT pathway, with governance and distributions operating under the joint venture structure.</p>
+
+      <div class="pillars">
+        <span class="pillar">Partner Control</span>
+        <span class="pillar">CHESS-Held Shares</span>
+        <span class="pillar">Community Polls</span>
+        <span class="pillar">3-of-Board Security</span>
+        <span class="pillar">Stewardship</span>
+        <span class="pillar">Expansion Day</span>
+      </div>
+
+      <div class="countdown" data-countdown-target="2026-05-14T17:00:00+10:00" aria-live="polite">
+        <div class="cd-title">First Partners governance poll</div>
+        <div class="cd-subtitle">Governance Foundation Day</div>
+        <div class="cd-expired" id="cdExpired">Governance Foundation Day — 14 May 2026</div>
+        <div class="cd-inner" id="cdGrid">
+          <div class="cd-days-row">
+            <span class="cd-days-val" id="cdD" data-countdown-days>--</span>
+            <span class="cd-days-lbl">Days</span>
           </div>
-          <div class="card">
-            <div class="card-num">50%</div>
-            <div class="card-label">of dividends distributed directly to members</div>
-          </div>
-          <div class="card">
-            <div class="card-num">1 vote</div>
-            <div class="card-label">per member — regardless of financial contribution</div>
-          </div>
-          <div class="card">
-            <div class="card-num">NFP</div>
-            <div class="card-label">Not-for-profit Foundation Deed — cannot be privately owned, sold, or captured</div>
-          </div>
-          <div class="card">
-            <div class="card-num">$4</div>
-            <div class="card-label">one-time cost for a permanent membership — never expires</div>
-          </div>
-          <div class="card">
-            <div class="card-num">$4M</div>
-            <div class="card-label">maximum per person so the Foundation can never be captured by wealth</div>
+          <div class="cd-hms">
+            <div class="cd-cell"><span class="cd-hval" id="cdH" data-countdown-hours>--</span><span class="cd-hlbl">Hours</span></div>
+            <div class="cd-dot">·</div>
+            <div class="cd-cell"><span class="cd-hval" id="cdM" data-countdown-mins>--</span><span class="cd-hlbl">Minutes</span></div>
+            <div class="cd-dot">·</div>
+            <div class="cd-cell"><span class="cd-hval" id="cdS" data-countdown-secs>--</span><span class="cd-hlbl">Seconds</span></div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+    
+    <hr class="divider">
 
-  <!-- HOW IT WORKS -->
-  <section id="how-it-works" class="fade-in">
-    <div class="section-eyebrow">How COG$ works</div>
-    <h2 class="section-title">Simple, transparent, <em>permanent.</em></h2>
-    <p class="section-intro mb-md">Australia's first community resources wealth fund. Members collectively and individually benefit from — and influence — a growing basket of Australian resource companies.</p>
+    <!-- ══ HOW THE PARTNERSHIP WORKS ═══════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <span class="kicker">How the partnership works</span>
+        <h2 class="section-title">Four steps. One coherent joint-venture story.</h2>
+        <p class="section-body">Four clear steps from first contribution to active governance. The structure is designed to be legible from the start — you know what you're joining, how it holds assets, and how you exercise your day to day control as a Partner.</p>
 
-    <div class="two-col-60">
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <span class="step-num">1</span>
+            <h3 class="step-title">Become a Partner</h3>
+            <p class="step-body">A personal $4 partnership contribution reserves a Personal S-NFT Partner position, gives one national governance vote, and opens the path into the Independence Vault.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-num">2</span>
+            <h3 class="step-title">The partnership holds real assets</h3>
+            <p class="step-body">The Partners Asset Pool holds CHESS-registered ASX resource company shares and other approved assets under the joint venture’s legal trust structure.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-num">3</span>
+            <h3 class="step-title">Partners direct day to day operations</h3>
+            <p class="step-body">Partners use Community Polls, proposals, proxy direction, and governance pathways to direct operations. The Trustee executes limited Trustee Functions within that direction.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-num">4</span>
+            <h3 class="step-title">Distributions and Expansion Day</h3>
+            <p class="step-body">Distributions flow through the trust structure, with the Partners Asset Pool remaining permanent. Expansion Day is when the first Sovereign Node — the Partners Node — goes live, as certified by the Board and endorsed by the First Nations Advisory Council, and operations move onto the Partners’ own infrastructure and smart contract blockchain.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+          
+    <!-- ══ IN PLAIN LANGUAGE ════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card quote-band">
           <div>
-            <h3>Permanent membership for $4</h3>
-            <p>Pay $4 once on Foundation Day for your Personal COG$ NFT membership token. It never expires and gives you one equal governance vote in all Foundation decisions.</p>
-            <div class="step-price">$4 AUD — once, forever</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div>
-            <h3>Direct share ownership — no middlemen</h3>
-            <p>All shares are held directly on the ASX CHESS register in the Foundation's name. No ETF. No fund manager. No intermediary. You are represented directly.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div>
-            <h3>The dividend engine</h3>
-            <p>50% of all dividends received from the community basket of resource companies flow directly to members. The remaining 50% is automatically reinvested to acquire more shares — compounding the Foundation's stewardship forever.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <div>
-            <h3>Equal governance — your vote counts</h3>
-            <p>One Personal COG$ NFT equals one vote in all Australian governance decisions, regardless of how many investment tokens are held. Local landholders receive additional weighted votes for issues affecting their land specifically.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">5</div>
-          <div>
-            <h3>Perpetual inheritance</h3>
-            <p>Your membership interest and benefits can be passed to heirs, allowing the community wealth structure to persist and compound indefinitely across generations.</p>
+            <span class="kicker">In plain language</span>
+            <blockquote>You are becoming a Partner in a community joint venture you help direct every day.</blockquote>
+            <div style="margin:1.5rem auto;max-width:480px;border-radius:16px;overflow:hidden;border:1px solid rgba(240,209,138,.18)">
+              <picture>
+                <source srcset="assets/two_coin.webp" type="image/webp">
+                <img src="assets/two_coin.png" alt="COG$ community coins — community joint venture partnership" style="width:100%;display:block;filter:brightness(.95)">
+              </picture>
+            </div>
+            <p>Australia is a wealthy country, yet many Australians feel disconnected from the value beneath the ground and the decisions made over land, resources, and public benefit. COG$ offers a different path: Partners join for a low fixed contribution, the joint venture holds real assets, the Trustee safeguards the legal structure, and the Partners direct the operations together through Community Polls and the Independence Vault system.</p>
           </div>
         </div>
       </div>
+    </section>
 
-      <div>
-        <div class="dividend-flow">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">The dividend compounding cycle</p>
-          <div class="flow-row">
-            <div class="flow-box accent">Resource company dividends received</div>
+    <hr class="divider">
+
+    <!-- ══ WHAT IS COG$ ═════════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <span class="kicker">What is COG$?</span>
+        <h2 class="section-title">A Partner-operated structure.</h2>
+        <p class="section-body">COG$ brings together CHESS-held shares in ASX-listed resource companies, community governance, and future ledger infrastructure in one joint venture structure. The Partnership Agreement is the controlling instrument, the Declaration and Deeds provide the legal administration layer, and the Partners’ own governance system directs the day-to-day life of the project.  In one sentence - COG$ is a Community Joint Venture Partnership using proprietary Cryptographic Resource Management and Distribution Systems.</p>
+        <div class="what-layout">
+
+          <div class="two-coin-wrap">
+            <img class="two-coin-img" src="assets/cogs_green_field.png" alt="COG$ — Australian land, community and stewardship" style="width:100%;display:block;object-fit:cover">
+            <div class="two-coin-caption">
+              <span class="kicker">A different kind of strength</span>
+              <h3>Not passive participation. Shared control.</h3>
+              <p>When Partners move together with rules they understand and a structure they can actually direct, they build something steadier, fairer, and harder to capture.</p>
+            </div>
           </div>
-          <div class="flow-row" style="justify-content: center;">
-            <div class="flow-arrow">↓</div>
+
+          <div class="what-card">
+            <span class="what-icon">⚖️</span>
+            <div class="what-title">Partner-directed governance</div>
+            <p class="what-body">Partners direct governance through Community Polls, proposals, and the Independence Vault. The Trustee is the custodian, not the manager. The structure is designed so the community helps decide what happens inside it.</p>
           </div>
-          <div class="flow-row">
-            <div class="flow-box accent">Foundation distributes 50% to members</div>
-            <div class="flow-arrow">+</div>
-            <div class="flow-box accent">50% reinvested in more shares</div>
+
+          <div class="what-card">
+            <span class="what-icon">🏅</span>
+            <div class="what-title">Anchored to real assets</div>
+            <p class="what-body">COG$ uses the Partners Asset Pool to hold real CHESS-registered shares in ASX-listed resource companies and, in time, other approved real-world assets. Partners direct proxy voting, stewardship, and engagement through the governance system.</p>
           </div>
-          <div class="flow-row" style="justify-content: center;">
-            <div class="flow-arrow">↓</div>
+
+          <div class="what-card">
+            <span class="what-icon">🌏</span>
+            <div class="what-title">$4 partnership contribution</div>
+            <p class="what-body">The personal entry point is intentionally low so meaningful participation is not reserved for the wealthy or well-connected. One fixed contribution secures a Personal S-NFT Partner position and one national governance vote.</p>
           </div>
-          <div class="flow-row">
-            <div class="flow-box">Expanded share ownership &amp; governance</div>
+
+          <div class="what-card">
+            <span class="what-icon">🗳️</span>
+            <div class="what-title">Partner's Vault access</div>
+            <p class="what-body">Every Partner receives an Independence Vault — your dashboard for governance votes, token holdings, transfers, notices, and community proposals. It is the practical doorway into the partnership’s operating system.</p>
           </div>
-          <div class="flow-row" style="justify-content: center;">
-            <div class="flow-arrow">↓</div>
-          </div>
-          <div class="flow-row">
-            <div class="flow-box accent">Larger future dividends → repeat</div>
+
+        </div>
+
+        <!-- Vault preview -->
+        <div class="two-coin-wrap" style="margin-top:18px">
+          <picture>
+            <source srcset="assets/cogs-vault-web-960w.webp" type="image/webp">
+            <img class="two-coin-img" src="assets/cogs-vault-web-960w.png" alt="COG$ Independence Vault — Partner dashboard" style="width:100%;display:block;object-fit:cover">
+          </picture>
+          <div class="two-coin-caption">
+            <span class="kicker">Partner's Vault</span>
+            <h3>Your vault. Your voice. Your partnership access.</h3>
+            <p>Vote on proposals, manage token holdings, review notices, and track governance activity from one secure dashboard built for Partners.</p>
           </div>
         </div>
 
-        <div style="text-align:center; margin-bottom:1.5rem;">
-          <img src="cogs_coin_web.png"
-               alt="COG$ Community Foundation Token"
-               style="width: clamp(120px, 32vw, 280px); height: auto; display:inline-block; filter: drop-shadow(0 8px 28px rgba(200,144,26,0.55));">
-          <p style="font-size:11px; color:var(--gold-light); margin-top:0.6rem; letter-spacing:0.08em; text-transform:uppercase;">The COG$ Community Token</p>
-        </div>
-
-        <div class="card mt-md">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">Participation options</p>
-          <div style="display:flex; flex-direction:column; gap:0.75rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text);">Personal NFT membership</span>
-              <span class="tag-badge">$4 — 1 vote</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text);">Landholder COG$</span>
-              <span class="tag-badge">Up to 10,000/ha</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text);">Investment COG$</span>
-              <span class="tag-badge">More dividends</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0;">
-              <span style="font-size:13px; color:var(--text);">Donation / philanthropic COG$</span>
-              <span class="tag-badge">Community benefit</span>
-            </div>
+        <div class="structure-grid" aria-label="Joint venture structure">
+          <div class="structure-card">
+            <span class="structure-step">1</span>
+            <h3 class="structure-title">Partnership Agreement</h3>
+            <p class="structure-body">The controlling document. It defines who the Partners are, what the Trustee can and cannot do, and the entrenched rules of the joint venture.</p>
+          </div>
+          <div class="structure-card">
+            <span class="structure-step">2</span>
+            <h3 class="structure-title">Declaration and Deeds</h3>
+            <p class="structure-body">The legal administration layer. These instruments hold property, record the rules, and give the partnership legal effect in Australian trust law.</p>
+          </div>
+          <div class="structure-card">
+            <span class="structure-step">3</span>
+            <h3 class="structure-title">Partners’ Governance System</h3>
+            <p class="structure-body">The operating layer. Community Polls, the Independence Vault, and the future node infrastructure are how Partners exercise day-to-day control.</p>
           </div>
         </div>
+        <p class="structure-note">In practical terms: the Trustee holds the safe, but the Partners decide what happens inside it.</p>
+
+
+        <div class="doc-grid">
+          <div class="doc-card">
+            <div class="doc-order">1 · Supreme instrument</div>
+            <div class="doc-title">Joint Venture Partnership Agreement</div>
+            <div class="doc-copy">The controlling instrument of the joint venture. Start here for the Partner / Trustee model and the instrument hierarchy.</div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-order">2 · Legal administration</div>
+            <div class="doc-title">Hybrid Trust Declaration</div>
+            <div class="doc-copy">The trust administration instrument that gives legal effect to the Partners’ rules inside Australian trust law.</div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-order">3 · Sub-Trust A</div>
+            <div class="doc-title">Partners Asset Pool Deed</div>
+            <div class="doc-copy">The Partners Asset Pool — the jointly held portfolio of CHESS-registered shares and approved real-world assets held permanently for the Partners.</div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-order">4 · Sub-Trust B</div>
+            <div class="doc-title">Distribution Trust Deed</div>
+            <div class="doc-copy">The distribution layer that routes Partners’ dividend distributions proportionally through the trust structure.</div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-order">5 · Sub-Trust C</div>
+            <div class="doc-title">Charity Deed</div>
+            <div class="doc-copy">The charitable and community-projects layer, including First Nations and public-benefit pathways. Entrenched minimum allocation: <strong>not less than 30%</strong> of annual Sub-Trust C distributions go to First Nations programs.</div>
+        <!-- LEGAL DRAFTER NOTE: cl.33E.3 of the Declaration describes the 30% First Nations floor as a 'standing priority class of beneficiaries receiving not less than 30%' but cl.33E.3 does not appear in the entrenched provisions table (cl.35). Confirm with legal drafter whether this is entrenched before describing it as such in public-facing content. -->
+          </div>
+        </div>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:18px;line-height:1.7">All governing documents are provided to new Partners during the Partnership Agreement process. <a href="join/index.html" style="color:var(--gold-2);text-decoration:underline">Apply for Partnership to access them →</a></p>
+
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- NFP STRUCTURE -->
-  <section class="fade-in">
-    <div class="section-eyebrow">Foundation structure</div>
-    <h2 class="section-title">A not-for-profit Foundation — <em>locked for the community.</em></h2>
-    <p class="section-intro mb-md">The The Trustee of COG$ of Australia Foundation is a not-for-profit entity. Its rules are locked in the founding Foundation Deed. The Foundation cannot be privately owned, sold, or captured.</p>
+    <hr class="divider">
 
-    <div class="card-grid">
-      <div class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        <h3>Foundation Deed</h3>
-        <p>The Foundation's rules are permanently encoded in the Foundation Deed. No individual, corporation, or government can alter the community-first governance structure.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div>
-        <h3>No private ownership</h3>
-        <p>The underlying assets remain permanently community-owned. No shareholder, director, or institution can claim ownership of Foundation assets for private gain.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <h3>Democratic governance</h3>
-        <p>Governance is one member, one vote. More financial contribution does not buy more power. The community always governs the Foundation, not its largest funders.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-        <h3>CHESS-registered shares</h3>
-        <p>Every share is held directly on the ASX CHESS register in the Foundation's name — on behalf of community beneficiaries. No fund managers, no intermediaries, no hidden layers.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-        <h3>Seat of Country in perpetual stewardship</h3>
-        <p>The Foundation is permanently tied to the land — a Seat of Country is held in perpetual stewardship, anchoring the community mission in the Australian landscape itself.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-        <h3>Non-profit distribution model</h3>
-        <p>50% of dividends go directly to members. 50% are reinvested to compound community stewardship. No profit is extracted for corporate or personal gain outside of membership entitlements.</p>
-      </div>
-    </div>
-  </section>
+    <!-- ══ CHOOSE YOUR PATH ══════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <span class="kicker">Choose your path</span>
+        <h2 class="section-title">Choose your partnership path.</h2>
+        <p class="section-body">Start with the explanation that fits you best. Each path is written to help a prospective Partner understand the structure before taking the next step.</p>
 
-  <!-- GOVERNANCE -->
-  <section id="governance" class="fade-in">
-    <div class="two-col">
-      <div>
-        <div class="section-eyebrow">Governance model</div>
-        <h2 class="section-title">Community power.<br><em>Structurally protected.</em></h2>
-        <p class="section-intro">Major governance decisions remain democratic across the entire community. When resource extraction or exploration decisions affect specific land areas, local landholders receive additional weighted voting influence — ensuring the communities living on the land have the strongest voice.</p>
-        <div class="mt-md">
-          <div class="principle">
-            <div class="principle-dot"></div>
-            <p><strong>National decisions:</strong> One member, one vote. Every personal COG$ NFT holder has an equal say in Foundation-wide decisions regardless of financial contribution.</p>
-          </div>
-          <div class="principle">
-            <div class="principle-dot"></div>
-            <p><strong>Local land decisions:</strong> When a project impacts a specific region, local landholder members receive additional weighted votes based on their Landholder COG$ — your land affected means more say than anyone else.</p>
-          </div>
-          <div class="principle">
-            <div class="principle-dot"></div>
-            <p><strong>AGM voting rights:</strong> The Foundation exercises its shareholder rights at company Annual General Meetings — a legally enshrined platform to influence resource company decisions at board level.</p>
-          </div>
-          <div class="principle">
-            <div class="principle-dot"></div>
-            <p><strong>Wealth cannot capture governance:</strong> A $4M maximum per person on investment COG$ ensures no individual or institution can buy disproportionate influence over the Foundation's direction.</p>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="gov-diagram">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.5rem;">Governance structure</p>
-          <div class="gov-tier">
-            <div class="gov-tier-title">Community Members</div>
-            <div class="gov-tier-sub">One member, one vote — equal governance</div>
-          </div>
-          <div class="gov-arrow">↓</div>
-          <div class="gov-tier">
-            <div class="gov-tier-title">Foundation</div>
-            <div class="gov-tier-sub">NFP — Foundation Deed locked, democratically governed</div>
-          </div>
-          <div class="gov-arrow">↓</div>
-          <div class="gov-tier">
-            <div class="gov-tier-title">ASX Resource Companies</div>
-            <div class="gov-tier-sub">Shareholder rights exercised at AGMs</div>
-          </div>
-          <div class="gov-arrow">↓</div>
-          <div class="gov-split">
-            <div class="gov-tier">
-              <div class="gov-tier-title" style="color:var(--gold-light);">50%</div>
-              <div class="gov-tier-sub">Dividends to members</div>
-            </div>
-            <div class="gov-tier">
-              <div class="gov-tier-title" style="color:var(--gold-light);">50%</div>
-              <div class="gov-tier-sub">Reinvested — more shares</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        <div class="path-grid">
 
-  <!-- FIVE PRINCIPLES -->
-  <section class="fade-in">
-    <div class="section-eyebrow">Foundation principles</div>
-    <h2 class="section-title">Five simple <em>principles.</em></h2>
-    <div class="two-col">
-      <div>
-        <div class="principle">
-          <div class="principle-dot"></div>
-          <p><strong>$4 for an individual NFT membership token</strong> — everyone can join to have a real vote. Limited to one per person. Your vote will always count.</p>
-        </div>
-        <div class="principle">
-          <div class="principle-dot"></div>
-          <p><strong>$4 million maximum per person</strong> of financial COG$ tokens — so the Foundation can never be captured by concentrated wealth.</p>
-        </div>
-        <div class="principle">
-          <div class="principle-dot"></div>
-          <p><strong>All shares held directly on the ASX CHESS registry</strong> — not through brokers or trading institutions. Complete transparency and no hidden fees.</p>
-        </div>
-        <div class="principle">
-          <div class="principle-dot"></div>
-          <p><strong>Seat of Country held in perpetual stewardship</strong> — tying the Foundation to the Australian land and communities it serves, permanently.</p>
-        </div>
-        <div class="principle">
-          <div class="principle-dot"></div>
-          <p><strong>50/50 dividend split</strong> — distributed to members and reinvested to continually increase the Foundation's influence over resource companies.</p>
-        </div>
-      </div>
-      <div>
-        <div class="card" style="background: var(--bg-card2);">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1.25rem;">If COG$ owned 1% of the Australian resource sector</p>
-          <p style="font-size:14px; color:var(--text-muted); line-height:1.75; margin-bottom:1rem;">A 1% ownership stake provides a legal platform for ESG governance influence across the entirety of Australia's resource sector and generates billions of dollars in annual dividends.</p>
-          <p style="font-size:14px; color:var(--text-muted); line-height:1.75;">Because half of all dividends are automatically reinvested, community stewardship and governance would continue expanding each year — creating a compounding national asset owned and governed collectively by its members.</p>
-          <div class="divider-line"></div>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:1rem;">The goal is not short-term profit — it is the creation of a permanent community-governed stewardship and wealth engine tied directly to Australia's natural resources.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ACQUISITION -->
-  <section id="acquisition" class="fade-in">
-    <div class="section-eyebrow">First acquisition target</div>
-    <h2 class="section-title">Legacy Minerals — <em>Drake, NSW.</em></h2>
-    <p class="section-intro mb-md">The Foundation's first target is Legacy Minerals (ASX: LGM), which controls approximately 9,000 km² of mineral tenements across New South Wales — including gold, silver, copper, zinc, and nickel independently JORC-valued at $5.9 billion, with a current market cap under $40 million.</p>
-
-    <div class="two-col-60">
-      <div>
-        <div class="highlight-box">
-          <p>These tenements include many communities, tens of thousands of people, and a diverse range of unique ecosystems, habitats, and waterways — including areas around the <strong>Clarence River, Timbara River</strong>, and the township of <strong>Drake, NSW</strong>. Without local stewardship and legitimate community involvement, the impacts of traditional operations and extraction are historically evident in these areas.</p>
-        </div>
-        <p class="mt-md" style="font-size:15px; color:var(--text-muted); line-height:1.75;">Their flagship project, Mt Carrington at Drake (NSW), is currently free of farm-in agreements or joint ventures — making it a suitable foundation asset for the Foundation's community stewardship pilot.</p>
-        <p class="mt-md" style="font-size:15px; color:var(--text-muted); line-height:1.75;">The long-term goal is to gradually accumulate stewardship and governance across multiple ASX-listed resource companies, giving communities real economic participation and legally enshrined governance over the use of Australia's resources.</p>
-        <p class="mt-md" style="font-size:15px; color:var(--text-muted); line-height:1.75;">Importantly, underground assets may potentially remain in the ground while still being monetised — there are successful global precedents for this approach.</p>
-      </div>
-      <div>
-        <div class="card">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1.25rem;">LGM at a glance</p>
-          <div style="display:flex; flex-direction:column; gap:0.75rem;">
-            <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text-muted);">ASX ticker</span>
-              <span style="font-size:13px; color:var(--text); font-weight:500;">LGM</span>
+          <a class="path-card is-primary" href="tell-me-more/index.html">
+            <div class="path-icon">✦</div>
+            <div class="path-body">
+              <div class="path-tag">✦ Start here</div>
+              <div class="path-title">Tell me more</div>
+              <p class="path-desc">Understand the partnership, how COG$ works, what the $4 contribution does, and how the Trustee and Partners each fit into the structure.</p>
+              <span class="path-arrow">→</span>
             </div>
-            <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text-muted);">Tenements</span>
-              <span style="font-size:13px; color:var(--text); font-weight:500;">~9,000 km² (NSW)</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text-muted);">JORC valuation</span>
-              <span style="font-size:13px; color:var(--gold-light); font-weight:500;">$5.9 billion</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text-muted);">Current market cap</span>
-              <span style="font-size:13px; color:var(--text); font-weight:500;">&lt; $40 million</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border);">
-              <span style="font-size:13px; color:var(--text-muted);">Farm-in agreements</span>
-              <span style="font-size:13px; color:var(--text); font-weight:500;">None (flagship)</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding:0.5rem 0;">
-              <span style="font-size:13px; color:var(--text-muted);">Minerals</span>
-              <span style="font-size:13px; color:var(--text); font-weight:500;">Au, Ag, Cu, Zn, Ni</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card mt-md" id="lgm-tracker-card">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1.25rem;">Phase 1 target — 1% of LGM</p>
-
-          <!-- ARC CHART -->
-          <div style="position:relative; width:100%; max-width:220px; margin:0 auto 1.5rem;">
-            <canvas id="tracker-canvas" width="220" height="130" style="display:block; width:100%;"></canvas>
-            <div style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); text-align:center; padding-bottom:4px;">
-              <div id="tracker-pct-big" style="font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--gold-light); line-height:1;"></div>
-              <div style="font-size:10px; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase; margin-top:2px;">of target</div>
-            </div>
-          </div>
-
-          <!-- BAR CHART -->
-          <div style="margin-bottom:1.25rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:11px; color:var(--text-muted);">Shares owned</span>
-              <span id="tracker-owned" style="font-size:13px; font-weight:500; color:var(--gold-light);"></span>
-            </div>
-            <div style="background:var(--bg-card2); border-radius:100px; height:10px; overflow:hidden; margin-bottom:10px;">
-              <div id="tracker-bar" style="height:100%; border-radius:100px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); transition:width 1.4s ease; width:0%;"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:11px; color:var(--text-muted);">1% target (ESG threshold)</span>
-              <span id="tracker-target" style="font-size:13px; font-weight:500; color:var(--text-muted);"></span>
-            </div>
-            <div style="background:var(--bg-card2); border-radius:100px; height:10px; overflow:hidden;">
-              <div style="height:100%; border-radius:100px; background:rgba(200,144,26,0.2); width:100%;"></div>
-            </div>
-          </div>
-
-          <!-- STATS -->
-          <div style="border-top:1px solid var(--border); padding-top:1rem; display:flex; flex-direction:column; gap:0.6rem;">
-            <div style="display:flex; justify-content:space-between;">
-              <span style="font-size:12px; color:var(--text-muted);">Confirmed shares held</span>
-              <span style="font-size:12px; color:var(--text); font-weight:500;" id="tracker-confirmed"></span>
-            </div>
-            <div style="display:flex; justify-content:space-between;">
-              <span style="font-size:12px; color:var(--gold); font-weight:500;">+ Your reservation</span>
-              <span id="tracker-form-shares" style="font-size:12px; color:var(--gold); font-weight:500;">0 shares</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding-top:0.4rem; border-top:1px solid var(--border);">
-              <span style="font-size:12px; color:var(--text-muted);">LGM total shares on issue</span>
-              <span style="font-size:12px; color:var(--text); font-weight:500;">200,120,000</span>
-            </div>
-            <div style="display:flex; justify-content:space-between;">
-              <span style="font-size:12px; color:var(--text-muted);">Shares still needed</span>
-              <span id="tracker-remaining" style="font-size:12px; color:var(--gold); font-weight:500;"></span>
-            </div>
-            <div style="display:flex; justify-content:space-between;">
-              <span style="font-size:12px; color:var(--text-muted);">% of LGM currently held</span>
-              <span id="tracker-pct" style="font-size:12px; color:var(--text); font-weight:500;"></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card mt-md">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">In-ground monetisation — global precedents</p>
-          <a href="https://natgold.com" target="_blank" class="case-study" style="margin-bottom:0.75rem;">
-            <div class="case-tag">NatGold Digital</div>
-            <p>Monetising certified gold reserves through digital assets — without physical extraction. A pioneering model for value without destruction.</p>
           </a>
-          <a href="https://tokeny.com/ama-ambiogeo-tokenizes-gold-reserves-with-tokeny/" target="_blank" class="case-study" style="margin-bottom:0.75rem;">
-            <div class="case-tag">AMBEOGEO — Brazil</div>
-            <p>Tokenised gold reserves in the Amazon, enabling community benefit from in-situ resources while protecting ecologically significant land.</p>
+
+          <a class="path-card" href="businesses/index.html">
+            <div class="path-icon">🏢</div>
+            <div class="path-body">
+              <div class="path-tag">Business &amp; Commercial</div>
+              <div class="path-title">Join as a business Partner</div>
+              <p class="path-desc">Verified Australian business partnership, commercial participation, and the operating pathway for businesses inside the real economy of COG$.</p>
+              <span class="path-arrow">→</span>
+            </div>
           </a>
-          <a href="https://auresources.io/" target="_blank" class="case-study">
-            <div class="case-tag">AureSources</div>
-            <p>Community-backed resource monetisation exploring the frontier of ethical in-ground value realisation.</p>
+
+          <a class="path-card" href="landholders/index.html">
+            <div class="path-icon">🌾</div>
+            <div class="path-body">
+              <div class="path-tag">Landholders &amp; Community</div>
+              <div class="path-title">Landholder or affected community</div>
+              <p class="path-desc">If your land or community is affected by exploration, mining, or community impact zones and you want an enforceable governance pathway, start here.</p>
+              <span class="path-arrow">→</span>
+            </div>
           </a>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- PHASES -->
-  <section class="fade-in">
-    <div class="section-eyebrow">Roadmap</div>
-    <h2 class="section-title mb-md">The first five years.</h2>
-    <div class="phases" style="border: 1px solid var(--border); border-radius: var(--radius-lg); overflow:hidden;">
-      <div class="phase">
-        <div class="phase-tag">Day 0</div>
-        <h3>Foundation Day — 14 May</h3>
-        <p>Public community participation opens. Members exercise or decline their reservations.</p>
-      </div>
-      <div class="phase">
-        <div class="phase-tag">Phase 1 — months 1–3</div>
-        <h3>1% toehold in Legacy Minerals</h3>
-        <p>Acquire first strategic governance stake in LGM — triggering ESG board-level engagement rights.</p>
-      </div>
-      <div class="phase">
-        <div class="phase-tag">Phase 2 — months 3–6</div>
-        <h3>20% stake &amp; takeover bid</h3>
-        <p>Acquire 20% governance stake in Legacy Minerals and formally launch community takeover bid to the board.</p>
-      </div>
-      <div class="phase">
-        <div class="phase-tag">Phase 3 — months 6–12</div>
-        <h3>Expand across the sector</h3>
-        <p>Identify next target and acquire 1% toehold governance positions across additional ASX-listed resource companies.</p>
-      </div>
-      <div class="phase" style="border-bottom:none;">
-        <div class="phase-tag">Phase 4 — years 2–3</div>
-        <h3>Compound growth</h3>
-        <p>Expand ownership and governance across multiple ASX resource companies. Dividend engine begins compounding in earnest.</p>
-      </div>
-      <div class="phase" style="border-bottom:none; border-right:none;">
-        <div class="phase-tag">Phase 5 — years 4+</div>
-        <h3>Sector influence</h3>
-        <p>Compound profit reinvestment drives increasing sector influence. Community wealth engine grows across generations.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- REGULATORY -->
-  <section id="regulatory" class="fade-in">
-    <div class="section-eyebrow">Regulatory &amp; legal structure</div>
-    <h2 class="section-title">Built to last — <em>built to comply.</em></h2>
-    <p class="section-intro mb-md">COG$ has engaged Australia's primary regulatory bodies before issuing any tokens or accepting any financial commitments. No COG$ tokens will be minted or issued until all regulatory requirements are satisfied.</p>
-
-    <div class="card-grid">
-      <div class="card">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
-          <div class="reg-dot"></div>
-          <span style="font-size:12px; font-weight:500; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">Active engagement</span>
-        </div>
-        <h3>ASIC Innovation Hub</h3>
-        <p>COG$ is engaged with ASIC's Innovation Hub — a pathway designed for novel financial structures that don't fit existing regulatory templates. This engagement helps establish whether and how COG$ tokens are classified under Australian financial services law.</p>
-      </div>
-      <div class="card">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
-          <div class="reg-dot"></div>
-          <span style="font-size:12px; font-weight:500; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">Active engagement</span>
-        </div>
-        <h3>ATO Class Rulings</h3>
-        <p>The Australian Taxation Office Class Rulings process is underway to determine the tax treatment of COG$ membership, dividend receipts, and token transactions. All rulings will be published to members before Foundation Day.</p>
-      </div>
-      <div class="card">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
-          <div style="width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0;"></div>
-          <span style="font-size:12px; font-weight:500; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">In progress</span>
-        </div>
-        <h3>Foundation Deed drafting</h3>
-        <p>The The Trustee of COG$ of Australia Foundation Deed is being drafted by legal advisors to ensure the not-for-profit community governance structure is legally enforceable, robust, and permanent before any member commits funds.</p>
-      </div>
-      <div class="card">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
-          <div style="width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0;"></div>
-          <span style="font-size:12px; font-weight:500; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">In progress</span>
-        </div>
-        <h3>Privacy &amp; data protection</h3>
-        <p>COG$ collects personal information during the reservation process. A full Privacy Policy compliant with the Australian Privacy Act 1988 will be published before Foundation Day. All collected data is held securely and used only for Foundation purposes.</p>
-      </div>
-    </div>
-
-    <div class="highlight-box mt-md">
-      <p><strong>Important:</strong> Submitting a reservation today records your intention only — no payment is required and no obligation is created. No COG$ tokens will be issued and no money will be collected until ASIC and ATO regulatory engagement is complete and all required approvals are in place. You may withdraw your reservation at any time.</p>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="fade-in">
-    <div class="section-eyebrow">Frequently asked questions</div>
-    <h2 class="section-title mb-md">Common <em>questions.</em></h2>
-
-    <div class="two-col">
-      <div>
-        <div class="faq-item">
-          <div class="faq-q">Is my $4 at risk?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">No payment is made during the reservation period. On Foundation Day (14 May), you choose whether to proceed. Your $4 membership fee goes into the Foundation's community foundation structure — it is not a speculative investment but a one-time governance membership. The $4 is not a financial product or share purchase.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">What happens if Foundation Day is delayed?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">If regulatory requirements or other circumstances require Foundation Day to be rescheduled, all reservation holders will be notified directly by email. Your reservation simply carries forward — there is no obligation and no penalty.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">What are the tax implications for members?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">The ATO Class Rulings process currently underway will determine the exact tax treatment of COG$ membership fees, dividend receipts, and token transactions. All rulings will be published in full to reservation holders before Foundation Day so you can make an informed decision.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Is COG$ a financial product or investment?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">The classification of COG$ tokens is precisely what the ASIC Innovation Hub engagement is determining. No tokens are issued today. The reservation process creates no financial product, involves no payment, and establishes no legal financial relationship. We will only proceed when regulatory classification is clear and compliant.</div>
-        </div>
-      </div>
-      <div>
-        <div class="faq-item">
-          <div class="faq-q">Who owns the resources under my land?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">Under Australian law, you do not own the minerals beneath your property — even if you hold freehold title to the surface. From the 1850s onwards, legislation in every state and territory vested ownership of all minerals in the Crown — meaning the State government — regardless of who owns the land above. This applies to gold, silver, copper, coal, hydrocarbons, and virtually every naturally occurring substance in the earth's crust.<br><br>As the legal owner of those minerals, the State can grant exploration and mining tenements to companies, giving them the right to access your land and extract what lies beneath it. If a tenement holder seeks to carry out mining activities on private land, there is an obligation to consult the landowner and negotiate compensation — but if no agreement can be reached, a court can determine the terms. In practice, the law does not favour landholders opposed to mining.<br><br>In short: a mining company can be legally granted the right to operate beneath your property, and your ability to stop or meaningfully influence that is extremely limited under current law.<br><br><strong>This is precisely the imbalance COG$ is designed to address.</strong> By accumulating direct shareholdings in ASX-listed resource companies on behalf of the community, the COG$ Foundation creates something that has never existed before in Australia — a community body with legally recognised, shareholder-enforced ESG governance input over how those resources are explored, managed, and extracted. As a Foundation member, your voice is exercised through shareholder voting rights at company AGMs, board-level ESG engagement, and weighted local governance votes for landholders in directly affected regions. COG$ provides unprecedented, legally recognised ESG input into decisions that have, until now, been made entirely without you.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Who governs the Foundation?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">The Foundation is governed by its members through democratic voting. The Foundation Deed locks this structure permanently — no single person, company, or institution can alter the governance model. A founding committee oversees establishment, but ongoing governance transfers fully to the member community once the Foundation is operational.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">What if I own land near a tenement area?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">Landholders can reserve Landholder COG$ tokens linked to their land at up to 10,000 tokens per hectare. This gives you weighted voting rights on resource decisions directly affecting your region — more than the standard one-member-one-vote for national decisions. Your land being affected means your voice carries additional weight in those specific decisions.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">How does the Foundation handle my personal data?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">Personal information collected during reservations is held securely and used solely for the purpose of the COG$ Foundation reservation and membership process. A full Privacy Policy compliant with the Australian Privacy Act 1988 will be published before Foundation Day. You may request deletion of your reservation data at any time by contacting the project team.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Where can I read the whitepaper?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">The COG$ White and Black Paper is in final preparation and will be published ahead of Foundation Day. You can request an advance copy by noting your interest in the reservation form below. It will cover the full legal structure, Foundation Deed framework, regulatory status, financial model, and governance design.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Can COG$ tokens be sold?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a"><strong>Personal NFT COG$</strong> can never be sold — only transferred to your heirs. If you have no heirs, the NFT COG$ are burnt (destroyed).<br><br><strong>Landholder COG$</strong> cannot be sold. They are tied directly to the land itself and are only transferable by transferring your Property Title.<br><br><strong>Investor COG$</strong> — for the first two (2) years after Foundation Day, all Investor COG$ tokens are locked and cannot be sold. After the lock period, they will be fully exchangeable through a digital wallet between members only. They may be gifted, sold, or exchanged for goods or services with any other COG$ member. Dividends will flow to the new owner accordingly.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">What happens to Landholder COG$ if I sell my property?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="faq-a">Landholder COG$ cannot be sold independently. They are tied directly to the land itself and are only transferable along with your Property Title. We are exploring ways that this transfer will be done automatically when a property changes hands.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- COG$ TOKEN COIN — standalone between FAQ and token feature -->
-  <section class="fade-in">
-    <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:2rem;">
-      <div>
-        <div style="font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-light); margin-bottom:0.5rem;">The COG$ Community Token</div>
-        <p style="font-size:14px; color:var(--text-muted); line-height:1.75; max-width:380px;">A community governed instrument. Real dividends. Real governance. Real Australia.</p>
-        <div style="display:flex; gap:1.25rem; margin-top:0.85rem; flex-wrap:wrap;">
-          <span style="font-size:13px; color:var(--text-muted);"><span style="color:var(--gold-light);">¢</span> Community Owned</span>
-          <span style="font-size:13px; color:var(--text-muted);"><span style="color:var(--gold-light);">©</span> For the People</span>
-        </div>
-      </div>
-      <div style="text-align:center; flex-shrink:0;">
-        <img src="cogs_coin_web.png"
-             alt="COG$ Community Foundation Token Coin"
-             style="width: clamp(140px, 28vw, 360px); height: auto; display:block;
-                    filter: drop-shadow(0 10px 38px rgba(200,144,26,0.6));">
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-light); margin-bottom:0.5rem; text-align:right;">Foundation Day</div>
-        <p style="font-size:14px; color:var(--text-muted); line-height:1.75; max-width:380px; margin-left:auto;">14 May — reserve your place today. No payment, no obligation, no risk.</p>
-        <a href="#reserve" style="display:inline-block; margin-top:0.75rem; color:var(--gold-light); font-size:13px; font-weight:500; text-decoration:none; border:1px solid var(--border-strong); padding:8px 18px; border-radius:8px;">Reserve now →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- COG$ TOKEN FEATURE -->
-  <section class="fade-in">
-    <div style="
-      background: linear-gradient(135deg, var(--bg-card) 0%, #1a1508 100%);
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius-lg);
-      padding: clamp(1.5rem, 4vw, 3rem);
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: clamp(1.25rem, 3vw, 3rem);
-      align-items: center;
-    " class="coin-feature-grid">
-      <div style="text-align:center; flex-shrink:0;">
-        <img src="cogs_coin_web.png"
-             alt="COG$ Community Foundation Token Coin"
-             style="width: clamp(110px, 22vw, 280px); height: auto; display:block; filter: drop-shadow(0 10px 38px rgba(200,144,26,0.6));">
-      </div>
-      <div>
-        <div style="font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-light); margin-bottom:0.75rem;">The COG$ Community Token</div>
-        <h2 style="font-family:'DM Serif Display',serif; font-size:clamp(1.6rem,3vw,2.4rem); color:var(--text); margin-bottom:0.85rem; letter-spacing:-0.02em; line-height:1.15;">A real say. <em style="color:var(--gold-light); font-style:italic;">A real stake.</em></h2>
-        <p style="font-size:15px; color:var(--text-muted); line-height:1.75; margin-bottom:1rem; max-width:520px;">The COG$ Community Token represents your membership in Australia's first community resources wealth foundation — a community governed instrument that gives you a real share of Australia's resource sector dividends and a real vote in how they are governed.</p>
-        <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
-          <div style="font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:8px;">
-            <span style="color:var(--gold-light); font-size:16px;">¢</span> Community Owned
-          </div>
-          <div style="font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:8px;">
-            <span style="color:var(--gold-light); font-size:16px;">©</span> For the People
-          </div>
-          <div style="font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:8px;">
-            <span style="color:var(--gold-light); font-size:16px;">✦</span> Foundation Day — 14 May
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- GOLDEN COGS THANK YOU BANNER -->
-  <section class="fade-in">
-    <div style="background: linear-gradient(135deg, var(--bg-card) 0%, #1e1a0f 100%); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); padding: 2.5rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
-      <img src="goldencog.png" alt="Golden COG$" style="width: 80px; height: 80px; flex-shrink: 0; filter: drop-shadow(0 4px 12px rgba(200,144,26,0.4));">
-      <div style="flex: 1; min-width: 240px;">
-        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.5rem;">With deep gratitude</div>
-        <h2 style="font-family: 'DM Serif Display', serif; font-size: clamp(1.4rem, 3vw, 2rem); color: var(--text); margin-bottom: 0.6rem; letter-spacing: -0.02em; line-height: 1.2;">Thank you to our <em style="color: var(--gold-light); font-style: italic;">Golden COGs</em> in the Community</h2>
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.7; max-width: 560px; margin-bottom: 1rem;">COG$ would not exist without the vision, generosity, and belief of those who gave their time, resources, and trust before the Foundation had even launched. We honour them on our Golden COG$ recognition page — a place of genuine, lasting gratitude.</p>
-        <a href="goldencogs.html" style="display: inline-flex; align-items: center; gap: 7px; color: var(--gold-light); text-decoration: none; font-size: 14px; font-weight: 500; border: 1px solid var(--border-strong); padding: 9px 20px; border-radius: 8px; transition: background 0.2s, color 0.2s;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
-          Meet our Golden COGs
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- RESERVE FORM -->
-  <section id="reserve" class="fade-in">
-    <div class="section-eyebrow">Reserve your place</div>
-    <h2 class="section-title">Join the community —<br><em>no obligation today.</em></h2>
-    <p class="section-intro mb-md">Submitting this form records your reservation only. No payment is required. On Foundation Day — 14 May — you may choose to exercise some, all, or none of your reserved tokens. If you decide not to proceed, your reservation simply expires.</p>
-
-    <div class="two-col-60">
-      <div class="form-card">
-        <div class="form-notice">
-          <strong>Reservation only — no payment today.</strong> This form records your intention to participate when COG$ publicly launches. No financial product is offered and no obligation is created. You may withdraw at any time.
-        </div>
-
-        <form action="https://formsubmit.co/COGsAustralia@gmail.com" method="POST" id="reserveForm">
-          <!-- FormSubmit configuration -->
-          <input type="hidden" name="_subject" value="COG$ Foundation — New Reservation">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_next" value="https://cogsaustralia.org/thankyou.html">
-          <!-- _replyto + hidden email field: both populated by JS so FormSubmit knows where to send auto-response -->
-          <input type="hidden" name="_replyto" id="replyto-field" value="">
-          <input type="hidden" name="email" id="hidden-email-copy" value="">
-          <!-- Auto-response: updated by JS to include member number + wallet setup link -->
-          <input type="hidden" name="_autoresponse" id="autoresponse-field" value="Thank you for reserving your COG$ membership with COG$ Community Resources Wealth Foundation (ABN: 61 734 327 831). Your unique 16-digit member number and wallet setup link will be displayed on screen. Foundation Day is 14 May — no payment required until then. Visit cogsaustralia.org/wallet.html to access your Independence Vault. Questions? Email COGsAustralia@gmail.com">
-          <!-- Honeypot spam trap -->
-          <input type="text" name="_honey" style="display:none">
-          <!-- Total reservation value — populated by JS before submit -->
-          <input type="hidden" name="Total Reservation Value" id="hidden-total-value" value="$4.00">
-          <input type="hidden" name="COG$ Member Number" id="hidden-member-number" value="">
-          <input type="hidden" name="NFT Tokens Reserved" id="hidden-nft-count" value="1">
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="fname">Full name *</label>
-            <input type="text" id="fname" name="Full Name" placeholder="Your full legal name" required>
-          </div>
-          <div class="form-group">
-            <label for="dob">Date of birth *</label>
-            <input type="date" id="dob" name="Date of Birth" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email address *</label>
-            <input type="email" id="email" name="Email Address" placeholder="your@email.com" required>
-          </div>
-          <div class="form-group">
-            <label for="mobile">Mobile *</label>
-            <input type="tel" id="mobile" name="Mobile" placeholder="+61 4xx xxx xxx" required>
-          </div>
-          <div class="form-group full">
-            <label for="address">Street address *</label>
-            <input type="text" id="address" name="Street Address" placeholder="e.g. 42 River Road" required>
-            <div class="address-grid" style="display:grid;grid-template-columns:1fr 120px 90px;gap:10px;margin-top:10px">
-              <div>
-                <label for="suburb" style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px">Suburb *</label>
-                <input type="text" id="suburb" name="Suburb" placeholder="Suburb" required>
-              </div>
-              <div>
-                <label for="state" style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px">State *</label>
-                <select id="state" name="State" required style="width:100%;padding:11px 10px;border-radius:var(--radius);border:1px solid var(--border-strong);background:var(--bg-card);color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none">
-                  <option value="">—</option>
-                  <option value="NSW">NSW</option>
-                  <option value="VIC">VIC</option>
-                  <option value="QLD">QLD</option>
-                  <option value="WA">WA</option>
-                  <option value="SA">SA</option>
-                  <option value="TAS">TAS</option>
-                  <option value="ACT">ACT</option>
-                  <option value="NT">NT</option>
-                </select>
-              </div>
-              <div>
-                <label for="postcode" style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:4px">Postcode *</label>
-                <input type="text" id="postcode" name="Postcode" placeholder="0000" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required>
-              </div>
+          <a class="path-card" href="gold-cogs/index.html">
+            <div class="path-icon">💛</div>
+            <div class="path-body">
+              <div class="path-tag">Support &amp; Build</div>
+              <div class="path-title">I want to help build it</div>
+              <p class="path-desc">Contribute time, skills, networks, or resources and help build a structure designed for long-term community stewardship and Partner-directed governance.</p>
+              <span class="path-arrow">→</span>
             </div>
-          </div>
+          </a>
 
-          <div class="form-group full">
-            <label>Reservation options</label>
-            <div class="checkbox-group mt-sm">
-              <label class="checkbox-item">
-                <input type="checkbox" name="Personal NFT Membership ($4)" value="Yes" checked>
-                <span><strong>Personal NFT COG$ membership</strong> — $4 AUD, one governance vote, never expires</span>
-              </label>
-              <label class="checkbox-item">
-                <input type="checkbox" name="Kids COG$ NFT" value="Yes">
-                <span><strong>Kids COG$ NFT</strong> — $4 AUD each. How many children / grandchildren?
-                  <input type="number" name="Kids COG$ NFT Count" min="0" max="20" placeholder="0" style="width:60px; margin-left:8px; display:inline-block;">
-                </span>
-              </label>
+          <a class="path-card" href="kids/index.html">
+            <div class="path-icon">👨‍👧</div>
+            <div class="path-body">
+              <div class="path-tag">Under 18 · $1</div>
+              <div class="path-title">Family pathway</div>
+              <p class="path-desc">Young Australians are welcome. A parent or guardian proceeds with you so families can enter the partnership together at the kids rate.</p>
+              <span class="path-arrow">→</span>
             </div>
-          </div>
+          </a>
 
-          <div class="form-group">
-            <label for="invest">Investment COG$ tokens @ $4 each</label>
-            <div class="token-field">
-              <input type="number" id="invest" name="Investment COG$ Tokens" placeholder="Number of tokens" min="0" oninput="calcTokens('invest','invest-val','invest-hidden')">
-              <div class="token-value" id="invest-val">= $0.00</div>
+          <a class="path-card is-primary" href="/skeptic/">
+            <div class="path-icon">🔍</div>
+            <div class="path-body">
+              <div class="path-tag">For the sceptics</div>
+              <div class="path-title">I have harder questions</div>
+              <p class="path-desc">The harder questions answered plainly — regulatory position, governance protections, supply controls, Expansion Day, and how the joint-venture structure works.</p>
+              <span class="path-arrow">→</span>
             </div>
-            <input type="hidden" id="invest-hidden" name="Investment COG$ Value ($)" value="0">
-            <p class="token-hint">Each token = $4 AUD · increases your dividend share · does not add governance votes</p>
-          </div>
-          <div class="form-group">
-            <label for="donate">Donation / philanthropic COG$ tokens @ $4 each</label>
-            <div class="token-field">
-              <input type="number" id="donate" name="Donation COG$ Tokens" placeholder="Number of tokens" min="0" oninput="calcTokens('donate','donate-val','donate-hidden')">
-              <div class="token-value" id="donate-val">= $0.00</div>
-            </div>
-            <input type="hidden" id="donate-hidden" name="Donation COG$ Value ($)" value="0">
-            <p class="token-hint">Each token = $4 AUD · supports community initiatives · 50% reinvested, 25% admin, 25% community projects</p>
-          </div>
-
-          <div class="form-group">
-            <label for="hectares">Landholder COG$ — approximate hectares you own</label>
-            <input type="number" id="hectares" name="Landholder Hectares" placeholder="0" min="0">
-          </div>
-          <div class="form-group">
-            <label for="landval">Landholder COG$ tokens @ $4 each</label>
-            <div class="token-field">
-              <input type="number" id="landval" name="Landholder COG$ Tokens" placeholder="Number of tokens" min="0" oninput="calcTokens('landval','landval-val','landval-hidden')">
-              <div class="token-value" id="landval-val">= $0.00</div>
-            </div>
-            <input type="hidden" id="landval-hidden" name="Landholder COG$ Value ($)" value="0">
-            <p class="token-hint">Each token = $4 AUD · max 10,000 tokens per hectare · increases dividends &amp; weighted local governance votes</p>
-          </div>
-
-          <div class="form-group full">
-            <label for="info">Additional information requested (optional)</label>
-            <textarea id="info" name="Additional Information Requested" rows="3" placeholder="e.g. Please send me a copy of the White and Black Paper, more information about landholder governance..."></textarea>
-          </div>
-
-          <div class="form-group full">
-            <label for="referral">Referral code (optional)</label>
-            <div style="display:flex; align-items:center; gap:0.75rem; max-width:180px;">
-              <input type="text" id="referral" name="Referral Code" placeholder="e.g. A1B" maxlength="3"
-                style="text-align:center; font-size:1.3rem; font-weight:500; letter-spacing:0.25em; padding:10px 14px; text-transform:uppercase;"
-                oninput="this.value=this.value.toUpperCase().slice(0,3)">
-            </div>
-            <p class="token-hint">If someone referred you to COG$, enter their 3-digit code here.</p>
-          </div>
-
-          <div class="form-group full">
-            <label class="checkbox-item" style="cursor:pointer;">
-              <input type="checkbox" id="confirm" name="No-Obligation Reservation Confirmed" value="Yes" required>
-              <span>I understand this is a <strong>no-obligation reservation</strong>. No payment is required today. I may choose whether to proceed on or after Foundation Day — 14 May.</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- RESERVATION SUMMARY -->
-        <div id="form-summary" style="background:var(--bg-card2); border:1px solid var(--border-strong); border-radius:var(--radius); padding:1.25rem 1.5rem; margin-top:1.5rem;">
-          <p style="font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">Reservation summary</p>
-          <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem;">
-            <div id="sum-personal" style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span>Personal NFT membership</span><span style="color:var(--text);">$4.00</span>
-            </div>
-            <div id="sum-kids" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span id="sum-kids-label">Kids NFT (0)</span><span id="sum-kids-val" style="color:var(--text);">$0.00</span>
-            </div>
-            <div id="sum-invest" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span id="sum-invest-label">Investment COG$ tokens (0)</span><span id="sum-invest-val" style="color:var(--text);white-space:nowrap">$0.00</span>
-            </div>
-            <div id="sum-donate" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span id="sum-donate-label">Donation COG$ tokens (0)</span><span id="sum-donate-val" style="color:var(--text);white-space:nowrap">$0.00</span>
-            </div>
-            <div id="sum-land" style="display:none; justify-content:space-between; font-size:13px; color:var(--text-muted);">
-              <span id="sum-land-label">Landholder COG$ tokens (0)</span><span id="sum-land-val" style="color:var(--text);white-space:nowrap">$0.00</span>
-            </div>
-          </div>
-          <div style="border-top:1px solid var(--border-strong); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:baseline;">
-            <span style="font-size:13px; font-weight:500; color:var(--text);">Total reservation value</span>
-            <span id="sum-total" style="font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--gold-light);">$4.00</span>
-          </div>
-          <p style="font-size:11px; color:var(--text-faint); margin-top:0.6rem;">No payment is made today. This is a no-obligation reservation only.</p>
-        </div>
-
-        <button type="submit" class="btn-primary form-submit">Reserve my place in COG$</button>
-        <p class="form-legal">
-          By submitting this form you agree to our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms of Use</a>.<br>
-          Personal information is collected under the Australian Privacy Act 1988 and used solely for COG$ Foundation purposes.
-        </p>
-        </form>
-      </div>
-
-      <div>
-        <div class="card mb-md">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">Reservation progress</p>
-          <div class="card-num" id="liveReservationCount">124</div>
-          <div class="card-label mb-md">reservations recorded ahead of Foundation Day</div>
-          <div class="progress-track">
-            <div class="progress-fill" id="reservationProgressBar" style="width: 12.4%;"></div>
-          </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:6px;">Target: 1,000 reservations before Foundation Day — 14 May</p>
+          </a>
 
         </div>
 
-        <div class="card mb-md">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">What you receive</p>
-          <div style="display:flex; flex-direction:column; gap:0.75rem;">
-            <div style="display:flex; gap:10px; align-items:flex-start;">
-              <div style="width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:7px; flex-shrink:0;"></div>
-              <span style="font-size:13px; color:var(--text-muted);">One equal governance vote in all Foundation decisions</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start;">
-              <div style="width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:7px; flex-shrink:0;"></div>
-              <span style="font-size:13px; color:var(--text-muted);">Proportional share of 50% of all dividends from the community basket</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start;">
-              <div style="width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:7px; flex-shrink:0;"></div>
-              <span style="font-size:13px; color:var(--text-muted);">Permanent NFT membership — never expires</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start;">
-              <div style="width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:7px; flex-shrink:0;"></div>
-              <span style="font-size:13px; color:var(--text-muted);">Inheritable membership interest — passes to your heirs</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start;">
-              <div style="width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:7px; flex-shrink:0;"></div>
-              <span style="font-size:13px; color:var(--text-muted);">Advance copy of the White &amp; Black Paper on request</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <p style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.75rem;">Contact</p>
-          <p style="font-size:13px; color:var(--text-muted); line-height:1.65;">Questions about COG$ or your reservation? Contact the project team directly.</p>
-          <p style="font-size:13px; color:var(--gold-light); margin-top:0.5rem;"><a href="mailto:COGsAustralia@gmail.com" style="color:var(--gold-light); text-decoration:none;">COGsAustralia@gmail.com</a></p>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:1rem;">ABN: 61 734 327 831<br></p>
-          <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
-            <p style="font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.5rem;">Postal address</p>
-            <p style="font-size:13px; color:var(--text-muted); line-height:1.8;">
-              COG$ Australia<br>
-              Attn: Thomas Cunliffe<br>
-              C/- Drake Village Resource Centre<br>
-              Drake Village, NSW 2469<br>
-              Australia
-            </p>
-          </div>
+        <div class="browse-link">
+          <a href="vision/index.html">Browse the public vision page</a>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-</div>
+  </main>
 
-<!-- FOOTER -->
-<footer>
-  <div class="page">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-brand">COG$<sup style="font-size:0.5em; vertical-align:super; letter-spacing:0;">™</sup></div>
-        <p class="footer-desc">Community Owned Gold &amp; Silver™ · Community Operated Governance Structure™. Australia's first community resources wealth foundation — not-for-profit, community governed, permanently structured for the benefit of its members.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigate</h4>
-        <ul>
-          <li><a href="#how-it-works">How it works</a></li>
-          <li><a href="#governance">Governance</a></li>
-          <li><a href="#acquisition">First acquisition</a></li>
-          <li><a href="#regulatory">Regulatory status</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#reserve">Reserve your place</a></li>
-          <li><a href="goldencogs.html">Golden COG$ in the Community</a></li>
-          <li><a href="vault.html">Community Vault</a></li>
-          <li><a href="wallet.html">Independence Vault</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="privacy.html" id="privacy">Privacy Policy</a></li>
-          <li><a href="terms.html" id="terms">Terms of Use</a></li>
-          <li><a href="#regulatory">Regulatory Status</a></li>
-          <li><a href="mailto:COGsAustralia@gmail.com">Contact</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <div>
-        <span>The Trustee of COG$ of Australia Foundation</span>
-        &nbsp;·&nbsp;
-        <span>ABN: 61 734 327 831</span>
-        &nbsp;·&nbsp;
-        <span>Not for public disclosure — Private community use only</span>
-      </div>
-      <div>
-        <span>Reservation only. No financial product offered today.</span>
-        &nbsp;·&nbsp;
-        <a href="#regulatory">Regulatory engagement ongoing</a>
-      </div>
-    </div>
-  </div>
-</footer>
+    <!-- ── Footer ── -->
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+
+</div><!-- .site-shell -->
 
 <script>
-  // ============================================================
-  // LGM PHASE 1 TRACKER — update SHARES_OWNED to current count
-  // ============================================================
-  var SHARES_OWNED  = 900;          // <-- UPDATE THIS NUMBER
-  var SHARES_TARGET = 2001200;      // 1% of LGM (200,120,000 shares on issue)
-  // ============================================================
+/* ── Countdown ── */
+(function(){
+  var targetMs = Date.UTC(2026, 4, 14, 7, 0, 0),
+      g = document.getElementById('cdGrid'),
+      e = document.getElementById('cdExpired'),
+      dEl = document.getElementById('cdD'),
+      hEl = document.getElementById('cdH'),
+      mEl = document.getElementById('cdM'),
+      sEl = document.getElementById('cdS');
 
-  // Renders the tracker — call with extraShares from form to show live preview
-  function renderTracker(extraShares) {
-    extraShares = extraShares || 0;
-    var totalShares = SHARES_OWNED + extraShares;
-    var pct        = (totalShares / SHARES_TARGET) * 100;
-    var pctOfTotal = (totalShares / 200120000) * 100;
-    var remaining  = SHARES_TARGET - totalShares;
+  if(!g || !e || !dEl || !hEl || !mEl || !sEl) return;
 
-    // Text values — shares only, no $ amounts
-    document.getElementById('tracker-owned').textContent     = totalShares.toLocaleString() + ' shares';
-    document.getElementById('tracker-confirmed').textContent = SHARES_OWNED.toLocaleString() + ' shares';
-    document.getElementById('tracker-target').textContent    = SHARES_TARGET.toLocaleString() + ' shares';
-    document.getElementById('tracker-pct').textContent       = pctOfTotal.toFixed(5) + '%';
-    document.getElementById('tracker-pct-big').textContent   = pct.toFixed(2) + '%';
-    document.getElementById('tracker-remaining').textContent = Math.max(0, remaining).toLocaleString() + ' shares';
-    document.getElementById('tracker-form-shares').textContent = extraShares > 0
-      ? '+ ' + extraShares.toLocaleString() + ' shares'
-      : '0 shares';
+  function p(n){ return String(n).padStart(2, '0'); }
 
-    // Progress bar
-    document.getElementById('tracker-bar').style.width = Math.min(pct, 100) + '%';
+  function render(diffMs){
+    var totalSeconds = Math.floor(diffMs / 1000),
+        days = Math.floor(totalSeconds / 86400),
+        hours = Math.floor((totalSeconds % 86400) / 3600),
+        mins = Math.floor((totalSeconds % 3600) / 60),
+        secs = totalSeconds % 60;
 
-    // Redraw arc chart
-    var canvas = document.getElementById('tracker-canvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var W = canvas.width, H = canvas.height;
-    var cx = W / 2, cy = H - 10;
-    var radius = Math.min(W, H * 2) * 0.44;
-    var stroke = 18;
-    var fillAngle = Math.PI + (Math.PI * Math.min(pct / 100, 1));
+    dEl.textContent = String(days);
+    hEl.textContent = p(hours);
+    mEl.textContent = p(mins);
+    sEl.textContent = p(secs);
+  }
 
-    ctx.clearRect(0, 0, W, H);
-
-    // Background arc
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, Math.PI, 0, false);
-    ctx.strokeStyle = 'rgba(200,144,26,0.15)';
-    ctx.lineWidth = stroke; ctx.lineCap = 'round';
-    ctx.stroke();
-
-    // Confirmed shares arc (solid gold)
-    var confirmedPct = (SHARES_OWNED / SHARES_TARGET) * 100;
-    var confirmedAngle = Math.PI + (Math.PI * Math.min(confirmedPct / 100, 1));
-    if (SHARES_OWNED > 0) {
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, Math.PI, confirmedAngle, false);
-      var grad = ctx.createLinearGradient(cx - radius, cy, cx + radius, cy);
-      grad.addColorStop(0, '#C8901A'); grad.addColorStop(1, '#F0B429');
-      ctx.strokeStyle = grad; ctx.lineWidth = stroke; ctx.lineCap = 'round';
-      ctx.stroke();
+  function tick(){
+    var diff = targetMs - Date.now();
+    if(diff <= 0){
+      g.style.display = 'none';
+      e.style.display = 'block';
+      dEl.textContent = '0';
+      hEl.textContent = '00';
+      mEl.textContent = '00';
+      sEl.textContent = '00';
+      return;
     }
-
-    // Form reservation arc (lighter gold overlay)
-    if (extraShares > 0 && fillAngle > confirmedAngle) {
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, confirmedAngle, fillAngle, false);
-      ctx.strokeStyle = 'rgba(240,180,41,0.45)';
-      ctx.lineWidth = stroke; ctx.lineCap = 'round';
-      ctx.stroke();
-    }
-
-    // End dots
-    ctx.beginPath();
-    ctx.arc(cx - radius, cy, stroke * 0.6, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(200,144,26,0.3)'; ctx.fill();
-    ctx.beginPath();
-    ctx.arc(cx + radius, cy, stroke * 0.6, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(200,144,26,0.5)'; ctx.fill();
-
-    // Labels
-    ctx.font = '500 11px Outfit, sans-serif';
-    ctx.fillStyle = 'rgba(200,144,26,0.7)';
-    ctx.textAlign = 'left';
-    ctx.fillText('0', cx - radius - 4, cy + 18);
-    ctx.textAlign = 'right';
-    ctx.fillText('1%', cx + radius + 4, cy + 18);
+    e.style.display = 'none';
+    g.style.display = 'block';
+    render(diff);
   }
 
-  // ── LocalStorage persistence for share tracker ──
-  // Adds cumulative shares from all submissions on this browser to SHARES_OWNED
-  (function() {
-    try {
-      var stored = JSON.parse(localStorage.getItem('cogs_extra_shares') || '0');
-      if (typeof stored === 'number' && stored > 0) {
-        SHARES_OWNED += stored;
-      }
-    } catch(e) {}
-  })();
+  tick();
+  window.setInterval(tick, 1000);
+  window.addEventListener('pageshow', tick);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) tick(); });
+})();
 
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() { renderTracker(0); }, 400);
-    // Show cumulative NFT count from localStorage
-    try {
-      var cumNft = parseInt(localStorage.getItem('cogs_total_nft') || '0') || 0;
-      var cumEl = document.getElementById('cumulative-nft-count');
-      if (cumEl) cumEl.textContent = cumNft > 0 ? cumNft.toLocaleString() : '—';
-    } catch(e) {}
-  });
-
-  // FAQ accordion — measures full content height including padding, never clips
-  var PAD_TOP = 12;     // 0.75rem top padding when open
-  var PAD_BOT = 20;     // 1.25rem bottom padding for breathing room
-
-  function openFaq(item) {
-    var answer = item.querySelector('.faq-a');
-    // Temporarily make visible off-screen to measure true content height
-    answer.style.visibility = 'hidden';
-    answer.style.height = 'auto';
-    var fullHeight = answer.scrollHeight + PAD_TOP + PAD_BOT;
-    answer.style.height = '0';
-    answer.style.paddingTop = '0';
-    answer.style.paddingBottom = '0';
-    answer.style.visibility = '';
-    // Force reflow then animate
-    answer.offsetHeight;
-    answer.style.height = fullHeight + 'px';
-    answer.style.paddingTop = PAD_TOP + 'px';
-    answer.style.paddingBottom = PAD_BOT + 'px';
-  }
-
-  function closeFaq(item) {
-    var answer = item.querySelector('.faq-a');
-    // Lock current pixel height first so transition has a start value
-    answer.style.height = answer.offsetHeight + 'px';
-    answer.offsetHeight; // reflow
-    answer.style.height = '0';
-    answer.style.paddingTop = '0';
-    answer.style.paddingBottom = '0';
-  }
-
-  document.querySelectorAll('.faq-q').forEach(function(q) {
-    q.addEventListener('click', function() {
-      var item = q.parentElement;
-      var wasOpen = item.classList.contains('open');
-      // Close all open items
-      document.querySelectorAll('.faq-item').forEach(function(i) {
-        if (i.classList.contains('open')) {
-          i.classList.remove('open');
-          closeFaq(i);
-        }
-      });
-      // Open clicked item if it was closed
-      if (!wasOpen) {
-        item.classList.add('open');
-        openFaq(item);
-      }
+/* ── Scroll reveal ── */
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
     });
-  });
-
-  // Scroll fade-in
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
-    });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-  // Format AUD value
-  function aud(n) { return '$' + n.toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-
-  // Token calculator — updates $ value display + summary
-  function calcTokens(inputId, displayId, hiddenId) {
-    var tokens  = parseInt(document.getElementById(inputId).value) || 0;
-    var value   = tokens * 4;
-    var display = document.getElementById(displayId);
-    var hidden  = document.getElementById(hiddenId);
-    display.textContent = tokens > 0 ? '= ' + aud(value) : '= $0.00';
-    tokens > 0 ? display.classList.add('active') : display.classList.remove('active');
-    hidden.value = value;
-    updateSummary();
-  }
-
-  // Live reservation summary
-  function updateSummary() {
-    var total = 4; // Personal NFT always $4
-
-    // Kids
-    var kidsInput = document.querySelector('.checkbox-group input[type=number]');
-    var kids = parseInt(kidsInput ? kidsInput.value : 0) || 0;
-    var kidsVal = kids * 4;
-    var kidsRow = document.getElementById('sum-kids');
-    if (kids > 0) {
-      document.getElementById('sum-kids-label').textContent = 'Kids NFT (' + kids + ')';
-      document.getElementById('sum-kids-val').textContent = aud(kidsVal);
-      kidsRow.style.display = 'flex';
-      total += kidsVal;
-    } else { kidsRow.style.display = 'none'; }
-
-    // Investment COG$ tokens
-    var investTokens = parseInt(document.getElementById('invest').value) || 0;
-    var investVal = investTokens * 4;
-    var investRow = document.getElementById('sum-invest');
-    if (investTokens > 0) {
-      document.getElementById('sum-invest-label').textContent = 'Investment COG$ tokens (' + investTokens.toLocaleString() + ')';
-      document.getElementById('sum-invest-val').textContent = aud(investVal);
-      investRow.style.display = 'flex';
-      total += investVal;
-    } else { investRow.style.display = 'none'; }
-
-    // Donation COG$ tokens
-    var donateTokens = parseInt(document.getElementById('donate').value) || 0;
-    var donateVal = donateTokens * 4;
-    var donateRow = document.getElementById('sum-donate');
-    if (donateTokens > 0) {
-      document.getElementById('sum-donate-label').textContent = 'Donation COG$ tokens (' + donateTokens.toLocaleString() + ')';
-      document.getElementById('sum-donate-val').textContent = aud(donateVal);
-      donateRow.style.display = 'flex';
-      total += donateVal;
-    } else { donateRow.style.display = 'none'; }
-
-    // Landholder COG$ tokens
-    var landTokens = parseInt(document.getElementById('landval').value) || 0;
-    var landVal = landTokens * 4;
-    var landRow = document.getElementById('sum-land');
-    if (landTokens > 0) {
-      document.getElementById('sum-land-label').textContent = 'Landholder COG$ tokens (' + landTokens.toLocaleString() + ')';
-      document.getElementById('sum-land-val').textContent = aud(landVal);
-      landRow.style.display = 'flex';
-      total += landVal;
-    } else { landRow.style.display = 'none'; }
-
-    document.getElementById('sum-total').textContent = aud(total);
-
-    // Update hidden field so total appears in the email
-    var hiddenTotal = document.getElementById('hidden-total-value');
-    if (hiddenTotal) hiddenTotal.value = aud(total);
-
-    // Count total NFT tokens for this submission
-    var nftCount = 1 + kids; // personal NFT (always 1) + kids
-    var hiddenNft = document.getElementById('hidden-nft-count');
-    if (hiddenNft) hiddenNft.value = nftCount;
-
-    // Update NFT count display in reservation progress card
-    var nftDisplay = document.getElementById('live-nft-count');
-    if (nftDisplay) nftDisplay.textContent = nftCount.toLocaleString();
-
-    // Update share tracker: total reservation $ / $0.25 LGM share price = equivalent shares
-    var formShares = Math.floor(total / 0.25);
-    renderTracker(formShares);
-  }
-
-  // Wire up kids count input to update summary
-  document.addEventListener('DOMContentLoaded', function() {
-    var kidsInput = document.querySelector('.checkbox-group input[type=number]');
-    if (kidsInput) kidsInput.addEventListener('input', updateSummary);
-  });
-
-  // Form validation — FormSubmit.co handles delivery to COGsAustralia@gmail.com
-  document.getElementById('reserveForm').addEventListener('submit', function(e) {
-    var name    = document.getElementById('fname').value.trim();
-    var email   = document.getElementById('email').value.trim();
-    var mobile  = document.getElementById('mobile').value.trim();
-    var address = document.getElementById('address').value.trim();
-    var suburb  = document.getElementById('suburb')   ? document.getElementById('suburb').value.trim()   : '';
-    var state   = document.getElementById('state')    ? document.getElementById('state').value.trim()    : '';
-    var postcode= document.getElementById('postcode') ? document.getElementById('postcode').value.trim() : '';
-    var confirm = document.getElementById('confirm').checked;
-
-    if (!name)    { e.preventDefault(); alert('Please enter your full name.'); return; }
-    if (!email)   { e.preventDefault(); alert('Please enter your email address.'); return; }
-    if (!mobile)  { e.preventDefault(); alert('Please enter your mobile number.'); return; }
-    if (!address)  { e.preventDefault(); alert('Please enter your street address.'); return; }
-    if (!suburb)   { e.preventDefault(); alert('Please enter your suburb.'); return; }
-    if (!state)    { e.preventDefault(); alert('Please select your state.'); return; }
-    if (!postcode) { e.preventDefault(); alert('Please enter your postcode.'); return; }
-    if (!confirm) { e.preventDefault(); alert('Please confirm you understand this is a no-obligation reservation.'); return; }
-
-    // Stamp the final total into the hidden field and update email subject
-    var totalText = document.getElementById('sum-total').textContent;
-    var hiddenTotal = document.getElementById('hidden-total-value');
-    if (hiddenTotal) hiddenTotal.value = totalText;
-    var subjectField = document.querySelector('input[name="_subject"]');
-    if (subjectField) subjectField.value = 'COG$ Reservation — ' + name + ' — ' + totalText;
-
-    // Stamp NFT count
-    var nftEl = document.getElementById('live-nft-count');
-    var hiddenNft = document.getElementById('hidden-nft-count');
-    if (nftEl && hiddenNft) hiddenNft.value = nftEl.textContent;
-
-    // Save cumulative NFT count to localStorage
-    try {
-      var nftNow = parseInt((document.getElementById('hidden-nft-count') || {}).value || '1') || 1;
-      var prevNft = parseInt(localStorage.getItem('cogs_total_nft') || '0') || 0;
-      localStorage.setItem('cogs_total_nft', prevNft + nftNow);
-    } catch(e) {}
-
-    // Persist this submission's shares to localStorage before redirect
-    try {
-      var formSharesNow = Math.floor(parseFloat((document.getElementById('sum-total').textContent || '4').replace(/[^0-9.]/g,'')) / 0.25);
-      var prevStored = parseInt(localStorage.getItem('cogs_extra_shares') || '0') || 0;
-      localStorage.setItem('cogs_extra_shares', prevStored + formSharesNow);
-    } catch(e) {}
-
-    // Generate unique 16-digit COG$ member number
-    // Format: 3 digits timestamp + 13 random digits
-    var ts = Date.now().toString().slice(-6);
-    var rand = '';
-    for (var i = 0; i < 10; i++) rand += Math.floor(Math.random() * 10);
-    var memberNum = ts + rand; // 16 digits
-    // Format with spaces: XXXX XXXX XXXX XXXX
-    var memberNumFmt = memberNum.replace(/(\d{4})/g, '$1 ').trim();
-
-    // Store in hidden field (sent in email)
-    var hmn = document.getElementById('hidden-member-number');
-    if (hmn) hmn.value = memberNumFmt;
-
-    // Update subject to include member number
-    if (subjectField) subjectField.value = 'COG$ Reservation — ' + name + ' — ' + totalText + ' — #' + memberNumFmt;
-
-    // Populate BOTH reply-to fields so FormSubmit reliably sends the auto-response
-    var replyToField = document.getElementById('replyto-field');
-    if (replyToField) replyToField.value = email;
-    // Hidden "email" field — FormSubmit uses field named "email" as the reply-to address
-    var hiddenEmailCopy = document.getElementById('hidden-email-copy');
-    if (hiddenEmailCopy) hiddenEmailCopy.value = email;
-
-    // Read token quantities and values at submit time
-    var nftCount     = 1; // always 1 per member
-    var investCount  = parseInt((document.getElementById('invest')   || {}).value)  || 0;
-    var donateCount  = parseInt((document.getElementById('donate')   || {}).value)  || 0;
-    var landCount    = parseInt((document.getElementById('landval')  || {}).value)  || 0;
-    var totalCogTokens = nftCount + investCount + donateCount + landCount;
-    var totalDollarValue = totalCogTokens * 4;
-
-    // Format as AUD
-    function audFmt(n){ return '$' + n.toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-
-    // Build detailed reservation breakdown lines
-    var tokenLines = '';
-    tokenLines += '\n  Personal NFT Membership:  1 token   = ' + audFmt(4);
-    if (investCount > 0)  tokenLines += '\n  Investment COG$:          ' + investCount + ' token' + (investCount>1?'s':'') + '  = ' + audFmt(investCount * 4);
-    if (landCount   > 0)  tokenLines += '\n  Landholder COG$:          ' + landCount   + ' token' + (landCount>1?'s':'')   + '  = ' + audFmt(landCount   * 4);
-    if (donateCount > 0)  tokenLines += '\n  Donation COG$:            ' + donateCount + ' token' + (donateCount>1?'s':'') + '  = ' + audFmt(donateCount * 4);
-    tokenLines += '\n  ─────────────────────────────────────────────';
-    tokenLines += '\n  TOTAL COG$ RESERVED:       ' + totalCogTokens + ' token' + (totalCogTokens>1?'s':'') + '  = ' + audFmt(totalDollarValue);
-
-    // Build full auto-response email
-    var walletSetupUrl = 'https://cogsaustralia.org/wallet.html#new=' + memberNum;
-    var autoResponseText =
-      'Hi ' + name.split(' ')[0] + ',' +
-      '\n\nThank you for reserving your COG$ membership.' +
-      '\n\n════════════════════════════════════════' +
-      '\nYOUR COG$ MEMBER NUMBER' +
-      '\n════════════════════════════════════════' +
-      '\n\n  ' + memberNumFmt +
-      '\n\nKeep this number safe. You will need it every time you log in to your Independence Vault.' +
-      '\n\n════════════════════════════════════════' +
-      '\nSET UP YOUR INDEPENDENCE VAULT' +
-      '\n════════════════════════════════════════' +
-      '\n\nClick or copy this link to create your password and access your personal vault:' +
-      '\n\n  ' + walletSetupUrl +
-      '\n\nThis link takes you directly to the password setup screen with your member number pre-filled.' +
-      '\n\nIf the link above does not work, visit:' +
-      '\n  https://cogsaustralia.org/wallet.html' +
-      '\nand enter your member number when prompted: ' + memberNumFmt +
-      '\n\n════════════════════════════════════════' +
-      '\nYOUR RESERVATION SUMMARY' +
-      '\n════════════════════════════════════════' +
-      tokenLines +
-      '\n\nFoundation Day: 14 May' +
-      '\nNo payment required until Foundation Day.' +
-      '\nYou may adjust or withdraw your reservation at any time before Foundation Day.' +
-      '\n\n════════════════════════════════════════' +
-      '\n\nQuestions? Reply to this email or contact us:' +
-      '\nCOGsAustralia@gmail.com' +
-      '\ncogsaustralia.org' +
-      '\n\nThe Trustee of COG$ of Australia Foundation' +
-      '\nABN: 61 734 327 831' +
-      '\nC/- Drake Village Resource Centre, Drake Village NSW 2469';
-
-    var arField = document.getElementById('autoresponse-field');
-    if (arField) arField.value = autoResponseText;
-
-    // Read token counts from form for email + localStorage
-    var investCount = parseInt(document.getElementById('invest')   ? (document.getElementById('invest').value   || '0') : '0') || 0;
-    var landCount   = parseInt(document.getElementById('landval')  ? (document.getElementById('landval').value  || '0') : '0') || 0;
-    var donateCount = parseInt(document.getElementById('donate')   ? (document.getElementById('donate').value   || '0') : '0') || 0;
-    var nftCount    = parseInt(document.getElementById('hidden-nft-count') ? (document.getElementById('hidden-nft-count').value || '1') : '1') || 1;
-    var totalCogs   = nftCount + investCount + landCount + donateCount;
-    // Parse total $ value — use sum-total if available, else calculate
-    var totalRawNum = parseFloat((document.getElementById('sum-total') ? document.getElementById('sum-total').textContent : '$4').replace(/[^0-9.]/g,'')) || 4;
-    var totalDollars = '$' + (totalRawNum).toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2});
-
-    // Save member data to localStorage — survives FormSubmit redirect
-    // sessionStorage does NOT survive the FormSubmit.co server-side redirect
-    try {
-      localStorage.setItem('cogs_pending_num',    memberNum);
-      localStorage.setItem('cogs_pending_name',   name);
-      localStorage.setItem('cogs_pending_email',  email);
-      localStorage.setItem('cogs_pending_mobile', mobile);
-      localStorage.setItem('cogs_pending_total',  totalText);
-      localStorage.setItem('cogs_pending_nft',    nftCount.toString());
-      localStorage.setItem('cogs_pending_invest', investCount.toString());
-      localStorage.setItem('cogs_pending_land',   landCount.toString());
-      localStorage.setItem('cogs_pending_donate', donateCount.toString());
-      localStorage.setItem('cogs_pending_totalcogs', totalCogs.toString());
-      localStorage.setItem('cogs_pending_totaldollars', totalDollars);
-      localStorage.setItem('cogs_pending_stamp',  Date.now().toString()); // expire after 30 min
-    } catch(ex) {}
-
-    // Update _next URL to include member number for display
-    var nextField = document.querySelector('input[name="_next"]');
-    if (nextField) nextField.value = 'https://cogsaustralia.org/thankyou.html?m=' + memberNum;
-
-    // Write member to Firebase NOW before form submits
-    // This ensures member exists in database even if thankyou redirect fails
-    try {
-      var fbCfgIdx = {
-        apiKey: "AIzaSyCvpRdc9SK_jaUuTQ62DbQArylu0hX6FvA",
-        authDomain: "cogs-australia.firebaseapp.com",
-        databaseURL: "https://cogs-australia-default-rtdb.firebaseio.com",
-        projectId: "cogs-australia",
-        storageBucket: "cogs-australia.firebasestorage.app",
-        messagingSenderId: "918224691358",
-        appId: "1:918224691358:web:4b5e4d8345252edc461b8f"
-      };
-      var fbApp = (typeof firebase !== 'undefined')
-        ? (firebase.apps.length ? firebase.app() : firebase.initializeApp(fbCfgIdx))
-        : null;
-      if (fbApp) {
-        var fbDb = firebase.database();
-        var cleanId = memberNum; // already 16 digits, no spaces
-        fbDb.ref('/members/' + cleanId).set({
-          nft:          1,
-          invest:       parseInt(document.getElementById('invest') ? document.getElementById('invest').value : '0') || 0,
-          land:         parseInt(document.getElementById('landval') ? document.getElementById('landval').value : '0') || 0,
-          donate:       parseInt(document.getElementById('donate') ? document.getElementById('donate').value : '0') || 0,
-          total:        1,
-          email:        email,
-          mobile:       mobile,
-          memberName:   name,
-          memberNumFmt: memberNumFmt,
-          firstLogin:   false,
-          registeredAt: new Date().toISOString()
-        });
-        // Increment community counter
-        fbDb.ref('/community/memberCount').transaction(function(c){return(c||0)+1;});
-        fbDb.ref('/community/totalCogs').transaction(function(c){return(c||0)+1;});
-        fbDb.ref('/community/totalNft').transaction(function(c){return(c||0)+1;});
-      }
-    } catch(fbEx) { console.log('Firebase pre-write failed (non-critical):', fbEx); }
-
-    // All good — FormSubmit.co takes it from here
-  });
-
-  // ── LIVE RESERVATION COUNT FROM FIREBASE ──
-  (function loadLiveCount(){
-    try {
-      var fbCfgCount = {
-        apiKey: "AIzaSyCvpRdc9SK_jaUuTQ62DbQArylu0hX6FvA",
-        databaseURL: "https://cogs-australia-default-rtdb.firebaseio.com",
-        projectId: "cogs-australia",
-        appId: "1:918224691358:web:4b5e4d8345252edc461b8f"
-      };
-      var fbA = (typeof firebase !== 'undefined')
-        ? (firebase.apps.length ? firebase.app() : firebase.initializeApp(fbCfgCount))
-        : null;
-      if (!fbA) return;
-      var fbD = firebase.database();
-      fbD.ref('/community/memberCount').on('value', function(snap){
-        var count = snap.val() || 124; // fallback to last known
-        var el = document.getElementById('liveReservationCount');
-        var bar = document.getElementById('reservationProgressBar');
-        if (el) el.textContent = count.toLocaleString();
-        if (bar) bar.style.width = Math.min(count / 1000 * 100, 100).toFixed(1) + '%';
-      });
-    } catch(ex) {}
-  })();
+  },{threshold:.07});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
 </script>
+<script src="/assets/ask-widget.js"></script>
 </body>
 </html>

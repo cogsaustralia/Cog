@@ -1,0 +1,24 @@
+DirectoryIndex index.php
+
+# Block directory listing
+Options -Indexes
+
+# Block direct web access to the error log.
+# This file contains stack traces, file paths, DB usernames,
+# and internal server structure — it must not be publicly readable.
+<Files "error_log">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Block access to any file ending in .log or .txt at this level
+<FilesMatch "\.(log|txt|env|sql|md|sh|bak)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to dotfiles (.env, .htpasswd, etc.)
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

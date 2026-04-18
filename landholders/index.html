@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landholders &amp; Affected Community | COGs of Australia Foundation</title>
+  <meta name="description" content="COG$ of Australia Foundation — information and pathways for landholders and affected community Partners connected to Foundation assets and resource decisions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(24,17,8,.84);--panel2:rgba(36,26,11,.90);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.74);--muted:rgba(210,185,130,.58);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    /* ── Background ── */
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{
+      position:absolute;inset:0;
+      background:url('../assets/cogs_green_field.webp') center 30%/cover no-repeat;
+      opacity:.14;filter:sepia(.55) saturate(.85) brightness(.65)
+    }
+    .bg-vignette{
+      position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.55) 0%,transparent 60%),
+        radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.95) 0%,transparent 70%),
+        radial-gradient(ellipse 35% 100% at 0%   50%,rgba(10,8,4,.50) 0%,transparent 60%),
+        radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.50) 0%,transparent 60%)
+    }
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:940px;margin:0 auto;padding:0 24px}
+
+    /* ── Header — full nav ── */
+    .site-header{border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:sticky;top:0;z-index:200;overflow:hidden}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;min-width:0}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden}
+    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block}
+    .brand-copy{display:flex;flex-direction:column;gap:1px}
+    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .brand-sub{font-size:.61rem;color:rgba(255,248,232,.65);letter-spacing:.04em;line-height:1.2}
+    .brand-tag{font-size:.58rem;color:var(--muted);letter-spacing:.05em;line-height:1.2}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:99px;transition:color .2s,background .2s;white-space:nowrap;letter-spacing:.02em}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold-1);background:var(--gold-pale)}
+    .nav-cta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .btn-primary{font-size:.76rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:8px 18px;border-radius:99px;white-space:nowrap;transition:opacity .2s;border:none;cursor:pointer}
+    .btn-primary:hover{opacity:.88}
+    .btn-secondary{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;border:1px solid var(--gold-rim);padding:7px 16px;border-radius:99px;white-space:nowrap;transition:color .2s,border-color .2s,background .2s;background:none;cursor:pointer}
+    .btn-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+    .mobile-toggle{display:none;background:none;border:1px solid var(--gold-rim);color:var(--muted);padding:7px 11px;border-radius:10px;cursor:pointer;font-size:1rem;line-height:1}
+    .mobile-drawer{display:none;flex-direction:column;gap:2px;padding:10px 0 14px;border-top:1px solid var(--line)}
+    .mobile-drawer a{font-size:.88rem;color:var(--muted);text-decoration:none;padding:9px 0;border-bottom:1px solid var(--line);transition:color .2s}
+    .mobile-drawer a:last-child{border-bottom:none}
+    .mobile-drawer a:hover{color:var(--gold-1)}
+    .mobile-drawer.open{display:flex}
+
+    /* ── Disclosure ── */
+    .disclosure{background:linear-gradient(180deg,rgba(42,29,11,.55),rgba(23,17,9,.3));border-bottom:1px solid var(--line);padding:9px 24px;text-align:center}
+    .disclosure p{font-size:.73rem;color:rgba(255,244,221,.55);line-height:1.5}
+
+    /* ── Page hero ── */
+    .page-hero{padding:60px 0 52px;text-align:center}
+    .eyebrow{display:inline-block;font-size:.67rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:22px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;color:var(--text);max-width:700px;margin:0 auto 20px}
+    .hero-lead{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.78;max-width:580px;margin:0 auto 32px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:28px}
+
+    /* FAQ pills */
+    .faq-link-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:0}
+    .faq-link-row a{display:inline-flex;align-items:center;padding:7px 13px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(40,31,19,.36);color:var(--muted);font-size:.76rem;text-decoration:none;transition:.2s ease}
+    .faq-link-row a:hover{color:var(--text);border-color:var(--gold-rim2);background:rgba(52,40,24,.62)}
+
+    /* ── Common sections ── */
+    .section{padding:0 0 56px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 52px}
+    .kicker{display:inline-block;font-size:.64rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .section-header{margin-bottom:30px}
+    .section-header h2{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:500;line-height:1.1;letter-spacing:-.028em;color:var(--text);margin:10px 0 12px}
+    .section-header p{font-size:.92rem;color:var(--muted);line-height:1.75;max-width:640px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+
+    /* Split band */
+    .split-band{padding:32px 36px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center}
+    .split-band h2{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.5rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;color:var(--text);margin:10px 0 14px}
+    .split-band .lead{font-size:.9rem;color:var(--text2);line-height:1.76;margin-bottom:0}
+    .cta-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-items:flex-start;min-width:160px}
+
+    /* Three-col card grid */
+    .card-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    /* Two-col card grid */
+    .card-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+
+    .info-card{padding:24px 22px;border-radius:var(--r);background:linear-gradient(160deg,rgba(32,23,10,.90),rgba(16,11,5,.82));border:1px solid var(--line);box-shadow:0 10px 28px rgba(0,0,0,.42)}
+    .info-card .card-icon{font-size:1.4rem;display:block;margin-bottom:14px}
+    .info-card strong{display:block;font-size:1rem;font-weight:500;color:var(--gold-1);margin-bottom:8px;font-family:var(--serif)}
+    .info-card p{font-size:.82rem;color:var(--muted);line-height:1.68}
+
+    /* RWA-style two-col band */
+    .detail-band{padding:30px 36px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+    .detail-band h2{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--text);margin:10px 0 14px}
+    .detail-band > div > p{font-size:.9rem;color:var(--muted);line-height:1.75}
+    .detail-points{display:grid;gap:10px}
+    .detail-point{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);font-size:.83rem;color:var(--muted);line-height:1.62}
+    .detail-point strong{color:var(--text);display:block;margin-bottom:3px;font-weight:500}
+
+    /* Process steps */
+    .step-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .step-card{padding:24px 22px;border-radius:var(--r);background:linear-gradient(180deg,rgba(29,22,13,.88),rgba(14,11,8,.80));border:1px solid var(--line);box-shadow:var(--shadow)}
+    .step-number{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:99px;background:rgba(240,209,138,.10);border:1px solid rgba(240,209,138,.22);color:var(--gold-2);margin-bottom:12px;font-weight:700;font-size:.9rem;font-family:var(--serif)}
+    .step-card strong{display:block;margin-bottom:8px;font-size:1rem;font-weight:500;color:var(--gold-1);font-family:var(--serif)}
+    .step-card p{margin:0;font-size:.82rem;color:var(--muted);line-height:1.68}
+
+    /* ── Footer ── */
+    .site-footer{border-top:1px solid var(--line);padding:36px 28px 38px;background:rgba(8,6,2,.75)}
+    .footer-inner{max-width:940px;margin:0 auto;display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:32px;align-items:start}
+    .footer-name{font-family:var(--serif);font-size:.9rem;color:var(--gold-1);margin-bottom:8px;font-weight:600}
+    .footer-detail{font-size:.67rem;color:var(--muted);line-height:1.76}
+    .footer-col h4{font-size:.65rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .footer-links{display:flex;flex-direction:column;gap:7px}
+    .footer-links a{font-size:.76rem;color:var(--muted);text-decoration:none;line-height:1.3;transition:color .2s}
+    .footer-links a:hover{color:var(--gold-1)}
+    .footer-link-locked{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--muted);text-decoration:none;line-height:1.3;transition:color .2s}
+    .footer-link-locked:hover{color:var(--gold-1)}
+    .lock-badge{display:inline-flex;align-items:center;gap:3px;font-size:.58rem;font-weight:500;letter-spacing:.08em;color:var(--gold-3);background:rgba(120,80,20,.25);border:1px solid rgba(140,100,30,.35);padding:1px 6px;border-radius:4px;white-space:nowrap}
+    .footer-bottom{max-width:940px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+    .footer-bottom-left{font-size:.65rem;color:rgba(210,185,130,.35);line-height:1.6}
+    .footer-bottom-right{font-size:.65rem;color:rgba(210,185,130,.35);letter-spacing:.06em;text-align:right;line-height:1.8}
+
+    /* ── Animations ── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .ha{animation:fadeUp .65s ease both}
+    .ha:nth-child(1){animation-delay:.05s}.ha:nth-child(2){animation-delay:.15s}
+    .ha:nth-child(3){animation-delay:.24s}.ha:nth-child(4){animation-delay:.32s}
+    .ha:nth-child(5){animation-delay:.40s}
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.in{opacity:1;transform:translateY(0)}
+
+    /* ── Responsive ── */
+    @media(max-width:860px){
+      .split-band{grid-template-columns:1fr}
+      .cta-actions{flex-direction:row;min-width:0}
+      .detail-band{grid-template-columns:1fr}
+      .card-grid-3{grid-template-columns:1fr 1fr}
+      .step-grid{grid-template-columns:1fr 1fr}
+      .footer-inner{grid-template-columns:1fr 1fr}
+      .footer-inner>div:first-child{grid-column:1/-1}
+    }
+    @media(max-width:580px){
+      .nav-links{display:none}
+      .mobile-toggle{display:block}
+      .brand-copy{overflow:hidden}
+      .brand-name{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .brand-sub,.brand-tag{display:none}
+      .card-grid-3,.card-grid-2,.step-grid{grid-template-columns:1fr}
+      .footer-inner{grid-template-columns:1fr}
+      .footer-inner>div:first-child{grid-column:1}
+      .footer-bottom{flex-direction:column;align-items:flex-start}
+      .footer-bottom-right{text-align:left}
+      .cta-actions{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-img"></div>
+  <div class="bg-vignette"></div>
+</div>
+
+<div class="site-shell">
+
+  <!-- ── Header — full nav ── -->
+  <header class="site-header">
+    <div class="container">
+      <div class="nav-row">
+        <a class="brand" href="../index.html">
+          <img class="brand-logo" src="../assets/logo_webcir.png" alt="COG$ of Australia Foundation">
+          <div class="brand-copy">
+            <span class="brand-name">COG$ of Australia Foundation</span>
+            <span class="brand-sub">Community Owned Gold &amp; Silver™</span>
+            <span class="brand-tag">Community Operated Governance Structure™</span>
+          </div>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="../vision/index.html">The Vision</a>
+          <a href="../tell-me-more/index.html">Tell me how it works</a>
+          <a href="../faq/index.html">FAQ</a>
+        </nav>
+        <div class="nav-cta">
+          <a class="btn-primary" href="../join/index.html#form">Join now — $4</a>
+          <button class="mobile-toggle" id="mobileToggle" aria-expanded="false" aria-label="Open navigation">☰</button>
+        </div>
+      </div>
+      <div class="mobile-drawer" id="mobileDrawer">
+        <a href="../join/index.html">Join now — $4</a>
+        <a href="../vision/index.html">The Vision</a>
+        <a href="../tell-me-more/index.html">Tell me how it works</a>
+        <a href="../faq/index.html">FAQ</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══ PAGE HERO ══════════════════════════════════════ -->
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow ha">Landholders &amp; Affected Community</span>
+        <h1 class="ha">Your land. Your voice. Your place in the structure.</h1>
+        <p class="hero-lead ha">
+          If your land, community, or livelihood is directly connected to resource decisions,
+          COG$ of Australia Foundation has a dedicated pathway built for your situation —
+          with a structure that gives you a real say before decisions are made, not after.
+        </p>
+          <picture style="display:block;margin:1.5rem auto;max-width:480px;border-radius:16px;overflow:hidden;border:1px solid rgba(240,209,138,.15)">
+            <source srcset="../assets/cogs_land.webp" type="image/webp">
+            <img src="../assets/cogs_land.png" alt="COG$ landholder stewardship" style="width:100%;display:block">
+          </picture>
+
+        <div class="hero-actions ha">
+          <a class="btn-primary" href="../join/index.html">Secure your place — $4</a>
+          <a class="btn-secondary" href="../tell-me-more/index.html">Tell me how it works</a>
+        </div>
+        <div class="faq-link-row ha">
+          <a href="../faq/index.html#faq-landholder">FAQ: What is the landholder pathway?</a>
+          <a href="../faq/index.html#faq-rwa">FAQ: What does RWA mean here?</a>
+          <a href="../faq/index.html#faq-one-vote">FAQ: How does one equal vote work?</a>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ WHY THIS EXISTS ════════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card split-band">
+          <div>
+            <span class="kicker">Why this pathway exists</span>
+            <h2>Communities should not be left to live with decisions made elsewhere.</h2>
+            <p class="lead">
+              Too often, land and resource decisions are made at a distance — by people who do not live
+              with the consequences. This project is designed to bring landholders and affected community
+              Partners closer to those decisions, give them a meaningful and binding voice, and build a
+              structure that cannot be casually overridden or ignored.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn-primary" href="../join/index.html">Join now — $4</a>
+            <a class="btn-secondary" href="../faq/index.html">Read the FAQ</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ THREE CORE COMMITMENTS ═════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Resident COG$</span>
+          <h2>Allocated at no cost to verified Affected Zone residents.</h2>
+          <p style="color:var(--text2);line-height:1.75;margin-bottom:1.5rem">If you are a <strong>verified resident</strong> within a declared Affected Zone — an area materially affected by a Foundation resource action — you are automatically eligible for a Resident COG$ token at no cost. Resident COG$ carries weighted local governance rights on decisions affecting your zone. It does not carry a Sub-Trust B income unit, and it is separate from landholder or personal S-NFT partnership. You can hold both. Affected Zones are declared and published by the Board under the Declaration.</p>
+          <hr style="border-color:rgba(240,209,138,.15);margin:2rem 0">
+          <span class="kicker">Three commitments</span>
+          <h2>A seat at the table, not an afterthought.</h2>
+          <p>The Foundation is built around three principles that matter most to landholders and affected communities.</p>
+        </div>
+        <div class="card-grid-3">
+          <div class="info-card">
+            <span class="card-icon">🗣️</span>
+            <strong>A voice that counts</strong>
+            <p>Landholder Partners hold one equal vote in Foundation governance, the same as every other Partner. Your say is not weighted by how much land you hold or how much money you have.</p>
+          </div>
+          <div class="info-card">
+            <span class="card-icon">🛡️</span>
+            <strong>Stewardship over extraction</strong>
+            <p>The Foundation's structure treats in-ground minerals as assets of present value — not just future inventory to be removed. Extraction is not the automatic outcome. Partners vote on resource proposals, and the Foundation casts that community vote at resource company AGMs. Communities have a real, lawful governance voice in decisions that affect them — before those decisions are finalised.</p>
+          </div>
+          <div class="info-card">
+            <span class="card-icon">📋</span>
+            <strong>Binding governance</strong>
+            <p>Partner votes on resource proposals are formal and auditable. The Foundation casts those votes at AGMs of ASX-listed companies. This is not consultation theatre — it is a live governance structure.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ REAL WORLD ASSETS ══════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card detail-band">
+          <div>
+            <span class="kicker">Real World Assets &amp; stewardship</span>
+            <h2>Resources should not be reduced to extraction alone.</h2>
+            <p>
+              The Foundation starts from a different assumption: real value can exist in real things
+              before they are extracted, sold off, or pushed beyond community reach. RWA COG$ are
+              directly tied to in-ground mineral value — not speculative derivatives. Landholder
+              COG$ give affected community Partners a specific class of token designed for people
+              whose land and lives sit closest to those decisions.
+            </p>
+          </div>
+          <div class="detail-points">
+            <div class="detail-point">
+              <strong>Landholder COG$</strong>
+              Reserved for landholders and affected community Partners. No payment required to reserve — you confirm your position in the structure and receive your Independence Vault wallet. The per-hectare allocation is capped at <strong>1,000 COG$ per hectare</strong> of eligible land — an entrenched provision of the Declaration that cannot be reduced by any resolution.
+            </div>
+            <div class="detail-point">
+              <strong>Zero-cost for LALCs &amp; PBCs</strong>
+              For Local Aboriginal Land Councils and Native Title Prescribed Bodies Corporate, Landholder COG$ is issued automatically at zero cost (up to the 1,000-per-hectare cap), as a founding First Nations equity commitment entrenched under the Declaration. This entitlement cannot be reduced or made conditional upon payment without FNAC endorsement.
+            </div>
+            <div class="detail-point">
+              <strong>RWA COG$</strong>
+              Real World Asset tokens tied to in-ground mineral value. These can be reserved by any Partner but are designed with landholders and resource-adjacent communities in mind.
+            </div>
+            <div class="detail-point">
+              <strong>Evidence review</strong>
+              Landholder status is subject to an evidence review to ensure the pathway is used correctly. The Foundation will contact you after your reservation is lodged.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ HOW TO JOIN ════════════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">What happens next</span>
+          <h2>Three steps to secure your place.</h2>
+          <p>The process is straightforward. Your first step is an individual partnership — the landholder-specific pathway opens from inside your Independence Vault wallet once your place is confirmed.</p>
+        </div>
+        <div class="step-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <strong>Join as an individual for $4</strong>
+            <p>Secure your base partnership. Your one-equal-vote position in Foundation governance begins here. This is the same first step for everyone — landholders included.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <strong>Reserve Landholder COG$ in the form</strong>
+            <p>On the join form, you can reserve Landholder COG$ (issued on Expansion Day — when the first Sovereign Node goes live, as certified by the Board and endorsed by the First Nations Advisory Council — subject to any regulatory requirements determined by applicable law) at no additional cost. An evidence review will follow to confirm your landholder or affected community status.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <strong>Receive your Independence Vault wallet</strong>
+            <p>After joining, you receive your Independence Vault wallet. This is where your governance participation, reservations, and landholder-specific tools will live.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ TWO-COL INFO ═══════════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Things worth knowing</span>
+          <h2>Designed for people, not processes.</h2>
+        </div>
+        <div class="card-grid-2">
+          <div class="info-card">
+            <strong>Individual first, landholder second</strong>
+            <p>The landholder pathway is built on top of individual partnership. Your personal voice and wallet come first. The landholder-specific tools and reservations connect to that base. This keeps the structure clean — people first, land interests second.</p>
+          </div>
+          <div class="info-card">
+            <strong>No financial obligation on reservation</strong>
+            <p>Reserving Landholder COG$ or RWA COG$ carries no payment obligation at this stage. You are securing your position in the structure ahead of the licensed issuance phase. You can adjust or withdraw your reservation at any time from inside your Independence Vault wallet.</p>
+          </div>
+          <div class="info-card">
+            <strong>Families can join together</strong>
+            <p>If multiple family Partners — including under-18s — are affected by the same land situation, each person can hold their own partnership. Children can join through the kids pathway for $1. The Foundation is built for households, not just individuals.</p>
+          </div>
+          <div class="info-card">
+            <strong>Decisions go to AGMs</strong>
+            <p>When the Foundation holds CHESS-registered shares in ASX-listed resource companies operating on or near affected land, Partner votes on resource proposals are taken directly to those companies' AGMs. Your voice has a real destination.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ CLOSING CTA ════════════════════════════════════ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card split-band">
+          <div>
+            <span class="kicker">The invitation</span>
+            <h2>Step in before Governance Foundation Day.</h2>
+            <p class="lead">
+              The first online community vote opens at 5pm on 14 May 2026. Joining now puts you
+              in place before that moment — with your voice registered, your wallet active, and
+              your landholder reservation lodged. This is not a decision that improves by waiting.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn-primary" href="../join/index.html">Join now — $4 once only</a>
+            <a class="btn-secondary" href="../tell-me-more/index.html">Tell me how it works</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+
+</div><!-- .site-shell -->
+
+<script>
+/* ── Mobile nav ── */
+(function(){
+  var t=document.getElementById('mobileToggle'),d=document.getElementById('mobileDrawer');
+  if(!t||!d) return;
+  t.addEventListener('click',function(){
+    var o=d.classList.toggle('open');
+    t.setAttribute('aria-expanded',o);
+    t.textContent=o?'✕':'☰';
+  });
+})();
+
+/* ── Scroll reveal ── */
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+    });
+  },{threshold:.07});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+</body>
+</html>

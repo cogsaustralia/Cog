@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids Pathway | COGs of Australia Foundation</title>
+  <meta name="description" content="Kids S-NFT COG$ — a permanent, soulbound partnership for children and grandchildren. $1 once only. One income unit. Proxy vote. Converts to full adult partnership at 18.">
+  <link rel="icon" type="image/png" href="../assets/logo_webcir.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(16,11,4,.90);--panel2:rgba(36,26,11,.90);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.74);--muted:rgba(210,185,130,.58);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/kids_cogs_1600.webp') center 30%/cover no-repeat;opacity:.14;filter:sepia(.5) saturate(.9) brightness(.6)}
+    .bg-vignette{position:absolute;inset:0;background:
+      radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.55) 0%,transparent 60%),
+      radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.95) 0%,transparent 70%),
+      radial-gradient(ellipse 35% 100% at 0% 50%,rgba(10,8,4,.50) 0%,transparent 60%),
+      radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.50) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:940px;margin:0 auto;padding:0 24px}
+
+    .site-header{border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:sticky;top:0;z-index:200;overflow:hidden}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;min-width:0}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden}
+    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block}
+    .brand-copy{display:flex;flex-direction:column;gap:1px}
+    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .brand-sub{font-size:.61rem;color:rgba(255,248,232,.65);letter-spacing:.04em;line-height:1.2}
+    .brand-tag{font-size:.58rem;color:var(--muted);letter-spacing:.05em;line-height:1.2}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:99px;transition:color .2s,background .2s;white-space:nowrap;letter-spacing:.02em}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold-1);background:var(--gold-pale)}
+    .nav-cta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .btn-primary{font-size:.76rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:8px 18px;border-radius:99px;white-space:nowrap;transition:opacity .2s;border:none;cursor:pointer}
+    .btn-primary:hover{opacity:.88}
+    .btn-secondary{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;border:1px solid var(--gold-rim);padding:7px 16px;border-radius:99px;white-space:nowrap;transition:color .2s,border-color .2s,background .2s;background:none;cursor:pointer}
+    .btn-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+    .mobile-toggle{display:none;background:none;border:1px solid var(--gold-rim);color:var(--muted);padding:7px 11px;border-radius:10px;cursor:pointer;font-size:1rem;line-height:1}
+    .mobile-drawer{display:none;flex-direction:column;gap:2px;padding:10px 0 14px;border-top:1px solid var(--line)}
+    .mobile-drawer a{font-size:.88rem;color:var(--muted);text-decoration:none;padding:9px 0;border-bottom:1px solid var(--line);transition:color .2s}
+    .mobile-drawer a:last-child{border-bottom:none}
+    .mobile-drawer a:hover{color:var(--gold-1)}
+    .mobile-drawer.open{display:flex}
+
+    .page-hero{padding:60px 0 52px;text-align:center}
+    .eyebrow{display:inline-block;font-size:.67rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:22px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;color:var(--text);max-width:700px;margin:0 auto 20px}
+    .hero-lead{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.78;max-width:580px;margin:0 auto 32px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:28px}
+    .faq-link-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:0}
+    .faq-link-row a{display:inline-flex;align-items:center;padding:7px 13px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(40,31,19,.36);color:var(--muted);font-size:.76rem;text-decoration:none;transition:.2s ease}
+    .faq-link-row a:hover{color:var(--text);border-color:var(--gold-rim2);background:rgba(52,40,24,.62)}
+
+    .section{padding:0 0 58px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 54px}
+    .kicker{display:inline-block;font-size:.64rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .section-header{margin-bottom:28px}
+    .section-header h2{font-family:var(--serif);font-size:clamp(1.5rem,4vw,2.4rem);font-weight:500;line-height:1.1;letter-spacing:-.02em;color:var(--text);margin:10px 0 10px}
+    .section-header p{font-size:.92rem;color:var(--muted);line-height:1.75;max-width:660px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .split-band{padding:32px 36px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center}
+    .split-band h2{font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:500;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin:10px 0 14px}
+    .split-band .lead{font-size:.92rem;margin-bottom:0;color:var(--text2);line-height:1.78}
+    .cta-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-items:flex-start}
+    .card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .info-card{padding:24px;border-radius:var(--r);background:linear-gradient(180deg,rgba(29,22,13,.88),rgba(14,11,8,.80));border:1px solid var(--line);box-shadow:var(--shadow)}
+    .info-card strong{display:block;font-size:1.02rem;color:var(--gold-1);margin-bottom:10px;font-weight:500}
+    .info-card p{color:var(--muted);line-height:1.72;font-size:.83rem;margin:0}
+    .card-icon{font-size:1.6rem;display:block;margin-bottom:12px}
+    .step-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .step-card{padding:24px;border-radius:var(--r);background:linear-gradient(180deg,rgba(29,22,13,.88),rgba(14,11,8,.80));border:1px solid var(--line);box-shadow:var(--shadow);text-align:center}
+    .step-number{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold-2),var(--gold-3));color:#fff8e8;font-weight:700;font-size:1.1rem;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+    .step-card strong{display:block;font-size:.95rem;color:var(--gold-1);margin-bottom:10px;font-weight:500}
+    .step-card p{color:var(--muted);line-height:1.72;font-size:.82rem;margin:0}
+    .notice-box{padding:24px 26px;border-radius:var(--r);background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.22);max-width:780px;margin:0 auto;box-shadow:var(--shadow)}
+    .notice-box p{margin:0;color:var(--muted);line-height:1.72;font-size:.84rem}
+    .notice-box strong{color:var(--gold-1)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .ha{animation:fadeUp .65s ease both}
+    .ha:nth-child(1){animation-delay:.05s}.ha:nth-child(2){animation-delay:.15s}
+    .ha:nth-child(3){animation-delay:.24s}.ha:nth-child(4){animation-delay:.32s}
+    .ha:nth-child(5){animation-delay:.40s}
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.in{opacity:1;transform:translateY(0)}
+
+    @media(max-width:860px){
+      .split-band{grid-template-columns:1fr}
+      .cta-actions{flex-direction:row}
+      .card-grid{grid-template-columns:1fr 1fr}
+      .step-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:580px){
+      .nav-links{display:none}
+      .mobile-toggle{display:block}
+      .brand-copy{overflow:hidden}
+      .brand-name{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .brand-sub,.brand-tag{display:none}
+      .card-grid,.step-grid{grid-template-columns:1fr}
+      .cta-actions{flex-direction:column}
+      .split-band{padding:24px 20px;gap:20px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-img"></div>
+  <div class="bg-vignette"></div>
+</div>
+
+<div class="site-shell">
+
+  <header class="site-header">
+    <div class="container">
+      <div class="nav-row">
+        <a class="brand" href="../index.html">
+          <img class="brand-logo" src="../assets/logo_webcir.png" alt="COG$ of Australia Foundation">
+          <div class="brand-copy">
+            <span class="brand-name">COG$ of Australia Foundation</span>
+            <span class="brand-sub">Community Owned Gold &amp; Silver™</span>
+            <span class="brand-tag">Community Operated Governance Structure™</span>
+          </div>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="../vision/index.html">The Vision</a>
+          <a href="../tell-me-more/index.html">Tell me how it works</a>
+          <a href="../faq/index.html">FAQ</a>
+        </nav>
+        <div class="nav-cta">
+          <a class="btn-primary" href="../join/index.html#form">Join now — $4</a>
+          <button class="mobile-toggle" id="mobileToggle" aria-expanded="false" aria-label="Open navigation">☰</button>
+        </div>
+      </div>
+      <div class="mobile-drawer" id="mobileDrawer">
+        <a href="../join/index.html">Join now — $4</a>
+        <a href="../vision/index.html">The Vision</a>
+        <a href="../tell-me-more/index.html">Tell me how it works</a>
+        <a href="../faq/index.html">FAQ</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══ HERO ══ -->
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow ha">Kids S-NFT COG$</span>
+        <h1 class="ha">For the next generation.</h1>
+        <p class="hero-lead ha">
+          A Kids S-NFT gives a child or grandchild their own permanent, soulbound partnership in COGs of Australia Foundation — held in trust until they turn 18, then theirs for life.
+        </p>
+        <picture style="display:block;margin:0 auto 2rem;max-width:440px;border-radius:16px;overflow:hidden;border:1px solid rgba(240,209,138,.15)">
+          <source srcset="../assets/kids_cogs_1600.webp" type="image/webp">
+          <img src="../assets/kids_cogs.png" alt="Children and community stewardship" style="width:100%;display:block">
+        </picture>
+        <div class="hero-actions ha">
+          <a class="btn-primary" href="../join/index.html">Join as a parent — $4</a>
+          <a class="btn-secondary" href="../tell-me-more/index.html">Tell me how it works</a>
+        </div>
+        <div class="faq-link-row ha">
+          <a href="../faq/index.html#faq-kids">FAQ: Kids pathway</a>
+          <a href="../faq/index.html#faq-one-vote">FAQ: One equal vote</a>
+          <a href="../faq/index.html#faq-why-4">FAQ: Why is it $4?</a>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ WHAT KIDS S-NFT PROVIDES ══ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">What a Kids S-NFT provides</span>
+          <h2>$1 once only. Permanent. Real rights from day one.</h2>
+          <p>The Kids S-NFT is the lowest entry point in the Foundation — permanently fixed at $1.00 by entrenched provision. It is not symbolic. It carries real, legally grounded rights under the Declaration.</p>
+        </div>
+        <div class="card-grid">
+          <div class="info-card">
+            <span class="card-icon">🪙</span>
+            <strong>$1.00 once only — permanently fixed</strong>
+            <p>The full $1.00 is invested through Sub-Trust A toward the Partners Asset Pool of ASX-listed and real-world assets. Nothing is taken for administration. This price is entrenched in the Declaration and cannot be increased by any resolution.</p>
+          </div>
+          <div class="info-card">
+            <span class="card-icon">💰</span>
+            <strong>One Sub-Trust B income unit</strong>
+            <p>Each Kids S-NFT carries one income unit — the same per-token entitlement as every adult Personal S-NFT Partner. Dividends that accrue during the child's minority are held on trust by the parent or guardian and must be accounted for separately.</p>
+          </div>
+          <div class="info-card">
+            <span class="card-icon">🗳️</span>
+            <strong>One governance vote (proxy)</strong>
+            <p>The national governance vote is exercised by the parent or guardian as proxy until the child turns 18. The child's vote carries the same weight as every other Partner's — one equal vote, regardless of wealth.</p>
+          </div>
+          <div class="info-card">
+            <span class="card-icon">🔒</span>
+            <strong>Soulbound — non-transferable</strong>
+            <p>The Kids S-NFT cannot be sold, traded, exchanged, pledged, or reassigned under any circumstances. It is permanently attached to the child. It passes to the child's nominated heir on death only.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ WHAT HAPPENS AT 18 ══ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card split-band">
+          <div>
+            <span class="kicker">Automatic conversion at age 18</span>
+            <h2>On their 18th birthday, it becomes fully theirs.</h2>
+            <p class="lead">
+              The Kids S-NFT automatically converts to a full Personal S-NFT COG$ on the child's 18th birthday. All Partner rights vest directly in them — their own Independence Vault wallet, their own governance vote (no longer proxy), and full control over their income unit. The transition is automatic and irrevocable. No additional payment is required.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn-primary" href="../join/index.html">Join now — $4</a>
+            <a class="btn-secondary" href="../faq/index.html">Read the FAQ</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ HOW IT WORKS ══ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">How to add children</span>
+          <h2>Three steps. Parent joins first.</h2>
+          <p>A parent or legal guardian must hold a Personal S-NFT partnership to reserve a Kids S-NFT. Children and grandchildren are eligible.</p>
+        </div>
+        <div class="step-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <strong>Join as a parent — $4</strong>
+            <p>Secure your own Personal S-NFT partnership first. This gives you your Independence Vault and one equal vote. The same first step for everyone.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <strong>Add children — $1 each</strong>
+            <p>Add your children or grandchildren during the join process or later from inside your Independence Vault wallet. Provide each child's name and date of birth.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <strong>Manage from your wallet</strong>
+            <p>Each child's Kids S-NFT appears in your vault. You exercise their proxy vote, view their income unit status, and manage their partnership until they turn 18.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ THINGS WORTH KNOWING ══ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Things worth knowing</span>
+          <h2>Designed for families, not just individuals.</h2>
+        </div>
+        <div class="card-grid">
+          <div class="info-card">
+            <strong>Multiple children welcome</strong>
+            <p>There is no limit on the number of children a parent can register. Each child receives their own separate Kids S-NFT, their own income unit, and their own proxy vote. Each costs $1.00.</p>
+          </div>
+          <div class="info-card">
+            <strong>Grandchildren included</strong>
+            <p>An existing Partner can acquire a Kids S-NFT on behalf of a child or grandchild. The grandparent must hold their own Personal S-NFT partnership first.</p>
+          </div>
+          <div class="info-card">
+            <strong>Income held on trust</strong>
+            <p>Any Sub-Trust B dividend distributions that accrue to a Kids S-NFT during the child's minority are held on trust by the parent or guardian under applicable state trust law. They must be accounted for separately from the parent's own funds.</p>
+          </div>
+          <div class="info-card">
+            <strong>No fiat sale — ever</strong>
+            <p>Like all COG$ tokens, the Kids S-NFT is subject to the no-fiat-sale rule. It cannot be sold for cash under any circumstances. This is an entrenched provision of the Declaration and cannot be changed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ FOUNDING PHASE NOTICE ══ -->
+    <section class="section reveal">
+      <div class="container notice-box">
+        <p><strong>Founding phase notice.</strong> Kids S-NFT COG$ tokens are reserved now and will be Trustee-approved and issued on Foundation Governance Day — once all Tier 1 pre-conditions are satisfied. Sub-Trust B income distributions will only begin once the Partners Asset Pool has received dividends after Expansion Day. The $1.00 payment per child applies on or after Foundation Governance Day. No payment is required today for reservation.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ CLOSING CTA ══ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card split-band">
+          <div>
+            <span class="kicker">The invitation</span>
+            <h2>Give them a place before Foundation Governance Day.</h2>
+            <p class="lead">
+              Joining now secures your child's position in the structure — with their income unit, their proxy vote, and their permanent partnership locked in before the first community governance vote opens.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn-primary" href="../join/index.html">Join as a parent — $4</a>
+            <a class="btn-secondary" href="../tell-me-more/index.html">Tell me how it works</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+</div><!-- .site-shell -->
+
+<script>
+(function(){
+  var t=document.getElementById('mobileToggle'),d=document.getElementById('mobileDrawer');
+  if(!t||!d)return;
+  t.addEventListener('click',function(){
+    var o=d.classList.toggle('open');
+    t.setAttribute('aria-expanded',o);
+    t.textContent=o?'✕':'☰';
+  });
+})();
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.07});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+</body>
+</html>

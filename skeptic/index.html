@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Is COG$ Real? The Skeptic's Guide | COG$ of Australia Foundation</title>
+  <meta name="description" content="Hard questions about COG$ answered plainly. Supply controls, governance protections, regulatory standing, and why $4 is the only way in.">
+  <link rel="icon" type="image/png" href="/assets/logo_webcir.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;
+      --panel:rgba(24,17,8,.84);
+      --gold-1:#f0d18a;
+      --gold-2:#c9973d;
+      --gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);
+      --gold-rim:rgba(240,209,138,.20);
+      --gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;
+      --text2:rgba(255,248,232,.92);
+      --muted:rgba(220,196,148,.88);
+      --line:rgba(240,209,138,.18);
+      --line2:rgba(240,209,138,.36);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;
+      --sans:'DM Sans',system-ui,sans-serif;
+      --r:20px;
+    }
+
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+    html { scroll-behavior:smooth; font-size:18px }
+    body { font-family:var(--sans); background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden }
+
+    /* ── Background ── */
+    .bg-layer { position:fixed; inset:0; z-index:0; pointer-events:none }
+    .bg-img {
+      position:absolute; inset:0;
+      background:url('/assets/logo_web.webp') center/cover no-repeat;
+      opacity:.18; filter:sepia(.6) saturate(.9) brightness(.85)
+    }
+    .bg-vignette {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 80% 70% at 50% 40%,transparent 30%,rgba(10,8,4,.6) 75%,rgba(10,8,4,.82) 100%),
+        linear-gradient(to bottom,rgba(10,8,4,.6) 0%,transparent 18%,transparent 65%,rgba(10,8,4,.5) 100%)
+    }
+    .bg-grain {
+      position:absolute; inset:0; opacity:.035;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size:128px
+    }
+
+    /* ── Layout ── */
+    .site-shell { position:relative; z-index:1;overflow-x:hidden}
+    .container { max-width:860px; margin:0 auto; padding:0 22px }
+    .container-wide { max-width:1040px; margin:0 auto; padding:0 22px }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px) }
+      to   { opacity:1; transform:translateY(0) }
+    }
+    @keyframes breathe {
+      0%,100% { opacity:.45; transform:scale(1) }
+      50%      { opacity:.9;  transform:scale(1.1) }
+    }
+    @keyframes floatCoin {
+      0%,100% { transform:translateY(0) rotate(-1deg) }
+      50%      { transform:translateY(-10px) rotate(1deg) }
+    }
+    .au   { animation:fadeUp .65s both }
+    .d1   { animation-delay:.05s } .d2 { animation-delay:.15s }
+    .d3   { animation-delay:.25s } .d4 { animation-delay:.35s }
+    .d5   { animation-delay:.45s } .d6 { animation-delay:.55s }
+
+    /* ── Buttons ── */
+    .btn-primary-lg {
+      font-size:.9rem; font-weight:500; color:#1a0f00; text-decoration:none;
+      background:linear-gradient(135deg,var(--gold-1),var(--gold-2));
+      padding:14px 36px; border-radius:99px; white-space:nowrap;
+      transition:opacity .2s; border:none; cursor:pointer; display:inline-block
+    }
+    .btn-primary-lg:hover { opacity:.88 }
+    .btn-secondary-lg {
+      font-size:.84rem; font-weight:400; color:var(--muted); text-decoration:none;
+      border:1px solid var(--gold-rim); padding:13px 30px; border-radius:99px;
+      white-space:nowrap; transition:color .2s,border-color .2s,background .2s;
+      background:none; cursor:pointer; display:inline-block
+    }
+    .btn-secondary-lg:hover { color:var(--gold-1); border-color:var(--gold-rim2); background:var(--gold-pale) }
+
+    /* ── Hero ── */
+    .hero { display:flex; flex-direction:column; align-items:center; text-align:center; padding:64px 22px 0 }
+    .hero-eyebrow {
+      display:inline-block; font-size:.66rem; font-weight:500; letter-spacing:.18em;
+      text-transform:uppercase; color:var(--gold-2); border:1px solid var(--gold-rim);
+      padding:5px 18px; border-radius:99px; margin-bottom:30px
+    }
+    .coin-wrap { position:relative; width:170px; height:170px; margin:0 auto 34px }
+    .coin-glow {
+      position:absolute; inset:-28px; border-radius:50%;
+      background:radial-gradient(circle,rgba(201,151,61,.4) 0%,transparent 68%);
+      animation:breathe 4s ease-in-out infinite; z-index:0
+    }
+    .coin-img {
+      width:170px; height:170px; position:relative; z-index:1; display:block;
+      filter:drop-shadow(0 8px 34px rgba(180,130,40,.55));
+      animation:floatCoin 6s ease-in-out 0.5s infinite;
+      border-radius:50%; object-fit:cover;
+      opacity:0; transition:opacity .5s ease
+    }
+    .coin-img.loaded { opacity:1 }
+    .coin-fallback {
+      width:170px; height:170px; border-radius:50%;
+      border:2px solid var(--gold-rim2); background:rgba(240,209,138,.06);
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--serif); font-size:1.7rem; color:var(--gold-2);
+      position:relative; z-index:1; animation:floatCoin 6s ease-in-out 0.5s infinite
+    }
+    .hero-title {
+      font-family:var(--serif); font-size:clamp(2.6rem,6vw,4.4rem);
+      font-weight:500; line-height:1.05; letter-spacing:-.03em; color:var(--text); margin-bottom:14px
+    }
+    .hero-title em { font-style:italic; color:var(--gold-1) }
+    .hero-sub {
+      font-family:var(--serif); font-size:clamp(1rem,2.5vw,1.35rem);
+      font-style:italic; font-weight:400; color:var(--muted); margin-bottom:22px
+    }
+    .hero-lead {
+      font-size:.95rem; font-weight:300; color:var(--text2);
+      line-height:1.84; max-width:520px; margin:0 auto
+    }
+    .hero-rule {
+      width:1px; height:60px;
+      background:linear-gradient(to bottom,var(--line2),transparent);
+      margin:38px auto 0
+    }
+
+    /* ── Sections ── */
+    .section { padding:64px 0 0 }
+    .section-inner { padding:0 0 64px }
+    .divider {
+      border:none; height:1px;
+      background:linear-gradient(to right,transparent,var(--line2),transparent)
+    }
+    .kicker {
+      display:block; font-size:.64rem; font-weight:500; letter-spacing:.16em;
+      text-transform:uppercase; color:var(--gold-2); margin-bottom:14px
+    }
+    .section-title {
+      font-family:var(--serif); font-size:clamp(1.8rem,4vw,2.6rem);
+      font-weight:500; line-height:1.1; letter-spacing:-.022em; color:var(--text); margin-bottom:16px
+    }
+    .section-lead { font-size:.94rem; color:var(--text2); line-height:1.84; max-width:580px }
+    .glass-card {
+      background:var(--panel); border:1px solid var(--line); border-radius:var(--r);
+      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:var(--shadow)
+    }
+
+    /* ── Accordion ── */
+    .questions-stack { display:flex; flex-direction:column; gap:2px; margin-top:38px }
+    .q-panel {
+      background:linear-gradient(160deg,rgba(28,20,9,.92),rgba(16,11,5,.88));
+      border:1px solid var(--line); border-radius:var(--r);
+      overflow:hidden; transition:border-color .3s
+    }
+    .q-panel:hover { border-color:var(--gold-rim2) }
+    .q-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:22px 28px; cursor:pointer; gap:16px; user-select:none
+    }
+    .q-number {
+      font-family:var(--serif); font-size:.78rem; font-style:italic;
+      color:var(--gold-3); flex-shrink:0; width:22px
+    }
+    .q-question {
+      font-family:var(--serif); font-size:1.08rem; font-weight:500;
+      color:var(--gold-1); flex:1; line-height:1.3
+    }
+    .q-arrow { color:var(--gold-2); font-size:.7rem; flex-shrink:0; transition:transform .35s cubic-bezier(.4,0,.2,1) }
+    .q-panel.open .q-arrow { transform:rotate(180deg) }
+    .q-body { max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.4,0,.2,1) }
+    .q-panel.open .q-body { max-height:900px }
+    .q-inner { padding:0 28px 28px; border-top:1px solid var(--line) }
+    .q-inner p { font-size:.89rem; color:var(--text2); line-height:1.88; margin-top:20px }
+    .q-inner p + p { margin-top:12px }
+    .q-highlight {
+      background:rgba(240,209,138,.07); border-left:2px solid var(--gold-2);
+      padding:14px 18px; border-radius:0 10px 10px 0; margin-top:16px
+    }
+    .q-highlight p { margin-top:0 !important; font-size:.84rem }
+    .q-bridge {
+      font-family:var(--serif); font-style:italic; color:var(--gold-1);
+      font-size:.92rem; margin-top:18px !important; line-height:1.65
+    }
+    .q-img-panel {
+      display:flex; margin-top:20px; border-radius:14px; overflow:hidden;
+      border:1px solid var(--line); background:rgba(0,0,0,.3)
+    }
+    .q-img-panel img {
+      width:150px; height:150px; flex-shrink:0; object-fit:cover;
+      filter:sepia(.15) saturate(1.1) brightness(.9)
+    }
+    .q-img-caption { flex:1; padding:18px 20px }
+    .q-img-caption strong {
+      font-family:var(--serif); font-size:.9rem; color:var(--gold-1);
+      display:block; margin-bottom:6px
+    }
+    .q-img-caption span { font-size:.8rem; color:var(--muted); line-height:1.68 }
+
+    /* ── Supply callout ── */
+    .supply-callout {
+      background:linear-gradient(135deg,rgba(201,151,61,.09),rgba(240,209,138,.04));
+      border:1px solid var(--gold-rim2); border-radius:var(--r);
+      padding:38px 44px; margin-top:38px; text-align:center
+    }
+    .supply-num {
+      font-family:var(--serif); font-size:clamp(2.4rem,5vw,3.6rem);
+      font-weight:500; color:var(--gold-1); letter-spacing:-.03em;
+      display:block; margin-bottom:6px
+    }
+    .supply-label {
+      font-size:.68rem; font-weight:500; letter-spacing:.16em;
+      text-transform:uppercase; color:var(--gold-2); display:block; margin-bottom:20px
+    }
+    .supply-callout > p { font-size:.88rem; color:var(--text2); line-height:1.84; max-width:560px; margin:0 auto }
+    .supply-rule {
+      display:flex; align-items:center; gap:16px; margin-top:24px;
+      padding-top:22px; border-top:1px solid var(--line);
+      flex-wrap:wrap; justify-content:center
+    }
+    .supply-rule-item { display:flex; align-items:center; gap:8px; font-size:.76rem; color:var(--muted) }
+    .supply-rule-item .dot { width:6px; height:6px; border-radius:50%; background:var(--gold-2); flex-shrink:0 }
+    .supply-div { width:1px; height:16px; background:var(--line2) }
+
+    /* ── Landscape panel ── */
+    .landscape-wrap {
+      position:relative; border-radius:var(--r); overflow:hidden;
+      margin-top:28px; border:1px solid var(--line); min-height:240px
+    }
+    .landscape-img {
+      width:100%; display:block; object-fit:cover;
+      max-height:320px; opacity:.8; filter:sepia(.25) saturate(1.15) brightness(.88)
+    }
+    .landscape-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to right,rgba(10,8,4,.88) 44%,rgba(10,8,4,.2) 100%);
+      display:flex; flex-direction:column; justify-content:center; padding:36px 44px
+    }
+    .landscape-fallback {
+      min-height:240px; display:none; flex-direction:column; justify-content:center;
+      padding:36px 44px; background:linear-gradient(135deg,rgba(28,18,6,.97),rgba(14,10,3,.99))
+    }
+    .landscape-quote {
+      font-family:var(--serif); font-size:clamp(1.1rem,2.5vw,1.6rem);
+      font-style:italic; color:var(--gold-1); line-height:1.3; margin-bottom:10px
+    }
+    .landscape-sub { font-size:.8rem; color:var(--muted); max-width:360px; line-height:1.72 }
+
+    /* ── Two-col info cards ── */
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:38px }
+    .info-card {
+      background:linear-gradient(160deg,rgba(28,20,9,.92),rgba(16,11,5,.88));
+      border:1px solid var(--line); border-radius:var(--r); padding:30px 28px
+    }
+    .info-card-icon {
+      width:54px; height:54px; margin-bottom:18px; border-radius:14px;
+      overflow:hidden; border:1px solid var(--gold-rim);
+      background:rgba(240,209,138,.06); display:flex; align-items:center; justify-content:center
+    }
+    .info-card-icon img { width:54px; height:54px; object-fit:cover; display:block }
+    .info-card-icon .ico-fb { font-size:1.5rem }
+    .info-card h3 {
+      font-family:var(--serif); font-size:1.12rem; font-weight:500;
+      color:var(--gold-1); margin-bottom:18px
+    }
+    .info-item { display:flex; gap:12px; margin-bottom:14px }
+    .info-item:last-child { margin-bottom:0 }
+    .info-dot { color:var(--gold-2); font-size:.55rem; margin-top:6px; flex-shrink:0 }
+    .info-item-content strong { font-size:.85rem; font-weight:500; color:var(--text); display:block; margin-bottom:3px }
+    .info-item-content span { font-size:.79rem; color:var(--muted); line-height:1.64; display:block }
+
+    /* ── Allocation cards ── */
+    .alloc-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:38px }
+    .alloc-card {
+      background:linear-gradient(160deg,rgba(28,20,9,.95),rgba(16,11,5,.9));
+      border:1px solid var(--line); border-radius:var(--r); padding:32px 28px;
+      text-align:center; transition:border-color .3s
+    }
+    .alloc-card:hover { border-color:var(--gold-rim2) }
+    .alloc-num {
+      font-family:var(--serif); font-size:3rem; font-weight:500;
+      color:var(--gold-1); letter-spacing:-.03em; display:block; margin-bottom:4px
+    }
+    .alloc-label {
+      font-size:.66rem; font-weight:500; letter-spacing:.14em;
+      text-transform:uppercase; color:var(--gold-2); display:block; margin-bottom:16px
+    }
+    .alloc-desc { font-size:.8rem; color:var(--muted); line-height:1.74; margin-bottom:14px }
+    .alloc-note {
+      font-size:.76rem; color:var(--text2); line-height:1.6;
+      border-top:1px solid var(--line); padding-top:14px
+    }
+
+    /* ── Quote band ── */
+    .quote-band {
+      display:grid; grid-template-columns:1fr auto; gap:32px;
+      align-items:center; padding:36px 40px; margin-top:28px
+    }
+    .quote-band blockquote {
+      font-family:var(--serif); font-size:clamp(1.1rem,2.5vw,1.6rem);
+      font-style:italic; font-weight:400; color:var(--gold-1);
+      line-height:1.32; letter-spacing:-.018em; margin-bottom:14px
+    }
+    .quote-band p { font-size:.86rem; color:var(--muted); line-height:1.76 }
+    .quote-img {
+      width:140px; height:140px; flex-shrink:0; border-radius:14px;
+      object-fit:cover; border:1px solid var(--gold-rim2);
+      filter:sepia(.2) saturate(1.15) brightness(.9)
+    }
+
+    /* ── CTA close ── */
+    .close-cta {
+      background:linear-gradient(160deg,rgba(36,26,11,.97),rgba(16,11,5,.93));
+      border:1px solid var(--line2); border-radius:28px;
+      padding:56px 48px; text-align:center; margin-top:64px;
+      position:relative; overflow:hidden
+    }
+    .close-cta::before {
+      content:''; position:absolute; inset:0; border-radius:28px;
+      background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(201,151,61,.13),transparent 70%);
+      pointer-events:none
+    }
+    .cta-img {
+      width:100%; max-height:190px; object-fit:cover; object-position:center 40%;
+      border-radius:14px; margin-bottom:36px; opacity:.72;
+      filter:sepia(.3) saturate(1.1) brightness(.85); border:1px solid var(--line);
+      position:relative; z-index:1
+    }
+    .price-pill {
+      font-size:.68rem; font-weight:500; letter-spacing:.14em;
+      text-transform:uppercase; color:var(--gold-2); border:1px solid var(--gold-rim);
+      padding:5px 14px; border-radius:99px; margin-bottom:22px;
+      display:inline-block; position:relative; z-index:1
+    }
+    .close-cta h2 {
+      font-family:var(--serif); font-size:clamp(1.8rem,4vw,2.9rem);
+      font-weight:500; color:var(--text); line-height:1.08; margin-bottom:10px;
+      position:relative; z-index:1
+    }
+    .close-cta h2 em { font-style:italic; color:var(--gold-1) }
+    .close-cta .cta-subtitle {
+      font-family:var(--serif); font-style:italic;
+      font-size:1rem; color:var(--muted); margin-bottom:22px;
+      position:relative; z-index:1
+    }
+    .close-cta > p {
+      font-size:.9rem; color:var(--text2); line-height:1.86;
+      max-width:500px; margin:0 auto 34px; position:relative; z-index:1
+    }
+    .cta-buttons {
+      display:flex; align-items:center; justify-content:center;
+      gap:14px; flex-wrap:wrap; position:relative; z-index:1
+    }
+    .cta-footnote {
+      font-size:.74rem; color:var(--muted); margin-top:20px;
+      line-height:1.64; position:relative; z-index:1
+    }
+
+    /* ── Badge row ── */
+    .badge-row { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:38px }
+    .badge {
+      background:rgba(240,209,138,.06); border:1px solid var(--gold-rim);
+      padding:7px 16px; border-radius:99px; font-size:.67rem; font-weight:500;
+      letter-spacing:.1em; text-transform:uppercase; color:var(--muted)
+    }
+    .badge-gold { border-color:var(--gold-rim2); color:var(--gold-2) }
+
+    /* ── Responsive ── */
+    @media(max-width:680px) {
+      .hero                              { padding:44px 16px 0 }
+      .two-col, .alloc-grid             { grid-template-columns:1fr }
+      .quote-band                        { grid-template-columns:1fr; text-align:center }
+      .quote-img                         { margin:0 auto; width:110px; height:110px }
+      .close-cta                         { padding:38px 20px }
+      .supply-callout                    { padding:28px 20px }
+      .supply-rule                       { gap:10px }
+      .supply-div                        { display:none }
+      .q-header                          { padding:18px 20px }
+      .q-inner                           { padding:0 18px 22px }
+      .q-img-panel                       { flex-direction:column }
+      .q-img-panel img                   { width:100%; height:160px }
+      .landscape-overlay, .landscape-fallback { padding:26px 22px }
+      .info-card                         { padding:24px 18px }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Fixed background ── -->
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-img"></div>
+  <div class="bg-vignette"></div>
+  <div class="bg-grain"></div>
+</div>
+
+<div class="site-shell">
+
+  <!-- ── Shared header ── -->
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
+  <!-- ═══════════════════════════
+       HERO
+  ════════════════════════════ -->
+  <section class="hero">
+    <div class="container">
+
+      <div class="hero-eyebrow au d1">The Skeptic's Guide to COG$ Australia</div>
+
+      <div class="coin-wrap au d2">
+        <div class="coin-glow"></div>
+        <img
+          class="coin-img"
+          src="/assets/cogs_coin_web.webp"
+          alt="COG$ Community Foundation Coin — Community Owned Gold and Silver"
+          onload="this.classList.add('loaded')"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+        >
+        <div class="coin-fallback" style="display:none">COG$</div>
+      </div>
+
+      <h1 class="hero-title au d3">Is COG$ <em>real?</em></h1>
+      <p class="hero-sub au d4">That's the right question. Here are the honest answers.</p>
+      <p class="hero-lead au d5">We built this page for people who aren't sure yet — not to convince you, but to give you what you need to decide for yourself. If the answers hold up to scrutiny, the next step is&nbsp;$4.</p>
+      <div class="hero-rule au d6"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════
+       FIVE QUESTIONS
+  ════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-inner">
+
+        <span class="kicker">Five questions we get asked</span>
+        <h2 class="section-title">The hard questions,<br>answered plainly.</h2>
+        <p class="section-lead">No deflection. No enthusiasm. Just the mechanics of how this works and the protections built in to keep it honest.</p>
+
+        <div class="questions-stack" id="questionsStack">
+
+          <!-- Q1 -->
+          <div class="q-panel" data-panel="0">
+            <div class="q-header" onclick="togglePanel(0)" role="button" tabindex="0" aria-expanded="false">
+              <span class="q-number">i.</span>
+              <span class="q-question">"Where is the value? What's actually backing this?"</span>
+              <span class="q-arrow">▼</span>
+            </div>
+            <div class="q-body">
+              <div class="q-inner">
+                <p>The joint venture's governance is anchored to the stewardship of in-ground assets — documented mineral tenements and CHESS-held shares in ASX-listed resource companies — that stay in place. This is the non-extraction thesis: the assets do not have to be sold or removed from the ground to serve the community. They need to be real, independently registered, and Partner-governed.</p>
+                <p>CHESS-registered shareholdings are visible, traceable, and lawfully held in the Foundation's name. As the Foundation acquires shares in ASX-listed resource companies, Partners vote on how those holdings are deployed at company AGMs. The community's voice becomes a lawful governance act — not a sentiment, not a symbol.</p>
+                <div class="q-img-panel">
+                  <img src="/assets/cogs_steward.png" alt="Non-Extractive Backing — minerals below, community above" loading="lazy">
+                  <div class="q-img-caption">
+                    <strong>Non-Extractive Backing</strong>
+                    <span>The minerals stay beneath the surface. Community life is built above them. The two do not have to trade off — that is the entire point of the structure.</span>
+                  </div>
+                </div>
+                <div class="q-highlight">
+                  <p>The Foundation is building toward its first 1% acquisition in Legacy Minerals Limited (ASX:LGM) as the first milestone in establishing the Partners Asset Pool of real-world assets.</p>
+                </div>
+                <p class="q-bridge">The $4 does not buy a share price. It buys a governance position in the structure that holds those assets — permanently.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="q-panel" data-panel="1">
+            <div class="q-header" onclick="togglePanel(1)" role="button" tabindex="0" aria-expanded="false">
+              <span class="q-number">ii.</span>
+              <span class="q-question">"Is this a crypto scam? It sounds like a crypto scam."</span>
+              <span class="q-arrow">▼</span>
+            </div>
+            <div class="q-body">
+              <div class="q-inner">
+                <p>The features that define a crypto scam are specifically absent here. There is no cash-out mechanism to fiat currency. That single design choice removes the incentive for pump-and-dump behaviour — if you cannot exit to AUD, there is no speculation loop to exploit.</p>
+                <p>Tier 1 COG$ governance units — the Personal S-NFT, B-NFT, Pay It Forward, Donation, and Resident classes — are closed-loop utility instruments used within the Partner joint venture. They are not tradeable assets, not financial products, and not speculative tokens with an exit door. Tier 2 investment classes (ASX COG$, RWA COG$, Landholder COG$) are subject to applicable disclosure requirements from Expansion Day.</p>
+                <div class="q-img-panel">
+                  <img src="/assets/two_coin.webp" alt="COG$ Coins — trust and mutual exchange, not speculation" loading="lazy">
+                  <div class="q-img-caption">
+                    <strong>Trust, not speculation</strong>
+                    <span>Two coins, a handshake, a community foundation. No exit ramp to fiat means no incentive to inflate, manipulate, or abandon the structure.</span>
+                  </div>
+                </div>
+
+                <p class="q-bridge">The structure is designed to make COG$ uninteresting to speculators and useful to participants. That is intentional, not a limitation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="q-panel" data-panel="2">
+            <div class="q-header" onclick="togglePanel(2)" role="button" tabindex="0" aria-expanded="false">
+              <span class="q-number">iii.</span>
+              <span class="q-question">"Can they just change the rules whenever they feel like it?"</span>
+              <span class="q-arrow">▼</span>
+            </div>
+            <div class="q-body">
+              <div class="q-inner">
+                <p>The supply protection and core governance rules are entrenched provisions under the Foundation's Declaration. Entrenched means they cannot be changed by any board decision, trustee action, or simple majority vote. They are locked at the constitutional level of the structure.</p>
+                <p>The supply protections on each token class are precise and distinct. RWA COG$ — the Real World Asset token class tied to in-ground mineral stewardship — may only ever be increased if new in-ground assets are formally identified and independently valued, and even then only by special resolution of Partners. That threshold is designed to make casual or self-serving expansion structurally impossible.</p>
+                <div class="q-img-panel">
+                  <img src="/assets/cogs_perpetual.png" alt="COG$ Perpetual Reserve — Australia preserved under a protective dome" loading="lazy">
+                  <div class="q-img-caption">
+                    <strong>The Perpetual Reserve</strong>
+                    <span>Australia preserved under a protective dome. The in-ground assets are held, not extracted. The rules that hold them there are entrenched — not administrative policy that can be quietly revised.</span>
+                  </div>
+                </div>
+                <div class="q-highlight">
+                  <p>Partners who join now hold the most significant governance position if an expansion is ever proposed. Early partnership is not symbolic — it is a real vote in any future 75% resolution of this consequence.</p>
+                </div>
+                <p class="q-bridge">The rules that protect you are the same rules that bind us. They are not policies — they are the architecture.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="q-panel" data-panel="3">
+            <div class="q-header" onclick="togglePanel(3)" role="button" tabindex="0" aria-expanded="false">
+              <span class="q-number">iv.</span>
+              <span class="q-question">"What does my $4 actually get me — right now, today?"</span>
+              <span class="q-arrow">▼</span>
+            </div>
+            <div class="q-body">
+              <div class="q-inner">
+                <p>Immediately on joining: permanent partnership (non-transferable and soulbound to you for life), a permanent Partner number, one equal national governance vote, and access to your Independence Vault — the personal dashboard through which all governance, holdings, and community proposals are managed.</p>
+                <p>The $4 is administratively fixed forever as an entrenched provision of the Declaration. It cannot be increased by any vote. What you pay today is what every Partner who joins after you pays. The barrier to entry is permanently low by design — so participation is not reserved for those with more resources.</p>
+                <div class="q-highlight">
+                  <p>On-chain COG$ token classes are reserved after Governance Foundation Day (14 May 2026). Tier 2 token classes (ASX COG$, RWA COG$, Landholder COG$) activate on Expansion Day — when the first Sovereign Node goes live on the Partners Consensus Network, as certified by the Board and endorsed by the First Nations Advisory Council — subject to any regulatory requirements determined by applicable law at that time. The $4 records your governance position. It is not a promise of financial return.</p>
+                </div>
+                <p class="q-bridge">It is a seat at the table, not a ticket in a lottery. The distinction matters.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="q-panel" data-panel="4">
+            <div class="q-header" onclick="togglePanel(4)" role="button" tabindex="0" aria-expanded="false">
+              <span class="q-number">v.</span>
+              <span class="q-question">"What is the actual regulatory standing? Are you legal?"</span>
+              <span class="q-arrow">▼</span>
+            </div>
+            <div class="q-body">
+              <div class="q-inner">
+                <p>The CJVM Hybrid Trust operates as a Community Joint Venture Cryptographic Governance, Resource Management and Distribution System — a business partnership in which the Partners exercise day-to-day control through their proprietary cryptographic governance system. The Foundation's self-assessed position is that the CJVM does not constitute a managed investment scheme within the meaning of section 9 of the Corporations Act 2001 (Cth), because the third limb of that definition — that members do not have day-to-day control — is not satisfied.</p>
+                <p>Tier 1 COG$ units operate as closed-loop utility and governance instruments within a Partner-only joint venture. No Tier 1 financial product, token, or investment instrument has been offered or issued. Tier 2 investment classes (ASX COG$, RWA COG$, Landholder COG$) are acknowledged under the Foundation’s self-assessment to constitute financial products within the meaning of ASIC Information Sheet 225 and will not be issued until applicable disclosure obligations are satisfied from Expansion Day. Partners direct governance through Community Polls, proposals, and the Independence Vault. The Trustee holds legal title and performs limited custody, compliance, and fiat functions.</p>
+                <div class="q-highlight">
+                  <p>The Foundation engages with the ASIC Innovation Hub as a matter of good governance and transparency — to inform ASIC of the self-assessed regulatory position, not to seek confirmation that it is correct. MIS classification is determined by whether the statutory definition is met on the facts — not by ASIC approval. If applicable law later requires a specific authorisation or disclosure for a particular activity, the Trustee will obtain or provide what is required. Partners are informed through the Independence Vault.</p>
+                </div>
+                <p class="q-bridge">We are not asking you to trust us. We are asking you to join the room where the decisions get made.</p>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /questions-stack -->
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════
+       THE FOUR SPOKES
+  ════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-inner">
+
+        <span class="kicker">The COG$ Circular Economy</span>
+        <h2 class="section-title">The Four Spokes of the<br>COG$ Circular Economy</h2>
+        <p class="section-lead">The COG$ of Australia Foundation is built around a circular economy operating between partners and their communities. At its heart are four distinct token types — each one a spoke in the wheel, minted by a different mechanism and anchored to a different form of value. No single spoke carries the wheel alone. Together they keep value moving, recognise real contribution, and sustain the community without extraction, speculation, or dilution.</p>
+
+        <div class="questions-stack" style="margin-top:38px">
+
+          <div class="glass-card" style="padding:28px 32px">
+            <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-1);margin-bottom:14px">NFT COG$ — the spoke of identity</h3>
+            <p style="font-size:.9rem;color:var(--text2);line-height:1.84">Minted once at the moment an individual partner or business joins the community, each NFT COG$ is permanently and uniquely bound to that participant. They are not transferable, not replicable, and not a currency — they are a governance instrument and a membership record. This spoke grows only as the community genuinely grows, one consenting participant at a time.</p>
+          </div>
+
+          <div class="glass-card" style="padding:28px 32px;margin-top:10px">
+            <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-1);margin-bottom:14px">ASX COG$ — the spoke of equity</h3>
+            <p style="font-size:.9rem;color:var(--text2);line-height:1.84">Minted against a pooled holding of shares in ASX-listed resource companies, every token represents a proportional stake in that pool and cannot exist without a corresponding share underpinning it. This spoke expands only when the pool itself expands — through new company partnerships or additional share contributions — keeping it transparent, market-anchored, and directly tied to the performance of real resource companies.</p>
+          </div>
+
+          <div class="glass-card" style="padding:28px 32px;margin-top:10px">
+            <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-1);margin-bottom:14px">RWA COG$ — the spoke of resource</h3>
+            <p style="font-size:.9rem;color:var(--text2);line-height:1.84">Not yet in circulation, each RWA COG$ will be minted via smart contract and tied to an independently verified, in-situ resource: minerals, biological assets, or other natural assets valued before a single gram is extracted or a single hectare is harvested. The minting quantity is fixed at the point of independent valuation and cannot be revisited. If the underlying resource increases in value, existing tokens appreciate — the token carries more weight, but the supply does not grow. No new tokens are created, no dilution occurs. The only way to extend this class is to register additional independently verified resources, making inflation structurally impossible by architecture, not just by rule.</p>
+          </div>
+
+          <div class="glass-card" style="padding:28px 32px;margin-top:10px">
+            <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-1);margin-bottom:14px">Community COG$ (CC) — the spoke of exchange</h3>
+            <p style="font-size:.9rem;color:var(--text2);line-height:1.84">The everyday transactional currency of the partnership. Carrying no directly linked underlying asset, their value is social and consensual: what partners agree they are worth through the exchange of real goods and services. Every Individual Partner receives 1,000 CC (¢©) upon entry; every Business Partner receives 10,000 CC. Beyond that, Partners may mint and issue additional CC only in exchange for genuine goods or services contributed to the Community Joint Venture Partnership. This spoke grows in direct proportion to the productive activity of the community itself.</p>
+          </div>
+
+        </div>
+
+          <div class="glass-card" style="padding:28px 32px;margin-top:10px">
+            <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-1);margin-bottom:14px">Donation COG$ — the spoke of community benefit</h3>
+            <p style="font-size:.9rem;color:var(--text2);line-height:1.84">Available to any person or entity. Each $4 Donation COG$ splits on issue: $2.00 goes directly to Sub-Trust C at the moment of issue — immediately available for community and First Nations projects — and $2.00 is invested through Sub-Trust A to generate an ongoing Donation Dividend Stream. That stream is itself split 50/25/25: 50% to Sub-Trust B for Partner distributions, 25% back to Sub-Trust C, and 25% to the Foundation. Sub-Trust C is registered as a D Class Beneficial Unit Holder, meaning the community benefit pathway is structurally embedded — not discretionary. The donor holds no governance right, but every Donation COG$ generates a permanent, compounding benefit flow.</p>
+          </div>
+
+                <p style="font-size:.9rem;color:var(--text2);line-height:1.84;margin-top:32px;max-width:680px">Five spokes — identity, equity, resource, exchange, and community benefit — each governed by its own minting logic, each incapable of being inflated without a corresponding real-world input. This is the structural integrity of the COG$ circular economy: value that moves between partners and their communities, always grounded in something real.</p>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════
+       REGULATORY & GOVERNANCE
+  ════════════════════════════ -->
+  <section class="section">
+    <div class="container-wide">
+      <div class="section-inner">
+
+        <span class="kicker">Structure &amp; Standing</span>
+        <h2 class="section-title">Regulatory independence.<br>Consensus governance.</h2>
+        <p class="section-lead">Two things sceptics most need to see: what the legal standing is, and who actually controls the decisions. Here is both.</p>
+
+        <div class="two-col">
+
+          <!-- Regulatory card — Scales of Justice -->
+          <div class="info-card">
+            <div class="info-card-icon">
+              <img
+                src="/assets/Scales of justice with Australian flora.png"
+                alt="Scales of justice with Australian flora"
+                onerror="this.outerHTML='<span class=\'ico-fb\'>⚖️</span>'"
+              >
+            </div>
+            <h3>Regulatory Independence</h3>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>Non-ADI Status</strong>
+                <span>Not a bank. No deposits taken. No interest paid. No cash payment facility.</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>Non-Cash Payment — Legal Position</strong>
+                <span>The Foundation's legal analysis supports the position that COG$ is structured as a closed-loop utility instrument within a Partner-only joint venture. The Foundation engages with the ASIC Innovation Hub as a matter of good governance and transparency.</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>Closed-Loop Utility Instrument</strong>
+                <span>Partner-only joint venture. COG$ units are non-convertible to AUD by design and by entrenched rule.</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>Self-Assessed Non-MIS Position</strong>
+                <span>The CJVM is not a managed investment scheme — the third limb of the Corporations Act s.9 definition is not satisfied because Partners exercise day-to-day control.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Governance card — Community Governance coin -->
+          <div class="info-card">
+            <div class="info-card-icon">
+              <img
+                src="/assets/cogs_gov.png"
+                alt="COG$ Community Governance — people in a circle around Australia"
+                onerror="this.outerHTML='<span class=\'ico-fb\'>🗳️</span>'"
+              >
+            </div>
+            <h3>Consensus Governance</h3>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>75% Supply Protection</strong>
+                <span>Supply expansion requires new independently valued assets plus a 75% Partner special resolution. No exceptions.</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>Independence Vault Voting</strong>
+                <span>Partners vote on governance proposals, resource decisions, and AGM positions via their personal vault.</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>One Partner, One Vote</strong>
+                <span>Wealth does not buy additional governance voice. The $4 partnership contribution carries the same vote as any other.</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-dot">●</span>
+              <div class="info-item-content">
+                <strong>Governing Documents Access</strong>
+                <span>Full legal framework accessible to all Partners. Open ledger, not black-box control.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════
+       FOUNDING PHASE NOTICE
+  ════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-inner">
+        <div class="glass-card" style="padding:24px 30px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;border-left:3px solid var(--gold-2)">
+          <div style="font-size:1.4rem;line-height:1;flex-shrink:0;margin-top:2px">📋</div>
+          <div>
+            <h4 style="font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin-bottom:10px">About the current phase</h4>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0">The CJVM Hybrid Trust operates as a community joint venture business partnership. The Foundation's self-assessed position is that the CJVM does not constitute a managed investment scheme under section 9 of the Corporations Act 2001 (Cth), because Partners exercise day-to-day control over the trust's operations through their proprietary cryptographic governance system. The Foundation does not hold an AFSL and does not operate as a responsible entity. No financial product, token, or investment instrument has been offered or issued.</p>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin-top:8px">Tier 1 governance units (Personal S-NFT, B-NFT, Pay It Forward, Donation, Resident COG$) are issued immediately upon joining the partnership. Governance Foundation Day (14 May 2026) is when the first Partners governance poll runs — the first live test of the cryptographic management system. Tier 2 token classes (ASX COG$, RWA COG$, Landholder COG$) may be activated on or from Expansion Day — when the Partners' proprietary nodes, shards, and blockchain infrastructure is deployed, as certified by the Board and endorsed by the First Nations Advisory Council — subject to any regulatory requirements determined by applicable law at that time.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">
+              <span style="font-size:.72rem;padding:5px 12px;border-radius:99px;border:1px solid rgba(240,209,138,.35);color:var(--gold-2);background:rgba(240,209,138,.06)">✓ Governance partnership — available now</span>
+              <span style="font-size:.72rem;padding:5px 12px;border-radius:99px;border:1px solid rgba(240,209,138,.35);color:var(--gold-2);background:rgba(240,209,138,.06)">✓ Governance Foundation Day — 14 May 2026</span>
+              <span style="font-size:.72rem;padding:5px 12px;border-radius:99px;border:1px solid rgba(240,209,138,.35);color:var(--gold-2);background:rgba(240,209,138,.06)">Expansion Day — Partners Node activation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════
+       CONVERSION CLOSE
+  ════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-inner">
+
+        <div class="close-cta">
+
+          <!-- Community-driven market & circular economy image -->
+          <img
+            class="cta-img"
+            src="/assets/Community-driven market and sustainable growth.png"
+            alt="COG$ circular economy — members, businesses, community basket, sustainable growth"
+            loading="lazy"
+            onerror="this.style.display='none'"
+          >
+
+          <span class="price-pill">$4 — Once, Forever</span>
+          <h2>Still reading?<br><em>Good.</em></h2>
+          <p class="cta-subtitle">That's exactly the kind of attention this structure deserves.</p>
+          <p>The $4 is not asking you to trust us. It is asking you to join the room where the decisions get made. Permanent partnership. One equal vote. A position in any future governance action — including any 75% resolution on supply. If everything on this page holds up to your scrutiny, the only remaining question is whether you want a seat at that table.</p>
+          <div class="cta-buttons">
+            <a class="btn-primary-lg" href="/join/">Join for $4 — Once, Forever</a>
+            <a class="btn-secondary-lg" href="/terms/">Read the Terms →</a>
+          </div>
+          <p class="cta-footnote">
+            Permanent partnership &middot; Non-transferable &middot; One equal vote for life<br>
+            Governance Foundation Day &mdash; 14 May 2026
+          </p>
+
+        </div>
+
+        <div class="badge-row">
+          <span class="badge">Partner-Only Joint Venture</span>
+          <span class="badge">Non-Extractive Model</span>
+          <span class="badge">Closed-Loop Economy</span>
+          <span class="badge badge-gold">75% Supply Protection</span>
+          <span class="badge">Sovereign Ledger</span>
+          <span class="badge">One Partner &middot; One Vote</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Shared footer ── -->
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+</div><!-- /site-shell -->
+
+<script>
+  /* ── Accordion ── */
+  function togglePanel(idx) {
+    document.querySelectorAll('.q-panel').forEach(function(panel, i) {
+      var open = (i === idx) && !panel.classList.contains('open');
+      panel.classList.toggle('open', open);
+      panel.querySelector('.q-header').setAttribute('aria-expanded', String(open));
+    });
+  }
+  document.querySelectorAll('.q-header').forEach(function(h, i) {
+    h.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePanel(i); }
+    });
+  });
+  togglePanel(0);
+
+  /* ── Scroll-reveal ── */
+  var ro = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.style.opacity   = '1';
+        e.target.style.transform = 'translateY(0)';
+        ro.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll(
+    '.q-panel,.info-card,.alloc-card,.supply-callout,.close-cta,.quote-band'
+  ).forEach(function(el) {
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(18px)';
+    el.style.transition = 'opacity .55s ease, transform .55s ease';
+    ro.observe(el);
+  });
+</script>
+
+</body>
+</html>

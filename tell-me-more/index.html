@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tell Me More | COG$ of Australia Foundation</title>
+  <meta name="description" content="Tell Me More — the plain-language guide to the COG$ of Australia Foundation partner-operated joint venture partnership.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804; --panel:rgba(24,17,8,.86);
+      --gold-1:#f0d18a; --gold-2:#c9973d; --gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10); --gold-rim:rgba(240,209,138,.20); --gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8; --text2:rgba(255,248,232,.93); --muted:rgba(240,225,196,.88);
+      --line:rgba(240,209,138,.13); --line2:rgba(240,209,138,.28);
+      --shadow:0 18px 48px rgba(0,0,0,.58);
+      --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; --r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    a{color:inherit}
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/logo_web.png') center center/cover no-repeat;opacity:.24;filter:sepia(.6) saturate(.9) brightness(.82)}
+    .bg-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 35%,transparent 24%,rgba(10,8,4,.58) 74%,rgba(10,8,4,.78) 100%),linear-gradient(to bottom,rgba(10,8,4,.52) 0%,transparent 18%,transparent 70%,rgba(10,8,4,.48) 100%)}
+    .site-shell{position:relative;z-index:1}
+    .container{max-width:980px;margin:0 auto;padding:0 24px}
+
+    .hero{padding:56px 0 26px}
+    .hero-grid{display:grid;grid-template-columns:1fr;gap:24px;align-items:center}
+    .eyebrow{display:inline-block;font-size:.69rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:6px 16px;border-radius:999px;margin-bottom:22px}
+    h1{font-family:var(--serif);font-size:clamp(2.4rem,5vw,4rem);font-weight:500;line-height:1.05;letter-spacing:-.025em;color:var(--text);margin-bottom:16px}
+    h1 em{font-style:italic;color:var(--gold-1)}
+    .lead{font-size:1.03rem;color:var(--text2);line-height:1.8;max-width:680px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+    .btn-primary,.btn-secondary,.btn-inline{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:999px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:transform .18s,border-color .2s,background .2s}
+    .btn-primary,.btn-secondary{padding:13px 18px;font-size:.84rem;min-width:190px}
+    .btn-primary{border:1px solid rgba(240,209,138,.48);background:linear-gradient(145deg,rgba(66,47,18,.98),rgba(30,21,8,.96));color:var(--text);box-shadow:0 12px 28px rgba(0,0,0,.35)}
+    .btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.72);background:linear-gradient(145deg,rgba(78,56,22,1),rgba(36,25,9,.98))}
+    .btn-secondary{border:1px solid rgba(240,209,138,.28);background:rgba(240,209,138,.08);color:var(--text)}
+    .btn-secondary:hover,.btn-secondary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.54);background:rgba(240,209,138,.14)}
+    .hero-card,.panel,.step-card,.pill-card,.doc-card,.cta-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .hero-card{padding:24px}
+    .hero-card h2{font-family:var(--serif);font-size:1.24rem;font-weight:600;color:var(--gold-1);margin-bottom:10px}
+    .hero-card p{font-size:.95rem;color:var(--text2);line-height:1.74}
+    .hero-points{display:grid;gap:10px;margin-top:16px}
+    .hero-point{padding:12px 14px;border-radius:14px;border:1px solid rgba(240,209,138,.16);background:rgba(240,209,138,.06)}
+    .hero-point strong{display:block;font-size:.88rem;color:var(--gold-1);margin-bottom:4px}
+    .hero-point span{font-size:.89rem;color:var(--text2);line-height:1.6}
+
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 24px 52px}
+    .section{padding:0 0 56px}
+    .kicker{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .section-title{font-family:var(--serif);font-size:clamp(1.8rem,3.6vw,2.65rem);font-weight:500;line-height:1.12;letter-spacing:-.02em;color:var(--text);margin-bottom:12px}
+    .section-body{font-size:.99rem;color:var(--text2);line-height:1.82;max-width:760px}
+
+    .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+    .step-card{padding:24px 20px}
+    .step-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid rgba(240,209,138,.34);background:rgba(240,209,138,.10);font-size:.88rem;font-weight:700;color:var(--gold-1);margin-bottom:12px}
+    .step-card h3{font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:8px}
+    .step-card p{font-size:.95rem;color:var(--text2);line-height:1.76}
+
+    .split-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+    .panel{padding:24px}
+    .panel h3{font-family:var(--serif);font-size:1.18rem;font-weight:600;color:var(--gold-1);margin-bottom:10px}
+    .panel p{font-size:.96rem;color:var(--text2);line-height:1.78}
+    .panel ul{margin-top:12px;padding-left:18px}
+    .panel li{font-size:.95rem;color:var(--text2);line-height:1.8;margin:4px 0}
+
+    .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+    .pill-card{padding:22px}
+    .pill-card h3{font-family:var(--serif);font-size:1.08rem;font-weight:600;color:var(--gold-1);margin-bottom:8px}
+    .pill-card p{font-size:.95rem;color:var(--text2);line-height:1.76}
+
+    .legal-band{margin-top:22px;padding:20px 22px;border-radius:18px;border:1px solid rgba(240,209,138,.24);background:linear-gradient(160deg,rgba(34,24,10,.86),rgba(18,13,5,.78))}
+    .legal-band p{font-size:.95rem;color:var(--text2);line-height:1.8}
+
+    .doc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:24px}
+    .doc-card{padding:22px 18px;display:flex;flex-direction:column;gap:10px}
+    .doc-order{font-size:.74rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--gold-1)}
+    .doc-title{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--text);line-height:1.25}
+    .doc-copy{font-size:.90rem;color:var(--text2);line-height:1.72;flex:1}
+    .doc-link{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;font-weight:700;color:var(--gold-1);text-decoration:none;border-bottom:1px solid rgba(240,209,138,.35);padding-bottom:2px;width:max-content}
+    .doc-link:hover{color:var(--text);border-color:rgba(240,209,138,.65)}
+    .hero-actions a,.section-body,.panel p,.panel li,.pill-card p,.doc-copy,.doc-link{overflow-wrap:anywhere}
+
+    .cta-card{padding:28px;text-align:center}
+    .cta-card h2{font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:500;color:var(--text);margin-bottom:12px}
+    .cta-card p{font-size:1rem;color:var(--text2);line-height:1.82;max-width:700px;margin:0 auto 20px}
+    .cta-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
+
+    @media(max-width:980px){
+      .steps-grid{grid-template-columns:1fr 1fr}
+      .doc-grid{grid-template-columns:1fr 1fr}
+      .pillars{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:760px){
+      .hero-grid,.split-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:620px){
+    }
+  </style>
+</head>
+<body>
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-img"></div>
+  <div class="bg-vignette"></div>
+</div>
+
+<div class="site-shell">
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Tell me more · Plain-language guide</span>
+          <h1><em>Simple first step.</em><br>Real joint venture behind it.</h1>
+          <p class="lead">You are becoming a Partner in a joint venture partnership. Your first step is a $4 partnership contribution for a Personal S-NFT Partner position. From there, you gain access to the Independence Vault, direct participation in Partner Governance, and the wider structure the Partners operate together.</p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="../join/index.html">Become a Partner</a>
+            <a class="btn-secondary" href="../faq/index.html">Read the FAQ</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section">
+      <div class="container">
+        <span class="kicker">How the first step works</span>
+        <h2 class="section-title">Four clear steps.</h2>
+        <p class="section-body">This page gives a new visitor the essentials: what the structure is, what the first step gives you, how real assets fit in, and how Partners exercise control.</p>
+        <div class="steps-grid">
+          <article class="step-card">
+            <span class="step-num">1</span>
+            <h3>Become a Partner</h3>
+            <p>Contribute $4 once as the personal entry point. That gives you a Personal S-NFT Partner position, your Independence Vault pathway, and participation in the governance layer.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-num">2</span>
+            <h3>The partnership holds real assets</h3>
+            <p>The Partners Asset Pool is designed to hold CHESS-registered shares in ASX-listed resource companies and, over time, other approved real-world assets under the trust structure.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-num">3</span>
+            <h3>Partners direct operations</h3>
+            <p>Partner Polls, proposals, proxy direction, and governance activity sit with the Partners. The Trustee executes the legal and custody-facing functions inside the limits of Trustee Functions.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-num">4</span>
+            <h3>Distribution and expansion</h3>
+            <p>Distributions and reinvestment flow under the trust architecture, and Expansion Day marks the first activation of the Partners’ own operating infrastructure, as certified by the Board and endorsed by the First Nations Advisory Council.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section">
+      <div class="container">
+        <span class="kicker">Who does what?</span>
+        <h2 class="section-title">Partners operate. The Trustee safeguards and executes.</h2>
+        <p class="section-body">Partners direct the joint venture through governance, proposals, proxy direction, stewardship decisions, and the operating system. The Trustee holds legal title and performs limited legal, custody, compliance, and fiat functions.</p>
+        <div class="split-grid">
+          <article class="panel">
+            <h3>What the Partners do</h3>
+            <p>Partners direct the joint venture through governance. That includes Partner Polls, proposal-making, proxy voting direction, stewardship decisions, communications, and the practical operation of the governance system.</p>
+            <ul>
+              <li>Direct national governance through the Partner vote.</li>
+              <li>Use the Independence Vault as the practical doorway into the system.</li>
+              <li>Drive stewardship, engagement, and operational direction together.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>What the Trustee does</h3>
+            <p>The Trustee holds legal title to trust property, interfaces with external legal and compliance requirements, processes fiat where needed, and records the structure in legal instruments.</p>
+            <ul>
+              <li>Legal custody of trust property and documents.</li>
+              <li>Compliance-facing tasks and lawful external interface.</li>
+              <li>Execution of valid Partner directions within Trustee Functions.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section">
+      <div class="container">
+        <span class="kicker">What your first step gives you</span>
+        <h2 class="section-title">Low barrier. Real participation. A clear pathway forward.</h2>
+        <p class="section-body">The first step is deliberately simple so ordinary Australians can enter the partnership, understand the structure in stages, and go deeper into the documents as they choose.</p>
+        <div class="pillars">
+          <article class="pill-card">
+            <h3>Your Independence Vault</h3>
+            <p>Your practical dashboard for notices, governance activity, balances, proposals, and later token operations. The Vault is where Partner operational authority becomes visible.</p>
+          </article>
+          <article class="pill-card">
+            <h3>Your governance place</h3>
+            <p>The personal pathway is where the one-Partner-one-vote principle sits for national governance. It is designed to keep civic control with people rather than capital concentration.</p>
+          </article>
+          <article class="pill-card">
+            <h3>Your reservation pathway</h3>
+            <p>Your first step is simple: secure your place in the partnership, enter the Vault pathway, and be ready to participate as the wider operating layer comes online.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section">
+      <div class="container">
+        <span class="kicker">Expansion Day</span>
+        <h2 class="section-title">Expansion Day and the operating pathway.</h2>
+        <p class="section-body">Expansion Day is the day the first Partners Node goes live — as certified by the Board and endorsed by the First Nations Advisory Council — and the joint venture’s operating layer begins running on the Partners’ own infrastructure.</p>
+        <div class="split-grid">
+          <article class="panel">
+            <h3>What Expansion Day means</h3>
+            <p>It is the point at which the first Partners Node, the Partner Governance Vault, and the core operating records begin running inside the Partners’ own infrastructure.</p>
+            <ul>
+              <li>The first Partners Node is activated.</li>
+              <li>The Partner Governance Vault operates with the 3-of-Board multisignature mechanism.</li>
+              <li>Operational state, governance records, and token records move into the Partners’ own system.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section">
+      <div class="container">
+        <span class="kicker">Document hierarchy</span>
+        <h2 class="section-title">Which document actually controls what?</h2>
+        <p class="section-body">The hierarchy is simple: the JV Partnership Agreement sits at the top, the Declaration and Sub-Trust Deeds give legal effect beneath it, and the governance system is the operating layer.</p>
+        <div class="doc-grid">
+          <article class="doc-card">
+            <span class="doc-order">1 · Supreme</span>
+            <h3 class="doc-title">JV Partnership Agreement</h3>
+            <p class="doc-copy">The controlling instrument. It defines the joint venture model, the Partner structure, the Trustee’s limited role, and the overarching governance architecture.</p>
+          </article>
+          <article class="doc-card">
+            <span class="doc-order">2 · Legal layer</span>
+            <h3 class="doc-title">Declaration</h3>
+            <p class="doc-copy">The legal trust administration instrument that gives the partnership effect in Australian trust law and records the agreed rules beneath the JVPA.</p>
+          </article>
+          <article class="doc-card">
+            <span class="doc-order">3 · Basket</span>
+            <h3 class="doc-title">Sub-Trust A</h3>
+            <p class="doc-copy">The Partners Asset Pool layer that holds the portfolio and related trust property inside the ring-fenced structure.</p>
+          </article>
+          <article class="doc-card">
+            <span class="doc-order">4 · Distribution</span>
+            <h3 class="doc-title">Sub-Trust B</h3>
+            <p class="doc-copy">The downstream distribution layer through which beneficiary distributions are routed proportionally under the structure.</p>
+          </article>
+          <article class="doc-card">
+            <span class="doc-order">5 · Shared-benefit projects</span>
+            <h3 class="doc-title">Sub-Trust C</h3>
+            <p class="doc-copy">The charitable and shared-benefit layer, including First Nations custodianship, public-benefit purposes, and designated public and Partner outcomes. <strong>Not less than 30%</strong> of annual Sub-Trust C distributions go to First Nations programs — an entrenched minimum that cannot be reduced by any resolution.</p>
+          </article>
+        </div>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:18px;line-height:1.7">All governing documents are provided to new Partners during the Partnership Agreement process. <a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline">Become a Partner to access them →</a></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta-card">
+          <span class="kicker">Ready to take the first step?</span>
+          <h2>Start as a Partner. Go deeper when you are ready.</h2>
+          <p>You do not need to master every clause on the first visit. Start with the first step, then read the governing documents as deeply as you want.</p>
+          <div class="cta-actions">
+            <a class="btn-primary" href="../join/index.html">Become a Partner</a>
+            <a class="btn-secondary" href="../skeptic/index.html">Have harder questions?</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+    <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+</div>
+</body>
+</html>

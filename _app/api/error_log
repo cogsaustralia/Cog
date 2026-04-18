@@ -1,0 +1,155 @@
+[02-Apr-2026 12:55:42 UTC] recordReservationUpdate failed: SQLSTATE[HY000]: General error: 1364 Field 'subject_id' doesn't have a default value
+[02-Apr-2026 12:56:54 UTC] recordReservationUpdate failed: SQLSTATE[HY000]: General error: 1364 Field 'subject_id' doesn't have a default value
+[02-Apr-2026 12:59:25 UTC] recordReservationUpdate failed: SQLSTATE[HY000]: General error: 1364 Field 'subject_id' doesn't have a default value
+[02-Apr-2026 13:00:02 UTC] recordReservationUpdate failed: SQLSTATE[HY000]: General error: 1364 Field 'subject_id' doesn't have a default value
+[02-Apr-2026 13:21:40 UTC] recordReservationUpdate failed: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+[04-Apr-2026 02:54:54 UTC] PHP Warning:  require(/home4/cogsaust/test.cogsaustralia.org/_app/api/routes/snft-reserve.php): Failed to open stream: No such file or directory in /home4/cogsaust/test.cogsaustralia.org/_app/api/index.php on line 64
+[04-Apr-2026 02:54:55 UTC] PHP Warning:  require(/home4/cogsaust/test.cogsaustralia.org/_app/api/routes/snft-reserve.php): Failed to open stream: No such file or directory in /home4/cogsaust/test.cogsaustralia.org/_app/api/index.php on line 64
+[04-Apr-2026 21:01:37 UTC] [snft-reserve] SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '6082000000000016' for key 'member_number' in /home4/cogsaust/test.cogsaustralia.org/_app/api/routes/snft-reserve.php:246
+[04-Apr-2026 21:01:37 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[04-Apr-2026 21:26:46 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 03:12:50 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 04:02:20 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 04:34:04 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 04:59:10 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 05:13:28 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 08:52:35 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 09:10:30 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[05-Apr-2026 13:17:48 UTC] recordStewardshipAttestation skipped (table missing?): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestations' doesn't exist
+[07-Apr-2026 20:35:42 Australia/Sydney] PHP Parse error:  syntax error, unexpected identifier "s" in /home4/cogsaust/public_html/_app/api/integrations/mailer.php on line 837
+[07-Apr-2026 20:40:51 Australia/Sydney] PHP Parse error:  syntax error, unexpected identifier "s" in /home4/cogsaust/public_html/_app/api/integrations/mailer.php on line 837
+[07-Apr-2026 20:40:57 Australia/Sydney] PHP Parse error:  syntax error, unexpected identifier "s" in /home4/cogsaust/public_html/_app/api/integrations/mailer.php on line 837
+[07-Apr-2026 20:40:58 Australia/Sydney] PHP Parse error:  syntax error, unexpected identifier "s" in /home4/cogsaust/public_html/_app/api/integrations/mailer.php on line 837
+[07-Apr-2026 21:04:20 Australia/Sydney] PHP Parse error:  syntax error, unexpected identifier "s" in /home4/cogsaust/public_html/_app/api/integrations/mailer.php on line 837
+[08-Apr-2026 14:07:11 Australia/Sydney] [stripe-webhook] activity log failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'actor_type' at row 1
+[08-Apr-2026 14:07:11 Australia/Sydney] [stripe-webhook] Payment confirmed — member: 6082000000000016 amount: 400 cents session: cs_live_a1febm1Qcz9LKWJgFAl5uMtqArcvNiZZ5LhtdfhfBxEHXWFwqKP5mYgN83
+[08-Apr-2026 14:08:08 Australia/Sydney] [vault] approval_requests sync failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'unit_price_cents' in 'SET'
+[08-Apr-2026 14:08:17 Australia/Sydney] [vault] approval_requests sync failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'unit_price_cents' in 'SET'
+[08-Apr-2026 14:36:11 Australia/Sydney] [vault] approval_requests sync failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'unit_price_cents' in 'SET'
+[08-Apr-2026 14:36:24 Australia/Sydney] [vault] approval_requests sync failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'unit_price_cents' in 'SET'
+[08-Apr-2026 15:17:45 Australia/Sydney] [vault] approval_requests sync failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'unit_price_cents' in 'SET'
+[08-Apr-2026 17:34:37 Australia/Sydney] [vault] approval_requests sync failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'unit_price_cents' in 'SET'
+[08-Apr-2026 17:43:02 Australia/Sydney] [stripe-webhook] activity log failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'actor_type' at row 1
+[08-Apr-2026 17:43:02 Australia/Sydney] [stripe-webhook] Payment confirmed — member: 6082000000000024 amount: 400 cents session: cs_live_a1DT2fmgRZN1efj8TmnFEOz1vFecJUBfkdKF2ExwbGPWgv4L86unwPvYDh
+[08-Apr-2026 17:49:36 Australia/Sydney] [vault] approval_requests sync failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'unit_price_cents' in 'SET'
+[08-Apr-2026 17:58:23 Australia/Sydney] [stripe-webhook] Signature verification failed
+[08-Apr-2026 17:59:10 Australia/Sydney] [stripe-webhook] Signature verification failed
+[08-Apr-2026 19:43:41 Australia/Sydney] [stripe-webhook] activity log failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'actor_type' at row 1
+[08-Apr-2026 19:43:41 Australia/Sydney] [stripe-webhook] email notification failed: Call to undefined function queueEmail()
+[08-Apr-2026 19:43:41 Australia/Sydney] [stripe-webhook] Payment confirmed — member: 6082000000000032 amount: 400 cents session: cs_live_a1XIeSxB1U5i9abJvF2rwSnmDTtyS4swGFWFNyqEeN1vhwwtTvQmje2AUY
+[08-Apr-2026 23:06:48 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[08-Apr-2026 23:07:58 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[08-Apr-2026 23:24:30 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 11:37:51 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 11:41:07 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 11:43:33 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 11:45:01 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 11:47:27 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 11:54:44 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 11:56:24 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 11:57:17 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 11:57:28 Australia/Sydney] [ask] ANTHROPIC_API_KEY not configured
+[09-Apr-2026 12:48:31 Australia/Sydney] GnafAddressAgent: environment variable GEOSCAPE_API_KEY is not set. Verification will fail.
+[09-Apr-2026 12:48:31 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=780+Sugarbag+Road+West%2C+Drake+NSW+2469&maxResults=5&stateTerritory=
+[09-Apr-2026 12:49:07 Australia/Sydney] GnafAddressAgent: environment variable GEOSCAPE_API_KEY is not set. Verification will fail.
+[09-Apr-2026 12:49:07 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=38+Oakden+Street%2C+Greenway+ACT+2901&maxResults=5&stateTerritory=
+[09-Apr-2026 12:49:16 Australia/Sydney] GnafAddressAgent: environment variable GEOSCAPE_API_KEY is not set. Verification will fail.
+[09-Apr-2026 12:49:16 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=229+Lower+Rocky+River+Road%2C+Rocky+River+QLD+2372&maxResults=5&stateTerritory=
+[09-Apr-2026 13:33:35 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:33:35 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:35:21 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:35:21 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:36:22 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:36:22 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:45:31 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:45:31 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:47:47 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:47:47 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:56:18 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:56:18 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:56:20 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:56:20 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:58:56 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 13:58:56 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:58:56 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 13:58:58 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 13:58:58 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 13:58:58 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 14:00:32 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 14:00:32 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 14:06:25 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 404 
+[09-Apr-2026 14:06:25 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 14:07:11 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 404 
+[09-Apr-2026 14:07:11 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 14:08:08 Australia/Sydney] GnafAddressAgent: environment variable GEOSCAPE_TOKEN_URL is not set. Verification will fail.
+[09-Apr-2026 14:08:08 Australia/Sydney] GnafAddressAgent token fetch failed: HTTP 0 Could not resolve host: api.geoscape.com.au
+[09-Apr-2026 14:08:08 Australia/Sydney] GnafAddressAgent: no Bearer token available, cannot call API.
+[09-Apr-2026 14:09:47 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=780+Sugarbag+Road+West%2C+Drake+NSW+2469&maxResults=5&stateTerritory=
+[09-Apr-2026 14:11:51 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=780+Sugarbag+Road+West%2C+Drake+NSW+2469&maxResults=5&stateTerritory=
+[09-Apr-2026 14:13:00 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=780+Sugarbag+Road+West%2C+Drake+NSW+2469&maxResults=5&stateTerritory=
+[09-Apr-2026 14:13:38 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=38+Oakden+Street%2C+Greenway+ACT+2901&maxResults=5&stateTerritory=
+[09-Apr-2026 14:13:44 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=229+Lower+Rocky+River+Road%2C+Rocky+River+QLD+2372&maxResults=5&stateTerritory=
+[09-Apr-2026 14:14:25 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 14:14:25 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=38+Oakden+Street%2C+Greenway+ACT+2901&maxResults=5&stateTerritory=
+[09-Apr-2026 14:16:39 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 14:16:40 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=229+Lower+Rocky+River+Road%2C+Rocky+River+QLD+2372&maxResults=5&stateTerritory=
+[09-Apr-2026 14:16:46 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 14:16:46 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=780+Sugarbag+Road+West%2C+Drake+NSW+2469&maxResults=5&stateTerritory=
+[09-Apr-2026 14:16:50 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 14:16:50 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/predictive/v2/address?query=229+Lower+Rocky+River+Road%2C+Rocky+River+QLD+2372&maxResults=5&stateTerritory=
+[09-Apr-2026 17:05:12 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 17:05:16 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[09-Apr-2026 17:20:25 Australia/Sydney] ParcelLandholderAgent API error: HTTP 404  URL: https://api.psma.com.au/v2/parcels?lotNumber=26&planNumber=DP&stateTerritory=NSW&maxResults=1
+[09-Apr-2026 17:23:06 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 17:23:26 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 17:32:09 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 17:33:04 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 17:36:29 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 17:39:10 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 17:55:11 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 18:09:55 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 18:11:29 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 18:43:26 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 19:16:17 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 19:47:06 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 20:37:29 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 20:44:41 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[09-Apr-2026 20:54:11 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 06:49:58 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 06:54:36 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 07:02:04 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 07:14:37 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 07:40:37 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 09:59:18 Australia/Sydney] [SMS] OTP send failed to 0499xxxx: SMS API error (400): 'From' +61410025391 is not a Twilio phone number or Short Code country mismatch
+[10-Apr-2026 12:00:43 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 12:31:28 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 13:10:22 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 13:28:42 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 13:39:38 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 15:56:40 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS cURL error: Recv failure: Connection reset by peer
+[10-Apr-2026 16:01:36 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 18:27:16 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[10-Apr-2026 20:21:15 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 21:18:50 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 21:21:11 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'To' and 'From' number cannot be the same: +6141002XXXX
+[10-Apr-2026 21:37:52 Australia/Sydney] [SMS] OTP send failed to 0410xxxx: SMS API error (400): 'From' +61494768706 is not a Twilio phone number or Short Code country mismatch
+[10-Apr-2026 22:40:21 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[10-Apr-2026 22:40:36 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[10-Apr-2026 22:40:37 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/v1/addresses/GAACT717232126/localGovernmentArea/
+[10-Apr-2026 22:40:44 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[10-Apr-2026 22:40:51 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[10-Apr-2026 22:40:59 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[10-Apr-2026 22:41:00 Australia/Sydney] GnafAddressAgent API error: HTTP 404, , URL: https://api.psma.com.au/v1/addresses/GAACT717232126/localGovernmentArea/
+[10-Apr-2026 23:33:19 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[10-Apr-2026 23:33:23 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[10-Apr-2026 23:33:29 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[11-Apr-2026 00:02:35 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[11-Apr-2026 00:02:35 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[11-Apr-2026 00:02:35 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[11-Apr-2026 00:03:31 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[11-Apr-2026 00:10:17 Australia/Sydney] [cancel-gift-order] path-b payment cancel failed: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'payment_status' at row 1
+[15-Apr-2026 16:52:59 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[16-Apr-2026 19:35:52 Australia/Sydney] [ask] cURL error: Operation timed out after 30002 milliseconds with 0 bytes received
+[16-Apr-2026 21:35:45 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.
+[17-Apr-2026 08:22:32 Australia/Sydney] [2FA] 12h window check failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'otp_verified_at' in 'WHERE'
+[17-Apr-2026 15:12:20 Australia/Sydney] GnafAddressAgent: environment variable GNAF_MOCK_MODE is not set. Verification will fail.

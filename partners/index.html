@@ -1,0 +1,2558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <title>Community | COGs of Australia Foundation</title>
+  <meta name="description" content="Member community hub — vaults, governance, and the Foundation document library.">
+  <link rel="icon" type="image/png" href="../assets/logo_webcir.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+:root {
+      --bg:#0a0804;--panel:rgba(16,11,4,.90);--panel2:rgba(36,26,11,.90);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.92);--muted:rgba(220,196,148,.88);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --ok:#7ee8a2;--okb:rgba(82,184,122,.10);--okr:rgba(82,184,122,.28);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth;font-size:19px}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.72}
+
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/cogs_build.webp') center 40%/cover no-repeat;opacity:.15;filter:sepia(.3) saturate(.85) brightness(.5)}
+    .bg-vignette{position:absolute;inset:0;background:
+      radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.65) 0%,transparent 60%),
+      radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.97) 0%,transparent 70%),
+      radial-gradient(ellipse 35% 100% at 0% 50%,rgba(10,8,4,.72) 0%,transparent 60%),
+      radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.72) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    /* ── Header ── */
+    .site-header{border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(18px);position:sticky;top:0;z-index:200;overflow:hidden}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;min-width:0}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden}
+    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block}
+    .brand-copy{display:flex;flex-direction:column;gap:1px}
+    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .brand-sub{font-size:.61rem;color:rgba(255,248,232,.65);letter-spacing:.04em;line-height:1.2}
+    .brand-tag{font-size:.58rem;color:var(--muted);letter-spacing:.05em;line-height:1.2}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{font-size:.76rem;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:99px;transition:color .2s,background .2s;white-space:nowrap}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold-1);background:var(--gold-pale)}
+    .nav-cta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .btn-primary{font-size:.76rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:8px 18px;border-radius:99px;white-space:nowrap;transition:opacity .2s;border:none;cursor:pointer}
+    .btn-primary:hover{opacity:.88}
+    .btn-secondary{font-size:.76rem;color:var(--muted);text-decoration:none;border:1px solid var(--gold-rim);padding:7px 16px;border-radius:99px;white-space:nowrap;transition:color .2s,border-color .2s,background .2s;background:none;cursor:pointer}
+    .btn-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+    .mobile-toggle{display:none;background:none;border:1px solid var(--gold-rim);color:var(--muted);padding:7px 11px;border-radius:10px;cursor:pointer;font-size:1rem;line-height:1}
+    .mobile-drawer{display:none;flex-direction:column;gap:2px;padding:10px 0 14px;border-top:1px solid var(--line)}
+    .mobile-drawer a{font-size:.88rem;color:var(--muted);text-decoration:none;padding:9px 0;border-bottom:1px solid var(--line);transition:color .2s}
+    .mobile-drawer a:last-child{border-bottom:none}
+    .mobile-drawer a:hover{color:var(--gold-1)}
+    .mobile-drawer.open{display:flex}
+
+    /* ── Common ── */
+    .section{padding:0 0 52px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 48px}
+    .kicker{display:inline-block;font-size:.80rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .eyebrow{display:inline-block;font-size:.80rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:20px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .lead{font-size:.97rem;font-weight:300;color:var(--text2);line-height:1.78}
+
+    /* ── Auth gate ── */
+    #auth-gate{display:block}
+    #community-content{display:none}
+
+    .gate-wrap{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:48px 24px}
+    .auth-card{width:100%;max-width:440px;padding:38px 34px;border-radius:var(--r);background:linear-gradient(160deg,rgba(28,20,8,.97),rgba(14,10,4,.95));border:1px solid var(--gold-rim);box-shadow:0 28px 64px rgba(0,0,0,.7)}
+    .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+    .auth-logo img{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--gold-rim)}
+    .auth-logo-copy{display:flex;flex-direction:column}
+    .auth-logo-name{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .auth-logo-sub{font-size:.82rem;color:var(--muted);margin-top:3px}
+    .auth-card h2{font-family:var(--serif);font-size:1.65rem;font-weight:500;color:var(--text);margin-bottom:10px}
+    .auth-card .sub{font-size:.94rem;color:var(--muted);line-height:1.68;margin-bottom:24px}
+    .hidden{display:none!important}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+    .field label{font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+    .field input{background:rgba(255,255,255,.05);border:1px solid var(--line2);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--sans);font-size:1rem;outline:none;transition:border-color .2s,background .2s;min-height:52px}
+    .field input:focus{border-color:var(--gold-rim2);background:rgba(240,209,138,.05)}
+    .field input::placeholder{color:var(--muted)}
+    .btn-gold{width:100%;padding:15px;border-radius:11px;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#1a0f00;font-family:var(--sans);font-size:.98rem;font-weight:700;border:none;cursor:pointer;margin-top:10px;transition:opacity .2s;min-height:54px}
+    .btn-gold:hover{opacity:.88}
+    .btn-gold:disabled{opacity:.45;cursor:not-allowed}
+    .auth-links{display:flex;gap:16px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+    .auth-link{background:none;border:none;color:var(--gold-2);font-size:.9rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:10px 6px;min-height:44px;display:inline-flex;align-items:center}
+    .auth-link:hover{color:var(--gold-1)}
+    .flash{font-size:.9rem;min-height:20px;margin-top:12px;line-height:1.6}
+    .flash.err{color:#f0857a}
+    .flash.ok{color:var(--ok)}
+    /* OTP panel */
+    .otp-inputs{display:flex;gap:10px;justify-content:center;margin:20px 0}
+    .otp-digit{width:52px;height:62px;text-align:center;font-size:1.8rem;font-weight:700;color:var(--gold-1);background:rgba(255,255,255,.04);border:1.5px solid var(--gold-rim2);border-radius:10px;outline:none;font-family:var(--sans);transition:border-color .2s,background .2s;-webkit-appearance:none}
+    .otp-digit:focus{border-color:var(--gold-1);background:rgba(240,209,138,.06)}
+    .otp-hint{font-size:.92rem;color:var(--muted);text-align:center;margin-bottom:10px;line-height:1.65}
+    .otp-timer{font-size:.88rem;color:var(--muted);text-align:center;margin-top:10px}
+    .otp-timer.urgent{color:#f0857a;font-weight:600}
+    .hidden{display:none!important}
+
+    /* ── Community content ── */
+    .page-hero{padding:48px 0 40px}
+    .welcome-badge{display:inline-flex;align-items:center;gap:8px;font-size:.80rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ok);background:var(--okb);border:1px solid var(--okr);padding:5px 16px;border-radius:99px;margin-bottom:18px}
+    .member-welcome-hd{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:500;line-height:1.08;letter-spacing:-.025em;margin-bottom:12px}
+    .member-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;background:rgba(240,209,138,.1);border:1px solid var(--gold-rim);font-size:.72rem;color:var(--gold-2);font-family:monospace;letter-spacing:.08em}
+
+    /* Community vault stats (display-only) */
+    .cv-full{padding:24px;background:linear-gradient(160deg,rgba(10,18,30,.96),rgba(6,12,22,.9));border:1px solid rgba(86,147,220,.2);border-radius:var(--r)}
+
+    /* ── Foundation Holdings (ASX + RWA windows) ── */
+    .fh-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+    .fh-stat{padding:14px 16px;background:linear-gradient(135deg,rgba(10,18,30,.7),rgba(6,12,22,.5));border:1px solid rgba(86,147,220,.18);border-radius:10px;text-align:center}
+    .fh-stat-val{display:block;font-family:var(--serif);font-size:clamp(1.2rem,2.6vw,1.7rem);font-weight:500;color:#a0c4f0;letter-spacing:-.02em;line-height:1.1}
+    .fh-stat-lbl{display:block;font-size:.68rem;color:rgba(160,196,240,.6);margin-top:4px;line-height:1.4}
+
+    .fh-window{padding:20px 22px;background:linear-gradient(160deg,rgba(10,18,30,.92),rgba(6,12,22,.78));border:1px solid rgba(86,147,220,.2);border-radius:var(--r)}
+    .fh-window-rwa{border-color:rgba(140,120,200,.22);background:linear-gradient(160deg,rgba(18,14,30,.92),rgba(10,8,22,.78))}
+    .fh-window-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+    .fh-kicker{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#6ea8d8}
+    .fh-title{font-family:var(--serif);font-size:clamp(1.1rem,2.4vw,1.45rem);font-weight:500;letter-spacing:-.02em;margin:6px 0 4px;color:var(--text)}
+    .fh-sub{font-size:.74rem;color:var(--muted);line-height:1.5;max-width:48ch}
+    .fh-live-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;background:rgba(110,168,216,.08);border:1px solid rgba(110,168,216,.25);font-size:.66rem;letter-spacing:.06em;color:#6ea8d8;text-transform:uppercase;white-space:nowrap;font-weight:500}
+    .fh-live-badge-rwa{background:rgba(140,120,200,.08);border-color:rgba(140,120,200,.25);color:#c4b0f0}
+    .fh-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+    .fh-table-wrap{border-radius:10px;overflow:hidden;border:1px solid rgba(86,147,220,.12)}
+    .fh-table-hd{display:grid;grid-template-columns:90px 1fr 130px 150px;gap:10px;padding:10px 14px;background:rgba(86,147,220,.08);font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(160,196,240,.7)}
+    .fh-table-hd-rwa{background:rgba(140,120,200,.08);color:rgba(196,176,240,.7)}
+    .fh-row{display:grid;grid-template-columns:90px 1fr 130px 150px;gap:10px;padding:12px 14px;font-size:.82rem;color:var(--text2);border-top:1px solid rgba(86,147,220,.08);align-items:center}
+    .fh-row:first-child{border-top:none}
+    .fh-row-rwa{border-top-color:rgba(140,120,200,.1)}
+    .fh-row-code{font-family:monospace;font-weight:600;color:var(--gold-1)}
+    .fh-row-name{color:var(--text);font-weight:500}
+    .fh-num{text-align:right;font-variant-numeric:tabular-nums}
+    .fh-table-ft{display:grid;grid-template-columns:90px 1fr 130px 150px;gap:10px;padding:12px 14px;font-size:.82rem;background:rgba(86,147,220,.06);border-top:1px solid rgba(86,147,220,.18)}
+    .fh-table-ft-rwa{background:rgba(140,120,200,.06);border-top-color:rgba(140,120,200,.2)}
+    .fh-empty{padding:22px 16px;text-align:center;font-size:.78rem;color:var(--muted);line-height:1.6}
+    @media(max-width:720px){
+      .fh-strip{grid-template-columns:repeat(2,1fr)}
+      .fh-table-hd, .fh-row, .fh-table-ft{grid-template-columns:70px 1fr 100px;font-size:.72rem}
+      .fh-table-hd > div:nth-child(3), .fh-row > div:nth-child(3), .fh-table-ft > div:nth-child(3){display:none}
+    }
+    .display-only-badge{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(160,196,240,.7);background:rgba(86,147,220,.08);border:1px solid rgba(86,147,220,.2);padding:3px 9px;border-radius:5px;margin-top:6px}
+
+    /* Master control grid */
+    .mc-section-hd{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;padding:6px 10px;border-radius:8px;display:inline-flex;align-items:center;gap:6px}
+    .mc-hd-warm{color:#f0a870;background:rgba(240,168,112,.06);border:1px solid rgba(240,168,112,.15)}
+    .mc-hd-teal{color:#60d4b8;background:rgba(96,212,184,.06);border:1px solid rgba(96,212,184,.15)}
+    .mc-hd-gold{color:var(--gold-1);background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.15)}
+    .mc-row{display:grid;gap:8px}
+    .mc-row-3{grid-template-columns:repeat(3,1fr)}
+    .mc-row-4{grid-template-columns:repeat(4,1fr)}
+    .mc-cell{padding:14px;border-radius:12px;text-align:center;cursor:help;transition:transform .15s,border-color .2s,box-shadow .2s;position:relative}
+    .mc-cell:hover{transform:translateY(-2px)}
+    .mc-cell[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max(200px,min-content);max-width:280px;padding:10px 12px;border-radius:10px;background:rgba(16,20,28,.97);border:1px solid rgba(240,209,138,.2);color:rgba(255,248,232,.85);font-size:.68rem;font-weight:400;line-height:1.55;text-align:left;pointer-events:none;opacity:0;transition:opacity .2s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.5);white-space:normal}
+    .mc-cell[data-tip]:hover::after{opacity:1}
+    .mc-cell-warm{background:rgba(240,168,112,.04);border:1px solid rgba(240,168,112,.12)}
+    .mc-cell-warm:hover{border-color:rgba(240,168,112,.35);box-shadow:0 4px 20px rgba(240,168,112,.08)}
+    .mc-cell-teal{background:rgba(96,212,184,.04);border:1px solid rgba(96,212,184,.12)}
+    .mc-cell-teal:hover{border-color:rgba(96,212,184,.35);box-shadow:0 4px 20px rgba(96,212,184,.08)}
+    .mc-cell-gold{background:rgba(240,209,138,.04);border:1px solid rgba(240,209,138,.1)}
+    .mc-cell-gold:hover{border-color:rgba(240,209,138,.35);box-shadow:0 4px 20px rgba(240,209,138,.08)}
+    .mc-cell-green{background:rgba(82,184,122,.04);border:1px solid rgba(82,184,122,.1)}
+    .mc-cell-green:hover{border-color:rgba(82,184,122,.35);box-shadow:0 4px 20px rgba(82,184,122,.08)}
+    .mc-ico{font-size:1rem;margin-bottom:6px}
+    .mc-val{font-family:var(--serif);font-size:1.3rem;font-weight:600;color:#a0c4f0;line-height:1;font-variant-numeric:lining-nums}
+    .mc-cell-warm .mc-val{color:#f0a870}
+    .mc-cell-teal .mc-val{color:#60d4b8}
+    .mc-val.mc-gold{color:var(--gold-1)}
+    .mc-val.mc-green{color:#7ee8a2}
+    .mc-sub{font-size:.64rem;color:rgba(160,196,240,.45);margin-top:5px;line-height:1.3}
+    .mc-cell-warm .mc-sub{color:rgba(240,168,112,.5)}
+    .mc-cell-teal .mc-sub{color:rgba(96,212,184,.5)}
+    .mc-cell-gold .mc-sub,.mc-cell-green .mc-sub{color:rgba(210,185,130,.4)}
+    .mc-tier{font-size:.55rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:6px;color:rgba(110,168,216,.45);background:rgba(110,168,216,.06);border:1px solid rgba(110,168,216,.12);display:inline-block;padding:1px 7px;border-radius:4px}
+    .mc-tier.t2{color:rgba(82,184,122,.6);background:rgba(82,184,122,.06);border-color:rgba(82,184,122,.15)}
+    .mc-tier.t1g{color:rgba(126,232,162,.5);background:rgba(126,232,162,.06);border-color:rgba(126,232,162,.12)}
+    .mc-bars{display:flex;flex-direction:column;gap:5px;padding:12px 14px;border-radius:12px;background:rgba(96,212,184,.03);border:1px solid rgba(96,212,184,.1)}
+    .mc-bar-row{display:flex;align-items:center;gap:10px}
+    .mc-bar-st{width:32px;font-size:.7rem;font-weight:600;color:rgba(96,212,184,.6);text-align:right;flex-shrink:0}
+    .mc-bar-track{flex:1;height:18px;border-radius:6px;background:rgba(96,212,184,.06);overflow:hidden;position:relative}
+    .mc-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,rgba(96,212,184,.3),rgba(96,212,184,.6));min-width:4px;transition:width .6s ease}
+    .mc-bar-cnt{font-size:.65rem;color:rgba(96,212,184,.5);flex-shrink:0;width:28px;text-align:right}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* Spread / invite section */
+    .stag-cell{padding:16px;border-radius:12px;background:rgba(240,168,112,.04);border:1px solid rgba(240,168,112,.12);text-align:center}
+    .stag-cell-hl{background:rgba(240,168,112,.08);border-color:rgba(240,168,112,.3)}
+    .stag-ppl{font-family:var(--serif);font-size:1.5rem;font-weight:600;color:#f0a870;line-height:1}
+    .stag-label{font-size:.65rem;color:rgba(240,168,112,.5);margin:3px 0 8px}
+    .stag-result{font-size:.88rem;font-weight:500;color:var(--gold-1)}
+    .share-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:10px;border:1px solid;font-size:.78rem;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s;font-family:var(--sans)}
+    .share-btn:hover{opacity:.85;transform:translateY(-1px)}
+
+    /* Library */
+    .lib-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .lib-item{display:flex;align-items:flex-start;gap:14px;padding:18px 20px;border-radius:16px;background:linear-gradient(160deg,rgba(22,16,6,.92),rgba(12,9,4,.85));border:1px solid var(--line);text-decoration:none;transition:border-color .2s,background .2s;cursor:pointer}
+    .lib-item:hover{border-color:var(--gold-rim2);background:linear-gradient(160deg,rgba(32,23,9,.95),rgba(16,11,5,.9))}
+    .lib-item.coming-soon{opacity:.52;cursor:default}
+    .lib-item.coming-soon:hover{border-color:var(--line);background:linear-gradient(160deg,rgba(22,16,6,.92),rgba(12,9,4,.85))}
+    .lib-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;margin-top:1px}
+    .lib-ico-doc{background:rgba(240,209,138,.1);border:1px solid var(--gold-rim)}
+    .lib-ico-pdf{background:rgba(220,80,60,.1);border:1px solid rgba(220,80,60,.25)}
+    .lib-ico-lock{background:rgba(255,255,255,.05);border:1px solid var(--line)}
+    .lib-copy{flex:1;min-width:0}
+    .lib-title{font-size:.88rem;font-weight:500;color:var(--text);margin-bottom:4px;line-height:1.3}
+    .lib-desc{font-size:.74rem;color:var(--muted);line-height:1.5}
+    .lib-badge{display:inline-block;font-size:.6rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:2px 8px;border-radius:5px;margin-top:6px}
+    .lib-badge-pdf{color:#f08070;background:rgba(220,80,60,.12);border:1px solid rgba(220,80,60,.2)}
+    .lib-badge-docx{color:var(--gold-2);background:rgba(201,151,61,.1);border:1px solid var(--gold-rim)}
+    .lib-badge-soon{color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line)}
+
+    /* Info box */
+    .info-box{padding:18px 20px;border-radius:14px;background:rgba(240,209,138,.04);border:1px solid var(--line);font-size:.8rem;color:var(--muted);line-height:1.65}
+    .info-box strong{color:var(--text);display:block;margin-bottom:4px}
+
+    /* ── Compact vault buttons ── */
+    .vault-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;background:rgba(240,209,138,.06);border:1px solid var(--gold-rim);color:var(--gold-1);font-size:.78rem;font-weight:500;text-decoration:none;transition:background .2s,border-color .2s}
+    .vault-btn:hover{background:rgba(240,209,138,.12);border-color:rgba(240,209,138,.4)}
+    .vault-btn svg{opacity:.7}
+    .vault-btn-primary{
+      display:inline-flex;align-items:center;gap:14px;
+      padding:14px 22px 14px 14px;border-radius:16px;
+      background:linear-gradient(135deg,rgba(240,209,138,.14),rgba(200,151,62,.08));
+      border:2px solid var(--gold-rim2);color:var(--gold-1);
+      font-size:1rem;font-weight:700;text-decoration:none;
+      transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;
+      position:relative;box-shadow:0 4px 24px rgba(200,151,62,.15)}
+    .vault-btn-primary:hover{background:linear-gradient(135deg,rgba(240,209,138,.22),rgba(200,151,62,.14));border-color:rgba(240,209,138,.7);box-shadow:0 6px 32px rgba(200,151,62,.28);transform:translateY(-2px)}
+    .vault-coin{width:44px;height:44px;border-radius:50%;flex-shrink:0;transition:transform .5s cubic-bezier(.25,.46,.45,.94);border:1.5px solid rgba(240,209,138,.35)}
+    .vault-btn-primary:hover .vault-coin{transform:perspective(200px) rotateY(180deg)}
+
+    /* Coin spin page transition (vault navigation) */
+    .coin-transition{position:fixed;inset:0;z-index:9999;background:rgba(10,8,4,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .25s ease}
+    .coin-transition.active{opacity:1}
+    .coin-transition img{width:90px;height:90px;filter:drop-shadow(0 0 30px rgba(240,209,138,.4))}
+    .coin-transition .coin-spin-anim{animation:vaultSpin 1.4s cubic-bezier(.22,.68,.36,1) forwards}
+    .coin-transition .coin-label{font-family:var(--serif);font-size:.96rem;color:var(--gold-1);opacity:0;margin-top:18px;letter-spacing:.06em;animation:coinFadeIn .4s ease .6s forwards}
+    @keyframes vaultSpin{
+      0%{transform:perspective(600px) scale(.6) rotateY(0deg);opacity:0}
+      15%{opacity:1}
+      40%{transform:perspective(600px) scale(1.05) rotateY(360deg)}
+      70%{transform:perspective(600px) scale(1) rotateY(540deg)}
+      100%{transform:perspective(600px) scale(.95) rotateY(720deg);opacity:.7}
+    }
+    @keyframes coinFadeIn{to{opacity:1}}
+
+    /* Page load splash */
+    .page-splash{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease}
+    .page-splash.fade-out{opacity:0;pointer-events:none}
+    .page-splash.gone{display:none}
+    .page-splash img{width:72px;height:72px;animation:splashSpin 1.6s cubic-bezier(.25,.46,.45,.94) forwards;filter:drop-shadow(0 0 24px rgba(240,209,138,.35))}
+    .page-splash .splash-text{font-family:var(--serif);font-size:.9rem;color:var(--gold-1);opacity:0;margin-top:18px;animation:coinFadeIn .5s ease .7s forwards}
+    @keyframes splashSpin{
+      0%{transform:perspective(800px) scale(.2) rotateY(-90deg);opacity:0}
+      15%{opacity:1}
+      35%{transform:perspective(800px) scale(.9) rotateY(90deg)}
+      55%{transform:perspective(800px) scale(1.08) rotateY(270deg)}
+      75%{transform:perspective(800px) scale(1) rotateY(360deg)}
+      90%{transform:perspective(800px) scale(.98) rotateY(380deg)}
+      100%{transform:perspective(800px) scale(1) rotateY(360deg);opacity:1}
+    }
+
+    /* Welcome banner for new signups */
+    .welcome-banner{padding:20px 24px;border-radius:14px;background:linear-gradient(135deg,rgba(82,184,122,.08),rgba(82,184,122,.02));border:1px solid rgba(82,184,122,.25);margin-bottom:24px;text-align:center}
+    .welcome-banner h3{font-family:var(--serif);font-size:1.25rem;font-weight:500;color:#7ee8a2;margin-bottom:8px}
+    .welcome-banner p{font-size:.94rem;color:var(--muted);line-height:1.68;margin:0}
+    .welcome-banner .wb-mn{font-family:monospace;font-size:1.1rem;font-weight:600;color:var(--gold-1);letter-spacing:.06em;margin:8px 0}
+
+    /* ── Community stats strip ── */
+    .comm-strip{display:flex;flex-wrap:wrap;gap:10px}
+    .comm-pill{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:99px;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.15)}
+
+    /* ── Important News (wallet notices on hub) ── */
+    .important-news{border:1px solid var(--gold-rim);border-radius:14px;background:linear-gradient(135deg,rgba(46,33,14,.72),rgba(20,14,6,.5));padding:18px 20px}
+    .important-news.has-unread{border-color:rgba(240,130,20,.5);box-shadow:0 0 0 1px rgba(240,130,20,.15),0 6px 28px rgba(200,80,20,.12)}
+    .in-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+    .in-icon{font-size:1.1rem;color:var(--gold-1);line-height:1}
+    .in-title{font-size:.96rem;font-weight:600;color:var(--text);letter-spacing:.01em}
+    .in-badge{font-size:.68rem;padding:2px 9px;border-radius:99px;background:rgba(240,130,20,.18);border:1px solid rgba(240,130,20,.5);color:#f0c070;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+    .in-view-all{margin-left:auto;font-size:.74rem;color:var(--gold-2);text-decoration:none;font-weight:500}
+    .in-view-all:hover{color:var(--gold-1);text-decoration:underline}
+    .in-list{display:flex;flex-direction:column;gap:10px}
+    .in-item{padding:12px 14px;border-left:3px solid var(--gold-rim2);background:rgba(255,255,255,.03);border-radius:0 8px 8px 0}
+    .in-item.unread{border-left-color:#f0c070;background:rgba(240,130,20,.06)}
+    .in-item-hd{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+    .in-item-title{font-size:.86rem;font-weight:600;color:var(--text);line-height:1.3}
+    .in-item-unread-dot{width:7px;height:7px;border-radius:50%;background:#f0c070;box-shadow:0 0 10px rgba(240,130,20,.6);flex-shrink:0}
+    .in-item-date{font-size:.68rem;color:var(--muted);margin-left:auto}
+    .in-item-body{font-size:.78rem;color:var(--text2);line-height:1.55}
+    .in-empty{padding:16px 14px;text-align:center;font-size:.78rem;color:var(--muted);background:rgba(255,255,255,.02);border:1px dashed var(--gold-rim);border-radius:8px;line-height:1.6}
+    .in-priority-badge{font-size:.62rem;padding:1px 7px;border-radius:4px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+    .in-priority-badge.critical{background:rgba(200,40,40,.22);border:1px solid rgba(220,70,70,.5);color:#ff8080}
+    .in-priority-badge.high{background:rgba(240,130,20,.18);border:1px solid rgba(240,130,20,.5);color:#f0c070}
+    .in-item.in-priority-critical{border-left-color:#ff5555;background:rgba(200,40,40,.06)}
+    .in-item.in-priority-high{border-left-color:#f0c070}
+    @media(max-width:640px){
+      .in-view-all{margin-left:0;width:100%;margin-top:6px}
+    }
+    .comm-pill-val{font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--gold-1);font-variant-numeric:lining-nums}
+    .comm-pill-val.is-money{color:var(--ok)}
+    .comm-pill-lbl{font-size:.68rem;color:var(--muted);letter-spacing:.04em}
+
+    /* ── Expandable content ── */
+    .expand-btn{display:inline-block;margin-top:12px;padding:6px 14px;border-radius:8px;background:none;border:1px solid var(--line);color:var(--gold-2);font-size:.72rem;font-weight:500;cursor:pointer;transition:background .2s,color .2s;font-family:var(--sans)}
+    .expand-btn:hover{background:rgba(240,209,138,.08);color:var(--gold-1)}
+    .expand-btn.open{border-color:var(--gold-rim2)}
+    .expand-content{display:none;margin-top:12px;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);font-size:.82rem;line-height:1.72;color:var(--muted);animation:fadeUp .3s ease}
+    .expand-content.show{display:block}
+
+    /* Trust flow diagram */
+    .tf-pill{display:inline-block;font-size:.62rem;font-weight:500;padding:2px 8px;border-radius:12px;margin:2px}
+    .tf-p1{background:rgba(110,168,216,.15);color:#6ea8d8;border:1px solid rgba(110,168,216,.25)}
+    .tf-p1d{background:rgba(140,120,200,.15);color:#c4b0f0;border:1px solid rgba(140,120,200,.25)}
+    .tf-p1g{background:rgba(240,209,138,.15);color:#f0d18a;border:1px solid rgba(240,209,138,.3)}
+    .tf-p2{background:rgba(82,184,122,.12);color:#7ee8a2;border:1px solid rgba(82,184,122,.25)}
+    .tf-ben{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:5px;background:rgba(255,255,255,.03);border:1px solid rgba(240,209,138,.1)}
+    .tf-ben-d{border-color:rgba(140,120,200,.25);background:rgba(140,120,200,.05)}
+    .tf-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .tf-bn{font-size:.68rem;font-weight:500;color:var(--gold-1);flex:1}
+    .tf-bu{font-size:.62rem;color:var(--muted)}
+    .tf-tag{font-size:.6rem;color:var(--muted);border:1px solid var(--line);border-radius:12px;padding:2px 8px}
+
+    /* Trust flow steps */
+    .tf-step{border-radius:12px;border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:border-color .2s}
+    .tf-step:hover{border-color:rgba(240,209,138,.25)}
+    .tf-step.open{border-color:rgba(240,209,138,.3)}
+    .tf-step-hd{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(255,255,255,.02)}
+    .tf-num{width:24px;height:24px;border-radius:50%;background:rgba(240,209,138,.12);color:var(--gold-1);font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .tf-step.open .tf-num{background:var(--gold-2);color:#1a0f00}
+    .tf-step-title{flex:1;font-size:.82rem;font-weight:500;color:var(--text)}
+    .tf-arrow{color:var(--muted);font-size:.7rem;flex-shrink:0;transition:transform .2s}
+    .tf-step.open .tf-arrow{transform:rotate(0)}
+    .tf-step-body{display:none;padding:0 16px 14px}
+    .tf-step.open .tf-step-body{display:block}
+    .tf-note{font-size:.82rem;color:var(--muted);line-height:1.72;margin-bottom:8px}
+    .tf-detail{font-size:.72rem;color:rgba(210,185,130,.45);line-height:1.55;margin:4px 0 0}
+    .tf-connector{text-align:center;color:rgba(240,209,138,.2);font-size:.8rem;line-height:1;padding:2px 0}
+    .tf-next{margin-top:12px;padding:8px 14px;border-radius:8px;background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.15);color:var(--gold-2);font-size:.72rem;font-weight:500;text-align:center;cursor:pointer;transition:background .2s}
+    .tf-next:hover{background:rgba(240,209,138,.12)}
+    .tf-split-row{display:flex;align-items:center;gap:8px;margin:5px 0}
+    .tf-pct{min-width:30px;font-size:.78rem;font-weight:600;color:var(--text);text-align:right}
+    .tf-bar{flex:1;height:7px;border-radius:4px}
+    .tf-dest{font-size:.68rem;color:var(--muted);flex:2}
+    .tf-callout{margin-top:10px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);font-size:.7rem;color:rgba(210,185,130,.45);line-height:1.55}
+
+    /* Logout bar */
+    .member-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-radius:13px;background:rgba(240,209,138,.05);border:1px solid var(--line);margin-bottom:28px;flex-wrap:wrap}
+    .member-bar-left{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+
+    .btn-logout{font-size:.73rem;color:var(--muted);background:none;border:1px solid var(--line);border-radius:99px;padding:5px 13px;cursor:pointer;transition:color .2s,border-color .2s}
+    .btn-logout:hover{color:var(--gold-1);border-color:var(--gold-rim)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .ha{animation:fadeUp .55s ease both}
+    .ha:nth-child(1){animation-delay:.05s}
+    .ha:nth-child(2){animation-delay:.16s}
+    .ha:nth-child(3){animation-delay:.27s}
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* ── Basket & RWA section ── */
+    .basket-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .basket-card{padding:24px;border-radius:var(--r);background:linear-gradient(160deg,rgba(29,22,13,.92),rgba(14,11,8,.85));border:1px solid var(--line);box-shadow:var(--shadow);transition:border-color .2s}
+    .basket-card:hover{border-color:rgba(240,209,138,.3)}
+    .basket-ico{font-size:1.6rem;margin-bottom:14px;display:block}
+    .basket-card h3{font-family:var(--serif);font-size:1.08rem;font-weight:500;color:var(--gold-1);margin-bottom:10px;line-height:1.2}
+    .basket-card p{color:var(--muted);font-size:.82rem;line-height:1.72;margin:0}
+    .principle-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+    .principle-item{padding:14px 16px;border-radius:14px;background:rgba(240,209,138,.04);border:1px solid rgba(240,209,138,.12);text-align:center}
+    .principle-num{font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--gold-1);line-height:1}
+    .principle-lbl{font-size:.68rem;color:var(--muted);margin-top:6px;line-height:1.4}
+    .esg-card{padding:28px;border-radius:var(--r);border:1px solid rgba(82,184,122,.2);background:linear-gradient(160deg,rgba(20,35,25,.85),rgba(10,18,12,.9));box-shadow:var(--shadow)}
+    .esg-card h3{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:#7ee8a2;margin-bottom:10px}
+    .esg-card p{color:rgba(180,220,195,.7);font-size:.84rem;line-height:1.72;margin:0 0 10px}
+    .esg-badge{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;letter-spacing:.08em;color:#52b87a;background:rgba(82,184,122,.1);border:1px solid rgba(82,184,122,.2);padding:5px 14px;border-radius:99px;text-transform:uppercase}
+    .rwa-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .rwa-card{padding:24px;border-radius:var(--r);background:linear-gradient(160deg,rgba(25,20,35,.88),rgba(14,11,22,.85));border:1px solid rgba(140,120,200,.18);box-shadow:var(--shadow)}
+    .rwa-card h3{font-family:var(--serif);font-size:1.05rem;font-weight:500;color:#c4b0f0;margin-bottom:10px}
+    .rwa-card p{color:rgba(180,170,210,.65);font-size:.82rem;line-height:1.72;margin:0}
+    .fnac-banner{padding:24px 28px;border-radius:var(--r);background:linear-gradient(160deg,rgba(35,25,12,.9),rgba(18,12,4,.92));border:1px solid rgba(200,151,62,.25);box-shadow:var(--shadow)}
+    .fnac-banner h3{font-family:var(--serif);font-size:1.08rem;font-weight:500;color:var(--gold-1);margin-bottom:8px}
+    .fnac-banner p{color:var(--muted);font-size:.84rem;line-height:1.72;margin:0 0 8px}
+    .fnac-grid{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start}
+
+    @media(max-width:860px){
+      .lib-grid{grid-template-columns:1fr}
+      .mc-row-4{grid-template-columns:repeat(2,1fr)}
+      .basket-grid{grid-template-columns:1fr 1fr}
+      .principle-strip{grid-template-columns:1fr 1fr}
+      .rwa-split{grid-template-columns:1fr}
+      .fnac-grid{grid-template-columns:1fr}
+      .fnac-grid picture{max-width:280px}
+      .footer-inner{grid-template-columns:1fr 1fr}
+      .footer-inner>div:first-child{grid-column:1/-1}
+    }
+    @media(max-width:580px){
+      .nav-links{display:none}
+      .mobile-toggle{display:block}
+      .brand-copy{overflow:hidden}
+      .brand-name{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .brand-sub,.brand-tag{display:none}
+      .mc-row-3{grid-template-columns:1fr 1fr 1fr}
+      .mc-row-4{grid-template-columns:1fr 1fr}
+      .mc-val{font-size:1.1rem}
+      .basket-grid{grid-template-columns:1fr}
+      .principle-strip{grid-template-columns:1fr 1fr}
+      .comm-strip{flex-direction:column}
+      .vault-btns,.vault-btn,.vault-btn-primary{width:auto}
+      .trust-flow [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+      .tf-ben{font-size:.62rem}
+      .stag-grid{grid-template-columns:1fr!important}
+      .footer-inner{grid-template-columns:1fr}
+      .footer-inner>div:first-child{grid-column:1}
+      .footer-bottom{flex-direction:column;align-items:flex-start}
+    }
+
+    /* ── Vault pill payment overlay ── */
+    .vault-pill-wrap{position:relative;display:inline-flex;flex-direction:column;align-items:stretch;gap:0}
+    .vault-pay-overlay{
+      position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+      white-space:nowrap;
+      background:linear-gradient(135deg,#f0a030,#d4722a);
+      color:#fff;font-size:.65rem;font-weight:800;letter-spacing:.09em;
+      text-transform:uppercase;padding:3px 11px;border-radius:99px;
+      box-shadow:0 2px 10px rgba(220,100,20,.5);
+      animation:payPulse 2s ease-in-out infinite;
+      pointer-events:none;z-index:10
+    }
+    @keyframes payPulse{
+      0%,100%{box-shadow:0 2px 10px rgba(220,100,20,.5),0 0 0 0 rgba(220,100,20,.4)}
+      50%{box-shadow:0 2px 14px rgba(220,100,20,.7),0 0 0 6px rgba(220,100,20,0)}
+    }
+    .vault-pay-strip{
+      margin-top:6px;padding:9px 14px;border-radius:10px;
+      background:linear-gradient(135deg,rgba(240,130,20,.12),rgba(220,90,20,.08));
+      border:1px solid rgba(240,130,20,.35);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap
+    }
+    .vault-pay-strip span{font-size:.78rem;color:#f0c070;line-height:1.4;flex:1}
+    .vault-pay-strip a{
+      flex-shrink:0;padding:7px 16px;border-radius:8px;
+      background:linear-gradient(135deg,#f0a030,#c97020);
+      color:#fff;font-size:.76rem;font-weight:700;text-decoration:none;
+      white-space:nowrap;transition:opacity .2s
+    }
+    .vault-pay-strip a:hover{opacity:.88}
+
+  
+    /* ── Payment intercept modal ── */
+    .pay-intercept-modal{display:none;position:fixed;inset:0;z-index:9000;
+      background:rgba(8,6,2,.94);backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      align-items:center;justify-content:center;padding:24px}
+    .pay-intercept-modal.show{display:flex}
+    .pay-intercept-box{width:100%;max-width:480px;background:linear-gradient(160deg,rgba(28,20,9,.97),rgba(14,10,3,.99));
+      border:1.5px solid rgba(240,130,20,.5);border-radius:20px;padding:36px 32px;
+      box-shadow:0 0 60px rgba(220,100,20,.25),0 24px 64px rgba(0,0,0,.7);
+      position:relative}
+    .pay-intercept-close{position:absolute;top:14px;right:16px;background:none;border:none;
+      color:rgba(240,209,138,.4);font-size:1.4rem;cursor:pointer;line-height:1;padding:4px}
+    .pay-intercept-close:hover{color:var(--gold-1)}
+    .pay-intercept-icon{font-size:2.2rem;margin-bottom:14px;display:block;text-align:center}
+    .pay-intercept-title{font-family:var(--serif);font-size:1.5rem;font-weight:500;
+      color:var(--gold-1);text-align:center;margin-bottom:10px;line-height:1.2}
+    .pay-intercept-body{font-size:.88rem;color:var(--text2);line-height:1.72;
+      text-align:center;margin-bottom:24px;max-width:360px;margin-left:auto;margin-right:auto}
+    .pay-intercept-stripe{min-height:60px;display:flex;align-items:center;
+      justify-content:center;margin-bottom:16px}
+    .pay-intercept-links{display:flex;flex-direction:column;align-items:center;gap:8px}
+    .pay-check-link{font-size:.78rem;color:var(--gold-2);cursor:pointer;
+      text-decoration:underline;text-underline-offset:3px;background:none;border:none;
+      font-family:var(--sans)}
+    .pay-check-link:hover{color:var(--gold-1)}
+    .pay-anyway-link{font-size:.74rem;color:var(--muted);cursor:pointer;
+      text-decoration:none;background:none;border:none;font-family:var(--sans)}
+    .pay-anyway-link:hover{color:var(--text2)}
+
+    /* ── Participation pill ── */
+    .participation-pill{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:11px 18px;border-radius:12px;cursor:pointer;
+      font-size:.82rem;font-weight:600;text-decoration:none;
+      transition:background .2s,border-color .2s,box-shadow .2s;
+      border:1.5px solid;font-family:var(--sans)}
+    .participation-pill.incomplete{
+      color:#f0c070;border-color:rgba(240,150,20,.5);
+      background:rgba(240,130,20,.08);
+      animation:participatePulse 2.8s ease-in-out infinite}
+    .participation-pill.complete{
+      color:#52b87a;border-color:rgba(82,184,122,.4);
+      background:rgba(82,184,122,.06)}
+    @keyframes participatePulse{
+      0%,100%{box-shadow:0 0 0 0 rgba(240,150,20,.3)}
+      50%{box-shadow:0 0 0 5px rgba(240,150,20,0)}}
+    .participation-pill:hover{transform:translateY(-1px)}
+    .part-areas-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+    .part-area-tag{font-size:.65rem;padding:3px 9px;border-radius:99px;
+      font-weight:500;transition:background .2s,border-color .2s,color .2s}
+    .part-area-tag.on{
+      background:rgba(82,184,122,.12);
+      border:1px solid rgba(82,184,122,.35);
+      color:#52b87a}
+    .part-area-tag.off{
+      background:rgba(240,209,138,.06);
+      border:1px solid rgba(240,209,138,.25);
+      color:rgba(240,209,138,.72)}
+
+    /* ── Participation editor modal ── */
+    .pe-overlay{position:fixed;inset:0;z-index:950;background:rgba(6,4,2,.92);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+    .pe-overlay.show{display:flex}
+    .pe-card{max-width:640px;width:100%;background:var(--panel);border:1px solid var(--gold-rim2);border-radius:var(--r);padding:32px 28px;box-shadow:0 20px 52px rgba(0,0,0,.65);position:relative}
+    .pe-card h2{font-family:var(--serif);font-size:1.4rem;font-weight:500;color:var(--gold-1);margin-bottom:8px}
+    .pe-sub{font-size:.88rem;color:var(--text2);line-height:1.7;margin-bottom:20px}
+    .pe-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px;line-height:1}
+    .pe-close:hover{color:var(--text)}
+    .pe-area-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:20px}
+    .pe-area-btn{text-align:left;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid var(--gold-rim);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s;color:var(--text);font-family:var(--sans)}
+    .pe-area-btn:hover{border-color:var(--gold-rim2);background:rgba(255,255,255,.05)}
+    .pe-area-btn.selected{border-color:var(--gold-1);background:var(--gold-pale)}
+    .pe-area-btn .pe-area-label{font-size:.82rem;font-weight:600;color:var(--text);display:block;margin-bottom:3px}
+    .pe-area-btn .pe-area-desc{font-size:.72rem;color:var(--muted);line-height:1.5}
+    .pe-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
+    .pe-btn{padding:11px 22px;font-size:.85rem;font-weight:600;border-radius:10px;cursor:pointer;border:1px solid;transition:opacity .2s,transform .15s,background .2s}
+    .pe-btn-save{color:#0a0804;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));border-color:var(--gold-2)}
+    .pe-btn-save:disabled{opacity:.35;cursor:not-allowed}
+    .pe-btn-save:not(:disabled):hover{opacity:.92;transform:translateY(-1px)}
+    .pe-btn-cancel{color:var(--text2);background:transparent;border-color:var(--gold-rim)}
+    .pe-btn-cancel:hover{border-color:var(--gold-rim2);background:rgba(255,255,255,.03)}
+    .pe-fl{font-size:.82rem;padding:8px 0;text-align:center;display:none}
+    .pe-fl.show{display:block}
+    .pe-fl.ok{color:#52b87a}
+    .pe-fl.err{color:#f0857a}
+    .pe-hint{font-size:.74rem;color:var(--muted);margin-bottom:14px;text-align:center}
+
+  </style>
+</head>
+<body data-root="../">
+
+<!-- Page load splash -->
+<div class="page-splash" id="page-splash">
+  <img src="../assets/cogs_coin_web.png" alt="">
+  <div class="splash-text">COG$ of Australia</div>
+</div>
+
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+
+<div class="site-shell">
+
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       AUTH GATE — shown before login
+  ═══════════════════════════════════════════════════════════ -->
+  <div id="auth-gate">
+    <div class="gate-wrap">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <img src="../assets/logo_webcir.png" alt="COG$">
+          <div class="auth-logo-copy">
+            <span class="auth-logo-name">Partners' Hub</span>
+            <span class="auth-logo-sub">Individual Partner access only</span>
+          </div>
+        </div>
+
+        <!-- Welcome banner for new signups -->
+        <div id="welcome-banner" class="welcome-banner" style="display:none">
+          <h3 id="wb-greeting">Welcome, Partner.</h3>
+          <div class="wb-mn" id="wb-member-number"></div>
+          <p>Your Class S Unit application is lodged. Set your password below to activate your vault — then open your <strong style="color:var(--gold-1)">Independence Vault</strong> to complete your $4 payment and secure your partnership.</p>
+        </div>
+
+        <!-- Login panel -->
+        <div id="ap-login">
+          <h2>Partner login</h2>
+          <p class="sub">Sign in with your mobile number and password.</p>
+          <form id="f-login">
+            <input type="hidden" name="role" value="snft">
+            <div class="field">
+              <label>Mobile number</label>
+              <input type="tel" name="mobile" autocomplete="tel" placeholder="04xx xxx xxx">
+            </div>
+            <div class="field" style="margin-top:-4px">
+              <label style="opacity:.7;font-size:.82rem;font-weight:400;letter-spacing:0;text-transform:none">or email address</label>
+              <input type="email" name="email" autocomplete="email" placeholder="your@email.com">
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" name="password" autocomplete="current-password" placeholder="Your password">
+            </div>
+            <button type="submit" class="btn-gold" id="login-btn">Enter the Partners' Hub</button>
+            <div class="flash" id="login-fl"></div>
+          </form>
+          <div class="auth-links">
+            <button class="auth-link" onclick="showPanel('ap-setup')">First-time setup</button>
+            <button class="auth-link" onclick="showPanel('ap-recover')">Recover access</button>
+          </div>
+        </div>
+
+        <!-- First-time setup -->
+        <div id="ap-setup" class="hidden">
+          <h2>Activate your vault</h2>
+          <p class="sub">Enter your Partner number and registered mobile, then choose a strong password.</p>
+          <form id="f-setup">
+            <input type="hidden" name="role" value="snft">
+            <div class="field"><label>Partner number</label><input name="member_number" required placeholder="16-digit number"></div>
+            <div class="field"><label>Mobile number</label><input type="tel" name="mobile" autocomplete="tel" required placeholder="04xx xxx xxx"></div>
+            <div class="field"><label>New password</label><input type="password" name="password" minlength="8" required autocomplete="new-password"></div>
+            <div class="field"><label>Confirm password</label><input type="password" name="confirm_password" required autocomplete="new-password"></div>
+            <button type="submit" class="btn-gold" id="setup-btn">Set password &amp; enter</button>
+            <div class="flash" id="setup-fl"></div>
+          </form>
+          <div class="auth-links"><button class="auth-link" onclick="showPanel('ap-login')">← Back to login</button></div>
+        </div>
+
+        <!-- Recover -->
+        <div id="ap-recover" class="hidden">
+          <h2>Recover access</h2>
+          <p class="sub">Recover your Partner number using your name and contact details.</p>
+          <form id="f-recover">
+            <input type="hidden" name="role" value="snft">
+            <div class="field"><label>Full name</label><input name="full_name" required></div>
+            <div class="field"><label>Email address</label><input type="email" name="email" required></div>
+            <button type="submit" class="btn-gold" id="recover-btn">Find my Partner number</button>
+            <div class="flash" id="recover-fl"></div>
+          </form>
+          <div class="auth-links"><button class="auth-link" onclick="showPanel('ap-login')">← Back to login</button></div>
+        </div>
+
+        <!-- OTP verification -->
+        <div id="ap-otp" class="hidden">
+          <h2>Verify your identity</h2>
+          <p class="sub otp-hint" id="otp-hint-text">A 6-digit code has been sent to your registered contact.</p>
+          <div class="otp-inputs" id="otp-inputs">
+            <input class="otp-digit" id="otp-d1" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+            <input class="otp-digit" id="otp-d2" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-digit" id="otp-d3" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-digit" id="otp-d4" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-digit" id="otp-d5" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-digit" id="otp-d6" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          </div>
+          <button class="btn-gold" id="otp-submit-btn" onclick="submitOtp()">Verify code</button>
+          <div class="otp-timer" id="otp-timer"></div>
+          <div class="flash" id="otp-fl"></div>
+          <div class="auth-links">
+            <button class="auth-link" id="otp-resend-btn" onclick="resendOtp()">Resend code</button>
+            <button class="auth-link" id="otp-switch-btn" onclick="switchOtpChannel()" style="display:none">Send to my email instead</button>
+            <button class="auth-link" onclick="showPanel('ap-login')">← Back to login</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       COMMUNITY CONTENT — shown after login
+  ═══════════════════════════════════════════════════════════ -->
+  <div id="community-content">
+    <main>
+
+      <!-- Hero -->
+      <section class="page-hero">
+        <div class="container">
+          <div class="member-bar ha">
+            <div class="member-bar-left">
+              <div class="welcome-badge">◈ Partner community</div>
+              <div class="member-chip" id="member-number-display" style="margin-top:4px;font-size:.72rem">—</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <div class="vault-pill-wrap" id="vault-pill-wrap">
+                <a href="../wallets/member.html" class="vault-btn-primary" id="vault-pill-btn" onclick="handleVaultEntry(event);return false;">
+                  <img src="../assets/cogs_coin_web.png" alt="" class="vault-coin">
+                  <span>Partner Independence Vault
+                    <span style="display:block;font-size:.72rem;font-weight:500;opacity:.85;margin-top:3px;letter-spacing:.01em">Enter Here →</span>
+                    <span style="display:block;font-size:.6rem;font-weight:400;opacity:.55;margin-top:1px">Holdings · Governance · Profile</span>
+                  </span>
+                </a>
+                <!-- Payment overlay — injected by JS when payment is pending -->
+              </div>
+          <!-- Partners Participation Pill -->
+          <div id="participation-pill-wrap" style="margin-top:14px;display:none">
+            <button class="participation-pill incomplete" id="participation-pill" onclick="handleParticipationPillClick()">
+              <span>◈</span>
+              <span id="participation-pill-label">Partners Participation — complete before entering your vault</span>
+            </button>
+            <div class="part-areas-tags" id="participation-areas-tags" style="display:none"></div>
+          </div>
+
+              <a href="#" class="vault-btn" onclick="openBusinessVault(event)">Business →</a>
+              <button class="btn-logout" id="logout-btn">Log out</button>
+            </div>
+          </div>
+          <span class="eyebrow ha">Community hub</span>
+          <h1 class="member-welcome-hd ha">Welcome back, <span id="member-first-name">Partner</span>.</h1>
+          <p class="lead ha" style="max-width:62ch">Your home base — vaults, governance, community growth, and everything that matters.</p>
+
+          <!-- Founding Partners stats -->
+          <div class="comm-strip ha" id="comm-strip" style="display:none;margin-top:20px">
+            <div class="comm-pill"><span class="comm-pill-val" id="cs-members">—</span><span class="comm-pill-lbl">Founding Partners</span></div>
+            <div class="comm-pill"><span class="comm-pill-val" id="cs-cogs">—</span><span class="comm-pill-lbl">COG$ Reserved</span></div>
+            <div class="comm-pill"><span class="comm-pill-val is-money" id="cs-value">—</span><span class="comm-pill-lbl">Reservation Value</span></div>
+          </div>
+
+          <!-- ══ Important News — fed from wallet notices ══ -->
+          <div class="important-news" id="important-news" style="display:none;margin-top:28px">
+            <div class="in-header">
+              <span class="in-icon" aria-hidden="true">◎</span>
+              <span class="in-title">Important News</span>
+              <span class="in-badge" id="in-badge" style="display:none"></span>
+              <a class="in-view-all" href="../wallets/member.html#s-news" onclick="coinTransition(this);return false;">View all in vault →</a>
+            </div>
+            <div class="in-list" id="in-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ══ COMMUNITY BASKET & RWA ═══════════════════════════════ -->
+      <section class="section reveal">
+        <div class="container">
+          <span class="kicker">The Partners Asset Pool</span>
+          <h2 style="font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.3rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">What we are building together.</h2>
+          <p style="font-size:.88rem;color:var(--muted);line-height:1.75;margin-bottom:28px;max-width:64ch">A permanent, collectively owned pool of ASX-listed resource company shares and blockchain-verified Real World Assets — held directly on the CHESS Register in the Foundation's name. It can never be sold. It only grows.</p>
+
+          <!-- Trust architecture — step-by-step walkthrough -->
+          <div class="trust-flow" style="max-width:640px;margin:0 auto 28px">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:14px;text-align:center">Follow the flow — click each step to understand how the structure works</div>
+
+            <!-- Step 1 -->
+            <div class="tf-step open" id="tf-step-1" onclick="openFlowStep(1)">
+              <div class="tf-step-hd"><span class="tf-num">1</span><span class="tf-step-title">The Partners Asset Pool — Sub-Trust A</span><span class="tf-arrow">▾</span></div>
+              <div class="tf-step-body" id="tf-body-1">
+                <p class="tf-note">Sub-Trust A is the engine room. It holds every ASX share and Real World Asset the community owns — registered directly on the CHESS Register in the Foundation's name. It is also the sole minting engine for every token class. Nothing leaves. Assets are held in perpetuity with no power of sale.</p>
+                <div style="padding:10px 12px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(93,202,165,.18);margin:10px 0 6px">
+                  <span style="font-size:.68rem;font-weight:600;color:#6ea8d8">Tier 1 — Immediate</span>
+                  <div style="margin-top:6px"><span class="tf-pill tf-p1">S-NFT</span><span class="tf-pill tf-p1">kS-NFT</span><span class="tf-pill tf-p1">B-NFT</span><span class="tf-pill tf-p1d">Pay it forward</span><span class="tf-pill tf-p1d">Donation</span><span class="tf-pill tf-p1g">Community</span><span class="tf-pill tf-p1">Resident</span></div>
+                  <p class="tf-detail">Governance and community tokens. Issued under the Partners' joint venture framework — no managed investment scheme applies. Active immediately.</p>
+                </div>
+                <div style="padding:10px 12px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(93,202,165,.18)">
+                  <span style="font-size:.68rem;font-weight:600;color:#7ee8a2">Tier 2 — Expansion Day</span>
+                  <div style="margin-top:6px"><span class="tf-pill tf-p2">ASX</span><span class="tf-pill tf-p2">Landholder</span><span class="tf-pill tf-p2">RWA</span><span class="tf-pill tf-p2">Business property</span></div>
+                  <p class="tf-detail">Investment tokens. Activated on Expansion Day — when the first Sovereign Node goes live on the Partners Consensus Network, the Foundation's own Partner-controlled infrastructure, and the Partners' proprietary governance system becomes operational.</p>
+                </div>
+                <div class="tf-next" onclick="event.stopPropagation();openFlowStep(2)">Next: How dividends are split →</div>
+              </div>
+            </div>
+
+            <div class="tf-connector">│</div>
+
+            <!-- Step 2 -->
+            <div class="tf-step" id="tf-step-2" onclick="openFlowStep(2)">
+              <div class="tf-step-hd"><span class="tf-num">2</span><span class="tf-step-title">The Dividend Engine — two income streams</span><span class="tf-arrow">▸</span></div>
+              <div class="tf-step-body" id="tf-body-2">
+                <p class="tf-note">When ASX companies in the Partners Asset Pool pay dividends, that income arrives in Sub-Trust A. Within 5 business days the Trustee must apply mandatory splits. There are two separate streams, determined by the Donation Ledger. These splits are entrenched under clause 35(g) — they cannot be changed by any vote.</p>
+
+                <div style="font-size:.72rem;font-weight:600;color:#7ee8a2;margin:12px 0 6px">Beneficiary Distribution Stream</div>
+                <p class="tf-detail" style="margin-bottom:8px">Income from all token classes except the Donation invested component (S-NFT, kS-NFT, B-NFT, ASX, Landholder, RWA, Business Property, Community).</p>
+                <div class="tf-split-row"><span class="tf-pct">50%</span><span class="tf-bar" style="background:rgba(15,110,86,.5)"></span><span class="tf-dest">→ Transferred to Sub-Trust B for Partner distribution</span></div>
+                <div class="tf-split-row"><span class="tf-pct">50%</span><span class="tf-bar" style="background:rgba(93,202,165,.35)"></span><span class="tf-dest">→ Retained in Sub-Trust A — mandatory reinvestment</span></div>
+
+                <div style="font-size:.72rem;font-weight:600;color:#c4b0f0;margin:14px 0 6px">Donation Dividend Stream</div>
+                <p class="tf-detail" style="margin-bottom:8px">Income from the $2.00 invested component of each Donation COG$, tracked separately via the Donation Ledger. This stream does NOT flow directly to Sub-Trust C — it flows through Sub-Trust B.</p>
+                <div class="tf-split-row"><span class="tf-pct">50%</span><span class="tf-bar" style="background:rgba(83,74,183,.45)"></span><span class="tf-dest">→ Transferred to Sub-Trust B for all unit holders</span></div>
+                <div class="tf-split-row"><span class="tf-pct">25%</span><span class="tf-bar" style="flex:.5;background:rgba(175,169,236,.3)"></span><span class="tf-dest">→ Retained in Sub-Trust A — mandatory reinvestment</span></div>
+                <div class="tf-split-row"><span class="tf-pct">25%</span><span class="tf-bar" style="flex:.5;background:rgba(206,203,246,.2)"></span><span class="tf-dest">→ Trustee administration costs (surplus to Sub-Trust C)</span></div>
+
+                <div class="tf-callout">Failure to transfer within 5 business days constitutes a breach of trust enforceable by any Beneficiary Holder in the Supreme Court of South Australia.</div>
+                <div class="tf-next" onclick="event.stopPropagation();openFlowStep(3)">Next: Who receives distributions →</div>
+              </div>
+            </div>
+
+            <div class="tf-connector">│</div>
+
+            <!-- Step 3 -->
+            <div class="tf-step" id="tf-step-3" onclick="openFlowStep(3)">
+              <div class="tf-step-hd"><span class="tf-num">3</span><span class="tf-step-title">Sub-Trust B — distribution to unit holders</span><span class="tf-arrow">▸</span></div>
+              <div class="tf-step-body" id="tf-body-3">
+                <p class="tf-note">Sub-Trust B is a distribution vehicle only — it does not hold assets. It receives income from Sub-Trust A and distributes 100% proportionally to every Beneficial Unit holder within 60 days. This is non-discretionary, mandatory, and entrenched. No one decides who gets what — it is determined by the number of income units held.</p>
+
+                <div style="font-size:.68rem;font-weight:500;color:var(--gold-2);margin:10px 0 6px">Every token class carries 1 Beneficial Unit in Sub-Trust B:</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+                  <div class="tf-ben"><span class="tf-dot" style="background:#6ea8d8"></span><span class="tf-bn">S-NFT (personal)</span><span class="tf-bu">Class S</span></div>
+                  <div class="tf-ben"><span class="tf-dot" style="background:#6ea8d8"></span><span class="tf-bn">kS-NFT (kids)</span><span class="tf-bu">Class kS</span></div>
+                  <div class="tf-ben"><span class="tf-dot" style="background:#6ea8d8"></span><span class="tf-bn">B-NFT (business)</span><span class="tf-bu">Class B</span></div>
+                  <div class="tf-ben"><span class="tf-dot" style="background:#52b87a"></span><span class="tf-bn">ASX COG$</span><span class="tf-bu">Class A</span></div>
+                  <div class="tf-ben"><span class="tf-dot" style="background:#52b87a"></span><span class="tf-bn">Landholder COG$</span><span class="tf-bu">Class Lh</span></div>
+                  <div class="tf-ben"><span class="tf-dot" style="background:#52b87a"></span><span class="tf-bn">Business property</span><span class="tf-bu">Class BP</span></div>
+                  <div class="tf-ben"><span class="tf-dot" style="background:#52b87a"></span><span class="tf-bn">RWA COG$</span><span class="tf-bu">Class R</span></div>
+                  <div class="tf-ben"><span class="tf-dot" style="background:#52b87a"></span><span class="tf-bn">Community COG$</span><span class="tf-bu">Class C</span></div>
+                </div>
+                <div class="tf-ben tf-ben-d" style="margin:6px 0 0"><span class="tf-dot" style="background:#8b80d8"></span><span class="tf-bn" style="color:#c4b0f0">Sub-Trust C as D Class holder</span><span class="tf-bu" style="color:rgba(180,170,210,.6)">1 unit per Donation COG$ issued</span></div>
+
+                <div class="tf-callout" style="border-color:rgba(240,209,138,.15)"><span style="font-weight:500;color:var(--gold-1)">Election:</span> Each Partner chooses — AUD to their bank account (default) or new ASX COG$ at the constitutional price. Sub-Trust C receives AUD to its trust bank account for charitable purposes.</div>
+                <div class="tf-next" onclick="event.stopPropagation();openFlowStep(4)">Next: Where the money ends up →</div>
+              </div>
+            </div>
+
+            <div class="tf-connector">│</div>
+
+            <!-- Step 4 -->
+            <div class="tf-step" id="tf-step-4" onclick="openFlowStep(4)">
+              <div class="tf-step-hd"><span class="tf-num">4</span><span class="tf-step-title">Outcomes — Partners and community projects</span><span class="tf-arrow">▸</span></div>
+              <div class="tf-step-body" id="tf-body-4">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+                  <div style="padding:12px;border-radius:10px;background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.18)">
+                    <div style="font-size:.82rem;font-weight:500;color:var(--gold-1);margin-bottom:4px">Partner returns</div>
+                    <p class="tf-detail">Your proportional share of Partners Asset Pool dividends paid as a Partners bonus. As reinvested dividends grow the basket each cycle, your future returns compound — the longer you hold, the more the engine produces.</p>
+                  </div>
+                  <div style="padding:12px;border-radius:10px;background:rgba(83,74,183,.06);border:1px solid rgba(83,74,183,.18)">
+                    <div style="font-size:.82rem;font-weight:500;color:#c4b0f0;margin-bottom:4px">Sub-Trust C — Community projects</div>
+                    <p class="tf-detail">Charitable trust funded from two sources: (1) $2.00 direct payment per Donation COG$ at minting and (2) Sub-Trust C's proportional D Class share through Sub-Trust B. Funds First Nations programs, environmental stewardship, and community initiatives. DGR/ACNC pathway.</p>
+                  </div>
+                </div>
+                <div class="tf-next" onclick="event.stopPropagation();openFlowStep(5)">Next: Why it lasts forever →</div>
+              </div>
+            </div>
+
+            <div class="tf-connector">│</div>
+
+            <!-- Step 5 -->
+            <div class="tf-step" id="tf-step-5" onclick="openFlowStep(5)">
+              <div class="tf-step-hd"><span class="tf-num">5</span><span class="tf-step-title">The perpetual compounding loop</span><span class="tf-arrow">▸</span></div>
+              <div class="tf-step-body" id="tf-body-5">
+                <p class="tf-note">Every dividend cycle, 50% of income is reinvested back into Sub-Trust A. That money buys more ASX shares, which generate more dividends, which split again. The Partners Asset Pool grows permanently. There is no vesting date, no settlement, no expiry. The trust is designed to compound indefinitely.</p>
+
+                <div style="padding:10px 14px;border-radius:10px;background:rgba(240,209,138,.04);border:1px solid rgba(240,209,138,.12);margin:10px 0">
+                  <div style="font-size:.72rem;font-weight:500;color:var(--gold-1);margin-bottom:5px">Safeguards</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px">
+                    <span class="tf-tag">Entrenched provisions (cl.35)</span>
+                    <span class="tf-tag">3-of-board multisig vault</span>
+                    <span class="tf-tag">FNAC oversight</span>
+                    <span class="tf-tag">Supreme Court SA enforcement</span>
+                    <span class="tf-tag">60-day distribution obligation</span>
+                    <span class="tf-tag">1M token anti-capture cap</span>
+                    <span class="tf-tag">No power of sale</span>
+                  </div>
+                </div>
+
+                <div class="tf-callout" style="border-color:rgba(240,209,138,.15)">The dividend splits are entrenched founding principles under clause 35(g) and cannot be reduced or altered by any resolution. The compounding engine runs in perpetuity — the longer the structure exists, the stronger it becomes.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="basket-grid">
+            <div class="basket-card">
+              <span class="basket-ico">🏛️</span>
+              <h3>Permanent collective ownership</h3>
+              <p>Every share acquired is held forever. The Trustee has no power of sale — entrenched and cannot be changed by any vote.</p>
+              <button class="expand-btn" onclick="toggleExpand(this)">Read more ↓</button>
+              <div class="expand-content">The only exceptions are compulsory government acquisition and mandatory corporate actions — in both cases, all proceeds are reinvested into the Partners Asset Pool. Poor ESG performance does not trigger divestment. The Foundation engages from within as a registered CHESS holder.</div>
+            </div>
+            <div class="basket-card">
+              <span class="basket-ico">📊</span>
+              <h3>Direct CHESS registration</h3>
+              <p>All shares are registered directly on the ASX CHESS Register in the Foundation's name as Trustee. No intermediary.</p>
+              <button class="expand-btn" onclick="toggleExpand(this)">Read more ↓</button>
+              <div class="expand-content">No fund manager, broker nominee, ETF, or custodian sits between the community and its holdings. This is an entrenched provision. You can independently verify the Foundation's shareholdings at any time through the CHESS system.</div>
+            </div>
+            <div class="basket-card">
+              <span class="basket-ico">🔗</span>
+              <h3>Blockchain-verified RWA</h3>
+              <p>Every holding is recorded on-chain as a Real World Asset — transparent, tamper-resistant, independently auditable.</p>
+              <button class="expand-btn" onclick="toggleExpand(this)">Read more ↓</button>
+              <div class="expand-content">The Foundation's permissioned EVM blockchain provides on-chain provenance for every Partners Asset Pool asset. The CHESS Register remains the primary legal record. Any discrepancy must be resolved in favour of the CHESS record and remedied within 10 business days.</div>
+            </div>
+          </div>
+
+          <!-- Key numbers -->
+          <div class="principle-strip">
+            <div class="principle-item">
+              <div class="principle-num">∞</div>
+              <div class="principle-lbl">Hold forever — no power of sale</div>
+            </div>
+            <div class="principle-item">
+              <div class="principle-num">50%</div>
+              <div class="principle-lbl">Dividends distributed to Partners</div>
+            </div>
+            <div class="principle-item">
+              <div class="principle-num">50%</div>
+              <div class="principle-lbl">Reinvested permanently into the Basket</div>
+            </div>
+            <div class="principle-item">
+              <div class="principle-num">5%+</div>
+              <div class="principle-lbl">Minimum stake in Poor ESG companies</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ══ FOUNDATION HOLDINGS ═══════════════════════════════════
+           Real holdings on the CHESS Register and blockchain-verified RWA
+           pools. Distinct from the Truth Window (which shows member-facing
+           reservation totals). Populated from admin in a later round — for
+           now the backend returns empty arrays and the UI shows placeholders.
+      ══════════════════════════════════════════════════════════════ -->
+      <section class="section reveal">
+        <div class="container">
+          <span class="kicker" style="color:#6ea8d8">Foundation Holdings</span>
+          <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">Real assets held by the Foundation.</h2>
+          <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">These windows show actual ASX shareholdings on the CHESS Register and blockchain-verified Real World Asset pools — the real assets that back every COG$ minted. Different from the Truth Window above, which shows Partner reservations.</p>
+
+          <!-- Community COG$ total strip -->
+          <div class="fh-strip" id="fh-strip">
+            <div class="fh-stat">
+              <span class="fh-stat-val" id="fh-cc-minted">—</span>
+              <span class="fh-stat-lbl">Community COG$ minted</span>
+            </div>
+            <div class="fh-stat">
+              <span class="fh-stat-val" id="fh-cc-circ">—</span>
+              <span class="fh-stat-lbl">Community COG$ in circulation</span>
+            </div>
+            <div class="fh-stat">
+              <span class="fh-stat-val" id="fh-cc-asx">—</span>
+              <span class="fh-stat-lbl">ASX COG$ minted (total)</span>
+            </div>
+            <div class="fh-stat">
+              <span class="fh-stat-val" id="fh-cc-rwa">—</span>
+              <span class="fh-stat-lbl">RWA COG$ minted (total)</span>
+            </div>
+          </div>
+
+          <!-- ASX Shareholdings window -->
+          <div class="fh-window fh-window-asx">
+            <div class="fh-window-hd">
+              <div>
+                <span class="fh-kicker">CHESS Register Holdings</span>
+                <h3 class="fh-title">ASX Resource Company Shareholdings</h3>
+                <p class="fh-sub">Held directly on the ASX CHESS Register in the Foundation's name. Updated from Admin.</p>
+              </div>
+              <div class="fh-live-badge"><span class="fh-dot"></span>Admin feed</div>
+            </div>
+            <div class="fh-table-wrap">
+              <div class="fh-table-hd fh-table-hd-asx">
+                <div>ASX code</div>
+                <div>Company</div>
+                <div class="fh-num">Shares</div>
+                <div class="fh-num">ASX COG$ minted</div>
+              </div>
+              <div id="fh-asx-rows"></div>
+              <div class="fh-table-ft fh-table-ft-asx" id="fh-asx-total-row" style="display:none">
+                <div></div>
+                <div style="font-weight:600;color:var(--text)">Total</div>
+                <div class="fh-num" id="fh-asx-total-shares">0</div>
+                <div class="fh-num" id="fh-asx-total-cogs">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RWA Holdings window -->
+          <div class="fh-window fh-window-rwa" style="margin-top:18px">
+            <div class="fh-window-hd">
+              <div>
+                <span class="fh-kicker" style="color:#c4b0f0">Blockchain-Verified Holdings</span>
+                <h3 class="fh-title">Real World Asset Pools</h3>
+                <p class="fh-sub">In-ground mineral value and other blockchain-verified Real World Assets held by the Foundation. Updated from Admin.</p>
+              </div>
+              <div class="fh-live-badge fh-live-badge-rwa"><span class="fh-dot"></span>Admin feed</div>
+            </div>
+            <div class="fh-table-wrap">
+              <div class="fh-table-hd fh-table-hd-rwa">
+                <div>Pool name</div>
+                <div>Asset type</div>
+                <div class="fh-num">Verified valuation</div>
+                <div class="fh-num">RWA COG$ minted</div>
+              </div>
+              <div id="fh-rwa-rows"></div>
+              <div class="fh-table-ft fh-table-ft-rwa" id="fh-rwa-total-row" style="display:none">
+                <div></div>
+                <div style="font-weight:600;color:var(--text)">Total</div>
+                <div class="fh-num" id="fh-rwa-total-val">$0</div>
+                <div class="fh-num" id="fh-rwa-total-cogs">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ══ ESG & FIRST NATIONS ══════════════════════════════════ -->
+      <section class="section reveal">
+        <div class="container">
+          <span class="kicker">Stewardship & engagement</span>
+          <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">We never sell. We engage from within.</h2>
+          <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">The Foundation acquires permanent shareholdings in resource companies and uses that position to drive ESG change at the boardroom level — backed by Traditional Owner authority.</p>
+
+          <div class="rwa-split" style="margin-bottom:16px">
+            <div class="esg-card">
+              <span class="esg-badge">Active ESG strategy</span>
+              <h3 style="margin-top:12px">Poor ESG Targets</h3>
+              <p style="margin-bottom:0">The Board and FNAC jointly identify companies with poor records. The Foundation builds a minimum 5% registered holding — permanent, never sold — then uses AGM voting rights and direct board engagement to drive change. Your governance vote goes directly to the company.</p>
+            </div>
+            <div style="padding:20px;border-radius:var(--r);background:linear-gradient(160deg,rgba(35,25,12,.9),rgba(18,12,4,.92));border:1px solid rgba(200,151,62,.25);box-shadow:var(--shadow)">
+              <div class="fnac-grid" style="gap:16px;margin-bottom:0">
+                <div>
+                  <span style="font-size:.64rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2)">FNAC</span>
+                  <h3 style="font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin:6px 0">57.8% of critical mineral projects sit on Indigenous lands.</h3>
+                  <p style="font-size:.78rem;color:var(--muted);line-height:1.6;margin:0">3–7 Traditional Owner representatives with entrenched authority over ESG, Sub-Trust C grants, and FPIC. At least one Board Director must be FNAC-nominated. 30% minimum of Sub-Trust C to First Nations — cannot be reduced.</p>
+                </div>
+                <picture style="flex-shrink:0;width:120px;border-radius:12px;overflow:hidden;border:1px solid rgba(240,209,138,.15)">
+                  <source srcset="../assets/cogs_fnac.webp" type="image/webp">
+                  <img src="../assets/cogs_fnac.png" alt="FNAC" style="width:100%;display:block">
+                </picture>
+              </div>
+            </div>
+          </div>
+
+          <div class="rwa-split">
+            <div class="rwa-card">
+              <h3>⛏️ In-ground value</h3>
+              <p>The default position is to vote against extraction. Resources held in the ground carry measurable value under organised community stewardship.</p>
+            </div>
+            <div class="rwa-card">
+              <h3>🌏 RWA on-chain</h3>
+              <p>Every Partners Asset Pool holding is blockchain-verified. Partners can independently audit what the community owns at any time.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ══ BRING OTHERS IN ═══════════════════════════════════════ -->
+      <section class="section reveal">
+        <div class="container">
+          <span class="kicker" style="color:#f0a870">Bring others in</span>
+          <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">Australia's resources should carry Australian voices.</h2>
+          <p style="font-size:.88rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:64ch">Right now, the governance of Australia's resource wealth is shaped by foreign banks, offshore hedge funds, and institutional shareholders who have no connection to the land, the communities near it, or the people it belongs to. COGs exists to change that — permanently.</p>
+
+          <picture style="display:block;margin:0 auto 24px;max-width:420px;border-radius:16px;overflow:hidden;border:1px solid rgba(240,168,112,.15)">
+            <source srcset="../assets/coin_shake.webp" type="image/webp">
+            <img src="../assets/coin_shake.png" alt="Community cooperation" style="width:100%;display:block">
+          </picture>
+
+          <!-- Three pillars -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px" class="stag-grid">
+            <div class="stag-cell">
+              <div style="font-size:1.4rem;margin-bottom:8px">🏔️</div>
+              <div style="font-size:.82rem;font-weight:500;color:var(--gold-1);margin-bottom:6px">In-ground value</div>
+              <div style="font-size:.72rem;color:var(--muted);line-height:1.55">Resources held in the ground under community stewardship carry real, measurable value. Extraction is not the only outcome — and it should never be the default.</div>
+            </div>
+            <div class="stag-cell">
+              <div style="font-size:1.4rem;margin-bottom:8px">🤝</div>
+              <div style="font-size:.82rem;font-weight:500;color:var(--gold-1);margin-bottom:6px">Collective voice</div>
+              <div style="font-size:.72rem;color:var(--muted);line-height:1.55">One shareholder has no influence. But a community of registered CHESS holders, growing every week, builds a governance position that resource companies cannot ignore and cannot buy out.</div>
+            </div>
+            <div class="stag-cell stag-cell-hl">
+              <div style="font-size:1.4rem;margin-bottom:8px">♾️</div>
+              <div style="font-size:.82rem;font-weight:500;color:#f0a870;margin-bottom:6px">Permanent compounding</div>
+              <div style="font-size:.72rem;color:var(--muted);line-height:1.55">Every person who joins adds to the Partners Asset Pool. The basket can never be sold. Dividends are reinvested. The longer this runs, the stronger it gets — for everyone who came before and everyone who comes after.</div>
+            </div>
+          </div>
+
+          <!-- The transparency point -->
+          <div style="padding:18px 20px;border-radius:14px;background:linear-gradient(160deg,rgba(35,25,12,.9),rgba(18,12,4,.92));border:1px solid rgba(240,168,112,.2);margin-bottom:16px">
+            <h3 style="font-family:var(--serif);font-size:1rem;font-weight:500;color:#f0a870;margin-bottom:8px">You don't have to take anyone's word for it.</h3>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0 0 8px">The Partners Asset Pool is held directly on the ASX CHESS Register — not with a custodian, not through a fund manager, not behind a login. The token registry is blockchain-verified. The dashboard above shows live partnership data, geographic spread, and every token class in real time.</p>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0">This isn't a promise about what might happen. <strong style="color:var(--gold-1)">It's a structure you can see working.</strong></p>
+          </div>
+
+          <!-- How to explain it -->
+          <div style="padding:16px 20px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid var(--line);margin-bottom:16px">
+            <div style="font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:8px">🗣️ How to explain COGs in 30 seconds</div>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0;font-style:italic">"It's a community trust that buys shares in Australian resource companies and holds them permanently. Dividends are split — half to Partners, half reinvested to buy more. The community votes on how those companies are governed. The resources stay in the ground unless the community — including Traditional Owners — agrees otherwise. No one can sell the basket. It just compounds, forever."</p>
+          </div>
+
+          <!-- Founding Partner note -->
+          <div style="padding:22px 24px;border-radius:16px;background:linear-gradient(160deg,rgba(24,20,10,.96),rgba(12,10,4,.92));border:1px solid rgba(240,209,138,.18);margin-bottom:18px">
+            <div style="font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">From a Founding Partner</div>
+            <h3 style="font-family:var(--serif);font-size:1.12rem;font-weight:500;color:var(--gold-1);margin-bottom:12px">The Four Spokes of the COG$ Circular Economy</h3>
+            <div style="font-size:.82rem;color:var(--muted);line-height:1.76;display:flex;flex-direction:column;gap:12px">
+              <p>A wheel is one of humanity's oldest and most elegant solutions. It doesn't consume what it moves across — it simply turns, converting energy into forward motion, distributing force evenly, and returning to the same point it started from before moving on. That is exactly what the COG$ circular economy is designed to do: not extract, not accumulate, not collapse inward — but turn. Continuously, sustainably, and together.</p>
+              <p>At the centre of the wheel sits the hub — the Community Joint Venture Partnership itself. It is the fixed point around which everything rotates, the anchor that holds the spokes in tension and gives the wheel its form. Without the community, there is no wheel. Without the wheel, the community goes nowhere.</p>
+              <p>From that hub extend four spokes. Each one is distinct in its material, its purpose, and the load it carries. But a wheel with uneven spokes wobbles. A wheel with a missing spoke buckles under pressure. The COG$ model is designed so that all four spokes are present, tensioned, and load-bearing — because the integrity of the whole depends on the integrity of each.</p>
+              <p><strong style="color:var(--text)">NFT COG$ are the spoke of identity.</strong> This is the spoke that names every participant and gives them their place in the wheel. Minted once, at the moment an individual partner or business joins the community, each NFT COG$ is permanently and uniquely bound to that participant — their signature on the wheel, their seat at the table. It cannot be transferred, replicated, or cashed out, because identity cannot be transferred, replicated, or sold. This spoke does not stretch to accommodate demand. It grows only as the community genuinely grows — one consenting participant at a time — because a community built on manufactured membership is not a community at all. It is a rim without a hub.</p>
+              <p><strong style="color:var(--text)">ASX COG$ are the spoke of equity.</strong> This is the spoke that connects the wheel to the broader economy of real, publicly accountable resource companies. Minted against a pooled holding of shares in ASX-listed resource companies, every ASX COG$ represents a proportional stake in that pool — and it cannot exist without a corresponding share underpinning it. The spoke lengthens only when the pool grows, through new company partnerships or additional share contributions. It is market-anchored and transparent by design, tied directly to the performance of real companies operating under real regulatory scrutiny. This spoke does not speculate. It reflects.</p>
+              <p><strong style="color:var(--text)">RWA COG$ are the spoke of resource.</strong> This is the deepest spoke — reaching furthest from the hub, anchored not in markets or memberships but in the earth itself. Not yet in circulation, each RWA COG$ will be minted via smart contract and tied to an independently verified, in-situ resource: minerals, biological assets, or other natural assets valued before a single gram is extracted or a single hectare is harvested. The minting quantity is fixed at the point of independent valuation and cannot be revisited. If the underlying resource increases in value, existing tokens appreciate — the spoke carries more weight, but it does not grow longer. No new tokens are created. No dilution occurs. The only way to extend this spoke is to register additional verified resources. This is the spoke that makes inflation structurally impossible — not by rule, but by architecture.</p>
+              <p><strong style="color:var(--text)">Community COG$ (CC) are the spoke of exchange.</strong> This is the most active spoke — the one in constant motion, flexing and turning with the daily life of the community. Carrying no directly linked underlying asset, Community COG$ derive their value entirely from what partners agree they are worth through the exchange of real goods and services. Every Individual Partner receives 1,000 CC (¢©) upon entry; every Business Partner receives 10,000 CC — enough to begin participating, not enough to dominate. Additional CC may be minted and issued only in exchange for genuine goods or services contributed to the Community Joint Venture Partnership. This spoke grows in direct proportion to the productive activity of the community itself. The more the community does, the more it circulates. The more it circulates, the stronger the spoke becomes.</p>
+              <div style="height:1px;background:var(--line);margin:2px 0"></div>
+              <p><strong style="color:var(--gold-1)">The Rim: The No-Fiat Rule</strong></p>
+              <p>Four strong spokes are not enough on their own. What holds them together — what gives the wheel its shape and keeps value from flying outward — is the rim. In the COG$ model, that rim is the no-fiat rule.</p>
+              <p>No COG$ token of any type can be converted to or exchanged for Australian dollars or any other fiat currency. Value generated within the circular economy stays within the circular economy. This is not a restriction imposed on the community — it is the boundary condition that makes circularity possible. A wheel without a rim is just four spokes spinning in the air. The rim is what keeps the energy inside the system, moving forward, turning over, and returning to the community that generated it.</p>
+              <p>The moment a cash-out pathway exists, the wheel stops being a wheel. It becomes a funnel — and value flows in one direction only, away from the people who created it.</p>
+              <div style="height:1px;background:var(--line);margin:2px 0"></div>
+              <p><strong style="color:var(--gold-1)">The Road: The Real World</strong></p>
+              <p>A wheel is only as useful as the ground it moves on. The COG$ circular economy does not exist in abstraction — it turns on the real world. The shares are real. The in-situ resources are real. The partners are real people and real businesses. The goods and services exchanged are real contributions to real community operations. The road is not incidental to the wheel — it is what the wheel is for.</p>
+              <p>And unlike extraction, which tears up the road as it goes, a wheel leaves the road as it found it. The COG$ model is built to move across this country without leaving it worse behind.</p>
+              <p style="color:var(--text);font-weight:500">Four spokes. One hub. One rim. One road.</p>
+              <p>That is the COG$ circular economy — value that turns, returns, and keeps turning, always grounded in something real, always in service of the community that keeps it moving.</p>
+            </div>
+          </div>
+
+          <!-- Share actions -->
+          <div style="text-align:center;margin-bottom:10px"><span style="font-size:.72rem;color:var(--muted)">Know someone who should be part of this?</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+            <button class="share-btn" onclick="shareVia('whatsapp')" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.25);color:#25d366">
+              <span style="font-size:1rem">💬</span> WhatsApp
+            </button>
+            <button class="share-btn" onclick="shareVia('sms')" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.2);color:#60d4b8">
+              <span style="font-size:1rem">📱</span> Text message
+            </button>
+            <button class="share-btn" onclick="shareVia('email')" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.2);color:#6ea8d8">
+              <span style="font-size:1rem">✉️</span> Email
+            </button>
+            <button class="share-btn" onclick="shareVia('copy')" id="copy-link-btn" style="background:rgba(240,209,138,.06);border-color:rgba(240,209,138,.15);color:var(--gold-2)">
+              <span style="font-size:1rem">🔗</span> Copy invite link
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ COMMUNITY VAULT — MASTER CONTROL ═════════════════════ -->
+      <section class="section reveal">
+        <div class="container">
+          <div class="cv-full">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap">
+              <div>
+                <span class="kicker" style="color:#6ea8d8">The Truth Window</span>
+                <h2 style="font-family:var(--serif);font-size:clamp(1.3rem,3vw,1.8rem);font-weight:500;letter-spacing:-.02em;margin-top:8px;color:#a0c4f0">Real-time Registry Information.</h2>
+                <p style="font-size:.78rem;color:rgba(160,196,240,.45);margin-top:6px;line-height:1.5">Hover or tap any cell to learn what it means. All numbers update live from the database.</p>
+              </div>
+              <div class="display-only-badge" style="flex-shrink:0;margin-top:4px">
+                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#7ee8a2;animation:pulse 2s infinite;margin-right:3px"></span>
+                Live · Read only
+              </div>
+            </div>
+
+            <!-- ── PEOPLE ── -->
+            <div class="mc-section-hd mc-hd-warm">👤 People</div>
+            <div class="mc-row mc-row-3" style="margin-bottom:16px">
+              <div class="mc-cell mc-cell-warm" data-tip="Total individual Australians who have completed partnership registration and hold a Personal S-NFT COG$ token.">
+                <div class="mc-ico">◈</div>
+                <div class="mc-val" id="mc-members">—</div>
+                <div class="mc-sub">Personal Partners</div>
+              </div>
+              <div class="mc-cell mc-cell-warm" data-tip="Australian businesses that have registered a B-NFT partnership. Business Partners hold limited governance rights and participate in Sub-Trust B distributions.">
+                <div class="mc-ico">◇</div>
+                <div class="mc-val" id="mc-businesses">—</div>
+                <div class="mc-sub">Businesses</div>
+              </div>
+              <div class="mc-cell mc-cell-warm" data-tip="Kids kS-NFT tokens registered by adult Partners for children under 18. Held in trust until the child turns 18, at which point the kS-NFT auto-converts to a full Personal S-NFT.">
+                <div class="mc-ico">🧒</div>
+                <div class="mc-val" id="mc-kids">—</div>
+                <div class="mc-sub">Kids registered</div>
+              </div>
+            </div>
+
+            <!-- ── GEOGRAPHIC ── -->
+            <div class="mc-section-hd mc-hd-teal">🗺️ Geographic reach</div>
+            <div class="mc-row mc-row-3" style="margin-bottom:16px">
+              <div class="mc-cell mc-cell-teal" data-tip="Number of Australian states and territories with at least one registered member. Goal: all 8 (NSW, VIC, QLD, WA, SA, TAS, ACT, NT).">
+                <div class="mc-val" id="mc-states">—</div>
+                <div class="mc-sub">States / territories</div>
+              </div>
+              <div class="mc-cell mc-cell-teal" data-tip="Count of unique postcodes across all registered Partners — shows how widely the Foundation's community spreads across Australia.">
+                <div class="mc-val" id="mc-postcodes">—</div>
+                <div class="mc-sub">Unique postcodes</div>
+              </div>
+              <div class="mc-cell mc-cell-teal" data-tip="Count of unique suburbs from member addresses — a measure of community diversity and geographic distribution.">
+                <div class="mc-val" id="mc-suburbs">—</div>
+                <div class="mc-sub">Unique suburbs</div>
+              </div>
+            </div>
+
+            <!-- ── STATE BARS ── -->
+            <div class="mc-section-hd mc-hd-teal">📊 Partners by state</div>
+            <div class="mc-bars" id="mc-state-bars">
+              <div style="font-size:.75rem;color:rgba(160,196,240,.4);padding:8px 0">Loading…</div>
+            </div>
+
+            <!-- ── TOKEN CLASSES ── -->
+            <div class="mc-section-hd mc-hd-gold" style="margin-top:20px">🪙 COG$ class registry</div>
+            <p style="font-size:.72rem;color:rgba(210,185,130,.4);margin:-4px 0 10px 2px">Each token class serves a different purpose. Tap any cell to learn more.</p>
+            <div class="mc-row mc-row-4">
+              <div class="mc-cell mc-cell-gold" data-tip="Personal S-NFT — your core partnership token. Soulbound (non-transferable), carries 1 governance vote and 1 Beneficial Unit in Sub-Trust B. Issue price: $4.00. Every Australian gets exactly one.">
+                <div class="mc-ico">◈</div>
+                <div class="mc-val mc-gold" id="mc-snft">—</div>
+                <div class="mc-sub">Personal S-NFT</div>
+                <div class="mc-tier">Tier 1</div>
+              </div>
+              <div class="mc-cell mc-cell-gold" data-tip="Kids kS-NFT — registered by a parent or guardian for a child under 18. Held in trust. $1.00 issue price. Auto-converts to a full S-NFT at age 18 with full governance rights.">
+                <div class="mc-ico">🧒</div>
+                <div class="mc-val mc-gold" id="mc-ksnft">—</div>
+                <div class="mc-sub">Kids kS-NFT</div>
+                <div class="mc-tier">Tier 1</div>
+              </div>
+              <div class="mc-cell mc-cell-gold" data-tip="ASX COG$ — investment-grade token tied to ASX resource company shares in the Partners Asset Pool. Subject to any regulatory requirements determined by applicable law. Lock period applies from Expansion Day. $4.00 issue price.">
+                <div class="mc-ico">📈</div>
+                <div class="mc-val mc-gold" id="mc-asx">—</div>
+                <div class="mc-sub">ASX COG$</div>
+                <div class="mc-tier t2">Tier 2</div>
+              </div>
+              <div class="mc-cell mc-cell-gold" data-tip="RWA COG$ — Real World Asset token tied to in-ground mineral value. Blockchain-verified, not speculative. Activated on Expansion Day, subject to any regulatory requirements determined by applicable law.">
+                <div class="mc-ico">🌏</div>
+                <div class="mc-val mc-gold" id="mc-rwa">—</div>
+                <div class="mc-sub">RWA COG$</div>
+                <div class="mc-tier t2">Tier 2</div>
+              </div>
+            </div>
+            <div class="mc-row mc-row-4" style="margin-top:8px">
+              <div class="mc-cell mc-cell-green" data-tip="Donation COG$ — $4 issue price splits: $2 directly to Sub-Trust C for community projects, $2 invested in Sub-Trust A. Creates a D Class Beneficial Unit in Sub-Trust B so Sub-Trust C receives ongoing dividend income.">
+                <div class="mc-ico">💚</div>
+                <div class="mc-val mc-green" id="mc-donation">—</div>
+                <div class="mc-sub">Donation COG$</div>
+                <div class="mc-tier t1g">Tier 1</div>
+              </div>
+              <div class="mc-cell mc-cell-green" data-tip="Pay It Forward COG$ — a $4 charitable donation that funds a free S-NFT partnership for someone who cannot afford $4. $3 to admin, $1 to Sub-Trust A for the recipient. Donor cap: $40,000/year.">
+                <div class="mc-ico">🤝</div>
+                <div class="mc-val mc-green" id="mc-pif">—</div>
+                <div class="mc-sub">Pay It Forward</div>
+                <div class="mc-tier t1g">Tier 1</div>
+              </div>
+              <div class="mc-cell mc-cell-gold" data-tip="Landholder COG$ — issued to verified ALRA/NTA landholders whose eligible land overlaps with Partners Asset Pool tenements. Zero cost. Verification through FNAC. Carries Sub-Trust B entitlement.">
+                <div class="mc-ico">🏞️</div>
+                <div class="mc-val mc-gold" id="mc-landholder">—</div>
+                <div class="mc-sub">Landholder COG$</div>
+                <div class="mc-tier t2">Tier 2</div>
+              </div>
+              <div class="mc-cell mc-cell-gold" data-tip="Resident COG$ — auto-allocated to Partners whose verified address falls within an Affected Zone (geographic area near Partners Asset Pool tenements). No fee. Carries an additional 1,000 weighted vote units for Local Decision Votes.">
+                <div class="mc-ico">📍</div>
+                <div class="mc-val mc-gold" id="mc-lr">—</div>
+                <div class="mc-sub">Resident COG$</div>
+                <div class="mc-tier">Tier 1</div>
+              </div>
+            </div>
+
+            <!-- Multi-sig -->
+            <div style="margin-top:20px;padding:14px 18px;border-radius:12px;background:linear-gradient(135deg,rgba(86,147,220,.06),rgba(86,147,220,.02));border:1px solid rgba(86,147,220,.18)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <span style="font-size:1.1rem">🔐</span>
+                <strong style="color:rgba(160,196,240,.85);font-size:.82rem">Multi-signature requirement</strong>
+              </div>
+              <p style="font-size:.78rem;color:rgba(160,196,240,.55);line-height:1.6;margin:0">Core vault operations require at least <strong style="color:#a0c4f0">three board director authorisations</strong>. No single Partner or admin can unilaterally move assets, issue tokens, or alter registry records. All figures on this board are read directly from the live registry.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divider">
+      <hr class="divider">
+
+      <!-- Document library -->
+      <section class="section reveal">
+        <div class="container">
+          <span class="kicker">Foundation library</span>
+          <h2 style="font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.3rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">Governing documents &amp; Foundation papers.</h2>
+          <p style="font-size:.86rem;color:var(--muted);line-height:1.7;margin-bottom:26px;max-width:62ch">All documents that shape the Foundation structure — trust declarations/deeds, blockchain  and technical specifications, the narrative paper — and more - available here for Partner reference.</p>
+
+          <div class="lib-grid">
+            <div class="lib-item" onclick="downloadDoc('black-and-white-paper.pdf')">
+              <div class="lib-ico lib-ico-pdf">📄</div>
+              <div class="lib-copy">
+                <div class="lib-title">Black &amp; White Paper — PDF</div>
+                <div class="lib-desc">Downloadable PDF of the foundational narrative paper.</div>
+                <span class="lib-badge lib-badge-pdf">PDF · Download</span>
+              </div>
+            </div>
+
+            <div class="lib-item" onclick="downloadDoc('COGS_Hybrid_Trust_Master_Declaration_SA_Redraft_v4.docx')">
+              <div class="lib-ico lib-ico-doc">⚖</div>
+              <div class="lib-copy">
+                <div class="lib-title">Hybrid Trust Master Declaration</div>
+                <div class="lib-desc">Master trust declaration — South Australia redraft v4. The governing trust document for the Foundation structure.</div>
+                <span class="lib-badge lib-badge-docx">DOCX · Download</span>
+              </div>
+            </div>
+
+            <div class="lib-item" onclick="downloadDoc('SubTrustA_COGS_Hybrid_Trust_Deed_Execution_Subset_v21.docx')">
+              <div class="lib-ico lib-ico-doc">◇</div>
+              <div class="lib-copy">
+                <div class="lib-title">Sub-Trust A — Hybrid Trust Deed</div>
+                <div class="lib-desc">Execution subset v21. Sub-Trust A governs the core hybrid stewardship structure.</div>
+                <span class="lib-badge lib-badge-docx">DOCX · Download</span>
+              </div>
+            </div>
+
+            <div class="lib-item" onclick="downloadDoc('SubTrustB_COGS_Dividend_Distribution_Trust_Deed_Execution_Subset_v21.docx')">
+              <div class="lib-ico lib-ico-doc">◇</div>
+              <div class="lib-copy">
+                <div class="lib-title">Sub-Trust B — Dividend Distribution Trust Deed</div>
+                <div class="lib-desc">Execution subset v21. Governs dividend distribution pathways from income-generating ASX activity.</div>
+                <span class="lib-badge lib-badge-docx">DOCX · Download</span>
+              </div>
+            </div>
+
+            <div class="lib-item" onclick="downloadDoc('SubTrustC_COGS_Community_Projects_Fund_Execution_Subset_v21.docx')">
+              <div class="lib-ico lib-ico-doc">♡</div>
+              <div class="lib-copy">
+                <div class="lib-title">Sub-Trust C — Community Projects Fund</div>
+                <div class="lib-desc">Execution subset v21. Governs the community projects fund — where Donation COG$ flows.</div>
+                <span class="lib-badge lib-badge-docx">DOCX · Download</span>
+              </div>
+            </div>
+
+            <div class="lib-item" onclick="downloadDoc('COGS_Geofencing_and_Location_Eligibility_Specification__1_.docx')">
+              <div class="lib-ico lib-ico-doc">◉</div>
+              <div class="lib-copy">
+                <div class="lib-title">Geofencing &amp; Location Eligibility Specification</div>
+                <div class="lib-desc">Technical specification for geo-fencing, Affected Zone determination, and location-based governance eligibility.</div>
+                <span class="lib-badge lib-badge-docx">DOCX · Download</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="info-box" style="margin-top:16px">
+            <strong>Document access</strong>
+            All documents are provided for Partner reference. These are governing and specification documents — they define the legal structure, trust deeds, and technical architecture that underpin COG$ of Australia Foundation.
+          </div>
+        </div>
+      </section>
+
+    
+  <!-- ── Payment Intercept Modal ── -->
+  <div class="pay-intercept-modal" id="pay-intercept-modal">
+    <div class="pay-intercept-box">
+      <button class="pay-intercept-close" onclick="closePayIntercept()" aria-label="Close">×</button>
+      <span class="pay-intercept-icon">🔒</span>
+      <h2 class="pay-intercept-title">One step before your vault</h2>
+      <p class="pay-intercept-body">Your <strong style="color:var(--gold-1)">$4 partnership contribution</strong> is required to activate your Partnership and open your vault. It takes less than a minute via Stripe.</p>
+      <div class="pay-intercept-stripe" id="pay-intercept-stripe-container"></div>
+      <div class="pay-intercept-links">
+        <button class="pay-check-link" onclick="checkPaymentAndProceed()">I've already paid — check my status</button>
+        <button class="pay-anyway-link" onclick="proceedToVaultAnyway()">Continue to vault anyway →</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+  </div>
+
+  <!-- Footer -->
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const ROOT = (document.body.dataset.root) || '../';
+const API  = ROOT + '_app/api/index.php?route=';
+
+// Single entry point — the wallet redirects here if not authenticated. After a
+// successful login (password, OTP, or setup), the Partner always lands on the
+// hub. The hub is the destination; the wallet is reached by clicking the vault
+// pill. Do not auto-route to the wallet even if ?next=vault was passed in —
+// that parameter only governs the redirect-in messaging, not the post-login
+// destination.
+function afterLoginSuccess(vault){
+  // Clean ?next and ?reason from the URL so a refresh doesn't re-trigger the
+  // "Please sign in to access your vault" message.
+  try {
+    var url = new URL(window.location.href);
+    if (url.searchParams.has('next') || url.searchParams.has('reason')) {
+      url.searchParams.delete('next');
+      url.searchParams.delete('reason');
+      window.history.replaceState({}, '', url.toString());
+    }
+  } catch(e){}
+  enterCommunity(vault);
+}
+
+/* ── Mobile nav ── */
+var t=document.getElementById('mobileToggle'),d=document.getElementById('mobileDrawer');
+if(t&&d){t.addEventListener('click',function(){var o=d.classList.toggle('open');t.setAttribute('aria-expanded',o);t.textContent=o?'✕':'☰';});}
+
+/* ── Scroll reveal ── */
+(function(){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.07});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});})();
+
+/* ── Panel switcher ── */
+function showPanel(id){
+  ['ap-login','ap-setup','ap-recover','ap-otp'].forEach(function(p){
+    var el=document.getElementById(p);
+    if(el){ el.classList.toggle('hidden', p!==id); }
+  });
+}
+window.showPanel = showPanel;
+
+/* ── API helper ── */
+async function api(route, opts){
+  opts = opts || {};
+  var r = await fetch(API+route, Object.assign({
+    credentials:'include',
+    headers:{'Content-Type':'application/json','Accept':'application/json'}
+  }, opts));
+  var txt = await r.text();
+  var j; try{ j=JSON.parse(txt); }catch(e){ j={success:false,error:txt}; }
+  if(!r.ok||j.success===false) throw new Error(j.error||'Request failed ('+r.status+')');
+  return j.data!==undefined?j.data:j;
+}
+window.api = api;
+
+/* ── Flash helper ── */
+function flash(id,msg,kind){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.textContent=msg;
+  el.className='flash '+(kind||'');
+}
+
+/* ── Enter community ── */
+function enterCommunity(data){
+  document.getElementById('auth-gate').style.display='none';
+  document.getElementById('community-content').style.display='block';
+
+  var first = ((data.full_name||data.member_number||'').split(' ')[0]) || '';
+  var mn = document.getElementById('member-first-name');
+  if(mn) mn.textContent = first;
+  var mnDisplay = document.getElementById('member-number-display');
+  if(mnDisplay){
+    var num = data.member_number||'';
+    mnDisplay.textContent = num ? num.replace(/(.{4})(?=.)/g,'$1 ') : '';
+  }
+
+  // Payment nudge — shown above the community content for unpaid Partners.
+  // Removed automatically once payment_status reaches 'paid' on next vault load.
+  window._partnerPaymentStatus = (data.payment_status||'pending').toLowerCase();
+  window._communityData = data;
+  var paymentStatus = window._partnerPaymentStatus;
+  var wrap = document.getElementById('vault-pill-wrap');
+  if(paymentStatus !== 'paid' && wrap && !document.getElementById('vault-pay-badge')){
+
+    // ── Badge pulsing over the vault pill ──
+    var badge = document.createElement('div');
+    badge.id = 'vault-pay-badge';
+    badge.className = 'vault-pay-overlay';
+    badge.textContent = '⚡ $4 payment outstanding';
+    wrap.insertBefore(badge, wrap.firstChild);
+
+    // ── Strip below the vault pill ──
+    var strip = document.createElement('div');
+    strip.className = 'vault-pay-strip';
+    strip.innerHTML = '<span><strong style="color:#f0c070">Your Partnership is not yet active.</strong> Complete your $4 contribution to issue your Class S Unit and activate governance.</span>'
+      + '<a href="../wallets/member.html" onclick="coinTransition(this);return false;">Pay $4 now →</a>';
+    wrap.appendChild(strip);
+
+    // ── Highlight the vault pill itself ──
+    var btn = document.getElementById('vault-pill-btn');
+    if(btn){
+      btn.style.borderColor = 'rgba(240,130,20,.8)';
+      btn.style.background  = 'linear-gradient(135deg,rgba(240,130,20,.15),rgba(200,90,20,.08))';
+      btn.style.boxShadow   = '0 0 0 3px rgba(240,130,20,.2), 0 6px 28px rgba(200,80,20,.22)';
+    }
+  }
+
+  // Load live community stats + master control — then keep them current:
+  // • Auto-refresh every 60 s while page is open
+  // • Immediate refresh when user returns to this browser tab
+  renderParticipationPill(data);
+  renderImportantNews(data);
+  renderFoundationHoldings(data);
+  loadCommunityStats();
+  setInterval(loadCommunityStats, 60000);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'visible') loadCommunityStats();
+  });
+}
+
+async function loadCommunityStats(){
+  try{
+    var s = await api('community-stats');
+    var strip = document.getElementById('comm-strip');
+    if(strip) strip.style.display='';
+    var el = function(id){ return document.getElementById(id); };
+    var fmt = function(v){ return (+v||0).toLocaleString(); };
+    var fmtM = function(v){ var n=parseFloat(v||0); return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); };
+
+    // Hero strip
+    if(el('cs-members')) el('cs-members').textContent = fmt(s.founding_members);
+    if(el('cs-cogs')) el('cs-cogs').textContent = fmt(s.total_cogs);
+    if(el('cs-value')) el('cs-value').textContent = fmtM(s.total_value);
+
+    // Master control — people
+    if(el('mc-members')) el('mc-members').textContent = fmt(s.personal_members);
+    if(el('mc-businesses')) el('mc-businesses').textContent = fmt(s.businesses);
+    if(el('mc-kids')) el('mc-kids').textContent = fmt(s.kids_registered);
+
+    // Master control — geo
+    var geo = s.geo || {};
+    if(el('mc-states')) el('mc-states').textContent = fmt(geo.states_count) + ' / 8';
+    if(el('mc-postcodes')) el('mc-postcodes').textContent = fmt(geo.postcodes_count);
+    if(el('mc-suburbs')) el('mc-suburbs').textContent = fmt(geo.suburbs_count);
+
+    // State bars
+    var bars = el('mc-state-bars');
+    if(bars && geo.states){
+      var states = geo.states;
+      var keys = Object.keys(states);
+      var max = Math.max.apply(null, keys.map(function(k){return states[k];})) || 1;
+      var allStates = ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'];
+      var html = '';
+      allStates.forEach(function(st){
+        var cnt = states[st] || 0;
+        var pct = Math.round((cnt/max)*100);
+        html += '<div class="mc-bar-row">'
+          + '<div class="mc-bar-st">'+st+'</div>'
+          + '<div class="mc-bar-track"><div class="mc-bar-fill" style="width:'+pct+'%"></div></div>'
+          + '<div class="mc-bar-cnt">'+cnt+'</div>'
+          + '</div>';
+      });
+      bars.innerHTML = html;
+    }
+
+    // Master control — token classes
+    var c = s.classes || {};
+    if(el('mc-snft')) el('mc-snft').textContent = fmt(c.snft);
+    if(el('mc-ksnft')) el('mc-ksnft').textContent = fmt(c.ksnft);
+    if(el('mc-asx')) el('mc-asx').textContent = fmt(c.asx);
+    if(el('mc-rwa')) el('mc-rwa').textContent = fmt(c.rwa);
+    if(el('mc-donation')) el('mc-donation').textContent = fmt(c.donation);
+    if(el('mc-pif')) el('mc-pif').textContent = fmt(c.pif);
+    if(el('mc-landholder')) el('mc-landholder').textContent = fmt(c.landholder);
+    if(el('mc-lr')) el('mc-lr').textContent = fmt(c.lr);
+
+  }catch(e){ console.warn('Community stats unavailable:', e.message); }
+}
+
+/* ── Coin spin page transition ── */
+window.coinTransition = function(el){
+  var href = el.getAttribute('href');
+  if(!href) return;
+  var overlay = document.createElement('div');
+  overlay.className = 'coin-transition';
+  overlay.innerHTML = '<img src="../assets/cogs_coin_web.png" alt="" class="coin-spin-anim"><div class="coin-label">You are entering your Partner Vault</div>';
+  document.body.appendChild(overlay);
+  requestAnimationFrame(function(){
+    overlay.classList.add('active');
+  });
+  setTimeout(function(){ window.location.href = href; }, 1800);
+};
+
+/* ── Business vault check ── */
+window.openBusinessVault = async function(e){
+  if(e) e.preventDefault();
+  try{
+    var r = await api('vault/member-business');
+    if(r.has_business){
+      // Coin spin then navigate to business vault
+      var overlay = document.createElement('div');
+      overlay.className = 'coin-transition';
+      overlay.innerHTML = '<img src="../assets/cogs_coin_web.png" alt="" class="coin-spin-anim"><div class="coin-label">Opening Business Vault… Standby</div>';
+      document.body.appendChild(overlay);
+      requestAnimationFrame(function(){ overlay.classList.add('active'); });
+      setTimeout(function(){ window.location.href = '../wallets/business.html'; }, 1800);
+    } else {
+      // No linked business — redirect to business join form
+      window.location.href = '../join/business.html';
+    }
+  }catch(err){
+    // API error — redirect to business join form as fallback
+    console.warn('[business-vault]', err.message);
+    window.location.href = '../join/business.html';
+  }
+};
+
+/* ── Expandable sections ── */
+window.toggleExpand = function(btn){
+  var content = btn.nextElementSibling;
+  if(!content) return;
+  var isOpen = content.classList.toggle('show');
+  btn.classList.toggle('open', isOpen);
+  btn.textContent = isOpen ? btn.textContent.replace('↓','↑') : btn.textContent.replace('↑','↓');
+};
+
+/* ── Trust flow step-by-step ── */
+window.openFlowStep = function(n){
+  for(var i=1;i<=5;i++){
+    var step = document.getElementById('tf-step-'+i);
+    if(!step) continue;
+    if(i===n){
+      step.classList.toggle('open');
+      if(step.classList.contains('open')){
+        step.scrollIntoView({behavior:'smooth',block:'nearest'});
+      }
+    } else {
+      step.classList.remove('open');
+    }
+  }
+};
+
+/* ── Share / invite ── */
+var _partnerInviteShareUrl = null;
+async function resolvePartnerInviteShareUrl(){
+  if(_partnerInviteShareUrl) return _partnerInviteShareUrl;
+
+  var dataInvite = window._communityData && window._communityData.invite_code ? window._communityData.invite_code : null;
+  var inviteCode = dataInvite && dataInvite.code ? String(dataInvite.code).trim() : '';
+
+  if(!inviteCode){
+    try{
+      var fallback = await api('invitations/my-code');
+      var payload = fallback && fallback.invite_code ? fallback.invite_code : fallback;
+      if(payload && payload.code) inviteCode = String(payload.code).trim();
+    }catch(err){
+      inviteCode = '';
+    }
+  }
+
+  var origin = window.location.origin || 'https://cogsaustralia.org';
+  _partnerInviteShareUrl = inviteCode
+    ? origin + '/?invite=' + encodeURIComponent(inviteCode)
+    : origin + '/';
+  return _partnerInviteShareUrl;
+}
+
+window.shareVia = async function(channel){
+  var url = await resolvePartnerInviteShareUrl();
+  var text = 'Australia\'s resources should carry Australian voices. COGs is a community joint venture partnership where Partners collectively direct governance, stewardship, and real-asset participation. Start on the landing page here: ' + url;
+  switch(channel){
+    case 'whatsapp':
+      window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+      break;
+    case 'sms':
+      window.open('sms:?body='+encodeURIComponent(text),'_blank');
+      break;
+    case 'email':
+      window.open('mailto:?subject='+encodeURIComponent('You have been invited to look at COG$ of Australia')+'&body='+encodeURIComponent(text),'_blank');
+      break;
+    case 'copy':
+      navigator.clipboard.writeText(url).then(function(){
+        var btn=document.getElementById('copy-link-btn');
+        if(btn){btn.innerHTML='✓ Invite copied!';setTimeout(function(){btn.innerHTML='<span style="font-size:1rem">🔗</span> Copy invite link';},2000);}
+      }).catch(function(){
+        window.prompt('Copy invite link:', url);
+      });
+      break;
+  }
+};
+
+/* ── Dismiss page splash ── */
+function dismissSplash(){
+  var splash = document.getElementById('page-splash');
+  if(splash && !splash.classList.contains('fade-out')){
+    splash.classList.add('fade-out');
+    setTimeout(function(){
+      splash.classList.add('gone');
+      splash.remove();
+    }, 600);
+  }
+}
+// Safety: dismiss splash after 4s max if API hangs
+setTimeout(dismissSplash, 4000);
+
+/* ── Auto-login check ── */
+(async function(){
+  try{
+    var d = await api('vault/member');
+    dismissSplash();
+    enterCommunity(d);
+  }catch(e){
+    // Not logged in — show auth gate
+    dismissSplash();
+    document.getElementById('auth-gate').style.display='block';
+
+    // ── Redirect-from-wallet messaging ──
+    // If the wallet redirected here with ?next=vault, the Partner was trying to
+    // enter their vault but the session was missing or invalid. Surface the
+    // right message on the login panel so they know what's happening.
+    try {
+      var redirParams = new URLSearchParams(window.location.search);
+      if (redirParams.get('next') === 'vault') {
+        if (redirParams.get('reason') === 'server') {
+          flash('login-fl', 'The partnership service did not respond. Please sign in again in a moment.', 'err');
+        } else {
+          flash('login-fl', 'Please sign in to access your vault.', 'info');
+        }
+      } else if (redirParams.get('signed_out') === 'inactivity') {
+        flash('login-fl', 'You were signed out after 2 minutes of inactivity. Please sign in again.', 'info');
+      } else if (redirParams.get('signed_out') === '1') {
+        flash('login-fl', 'You have been signed out. Sign in to continue.', 'info');
+      }
+    } catch(ex){}
+
+    // ── Welcome handoff from join form ──
+    var params = new URLSearchParams(window.location.search);
+    if(params.get('welcome') === '1'){
+      // Try URL params first, then localStorage
+      var mn    = params.get('member') || '';
+      var mob   = params.get('mobile') || '';
+      var fname = params.get('name')   || '';
+      if(!mn){
+        try{
+          var stored = JSON.parse(localStorage.getItem('cogs_snft_member')||'{}');
+          mn    = stored.member_number||'';
+          mob   = stored.mobile||'';
+          fname = stored.first_name||'';
+        }catch(ex){}
+      }
+
+      // Personalise greeting if we have a first name
+      var wbGreeting = document.getElementById('wb-greeting');
+      if(wbGreeting && fname) wbGreeting.textContent = 'Welcome, ' + fname + '.';
+
+      // Show welcome banner with formatted Partner number
+      var wb = document.getElementById('welcome-banner');
+      if(wb && mn){
+        wb.style.display='';
+        var mnEl = document.getElementById('wb-member-number');
+        if(mnEl) mnEl.textContent = mn.replace(/(.{4})(?=.)/g,'$1 ');
+      }
+
+      // Switch to setup panel and pre-fill Partner number and mobile
+      showPanel('ap-setup');
+      var setupMn  = document.querySelector('#f-setup input[name="member_number"]');
+      var setupMob = document.querySelector('#f-setup input[name="mobile"]');
+      if(setupMn  && mn)  setupMn.value  = mn;
+      if(setupMob && mob) setupMob.value = mob;
+
+      // Clean URL without reload so refreshing doesn't re-trigger the handoff
+      if(window.history.replaceState){
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }
+})();
+
+/* ── Login form ── */
+/* ── OTP state ── */
+var _challengeToken = '';
+var _otpTimerInterval = null;
+var _loginCreds = {};   // stored at login time so resend can replay the request
+
+document.getElementById('f-login')?.addEventListener('submit', async function(e){
+  e.preventDefault();
+  var btn = document.getElementById('login-btn');
+  btn.disabled=true; btn.textContent='Checking…';
+  flash('login-fl','');
+  try{
+    var fd = Object.fromEntries(new FormData(e.target));
+    _loginCreds = {role: fd.role, mobile: fd.mobile||'', email: fd.email||'', password: fd.password||''};
+    var d = await api('auth/login',{method:'POST',body:JSON.stringify(fd)});
+
+    // Check if 2FA OTP is required
+    if(d.otp_required){
+      startOtpSession(d.challenge_token||'', d.delivery_hint||d.email_hint||'', d.delivery_channel||'');
+      btn.disabled=false; btn.textContent="Enter the Partners' Hub";
+      return;
+    }
+
+    // No OTP — direct login
+    var vault = await api('vault/member');
+    afterLoginSuccess(vault);
+  }catch(err){
+    flash('login-fl', err.message||'Login failed. Please check your details.','err');
+    btn.disabled=false; btn.textContent="Enter the Partners' Hub";
+  }
+});
+
+/* ── OTP session ── */
+var _otpCurrentChannel = 'sms';
+function startOtpSession(challengeToken, hint, channel) {
+  _challengeToken = challengeToken;
+  _otpCurrentChannel = channel || 'sms';
+  showPanel('ap-otp');
+
+  // Set hint text based on delivery channel
+  var hintEl = document.getElementById('otp-hint-text');
+  if(_otpCurrentChannel === 'sms') {
+    hintEl.textContent = 'A 6-digit code has been sent via SMS to ' + hint;
+  } else if(_otpCurrentChannel === 'email') {
+    hintEl.textContent = 'A 6-digit code has been sent to your email ' + hint;
+  } else {
+    hintEl.textContent = 'A 6-digit code has been sent to ' + hint;
+  }
+  // Show/update channel switch button
+  var sw = document.getElementById('otp-switch-btn');
+  if(sw) {
+    sw.style.display = '';
+    sw.textContent = _otpCurrentChannel === 'sms' ? 'Send to my email instead' : 'Send via SMS instead';
+  }
+
+  // Clear digits and focus first
+  for(var i=1;i<=6;i++){
+    var d = document.getElementById('otp-d'+i);
+    if(d) d.value='';
+  }
+  document.getElementById('otp-d1')?.focus();
+  flash('otp-fl','');
+
+  // Start 10-minute countdown
+  startOtpTimer(600);
+}
+
+function startOtpTimer(seconds) {
+  if(_otpTimerInterval) clearInterval(_otpTimerInterval);
+  var remaining = seconds;
+  var timerEl = document.getElementById('otp-timer');
+  function tick(){
+    if(remaining <= 0){
+      clearInterval(_otpTimerInterval);
+      timerEl.textContent = 'Code expired. Please log in again.';
+      timerEl.classList.add('urgent');
+      return;
+    }
+    var m = Math.floor(remaining/60), s = remaining%60;
+    timerEl.textContent = 'Code expires in '+m+':'+(s<10?'0':'')+s;
+    timerEl.classList.toggle('urgent', remaining <= 60);
+    remaining--;
+  }
+  tick();
+  _otpTimerInterval = setInterval(tick, 1000);
+}
+
+/* ── OTP resend — replays the original login request to generate a fresh code ── */
+async function resendOtp(){
+  var btn = document.getElementById('otp-resend-btn');
+  if(!btn || btn.disabled) return;
+  if(!_loginCreds.mobile && !_loginCreds.email){
+    flash('otp-fl','Please go back and sign in again to resend.','err');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  flash('otp-fl','');
+  try{
+    var d = await api('auth/login',{method:'POST',body:JSON.stringify(_loginCreds)});
+    if(d.otp_required){
+      if(_otpTimerInterval) clearInterval(_otpTimerInterval);
+      _challengeToken = d.challenge_token||'';
+      // Update hint text with new channel info
+      var hintEl = document.getElementById('otp-hint-text');
+      if(hintEl){
+        var hint = d.delivery_hint||d.email_hint||'';
+        _otpCurrentChannel = d.delivery_channel || _otpCurrentChannel;
+        if(_otpCurrentChannel === 'sms'){
+          hintEl.textContent = 'A new code has been sent via SMS to ' + hint;
+        } else {
+          hintEl.textContent = 'A new code has been sent to your email ' + hint;
+        }
+      }
+      var sw = document.getElementById('otp-switch-btn');
+      if(sw) sw.textContent = _otpCurrentChannel === 'sms' ? 'Send to my email instead' : 'Send via SMS instead';
+      // Clear old digits and restart timer
+      for(var i=1;i<=6;i++){var el=document.getElementById('otp-d'+i);if(el)el.value='';}
+      document.getElementById('otp-d1')?.focus();
+      startOtpTimer(600);
+      flash('otp-fl','New code sent.','ok');
+    }
+  }catch(err){
+    flash('otp-fl',err.message||'Could not resend. Please go back and sign in again.','err');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Resend code';
+  }
+}
+window.resendOtp = resendOtp;
+window.submitOtp = submitOtp;
+
+async function switchOtpChannel(){
+  var newChannel = _otpCurrentChannel === 'sms' ? 'email' : 'sms';
+  if(!_loginCreds.mobile && !_loginCreds.email){
+    flash('otp-fl','Please go back and sign in again.','err'); return;
+  }
+  var sw = document.getElementById('otp-switch-btn');
+  if(sw){ sw.disabled = true; sw.textContent = 'Sending…'; }
+  flash('otp-fl','');
+  try{
+    var creds = Object.assign({}, _loginCreds, {auth_channel: newChannel});
+    var d = await api('auth/login',{method:'POST',body:JSON.stringify(creds)});
+    if(d.otp_required){
+      if(_otpTimerInterval) clearInterval(_otpTimerInterval);
+      _challengeToken = d.challenge_token||'';
+      _otpCurrentChannel = d.delivery_channel || newChannel;
+      for(var i=1;i<=6;i++){var el=document.getElementById('otp-d'+i);if(el)el.value='';}
+      document.getElementById('otp-d1')?.focus();
+      startOtpTimer(600);
+      var hintEl = document.getElementById('otp-hint-text');
+      if(hintEl){
+        var hint = d.delivery_hint||d.email_hint||'';
+        if(_otpCurrentChannel === 'sms'){
+          hintEl.textContent = 'A 6-digit code has been sent via SMS to ' + hint;
+        } else {
+          hintEl.textContent = 'A 6-digit code has been sent to your email ' + hint;
+        }
+      }
+      if(sw) sw.textContent = _otpCurrentChannel === 'sms' ? 'Send to my email instead' : 'Send via SMS instead';
+      flash('otp-fl','New code sent via ' + (_otpCurrentChannel === 'sms' ? 'SMS' : 'email') + '.','ok');
+    }
+  }catch(err){
+    flash('otp-fl',err.message||'Could not switch delivery channel.','err');
+  }finally{
+    if(sw) sw.disabled = false;
+  }
+}
+window.switchOtpChannel = switchOtpChannel;
+
+/* ── OTP digit auto-advance ── */
+document.querySelectorAll('.otp-digit').forEach(function(el,i,all){
+  el.addEventListener('input', function(){
+    this.value = this.value.replace(/\D/g,'').slice(0,1);
+    if(this.value && i<all.length-1) all[i+1].focus();
+    // Auto-submit when all 6 filled
+    if(i===all.length-1 && this.value){
+      var code='';
+      for(var j=0;j<all.length;j++) code+=all[j].value;
+      if(code.length===6) submitOtp();
+    }
+  });
+  el.addEventListener('keydown', function(e){
+    if(e.key==='Backspace' && !this.value && i>0){
+      all[i-1].focus();
+      all[i-1].value='';
+    }
+  });
+  // Paste support
+  el.addEventListener('paste', function(e){
+    e.preventDefault();
+    var text = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+    for(var j=0;j<Math.min(text.length,all.length);j++) all[j].value=text[j];
+    if(text.length>=6) submitOtp();
+  });
+});
+
+async function submitOtp(){
+  var code='';
+  for(var i=1;i<=6;i++) code+=(document.getElementById('otp-d'+i)?.value||'');
+  if(code.length!==6){flash('otp-fl','Please enter all 6 digits.','err');return;}
+
+  var btn=document.getElementById('otp-submit-btn');
+  btn.disabled=true; btn.textContent='Verifying…';
+  flash('otp-fl','');
+  try{
+    await api('auth/verify-otp',{method:'POST',body:JSON.stringify({
+      challenge_token: _challengeToken, otp: code
+    })});
+    if(_otpTimerInterval) clearInterval(_otpTimerInterval);
+    // Authenticated — load community
+    var vault = await api('vault/member');
+    afterLoginSuccess(vault);
+  }catch(err){
+    flash('otp-fl', err.message||'Invalid code. Please try again.','err');
+    btn.disabled=false; btn.textContent='Verify code';
+    // Clear digits
+    for(var i=1;i<=6;i++){var d=document.getElementById('otp-d'+i);if(d)d.value='';}
+    document.getElementById('otp-d1')?.focus();
+  }
+}
+
+/* ── Setup form ── */
+document.getElementById('f-setup')?.addEventListener('submit', async function(e){
+  e.preventDefault();
+  var btn = document.getElementById('setup-btn');
+  btn.disabled=true; btn.textContent='Setting up…';
+  flash('setup-fl','');
+  try{
+    var fd = Object.fromEntries(new FormData(e.target));
+    if(fd.password!==fd.confirm_password){
+      flash('setup-fl','Passwords do not match.','err');
+      btn.disabled=false; btn.textContent='Set password & enter';
+      return;
+    }
+    await api('auth/setup',{method:'POST',body:JSON.stringify(fd)});
+    var vault = await api('vault/member');
+    afterLoginSuccess(vault);
+  }catch(err){
+    flash('setup-fl', err.message||'Setup failed.','err');
+    btn.disabled=false; btn.textContent='Set password & enter';
+  }
+});
+
+/* ── Recover form ── */
+document.getElementById('f-recover')?.addEventListener('submit', async function(e){
+  e.preventDefault();
+  var btn = document.getElementById('recover-btn');
+  btn.disabled=true; btn.textContent='Searching…';
+  flash('recover-fl','');
+  try{
+    var fd = Object.fromEntries(new FormData(e.target));
+    var d = await api('auth/recover-number',{method:'POST',body:JSON.stringify(fd)});
+    flash('recover-fl','Your Partner number: '+(d.member_number_display||d.member_number),'ok');
+    btn.disabled=false; btn.textContent='Find my Partner number';
+  }catch(err){
+    flash('recover-fl', err.message||'Could not find your record.','err');
+    btn.disabled=false; btn.textContent='Find my Partner number';
+  }
+});
+
+/* ── Logout ── */
+document.getElementById('logout-btn')?.addEventListener('click', async function(){
+  // Confirmation — the Partner is about to leave the session entirely.
+  if(!window.confirm('Are you sure you want to leave?')) return;
+  // End the server session first, then attempt to close the window. window.close()
+  // is only honoured by the browser if the script opened the window (or in some
+  // platforms at all) — so we fall through to a safe redirect if close is blocked.
+  try{ await api('auth/logout',{method:'POST',body:'{}'}); }catch(e){}
+  try{ window.close(); }catch(e){}
+  // If we're still here after ~200ms, the browser refused to close — fall back
+  // to redirecting to the public landing page so the Partner isn't left on a
+  // stale authenticated page.
+  setTimeout(function(){
+    window.location.replace('?signed_out=1');
+  }, 200);
+});
+
+/* ── Document downloads ── */
+window.downloadDoc = function(filename){
+  // Fire-and-forget log — don't block download
+  try {
+    api('doc-download', {method:'POST', body:JSON.stringify({filename:filename})});
+  } catch(e) {}
+  var a = document.createElement('a');
+  a.href = '../docs/' + encodeURIComponent(filename);
+  a.download = filename;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+<script>
+/* ════ VAULT ENTRY INTERCEPT ════ */
+function handleVaultEntry(e){
+  if(e) e.preventDefault();
+  // Only intercept when payment status is explicitly known and not paid.
+  // Fail open if status not yet loaded — vault pay-banner handles it.
+  var status = window._partnerPaymentStatus;
+  if(status && status.toLowerCase() !== 'paid'){
+    openPayIntercept();
+    return;
+  }
+  // Navigate directly — no overlay, no timing issues
+  window.location.href = '../wallets/member.html';
+}
+
+function coinTransitionAndGo(url){
+  // Used by payment check / proceed-anyway flows
+  var overlay = document.createElement('div');
+  overlay.className = 'coin-transition';
+  overlay.innerHTML = '<img src="../assets/cogs_coin_web.png" alt="" class="coin-spin-anim">'
+    + '<div class="coin-label">You are entering your Partner Vault</div>';
+  document.body.appendChild(overlay);
+  requestAnimationFrame(function(){ overlay.classList.add('active'); });
+  setTimeout(function(){ window.location.href = url; }, 1800);
+}
+
+function openPayIntercept(){
+  var modal = document.getElementById('pay-intercept-modal');
+  if(!modal) return;
+  modal.classList.add('show');
+  renderStripeInModal();
+}
+
+function closePayIntercept(){
+  var modal = document.getElementById('pay-intercept-modal');
+  if(modal) modal.classList.remove('show');
+}
+
+function renderStripeInModal(){
+  var sc = document.getElementById('pay-intercept-stripe-container');
+  if(!sc || sc.dataset.rendered) return;
+  var d = window._communityData || {};
+  var buyId  = 'buy_btn_1TJibgRpslKZeWaDYuSR0Dcy';
+  var pubKey = 'pk_live_51TJaqrRpslKZeWaDTY50Ps5PyBkDMTu6CX8ussZr14ypm8smzoG4WGFW8BCXeNJhdW0YIqFVrNJZUKHZrO0RLtaA00ZpXrutww';
+  sc.innerHTML = '<stripe-buy-button'
+    + ' buy-button-id="'+buyId+'"'
+    + ' publishable-key="'+pubKey+'"'
+    + ' client-reference-id="'+(d.member_number||'')+'"'
+    + ' customer-email="'+(d.email||'')+'"'
+    + '></stripe-buy-button>';
+  sc.dataset.rendered = '1';
+  if(!document.querySelector('script[src*="buy.stripe.com"]')){
+    var s = document.createElement('script');
+    s.src = 'https://js.stripe.com/v3/buy-button.js';
+    s.async = true;
+    document.head.appendChild(s);
+  }
+}
+
+async function checkPaymentAndProceed(){
+  var btn = document.querySelector('.pay-check-link');
+  if(btn){ btn.textContent = 'Checking…'; btn.disabled = true; }
+  try{
+    var d = await api('vault/member');
+    if(d && d.payment_status && d.payment_status.toLowerCase() === 'paid'){
+      window._partnerPaymentStatus = 'paid';
+      closePayIntercept();
+      // Remove orange payment overlays
+      var badge = document.getElementById('vault-pay-badge');
+      var strip = document.getElementById('vault-pay-strip');
+      if(badge) badge.remove();
+      if(strip) strip.remove();
+      var btn2 = document.getElementById('vault-pill-btn');
+      if(btn2){ btn2.style.borderColor=''; btn2.style.background=''; btn2.style.boxShadow=''; }
+      setTimeout(function(){ coinTransitionAndGo('../wallets/member.html'); }, 300);
+    } else {
+      if(btn){ btn.textContent = 'Not yet confirmed — payment may still be processing.'; btn.disabled = false; }
+    }
+  }catch(e){
+    if(btn){ btn.textContent = 'Could not check status — try again.'; btn.disabled = false; }
+  }
+}
+
+function proceedToVaultAnyway(){
+  closePayIntercept();
+  coinTransitionAndGo('../wallets/member.html');
+}
+
+/* ════ PARTICIPATION PILL ════ */
+var PARTICIPATION_AREA_LABELS = {
+  operations_oversight:   'Operations Oversight',
+  governance_polls:       'Governance & Polls',
+  esg_proxy_voting:       'ESG & Proxy Voting',
+  first_nations:          'First Nations Partnership',
+  community_projects:     'Community Projects',
+  technology_blockchain:  'Technology & Blockchain',
+  financial_oversight:    'Financial Oversight',
+  place_based_decisions:  'Place-Based Decisions',
+  education_outreach:     'Education & Outreach'
+};
+
+function renderParticipationPill(data){
+  var wrap  = document.getElementById('participation-pill-wrap');
+  var pill  = document.getElementById('participation-pill');
+  var label = document.getElementById('participation-pill-label');
+  var tags  = document.getElementById('participation-areas-tags');
+  if(!wrap || !pill || !label) return;
+
+  var completed = !!(data && data.participation_completed);
+  var areas     = (data && data.participation_areas) ? data.participation_areas : [];
+  var selectedSet = new Set(areas);
+
+  wrap.style.display = '';
+
+  if(completed){
+    pill.className = 'participation-pill complete';
+    label.textContent = 'Partners Participation recorded ✓ — click to edit';
+    if(tags){
+      tags.style.display = '';
+      // Render ALL 9 areas — green for selected, gold for unselected.
+      // Maintains the declared label order for consistency.
+      var html = '';
+      Object.keys(PARTICIPATION_AREA_LABELS).forEach(function(key){
+        var on = selectedSet.has(key);
+        html += '<span class="part-area-tag ' + (on ? 'on' : 'off') + '">'
+             + (on ? '✓ ' : '○ ')
+             + PARTICIPATION_AREA_LABELS[key] + '</span>';
+      });
+      tags.innerHTML = html;
+    }
+  } else {
+    pill.className = 'participation-pill incomplete';
+    label.textContent = 'Partners Participation — complete on first vault entry';
+    if(tags) tags.style.display = 'none';
+  }
+}
+
+// ── Important News (wallet notices on hub) ──
+// Reads data.announcements[] from the vault/member response (same source as the
+// wallet's News & Notices section) and surfaces the most recent unread items on
+// the hub. Unread notices are highlighted; read ones are dimmer. "View all in
+// vault →" routes the Partner to the wallet's full notices list.
+// ── Important News (Partner Notices on the hub) ──
+// Reads data.notices[] from the vault/member response — sourced from the
+// wallet_messages table (admin labels this "Partner Notices"). Unread items
+// are prioritised and highlighted. High/critical priority notices are
+// visually emphasised. "View all in vault →" routes to the wallet's full
+// notices list.
+function renderImportantNews(data){
+  var wrap  = document.getElementById('important-news');
+  if(!wrap) return;
+  var list  = document.getElementById('in-list');
+  var badge = document.getElementById('in-badge');
+  if(!list) return;
+
+  var items = (data && Array.isArray(data.notices)) ? data.notices : [];
+  var unreadCount = (data && typeof data.notices_unread === 'number')
+    ? data.notices_unread
+    : items.filter(function(n){ return !n.is_read; }).length;
+
+  // Always visible — every login should surface this window, even when empty,
+  // so the Partner knows where to look for Foundation notices.
+  wrap.style.display = '';
+  wrap.classList.toggle('has-unread', unreadCount > 0);
+
+  if(badge){
+    if(unreadCount > 0){
+      badge.textContent = unreadCount + ' unread';
+      badge.style.display = '';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  if(items.length === 0){
+    list.innerHTML = '<div class="in-empty">No current notices. Foundation Partner Notices and Partners Poll updates will appear here.</div>';
+    return;
+  }
+
+  // Backend already orders by priority then sent_at, but re-surface unread
+  // on top within that ordering so returning Partners see what's new first.
+  var sorted = items.slice().sort(function(a, b){
+    if(a.is_read !== b.is_read) return a.is_read ? 1 : -1;
+    return 0; // preserve backend's priority/date ordering within each read-state bucket
+  });
+  var shown = sorted.slice(0, 3);
+
+  list.innerHTML = shown.map(function(n){
+    var unread = !n.is_read;
+    // wallet_messages uses `subject` (aliased to `title` in backend) and `summary`
+    var title    = esc(n.subject || n.title || 'Partner notice');
+    var preview  = esc(n.summary || n.body || '');
+    if(preview.length > 180) preview = preview.substring(0, 180).trimEnd() + '…';
+    var when     = n.sent_at ? formatNewsDate(n.sent_at) : (n.created_at ? formatNewsDate(n.created_at) : '');
+    var priority = String(n.priority || 'normal').toLowerCase();
+    var priorityClass = (priority === 'critical' || priority === 'high') ? (' in-priority-' + priority) : '';
+    var priorityBadge = '';
+    if(priority === 'critical'){
+      priorityBadge = '<span class="in-priority-badge critical">Critical</span>';
+    } else if(priority === 'high'){
+      priorityBadge = '<span class="in-priority-badge high">High</span>';
+    }
+    return '<div class="in-item' + (unread ? ' unread' : '') + priorityClass + '">'
+         + '<div class="in-item-hd">'
+         + (unread ? '<span class="in-item-unread-dot" aria-hidden="true"></span>' : '')
+         + '<span class="in-item-title">' + title + '</span>'
+         + priorityBadge
+         + (when ? '<span class="in-item-date">' + esc(when) + '</span>' : '')
+         + '</div>'
+         + (preview ? '<div class="in-item-body">' + preview + '</div>' : '')
+         + '</div>';
+  }).join('');
+}
+
+function formatNewsDate(s){
+  if(!s) return '';
+  try{
+    var d = new Date(String(s).replace(' ', 'T'));
+    if(isNaN(d)) return s;
+    return d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' });
+  }catch(e){ return s; }
+}
+
+// ── Foundation Holdings (ASX + RWA + Community COG$ totals) ──
+// Reads data.asx_holdings[], data.rwa_holdings[], and the community/asx/rwa
+// COG$ mint totals returned by vault/member. Currently the backend returns
+// empty arrays and zeros — wiring to an admin-maintained source is a
+// follow-up. The UI renders placeholders when no data is present so Partners
+// still see the section shape.
+function renderFoundationHoldings(data){
+  var strip = document.getElementById('fh-strip');
+  if(!strip) return; // section not on this page
+
+  // ── Totals strip (Community, ASX-total, RWA-total) ──
+  var ccMinted = Number(data && data.community_cogs_minted) || 0;
+  var ccCirc   = Number(data && data.community_cogs_circulation) || 0;
+  var fmt = function(n){ return Math.round(n).toLocaleString('en-AU'); };
+  var ccm = document.getElementById('fh-cc-minted');
+  var ccc = document.getElementById('fh-cc-circ');
+  var cca = document.getElementById('fh-cc-asx');
+  var ccr = document.getElementById('fh-cc-rwa');
+  if(ccm) ccm.textContent = fmt(ccMinted);
+  if(ccc) ccc.textContent = fmt(ccCirc);
+
+  // ── ASX shareholdings table ──
+  var asx = (data && Array.isArray(data.asx_holdings)) ? data.asx_holdings : [];
+  var asxRows = document.getElementById('fh-asx-rows');
+  var asxTotalRow = document.getElementById('fh-asx-total-row');
+  var asxTotalShares = 0;
+  var asxTotalCogs = 0;
+
+  if(asxRows){
+    if(asx.length === 0){
+      asxRows.innerHTML = '<div class="fh-empty">No ASX shareholdings recorded yet. Entries appear here once the Foundation acquires its first CHESS-registered holdings.</div>';
+      if(asxTotalRow) asxTotalRow.style.display = 'none';
+    } else {
+      asxRows.innerHTML = asx.map(function(h){
+        var code   = esc(h.asx_code || h.code || '—');
+        var name   = esc(h.company_name || h.name || '');
+        var shares = Number(h.shares_held || h.shares || 0);
+        var cogs   = Number(h.cogs_minted || 0);
+        asxTotalShares += shares;
+        asxTotalCogs   += cogs;
+        return '<div class="fh-row">'
+             + '<div class="fh-row-code">' + code + '</div>'
+             + '<div class="fh-row-name">' + name + '</div>'
+             + '<div class="fh-num">' + fmt(shares) + '</div>'
+             + '<div class="fh-num">' + fmt(cogs) + '</div>'
+             + '</div>';
+      }).join('');
+      if(asxTotalRow){
+        asxTotalRow.style.display = '';
+        var ats = document.getElementById('fh-asx-total-shares');
+        var atc = document.getElementById('fh-asx-total-cogs');
+        if(ats) ats.textContent = fmt(asxTotalShares);
+        if(atc) atc.textContent = fmt(asxTotalCogs);
+      }
+    }
+  }
+  if(cca) cca.textContent = fmt(asxTotalCogs);
+
+  // ── RWA pools table ──
+  var rwa = (data && Array.isArray(data.rwa_holdings)) ? data.rwa_holdings : [];
+  var rwaRows = document.getElementById('fh-rwa-rows');
+  var rwaTotalRow = document.getElementById('fh-rwa-total-row');
+  var rwaTotalVal = 0;
+  var rwaTotalCogs = 0;
+
+  if(rwaRows){
+    if(rwa.length === 0){
+      rwaRows.innerHTML = '<div class="fh-empty">No Real World Asset pools recorded yet. Entries appear here once the Foundation completes verification of its first RWA pool.</div>';
+      if(rwaTotalRow) rwaTotalRow.style.display = 'none';
+    } else {
+      rwaRows.innerHTML = rwa.map(function(h){
+        var pname = esc(h.pool_name || h.name || '—');
+        var type  = esc(h.asset_type || h.type || '');
+        var val   = Number(h.verified_valuation || h.valuation || 0);
+        var cogs  = Number(h.cogs_minted || 0);
+        rwaTotalVal  += val;
+        rwaTotalCogs += cogs;
+        return '<div class="fh-row fh-row-rwa">'
+             + '<div class="fh-row-name">' + pname + '</div>'
+             + '<div>' + type + '</div>'
+             + '<div class="fh-num">$' + fmt(val) + '</div>'
+             + '<div class="fh-num">' + fmt(cogs) + '</div>'
+             + '</div>';
+      }).join('');
+      if(rwaTotalRow){
+        rwaTotalRow.style.display = '';
+        var rtv = document.getElementById('fh-rwa-total-val');
+        var rtc = document.getElementById('fh-rwa-total-cogs');
+        if(rtv) rtv.textContent = '$' + fmt(rwaTotalVal);
+        if(rtc) rtc.textContent = fmt(rwaTotalCogs);
+      }
+    }
+  }
+  if(ccr) ccr.textContent = fmt(rwaTotalCogs);
+}
+
+function esc(v){
+  return String(v == null ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function handleParticipationPillClick(){
+  // If already completed: open inline editor
+  // If not completed: route to vault — the gate there will handle first-entry flow
+  if(window._communityData && window._communityData.participation_completed){
+    openParticipationEditor();
+  } else {
+    coinTransitionAndGo('../wallets/member.html');
+  }
+}
+
+/* ══ PARTICIPATION EDITOR ══ */
+var _peSelectedAreas = new Set();
+
+function openParticipationEditor(){
+  var overlay = document.getElementById('pe-overlay');
+  if(!overlay) return;
+
+  // Load current selections
+  _peSelectedAreas = new Set();
+  var areas = (window._communityData && window._communityData.participation_areas) || [];
+  areas.forEach(function(a){ _peSelectedAreas.add(a); });
+
+  // Apply to buttons
+  document.querySelectorAll('#pe-area-grid .pe-area-btn').forEach(function(btn){
+    var key = btn.getAttribute('data-key');
+    btn.classList.toggle('selected', _peSelectedAreas.has(key));
+  });
+
+  // Clear any old flash message
+  var fl = document.getElementById('pe-fl');
+  if(fl){ fl.textContent = ''; fl.className = 'pe-fl'; }
+
+  // Reset save button
+  var sv = document.getElementById('pe-save-btn');
+  if(sv){ sv.disabled = false; sv.textContent = 'Save changes'; }
+
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeParticipationEditor(){
+  var overlay = document.getElementById('pe-overlay');
+  if(!overlay) return;
+  overlay.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function peBackgroundClose(event){
+  // Close only when clicking the overlay background, not the card
+  if(event.target && event.target.id === 'pe-overlay'){
+    closeParticipationEditor();
+  }
+}
+
+function peToggleArea(btn){
+  var key = btn.getAttribute('data-key');
+  if(_peSelectedAreas.has(key)){
+    _peSelectedAreas.delete(key);
+    btn.classList.remove('selected');
+  } else {
+    _peSelectedAreas.add(key);
+    btn.classList.add('selected');
+  }
+  // Live-update the pills under the participation pill so changes are visible
+  // immediately, even before the Partner saves. If they cancel, the next render
+  // (post-save or re-open) will reflect whatever is on the server.
+  if(window._communityData && window._communityData.participation_completed){
+    var previewData = Object.assign({}, window._communityData, {
+      participation_areas: Array.from(_peSelectedAreas)
+    });
+    renderParticipationPill(previewData);
+  }
+}
+
+async function savePeSelections(){
+  var fl = document.getElementById('pe-fl');
+  var sv = document.getElementById('pe-save-btn');
+  if(_peSelectedAreas.size === 0){
+    if(fl){ fl.textContent = 'Select at least one area before saving.'; fl.className = 'pe-fl show err'; }
+    return;
+  }
+  if(sv){ sv.disabled = true; sv.textContent = 'Saving…'; }
+  if(fl){ fl.textContent = ''; fl.className = 'pe-fl'; }
+  try{
+    var d = await api('vault/participation', {
+      method:'POST',
+      body: JSON.stringify({
+        areas: Array.from(_peSelectedAreas),
+        operator_acknowledged: true
+      })
+    });
+    // Update local vault data so the pill re-renders immediately
+    if(window._communityData){
+      window._communityData.participation_completed = true;
+      window._communityData.participation_areas = Array.from(_peSelectedAreas);
+    }
+    renderParticipationPill(window._communityData);
+    if(fl){ fl.textContent = 'Your participation areas have been updated.'; fl.className = 'pe-fl show ok'; }
+    setTimeout(closeParticipationEditor, 1200);
+  }catch(err){
+    if(fl){ fl.textContent = err.message || 'Could not save changes.'; fl.className = 'pe-fl show err'; }
+    if(sv){ sv.disabled = false; sv.textContent = 'Save changes'; }
+  }
+}
+
+window.openParticipationEditor = openParticipationEditor;
+window.closeParticipationEditor = closeParticipationEditor;
+window.peBackgroundClose = peBackgroundClose;
+window.peToggleArea = peToggleArea;
+window.savePeSelections = savePeSelections;
+
+</script>
+<!-- ══ PARTICIPATION EDITOR MODAL ══ -->
+<div class="pe-overlay" id="pe-overlay" onclick="peBackgroundClose(event)">
+  <div class="pe-card" onclick="event.stopPropagation()">
+    <button class="pe-close" onclick="closeParticipationEditor()" title="Close" aria-label="Close">&times;</button>
+    <h2>Your participation areas</h2>
+    <div class="pe-sub">Select the areas of the joint venture where you will take a particularly active role. You can change these at any time &mdash; the first-submission timestamp on your record is preserved.</div>
+    <div class="pe-hint">Click an area to select or deselect it. At least one area must remain selected.</div>
+    <div class="pe-area-grid" id="pe-area-grid">
+      <button class="pe-area-btn" data-key="operations_oversight" onclick="peToggleArea(this)"><span class="pe-area-label">Day-to-Day Operations</span><span class="pe-area-desc">Review trust operations and Trustee activity, raise issues through Partners Polls, ensure the partnership runs according to the JVPA.</span></button>
+      <button class="pe-area-btn" data-key="governance_polls" onclick="peToggleArea(this)"><span class="pe-area-label">Governance &amp; Polls</span><span class="pe-area-desc">Propose, deliberate on, and vote in Partners Polls &mdash; the primary mechanism through which the partnership is directed.</span></button>
+      <button class="pe-area-btn" data-key="esg_proxy_voting" onclick="peToggleArea(this)"><span class="pe-area-label">ESG &amp; Proxy Voting</span><span class="pe-area-desc">Direct how CHESS-registered shares are voted at portfolio company AGMs. Set the ESG engagement strategy.</span></button>
+      <button class="pe-area-btn" data-key="first_nations" onclick="peToggleArea(this)"><span class="pe-area-label">First Nations Partnership</span><span class="pe-area-desc">Engage with the FNAC, support FPIC processes and Cultural Heritage protections.</span></button>
+      <button class="pe-area-btn" data-key="community_projects" onclick="peToggleArea(this)"><span class="pe-area-label">Community Projects</span><span class="pe-area-desc">Direct grants and community benefit priorities under Sub-Trust C.</span></button>
+      <button class="pe-area-btn" data-key="technology_blockchain" onclick="peToggleArea(this)"><span class="pe-area-label">Technology &amp; Blockchain</span><span class="pe-area-desc">Smart contract governance, system audits, infrastructure decisions.</span></button>
+      <button class="pe-area-btn" data-key="financial_oversight" onclick="peToggleArea(this)"><span class="pe-area-label">Financial Oversight</span><span class="pe-area-desc">Monitor trust accounts, distribution accuracy, dividend strategy.</span></button>
+      <button class="pe-area-btn" data-key="place_based_decisions" onclick="peToggleArea(this)"><span class="pe-area-label">Place-Based Decisions</span><span class="pe-area-desc">Affected Zone declarations and land-impact assessments for your region.</span></button>
+      <button class="pe-area-btn" data-key="education_outreach" onclick="peToggleArea(this)"><span class="pe-area-label">Education &amp; Outreach</span><span class="pe-area-desc">Help new Partners understand their role and grow the governance base.</span></button>
+    </div>
+    <div class="pe-fl" id="pe-fl"></div>
+    <div class="pe-actions">
+      <button class="pe-btn pe-btn-cancel" onclick="closeParticipationEditor()">Cancel</button>
+      <button class="pe-btn pe-btn-save" id="pe-save-btn" onclick="savePeSelections()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══ INACTIVITY LOCKOUT — 5 minutes ══ */
+(function(){
+  var TIMEOUT_MS = 5 * 60 * 1000;
+  var _idleTimer = null;
+  var _locked    = false;
+  var _authed    = false; // set true once enterCommunity fires
+
+  function resetIdle(){
+    if(!_authed || _locked) return;
+    clearTimeout(_idleTimer);
+    _idleTimer = setTimeout(doLockout, TIMEOUT_MS);
+  }
+
+  async function doLockout(){
+    if(_locked) return;
+    _locked = true;
+    try{ await fetch('_app/api/index.php?route=auth/logout',
+           {method:'POST',body:'{}',credentials:'include',
+            headers:{'Content-Type':'application/json'}}); }catch(e){}
+    window.location.replace(window.location.pathname + '?signed_out=inactivity');
+  }
+
+  // Hook into enterCommunity — start timer when Partner is authenticated
+  var _origEC = window.enterCommunity;
+  window.enterCommunity = function(data){
+    _authed = true;
+    resetIdle();
+    if(typeof _origEC === 'function') _origEC(data);
+  };
+
+  ['mousedown','keydown','touchstart','scroll','click'].forEach(function(evt){
+    document.addEventListener(evt, resetIdle, {passive:true});
+  });
+
+  // pagehide removed — would log out on navigation to wallet
+})();
+</script>
+
+<script>
+/* ══ #participation deep-link handler ═════════════════════════════════
+   Lets the wallet link to /partners/#participation and auto-open the
+   editor once the Partner is authenticated. If they're not yet
+   authenticated, the hash is preserved and picked up after login fires
+   enterCommunity. Editor is only opened when participation_completed is
+   true — the first-entry flow (not completed) is handled by the normal
+   Hub experience. */
+(function(){
+  function tryOpen(){
+    if(window.location.hash !== '#participation') return false;
+    if(typeof window.openParticipationEditor !== 'function') return false;
+    if(!window._communityData) return false;
+    if(window._communityData.participation_completed){
+      window.openParticipationEditor();
+    }
+    // Clear the hash either way so it doesn't re-fire on hashchange events
+    try{ history.replaceState({}, '', window.location.pathname + window.location.search); }catch(e){}
+    return true;
+  }
+  // Try on first paint in case Partner is already authenticated
+  window.addEventListener('load', function(){ setTimeout(tryOpen, 200); });
+  // Try again after enterCommunity fires (authenticated flow)
+  var _origEC2 = window.enterCommunity;
+  window.enterCommunity = function(data){
+    if(typeof _origEC2 === 'function') _origEC2(data);
+    setTimeout(tryOpen, 400);
+  };
+})();
+</script>
+</body>
+</html>

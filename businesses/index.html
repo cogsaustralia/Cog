@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Interest | COGs of Australia Foundation</title>
+  <meta name="description" content="Register your business interest with COGs of Australia Foundation &#8212; explore accepting a share of payment in COG$ from Partners and customers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(16,11,4,.90);--panel2:rgba(36,26,11,.90);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.74);--muted:rgba(210,185,130,.58);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    /* Background */
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:
+      radial-gradient(circle at 20% 20%,rgba(201,151,61,.12),transparent 30%),
+      radial-gradient(circle at 80% 12%,rgba(240,209,138,.08),transparent 28%),
+      radial-gradient(circle at 50% 60%,rgba(122,85,24,.10),transparent 42%),
+      linear-gradient(180deg,#120d06 0%,#0a0804 100%);opacity:1}
+    .bg-vignette{position:absolute;inset:0;background:
+      radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.58) 0%,transparent 60%),
+      radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.97) 0%,transparent 70%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    /* Nav */
+
+
+    /* Disclosure */
+    .disclosure{background:linear-gradient(180deg,rgba(42,29,11,.55),rgba(23,17,9,.3));border-bottom:1px solid var(--line);padding:9px 24px;text-align:center}
+    .disclosure p{font-size:.73rem;color:rgba(255,244,221,.55);line-height:1.5}
+
+    /* Sticky float CTA */
+    .float-cta{position:fixed;bottom:24px;right:24px;z-index:100;opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity .3s,transform .3s}
+    .float-cta.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+    .float-cta a{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#1a0f00;font-weight:600;font-size:.82rem;padding:11px 20px;border-radius:99px;text-decoration:none;box-shadow:0 8px 28px rgba(201,151,61,.45);white-space:nowrap}
+
+    /* Common */
+    .section{padding:0 0 36px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 50px}
+    .kicker{display:inline-block;font-size:.64rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .eyebrow{display:inline-block;font-size:.67rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:20px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+  
+    /* &#9472;&#9472; Not-a-member state &#9472;&#9472; */
+    .not-member-note{display:none;margin-top:.75rem;padding:.85rem 1rem;background:rgba(201,151,61,.08);border:1px solid rgba(201,151,61,.3);border-radius:10px;font-size:.82rem;color:rgba(255,248,232,.75);line-height:1.7}
+    .not-member-note a{color:var(--gold-2);text-decoration:underline}
+    .not-member-note.show{display:block}
+    #submit-button:disabled{opacity:.45;cursor:not-allowed}
+
+  </style>
+  <style>
+    /* Hero */
+    .page-hero{padding:52px 0 40px}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:start}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(2rem,4.5vw,3rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;color:var(--text);margin-bottom:16px}
+    .lead{font-size:.95rem;font-weight:300;color:var(--text2);line-height:1.78;margin-bottom:20px}
+    .faq-link-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+    .faq-link-row a{display:inline-flex;align-items:center;padding:7px 13px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(40,31,19,.36);color:var(--muted);font-size:.76rem;text-decoration:none;transition:.2s ease}
+    .faq-link-row a:hover{color:var(--text);border-color:var(--gold-rim2)}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+
+    /* Hero right &#8212; notice box only, no tall diagram */
+    .notice-box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px 22px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+    .notice-box .kicker{display:block;margin-bottom:14px}
+    .reassure-grid{display:grid;grid-template-columns:1fr;gap:12px}
+    .reassure-card{padding:13px 15px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+    .reassure-card strong{display:block;font-size:.86rem;font-weight:500;color:var(--gold-1);margin-bottom:5px}
+    .reassure-card p{margin:0;font-size:.78rem;color:var(--muted);line-height:1.6}
+
+    /* Stats band &#8212; replaces generic info cards */
+    .stats-band{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:50px}
+    .stat-cell{background:var(--panel);padding:24px 22px;text-align:center}
+    .stat-cell .stat-num{font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-1);display:block;line-height:1;margin-bottom:6px}
+    .stat-cell .stat-label{font-size:.78rem;color:var(--text2);line-height:1.5}
+    .stat-cell .stat-sub{font-size:.72rem;color:var(--muted);margin-top:4px;display:block}
+
+    /* Vault banner &#8212; FIXED contrast */
+    .vault-banner{position:relative;overflow:hidden;min-height:400px;border-radius:var(--r)}
+    .vault-banner picture,.vault-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) saturate(.85)}
+    .vault-banner::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(8,6,3,.96) 0%,rgba(8,6,3,.80) 50%,rgba(8,6,3,.65) 100%)}
+    .vault-banner::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 72% 48%,rgba(201,151,61,.18),transparent 34%)}
+    .vault-banner-copy{position:relative;z-index:1;max-width:560px;padding:44px 38px}
+    .vault-banner-copy h2{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.5rem);font-weight:500;line-height:1.1;letter-spacing:-.024em;color:#fff8e8;margin:8px 0 14px;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+    .vault-banner-copy p{font-size:.9rem;color:rgba(255,248,232,.88);line-height:1.82;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+    .vault-banner-copy .badge-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .vault-banner-copy .badge-row span{display:inline-flex;align-items:center;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,248,232,.9);font-size:.76rem;font-weight:500}
+
+    /* How it works &#8212; clean text + pools */
+    .how-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start;padding:24px}
+    .how-grid h2{font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:500;line-height:1.12;letter-spacing:-.022em;color:var(--text);margin:8px 0 12px}
+    .how-grid p{font-size:.88rem;color:var(--text2);line-height:1.8;margin-bottom:12px}
+    .pool-list{display:flex;flex-direction:column;gap:10px;margin:16px 0 22px}
+    .pool-item{padding:13px 16px;border-radius:12px;border-left:3px solid var(--gold-rim2);background:rgba(240,209,138,.04)}
+    .pool-item strong{display:block;font-size:.86rem;color:var(--gold-1);margin-bottom:4px}
+    .pool-item span{font-size:.78rem;color:var(--muted);line-height:1.55}
+    .how-figure{border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+    .how-figure img{width:100%;height:auto;display:block;max-height:420px;object-fit:contain;object-position:top;background:rgba(0,0,0,.2)}
+    .how-figure figcaption{font-size:.72rem;color:var(--muted);line-height:1.5;padding:10px 14px;border-top:1px solid var(--line);font-style:italic}
+    .cta-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+
+    /* Form layout */
+    .form-layout{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+    .form-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:32px 28px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .form-card h2{font-family:var(--serif);font-size:clamp(1.4rem,3vw,1.9rem);font-weight:500;line-height:1.1;letter-spacing:-.02em;color:var(--text);margin-bottom:8px}
+    .form-card>p{font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:22px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+    .field{display:flex;flex-direction:column;gap:5px}
+    .field.full{grid-column:1/-1}
+    .field label{font-size:.7rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+    .field input,.field select,.field textarea{background:rgba(255,255,255,.05);border:1px solid var(--line2);border-radius:10px;padding:9px 13px;color:var(--text);font-family:var(--sans);font-size:.88rem;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none;width:100%}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold-rim2);background:rgba(240,209,138,.06)}
+    .field input::placeholder{color:var(--muted)}
+    .field select option{background:#1a1206;color:var(--text)}
+    .field textarea{min-height:90px;resize:vertical;line-height:1.6}
+    .percent-wrap{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .percent-head{display:flex;justify-content:space-between;align-items:center;font-size:.8rem}
+    .percent-head span{color:var(--muted)}
+    .percent-head strong{color:var(--gold-1);font-size:1.1rem;font-family:var(--serif)}
+    .percent-range{width:100%;accent-color:var(--gold-2);cursor:pointer}
+    .percent-scale{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted)}
+    .percent-number-row{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--muted)}
+    .percent-number{width:64px;background:rgba(255,255,255,.05);border:1px solid var(--line2);border-radius:8px;padding:6px 10px;color:var(--text);font-family:var(--sans);font-size:.88rem;text-align:right;outline:none;transition:border-color .2s}
+    .percent-number:focus{border-color:var(--gold-rim2)}
+    .radio-row{display:flex;gap:10px;margin-top:6px}
+    .radio-chip{display:flex;align-items:center;gap:7px;cursor:pointer;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.82rem;color:var(--text2);transition:.18s}
+    .radio-chip:hover{border-color:var(--gold-rim);color:var(--gold-1)}
+    .radio-chip input{accent-color:var(--gold-2);cursor:pointer}
+    .member-check-box{display:none;margin-top:14px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px}
+    .member-check-box.show{display:block}
+    .microcopy{font-size:.76rem;color:var(--muted);line-height:1.6;margin:8px 0 12px}
+    .member-check-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .member-check-status{font-size:.78rem;margin-top:8px;min-height:18px}
+    .member-check-status.success{color:#7ee8a2}
+    .member-check-status.error{color:#f0857a}
+    .member-check-status.info{color:var(--muted)}
+    .code-chip{font-family:monospace;font-size:.8em;background:rgba(240,209,138,.1);border:1px solid var(--gold-rim);border-radius:4px;padding:1px 5px;color:var(--gold-1)}
+    .form-actions{display:flex;gap:12px;align-items:center;margin-top:22px;flex-wrap:wrap}
+    .form-status{margin-top:10px;font-size:.82rem;min-height:20px}
+    .form-status.error{color:#f0857a}
+    .form-status.success{color:#8ddcb0}
+    .form-meta{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap}
+    .form-meta span{font-size:.7rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+    .form-meta span::before{content:"&#10003;";color:var(--gold-2)}
+    .side-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px 20px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:var(--shadow);position:sticky;top:90px}
+    .side-panel h3{font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-1);margin-bottom:12px}
+    .side-panel>p{font-size:.82rem;color:var(--muted);line-height:1.68;margin-bottom:14px}
+    .side-panel ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+    .side-panel li{font-size:.79rem;color:var(--text2);line-height:1.5;padding:8px 12px 8px 14px;border-left:2px solid var(--gold-rim2);background:rgba(240,209,138,.04);border-radius:0 8px 8px 0}
+    .side-panel .small-note{font-size:.72rem;color:var(--muted);line-height:1.65}
+
+    /* Footer placeholder */
+    #cogs-footer{border-top:1px solid var(--line);padding:32px 24px;background:rgba(8,6,2,.75);text-align:center}
+
+    /* Responsive */
+    @media(max-width:860px){
+      .hero-grid,.how-grid,.form-layout{grid-template-columns:1fr}
+      .stats-band{grid-template-columns:1fr 1fr}
+      .side-panel{position:static}
+      .vault-banner-copy{padding:32px 24px}
+      .cta-actions{flex-direction:row}
+      .reassure-grid{grid-template-columns:1fr}
+      .percent-wrap{max-width:100%}
+    }
+    @media(max-width:680px){
+      .hero-grid{gap:1.5rem}
+      .page-hero .hero-img{max-width:100%}
+      .stewardship-coin-row{grid-template-columns:1fr}
+    }
+    @media(max-width:580px){
+      .nav-links{display:none}
+      .brand-copy{overflow:hidden}
+      .brand-name{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .brand-sub,.brand-tag{display:none}
+      .form-grid{grid-template-columns:1fr}
+      .stats-band{grid-template-columns:1fr}
+      .float-cta{bottom:16px;right:16px}
+    }
+  
+
+    /* &#9472;&#9472; Footer &#9472;&#9472; */
+    .site-footer{border-top:1px solid var(--line);padding:36px 28px 38px;background:rgba(8,6,2,.75)}
+    .footer-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:32px;align-items:start}
+    .footer-name{font-family:var(--serif);font-size:.9rem;color:var(--gold-1);margin-bottom:8px;font-weight:600}
+    .footer-detail{font-size:.67rem;color:var(--muted);line-height:1.76}
+    .footer-col h4{font-size:.65rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .footer-links{display:flex;flex-direction:column;gap:7px}
+    .footer-links a{font-size:.76rem;color:var(--muted);text-decoration:none;line-height:1.3;transition:color .2s}
+    .footer-links a:hover{color:var(--gold-1)}
+    .footer-link-locked{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--muted);text-decoration:none;line-height:1.3;transition:color .2s}
+    .footer-link-locked:hover{color:var(--gold-1)}
+    .lock-badge{display:inline-flex;align-items:center;gap:3px;font-size:.58rem;font-weight:500;letter-spacing:.08em;color:var(--gold-3);background:rgba(120,80,20,.25);border:1px solid rgba(140,100,30,.35);padding:1px 6px;border-radius:4px;white-space:nowrap}
+    .footer-bottom{max-width:960px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+    .footer-bottom-left{font-size:.65rem;color:rgba(210,185,130,.35);line-height:1.6}
+    .footer-bottom-right{font-size:.65rem;color:rgba(210,185,130,.35);letter-spacing:.06em;text-align:right;line-height:1.8}
+    @media(max-width:860px){.footer-inner{grid-template-columns:1fr 1fr}
+    .footer-inner > div:first-child{grid-column:1/-1}}
+  </style>
+</head>
+
+<body data-root="../" data-page="business">
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+
+<!-- Floating register CTA &#8212; appears after scroll -->
+<div class="float-cta" id="floatCta">
+  <a href="#business-form">&#10022; Register interest</a>
+</div>
+
+<div class="site-shell">
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
+  <main>
+
+    <!-- &#9472;&#9472; HERO &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+    <section class="page-hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Business participation</span>
+          <h1>Is there a genuine fit for your business?</h1>
+          <picture style="display:block;margin:1rem auto 1.25rem;max-width:420px;border-radius:16px;overflow:hidden;border:1px solid rgba(240,209,138,.15)">
+            <source srcset="../assets/cogs_build.webp" type="image/webp">
+            <img src="../assets/cogs_build.png" alt="COG$ community business" style="width:100%;display:block">
+          </picture>
+          <p class="lead">If your business offers goods or services, you can explore accepting a share of payment in COG$ from Partners and customers. Fill in the short form below &#8212; we will contact you to discuss a pathway that suits your business at a time that works for you.</p>
+          <p class="lead" style="margin-top:.75rem">You must already be a COG$ Partner to register your business interest. If you are not yet a Partner, <a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline">join for $4 first</a> &#8212; it only takes a couple of minutes.</p>
+          <div style="display:flex;align-items:center;gap:1rem;margin-top:1.25rem;padding:1rem;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.15);border-radius:12px">
+            <picture style="flex-shrink:0">
+              <source srcset="../assets/cogs_coin.webp" type="image/webp">
+              <img src="../assets/cogs_coin.png" alt="COG$ coin" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 10px rgba(201,151,61,.45))">
+            </picture>
+            <p style="font-size:.8rem;color:var(--muted);line-height:1.65;margin:0">COG$ tokens are <strong style="color:var(--text2)">asset-backed</strong> and <strong style="color:var(--text2)">cannot be sold for cash</strong> &#8212; they are used exclusively for goods and services within the Partner community.</p>
+          </div>
+          <div class="faq-link-row">
+            <a href="#why-business">Why businesses matter</a>
+            <a href="#how-it-could-work">How it could work</a>
+            <a href="#business-form">Register interest</a>
+          </div>
+          <div class="hero-actions">
+            <a class="btn-primary" href="#business-form">Register interest</a>
+            <a class="btn-secondary" href="../faq/index.html">Read the FAQs</a>
+          </div>
+        </div>
+
+        <!-- Right side: reassurance cards only &#8212; no tall diagram -->
+        <div class="notice-box">
+          <span class="kicker">Before you fill in the form</span>
+          <div class="reassure-grid">
+            <div class="reassure-card">
+              <strong>It starts with a conversation</strong>
+              <p>The goal is to find out whether there is a genuine fit &#8212; for your business, your customers, and the community. If there is, great. If not, there is no pressure and no problem.</p>
+            </div>
+            <div class="reassure-card">
+              <strong>You set the percentage</strong>
+              <p>There is no contract and no fixed commitment. You choose what percentage of a sale you would consider accepting as COG$ &#8212; and you can adjust that any time.</p>
+            </div>
+            <div class="reassure-card">
+              <strong>We contact you &#8212; not the other way around</strong>
+              <p>After you submit, we review what your business offers and make contact at a time that suits you. Nothing activates and nothing is owed until you decide to proceed.</p>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- &#9472;&#9472; WHY BUSINESSES MATTER &#8212; stats band &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="stats-band">
+          <div class="stat-cell">
+            <span class="stat-value">10&#8211;50%</span>
+            <span class="stat-label">Suggested acceptance range</span>
+            <span class="stat-sub">You set it. You adjust it. No contract.</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-value">$0</span>
+            <span class="stat-label">Cost to register interest</span>
+            <span class="stat-sub">This form is free. A conversation follows.</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-value">No lock-in</span>
+            <span class="stat-label">Participation at your pace</span>
+            <span class="stat-sub">Start small. Adjust. Step back if it's not working.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- &#9472;&#9472; VAULT BANNER &#8212; fixed contrast &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+    <section class="section">
+      <div class="container">
+        <div class="glass-card" style="padding:2rem 2.25rem">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center">
+            <div>
+              <span class="kicker">The COG$ token</span>
+              <h2 style="font-family:var(--serif);font-size:clamp(1.3rem,3vw,1.8rem);font-weight:500;line-height:1.2;letter-spacing:-.02em;color:var(--gold-1);margin-bottom:.75rem">Asset-backed. Non-fiat. Goods and services only.</h2>
+              <p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin-bottom:.75rem">COG$ tokens are backed by real CHESS-held ASX shares in Australian resource companies &#8212; held by the Foundation on behalf of Partners. They are not a cryptocurrency you can sell for dollars. They cannot be listed on any exchange. They cannot be redeemed for fiat currency under any circumstances. This is an entrenched rule that no resolution of Partners or the board can remove.</p>
+              <p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin-bottom:.75rem">What COG$ can be used for is real goods and services &#8212; at participating businesses. That is what makes your business participation foundational. Without businesses that accept COG$, Partners have no real-world place to spend, and the community economy exists only on paper. Your business is where it becomes real.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem">
+                <span style="font-size:.76rem;padding:.35rem .75rem;border-radius:99px;border:1px solid rgba(240,209,138,.3);color:var(--gold-2)">&#10022; Asset-backed</span>
+                <span style="font-size:.76rem;padding:.35rem .75rem;border-radius:99px;border:1px solid rgba(240,209,138,.3);color:var(--gold-2)">&#10022; Cannot be sold for cash</span>
+                <span style="font-size:.76rem;padding:.35rem .75rem;border-radius:99px;border:1px solid rgba(240,209,138,.3);color:var(--gold-2)">&#10022; Goods and services only</span>
+                <span style="font-size:.76rem;padding:.35rem .75rem;border-radius:99px;border:1px solid rgba(240,209,138,.3);color:var(--gold-2)">&#10022; On-chain registry</span>
+              </div>
+            </div>
+            <picture style="flex-shrink:0">
+              <source srcset="../assets/cogs_coin_web.webp" type="image/webp">
+              <img src="../assets/cogs_coin_web.png" alt="COG$ community coin &#8212; asset-backed" style="width:140px;height:140px;object-fit:contain;filter:drop-shadow(0 6px 24px rgba(201,151,61,.5))">
+            </picture>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden;margin-top:1.25rem">
+          <div style="background:var(--panel);padding:1.1rem 1.25rem;text-align:center">
+            <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.35rem">Expression of interest only</div>
+            <p style="font-size:.8rem;color:var(--muted);line-height:1.6">This form does not activate anything. No COG$ are issued. No contract is formed.</p>
+          </div>
+          <div style="background:var(--panel);padding:1.1rem 1.25rem;text-align:center">
+            <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.35rem">Measured participation</div>
+            <p style="font-size:.8rem;color:var(--muted);line-height:1.6">Start at whatever percentage suits your business. Adjust or step back at any time.</p>
+          </div>
+          <div style="background:var(--panel);padding:1.1rem 1.25rem;text-align:center">
+            <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.35rem">Conversation before commitment</div>
+            <p style="font-size:.8rem;color:var(--muted);line-height:1.6">We discuss the fit before anything is formalised. No pressure to proceed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- &#9472;&#9472; HOW IT COULD WORK &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+    <section class="section" id="how-it-could-work">
+      <div class="container">
+        <div class="glass-card">
+          <div class="how-grid">
+            <div>
+              <span class="kicker">How it could work</span>
+              <h2>Start with interest, then discuss timing, scope, and what fits your business.</h2>
+              <p>We look at what your business offers, who it serves, and whether there is a natural fit with what COG$ Partners need. If the fit looks genuine, we make contact at a time that works for you &#8212; for a straightforward conversation about what participation could look like in practice.</p>
+              <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.25rem;padding:1rem 1.25rem;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.18);border-radius:14px">
+                <picture style="flex-shrink:0">
+                  <source srcset="../assets/two_coin.webp" type="image/webp">
+                  <img src="../assets/two_coin.png" alt="COG$ coins" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 12px rgba(201,151,61,.4))">
+                </picture>
+                <div>
+                  <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.3rem">How COG$ circulates</div>
+                  <p style="font-size:.8rem;color:var(--text2);line-height:1.7;margin:0">Partners receive income through their partnership and spend COG$ at participating businesses &#8212; keeping value circulating within and between communities rather than bypassing them.</p>
+                </div>
+              </div>
+              <div class="pool-list">
+                <div class="pool-item">
+                  <strong>Sub-Trust A &#8212; Partners Asset Pool</strong>
+                  <span>The Foundation holds real CHESS-registered ASX shares in resource companies. Dividends flow to Partners and fund community projects.</span>
+                </div>
+                <div class="pool-item">
+                  <strong>Sub-Trust B &#8212; Partner participation</strong>
+                  <span>Partners hold income units and governance votes. When they spend COG$ at your business, value circulates within the community rather than leaving it.</span>
+                </div>
+                <div class="pool-item">
+                  <strong>Sub-Trust C &#8212; Community projects</strong>
+                  <span>Donation COG$ proceeds fund community programs, First Nations custodianship initiatives, and local stewardship projects.</span>
+                </div>
+              </div>
+              <div class="cta-actions">
+                <a class="btn-primary" href="#business-form">Register your interest &#8594;</a>
+              </div>
+            </div>
+
+            <figure class="how-figure">
+              <picture>
+                <source srcset="../assets/cogs-three-pools.webp" type="image/webp">
+                <img src="../assets/cogs-three-pools.png" alt="COG$ three financial pools diagram showing community shareholding, Partner returns and community benefit" width="960" height="1440" loading="lazy" decoding="async">
+              </picture>
+              <figcaption>The three sub-trust structure is how value flows through the Foundation &#8212; and businesses are what make that flow real. Without real places to spend, Partner value stays theoretical.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<section class="section" id="business-form">
+      <div class="container form-layout">
+        <form class="form-card" id="business-interest-form" data-submit-route="business-interest" data-member-check-route="member-email-check" data-thankyou-url="../thank-you-business/index.html" novalidate>
+          <span class="kicker">Register interest</span>
+          <h2>Tell us about your business.</h2>
+          <p>A short form so we can understand what you offer and whether there could be a genuine fit. You must be an existing COG$ Partner to register interest. Not yet a Partner? <a href="../join/index.html" style="color:var(--gold-2)">Join for $4 first</a> &#8212; then come back here.</p>
+
+          <div class="form-grid">
+
+            <!-- Member check &#8212; first -->
+            <div class="field full">
+              <label>Are you an existing COG$ Partner?</label>
+              <div class="radio-row" role="radiogroup" aria-label="Are you an existing COG$ Partner?">
+                <label class="radio-chip"><input type="radio" name="existing_member" value="yes"> <span>Yes</span></label>
+                <label class="radio-chip"><input type="radio" name="existing_member" value="no" checked> <span>No &#8212; not yet</span></label>
+              </div>
+              <div class="not-member-note" id="not-member-note">You need to be an existing COG$ Partner to register your business interest. <a href="../join/index.html">Join for $4</a> &#8212; it only takes a few minutes &#8212; then come back here.</div>
+              <div class="member-check-box" id="member-check-box">
+                <div style="color:var(--text);font-weight:600;font-size:.85rem;margin-bottom:.4rem">Verify your Partner email</div>
+                <p class="microcopy">Enter the email address you used when you joined COG$ above, then click verify to confirm your partnership before submitting.</p>
+                <div class="member-check-row">
+                  <button type="button" class="btn-secondary" id="member-check-button">Verify email</button>
+                  <span id="member-check-inline-note" style="font-size:.8rem;color:var(--muted);">Uses the email address entered above.</span>
+                </div>
+                <div id="member-check-status" class="member-check-status info"></div>
+              </div>
+            </div>
+
+            <!-- Personal details -->
+            <div class="field full">
+              <label for="personal_name">Your name</label>
+              <input id="personal_name" name="personal_name" type="text" required placeholder="Your full name">
+            </div>
+
+            <div class="field">
+              <label for="email">Email address</label>
+              <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+            </div>
+
+            <div class="field">
+              <label for="mobile">Mobile <span style="font-weight:400;opacity:.65">optional</span></label>
+              <input id="mobile" name="mobile" type="tel" autocomplete="tel" placeholder="Optional">
+            </div>
+
+            <div class="field full">
+              <label for="goods_services">What goods or services does your business offer?</label>
+              <textarea id="goods_services" name="goods_services" required placeholder="Tell us what your business provides, who you serve, and anything useful for the discussion."></textarea>
+            </div>
+
+            <div class="field full">
+              <label for="acceptance_percent">What percentage of a sale would you consider accepting as COG$?</label>
+              <div class="percent-wrap">
+                <div class="percent-head">
+                  <span>Suggested range: 10% to 50%</span>
+                  <strong><span id="acceptance_percent_value">20</span>%</strong>
+                </div>
+                <input class="percent-range" id="acceptance_percent" name="acceptance_percent" type="range" min="10" max="50" step="1" value="20">
+                <div class="percent-scale"><span>10%</span><span>50%</span></div>
+                <div class="percent-number-row">
+                  <label for="acceptance_percent_number">Exact %</label>
+                  <input class="percent-number" id="acceptance_percent_number" type="number" min="10" max="50" step="1" value="20">
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="submit-button">Submit business interest</button>
+            <a class="btn-secondary" href="../faq/index.html">Read FAQs first</a>
+          </div>
+          <div id="form-status" class="form-status"></div>
+
+          <div class="form-meta">
+            <span>Short expression of interest</span>
+            <span>No pressure commitment</span>
+            <span>Contact to arrange discussion</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+<!-- &#9472;&#9472; Join First Modal &#9472;&#9472; -->
+  <div id="join-first-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1.5rem">
+    <div style="background:linear-gradient(160deg,rgba(36,26,9,.98),rgba(14,10,4,.97));border:1px solid rgba(240,209,138,.35);border-radius:20px;padding:2.25rem 2rem;max-width:440px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.7);text-align:center;position:relative">
+      <button id="join-first-close" type="button" aria-label="Close" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,248,232,.45);font-size:1.3rem;cursor:pointer;line-height:1;padding:4px">&#10005;</button>
+      <div style="font-size:2.2rem;margin-bottom:.75rem">&#129689;</div>
+      <h3 style="font-family:var(--serif);font-size:1.35rem;font-weight:500;color:var(--gold-1);line-height:1.2;margin-bottom:.6rem">You need to be a Partner first.</h3>
+      <p style="font-size:.88rem;color:rgba(255,248,232,.75);line-height:1.75;margin-bottom:.5rem">Business interest registration is only open to existing COG$ Partners. Joining is quick and costs just $4 once.</p>
+      <p style="font-size:.82rem;color:rgba(255,248,232,.55);line-height:1.65;margin-bottom:1.5rem">Once you have your Partner number and Independence Vault, come back here and register your business interest.</p>
+      <div style="display:flex;flex-direction:column;gap:.75rem">
+        <a href="../join/index.html" style="display:block;background:linear-gradient(135deg,#c9973d,#7a5518);color:#fff8e8;text-decoration:none;font-weight:600;font-size:.9rem;padding:.85rem 1.5rem;border-radius:10px;letter-spacing:.02em">Join as a person &#8212; $4 once only</a>
+        <button id="join-first-cancel" type="button" style="background:none;border:1px solid rgba(240,209,138,.2);color:rgba(255,248,232,.55);font-size:.8rem;padding:.6rem 1rem;border-radius:8px;cursor:pointer;font-family:inherit">I am already a Partner &#8212; go back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+</div><!-- .site-shell -->
+
+<script>
+/* Join-first modal */
+(function(){
+  var modal=document.getElementById('join-first-modal');
+  var closeBtn=document.getElementById('join-first-close');
+  var cancelBtn=document.getElementById('join-first-cancel');
+  if(!modal)return;
+  function hide(){modal.style.display='none';}
+  if(closeBtn) closeBtn.addEventListener('click',hide);
+  if(cancelBtn) cancelBtn.addEventListener('click',hide);
+  modal.addEventListener('click',function(e){if(e.target===modal)hide();});
+})();
+
+/* Floating CTA &#8212; show after scroll */
+(function(){
+  var fab=document.getElementById('floatCta');
+  if(!fab)return;
+  var shown=false;
+  function check(){
+    var y=window.scrollY||window.pageYOffset;
+    if(y>400&&!shown){fab.style.opacity='1';fab.style.pointerEvents='auto';shown=true;}
+    else if(y<=400&&shown){fab.style.opacity='0';fab.style.pointerEvents='none';shown=false;}
+  }
+  fab.style.opacity='0';fab.style.pointerEvents='none';fab.style.transition='opacity .3s';
+  window.addEventListener('scroll',check,{passive:true});
+  check();
+})();
+
+/* Member radio toggle &#8212; show/hide note and verify box */
+(function(){
+  var radios = document.querySelectorAll('input[name="existing_member"]');
+  var note = document.getElementById('not-member-note');
+  var checkBox = document.getElementById('member-check-box');
+  if(!radios.length||!note||!checkBox)return;
+
+  function toggle(){
+    var val='';
+    radios.forEach(function(r){if(r.checked)val=r.value;});
+    if(val==='no'){
+      note.classList.add('show');
+      checkBox.classList.remove('show');
+    } else {
+      note.classList.remove('show');
+      checkBox.classList.add('show');
+    }
+  }
+  radios.forEach(function(r){r.addEventListener('change',toggle);});
+  toggle(); // run on load since "No" is checked by default
+})();
+
+/* Scroll reveal */
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{threshold:.07});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+})();
+
+/* &#9472;&#9472; Percent slider &#8596; number input sync &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+   The range input (#acceptance_percent) carries name="acceptance_percent" and
+   is what the backend receives. The number input (#acceptance_percent_number)
+   is a display convenience with no name attribute. Both are kept in sync along
+   with the display span (#acceptance_percent_value).
+&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; */
+(function(){
+  var range  = document.getElementById('acceptance_percent');
+  var number = document.getElementById('acceptance_percent_number');
+  var display = document.getElementById('acceptance_percent_value');
+  if (!range || !number || !display) return;
+
+  function sync(val) {
+    var v = Math.min(50, Math.max(10, parseInt(val, 10) || 20));
+    range.value = v;
+    number.value = v;
+    display.textContent = v;
+  }
+
+  range.addEventListener('input', function()  { sync(this.value); });
+  number.addEventListener('input', function() { sync(this.value); });
+  number.addEventListener('change', function() { sync(this.value); });
+  sync(range.value); // init on load
+})();
+
+/* &#9472;&#9472; Member email verify &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+   Calls member-email-check route with the email entered in #email.
+   Sets a module-level flag (memberVerified) so the submit handler can inject
+   existing_member_verified=true into the payload.
+   Route: ../_app/api/index.php?route=member-email-check
+   Expects POST JSON { email }
+   Returns { success, data: { member_found, member_number, name } }
+&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; */
+(function(){
+  var btn     = document.getElementById('member-check-button');
+  var status  = document.getElementById('member-check-status');
+  var emailEl = document.getElementById('email');
+  if (!btn || !status || !emailEl) return;
+
+  /* Shared flag &#8212; read by the submit handler below */
+  window._cogsBusinessMemberVerified = false;
+  window._cogsBusinessMemberName     = '';
+
+  btn.addEventListener('click', async function() {
+    var email = (emailEl.value || '').trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      status.className = 'member-check-status error';
+      status.textContent = 'Please enter your email address above first.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Checking&#8230;';
+    status.className = 'member-check-status info';
+    status.textContent = 'Verifying partnership&#8230;';
+
+    var root = document.body.dataset.root || '../';
+    try {
+      var res  = await fetch(root + '_app/api/index.php?route=member-email-check', {
+        method:  'POST',
+        headers: {'Content-Type': 'application/json'},
+        body:    JSON.stringify({ email: email })
+      });
+      var json = await res.json();
+      var data = (json && json.data) ? json.data : json;
+
+      if (data.member_found) {
+        window._cogsBusinessMemberVerified = true;
+        window._cogsBusinessMemberName     = data.name || '';
+        status.className = 'member-check-status success';
+        status.textContent = '&#10003; Member confirmed' + (data.name ? ' &#8212; ' + data.name : '') + '. You can now submit.';
+        btn.textContent = '&#10003; Verified';
+      } else {
+        window._cogsBusinessMemberVerified = false;
+        status.className = 'member-check-status error';
+        status.textContent = 'No member record found for that email. Join for $4 first, then come back here.';
+        btn.disabled = false;
+        btn.textContent = 'Verify email';
+      }
+    } catch (err) {
+      window._cogsBusinessMemberVerified = false;
+      status.className = 'member-check-status error';
+      status.textContent = 'Could not reach the server. Please check your connection and try again.';
+      btn.disabled = false;
+      btn.textContent = 'Verify email';
+    }
+  });
+})();
+
+/* &#9472;&#9472; Business interest form submit &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+   Route:   ../_app/api/index.php?route=business-interest
+   Method:  POST JSON
+   Payload: personal_name, email, mobile, goods_services, acceptance_percent,
+            existing_member, existing_member_verified, source_page
+   Returns: { success:true, data:{ ok, name, email, percent, reference } }
+            reference format: BIZ-00001
+   On success: stores to sessionStorage('cogs_business_interest') then
+               redirects to data-thankyou-url on the form element.
+   DB table:   business_interest_submissions (unique key on email)
+&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; */
+(function(){
+  var form   = document.getElementById('business-interest-form');
+  var status = document.getElementById('form-status');
+  var btn    = document.getElementById('submit-button');
+  if (!form || !status || !btn) return;
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    /* &#9472;&#9472; Client-side validation &#9472;&#9472; */
+    var name    = (document.getElementById('personal_name').value || '').trim();
+    var email   = (document.getElementById('email').value || '').trim();
+    var goods   = (document.getElementById('goods_services').value || '').trim();
+    var pct     = parseInt(document.getElementById('acceptance_percent').value, 10) || 20;
+    var member  = '';
+    var radios  = document.querySelectorAll('input[name="existing_member"]');
+    radios.forEach(function(r) { if (r.checked) member = r.value; });
+
+    if (!name) {
+      showError('Please enter your name.'); return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('Please enter a valid email address.'); return;
+    }
+    if (!goods) {
+      showError('Please describe the goods or services your business offers.'); return;
+    }
+
+    /* &#9472;&#9472; Build payload &#9472;&#9472; */
+    var payload = {
+      personal_name:            name,
+      email:                    email,
+      mobile:                   (document.getElementById('mobile').value || '').trim(),
+      goods_services:           goods,
+      acceptance_percent:       pct,
+      existing_member:          member || 'no',
+      existing_member_verified: window._cogsBusinessMemberVerified === true,
+      source_page:              'business-interest'
+    };
+
+    /* &#9472;&#9472; Submit &#9472;&#9472; */
+    btn.disabled = true;
+    btn.textContent = 'Submitting&#8230;';
+    status.className = 'form-status';
+    status.textContent = 'Sending your details&#8230;';
+
+    var root = document.body.dataset.root || '../';
+    try {
+      var res  = await fetch(root + '_app/api/index.php?route=business-interest', {
+        method:  'POST',
+        headers: {'Content-Type': 'application/json'},
+        body:    JSON.stringify(payload)
+      });
+      var json = await res.json();
+
+      if (!res.ok || json.success === false) {
+        throw new Error(json.error || (json.data && json.data.error) || 'Submission failed.');
+      }
+
+      var data = (json && json.data) ? json.data : json;
+
+      /* &#9472;&#9472; Store for thank-you page &#9472;&#9472; */
+      try {
+        sessionStorage.setItem('cogs_business_interest', JSON.stringify({
+          personal_name: data.name || name,
+          email:         data.email || email,
+          percent:       data.percent || pct,
+          reference:     data.reference || ''
+        }));
+      } catch(ex) {}
+
+      status.className = 'form-status success';
+      status.textContent = 'Received. Redirecting&#8230;';
+
+      /* &#9472;&#9472; Redirect to thank-you page &#9472;&#9472; */
+      var thankyouUrl = form.getAttribute('data-thankyou-url') || '../thank-you-business/index.html';
+      setTimeout(function() {
+        window.location.href = thankyouUrl;
+      }, 700);
+
+    } catch(err) {
+      showError(err.message || 'Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Submit business interest';
+    }
+  });
+
+  function showError(msg) {
+    status.className = 'form-status error';
+    status.textContent = msg;
+    btn.disabled = false;
+    btn.textContent = 'Submit business interest';
+  }
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+</body>
+</html>

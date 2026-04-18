@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COGS Monitoring Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .status-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 30px; }
+        .status-indicator { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; }
+        .status-healthy { background: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+        .status-alert { background: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+        .status-text { font-size: 1.3em; margin: 15px 0; }
+        .last-check { font-size: 0.9em; color: #94a3b8; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 12px; padding: 20px; }
+        .card h2 { font-size: 1.2em; margin-bottom: 15px; color: #cbd5e1; }
+        .metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; }
+        .metric:last-child { border-bottom: none; }
+        .metric-label { color: #94a3b8; }
+        .metric-value { font-weight: 600; }
+        .alerts-list { max-height: 400px; overflow-y: auto; }
+        .alert-item { background: #1e293b; border-left: 3px solid #ef4444; padding: 12px; margin-bottom: 10px; border-radius: 6px; }
+        .alert-time { font-size: 0.85em; color: #94a3b8; }
+        .alert-title { font-weight: 600; color: #f1f5f9; }
+        .recommendation { background: #1e40af; border: 1px solid #3b82f6; border-radius: 8px; padding: 20px; text-align: center; margin-top: 30px; }
+        .recommendation h3 { margin-bottom: 10px; font-size: 1.1em; }
+        .recommendation-yes { background: #065f46; border-color: #10b981; color: #d1fae5; }
+        .recommendation-no { background: #1e293b; border-color: #64748b; }
+        .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 COGS Monitoring Dashboard</h1>
+            <p>Real-time system health and performance metrics</p>
+        </div>
+
+        <div class="status-card">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <div class="status-text" id="statusText">Loading...</div>
+            <div class="last-check" id="lastCheck">Checking system health...</div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📊 Current Metrics</h2>
+                <div class="metric">
+                    <span class="metric-label">Requests/sec</span>
+                    <span class="metric-value" id="reqPerSec">—</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Error Rate</span>
+                    <span class="metric-value" id="errorRate">—</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">HTTP Errors</span>
+                    <span class="metric-value" id="httpErrors">—</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">PHP Errors</span>
+                    <span class="metric-value" id="phpErrors">—</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Trend Analysis</h2>
+                <div class="metric">
+                    <span class="metric-label">Peak Traffic</span>
+                    <span class="metric-value" id="peakTraffic">—</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Avg Error Rate (7d)</span>
+                    <span class="metric-value" id="avgErrorRate">—</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Alerts (7d)</span>
+                    <span class="metric-value" id="alertCount">—</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">System Uptime</span>
+                    <span class="metric-value" id="uptime">—</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🚨 Recent Alerts (Last 7 Days)</h2>
+            <div class="alerts-list" id="alertsList">
+                <p style="color: #64748b; text-align: center;">Loading alerts...</p>
+            </div>
+        </div>
+
+        <div class="recommendation" id="recommendationBox">
+            <h3>🔄 Rebuild Recommendation</h3>
+            <p id="recommendationText">Analyzing trends...</p>
+        </div>
+
+        <div class="footer">
+            <p>Last updated: <span id="updateTime">—</span> | Powered by COGS Monitoring</p>
+        </div>
+    </div>
+
+    <script>
+        async function loadDashboard() {
+            try {
+                const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=all&per_page=50');
+                const issues = await response.json();
+                
+                const alerts = issues.filter(issue => issue.title.includes('[ALERT]'));
+                const trends = issues.find(issue => issue.title.includes('[TRENDS]'));
+                
+                updateStatus(alerts);
+                updateMetrics(alerts);
+                updateAlerts(alerts);
+                updateRecommendation(trends);
+                
+                document.getElementById('updateTime').textContent = new Date().toLocaleTimeString();
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('statusText').textContent = 'Error loading data';
+            }
+        }
+        
+        function updateStatus(alerts) {
+            const hasRecentAlert = alerts.some(a => {
+                const createdAt = new Date(a.created_at);
+                const now = new Date();
+                return (now - createdAt) < 3600000; // Last hour
+            });
+            
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (hasRecentAlert) {
+                indicator.className = 'status-indicator status-alert';
+                text.textContent = '🚨 ALERT ACTIVE';
+            } else {
+                indicator.className = 'status-indicator status-healthy';
+                text.textContent = '✅ HEALTHY';
+            }
+        }
+        
+        function updateMetrics(alerts) {
+            if (alerts.length === 0) {
+                document.getElementById('reqPerSec').textContent = '< 2';
+                document.getElementById('errorRate').textContent = '< 8%';
+                document.getElementById('httpErrors').textContent = '0';
+                document.getElementById('phpErrors').textContent = '0';
+                return;
+            }
+            
+            const latest = alerts[0];
+            const body = latest.body;
+            
+            const reqMatch = body.match(/Requests\/sec:\s*(\d+)/);
+            const errMatch = body.match(/Error rate:\s*(\d+)/);
+            
+            document.getElementById('reqPerSec').textContent = reqMatch ? reqMatch[1] : '—';
+            document.getElementById('errorRate').textContent = errMatch ? errMatch[1] + '%' : '—';
+        }
+        
+        function updateAlerts(alerts) {
+            const list = document.getElementById('alertsList');
+            
+            if (alerts.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No alerts in the past 7 days</p>';
+                return;
+            }
+            
+            list.innerHTML = alerts.slice(0, 10).map(alert => `
+                <div class="alert-item">
+                    <div class="alert-time">${new Date(alert.created_at).toLocaleString()}</div>
+                    <div class="alert-title">${alert.title}</div>
+                </div>
+            `).join('');
+        }
+        
+        function updateRecommendation(trends) {
+            const box = document.getElementById('recommendationBox');
+            
+            if (!trends) {
+                box.innerHTML = '<h3>🔄 Rebuild Recommendation</h3><p>No trend data yet. Check back after your first week.</p>';
+                return;
+            }
+            
+            const rebuild = trends.body.includes('Rebuild Recommendation:** YES') ? 'yes' : 'no';
+            box.className = 'recommendation ' + (rebuild === 'yes' ? 'recommendation-yes' : 'recommendation-no');
+            
+            box.innerHTML = `
+                <h3>🔄 Rebuild Recommendation</h3>
+                <p><strong>${rebuild === 'yes' ? '✅ YES - Rebuild Now' : '⏸️ NO - Monitor'}</strong></p>
+                <p style="margin-top: 10px; opacity: 0.9;">Review the trend analysis issue for detailed reasoning</p>
+            `;
+        }
+        
+        loadDashboard();
+        setInterval(loadDashboard, 300000); // Refresh every 5 minutes
+    </script>
+</body>
+</html>

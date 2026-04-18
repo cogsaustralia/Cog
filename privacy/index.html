@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | COGs of Australia Foundation</title>
+  <meta name="description" content="Privacy policy for the COG$ of Australia Foundation — how member information is collected, held, used, and protected.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(16,11,4,.90);--panel2:rgba(36,26,11,.90);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.74);--muted:rgba(210,185,130,.58);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/cogs_build.webp') center 25%/cover no-repeat;opacity:.1;filter:sepia(.7) saturate(.8) brightness(.65)}
+    .bg-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 90% 50% at 50% 0%,rgba(10,8,4,.5) 0%,transparent 60%),radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.92) 0%,transparent 70%),radial-gradient(ellipse 35% 100% at 0% 50%,rgba(10,8,4,.5) 0%,transparent 60%),radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.5) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    .site-header{border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:sticky;top:0;z-index:200;overflow:hidden}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;min-width:0}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden}
+    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block}
+    .brand-copy{display:flex;flex-direction:column;gap:1px}
+    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .brand-sub{font-size:.61rem;color:rgba(255,248,232,.65);letter-spacing:.04em;line-height:1.2}
+    .brand-tag{font-size:.58rem;color:var(--muted);letter-spacing:.05em;line-height:1.2}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:99px;transition:color .2s,background .2s;white-space:nowrap;letter-spacing:.02em}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold-1);background:var(--gold-pale)}
+    .nav-cta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .btn-primary,.button.button-primary{font-size:.76rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:8px 18px;border-radius:99px;white-space:nowrap;transition:opacity .2s;border:none;display:inline-flex;align-items:center;justify-content:center}
+    .btn-primary:hover,.button.button-primary:hover{opacity:.88}
+    .btn-ghost,.button.button-secondary{font-size:.71rem;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--gold-rim);padding:7px 15px;border-radius:99px;transition:color .2s,border-color .2s,background .2s;white-space:nowrap;background:none;display:inline-flex;align-items:center;justify-content:center}
+    .btn-ghost:hover,.button.button-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+    .mobile-toggle{display:none;background:none;border:1px solid var(--gold-rim);color:var(--muted);padding:7px 11px;border-radius:10px;cursor:pointer;font-size:1rem;line-height:1}
+    .mobile-drawer{display:none;flex-direction:column;gap:2px;padding:10px 0 14px;border-top:1px solid var(--line)}
+    .mobile-drawer a{font-size:.88rem;color:var(--muted);text-decoration:none;padding:9px 0;border-bottom:1px solid var(--line);transition:color .2s}
+    .mobile-drawer a:last-child{border-bottom:none}
+    .mobile-drawer a:hover{color:var(--gold-1)}
+    .mobile-drawer.open{display:flex}
+
+    .disclosure{background:linear-gradient(180deg,rgba(42,29,11,.55),rgba(23,17,9,.3));border-bottom:1px solid var(--line);padding:9px 24px;text-align:center}
+    .disclosure p{font-size:.73rem;color:rgba(255,244,221,.62);line-height:1.5}
+
+    .page-hero{padding:60px 0 48px}
+    .eyebrow{display:inline-block;font-size:.67rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:22px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(2rem,5vw,3.2rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;color:var(--text);margin-bottom:20px}
+    .lead{font-size:.97rem;font-weight:300;color:var(--text2);line-height:1.78;margin-bottom:22px}
+
+    .section{padding:0 0 58px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 54px}
+    .kicker{display:inline-block;font-size:.64rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .section-header{margin-bottom:28px}
+    .section-header h2{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:500;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin:10px 0 10px}
+    .section-header p{font-size:.92rem;color:var(--muted);line-height:1.75;max-width:660px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+
+    .policy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:960px;margin:0 auto}
+    .policy-item{padding:22px;border-radius:var(--r);background:linear-gradient(180deg,rgba(29,22,13,.88),rgba(14,11,8,.80));border:1px solid var(--line);box-shadow:var(--shadow)}
+    .policy-item h3{margin:0 0 10px;font-size:1.02rem;font-weight:500;color:var(--gold-1)}
+    .policy-item p,.policy-item ul{margin:0;color:var(--muted);line-height:1.72;font-size:.82rem}
+    .policy-item ul{padding-left:20px}
+    .policy-item ul li{margin-top:6px}
+    .policy-notice{padding:24px 26px;border-radius:var(--r);background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.22);max-width:960px;margin:0 auto;box-shadow:var(--shadow)}
+    .policy-notice p{margin:0;color:var(--muted);line-height:1.72}
+    .policy-notice strong{color:var(--gold-2)}
+    .split-band{padding:32px 36px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center}
+    .split-band h2{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);font-weight:500;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin:10px 0 14px}
+    .split-band .lead{font-size:.92rem;margin-bottom:0}
+    .cta-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-items:flex-start}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .hero-animate{animation:fadeUp .65s ease both}
+    .hero-animate:nth-child(1){animation-delay:.05s}
+    .hero-animate:nth-child(2){animation-delay:.15s}
+    .hero-animate:nth-child(3){animation-delay:.25s}
+    .hero-animate:nth-child(4){animation-delay:.32s}
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.in{opacity:1;transform:translateY(0)}
+
+    @media(max-width:860px){
+      .policy-grid{grid-template-columns:1fr}
+      .split-band{grid-template-columns:1fr}
+      .cta-actions{flex-direction:row}
+    }
+    @media(max-width:580px){
+      .nav-links{display:none}
+      .mobile-toggle{display:block}
+      .brand-copy{overflow:hidden}
+      .brand-name{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .brand-sub,.brand-tag{display:none}
+      .cta-actions{flex-direction:column}
+      .split-band{padding:24px 20px;gap:20px}
+    }
+  </style>
+</head>
+<body>
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+
+<div class="site-shell">
+  <header class="site-header">
+    <div class="container">
+      <div class="nav-row">
+        <a class="brand" href="../index.html">
+          <img class="brand-logo" src="../assets/logo_webcir.png" alt="COG$ of Australia Foundation">
+          <div class="brand-copy">
+            <span class="brand-name">COG$ of Australia Foundation</span>
+            <span class="brand-sub">Community Owned Gold &amp; Silver™</span>
+            <span class="brand-tag">Community Operated Governance Structure™</span>
+          </div>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="../vision/index.html">The Vision</a>
+          <a href="../tell-me-more/index.html">Tell me how it works</a>
+          <a href="../faq/index.html">FAQ</a>
+        </nav>
+        <div class="nav-cta">
+          <a class="btn-primary" href="../join/index.html#form">Join now — $4</a>
+          <button class="mobile-toggle" id="mobileToggle" aria-expanded="false" aria-label="Open navigation">☰</button>
+        </div>
+      </div>
+      <div class="mobile-drawer" id="mobileDrawer">
+        <a href="../join/index.html">Join now — $4</a>
+        <a href="../vision/index.html">The Vision</a>
+        <a href="../tell-me-more/index.html">Tell me how it works</a>
+        <a href="../faq/index.html">FAQ</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow hero-animate">Privacy Policy</span>
+        <h1 class="hero-animate">How we collect, hold, and protect your information.</h1>
+        <p class="lead hero-animate">COG$ of Australia Foundation takes the privacy of Partner information seriously. This policy explains what personal information we collect, why we collect it, how it is stored and used, and your rights in relation to it.</p>
+        <p class="hero-animate" style="margin-top:12px; color:var(--muted); font-size:.9rem;">Last updated: April 2026 · Applies to: cogsaustralia.org and test.cogsaustralia.org</p>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="container policy-notice">
+        <p><strong>Australian Privacy Act compliance.</strong> The Foundation is committed to compliance with the Australian Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs). This policy reflects those obligations. If you have a privacy concern, contact us at <strong>hello@cogsaustralia.org</strong>.</p>
+      </div>
+    </section>
+
+
+    <hr class="divider">
+
+    <!-- ══ WHAT WE COLLECT ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">What we collect</span>
+        <h2>Information collected when you join and participate.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Join form information</h3>
+          <p>When you submit a join form, we collect your full name, email address, mobile number, date of birth, street address, suburb, state, and postcode. For business partnerships, we also collect your ABN, business name, trading name, contact name, and position title. This information is required to create your Partner record and issue your Partner number.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Wallet and reservation information</h3>
+          <p>When you set up your Independence Vault wallet or update your COG$ reservation mix, we record your choices, timestamps, and any notes you provide. This includes the stewardship module responses you complete on the join form. These records are permanent parts of your Partner record.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Payment information</h3>
+          <p>Partnership contributions are processed by Stripe, a PCI DSS Level 1 certified payment processor. Stripe receives your payment card details directly — the Foundation never sees, handles, or stores your full card number, CVV, or expiry date. We receive and store the payment amount, date, Stripe transaction reference, and payment status against your Partner record.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Identity verification data (Medicare card)</h3>
+          <p>If you submit Medicare card details for identity verification, your card name, card number, individual reference number (IRN), and expiry date are encrypted using AES-256-CBC encryption before being stored in the Foundation’s database. The Foundation stores only the first letter of your name and the last four digits of your card number in unencrypted form, for administrative reference only. Your full card details are never visible in plain text to administrators. A SHA-256 evidence hash is generated at submission, incorporating your member number, the card fields, and the submission timestamp, stored as an integrity anchor (see Cryptographic hashing of records below). Medicare card data is retained for seven years in accordance with AML/CTF Act 2006 (Cth) obligations, after which it is deleted.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Address verification</h3>
+          <p>If your address is verified against the Australian address register (G-NAF), a SHA-256 cryptographic hash of the verification evidence is generated and stored against your Partner record as an integrity anchor. This hash cannot be used to reconstruct your address from the hash alone.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Phone verification (SMS 2FA)</h3>
+          <p>If SMS-based two-factor authentication is enabled on your account, your mobile number is sent to Twilio, a third-party communications provider, for the sole purpose of delivering a one-time verification code. Twilio retains message delivery logs in accordance with their own privacy policy.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Wallet activity and events</h3>
+          <p>Actions you take in your wallet — password setup, reservation updates, announcement reads, votes cast, gift transactions — are logged as wallet events with timestamps. A SHA-256 cryptographic hash is generated for every Partner-initiated action and stored immutably in the database, in accordance with JVPA clause 2.2(h). These hash records are independently verifiable through your Independence Vault and form the Foundation’s operational audit trail. They are not shared externally.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Referral codes</h3>
+          <p>If you enter a referral code on your join form, that code is recorded against your Partner record. It is used to track community growth and to recognise contributors who helped bring Partners in.</p>
+        </div>
+        <div class="policy-item">
+          <h3>AI chat interactions</h3>
+          <p>If you use the FAQ chat assistant on this website, your question is sent to Anthropic's API for processing. Questions are not linked to your Partner record or personal identity. Anthropic processes the query under their own data handling policy. No conversation history is stored by the Foundation.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Technical information and cookies</h3>
+          <p>Standard server logs may record your IP address, browser type, and pages visited. This information is used only for security monitoring and debugging. The site uses session cookies to maintain your login state — these are essential cookies and are not used for tracking or advertising. No third-party analytics or advertising cookies are used on this site.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ HOW WE USE IT ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">How we use it</span>
+        <h2>The purposes for which your information is used.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Partnership administration</h3>
+          <p>Your name, email, mobile, and address are used to create and maintain your Partner record, send you access emails, and allow you to recover your Partner number or reset your wallet password using your on-file contact details.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Governance participation</h3>
+          <p>Your Partner number and reservation details are used to determine your eligibility to vote on governance proposals, to allocate voting weight in any geofenced local decisions, and to send you relevant announcements and proposals through your wallet.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Communications</h3>
+          <p>We send transactional emails related to your partnership: welcome confirmation, wallet access setup, password reset, payment received, and governance notices. We do not send unsolicited marketing email. You cannot opt out of transactional partnership communications while you hold an active partnership.</p>
+        </div>
+        <div class="policy-item">
+          <h3>CRM and administration</h3>
+          <p>Partner information may be synced to an internal CRM system used by Foundation administrators for Partner support and workflow management. This system is not accessible to the public and access is restricted to authorised Foundation administrators only.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ THIRD-PARTY SERVICES ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Third-party services</span>
+        <h2>External services that receive limited data.</h2>
+        <p>The Foundation uses a small number of trusted third-party services to operate the platform. Each receives only the minimum data necessary for its function.</p>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Stripe (payments)</h3>
+          <p>Stripe Inc. processes all partnership contribution payments. Stripe is PCI DSS Level 1 certified — the highest level of payment security compliance. Your card details are sent directly to Stripe and never pass through Foundation servers. Stripe's privacy policy applies to all payment data they process. Stripe is headquartered in the United States and processes data under Standard Contractual Clauses for international transfers.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Twilio (SMS verification)</h3>
+          <p>Twilio Inc. delivers SMS verification codes for two-factor authentication. The only data sent to Twilio is your mobile phone number and the verification message content. Twilio is headquartered in the United States. Their privacy policy governs their handling of delivery logs.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Anthropic (AI chat assistant)</h3>
+          <p>The website FAQ chat widget sends your typed question to Anthropic's Claude API for processing. No personal information, Partner number, or account data is included in the request. Anthropic does not receive your identity. Anthropic's data handling policy applies to the processing of your query text.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Serversaurus (hosting)</h3>
+          <p>The Foundation's website and database are hosted by Serversaurus, an Australian hosting provider with servers located in Australia. All Partner data resides on Australian-based infrastructure. Serversaurus does not have application-level access to Partner records.</p>
+        </div>
+        <div class="policy-item">
+          <h3>SMTP email relay</h3>
+          <p>Transactional emails (welcome, password reset, governance notices) are sent through an authenticated SMTP relay. Email content passes through the relay provider's servers in transit. We do not use email services that scan message content for advertising purposes.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ STORAGE AND SECURITY ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Storage and security</span>
+        <h2>How your information is stored and protected.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Encryption in transit</h3>
+          <p>All connections to cogsaustralia.org are encrypted using TLS 1.2 or higher (HTTPS). This applies to every page, the join form, wallet login, admin panel, and API endpoints. Unencrypted HTTP requests are automatically redirected to HTTPS. No personal data is transmitted in plain text.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Database security</h3>
+          <p>Partner records are stored in a secured MySQL database hosted in Australia. The database is not publicly accessible — connections are restricted to the application server only. Database credentials are stored in environment variables outside the web root and are not committed to version control. Regular automated backups are maintained.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Password security</h3>
+          <p>Wallet passwords are hashed using bcrypt with a minimum work factor of 12. Plain-text passwords are never stored, logged, or visible to administrators. The Foundation cannot retrieve your password — only reset it. Password reset requires verification against your on-file email or mobile number.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Admin access controls</h3>
+          <p>Admin panel access requires a username, a password of at least 12 characters, and a time-based one-time code (TOTP 2FA) generated by an authenticator app. All admin actions that read or modify Partner records are logged in a permanent, tamper-evident audit trail including the admin identity, action, timestamp, and affected record.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Session management</h3>
+          <p>Partner wallet sessions use secure, HTTP-only session tokens that expire after a period of inactivity. Session tokens are regenerated on login to prevent session fixation attacks. Admin sessions have shorter timeouts and require re-authentication for sensitive operations.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Application security</h3>
+          <p>The application uses parameterised SQL queries to prevent SQL injection, input validation and output encoding to prevent cross-site scripting (XSS), CSRF token protection on all state-changing forms, rate limiting on authentication and API endpoints, and Content Security Policy headers to restrict resource loading.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Backup and recovery</h3>
+          <p>The database is backed up on a regular automated schedule. Backups are stored securely and are encrypted. Backup retention follows the same access controls as production data. The Foundation maintains a tested recovery process to restore service in the event of infrastructure failure.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Data residency</h3>
+          <p>All primary Partner data is stored on servers located within Australia. Where third-party services process limited data outside Australia (Stripe, Twilio, Anthropic), the data transmitted is the minimum necessary for the service and is subject to the provider's own security and privacy controls as described above.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ CHILDREN'S INFORMATION ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Children's information</span>
+        <h2>Special protections for under-18 Partners.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Parental consent and control</h3>
+          <p>Kids S-NFT partnerships are created by a parent or legal guardian through their own authenticated Partner account. The child does not create an account independently. The parent provides the child's name and date of birth. Only the parent can view, manage, or close the child's partnership from within their Independence Vault.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Minimal data collection</h3>
+          <p>For children under 18, the Foundation collects only the child's name and date of birth. No email address, phone number, or street address is collected separately for the child. The child's data is held under the parent's Partner record. On turning 18, the child may convert their Kids S-NFT to a full Personal S-NFT, at which point they create their own independent record with standard adult data collection.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ VOTING AND GOVERNANCE PRIVACY ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Voting and governance privacy</span>
+        <h2>How your vote is recorded and protected.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Binding polls (anonymous)</h3>
+          <p>Votes cast on binding governance polls are recorded anonymously. The system records that a vote was cast and the option selected, but does not link the vote to your Partner number. Once submitted, it is not possible for any administrator or board director to determine how any individual voted. The total results are published to all Partners.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Stewardship proposals (accountable)</h3>
+          <p>Stewardship proposals — which involve the Foundation casting shareholder votes at ASX company AGMs on behalf of Partners — are linked to your Partner number. This is necessary for the Foundation to demonstrate that its AGM vote reflects the genuine will of its Partners, as required by governance and regulatory obligations.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ BLOCKCHAIN RECORDS ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Future blockchain records</span>
+        <h2>On-chain data and immutability.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Planned blockchain architecture</h3>
+          <p>The Foundation plans to implement a permissioned EVM blockchain to record token issuance, transfers, and governance events. When implemented, certain transaction records (token mint, gift, governance vote hashes) will be written to the blockchain and will be immutable — they cannot be deleted or altered after recording. No personal information (name, address, email) will be written to the chain. On-chain records will reference wallet addresses only.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Right to erasure and immutable records</h3>
+          <p>Because blockchain records are immutable by design, they cannot be deleted on request. The Foundation mitigates this by ensuring no personally identifiable information is written on-chain. Off-chain records (your Partner profile, contact details, reservation notes) remain subject to your access, correction, and deletion rights as described below.</p>
+        </div>
+      </div>
+    </section>
+
+        <hr class="divider">
+
+    <!-- ====== CRYPTOGRAPHIC HASHING ====== -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Cryptographic hashing</span>
+        <h2>How SHA-256 hashes are used to protect and verify your records.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>What is a SHA-256 hash?</h3>
+          <p>A SHA-256 hash is a one-way cryptographic fingerprint. Given an input (such as your acceptance record), the algorithm produces a fixed-length string that uniquely represents that input. The hash cannot be reversed to recover the original data, but it enables independent verification that a record has not been altered — if the data changes even slightly, the hash changes entirely.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Acceptance record hash</h3>
+          <p>At the moment you join, the Foundation generates a SHA-256 hash of your complete acceptance record (incorporating your S-NFT token ID, Partner number, JVPA version, IP address, UTC timestamp, and Stripe payment reference). This hash is written permanently into your S-NFT token metadata and stored in the Foundation’s database as a secondary record. It provides cryptographic proof of your acceptance of the Joint Venture Partnership Agreement that neither the Foundation nor any third party can alter. It is retained for a minimum of seven years per JVPA clause 8.1A(f).</p>
+        </div>
+        <div class="policy-item">
+          <h3>Agreement hash</h3>
+          <p>A SHA-256 hash of the JVPA text at the version you accepted is stored alongside your acceptance record. This enables any Partner to verify independently that the agreement they accepted has not been altered since the moment of their acceptance.</p>
+        </div>
+        <div class="policy-item">
+          <h3>KYC evidence hash</h3>
+          <p>If you submit Medicare card details for identity verification, a SHA-256 hash is generated incorporating your member number, the card fields, and the submission timestamp. This hash is stored as an evidence anchor and cannot be used to reconstruct your Medicare card details from the hash alone. The underlying card data is encrypted with AES-256-CBC (see Identity verification data above).</p>
+        </div>
+        <div class="policy-item">
+          <h3>Wallet event hashes</h3>
+          <p>A SHA-256 hash is generated for every action you take in your Independence Vault — governance proposals, votes, transfers, and other Partner-initiated operations. These hashes are stored immutably in the operational database in accordance with JVPA clause 2.2(h) and are independently verifiable through your Independence Vault. When the Foundation’s blockchain infrastructure is deployed, these hashes will be anchored on-chain for permanent public auditability.</p>
+        </div>
+      </div>
+    </section>
+
+<hr class="divider">
+
+    <!-- ══ RETENTION ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Data retention</span>
+        <h2>How long we keep your information.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Active partnerships</h3>
+          <p>Partner records are retained for the duration of your active partnership. All wallet events, governance records, reservation history, and transaction logs are retained as part of the permanent community ledger for audit and governance integrity purposes.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Closed partnerships</h3>
+          <p>If your partnership is closed, your personal contact information (name, email, phone, address) is retained for seven years after closure in line with standard Australian financial and trust record-keeping obligations. After seven years, personal contact information is anonymised. Governance records and transaction history are retained indefinitely in anonymised form. Your cryptographic acceptance record (including the SHA-256 hash written to your S-NFT token metadata) is retained for a minimum of seven years from the date you joined — not from the date of closure — as required by JVPA clause 8.1A(f). These are separate retention obligations with different trigger dates.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ DATA BREACH ══ -->
+    <section class="section reveal">
+      <div class="container policy-notice">
+        <p><strong>Data breach notification.</strong> In the event of a data breach that is likely to result in serious harm to any individual whose personal information is involved, the Foundation will notify affected Partners and the Office of the Australian Information Commissioner (OAIC) as required by the Notifiable Data Breaches scheme under Part IIIC of the Privacy Act 1988. Notification will be made as soon as practicable after the Foundation becomes aware of the breach.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ YOUR RIGHTS ══ -->
+    <section class="section reveal">
+      <div class="container section-header">
+        <span class="kicker">Your rights</span>
+        <h2>Access, correction, deletion, and complaints.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Access and correction</h3>
+          <p>You may request access to the personal information we hold about you at any time by contacting us at hello@cogsaustralia.org. If any information is inaccurate, you may request a correction. We will respond within 30 days.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Deletion</h3>
+          <p>You may request deletion of your personal information. Where deletion is possible and not subject to a legal retention obligation, we will comply. Governance records and transaction history that are part of the permanent community ledger cannot be deleted but will be anonymised so they are no longer linked to your identity.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Complaints</h3>
+          <p>If you believe we have handled your personal information in a way that does not comply with the Australian Privacy Act, you may lodge a complaint at hello@cogsaustralia.org. If you are not satisfied with our response, you may escalate your complaint to the Office of the Australian Information Commissioner (OAIC) at oaic.gov.au.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Changes to this policy</h3>
+          <p>This policy may be updated from time to time. Where changes materially affect how we handle your personal information, we will notify active Partners through their Independence Vault inbox. The current version is always available at this URL.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ══ CONTACT CTA ══ -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card split-band">
+          <div>
+            <span class="kicker">Contact</span>
+            <h2>Privacy questions or concerns.</h2>
+            <p class="lead">For any question about this privacy policy, how your information is handled, or to make an access, correction, or deletion request, contact us at hello@cogsaustralia.org. We aim to respond within 5 business days.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn-primary" href="../join/index.html">Join now — $4</a>
+            <a class="btn-ghost" href="../terms/index.html">Terms of participation</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+</div>
+
+<script>
+(function(){
+  var toggle=document.getElementById('mobileToggle'),drawer=document.getElementById('mobileDrawer');
+  if(toggle&&drawer){
+    toggle.addEventListener('click',function(){
+      var open=drawer.classList.toggle('open');
+      toggle.setAttribute('aria-expanded',open);
+      toggle.textContent=open?'✕':'☰';
+    });
+  }
+})();
+(function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+</body>
+</html>

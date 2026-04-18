@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Partner | COGs of Australia Foundation</title>
+  <meta name="description" content="Become a Partner in the CJVM Joint Venture for $4 once only. Your place, your voice, your vault.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(16,11,4,.95);--panel2:rgba(36,26,11,.95);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.28);--gold-rim2:rgba(240,209,138,.52);
+      --text:#fff8e8;--text2:rgba(255,248,232,.92);--muted:rgba(220,196,148,.88);
+      --line:rgba(240,209,138,.18);--line2:rgba(240,209,138,.36);
+      --ok:#52b87a;--okb:rgba(82,184,122,.12);--okr:rgba(82,184,122,.35);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-size:18px}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.7}
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/cogs_join.png') center 40%/cover no-repeat;opacity:.18;filter:sepia(.25) saturate(.9) brightness(.6)}
+    .bg-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.65) 0%,transparent 60%),radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.97) 0%,transparent 70%),radial-gradient(ellipse 35% 100% at 0% 50%,rgba(10,8,4,.72) 0%,transparent 60%),radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.72) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    /* Buttons — used in form and hero */
+    .btn-primary{font-size:.92rem;font-weight:600;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:12px 24px;border-radius:99px;white-space:nowrap;transition:opacity .2s;border:none;cursor:pointer;min-height:48px;display:inline-flex;align-items:center}
+    .btn-primary:hover{opacity:.88}
+    .btn-secondary{font-size:.88rem;color:var(--text2);text-decoration:none;border:1.5px solid var(--gold-rim2);padding:11px 20px;border-radius:99px;white-space:nowrap;transition:color .2s,border-color .2s,background .2s;background:none;cursor:pointer;min-height:48px;display:inline-flex;align-items:center}
+    .btn-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+
+    /* Page hero */
+    .page-hero{padding:52px 0 40px}
+    .hero-grid{display:grid;grid-template-columns:1fr 360px;gap:36px;align-items:start}
+    .eyebrow{display:inline-block;font-size:.8rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:6px 18px;border-radius:99px;margin-bottom:18px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:500;line-height:1.12;letter-spacing:-.025em;color:var(--text);margin-bottom:14px}
+    .lead{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.78}
+
+    /* Trust box */
+    .trust-box{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);padding:26px;backdrop-filter:blur(10px)}
+    .trust-box .kicker{display:block;font-size:.78rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:16px}
+    .trust-item{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+    .trust-item:last-child{border-bottom:none}
+    .trust-ico{width:34px;height:34px;border-radius:50%;background:rgba(240,209,138,.10);border:1px solid var(--gold-rim);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;color:var(--gold-2)}
+    .trust-item strong{display:block;font-size:.95rem;color:var(--text);margin-bottom:4px}
+    .trust-item p{margin:0;font-size:.88rem;color:var(--text2);line-height:1.6}
+
+    /* Section */
+    .section{padding:0 0 50px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 48px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+
+    /* Form layout */
+    .form-layout{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+
+    /* Form card */
+    .form-card{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);padding:34px 32px;box-shadow:var(--shadow)}
+    .form-card h2{font-family:var(--serif);font-size:1.6rem;font-weight:500;color:var(--gold-1);margin-bottom:8px}
+    .form-card>p{font-size:.92rem;color:var(--text2);line-height:1.72;margin-bottom:24px}
+
+    /* Step progress — 2 steps only */
+    .step-progress{display:flex;align-items:center;gap:0;margin-bottom:30px}
+    .step-pip{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0}
+    .step-pip span{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;background:rgba(255,255,255,.08);border:1.5px solid var(--line2);color:var(--text2);transition:background .3s,border-color .3s,color .3s}
+    .step-pip em{font-size:.75rem;font-style:normal;letter-spacing:.04em;color:var(--text2);white-space:nowrap;text-transform:uppercase;transition:color .3s}
+    .step-pip.active span{background:linear-gradient(135deg,var(--gold-1),var(--gold-2));border-color:var(--gold-2);color:#1a0f00}
+    .step-pip.active em{color:var(--gold-2)}
+    .step-pip.done span{background:var(--okb);border-color:var(--okr);color:var(--ok)}
+    .step-pip.done em{color:var(--ok)}
+    .step-connector{flex:1;height:2px;background:var(--line2);margin:0 8px;margin-bottom:18px;transition:background .3s}
+    .step-connector.done{background:var(--okr)}
+
+    /* Form steps */
+    .form-step{display:none;animation:fadeUp .3s ease both}
+    .form-step.active{display:block}
+
+    /* Step header */
+    .step-hd{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--line2)}
+    .step-num-badge{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.15rem;font-weight:600;color:#1a0f00;flex-shrink:0;margin-top:3px}
+    .step-hd h2{font-family:var(--serif);font-size:clamp(1.3rem,2.5vw,1.8rem);font-weight:500;line-height:1.1;letter-spacing:-.02em;color:var(--text);margin-bottom:6px}
+    .step-hd p{font-size:.92rem;color:var(--text2);line-height:1.65;margin:0}
+
+    /* Fields */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field.full{grid-column:1/-1}
+    .field label{font-size:.86rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text2)}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.10);border:1.5px solid var(--line2);border-radius:10px;padding:13px 16px;color:var(--text);font-family:var(--sans);font-size:1rem;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none;min-height:50px}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold-rim2);background:rgba(240,209,138,.07)}
+    .field input::placeholder{color:rgba(220,196,148,.55)}
+    .field select option{background:#1a1206;color:var(--text)}
+
+    /* Address autocomplete */
+    .addr-wrap{position:relative}
+    .addr-dropdown{position:absolute;top:100%;left:0;right:0;z-index:100;background:rgba(24,17,8,.98);border:1px solid var(--gold-rim2);border-top:none;border-radius:0 0 12px 12px;max-height:220px;overflow-y:auto;display:none}
+    .addr-dropdown.open{display:block}
+    .addr-option{padding:10px 14px;font-size:.85rem;color:var(--text2);cursor:pointer;border-bottom:1px solid var(--line);transition:background .15s}
+    .addr-option:last-child{border-bottom:none}
+    .addr-option:hover{background:rgba(240,209,138,.06);color:var(--gold-1)}
+    .addr-manual-btn{display:block;width:100%;padding:8px 0 2px;font-size:.84rem;color:var(--gold-2);background:none;border:none;cursor:pointer;text-align:center;text-decoration:underline;text-underline-offset:3px;margin-top:4px}
+    #addr-manual{display:contents}
+    #addr-manual.hidden{display:none}
+
+    /* Membership pill */
+    .membership-pill{display:flex;align-items:stretch;border-radius:16px;overflow:hidden;border:1.5px solid var(--gold-rim2);background:linear-gradient(135deg,rgba(36,26,9,.95),rgba(20,14,4,.92));margin:24px 0}
+    .pill-left{flex:1;padding:18px 22px;display:flex;align-items:center;gap:14px}
+    .pill-ico{font-size:1.4rem;color:var(--gold-2);flex-shrink:0;width:34px;text-align:center}
+    .pill-name{font-size:1rem;font-weight:600;color:var(--gold-1);margin-bottom:4px}
+    .pill-sub{font-size:.86rem;color:var(--text2);line-height:1.5}
+    .pill-right{flex-shrink:0;width:114px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;background:rgba(240,209,138,.09);border-left:1.5px solid var(--gold-rim);text-align:center;gap:5px}
+    .pill-price{font-family:var(--serif);font-size:1.7rem;font-weight:600;color:var(--gold-1);line-height:1}
+    .pill-once{font-size:.74rem;color:var(--text2)}
+    .pill-badge{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-2);background:rgba(201,151,61,.14);border:1px solid var(--gold-rim);padding:4px 10px;border-radius:5px}
+
+    /* Optional add-ons (step 1, collapsed) */
+
+    /* Cost summary */
+    .cost-row{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:rgba(240,209,138,.08);border:1.5px solid var(--gold-rim2);border-radius:12px;margin:18px 0}
+    .cost-label{font-size:.84rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+    .cost-val{font-family:var(--serif);font-size:1.7rem;font-weight:600;color:var(--gold-1);line-height:1}
+    .cost-note{font-size:.82rem;color:var(--text2);margin-top:3px}
+
+    /* Step 2 — confirm */
+    .confirm-summary{border:1.5px solid var(--gold-rim);border-radius:14px;overflow:hidden;margin-bottom:20px}
+    .confirm-row{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line)}
+    .confirm-row:last-child{border-bottom:none}
+    .confirm-ico{width:30px;height:30px;border-radius:50%;background:rgba(240,209,138,.10);border:1px solid var(--gold-rim);display:flex;align-items:center;justify-content:center;font-size:.84rem;color:var(--gold-2);flex-shrink:0;margin-top:2px;text-align:center;line-height:30px}
+    .confirm-row strong{display:block;font-size:.95rem;color:var(--text);margin-bottom:3px}
+    .confirm-row span{font-size:.88rem;color:var(--text2);line-height:1.6}
+
+    /* Terms checkbox / accept pill */
+    .terms-box{background:rgba(255,255,255,.04);border:1.5px solid var(--line2);border-radius:16px;padding:20px;margin-bottom:18px}
+    .terms-prompt{font-size:.84rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-2);margin-bottom:14px}
+    /* Redesigned accept control — explicit checkbox style */
+    .accept-cb-wrap{display:block}
+    .accept-cb-input{position:absolute;opacity:0;pointer-events:none;width:0;height:0}
+    .accept-cb-label{
+      display:flex;align-items:flex-start;gap:16px;cursor:pointer;
+      padding:16px 18px;border-radius:14px;
+      border:1.5px solid var(--gold-rim2);
+      background:linear-gradient(135deg,rgba(240,209,138,.07),rgba(201,151,61,.05));
+      transition:border-color .2s ease,background .2s ease;
+    }
+    .accept-cb-label:hover{
+      border-color:rgba(240,209,138,.65);
+      background:linear-gradient(135deg,rgba(240,209,138,.12),rgba(201,151,61,.08));
+    }
+    .accept-cb-input:focus-visible + .accept-cb-label{
+      outline:2px solid rgba(240,209,138,.65);outline-offset:3px;
+    }
+    .accept-cb-input:checked + .accept-cb-label{
+      border-color:rgba(82,184,122,.65);
+      background:linear-gradient(135deg,rgba(82,184,122,.18),rgba(40,112,76,.12));
+    }
+    /* The visible checkbox box */
+    .accept-cb-box{
+      flex-shrink:0;width:26px;height:26px;border-radius:7px;
+      border:2px solid var(--gold-rim2);
+      background:rgba(255,255,255,.07);
+      display:flex;align-items:center;justify-content:center;
+      transition:border-color .2s,background .2s;
+      margin-top:2px;
+    }
+    .accept-cb-input:checked + .accept-cb-label .accept-cb-box{
+      border-color:rgba(82,184,122,.85);
+      background:rgba(82,184,122,.28);
+    }
+    .accept-cb-check{display:none;font-size:1rem;color:var(--ok);font-weight:700;line-height:1}
+    .accept-cb-input:checked + .accept-cb-label .accept-cb-check{display:block}
+    .accept-cb-copy{display:flex;flex-direction:column;gap:6px;min-width:0}
+    .accept-cb-title{font-size:.98rem;font-weight:600;color:var(--text)}
+    .accept-cb-text{font-size:.9rem;color:var(--text2);line-height:1.65}
+    .accept-cb-input:checked + .accept-cb-label .accept-cb-title{color:#eafff2}
+    .accept-cb-note{margin-top:12px;font-size:.84rem;color:var(--text2);line-height:1.6}
+    .terms-label a,.accept-cb-note a{color:var(--gold-2);text-decoration:underline;text-underline-offset:3px}
+    .terms-label a,.accept-pill-note a{color:var(--gold-2);text-decoration:underline;text-underline-offset:3px}
+
+    /* Legal notice inline */
+    .legal-note{font-size:.92rem;color:var(--text2);line-height:1.72;padding:18px 20px;background:rgba(255,255,255,.06);border:1.5px solid rgba(240,209,138,.26);border-radius:12px;margin-bottom:18px}
+    .legal-note strong{color:var(--gold-1);display:block;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+    .legal-note p{margin:0 0 10px}
+    .legal-note p:last-child{margin:0}
+
+    /* Step nav */
+    .step-nav{display:flex;align-items:center;gap:12px;margin-top:24px;flex-wrap:wrap}
+
+    /* Form status */
+    .form-status{margin-top:14px;font-size:.9rem;min-height:20px;line-height:1.55}
+    .form-status.error{color:#f0857a}
+    .form-status.success{color:#8ddcb0}
+    .form-status.loading{color:var(--text2)}
+
+    /* Side panel */
+    .side-panel{background:var(--panel);border:1.5px solid var(--line2);border-radius:var(--r);padding:26px;position:sticky;top:90px}
+    .side-panel h3{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--gold-1);margin-bottom:12px}
+    .side-panel p{font-size:.9rem;color:var(--text2);line-height:1.68;margin-bottom:14px}
+    .side-panel ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+    .side-panel li{font-size:.9rem;color:var(--text2);line-height:1.55;display:flex;align-items:flex-start;gap:9px}
+    .side-panel li::before{content:'◈';color:var(--gold-2);font-size:.76rem;margin-top:3px;flex-shrink:0}
+    .side-faq{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+    .side-faq a{font-size:.88rem;color:var(--text2);text-decoration:none;padding:9px 12px;border-radius:8px;border:1px solid var(--line2);background:rgba(255,255,255,.03);transition:.15s;line-height:1.4}
+    .side-faq a:hover{color:var(--gold-1);border-color:var(--gold-rim);background:var(--gold-pale)}
+
+    /* Invitation code field */
+    .invite-field-wrap{margin-top:20px;background:rgba(240,209,138,.04);border:1.5px solid var(--gold-rim);border-radius:14px;padding:18px 20px}
+    .invite-field-wrap.validated{border-color:rgba(82,184,122,.6);background:rgba(82,184,122,.06)}
+    .invite-field-wrap.invalid{border-color:rgba(240,100,100,.5);background:rgba(200,60,60,.05)}
+    .invite-label{font-size:.86rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-2);display:block;margin-bottom:6px}
+    .invite-field-wrap.validated .invite-label{color:#52b87a}
+    .invite-helper{font-size:.84rem;color:var(--text2);line-height:1.55;margin-bottom:12px}
+    .invite-input-row{display:flex;gap:10px;align-items:stretch}
+    .invite-input-row input{flex:1;background:rgba(255,255,255,.10);border:1.5px solid var(--line2);border-radius:10px;padding:13px 16px;color:var(--text);font-family:var(--sans);font-size:1rem;outline:none;transition:border-color .2s;min-height:50px}
+    .invite-input-row input:focus{border-color:var(--gold-rim2)}
+    .invite-validate-btn{padding:0 20px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#1a0f00;font-family:var(--sans);font-size:.88rem;font-weight:700;cursor:pointer;white-space:nowrap;min-height:50px;transition:opacity .2s;flex-shrink:0}
+    .invite-validate-btn:hover{opacity:.88}
+    .invite-validate-btn:disabled{opacity:.45;cursor:not-allowed}
+    .invite-status{margin-top:10px;font-size:.88rem;line-height:1.55;display:none}
+    .invite-status.ok{display:block;color:#52b87a}
+    .invite-status.err{display:block;color:#f0857a}
+    .invite-status.loading{display:block;color:var(--text2)}
+    .invite-inviter-name{font-weight:700;color:#52b87a}
+    .invite-admin-note{margin-top:10px;font-size:.82rem;color:var(--muted);line-height:1.6}
+    /* Block state on step 2 */
+    .invite-block{background:rgba(200,60,60,.06);border:1.5px solid rgba(240,100,100,.35);border-radius:14px;padding:18px 20px;margin-bottom:18px;display:none}
+    .invite-block.active{display:block}
+    .invite-block p{font-size:.92rem;color:var(--text2);line-height:1.65;margin:0 0 8px}
+    .invite-block p:last-child{margin:0}
+    .invite-block strong{color:#f07a7a}
+    /* Inviter confirm row */
+    .invite-confirm-row{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:rgba(82,184,122,.04)}
+
+    /* Animations */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .hero-animate{animation:fadeUp .6s ease both}
+    .hero-animate:nth-child(1){animation-delay:.05s}
+    .hero-animate:nth-child(2){animation-delay:.15s}
+    .hero-animate:nth-child(3){animation-delay:.25s}
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* Responsive */
+    @media(max-width:860px){
+      .hero-grid,.form-layout{grid-template-columns:1fr}
+      .side-panel{position:static}
+      }
+    @media(max-width:580px){
+      .form-grid{grid-template-columns:1fr}
+        .membership-pill{flex-direction:column}
+      .pill-right{width:100%;flex-direction:row;gap:10px;border-left:none;border-top:1px solid var(--gold-rim);padding:10px 16px}
+      .step-pip em{display:none}
+        }
+  
+    /* ── Site footer — matches site-footer.js injected structure ── */
+    .site-footer{border-top:1px solid var(--line);padding:36px 28px 38px;background:rgba(8,6,2,1)}
+    .footer-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:32px;align-items:start}
+    .footer-name{font-family:var(--serif);font-size:.9rem;color:var(--gold-1);margin-bottom:8px;font-weight:600}
+    .footer-detail{font-size:.67rem;color:var(--muted);line-height:1.76}
+    .footer-col h4{font-size:.65rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .footer-links{display:flex;flex-direction:column;gap:7px}
+    .footer-links a{font-size:.76rem;color:var(--muted);text-decoration:none;line-height:1.3;transition:color .2s}
+    .footer-links a:hover{color:var(--gold-1)}
+    .footer-link-locked{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--muted);text-decoration:none;line-height:1.3;transition:color .2s}
+    .footer-link-locked:hover{color:var(--gold-1)}
+    .lock-badge{display:inline-flex;align-items:center;gap:3px;font-size:.58rem;font-weight:500;letter-spacing:.08em;color:var(--gold-3);background:rgba(120,80,20,.25);border:1px solid rgba(140,100,30,.35);padding:1px 6px;border-radius:4px;white-space:nowrap}
+    .footer-bottom{max-width:960px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--line)}
+    .footer-bottom-left{font-size:.65rem;color:rgba(210,185,130,.35);line-height:1.6}
+    @media(max-width:860px){
+      .footer-inner{grid-template-columns:1fr 1fr}
+      .footer-inner>div:first-child{grid-column:1/-1}
+    }
+    @media(max-width:580px){
+      .footer-inner{grid-template-columns:1fr}
+      .footer-inner>div:first-child{grid-column:1}
+    }
+</style>
+</head>
+<body data-root="../" data-page="individual">
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+<div class="site-shell">
+
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow hero-animate">Governance Foundation Day · 14 May 2026</span>
+          <h1 class="hero-animate">Become a Partner in Australia's community joint venture.</h1>
+          <p class="lead hero-animate">Become a Partner for $4 once only. That's it. Your Partner record, your Independence Vault, and your equal vote are set up from this one step. No ongoing fees. No obligations beyond the contribution.</p>
+          <div class="hero-animate" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:10px">
+            <a class="btn-primary" href="#form">Become a Partner — $4</a>
+            <a class="btn-secondary" href="../faq/index.html">Questions first?</a>
+          </div>
+        </div>
+        <div class="trust-box hero-animate">
+          <span class="kicker">What becoming a Partner gives you</span>
+          <div class="trust-item">
+            <div class="trust-ico">◈</div>
+            <div>
+              <strong>One equal vote</strong>
+              <p>Every Partner has the same governance weight. Wealth doesn't change that.</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-ico">⬡</div>
+            <div>
+              <strong>Your Independence Vault</strong>
+              <p>Your operational dashboard — governance direction, Partner Polls, token record, and Partnership communications.</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-ico">⚡</div>
+            <div>
+              <strong>Ready for Governance Foundation Day</strong>
+              <p>14 May 2026. The first Partners governance poll — the first live test of the cryptographic management system. Be in place for it.</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-ico">🔒</div>
+            <div>
+              <strong>$4 once only. Nothing more.</strong>
+              <p>One partnership contribution. No subscription. No surprise charges. That's the whole deal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Form -->
+    <section class="section" id="form">
+      <div class="container form-layout">
+
+        <form class="form-card" id="join-form" data-api-route="snft-reserve" data-reservation-flow="snft" data-thankyou-url="../thank-you/index.html?flow=partner" novalidate>
+
+          <!-- 2-step progress -->
+          <div class="step-progress" id="step-progress" aria-label="Form progress">
+            <div class="step-pip active" data-step="1"><span>1</span><em>Your details</em></div>
+            <div class="step-connector" id="conn-1"></div>
+            <div class="step-pip" data-step="2"><span>2</span><em>Confirm &amp; submit</em></div>
+          </div>
+
+          <!-- ══ STEP 1 — YOUR DETAILS ══ -->
+          <div class="form-step active" id="step-1">
+            <div class="step-hd">
+              <div class="step-num-badge">1</div>
+              <div>
+                <h2>Your details</h2>
+                <p>This creates your Partner record and sets up your Independence Vault. Takes about two minutes.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="first_name">First name</label>
+                <input id="first_name" name="first_name" autocomplete="given-name" required placeholder="Jane">
+              </div>
+              <div class="field">
+                <label for="last_name">Last name</label>
+                <input id="last_name" name="last_name" autocomplete="family-name" required placeholder="Smith">
+              </div>
+              <input type="hidden" id="full_name" name="full_name">
+              <div class="field full">
+                <label for="email">Email address <span style="font-weight:400;opacity:.6">(required — for vault access and updates)</span></label>
+                <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+              </div>
+              <div class="field full">
+                <label for="mobile">Mobile number <span style="font-weight:400;opacity:.6">(required — your primary vault login key)</span></label>
+                <input id="mobile" name="mobile" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx">
+              </div>
+              <div class="field full">
+                <label for="dob">Date of birth <span style="font-weight:400;opacity:.6">(required)</span></label>
+                <input id="dob" name="date_of_birth" type="date" autocomplete="bday" required>
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div style="margin-top:16px">
+              <div class="field full" style="margin-bottom:4px">
+                <label>Street address</label>
+                <div class="addr-wrap">
+                  <input id="addr-search" type="text" autocomplete="off" placeholder="Start typing your address…"
+                    style="display:none" oninput="addrSearch(this.value)">
+                  <div class="addr-dropdown" id="addr-dropdown"></div>
+                </div>
+                
+              </div>
+              <div id="addr-manual" class="form-grid">
+                <div class="field full"><label for="street">Street</label><input id="street" name="street" placeholder="123 Main Street" autocomplete="street-address"></div>
+                <div class="field full"><label for="street2">Line 2 <span style="opacity:.6">(optional)</span></label><input id="street2" name="street2" placeholder="Unit / suite" autocomplete="address-line2"></div>
+                <div class="field"><label for="suburb">Suburb</label><input id="suburb" name="suburb" placeholder="Suburb" autocomplete="address-level2"></div>
+                <div class="field"><label for="state">State</label>
+                  <select id="state" name="state" autocomplete="address-level1">
+                    <option value="">Select</option><option>NSW</option><option>VIC</option><option>QLD</option><option>WA</option><option>SA</option><option>TAS</option><option>ACT</option><option>NT</option>
+                  </select>
+                </div>
+                <div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode" inputmode="numeric" pattern="[0-9]{4}" required placeholder="2000" autocomplete="postal-code"></div>
+              </div>
+            </div>
+
+            <!-- Partner Invitation Code -->
+            <div class="invite-field-wrap" id="invite-wrap">
+              <label class="invite-label" for="invite_code_input">Inviting Partner Code</label>
+              <p class="invite-helper">Enter the code from the Partner who invited you, or use their invitation link. A valid Partner invitation code is required to join the partnership.</p>
+              <div class="invite-input-row">
+                <input id="invite_code_input" name="invite_code_display" type="text" maxlength="40" placeholder="e.g. TBC-DRAKE-01" autocomplete="off" autocapitalize="characters" oninput="onInviteInput()">
+                <button type="button" class="invite-validate-btn" id="invite-validate-btn" onclick="validateInviteCode()">Verify code</button>
+              </div>
+              <div class="invite-status" id="invite-status"></div>
+              <p class="invite-admin-note">Do not have a Partner code? <a href="mailto:hello@cogsaustralia.org?subject=Partner%20Invitation%20Request" style="color:var(--gold-2)">Contact administration</a> to request a reviewed invitation pathway.</p>
+            </div>
+            <input type="hidden" id="invite_code_used" name="invite_code_used">
+            <input type="hidden" id="invite_validation_status" name="invite_validation_status" value="missing">
+            <input type="hidden" id="invited_by_partner_id" name="invited_by_partner_id">
+            <input type="hidden" id="invite_verified_at" name="invite_verified_at">
+                        </div>
+
+            <!-- Membership pill -->
+            <div class="membership-pill">
+              <div class="pill-left">
+                <div class="pill-ico">◈</div>
+                <div>
+                  <div class="pill-name">Independence Vault — Foundation S-NFT</div>
+                  <div class="pill-sub">Core partnership · One equal vote · Permanent · Non-transferable</div>
+                </div>
+              </div>
+              <div class="pill-right">
+                <div class="pill-price">$4</div>
+                <div class="pill-once">once only</div>
+                <span class="pill-badge">Included</span>
+                <input type="hidden" name="personal_tokens" value="1">
+              </div>
+            </div>
+
+            <div class="cost-row">
+              <div>
+                <div class="cost-label">Amount due today</div>
+                <div class="cost-note">CJVM Partnership Contribution — COG$ Partner Token Reservation</div>
+              </div>
+              <div class="cost-val">$4.00</div>
+            </div>
+
+            <div class="step-nav">
+              <button type="button" class="btn-primary" onclick="goStep(2)" style="margin-left:auto">
+                Review and confirm →
+              </button>
+            </div>
+          </div>
+
+          <!-- ══ STEP 2 — CONFIRM & SUBMIT ══ -->
+          <div class="form-step" id="step-2">
+            <div class="step-hd">
+              <div class="step-num-badge">2</div>
+              <div>
+                <h2>Confirm &amp; submit</h2>
+                <p>Check your details, read the partnership notice below, and confirm your registration.</p>
+              </div>
+            </div>
+
+            <!-- Confirm summary — populated by JS -->
+            <div class="confirm-summary" id="confirm-summary">
+              <div class="confirm-row">
+                <div class="confirm-ico">◈</div>
+                <div>
+                  <strong id="cs-name">—</strong>
+                  <span id="cs-contact">—</span>
+                  <span id="cs-dob" style="display:block;font-size:.88rem;opacity:.7">—</span>
+                </div>
+              </div>
+              <!-- Inviter confirm row -->
+              <div class="invite-confirm-row" id="cs-invite-row" style="display:none">
+                <div class="confirm-ico" style="color:#52b87a">✓</div>
+                <div>
+                  <strong style="color:#52b87a">Invited by Partner</strong>
+                  <span id="cs-invite-name" style="display:block;font-size:.88rem;color:var(--text2)">—</span>
+                </div>
+                <div class="confirm-ico">📍</div>
+                <div>
+                  <strong>Address</strong>
+                  <span id="cs-address">—</span>
+                </div>
+              </div>
+              <div class="confirm-row">
+                <div class="confirm-ico">$</div>
+                <div>
+                  <strong>Amount due today</strong>
+                  <span id="cs-cost">$4.00 — CJVM Joint Venture Partnership Contribution — COG$ Partner Token Reservation</span>
+                </div>
+              </div>
+              <div class="confirm-row" style="border-bottom:none">
+                <div class="confirm-ico">⬡</div>
+                <div>
+                  <strong>After you submit</strong>
+                  <span>You'll go straight to the Partner area, then set up your vault password and 2FA. Payment via Stripe will be available inside your vault.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inline legal notice -->
+            <div class="legal-note">
+              <strong>Partnership notice</strong>
+              <p>Your $4 partnership contribution establishes your Partner record, your Foundation S-NFT blockchain reservation record, and your Independence Vault. <strong style="font-size:inherit;letter-spacing:normal;text-transform:none;color:var(--text2)">It is not a payment for a financial product.</strong></p>
+              <p>The CJVM Hybrid Trust operates as a community joint venture partnership. The Foundation's self-assessed position is that the CJVM does not constitute a managed investment scheme under section 9 of the Corporations Act 2001 (Cth), because Partners exercise day-to-day control over the trust's operations through their proprietary governance system. If applicable law later requires a specific authorisation or disclosure for a particular activity, the Trustee will obtain or provide what is required.</p>
+              <p>The <a href="../docs/COGS_CJVM_Partnership_Agreement.pdf" target="_blank" style="color:var(--gold-2)">Joint Venture Partnership Agreement</a> is the supreme governing instrument. By proceeding, you accept that Agreement and the entrenched founding principles of the CJVM Hybrid Trust.</p>
+              <p style="color:var(--muted);font-size:.78rem">Governed by the laws of South Australia, Australia. &nbsp;<a href="../privacy/index.html" style="color:var(--gold-2)">Privacy policy</a> · <a href="../terms/index.html" style="color:var(--gold-2)">Terms</a>.</p>
+            </div>
+
+            <!-- Invite gate — shown when code is missing or invalid -->
+            <div class="invite-block" id="invite-block">
+              <p><strong>A valid Partner invitation code is required to join the partnership.</strong></p>
+              <p>Please return to the Partner who introduced you and use their invitation link, or <a href="mailto:hello@cogsaustralia.org?subject=Partner%20Invitation%20Request" style="color:var(--gold-2)">contact administration</a> for further information.</p>
+              <p style="font-size:.82rem;color:var(--muted)">Administration-approved entries may proceed without a Partner code where a manual invitation exception has been recorded.</p>
+            </div>
+
+            <!-- Acceptance checkbox -->
+            <div class="terms-box">
+              <div class="terms-prompt">Tick to confirm before submitting</div>
+              <div class="accept-cb-wrap">
+                <input class="accept-cb-input" type="checkbox" id="terms-cb" name="terms_accepted" required onchange="checkSubmit()">
+                <label class="accept-cb-label" for="terms-cb">
+                  <span class="accept-cb-box">
+                    <span class="accept-cb-check">✓</span>
+                  </span>
+                  <span class="accept-cb-copy">
+                    <span class="accept-cb-title">I have read and accept the <a href="../docs/COGS_CJVM_Partnership_Agreement.pdf" target="_blank" style="color:var(--gold-2);text-decoration:underline">Joint Venture Partnership Agreement Version 5.0 (15 April 2026)</a>.</span>
+                    <span class="accept-cb-text">I understand that I am becoming a Partner in a community joint venture, not an investor in a managed fund. I understand that Partners exercise day-to-day control over the trust's operations through the Partners' proprietary governance system, and that the Trustee's role is limited to legal custody, compliance, and fiat processing.</span>
+                  </span>
+                </label>
+              </div>
+              <div class="accept-cb-note">Tick the box above to enable the Submit button. By confirming, you accept the Joint Venture Partnership Agreement and the entrenched founding principles of the CJVM Hybrid Trust. <a href="../terms/index.html" style="color:var(--gold-2)">Terms of participation</a> · <a href="../docs/COGS_CJVM_Partnership_Agreement.pdf" target="_blank" style="color:var(--gold-2)">Download JVPA (PDF)</a></div>
+            </div>
+
+            <div class="step-nav">
+              <button type="button" class="btn-secondary" onclick="goStep(1)">← Back</button>
+              <button class="btn-primary" type="submit" id="submit-btn" disabled style="opacity:.45;cursor:not-allowed;margin-left:auto">
+                Register as a Partner →
+              </button>
+            </div>
+            <div class="form-status" id="formStatus"></div>
+          </div>
+
+        </form>
+
+        <!-- Side panel -->
+        <aside class="side-panel reveal">
+          <h3>What happens after you register</h3>
+          <ul>
+            <li>Your Partner record is created and your registration is lodged</li>
+            <li>You go to the Partner area with your partnership information and next steps</li>
+            <li>You set up your vault password and 2FA from there</li>
+            <li>Payment via Stripe appears as a pill inside your vault</li>
+            <li>Once payment is confirmed, your vault shows "Vault Secured"</li>
+          </ul>
+          <p>Your stewardship commitment is recorded the first time you open your vault — this establishes your stated intent as a Partner before the dashboard opens.</p>
+          <div class="side-faq">
+            <a href="../faq/index.html#faq-why-4">Why is it $4?</a>
+            <a href="../faq/index.html#faq-vault">What is the Independence Vault?</a>
+            <a href="../faq/index.html#faq-one-vote">One Partner, one vote explained</a>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+</div>
+
+<script>
+/* ── Invitation code state ── */
+var _inviteValid = false;
+var _inviterName = '';
+var _inviterPartnerId = '';
+
+/* ── Read invite token / code from URL or stored referral on load ── */
+(function(){
+  var STORAGE_KEY = 'cogs_partner_invite_v1';
+  var MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+  function normaliseInvite(value){
+    value = String(value || '').trim();
+    return value ? value.toUpperCase() : '';
+  }
+
+  function getInviteFromUrl(){
+    var params = new URLSearchParams(window.location.search);
+    return normaliseInvite(
+      params.get('invite') ||
+      params.get('invite_token') ||
+      params.get('ref') ||
+      params.get('code') ||
+      params.get('partner_code')
+    );
+  }
+
+  function readStoredInvite(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return null;
+      var parsed = JSON.parse(raw);
+      if(!parsed || !parsed.code || !parsed.stored_at) return null;
+      var age = Date.now() - new Date(parsed.stored_at).getTime();
+      if(!isFinite(age) || age < 0 || age > MAX_AGE_MS){
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+      return parsed;
+    }catch(e){
+      try{ localStorage.removeItem(STORAGE_KEY); }catch(_e){}
+      return null;
+    }
+  }
+
+  function storeInvite(code, source){
+    code = normaliseInvite(code);
+    if(!code) return null;
+    var payload = { code: code, stored_at: new Date().toISOString(), source: source || 'join' };
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }catch(e){}
+    return payload;
+  }
+
+  var urlInvite = getInviteFromUrl();
+  var stored = urlInvite ? storeInvite(urlInvite, 'join_url') : readStoredInvite();
+  var prefill = urlInvite || (stored && stored.code) || '';
+
+  if (prefill) {
+    var inp = document.getElementById('invite_code_input');
+    if (inp) {
+      inp.value = normaliseInvite(prefill);
+      setTimeout(validateInviteCode, 400);
+    }
+  }
+
+  window.COGSInvite = window.COGSInvite || {
+    key: STORAGE_KEY,
+    read: readStoredInvite,
+    store: storeInvite,
+    clear: function(){ try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} }
+  };
+})();
+
+/* ── Invitation validation ── */
+function onInviteInput() {
+  if (_inviteValid) {
+    _inviteValid = false; _inviterName = ''; _inviterPartnerId = '';
+    document.getElementById('invite_validation_status').value = 'missing';
+    document.getElementById('invited_by_partner_id').value = '';
+    document.getElementById('invite_verified_at').value = '';
+    var wrap = document.getElementById('invite-wrap');
+    wrap.classList.remove('validated','invalid');
+    var st = document.getElementById('invite-status');
+    st.className = 'invite-status'; st.textContent = '';
+    checkSubmit();
+  }
+}
+
+async function validateInviteCode() {
+  var inp   = document.getElementById('invite_code_input');
+  var code  = (inp.value || '').trim().toUpperCase();
+  var btn   = document.getElementById('invite-validate-btn');
+  var st    = document.getElementById('invite-status');
+  var wrap  = document.getElementById('invite-wrap');
+
+  if (!code) {
+    st.className = 'invite-status err';
+    st.textContent = 'Please enter a Partner invitation code.';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Checking\u2026';
+  st.className = 'invite-status loading';
+  st.textContent = 'Verifying invitation code\u2026';
+  wrap.classList.remove('validated','invalid');
+
+  try {
+    var root = document.body.dataset.root || '../';
+    var res = await fetch(root + '_app/api/index.php?route=invitations/validate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({ code: code, entry_type: 'personal' })
+    });
+    var json = await res.json();
+    var d = (json && json.data) ? json.data : json;
+
+    if (json.success && d.valid) {
+      _inviteValid = true;
+      _inviterName = d.inviter_name || 'Partner';
+      _inviterPartnerId = d.inviter_partner_id || '';
+      document.getElementById('invite_code_used').value         = code;
+      document.getElementById('invite_validation_status').value = 'valid';
+      document.getElementById('invited_by_partner_id').value    = _inviterPartnerId;
+      document.getElementById('invite_verified_at').value       = new Date().toISOString();
+      wrap.classList.add('validated');
+      st.className = 'invite-status ok';
+      st.innerHTML = 'Invitation confirmed. You were invited by Partner: <span class="invite-inviter-name">' + escText(_inviterName) + '</span>.';
+    } else {
+      _inviteValid = false;
+      wrap.classList.add('invalid');
+      document.getElementById('invite_validation_status').value = d.reason || 'invalid';
+      st.className = 'invite-status err';
+      var reason = d.reason || d.message || 'invalid';
+      if (reason === 'expired')
+        st.textContent = 'This invitation code has expired. Please request a new one from the Partner who invited you.';
+      else if (reason === 'revoked')
+        st.textContent = 'This invitation code has been revoked. Please contact the Partner who invited you or administration.';
+      else if (reason === 'inactive_inviter')
+        st.textContent = 'The Partner who issued this code is not currently active. Please contact administration.';
+      else
+        st.textContent = 'This invitation code could not be verified. Please check the code, use the original invitation link, or contact administration.';
+    }
+  } catch(err) {
+    wrap.classList.add('invalid');
+    st.className = 'invite-status err';
+    st.textContent = 'Verification service is temporarily unavailable. Please try again or contact administration.';
+    document.getElementById('invite_validation_status').value = 'error';
+  }
+
+  btn.disabled = false; btn.textContent = 'Verify code';
+  checkSubmit();
+}
+
+function escText(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Step navigation ── */
+var currentStep = 1;
+function goStep(n) {
+  if (n === 2 && !validateStep1()) return;
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  var prev = document.querySelector('[data-step="'+currentStep+'"]');
+  if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+  if (currentStep < n) document.getElementById('conn-' + currentStep) && document.getElementById('conn-1').classList.add('done');
+  currentStep = n;
+  document.getElementById('step-' + n).classList.add('active');
+  document.querySelector('[data-step="'+n+'"]').classList.add('active');
+  document.querySelector('[data-step="'+n+'"]').classList.remove('done');
+  if (n === 2) populateConfirm();
+  document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── Step 1 validation ── */
+function validateStep1() {
+  var req = ['first_name','last_name','email','mobile','dob'];
+  var ok = true;
+  req.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.style.borderColor = '#f0857a'; ok = false;
+      el.addEventListener('input', function(){ el.style.borderColor = ''; }, {once:true});
+    }
+  });
+  var emailEl = document.getElementById('email');
+  if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+    emailEl.style.borderColor = '#f0857a'; ok = false;
+    emailEl.addEventListener('input', function(){ emailEl.style.borderColor = ''; }, {once:true});
+  }
+  var addrEmpty = false;
+  ['street','suburb','state','postcode'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el && !el.value.trim()) { addrEmpty = true; }
+  });
+  if (addrEmpty) {
+    showManual();
+    ['street','suburb','state','postcode'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && !el.value.trim()) {
+        el.style.borderColor='#f0857a'; ok=false;
+        el.addEventListener('input',function(){el.style.borderColor='';},{once:true});
+      }
+    });
+  }
+  if (!ok) {
+    var first = document.querySelector('#step-1 [style*="f0857a"]');
+    if (first) first.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  return ok;
+}
+
+/* ── Populate confirm summary ── */
+function populateConfirm() {
+  var fn  = (document.getElementById('first_name').value||'').trim();
+  var ln  = (document.getElementById('last_name').value||'').trim();
+  var em  = (document.getElementById('email').value||'').trim();
+  var mob = (document.getElementById('mobile').value||'').trim();
+  document.getElementById('cs-name').textContent    = fn + ' ' + ln;
+  document.getElementById('cs-contact').textContent = [em, mob].filter(Boolean).join(' \u00b7 ');
+  var dobVal = (document.getElementById('dob')||{}).value||'';
+  var dobEl  = document.getElementById('cs-dob');
+  if (dobEl) dobEl.textContent = dobVal
+    ? 'DOB: ' + new Date(dobVal+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})
+    : '';
+  var sub   = (document.getElementById('suburb')||{}).value||'';
+  var state = (document.getElementById('state')||{}).value||'';
+  var pc    = (document.getElementById('postcode')||{}).value||'';
+  var str   = (document.getElementById('street')||{}).value||'';
+  document.getElementById('cs-address').textContent = [str,sub,state,pc].filter(Boolean).join(', ') || '(not provided)';
+  /* Show inviter row if validated */
+  var inviteRow  = document.getElementById('cs-invite-row');
+  var inviteName = document.getElementById('cs-invite-name');
+  if (_inviteValid && inviteRow && inviteName) {
+    inviteRow.style.display = ''; inviteName.textContent = _inviterName;
+  } else if (inviteRow) { inviteRow.style.display = 'none'; }
+  updateInviteBlock();
+}
+
+/* ── Invite block gate ── */
+function updateInviteBlock() {
+  var block = document.getElementById('invite-block');
+  var btn   = document.getElementById('submit-btn');
+  if (!block || !btn) return;
+  if (_inviteValid) {
+    block.classList.remove('active');
+  } else {
+    block.classList.add('active');
+    btn.disabled = true;
+    btn.style.opacity = '.45';
+    btn.style.cursor  = 'not-allowed';
+  }
+}
+
+/* ── Terms checkbox enables submit (only if invite also valid) ── */
+function checkSubmit() {
+  var cb  = document.getElementById('terms-cb');
+  var btn = document.getElementById('submit-btn');
+  var canSubmit = cb && cb.checked && _inviteValid;
+  btn.disabled      = !canSubmit;
+  btn.style.opacity = canSubmit ? '1' : '.45';
+  btn.style.cursor  = canSubmit ? 'pointer' : 'not-allowed';
+  updateInviteBlock();
+}
+
+/* ── Address search (stub) ── */
+function addrSearch(val) {
+  var dd = document.getElementById('addr-dropdown');
+  if (val.length < 3) { dd.classList.remove('open'); return; }
+  dd.classList.add('open');
+  dd.innerHTML = '<div class="addr-option" onclick="selectAddr(\''+val+'\')">'+val+' (continue typing or enter manually below)</div>';
+}
+function selectAddr(val) {
+  document.getElementById('addr-search').value = val;
+  document.getElementById('addr-dropdown').classList.remove('open');
+}
+function showManual() {
+  var m = document.getElementById('addr-manual');
+  m.classList.remove('hidden'); m.classList.add('show'); m.style.display = 'grid';
+  var btn = document.querySelector('.addr-manual-btn');
+  if (btn) btn.style.display = 'none';
+  ['street','suburb','state','postcode'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.required = true;
+  });
+}
+
+/* ── Form submit ── */
+document.getElementById('join-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  var btn    = document.getElementById('submit-btn');
+  var status = document.getElementById('formStatus');
+  if (!document.getElementById('terms-cb').checked) return;
+  /* Hard gate — must have valid invite or admin override */
+  var inviteStatus = document.getElementById('invite_validation_status').value;
+  if (inviteStatus !== 'valid' && inviteStatus !== 'override_approved') {
+    updateInviteBlock();
+    document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+
+  document.getElementById('full_name').value =
+    (document.getElementById('first_name').value||'').trim() + ' ' +
+    (document.getElementById('last_name').value||'').trim();
+
+  btn.disabled = true; btn.textContent = 'Registering\u2026';
+  status.className = 'form-status loading';
+  status.textContent = 'Lodging your registration\u2026';
+
+  try {
+    var data = Object.fromEntries(new FormData(this));
+    data['reservation_notice_accepted']    = true;
+    data['reservation_notice_version']     = 'jvpa-v5.0';
+    data['reservation_notice_accepted_at'] = new Date().toISOString();
+    data['jvpa_version_accepted']          = 'COGS_CJVM_Partnership_Agreement';
+    data['jvpa_accepted_at']               = new Date().toISOString();
+    data['stewardship_module'] = {
+      module_name:  'stewardship_awareness',
+      completed_at: new Date().toISOString(),
+      answers: {
+        q11: 'agree_understand',
+        q12: 'long_term_stewardship',
+        q21: 'fifty_fifty_split',
+        q31: 'veto_extraction',
+        q41: 'acknowledge_risk'
+      }
+    };
+
+    var root  = document.body.dataset.root || '../';
+    var route = this.dataset.apiRoute || 'snft-reserve';
+    var res   = await fetch(root + '_app/api/' + route, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    var json = await res.json();
+    var d = (json && json.data) ? json.data : json;
+    if (!res.ok) throw new Error(d.message || d.error || json.error || 'Registration failed.');
+
+    status.className = 'form-status success';
+    status.textContent = 'Registration complete. Taking you to the Partner area\u2026';
+
+    var mn  = d.member_number || '';
+    var mob = d.mobile        || '';
+    var fn  = d.first_name    || '';
+
+    var payload = JSON.stringify({ member_number: mn, mobile: mob, first_name: fn,
+                                   inviter_name: _inviterName || '' });
+    try { localStorage.setItem('cogs_snft_member', payload); } catch(ex) {}
+    try { sessionStorage.setItem('cogs_snft_thankyou', payload); } catch(ex) {}
+    try { localStorage.removeItem('cogs_partner_invite_v1'); } catch(ex) {}
+
+    var origin = window.location.origin;
+    var dest   = origin + '/community/index.html?welcome=1';
+    if (mn)  dest += '&member=' + encodeURIComponent(mn);
+    if (mob) dest += '&mobile=' + encodeURIComponent(mob);
+    if (fn)  dest += '&name='   + encodeURIComponent(fn);
+    setTimeout(function(){ window.location.href = dest; }, 800);
+
+  } catch(err) {
+    status.className = 'form-status error';
+    status.textContent = err.message || 'Something went wrong. Please try again.';
+    btn.disabled = false;
+    btn.textContent = 'Register as a Partner \u2192';
+    checkSubmit();
+  }
+});
+
+/* ── Scroll reveal ── */
+(function(){
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
+  }, {threshold:.07});
+  document.querySelectorAll('.side-panel, .reveal').forEach(function(el){ io.observe(el); });
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<?php
+declare(strict_types=1);
+
+if (!function_exists('admin_sidebar_detect_active')) {
+    function admin_sidebar_detect_active(): string {
+        $script = basename((string)($_SERVER['PHP_SELF'] ?? ''));
+        $section = (string)($_GET['section'] ?? '');
+        $focus = (string)($_GET['focus'] ?? '');
+        $type = (string)($_GET['type'] ?? '');
+
+        if ($script === 'dashboard.php') return 'dashboard';
+        if ($script === 'landing.php') return 'landing';
+        if ($script === 'payments.php') return 'payments';
+        if ($script === 'kids.php') return 'kids';
+        if ($script === 'approvals.php') return 'approvals';
+        if ($script === 'execution.php') return 'execution';
+        if ($script === 'asset_backing.php') return 'asset_backing';
+        if ($script === 'asx_holdings.php') return 'asx_holdings';
+        if ($script === 'asx_purchases.php') return 'asx_purchases';
+        if ($script === 'rwa_assets.php') return 'rwa_assets';
+        if ($script === 'rwa_valuations.php') return 'rwa_valuations';
+        if ($script === 'governance.php') return 'governance';
+        if ($script === 'foundation_day.php') return 'foundation_day';
+        if ($script === 'infrastructure.php') return 'infrastructure';
+        if ($script === 'zones.php') return 'zones';
+        if ($script === 'classes.php') return 'classes';
+        if ($script === 'messages.php') {
+            if (in_array($section, ['wallet_messages','announcements','proposals','binding_polls','stewardship_responses','email_templates','email_access'], true)) {
+                return $section;
+            }
+            return 'communications';
+        }
+        if ($script === 'members.php') {
+            if ($type === 'personal') return 'members_personal';
+            if ($type === 'business') return 'businesses';
+            if ($focus === 'wallet_activity') return 'wallet_activity';
+            if ($focus === 'beta_exchanges') return 'beta_exchanges';
+            return 'partner_registry';
+        }
+        if ($script === 'businesses.php') return 'businesses';
+        if ($script === 'evidence_reviews.php') return 'evidence_reviews';
+        if ($script === 'mint_queue.php') return 'mint_queue';
+        if ($script === 'mint_batches.php') return 'mint_batches';
+        if ($script === 'chain_handoff.php') return 'chain_handoff';
+        if ($script === 'audit.php') return 'audit';
+        if ($script === 'audit_access.php') return 'audit_access';
+        if ($script === 'doc-downloads.php') return 'doc_downloads';
+        if ($script === 'reconciliation.php') return 'reconciliation';
+        if ($script === 'reconciliation_agent.php') return 'reconciliation';
+        if ($script === 'accounting.php') return 'accounting';
+        if ($script === 'ledger.php') return 'accounting';
+        if ($script === 'expenses.php') return 'expenses';
+        if ($script === 'trust_income.php') return 'trust_income';
+        if ($script === 'session-check.php') return 'session_check';
+        if ($script === 'legacy-dependencies.php') return 'legacy_dependencies';
+        if ($script === 'operator_security.php') return 'operator_security';
+        if ($script === 'settings.php') return 'settings';
+        if ($script === 'exceptions.php') return 'exceptions';
+        if ($script === 'email_access.php') return 'email_access';
+        if ($script === 'admin_kyc.php') return 'admin_kyc';
+        return 'dashboard';
+    }
+}
+
+if (!function_exists('admin_sidebar_link')) {
+    function admin_sidebar_link(string $href, string $label, string $key, string $active): string {
+        $isActive = $active === $key ? 'active' : '';
+        return '<a href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '" class="' . $isActive . '">' .
+            htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</a>';
+    }
+}
+
+if (!function_exists('admin_sidebar_styles_once')) {
+    function admin_sidebar_styles_once(): void {
+        static $printed = false;
+        if ($printed) return;
+        $printed = true;
+        echo '<style>
+:root{--sidebar-w:210px;--sidebar-collapsed:56px}
+.admin-shell,.shell{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);min-height:100vh}
+.sidebar{background:linear-gradient(180deg,#121a23,#16212b);border-right:1px solid rgba(255,255,255,.08);padding:10px 8px;min-width:0;overflow:hidden;position:relative;transition:width .2s ease,padding .2s ease}
+.sidebar .brand{display:flex;gap:8px;align-items:center;margin:0 0 12px}
+.sidebar .brand img{width:32px;height:32px;border-radius:50%;flex-shrink:0}
+.sidebar .brand strong{display:block;font-size:12px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar .brand span{color:#9fb0c1;font-size:11px}
+.sidebar .side-section{margin-bottom:4px}
+.sidebar .side-toggle{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;margin:0 0 2px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(255,255,255,.02);cursor:pointer;user-select:none;transition:background .15s,border-color .15s}
+.sidebar .side-toggle:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}
+.sidebar .side-toggle .side-label{font-size:11px;font-weight:700;color:#9fb0c1;text-transform:uppercase;letter-spacing:.06em;margin:0;white-space:nowrap;overflow:hidden}
+.sidebar .side-toggle .side-chev{font-size:9px;color:#9fb0c1;transition:transform .2s;flex-shrink:0}
+.sidebar .side-section.open .side-toggle{border-color:rgba(212,178,92,.2);background:rgba(212,178,92,.04)}
+.sidebar .side-section.open .side-toggle .side-label{color:#d4b25c}
+.sidebar .side-section.open .side-chev{transform:rotate(180deg)}
+.sidebar .nav{display:none;padding:2px 0 6px 8px}
+.sidebar .side-section.open .nav{display:grid;gap:3px}
+.sidebar .nav a{display:block;text-decoration:none;color:#eef2f7;padding:6px 9px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(255,255,255,.02);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .12s,border-color .12s}
+.sidebar .nav a:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+.sidebar .nav a.active{background:linear-gradient(180deg,#d4b25c,#b98b2f);color:#201507;border-color:rgba(212,178,92,.35);font-weight:800}
+.sidebar .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px}
+.sidebar-toggle{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#eef2f7;cursor:pointer;font-size:14px;line-height:28px;text-align:center}
+.admin-shell.is-collapsed,.shell.is-collapsed{grid-template-columns:var(--sidebar-collapsed) minmax(0,1fr)}
+.sidebar.is-collapsed{padding-inline:6px}
+.sidebar.is-collapsed .brand div,.sidebar.is-collapsed .side-section,.sidebar.is-collapsed .card{display:none}
+.sidebar.is-collapsed .brand{justify-content:center;margin-top:20px}
+.sidebar.is-collapsed .brand img{display:block}
+@media(max-width:700px){.admin-shell,.shell{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);max-height:350px;overflow-y:auto}.sidebar-toggle{display:none}}
+@media(min-width:701px){.sidebar{height:100vh;overflow-y:auto;position:sticky;top:0}}
+</style>
+<script>
+(function(){
+  function boot(){
+    var shell=document.querySelector(".admin-shell") || document.querySelector(".shell");
+    var sidebar=document.querySelector(".sidebar");
+    var btn=document.querySelector(".sidebar-toggle");
+    if(!shell||!sidebar||!btn) return;
+    var key="cogs_admin_sidebar_collapsed";
+    if(localStorage.getItem(key)==="1"){ shell.classList.add("is-collapsed"); sidebar.classList.add("is-collapsed"); }
+    btn.addEventListener("click", function(){
+      shell.classList.toggle("is-collapsed");
+      sidebar.classList.toggle("is-collapsed");
+      localStorage.setItem(key, sidebar.classList.contains("is-collapsed") ? "1" : "0");
+    });
+    // Section expand/collapse
+    sidebar.querySelectorAll(".side-toggle").forEach(function(t){
+      t.addEventListener("click", function(){
+        var sec = t.closest(".side-section");
+        if(sec) sec.classList.toggle("open");
+        saveSections();
+      });
+    });
+    // Restore open sections + auto-open section with active link
+    var saved = {};
+    try{ saved = JSON.parse(localStorage.getItem("cogs_admin_sections")||"{}"); }catch(e){}
+    sidebar.querySelectorAll(".side-section").forEach(function(sec){
+      var id = sec.dataset.sec;
+      if(sec.querySelector(".nav a.active") || saved[id]) sec.classList.add("open");
+    });
+    function saveSections(){
+      var state = {};
+      sidebar.querySelectorAll(".side-section").forEach(function(s){
+        if(s.classList.contains("open")) state[s.dataset.sec] = 1;
+      });
+      try{ localStorage.setItem("cogs_admin_sections", JSON.stringify(state)); }catch(e){}
+    }
+  }
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded", boot);}else{boot();}
+})();
+</script>';
+    }
+}
+
+if (!function_exists('admin_sidebar_render')) {
+    function admin_sidebar_render(string $active = ''): void
+    {
+        if ($active === '') $active = admin_sidebar_detect_active();
+        admin_sidebar_styles_once();
+
+        $groups = [
+            'Control Plane' => [
+                ['key' => 'dashboard',         'label' => '◈  Dashboard',               'href' => './dashboard.php'],
+                ['key' => 'partner_registry',  'label' => '👥  Partner Registry',        'href' => './members.php'],
+                ['key' => 'businesses',        'label' => '🏢  Business Registry',       'href' => './businesses.php'],
+                ['key' => 'payments',          'label' => '💳  Payments',                'href' => './payments.php'],
+                ['key' => 'approvals',         'label' => '✅  Approvals',               'href' => './approvals.php'],
+                ['key' => 'kids',              'label' => '👶  Kids kS-NFT',             'href' => './kids.php'],
+                ['key' => 'execution',         'label' => '⛓  Execution',               'href' => './execution.php'],
+                ['key' => 'classes',           'label' => '🪙  COG$ Classes',            'href' => './classes.php'],
+                ['key' => 'settings',          'label' => '⚙  Settings',                'href' => './settings.php'],
+            ],
+            'Governance & Evidence' => [
+                ['key' => 'governance',        'label' => '🗳  Governance',              'href' => './governance.php'],
+                ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',           'href' => './foundation_day.php'],
+                ['key' => 'communications',    'label' => '📣  Communications',          'href' => './messages.php'],
+                ['key' => 'zones',             'label' => '📍  Zones & Eligibility',     'href' => './zones.php'],
+                ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',        'href' => './evidence_reviews.php'],
+                ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',              'href' => './admin_kyc.php'],
+                ['key' => 'exceptions',        'label' => '⚠  Exceptions',               'href' => './exceptions.php'],
+                ['key' => 'audit',             'label' => '📜  Audit / Recovery',        'href' => './audit.php'],
+                ['key' => 'audit_access',      'label' => '🔐  Audit Access',             'href' => './audit_access.php'],
+            ],
+            'Assets & Backing' => [
+                ['key' => 'asx_holdings',       'label' => '📈  ASX Holdings',            'href' => './asx_holdings.php'],
+                ['key' => 'asx_purchases',      'label' => '🧾  ASX Purchases',           'href' => './asx_purchases.php'],
+                ['key' => 'rwa_assets',         'label' => '🪨  RWA Assets',              'href' => './rwa_assets.php'],
+                ['key' => 'rwa_valuations',     'label' => '💠  RWA Valuations',          'href' => './rwa_valuations.php'],
+                ['key' => 'asset_backing',      'label' => '🧷  Asset Backing',           'href' => './asset_backing.php'],
+            ],
+            'Infrastructure & Security' => [
+                ['key' => 'infrastructure',    'label' => '🛰  Sovereign Infrastructure', 'href' => './infrastructure.php'],
+                ['key' => 'accounting',        'label' => '📊  Trust Accounting',        'href' => './accounting.php'],
+                ['key' => 'reconciliation',    'label' => '🤖  Reconciliation Agent',    'href' => './reconciliation_agent.php'],
+                ['key' => 'expenses',          'label' => '🧾  Expenses',                'href' => './expenses.php'],
+                ['key' => 'trust_income',      'label' => '💰  Trust Income',            'href' => './trust_income.php'],
+                ['key' => 'doc_downloads',     'label' => '📥  Doc Downloads',           'href' => './doc-downloads.php'],
+                ['key' => 'email_access',      'label' => '📮  Email Access',            'href' => './email_access.php'],
+                ['key' => 'operator_security', 'label' => '🔐  Operator Security',       'href' => './operator_security.php'],
+            ],
+            'Legacy Bridge Diagnostics' => [
+                ['key' => 'reconciliation',     'label' => '🔍  Reconciliation',         'href' => './reconciliation.php'],
+                ['key' => 'mint_queue',         'label' => '⛏  Mint Queue (bridge)',    'href' => './mint_queue.php'],
+                ['key' => 'mint_batches',       'label' => '📦  Mint Batches (bridge)',  'href' => './mint_batches.php'],
+                ['key' => 'chain_handoff',      'label' => '🔗  Chain Handoff (bridge)', 'href' => './chain_handoff.php'],
+                ['key' => 'session_check',      'label' => '🔐  Session Check',          'href' => './session-check.php'],
+                ['key' => 'legacy_dependencies','label' => '🧩  Legacy Bridge Status',   'href' => './legacy-dependencies.php'],
+            ],
+            'Communications Detail' => [
+                ['key' => 'wallet_messages',       'label' => '✉  Wallet Notices',      'href' => './messages.php?section=wallet_messages'],
+                ['key' => 'announcements',         'label' => '📢  Announcements',       'href' => './messages.php?section=announcements'],
+                ['key' => 'proposals',             'label' => '📝  Proposals',           'href' => './messages.php?section=proposals'],
+                ['key' => 'binding_polls',         'label' => '⚖  Binding Polls',       'href' => './messages.php?section=binding_polls'],
+                ['key' => 'stewardship_responses', 'label' => '◈  Stewardship',         'href' => './messages.php?section=stewardship_responses'],
+                ['key' => 'email_templates',       'label' => '📄  Email Templates',     'href' => './messages.php?section=email_templates'],
+            ],
+        ];
+        ?>
+        <aside class="sidebar">
+          <button type="button" class="sidebar-toggle" title="Collapse navigation">≡</button>
+          <div class="brand">
+            <img src="./assets/logo_webcir.png" alt="COG$ Australia" onerror="this.style.display='none'">
+            <div><strong>COG$ of AUSTRALIA FOUNDATION</strong><span>Authoritative control plane</span></div>
+          </div>
+          <?php foreach ($groups as $groupLabel => $links):
+            $secId = strtolower(str_replace([' ', '&', '$'], ['_','',''], $groupLabel));
+            $hasActive = false;
+            foreach ($links as $link) { if ($active === $link['key']) { $hasActive = true; break; } }
+          ?>
+            <div class="side-section<?= $hasActive ? ' open' : '' ?>" data-sec="<?= htmlspecialchars($secId, ENT_QUOTES, 'UTF-8') ?>">
+              <div class="side-toggle">
+                <p class="side-label"><?= htmlspecialchars($groupLabel, ENT_QUOTES, 'UTF-8') ?></p>
+                <span class="side-chev">▼</span>
+              </div>
+              <div class="nav">
+                <?php foreach ($links as $link): echo admin_sidebar_link($link['href'], $link['label'], $link['key'], $active); endforeach; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
+
+          <div class="card" style="padding:12px;margin-top:12px">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+              <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c1">Using Admin</div>
+              <?php if (function_exists('ops_admin_help_button')): ?>
+                <?= ops_admin_help_button('Admin navigation', 'Control Plane pages are the live operator route. Governance & Evidence pages explain legal and decision records. Legacy Bridge Diagnostics pages are for transitional checks and retirement readiness, not for primary day-to-day operations.') ?>
+              <?php endif; ?>
+            </div>
+            <p style="margin:0 0 10px;color:#9fb0c1;font-size:11.5px;line-height:1.55">Start on Dashboard for orientation, then move through Payments, Approvals, and Execution for live operations. Use diagnostics only when you are checking bridge state or investigating a fault.</p>
+            <div class="nav" style="display:grid;gap:6px;padding:0">
+              <?= admin_sidebar_link('./dashboard.php', 'Dashboard guide', 'dashboard', $active) ?>
+              <?= admin_sidebar_link('./landing.php', 'Admin guide & workflow', 'landing', $active) ?>
+              <?= admin_sidebar_link('./legacy-dependencies.php', 'Bridge status', 'legacy_dependencies', $active) ?>
+            </div>
+          </div>
+        </aside>
+        <?php
+    }
+}
+?>

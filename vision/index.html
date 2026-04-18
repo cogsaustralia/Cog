@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Vision | COG$ of Australia Foundation</title>
+  <meta name="description" content="The vision for COG$ of Australia Foundation — a partner-operated joint venture partnership circulating real value, anchored to Country, Partner Governance and Co-operation.">
+  <link rel="icon" type="image/png" href="../assets/logo_webcir.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0a0804;--panel:rgba(16,11,4,.92);--panel2:rgba(36,26,11,.92);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.92);--muted:rgba(244,232,207,.84);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:22px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    a{color:inherit}
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/cogs_garden.webp') center 28%/cover no-repeat;opacity:.14;filter:sepia(.45) saturate(.9) brightness(.55)}
+    .bg-vignette{position:absolute;inset:0;background:
+      radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.56) 0%,transparent 60%),
+      radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.97) 0%,transparent 70%),
+      radial-gradient(ellipse 35% 100% at 0% 50%,rgba(10,8,4,.68) 0%,transparent 60%),
+      radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.68) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:1040px;margin:0 auto;padding:0 24px}
+
+    .x-local-site-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 26px;border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:200}
+    .x-local-brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
+    .x-local-brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block;flex-shrink:0}
+    .x-local-brand-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+    .x-local-brand-name{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .x-local-brand-sub{font-size:.7rem;color:var(--text2);letter-spacing:.05em;line-height:1.2}
+    .x-local-brand-tag{font-size:.68rem;color:var(--muted);letter-spacing:.04em;line-height:1.2}
+    .x-local-header-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .x-local-nav-link,.btn-ghost{font-size:.78rem;font-weight:700;color:var(--text);text-decoration:none;letter-spacing:.07em;text-transform:uppercase;border:1px solid rgba(240,209,138,.32);padding:9px 15px;border-radius:999px;white-space:nowrap;background:rgba(240,209,138,.03);transition:color .2s,border-color .2s,background .2s,transform .18s}
+    .x-local-nav-link:hover,.x-local-nav-link:focus-visible,.btn-ghost:hover,.btn-ghost:focus-visible{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale);transform:translateY(-1px)}
+    .btn-primary{display:inline-flex;align-items:center;justify-content:center;min-width:188px;padding:12px 18px;border-radius:999px;border:1px solid rgba(240,209,138,.52);background:linear-gradient(145deg,rgba(66,47,18,.98),rgba(30,21,8,.96));color:var(--text);text-decoration:none;font-size:.84rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 12px 28px rgba(0,0,0,.35);transition:transform .18s,border-color .2s,background .2s}
+    .btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.72);background:linear-gradient(145deg,rgba(78,56,22,1),rgba(36,25,9,.98))}
+    .btn-secondary{display:inline-flex;align-items:center;justify-content:center;min-width:188px;padding:12px 18px;border-radius:999px;border:1px solid rgba(240,209,138,.34);background:rgba(240,209,138,.08);color:var(--text);text-decoration:none;font-size:.84rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:transform .18s,border-color .2s,background .2s}
+    .btn-secondary:hover,.btn-secondary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.58);background:rgba(240,209,138,.14)}
+
+    .hero-point span,.metric span,.doc-copy,.doc-link,.badge,.quick-pills a,.step-card p,.panel p,.panel li,.promise-card p,.card p,.legal-band p{overflow-wrap:anywhere}
+    .x-local-btn-vault{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid rgba(240,209,138,.46);background:linear-gradient(145deg,rgba(54,38,15,.94),rgba(24,16,6,.92));box-shadow:0 10px 24px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);color:var(--text);text-decoration:none;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;transition:transform .18s,border-color .2s,background .2s,box-shadow .2s}
+    .x-local-btn-vault:hover,.x-local-btn-vault:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.70);background:linear-gradient(145deg,rgba(66,47,18,.98),rgba(30,21,8,.96));box-shadow:0 12px 30px rgba(0,0,0,.40),0 0 0 4px rgba(240,209,138,.08)}
+    .x-local-btn-vault svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+
+    .page-hero{padding:64px 0 52px}
+    .content-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:42px;align-items:start}
+    .content-grid > *, .section-grid > *, .three-grid > *, .doc-grid > *, .promise-grid > *, .image-split > *{min-width:0}
+    .eyebrow,.kicker{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:6px 16px;border-radius:99px;margin-bottom:22px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.6rem);font-weight:500;line-height:1.08;letter-spacing:-.03em;color:var(--text);margin-bottom:18px}
+    .lead{font-size:1rem;font-weight:400;color:var(--text2);line-height:1.82;margin-bottom:26px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+    .quick-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .quick-pills a{display:inline-flex;align-items:center;padding:8px 13px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(40,31,19,.42);color:var(--text2);font-size:.82rem;text-decoration:none;transition:.2s ease}
+    .quick-pills a:hover{color:var(--text);border-color:var(--gold-rim2);background:rgba(52,40,24,.62)}
+    .visual-panel{position:sticky;top:90px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .figure-card{position:relative;overflow:hidden;border-radius:var(--r);border:1px solid var(--line2);background:rgba(13,10,6,.96);box-shadow:var(--shadow)}
+    .figure-card img{display:block;width:100%;height:auto}
+    .figure-card figcaption{padding:14px 16px;border-top:1px solid var(--line);font-size:.86rem;line-height:1.7;color:var(--text2);background:rgba(15,11,6,.92)}
+    .visual-copy{margin-top:18px;padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+    .visual-copy h3{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--text);margin:8px 0 8px}
+    .visual-copy p{font-size:.88rem;color:var(--text2);line-height:1.72}
+
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 54px}
+    .section{padding:0 0 58px}
+    .section-header{margin-bottom:28px}
+    .section-header h2{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:500;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin:10px 0 10px}
+    .section-header p{font-size:.96rem;color:var(--text2);line-height:1.78;max-width:760px}
+    .quote-band,.message-band,.split-band,.legal-band,.phase-band,.docs-band{padding:30px 36px}
+    .quote-band{text-align:center}
+    .quote-band blockquote{font-family:var(--serif);font-size:clamp(1.35rem,3vw,2.15rem);font-style:italic;line-height:1.2;letter-spacing:-.025em;color:var(--gold-1);margin:10px 0 14px}
+    .quote-band p,.message-band p,.legal-band p,.phase-band p,.docs-band p{font-size:.92rem;color:var(--text2);line-height:1.78}
+
+    .value-grid,.promise-grid,.step-grid,.docs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .value-card,.promise-card,.step-card,.doc-card{padding:22px;border-radius:var(--r);background:linear-gradient(180deg,rgba(29,22,13,.88),rgba(14,11,8,.80));border:1px solid var(--line);box-shadow:var(--shadow)}
+    .value-card strong,.promise-card strong,.step-card strong,.doc-card strong{display:block;margin-bottom:8px;font-size:1.04rem;font-weight:600;color:var(--gold-1)}
+    .value-card p,.promise-card p,.step-card p,.doc-card p{margin:0;font-size:.87rem;color:var(--text2);line-height:1.72}
+    .card-img,.step-card-img{display:block;width:100%;height:128px;object-fit:cover;border-radius:12px;margin-bottom:16px;border:1px solid var(--line);filter:sepia(.16) saturate(1.08) brightness(.9)}
+
+    .image-split{padding:30px 34px;display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:center}
+    .image-split h2,.split-band h2,.message-band h2,.phase-band h2,.docs-band h2{font-family:var(--serif);font-size:clamp(1.75rem,4vw,2.65rem);font-weight:500;line-height:1.08;letter-spacing:-.03em;color:var(--text);margin:8px 0 12px}
+    .image-split p{font-size:.92rem;color:var(--text2);line-height:1.8}
+    .image-split img{display:block;width:100%;height:auto;border-radius:16px;border:1px solid var(--line2);background:rgba(255,255,255,.03)}
+.image-split-figure{display:flex;flex-direction:column;gap:0;min-width:0;border-radius:16px;overflow:hidden}
+.image-split-figure img{display:block;width:100%;height:auto;border:1px solid var(--line2);border-radius:16px 16px 0 0;background:rgba(255,255,255,.03)}
+.image-split-figure figcaption{padding:14px 16px;border:1px solid var(--line);border-top:0;font-size:.86rem;line-height:1.7;color:var(--text2);background:rgba(15,11,6,.92);border-radius:0 0 16px 16px}
+.image-split-figure.image-missing figcaption{border-top:1px solid var(--line);border-radius:16px}
+    .text-stack{display:grid;gap:12px}
+    .bullet-list{display:grid;gap:10px;margin-top:6px}
+    .bullet-item{padding:15px 16px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08)}
+    .bullet-item strong{display:block;font-size:.9rem;font-weight:700;color:var(--gold-1);margin-bottom:4px}
+    .bullet-item span{display:block;font-size:.84rem;line-height:1.68;color:var(--text2)}
+
+    .reserve-landscape{position:relative;border-radius:var(--r);overflow:hidden;margin-bottom:32px;min-height:280px;border:1px solid var(--line2)}
+    .reserve-landscape img{width:100%;display:block;object-fit:cover;max-height:340px;opacity:.83;filter:sepia(.25) saturate(1.15) brightness(.82)}
+    .reserve-landscape-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(10,8,4,.90) 42%,rgba(10,8,4,.25) 100%);display:flex;flex-direction:column;justify-content:center;padding:42px 48px}
+    .reserve-landscape-overlay h2{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:500;line-height:1.08;letter-spacing:-.03em;color:var(--text);margin:10px 0 14px;max-width:500px}
+    .reserve-landscape-overlay p{font-size:.92rem;color:var(--text2);line-height:1.8;max-width:460px}
+
+    .cap-callout{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;padding:28px 32px}
+    .cap-img{width:110px;height:110px;flex-shrink:0;object-fit:cover;border-radius:50%;border:2px solid var(--gold-rim2);filter:sepia(.1) saturate(1.1)}
+    .cap-num{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:500;color:var(--gold-1);letter-spacing:-.03em;display:block;line-height:1;margin-bottom:4px}
+    .cap-label{font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);display:block;margin-bottom:14px}
+    .cap-callout p{font-size:.9rem;color:var(--text2);line-height:1.78;margin:0}
+    .cap-rule{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+    .cap-rule-item{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--text2)}
+    .cap-rule-item::before{content:'◈';color:var(--gold-2);font-size:.7rem}
+
+    .phase-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;margin-top:18px}
+    .phase-box{padding:18px 20px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08)}
+    .phase-box h3{font-family:var(--serif);font-size:1.12rem;font-weight:500;color:var(--gold-1);margin-bottom:8px}
+    .phase-box p{font-size:.86rem;line-height:1.72;color:var(--text2)}
+    .phase-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .badge{font-size:.77rem;padding:7px 12px;border-radius:99px;border:1px solid var(--line);color:var(--text2);background:rgba(240,209,138,.04)}
+    .badge.active{border-color:rgba(240,209,138,.38);color:var(--gold-1);background:rgba(240,209,138,.08)}
+
+    .doc-card a{display:inline-block;margin-top:10px;font-size:.82rem;font-weight:700;color:var(--gold-1);text-decoration:none;border-bottom:1px solid rgba(240,209,138,.34);padding-bottom:2px}
+    .doc-card a:hover{border-color:var(--gold-rim2)}
+
+    .split-band{display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center}
+    .cta-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+
+    .x-local-site-footer{border-top:1px solid var(--line);padding:36px 28px 38px;background:rgba(8,6,2,1)}
+    .x-local-footer-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:28px;align-items:start}
+    .x-local-footer-name{font-family:var(--serif);font-size:.96rem;color:var(--gold-1);margin-bottom:8px;font-weight:600}
+    .x-local-footer-detail{font-size:.82rem;color:var(--text2);line-height:1.82}
+    .x-local-footer-col h4{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .x-local-footer-links{display:flex;flex-direction:column;gap:8px}
+    .x-local-footer-links a{font-size:.84rem;color:var(--text2);text-decoration:none;line-height:1.45;transition:color .2s}
+    .x-local-footer-links a:hover{color:var(--gold-1)}
+    .x-local-footer-bottom{max-width:1040px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .x-local-footer-bottom div{font-size:.76rem;color:var(--muted);line-height:1.7}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .hero-animate{animation:fadeUp .65s ease both}
+    .hero-animate:nth-child(1){animation-delay:.05s}.hero-animate:nth-child(2){animation-delay:.15s}.hero-animate:nth-child(3){animation-delay:.25s}.hero-animate:nth-child(4){animation-delay:.32s}.hero-animate:nth-child(5){animation-delay:.40s}
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.in{opacity:1;transform:translateY(0)}
+
+    @media(max-width:980px){
+      .content-grid,.image-split,.phase-grid{grid-template-columns:1fr}
+      .visual-panel{position:static;margin-top:24px}
+      .value-grid,.promise-grid,.step-grid,.docs-grid{grid-template-columns:1fr 1fr}
+      .split-band{grid-template-columns:1fr}
+      .cta-actions{flex-direction:row;flex-wrap:wrap}
+      .cap-callout{grid-template-columns:1fr}
+      .cap-img{width:82px;height:82px}
+      .x-local-footer-inner{grid-template-columns:1fr 1fr}
+      .x-local-footer-inner>div:first-child{grid-column:1/-1}
+    }
+    @media(max-width:720px){
+      .x-local-site-header{padding:12px 16px;align-items:flex-start}
+      .x-local-brand-tag{display:none}
+      .x-local-header-nav{gap:8px}
+      .x-local-nav-link,.btn-ghost,.x-local-btn-vault{font-size:.7rem;padding:8px 12px}
+    }
+    @media(max-width:580px){
+      .value-grid,.promise-grid,.step-grid,.docs-grid{grid-template-columns:1fr}
+      .cta-actions{flex-direction:column}
+      .hero-actions .btn-primary,.hero-actions .btn-secondary{width:100%}
+      .quote-band,.message-band,.split-band,.legal-band,.phase-band,.docs-band{padding:22px 20px}
+      .image-split{padding:20px 18px;gap:18px}
+      .reserve-landscape-overlay{padding:24px 22px}
+      .cap-callout{padding:20px 18px}
+      .x-local-footer-inner{grid-template-columns:1fr}
+      .x-local-footer-bottom{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+<div class="site-shell">
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
+<main>
+    <section class="page-hero">
+      <div class="container content-grid">
+        <div>
+          <span class="eyebrow hero-animate">The Vision</span>
+          <h1 class="hero-animate">A partnership circulating real value, anchored to Country, Co-operation and shared stewardship.</h1>
+          <p class="lead hero-animate">The vision behind COG$ is to build a partner-operated joint venture partnership in which ordinary Australians step closer to real value, real assets and real decision-making. Partners direct the life of the joint venture through Partner Polls and the Independence Vault, while the Trustee performs limited legal custody, compliance, and fiat-processing functions.</p>
+          <div class="hero-actions hero-animate">
+            <a class="btn-primary" href="../join/index.html">Become a Partner</a>
+            <a class="btn-secondary" href="../tell-me-more/index.html">Tell me how it works</a>
+          </div>
+          <div class="quick-pills hero-animate" aria-label="Quick navigation">
+            <a href="#country">Country</a>
+            <a href="#partner-governance">Partner Governance</a>
+            <a href="#cooperation">Co-operation</a>
+            <a href="#reserve">Perpetual Reserve</a>
+            <a href="#circulation">Value circulation</a>
+            <a href="#phase">Expansion Day</a>
+          </div>
+        </div>
+        <div class="visual-panel hero-animate">
+          <figure class="figure-card">
+            <picture>
+              <source srcset="../assets/cogs_green_field.webp" type="image/webp">
+              <img src="../assets/cogs_green_field.png" alt="Partner stewardship and shared work on Country">
+            </picture>
+            <figcaption>The vision starts with a different assumption: value should not be owned at a distance and extracted by default. It should be recognised, governed, circulated and stewarded in relationship with place.</figcaption>
+          </figure>
+          <div class="visual-copy">
+            <span class="kicker">In one sentence</span>
+            <h3>Real-world value for real-world assets.</h3>
+            <p>COG$ is being built so that wealth connected to land, minerals, businesses and Partner effort can move in a more accountable loop — with Partners closer to both the benefit and the responsibility.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card quote-band">
+          <span class="kicker">The proposition</span>
+          <blockquote>What belongs to the life of the nation should carry the voice of the nation.</blockquote>
+          <p>The project is designed to turn that idea into structure: Partner stewardship, one-Partner-one-vote national governance, real-world-asset transparency, and a practical economy in which value circulates within and between communities above, amongst, and around the natural wealth — rather than bypassing them entirely.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal" id="country">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">The three values</span>
+          <h2>Country. Partner Governance. Co-operation.</h2>
+          <p>The vision is not just financial. It is constitutional and cultural. It is about where value sits, who gets a voice, and what kind of economy we normalise together.</p>
+        </div>
+        <div class="value-grid">
+          <article class="value-card">
+            <picture>
+              <source srcset="../assets/cogs_fnac.webp" type="image/webp">
+              <img class="card-img" src="../assets/cogs_fnac.png" alt="First Nations gathering and people on Country">
+            </picture>
+            <strong>Country</strong>
+            <p>Country is treated as more than a site of extraction. The vision recognises land, water, cultural heritage and in-ground minerals as matters of stewardship, legitimacy and long-term value, with First Nations custodianship treated as foundational, not decorative.</p>
+          </article>
+          <article class="value-card" id="partner-governance">
+            <picture>
+              <source srcset="../assets/cogs_poll.webp" type="image/webp">
+              <img class="card-img" src="../assets/cogs_poll.png" alt="Partner governance and voting">
+            </picture>
+            <strong>Partner Governance</strong>
+            <p>Partner governance is not meant to be symbolic. The structure is designed to give ordinary Australians a real place in the room through open entry, one-Partner-one-vote national governance, and Partner-benefit pathways built into the architecture.</p>
+          </article>
+          <article class="value-card" id="cooperation">
+            <picture>
+              <source srcset="../assets/cogs_land.webp" type="image/webp">
+              <img class="card-img" src="../assets/cogs_land.png" alt="Working the land together">
+            </picture>
+            <strong>Co-operation</strong>
+            <p>Co-operation is the engine. The aim is not heroic posturing or isolated complaint. It is coordinated, lawful participation: Partners, businesses and local communities moving together under rules they can inspect, question and improve.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card image-split">
+          <div class="text-stack">
+            <span class="kicker">In plain language</span>
+            <h2>This is a joint venture people help operate, not a structure they watch from the sidelines.</h2>
+            <p>COG$ is designed so that the Partners are the operators. They propose, vote, direct stewardship, direct proxy voting, and shape the operational rules through the governance system. The Trustee holds legal title, interfaces with the legal system, processes fiat where required, and carries the limited Trustee Functions needed to protect the structure.</p>
+            <div class="bullet-list">
+              <div class="bullet-item">
+                <strong>Partnership Agreement first</strong>
+                <span>The Joint Venture Partnership Agreement is the supreme governing instrument. It sits above the Declaration and the Sub-Trust Deeds.</span>
+              </div>
+              <div class="bullet-item">
+                <strong>Declaration and Deeds for legal effect</strong>
+                <span>The Declaration and the Sub-Trust Deeds give the joint venture legal trust effect in Australian law and record the Partners’ agreed rules.</span>
+              </div>
+              <div class="bullet-item">
+                <strong>Partners’ governance system for day-to-day control</strong>
+                <span>The Independence Vault, Partner Polls, and the Partners’ own infrastructure are how Partners exercise operational control in practice.</span>
+              </div>
+            </div>
+          </div>
+          <figure class="image-split-figure">
+            <picture>
+              <source srcset="../assets/cogs_gov.webp" type="image/webp">
+              <img src="../assets/cogs_gov.png" alt="" onerror="this.style.display='none'; this.closest('figure').classList.add('image-missing');">
+            </picture>
+            <figcaption>Partner direction is visible through the governance layer: the Independence Vault, Partner Polls, proposal-making, and the operating rules the Partners can inspect and improve together.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card legal-band">
+          <span class="kicker">Operating structure</span>
+          <h2>A partner-operated joint venture partnership with Partner control.</h2>
+          <p>The CJVM operates as a partner-operated joint venture partnership in which Partners exercise day-to-day control through the governance system. The Trustee holds legal title, performs limited Trustee Functions, and deals with compliance-facing matters and fiat where required.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal" id="reserve">
+      <div class="container">
+        <div class="reserve-landscape">
+          <picture>
+            <source srcset="../assets/cogs_perpetual.webp" type="image/webp">
+            <img src="../assets/cogs_perpetual.png" alt="COG$ Perpetual Reserve — Australia preserved, minerals below">
+          </picture>
+          <div class="reserve-landscape-overlay">
+            <span class="kicker">How the economy is anchored</span>
+            <h2>The Perpetual Reserve.</h2>
+            <p>The economic engine is not built on extraction. It is built on documented presence — the permanently recognised stewardship of in-ground resources that stay where they are, forming the foundation of a circular, interest-free Partner economy.</p>
+          </div>
+        </div>
+        <div class="message-band glass-card">
+          <span class="kicker">The design principle</span>
+          <h2>Value is already here. In the ground, waiting to be governed — not extracted.</h2>
+          <p>The Perpetual Reserve shifts the founding assumption from “how do we sell this?” to “how do we steward this?” That shift changes everything about how value moves. By keeping minerals in situ, the Foundation treats them as a permanent stewardship asset: one that cannot be spent, depleted, or removed by a board decision. The value of what is below the surface does not depend on taking it out.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal" id="circulation">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Value circulation</span>
+          <h2>COG$ is meant to move through a real economy, not vanish into abstraction.</h2>
+          <p>The vision is a circulation model: Partners step in, the Partner Asset Pool holds real-world assets, participating businesses accept COG$, and value keeps moving through relationships that people can see and use.</p>
+        </div>
+        <div class="glass-card image-split">
+          <picture>
+            <source srcset="../assets/cogs-circular-economy.webp" type="image/webp">
+            <img src="../assets/cogs-circular-economy.png" alt="COG$ circular economy and Partner flow diagram">
+          </picture>
+          <div class="text-stack">
+            <div class="bullet-list">
+              <div class="bullet-item">
+                <strong>Real assets</strong>
+                <span>The model is built around lawful shareholding, real-world-asset records and a Partner Asset Pool tied to assets that actually exist — CHESS-held on the ASX register.</span>
+              </div>
+              <div class="bullet-item">
+                <strong>No exit to fiat</strong>
+                <span>COG$ cannot be sold for Australian dollars. This is an entrenched rule — not a policy. It keeps value circulating instead of leaking.</span>
+              </div>
+              <div class="bullet-item">
+                <strong>Business utility</strong>
+                <span>Businesses are invited to help carry value through trade, goods and services, without taking over civic governance. Utility strengthens the economy; it does not displace Partner authority.</span>
+              </div>
+              <div class="bullet-item">
+                <strong>Value stays in community</strong>
+                <span>The aim is for more value to loop through Partners, businesses and shared benefit instead of simply exiting the places that generate it.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Three protected pools</span>
+          <h2>A structure designed to steward, distribute and return value.</h2>
+          <p>The three-pool model expresses the vision in practical form. One pool is designed to hold and grow the Partner Asset Pool, one is designed to carry Partner distributions where income is generated, and one is designed to direct value toward shared-benefit projects and benefit on Country.</p>
+        </div>
+        <div class="value-grid">
+          <article class="value-card">
+            <picture>
+              <source srcset="../assets/cogs_econ.webp" type="image/webp">
+              <img class="card-img" src="../assets/cogs_econ.png" alt="Partner Asset Pool and lawful shareholding">
+            </picture>
+            <strong>Sub-Trust A · Partner Asset Pool</strong>
+            <p>The asset-side pool holds all CHESS-registered ASX shares and approved real-world assets in perpetuity. The basket is designed for long-term stewardship, not liquidation.</p>
+          </article>
+          <article class="value-card">
+            <picture>
+              <source srcset="../assets/cogs-three-pools.webp" type="image/webp">
+              <img class="card-img" src="../assets/cogs-three-pools.png" alt="Three-pool structure diagram">
+            </picture>
+            <strong>Sub-Trust B · Partner distributions</strong>
+            <p>Where income is generated, the model is designed to distribute a protected Partner stream. Distribution is mandatory — not discretionary — within 60 days of receipt.</p>
+          </article>
+          <article class="value-card">
+            <picture>
+              <source srcset="../assets/cogs_fnac.webp" type="image/webp">
+              <img class="card-img" src="../assets/cogs_fnac.png" alt="Shared benefit on Country">
+            </picture>
+            <strong>Sub-Trust C · Shared benefit</strong>
+            <p>Shared-benefit projects are not an afterthought. Sub-Trust C receives a portion of Donation COG$ flow and directs value toward shared-benefit projects and benefit on Country, ring-fenced from the other pools. An entrenched minimum of <strong>30% of annual Sub-Trust C distributions</strong> goes to First Nations programs — a floor no resolution can reduce.</p>
+        <!-- LEGAL DRAFTER NOTE: cl.33E.3 of the Declaration describes the 30% First Nations floor as a 'standing priority class of beneficiaries receiving not less than 30%' but cl.33E.3 does not appear in the entrenched provisions table (cl.35). Confirm with legal drafter whether this is entrenched before describing it as such in public-facing content. -->
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card cap-callout">
+          <picture>
+            <source srcset="../assets/cogs_build.webp" type="image/webp">
+            <img class="cap-img" src="../assets/cogs_build.png" alt="Partner governance across Australia">
+          </picture>
+          <div>
+            <span class="cap-num">75%</span>
+            <span class="cap-label">Partner special resolution required to expand RWA COG$ supply — controlled by Partners</span>
+            <p>The <strong>RWA COG$</strong> class is the Real World Asset token class tied to in-ground mineral stewardship. Supply can only expand when new in-ground assets are formally identified and independently valued, and only then by 75% special resolution of Partners. No board decision or Trustee action can expand supply. The founding supply is set by the Partners through the governance system — not by the Foundation unilaterally.</p>
+            <div class="cap-rule">
+              <span class="cap-rule-item">New in-ground assets formally identified and independently valued</span>
+              <span class="cap-rule-item">75% Partner special resolution required</span>
+              <span class="cap-rule-item">No board or Trustee override exists</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card message-band">
+          <span class="kicker">The founding promise</span>
+          <h2>Fair Share. Fair Say. Fair Go.</h2>
+          <p>The Perpetual Reserve, the three-pool structure, the no-fiat rule, and the 75% governance protection all exist to honour one promise. The in-ground assets are held in permanent stewardship for the Partners and the communities above, amongst, and around them — not extracted for distant benefit.</p>
+          <div class="promise-grid" style="margin-top:22px">
+            <article class="promise-card">
+              <strong>Fair Share</strong>
+              <p>The model is designed so that Partners — not external markets — remain closest to the value the Foundation holds. Participation is designed to be interest-free and permanently within reach.</p>
+            </article>
+            <article class="promise-card">
+              <strong>Fair Say</strong>
+              <p>National governance decisions are made by people, not by capital. Every personal Partner holds one equal national governance vote. Wealth does not buy additional voice.</p>
+            </article>
+            <article class="promise-card">
+              <strong>Fair Go</strong>
+              <p>The $4 personal contribution and $1 kids pathway are intended to keep entry low. Pay It Forward exists so participation does not depend on already having spare money.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">What this vision is trying to do</span>
+          <h2>Build a structure that is harder to ignore, harder to capture, and easier to belong to.</h2>
+          <p>The ambition is disciplined. It aims to combine real-asset grounding with civic legitimacy and practical utility, while keeping authority close to the people who actually hold the partnership together.</p>
+        </div>
+        <div class="promise-grid">
+          <article class="promise-card"><strong>Open entry</strong><p>The low-cost pathway is there so participation is not reserved for the already wealthy, the already connected, or the loudest people in the room.</p></article>
+          <article class="promise-card"><strong>Equal national voice</strong><p>The national promise is simple: one Partner, one vote on Foundation-wide decisions, so governance is not bought by bigger money.</p></article>
+          <article class="promise-card"><strong>First Nations partnership</strong><p>The vision treats First Nations custodianship, consent and cultural standing as part of the structure itself — because legitimacy in Australia demands more than symbolic consultation.</p></article>
+          <article class="promise-card"><strong>In-ground value</strong><p>The model rejects the lazy assumption that if something can be extracted, it eventually should be. Partners should have a real say over what creates the greatest long-term good.</p></article>
+          <article class="promise-card"><strong>Business without capture</strong><p>Businesses are invited into circulation, utility and trade, while civic governance remains protected as a human civic function.</p></article>
+          <article class="promise-card"><strong>Public benefit by design</strong><p>The aim is not only to hold value, but to circulate it — toward belonging, resilience, capability and stronger local conditions over time.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal" id="phase">
+      <div class="container">
+        <div class="glass-card phase-band">
+          <span class="kicker">Expansion Day</span>
+          <h2>One defined infrastructure milestone.</h2>
+          <p>Expansion Day is the point at which the first Partners Governance Node and the on-ledger operating layer go live for the partnership, as certified by the Board and endorsed by the First Nations Advisory Council. Governance Foundation Day remains the first online Partner poll milestone.</p>
+          <div class="phase-grid">
+            <div class="phase-box">
+              <h3>Governance Foundation Day</h3>
+              <p>The first partnership-wide online poll milestone. It marks the opening of Partner-directed governance in visible, practical form.</p>
+            </div>
+            <div class="phase-box">
+              <h3>Expansion Day</h3>
+              <p>The first Partners Governance Node goes live — as certified by the Board and endorsed by the First Nations Advisory Council — the Partner Governance Vault becomes the active operating layer, and token and governance records run inside the Partners’ own infrastructure.</p>
+            </div>
+          </div>
+          <div class="phase-badges">
+            <span class="badge active">✓ Governance Foundation Day — 14 May 2026</span>
+            <span class="badge">Expansion Day — first Partners Governance Node</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Three practical steps</span>
+          <h2>Step in early. Learn the structure. Help hold the line.</h2>
+          <p>This page invites participation: read the structure, ask hard questions, and step in early if it makes sense to you.</p>
+        </div>
+        <div class="step-grid">
+          <article class="step-card">
+            <picture>
+              <source srcset="../assets/cogs_join.webp" type="image/webp">
+              <img class="step-card-img" src="../assets/cogs_join.png" alt="Partners joining the partnership">
+            </picture>
+            <strong>Become a Partner</strong>
+            <p>Secure your place in the partnership, receive your Independence Vault pathway, and be ready for the partnership’s governance and operating milestones.</p>
+          </article>
+          <article class="step-card">
+            <picture>
+              <source srcset="../assets/cogs_econ.webp" type="image/webp">
+              <img class="step-card-img" src="../assets/cogs_econ.png" alt="Working and trading together">
+            </picture>
+            <strong>Bring the idea into daily life</strong>
+            <p>If you run a business, consider how COG$ could be accepted for real goods and services so the value loop becomes usable, not theoretical.</p>
+          </article>
+          <article class="step-card">
+            <picture>
+              <source srcset="../assets/cogs_build.webp" type="image/webp">
+              <img class="step-card-img" src="../assets/cogs_build.png" alt="Partners building together">
+            </picture>
+            <strong>Build with others</strong>
+            <p>The culture matters as much as the code: question it, strengthen it, and help build a structure worthy of trust, patience and alignment.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card docs-band">
+          <span class="kicker">The governing documents</span>
+          <h2>The Vision sits inside a document hierarchy, not beside it.</h2>
+          <p>The Joint Venture Partnership Agreement is the supreme instrument. Below it sit the Hybrid Trust Declaration and the three Sub-Trust Deeds. All governing documents are provided to new Partners during the Partnership Agreement process.</p>
+          <p style="margin-top:14px"><a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline;font-weight:600">Become a Partner to access the full document suite →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="glass-card split-band">
+          <div>
+            <span class="kicker">What happens next</span>
+            <h2>The vision becomes real only when people and businesses step into it.</h2>
+            <p class="lead">Join not in triumphal spirit, but in service. Join because the country is worth the effort. Join because Partners should be closer to the value they help protect and direct. Join because some futures can only be secured when people decide that standing together, under rules they can live with, is wiser than waiting separately for someone else to act first.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn-primary" href="../join/index.html">Become a Partner</a>
+            <a class="btn-secondary" href="../faq/index.html">Read the FAQ</a>
+            <a class="btn-secondary" href="../skeptic/index.html">Read the Skeptic’s Guide</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+    <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+</div>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>

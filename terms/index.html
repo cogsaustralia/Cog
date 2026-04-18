@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Participation | COGs of Australia Foundation</title>
+  <meta name="description" content="Terms of participation for the COG$ of Australia Foundation — the Joint Venture Partnership Agreement is the supreme governing instrument. Partnership conditions and founding phase disclosures.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(16,11,4,.90);--panel2:rgba(36,26,11,.90);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.74);--muted:rgba(210,185,130,.58);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/cogs_build.webp') center 25%/cover no-repeat;opacity:.12;filter:sepia(.7) saturate(.8) brightness(.65)}
+    .bg-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 90% 50% at 50% 0%,rgba(10,8,4,.5) 0%,transparent 60%),radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.92) 0%,transparent 70%),radial-gradient(ellipse 35% 100% at 0% 50%,rgba(10,8,4,.5) 0%,transparent 60%),radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.5) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    .site-header{border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:sticky;top:0;z-index:200;overflow:hidden}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;min-width:0}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden}
+    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block}
+    .brand-copy{display:flex;flex-direction:column;gap:1px}
+    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .brand-sub{font-size:.61rem;color:rgba(255,248,232,.65);letter-spacing:.04em;line-height:1.2}
+    .brand-tag{font-size:.58rem;color:var(--muted);letter-spacing:.05em;line-height:1.2}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:99px;transition:color .2s,background .2s;white-space:nowrap;letter-spacing:.02em}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold-1);background:var(--gold-pale)}
+    .nav-cta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .btn-primary{font-size:.76rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:8px 18px;border-radius:99px;white-space:nowrap;transition:opacity .2s}
+    .btn-primary:hover{opacity:.88}
+    .btn-ghost{font-size:.71rem;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--gold-rim);padding:7px 15px;border-radius:99px;transition:color .2s,border-color .2s,background .2s;white-space:nowrap;background:none}
+    .btn-ghost:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+    .mobile-toggle{display:none;background:none;border:1px solid var(--gold-rim);color:var(--muted);padding:7px 11px;border-radius:10px;cursor:pointer;font-size:1rem;line-height:1}
+    .mobile-drawer{display:none;flex-direction:column;gap:2px;padding:10px 0 14px;border-top:1px solid var(--line)}
+    .mobile-drawer a{font-size:.88rem;color:var(--muted);text-decoration:none;padding:9px 0;border-bottom:1px solid var(--line);transition:color .2s}
+    .mobile-drawer a:last-child{border-bottom:none}
+    .mobile-drawer a:hover{color:var(--gold-1)}
+    .mobile-drawer.open{display:flex}
+
+    .disclosure{background:linear-gradient(180deg,rgba(42,29,11,.55),rgba(23,17,9,.3));border-bottom:1px solid var(--line);padding:9px 24px;text-align:center}
+    .disclosure p{font-size:.73rem;color:rgba(255,244,221,.62);line-height:1.5}
+
+    .page-hero{padding:60px 0 48px}
+    .eyebrow{display:inline-block;font-size:.67rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:22px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(2rem,5vw,3.4rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;color:var(--text);margin-bottom:20px;max-width:760px}
+    .lead{font-size:.97rem;font-weight:300;color:var(--text2);line-height:1.78;margin-bottom:22px;max-width:760px}
+
+    .section{padding:0 0 58px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 54px}
+    .kicker{display:inline-block;font-size:.64rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .section-header{margin-bottom:28px}
+    .section-header h2{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:500;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin:10px 0 10px}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .split-band{padding:32px 36px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center}
+    .split-band h2{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);font-weight:500;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin:10px 0 14px}
+    .split-band .lead{font-size:.92rem;margin-bottom:0}
+    .cta-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-items:flex-start}
+
+    .policy-grid{display:grid;gap:14px;max-width:780px;margin:0 auto;grid-template-columns:1fr 1fr}
+    .policy-item{padding:22px;border-radius:var(--r);background:linear-gradient(180deg,rgba(29,22,13,.88),rgba(14,11,8,.80));border:1px solid var(--line);box-shadow:var(--shadow)}
+    .policy-item h3{margin:0 0 10px;font-size:1.05rem;color:var(--gold-1);font-weight:500}
+    .policy-item p,.policy-item ul{margin:0;color:var(--muted);line-height:1.72;font-size:.83rem}
+    .policy-item ul{padding-left:20px}
+    .policy-item ul li+li{margin-top:6px}
+    .policy-notice{padding:24px 26px;border-radius:var(--r);background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.22);max-width:780px;margin:0 auto;box-shadow:var(--shadow)}
+    .policy-notice p{margin:0;color:var(--muted);line-height:1.72;font-size:.84rem}
+    .policy-notice strong{color:var(--gold-1)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .hero-animate{animation:fadeUp .65s ease both}
+    .hero-animate:nth-child(1){animation-delay:.05s}
+    .hero-animate:nth-child(2){animation-delay:.15s}
+    .hero-animate:nth-child(3){animation-delay:.25s}
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.in{opacity:1;transform:translateY(0)}
+
+    @media(max-width:860px){
+      .policy-grid{grid-template-columns:1fr}
+      .split-band{grid-template-columns:1fr}
+      .cta-actions{flex-direction:row}
+    }
+    @media(max-width:580px){
+      .nav-links{display:none}
+      .mobile-toggle{display:block}
+      .brand-copy{overflow:hidden}
+      .brand-name{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .brand-sub,.brand-tag{display:none}
+      .cta-actions{flex-direction:column}
+      .split-band{padding:24px 20px;gap:20px}
+    }
+  </style>
+</head>
+<body>
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+<div class="site-shell">
+  <header class="site-header">
+    <div class="container">
+      <div class="nav-row">
+        <a class="brand" href="../index.html">
+          <img class="brand-logo" src="../assets/logo_webcir.png" alt="COG$ of Australia Foundation">
+          <div class="brand-copy">
+            <span class="brand-name">COG$ of Australia Foundation</span>
+            <span class="brand-sub">Community Owned Gold &amp; Silver™</span>
+            <span class="brand-tag">Community Operated Governance Structure™</span>
+          </div>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="../vision/index.html">The Vision</a>
+          <a href="../tell-me-more/index.html">Tell me how it works</a>
+          <a href="../faq/index.html">FAQ</a>
+        </nav>
+        <div class="nav-cta">
+          <a class="btn-primary" href="../join/index.html#form">Join now — $4</a>
+          <button class="mobile-toggle" id="mobileToggle" aria-expanded="false" aria-label="Open navigation">☰</button>
+        </div>
+      </div>
+      <div class="mobile-drawer" id="mobileDrawer">
+        <a href="../join/index.html">Join now — $4</a>
+        <a href="../vision/index.html">The Vision</a>
+        <a href="../tell-me-more/index.html">Tell me how it works</a>
+        <a href="../faq/index.html">FAQ</a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">Terms of participation</span>
+        <h1>What you are agreeing to when you become a Partner.</h1>
+        <p class="lead">These terms set out the conditions under which you participate in the COG$ of Australia Foundation community during the current founding phase. The Joint Venture Partnership Agreement is the supreme governing instrument and is provided in full during the join process. Please read these terms and the JVPA carefully before submitting your application.</p>
+        <p class="lead" style="margin-top:10px;">By submitting the join form and making your $4 partnership contribution, you confirm that you have read and accepted the Joint Venture Partnership Agreement and these terms.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container policy-notice">
+        <p><strong>Founding phase notice.</strong> COG$ of Australia Foundation is currently in its founding phase. No financial product, token, or investment product has been offered or issued. All reservations recorded during this phase are proposals of intent only and carry no current financial obligation.</p>
+        <p style="margin-top:10px"><strong>Regulatory position.</strong> The CJVM Hybrid Trust operates as a community joint venture partnership. The Foundation's self-assessed position is that the CJVM does not constitute a managed investment scheme within the meaning of section 9 of the Corporations Act 2001 (Cth), because Partners exercise day-to-day control over the operations of the trust through their proprietary cryptographic governance system. The Foundation does not hold an AFSL and does not operate as a responsible entity under Chapter 5C. By becoming a Partner, you accept the Foundation's self-assessed regulatory position. If applicable law later requires a specific authorisation or disclosure for a particular activity, the Trustee will obtain or provide what is required.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container section-header">
+        <span class="kicker">Partnership</span>
+        <h2>Your partnership and what it means.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Who may join</h3>
+          <p>Individual partnership (Personal S-NFT) is open to natural persons aged 18 or over who are Australian residents. The kids pathway (Kids S-NFT) is available for children under 18 through their parent or legal guardian's account. Business partnership (B-NFT) is open to verified Australian businesses with a valid ABN.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Partnership contribution</h3>
+          <p>The once-only partnership contribution for individual Partners is $4.00 AUD, payable through the online join form via Stripe secure payment. Kids S-NFT partnerships are $1.00 each. Business partnerships are $40.00. These contributions are administrative partnership contributions, not payments for any financial product, token, or investment instrument. The $4.00 Personal S-NFT contribution is permanently fixed as an entrenched provision of the Declaration and cannot be changed by any resolution.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Partner number</h3>
+          <p>On joining, you are assigned a permanent Partner number. This number is your identity inside the community and is used to log into your Independence Vault wallet. It is non-transferable and permanently tied to your partnership. Keep it safe.</p>
+        </div>
+        <div class="policy-item">
+          <h3>One equal vote</h3>
+          <p>Each individual personal partnership carries one equal national governance vote, regardless of the number of COG$ classes reserved. Wealth does not buy additional governance voice. Business partnerships carry one limited governance vote only — on the appointment, removal, or replacement of the Trustee — but do not carry general national governance voting rights.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Non-transferability (soulbound)</h3>
+          <p>Personal S-NFT partnerships are soulbound — non-transferable during the holder's lifetime. They cannot be sold, exchanged, pledged, or listed. The partnership passes to a nominated heir on death only. Business B-NFT partnerships are entity-bound and cannot be transferred to any other entity or person. On dissolution of the entity, the B-NFT is cancelled. The partnership contribution is a participation contribution, not a deposit or investment, and is not refundable.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container section-header">
+        <span class="kicker">Reservation notice</span>
+        <h2>What your COG$ reservations mean — and what they do not.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Reservations are no-obligation proposals of intent</h3>
+          <p>Any COG$ classes you reserve on your join form or in your Independence Vault are records of proposed future intent only. They are not purchases, not investments, not securities, and not financial products. They have no current legal, financial, or contractual effect.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Reservation values are indicative only</h3>
+          <p>Any dollar values shown against reserved COG$ classes are indicative only. They reflect the proposed unit price for a possible future compliant offer. They are not prices paid, committed, or guaranteed. You may change or cancel your reservations at any time through your Independence Vault wallet.</p>
+        </div>
+        <div class="policy-item">
+          <h3>No obligation to proceed</h3>
+          <p>You are under no obligation to proceed with any reservation. The Foundation is under no obligation to issue the reserved tokens at any future time. Reservations may be changed, withdrawn, or allowed to lapse by either party before any compliant offer is made.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Reservation notice version</h3>
+          <p>When you submit your join form, the version of the Joint Venture Partnership Agreement and the reservation notice accepted by you is recorded permanently against your Partner record. Specifically, the acceptance record contains: your S-NFT token ID, Partner number, the JVPA version title and number, a SHA-256 cryptographic hash of the agreement text at the version you accepted (enabling verification that the document has not been altered), the UTC timestamp, your IP address and device information, your Stripe payment reference, and a flag confirming your acceptance checkbox was actively engaged. This record is preserved for a minimum of seven years in accordance with JVPA clause 8.1A(f). The SHA-256 acceptance record hash is also written permanently into your S-NFT token metadata at minting and cannot be altered or deleted after that point. You may review the version you accepted in your Independence Vault wallet at any time.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container section-header">
+        <span class="kicker">Conduct and governance</span>
+        <h2>Community standards and Partner obligations.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Stewardship commitment</h3>
+          <p>By joining, you acknowledge that COG$ is a stewardship structure, not a speculative investment. The community is built around long-term public benefit, fair distribution of resource value, and community governance. Conduct that undermines those purposes — including market manipulation, misleading promotion, or deliberate misrepresentation — may result in partnership suspension or termination.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Accurate information</h3>
+          <p>You agree that the information provided on your join form is accurate and complete to the best of your knowledge. Providing false or misleading information may result in partnership being void.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Private community use</h3>
+          <p>This site and its content are for private community use only and are not intended for public display or distribution. Partners must not reproduce, distribute, or publicly display site content without written approval from the Foundation.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Wallet security</h3>
+          <p>You are responsible for the security of your Independence Vault password and wallet access credentials. The Foundation cannot recover access if both your Partner number and on-file contact details are unavailable. Multi-signature board authorisation is required for any core vault operations.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Active participation and Dormant status</h3>
+          <p>The joint venture is not a passive investment. Partners are asked to access their Independence Vault at least once every 12 months. A Partner who does not access the System for a continuous 24-month period is classified as a Dormant Partner. Dormant Partners retain all beneficial entitlements — their token, income unit, and accrued Sub-Trust B distributions are unaffected — but their governance vote is suspended until they re-engage. The Trustee will send a written notice at the 18-month mark. Re-engaging with the System immediately reinstates the vote. Dormant status is never a ground for expulsion and cannot be used to diminish any beneficial right. (JVPA clause 4.11.)</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container section-header">
+        <span class="kicker">Legal and regulatory</span>
+        <h2>Regulatory position and governing framework.</h2>
+      </div>
+      <div class="container policy-grid">
+        <div class="policy-item">
+          <h3>Self-assessed regulatory position</h3>
+          <p>The CJVM Hybrid Trust is a community joint venture partnership in which Partners exercise day-to-day control over the operations of the trust through their proprietary cryptographic governance system. The Foundation's self-assessed position is that the CJVM does not constitute a managed investment scheme within the meaning of section 9 of the Corporations Act 2001 (Cth), because the third limb of that definition — that members do not have day-to-day control — is not satisfied. The Foundation does not hold an AFSL and does not operate as a responsible entity under Chapter 5C. The Foundation engages with the ASIC Innovation Hub as a matter of good governance and transparency. If applicable law requires a specific authorisation or disclosure for a particular activity, the Trustee will obtain or provide what is required.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Governance Foundation Day and Expansion Day</h3>
+          <p>The partnership activates in two stages. Governance Foundation Day (14 May 2026) activates Tier 1 governance tokens (Personal S-NFT, Kids S-NFT, Business B-NFT, Pay It Forward, Donation, Community COG$, Resident COG$) — these are governance and community participation instruments within the joint venture. Expansion Day is when the first Sovereign Node goes live on the Partners Consensus Network — as certified by the Board and endorsed by the First Nations Advisory Council — and the Partners' proprietary governance system becomes operational. Tier 2 classes (ASX COG$, Landholder COG$, RWA COG$) may be activated on or from Expansion Day, subject to any regulatory requirements determined by applicable law at that time.</p>
+        </div>
+        <div class="policy-item">
+          <h3>No-fiat-sale rule</h3>
+          <p>It is a fundamental, entrenched condition of the Declaration that minted tokens must never be sold or traded for fiat currency. Any attempted fiat sale is void from the beginning. Tokens may only be gifted or exchanged for goods and services between Partners via the Foundation Community Vault, subject to applicable verification requirements, class-specific rules, and lock periods.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Anti-capture provision</h3>
+          <p>The Foundation cannot be privately owned, sold, or captured for private benefit. An anti-capture cap of 1,000,000 tokens across all classes combined applies per person, excluding auto-allocated Resident COG$ which do not count toward the cap. The not-for-profit structure and entrenched provisions are designed to prevent concentration of control or drift from the Foundation's stated purposes.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Trust structure</h3>
+          <p>The supreme governing instrument is the Joint Venture Partnership Agreement (JVPA v5). The Foundation also operates through the CJVM Hybrid Trust Declaration (the Declaration), with three ring-fenced Sub-Trusts: Sub-Trust A (Community Basket Unit Trust) for holding assets, Sub-Trust B (Dividend Distribution Trust) for mandatory Partner income distribution, and Sub-Trust C (Community Projects Fund) for community benefit. The Declaration includes entrenched founding provisions that cannot be altered by ordinary Partner or board action. Governing instruments are available to Partners in the Independence Vault library. The full document suite is provided during the Partnership Agreement process when you join.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Changes to terms</h3>
+          <p>These terms may be updated from time to time. Where changes materially affect Partner rights or obligations, Partners will be notified through their Independence Vault. The version of the reservation notice you accepted on joining is permanently recorded and not retroactively altered.</p>
+        </div>
+        <div class="policy-item">
+          <h3>Governing law</h3>
+          <p>The Declaration is governed by the laws of South Australia, Australia (Trustee Act 1936 (SA), Law of Property Act 1936 (SA)). The courts of South Australia have non-exclusive jurisdiction. The Trustee for COGS of Australia Foundation Hybrid Trust is the entity through which the Foundation operates. ABN: 61 734 327 831. Address: C/- Drake Village Resource Centre, Drake Village NSW 2469. Contact: hello@cogsaustralia.org.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container split-band glass-card">
+        <div>
+          <span class="kicker">Questions</span>
+          <h2>Something unclear? Ask before you join.</h2>
+          <p class="lead">If any part of these terms is unclear or you have a question before submitting your form, contact us before proceeding. We would rather you join with full understanding than proceed with uncertainty.</p>
+        </div>
+        <div class="cta-actions">
+          <a class="btn-primary" href="../join/index.html">Join now — $4</a>
+          <a class="btn-ghost" href="../faq/index.html">Read the FAQ</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+</div>
+<script>
+(function(){
+  var toggle=document.getElementById('mobileToggle'),drawer=document.getElementById('mobileDrawer');
+  if(!toggle||!drawer)return;
+  toggle.addEventListener('click',function(){
+    var open=drawer.classList.toggle('open');
+    toggle.setAttribute('aria-expanded',open);
+    toggle.textContent=open?'✕':'☰';
+  });
+})();
+(function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:0.12});
+  document.querySelectorAll('.section,.page-hero').forEach(function(el){el.classList.add('reveal');io.observe(el);});
+  document.querySelectorAll('.page-hero .eyebrow,.page-hero h1,.page-hero .lead').forEach(function(el){el.classList.add('hero-animate');});
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+</body>
+</html>

@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Business Independence Vault | COGs of Australia Foundation</title>
+<link rel="icon" type="image/png" href="../assets/logo_webcir.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a1118;--ink2:#0e1620;--surface:rgba(14,22,32,.95);--card:rgba(16,26,38,.92);--lift:rgba(22,34,50,.88);
+  --border:rgba(96,212,184,.16);--border2:rgba(96,212,184,.32);
+  --teal:#60d4b8;--teal2:#4ca892;--tealglow:rgba(96,212,184,.14);
+  --gold:#f0d18a;--gold2:#c8973e;--goldglow:rgba(200,151,62,.14);
+  --text:#e0eef4;--sub:#8fa8b8;--dim:#5a7080;
+  --ok:#52b87a;--okb:rgba(82,184,122,.1);--warn:#d4a03c;--warnb:rgba(212,160,60,.1);
+  --err:#c46060;--errb:rgba(196,96,96,.1);
+  --font:'DM Sans',system-ui,sans-serif;--serif:'Cormorant Garamond',Georgia,serif;
+  --r:16px;--r2:10px;--sh:0 12px 40px rgba(0,0,0,.45);--bg:#0a1118;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--ink);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px}
+.hidden{display:none!important}
+img{max-width:100%;height:auto}
+
+/* Topbar */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 22px;height:62px;background:#0c1620;border-bottom:2px solid rgba(96,212,184,.38);box-shadow:0 2px 24px rgba(0,0,0,.55)}
+.tb-brand{display:flex;align-items:center;gap:12px}
+.tb-brand img{width:36px;height:36px;border-radius:10px;border:1px solid var(--border2)}
+.tb-title{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--teal);letter-spacing:.03em;display:none}
+@media(min-width:600px){.tb-title{display:block}}
+.tb-right{display:flex;align-items:center;gap:9px}
+.tb-pill{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);font-size:13px;font-weight:500;color:#c8d8e4;cursor:pointer;transition:all .18s;text-decoration:none;font-family:inherit}
+.tb-pill:hover{border-color:rgba(96,212,184,.4);color:#c0e8dc;background:rgba(255,255,255,.1)}
+.tb-pill-label{margin-left:2px}
+.tb-logout{padding:8px 16px;font-size:13px;font-weight:500;color:#c8d8e4;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);border-radius:999px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center}
+.tb-logout:hover{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.12)}
+.tb-logout-label{margin-left:2px}
+
+/* Beta bar */
+.beta-bar{position:fixed;top:62px;left:0;right:0;z-index:99;background:#121c28;border-bottom:1px solid rgba(96,212,184,.2);padding:8px 22px;font-size:12px;color:var(--sub);text-align:center}
+.beta-bar strong{color:var(--teal);font-weight:600}
+
+/* Tab nav */
+.tab-nav{display:flex;gap:0;padding:0 16px;background:#0c1118;border-bottom:1px solid rgba(96,212,184,.2);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;position:fixed;top:99px;left:0;right:0;z-index:98}
+.tab-nav::-webkit-scrollbar{display:none}
+.tnb{display:flex;align-items:center;gap:7px;padding:0 18px;height:50px;font-size:13px;font-weight:500;color:#6a8898;background:none;border:none;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer;font-family:inherit;transition:color .15s}
+.tnb:hover{color:var(--text)}
+.tnb.on{color:var(--teal);border-bottom-color:var(--teal)}
+.tnb-ico{font-size:14px}
+.tnb-label{}
+.tnb-votes-short{display:none}
+.tnb-badge{font-size:10px;background:var(--teal);color:#0a1118;padding:1px 6px;border-radius:99px;font-weight:700}
+
+/* Panels */
+.panel{display:none;flex:1}.panel.on{display:block}
+.pg{max-width:880px;margin:0 auto;padding:20px 22px 60px}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.card-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-hd h3{font-family:var(--serif);font-size:16px;font-weight:500;color:var(--text)}
+.card-bd{padding:18px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid}
+.chip-teal{background:var(--tealglow);border-color:rgba(96,212,184,.3);color:var(--teal)}
+.chip-gold{background:var(--goldglow);border-color:rgba(200,151,62,.3);color:var(--gold)}
+.chip-dim{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);color:var(--dim)}
+
+/* Identity card */
+.id-card{background:linear-gradient(135deg,rgba(14,26,38,.97),rgba(10,20,30,.95));border:1px solid var(--border2);border-radius:var(--r);padding:22px;margin-bottom:16px;position:relative;overflow:hidden}
+.id-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:.4}
+
+/* KPI boxes */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}
+.kpi-val{font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--gold)}
+.kpi-lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.kpi-sub{font-size:11px;color:var(--dim);margin-top:2px}
+
+/* Holdings rows — matching member wallet */
+.tr{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(96,212,184,.08)}
+.tr:last-child{border-bottom:none}
+.tr-ico{flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(96,212,184,.06);border:1px solid rgba(96,212,184,.12);font-size:16px}
+.tr-inf{flex:1;min-width:0}
+.tr-name{font-size:14px;font-weight:500;color:var(--text)}
+.tr-cls{font-size:11px;color:var(--sub);margin-top:2px}
+.tr-val{text-align:right}
+.tr-amt{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--teal);line-height:1;letter-spacing:-.01em}
+.tr-amt-label{font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.tr-edit{font-size:11px;font-weight:600;color:var(--teal);background:rgba(96,212,184,.08);border:1px solid rgba(96,212,184,.2);border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.tr-edit:hover{background:rgba(96,212,184,.15);border-color:var(--border2)}
+/* Inline edit panel */
+.iedit{display:none;padding:12px 18px 16px;background:rgba(96,212,184,.03);border-bottom:1px solid rgba(96,212,184,.08)}
+.iedit.on{display:block}
+.iedit-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.iedit input[type=number]{width:120px;padding:8px 12px;border-radius:10px;border:1px solid rgba(96,212,184,.25);background:rgba(96,212,184,.04);color:var(--teal);font:inherit;font-size:18px;font-weight:700;font-family:var(--serif);text-align:right}
+.iedit input[type=number]:focus{outline:none;border-color:var(--teal);background:rgba(96,212,184,.08)}
+.iedit-note{width:100%;margin-top:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--sub);font:inherit;font-size:12px;resize:vertical;min-height:38px}
+.iedit-note:focus{outline:none;border-color:var(--border2)}
+.iedit-acts{display:flex;gap:8px;margin-top:10px}
+.btn-teal-xs{font-size:11px;font-weight:600;color:#0a1118;background:var(--teal);border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit}
+
+/* Old holdings styles kept for reservation summary */
+.hold-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.hold-row:last-child{border-bottom:none}
+.hold-cls{font-size:13px;font-weight:500;color:var(--text)}
+.hold-cls span{font-size:11px;color:var(--dim);margin-left:6px}
+.hold-val{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--teal)}
+
+/* Transfer */
+.xfer-card{padding:18px}
+.xfer-field{margin-bottom:14px}
+.xfer-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal2);margin-bottom:5px}
+.xfer-field input,.xfer-field select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:14px}
+.xfer-field input:focus,.xfer-field select:focus{outline:none;border-color:var(--teal)}
+.xfer-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-teal{font-size:13px;font-weight:600;color:#0a1118;background:linear-gradient(135deg,var(--teal),var(--teal2));padding:10px 22px;border-radius:99px;border:none;cursor:pointer;font-family:inherit}
+.btn-teal:hover{opacity:.88}
+.btn-teal:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{font-size:13px;color:var(--sub);background:none;border:1px solid var(--border);padding:9px 18px;border-radius:99px;cursor:pointer;font-family:inherit}
+.btn-ghost:hover{color:var(--teal);border-color:var(--teal)}
+
+/* News */
+.news-item{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.04)}
+.news-item:last-child{border-bottom:none}
+.news-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.ntype{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:4px}
+.ntype-info{background:rgba(96,212,184,.1);color:var(--teal)}
+.ntype-gov{background:rgba(200,151,62,.1);color:var(--gold)}
+.ndate{font-size:11px;color:var(--dim)}
+.nsubj{font-size:14px;font-weight:500;margin-bottom:4px}
+.nbody{font-size:13px;color:var(--sub);line-height:1.6}
+
+/* Activity */
+.evt{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.evt:last-child{border-bottom:none}
+.evt-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);margin-top:5px;flex-shrink:0}
+.evt-msg{font-size:13px;color:var(--sub);line-height:1.55}
+.evt-date{font-size:11px;color:var(--dim);margin-top:2px}
+
+/* Profile */
+.pf-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.pf-row:last-child{border-bottom:none}
+.pk{color:var(--dim);font-size:12px}
+.pv{color:var(--text);text-align:right}
+
+/* Empty state */
+.empty{text-align:center;padding:32px 0;color:var(--dim)}
+.empty-ico{font-size:1.6rem;margin-bottom:8px}
+.empty-txt{font-size:13px}
+
+/* Flash */
+.flash{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:10px;display:none}
+.flash.show{display:block}
+.flash-ok{background:var(--okb);border:1px solid rgba(82,184,122,.3);color:var(--ok)}
+.flash-err{background:var(--errb);border:1px solid rgba(196,96,96,.3);color:var(--err)}
+
+/* Payment pill */
+.payment-pill-wrap{padding:10px 22px 6px}
+.payment-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.payment-pill-due{background:#1a3d2e;border:1px solid #2d7a4f;color:#52e899}
+.payment-pill-secured{background:rgba(96,212,184,.18);border:1px solid rgba(96,212,184,.55);color:var(--teal)}
+/* Bank details rows inside payment modal */
+.pay-bank-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(180,148,80,.08);font-size:13px}
+.pay-bank-row:last-child{border-bottom:none}
+.pay-bank-key{color:var(--sub)}
+.pay-bank-val{font-family:monospace;font-weight:600;color:var(--text)}
+
+/* Responsive */
+@media(max-width:640px){
+  .topbar{padding:0 14px;gap:6px;height:52px}
+  .tb-title{font-size:13px}
+  .tb-pill .tb-pill-label{display:none}
+  .tb-logout .tb-logout-label{display:none}
+  .tb-pill{padding:7px;border-radius:50%;width:34px;height:34px;justify-content:center;gap:0}
+  .tb-logout{padding:7px;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center}
+  .beta-bar{padding:5px 12px;font-size:11px}
+  .beta-bar .beta-full{display:none}
+  .beta-bar .beta-short{display:inline}
+  .tab-nav{padding:0 6px;top:80px}
+  .tnb{padding:0 10px;height:42px;font-size:11px;gap:4px}
+  .tnb[data-tab="proposals"] .tnb-label{display:none}
+  .tnb[data-tab="proposals"] .tnb-votes-short{display:inline}
+  .kpi-grid{grid-template-columns:1fr}
+  .xfer-row{grid-template-columns:1fr}
+  .pg{padding:16px 14px 60px}
+  .g2{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .tnb .tnb-label{font-size:10px}
+  .tnb{padding:0 8px;gap:3px;min-width:0}
+  .tnb-ico{font-size:13px}
+  .tab-nav{padding:0 2px}
+}
+@media(max-width:400px){
+  .tb-brand img{width:28px;height:28px}
+  .tb-title{display:none}
+}
+
+/* Two-column grid */
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:start}
+.col{display:flex;flex-direction:column;gap:14px}
+
+/* Accordion */
+.acc-section{margin-top:16px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.acc-section-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;background:rgba(255,255,255,.02)}
+.acc-section-hd h4{font-size:14px;font-weight:500;color:var(--text);margin:0;display:flex;align-items:center;gap:8px}
+.acc-count{font-size:11px;font-weight:700;background:rgba(96,212,184,.15);color:var(--teal);padding:2px 8px;border-radius:99px}
+.acc-chevron{font-size:11px;color:var(--dim);transition:transform .2s}
+.acc-body{display:none;border-top:1px solid var(--border)}
+.acc-section.open .acc-body{display:block}
+.acc-section.open .acc-chevron{transform:rotate(180deg)}
+
+/* News items */
+.news-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:11px;transition:border-color .15s}
+.news-item+.news-item{margin-top:11px}
+.news-item.unread{border-left:3px solid var(--teal)}
+.news-item:hover{border-color:var(--border2)}
+.news-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.ntype{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:4px}
+.ntype-ann{background:rgba(96,212,184,.1);color:var(--teal)}
+.ntype-gov,.ntype-appr{background:rgba(200,151,62,.1);color:var(--gold)}
+.ntype-pay{background:rgba(82,184,122,.1);color:var(--ok)}
+.ntype-sys{background:rgba(90,158,212,.1);color:#5a9ed4}
+.ndate{font-size:11px;color:var(--dim)}
+.ndot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pill-pulse 1.8s ease-in-out infinite}
+@keyframes pill-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nsubj{font-size:14px;font-weight:500;margin-bottom:4px}
+.nbody{font-size:13px;color:var(--sub);line-height:1.6}
+.n-read{background:none;border:none;font-size:12px;color:var(--dim);padding:0;margin-top:11px;text-decoration:underline;text-underline-offset:3px;transition:color .18s;cursor:pointer;font-family:inherit}
+.n-read:hover{color:var(--sub)}
+/* News compact rows */
+.news-compact{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:background .15s;font-size:13px}
+.news-compact:hover{background:rgba(255,255,255,.03)}
+.news-compact-type{flex-shrink:0}
+.news-compact-subj{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.news-compact-date{font-size:11px;color:var(--dim);flex-shrink:0}
+.news-compact-chev{font-size:10px;color:var(--dim);transition:transform .2s;flex-shrink:0}
+.news-compact.open .news-compact-chev{transform:rotate(180deg)}
+.news-expand-body{display:none;padding:0 16px 14px;font-size:13px;color:var(--sub);line-height:1.6}
+.news-expand-body.open{display:block}
+
+/* Skeleton loaders */
+.sk{background:linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.06) 50%,rgba(255,255,255,.03) 75%);background-size:200% 100%;animation:sk-shine 1.5s infinite;border-radius:8px;height:14px}
+@keyframes sk-shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Proposal meta */
+.prop-meta{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:14px}
+.ptype{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.ptype-op{background:rgba(90,158,212,.08);color:#5a9ed4;border:1px solid rgba(90,158,212,.22)}
+.ptype-co{background:var(--warnb);color:var(--warn);border:1px solid rgba(212,160,60,.22)}
+.ptype-re{background:var(--okb);color:var(--ok);border:1px solid rgba(82,184,122,.22)}
+.pstatus{font-size:11px;color:var(--sub)}
+
+/* Poll cards */
+.poll-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden}
+.poll-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,var(--ok) 50%,transparent 95%);opacity:.35}
+.poll-card+.poll-card{margin-top:12px}
+.poll-card:hover{border-color:var(--border2)}
+.poll-title{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--text);margin-bottom:10px;line-height:1.3}
+.poll-body{font-size:13px;color:var(--sub);line-height:1.68;margin-bottom:16px}
+.pbin-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.pbin-btn{padding:12px;border-radius:12px;font-size:14px;font-weight:600;border:2px solid;cursor:pointer;font-family:inherit;transition:all .18s}
+.pbin-yes{background:rgba(82,184,122,.06);border-color:rgba(82,184,122,.25);color:var(--ok)}
+.pbin-yes:hover:not(:disabled){background:rgba(82,184,122,.15);border-color:var(--ok)}
+.pbin-no{background:rgba(196,96,96,.06);border-color:rgba(196,96,96,.25);color:var(--err)}
+.pbin-no:hover:not(:disabled){background:rgba(196,96,96,.15);border-color:var(--err)}
+.pbin-btn:disabled{opacity:.45;cursor:not-allowed}
+.pbin-btn.on{transform:translateY(-2px)}
+.int-badge{font-size:10px;color:var(--dim);padding:8px 0 0;border-top:1px solid var(--border);margin-top:12px;display:flex;align-items:center;gap:6px;letter-spacing:.03em}
+.int-badge::before{content:'⬡';color:var(--teal)}
+/* Pay modal */
+.pay-modal-bg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.pay-modal-bg.show{opacity:1;pointer-events:auto}
+.pay-modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:28px 30px;box-shadow:var(--sh);max-width:480px;width:94%;max-height:90vh;overflow-y:auto}
+.pay-modal h3{font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:16px;color:var(--text)}
+.pay-bank-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(96,212,184,.08);font-size:13px}
+.pay-bank-key{color:var(--sub)}
+.pay-bank-val{font-family:monospace;font-weight:600;color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<header class="topbar">
+  <div class="tb-brand">
+    <img src="../assets/logo_webcir.png" alt="COG$">
+    <span class="tb-title">Business Independence Vault</span>
+  </div>
+  <div class="tb-right">
+    <span id="tb-status"></span>
+    <a href="../wallets/member.html" class="tb-pill" title="Open Partner Vault" style="text-decoration:none;border-color:rgba(240,209,138,.3);color:#f0d18a;cursor:pointer"><span style="font-size:14px">👤</span><span class="tb-pill-label">Partner Vault</span></a>
+    <a href="../community/index.html" class="tb-pill" title="Back to Members Area" style="text-decoration:none;border-color:rgba(201,151,61,.3);color:#c9973d;cursor:pointer"><span style="font-size:14px">🏠</span><span class="tb-pill-label">Members Area</span></a>
+    <div class="tb-pill" onclick="tab('profile')" title="Profile &amp; settings" style="cursor:pointer">
+      <span style="font-size:14px">⚙️</span><span class="tb-pill-label">Profile</span>
+    </div>
+    <button class="tb-logout" id="logout-btn"><span style="font-size:14px;margin-right:2px">🚪</span><span class="tb-logout-label">Log out</span></button>
+  </div>
+</header>
+
+<div class="beta-bar">
+  <span class="beta-full"><strong>Partnership and Governance are Active.</strong> ALL other token figures and values are no obligation/proposed participation intent only. No entitlement, issuance or financial claim is recorded until post-Expansion Day.</span>
+  <span class="beta-short" style="display:none"><strong>Active</strong> · Other tokens: intent only · No claim until post-Expansion Day</span>
+</div>
+
+<nav class="tab-nav" role="tablist">
+  <button class="tnb on" data-tab="overview" role="tab"><span class="tnb-ico">◈</span><span class="tnb-label"> Overview</span></button>
+  <button class="tnb" data-tab="holdings" role="tab"><span class="tnb-ico">◇</span><span class="tnb-label"> COG$ Reserve</span></button>
+  <button class="tnb" data-tab="transfer" role="tab"><span class="tnb-ico">⇄</span><span class="tnb-label"> Transfer</span></button>
+  <button class="tnb" data-tab="proposals" role="tab"><span class="tnb-ico">✦</span><span class="tnb-label"> Proposals &amp; Polls</span><span class="tnb-votes-short" style="display:none"> Votes</span><span class="tnb-badge hidden" id="votes-badge">0</span></button>
+  <button class="tnb" data-tab="news" role="tab"><span class="tnb-ico">◉</span><span class="tnb-label"> News</span><span class="tnb-badge hidden" id="news-badge">0</span></button>
+  <button class="tnb" data-tab="activity" role="tab"><span class="tnb-ico">◈</span><span class="tnb-label"> Activity</span></button>
+</nav>
+
+<!-- ═══ VAULT CONTENT ═══ -->
+<div id="vault" class="hidden" style="display:flex;flex-direction:column;min-height:100vh">
+  <div style="height:152px;flex-shrink:0"></div>
+
+  <div class="payment-pill-wrap" id="payment-pill-wrap"></div>
+
+  <!-- OVERVIEW -->
+  <div class="panel on" id="tab-overview">
+    <div class="pg">
+      <div class="id-card">
+        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
+          <div style="flex-shrink:0;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(96,212,184,.15),rgba(96,212,184,.05));border:1px solid var(--border2);display:flex;align-items:center;justify-content:center">
+            <img src="../assets/cogs_coin_web.png" style="width:36px;height:36px;border-radius:50%">
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--text)" id="id-name">Loading…</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px" id="id-trading"></div>
+            <div style="font-size:11px;color:var(--teal2);margin-top:4px;letter-spacing:.02em">Business Non-Fungible-Token</div>
+            <div style="font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-top:6px">Business B-NFT</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">ABN</div>
+            <div style="font-family:monospace;font-size:13px;color:var(--teal);letter-spacing:.06em" id="id-abn">—</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px" id="id-chips">
+          <span class="chip chip-teal" id="id-entity">—</span>
+          <span class="chip chip-dim" id="id-state">—</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-lbl">Total Beta COG$ Reserved</div>
+          <div class="kpi-val" id="kpi-total">—</div>
+          <div class="kpi-sub">Excludes B-NFT fee</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">Reservation Value</div>
+          <div class="kpi-val" id="kpi-val">—</div>
+          <div class="kpi-sub">Excludes partnership contribution</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><h3>Community Contribution</h3><span style="font-size:11px;color:var(--dim)">Donation &amp; Pay It Forward COG$</span></div>
+        <div class="card-bd">
+          <p style="font-size:13px;color:var(--sub);margin-bottom:14px;line-height:1.6">Purchase Donation COG$ ($4/unit — funds Sub-Trust C community projects) or Pay It Forward COG$ ($4/unit — sponsors a partnership for someone who can't afford it). Use your ABN as payment reference.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--teal2);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px">Donation COG$ (D)</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button class="btn-ghost" style="width:32px;height:32px;padding:0;font-size:16px" onclick="gpAdj('don',-1)">−</button>
+                <input id="gp-don" type="number" min="0" value="0" style="width:60px;text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:6px;font:inherit;font-size:15px;font-weight:600">
+                <button class="btn-ghost" style="width:32px;height:32px;padding:0;font-size:16px" onclick="gpAdj('don',1)">+</button>
+                <span style="font-size:12px;color:var(--dim);margin-left:4px">× $4</span>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--teal2);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px">Pay It Forward COG$ (pS)</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button class="btn-ghost" style="width:32px;height:32px;padding:0;font-size:16px" onclick="gpAdj('pif',-1)">−</button>
+                <input id="gp-pif" type="number" min="0" value="0" style="width:60px;text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:6px;font:inherit;font-size:15px;font-weight:600">
+                <button class="btn-ghost" style="width:32px;height:32px;padding:0;font-size:16px" onclick="gpAdj('pif',1)">+</button>
+                <span style="font-size:12px;color:var(--dim);margin-left:4px">× $4</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border)">
+            <div><span style="font-size:13px;color:var(--sub)">Total:</span> <span id="gp-total" style="font-size:18px;font-weight:700;color:var(--teal);margin-left:6px">$0.00</span></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn-teal" id="gp-order-btn" onclick="openBizGiftPoolPurchase()" disabled>Place Order</button>
+            </div>
+          </div>
+          <div class="flash" id="gp-flash"></div>
+        </div>
+      </div>
+
+      <!-- Pending orders — populated by renderPendingOrders() when gift_pool_unpaid_lines is non-empty -->
+      <div class="card" id="pending-orders-card" style="display:none">
+        <div class="card-hd">
+          <h3>Pending Orders</h3>
+          <span style="font-size:11px;color:var(--dim)">Awaiting payment</span>
+        </div>
+        <div class="card-bd" id="pending-orders-bd"></div>
+        <div class="flash" id="gp-pay-flash" style="margin:0 16px 12px"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><h3>Recent Activity</h3></div>
+        <div class="card-bd" id="ov-activity" style="padding:0">
+          <div class="empty"><div class="empty-ico">◈</div><div class="empty-txt">No activity yet</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COG$ RESERVE -->
+  <div class="panel" id="tab-holdings">
+    <div class="pg">
+      <div class="g2">
+        <div class="col">
+          <div class="card">
+            <div class="card-hd"><h3>Reserved COG$</h3><span style="font-size:11px;color:var(--dim)">No payment required · Edit freely</span></div>
+            <div class="card-bd" id="holdings-list" style="padding:14px 18px"></div>
+          </div>
+          <div class="card">
+            <div class="card-hd" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="var b=document.getElementById('res-sum-bd');var o=b.style.display!=='none';b.style.display=o?'none':'block';this.querySelector('.chv').textContent=o?'▶':'▼'"><h3>Reservation Summary</h3><span class="chv">▶</span></div>
+            <div class="card-bd" id="res-sum-bd" style="display:none">
+              <div class="hold-row"><div class="hold-cls">Total Tokens</div><div class="hold-val" id="ht-total">—</div></div>
+              <div class="hold-row"><div class="hold-cls">Reservation Value</div><div class="hold-val" style="color:var(--gold)" id="ht-val">—</div></div>
+              <div class="hold-row"><div class="hold-cls">Intent Status</div><div class="hold-val" style="color:var(--dim);font-size:13px" id="ht-intent">—</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-hd"><h3>Beta Phase — System Test</h3></div>
+            <div class="card-bd" style="display:grid;gap:14px">
+              <div style="padding:16px;background:linear-gradient(135deg,rgba(96,212,184,.08),rgba(96,212,184,.03));border-radius:12px;border:1px solid rgba(96,212,184,.2)">
+                <div style="font-family:var(--serif);font-size:18px;font-weight:500;color:var(--teal);margin-bottom:8px">Welcome to the Beta Phase</div>
+                <p style="font-size:13px;color:var(--sub);line-height:1.7;margin:0">Your business is part of the founding community helping build and test the COG$ platform before Expansion Day. Everything here is a live system test — your feedback shapes how this works for all Australian businesses.</p>
+              </div>
+              <div style="padding:14px 16px;background:rgba(82,232,153,.04);border-radius:12px;border:1px solid rgba(82,232,153,.15)">
+                <div style="font-size:11px;font-weight:700;color:#52e899;letter-spacing:.06em;margin-bottom:6px">✓ NO FINANCIAL OBLIGATION</div>
+                <p style="font-size:12px;color:var(--sub);line-height:1.65;margin:0">All COG$ shown on this page are <strong style="color:var(--text)">reservation-only</strong>. No payment is required. No financial commitment is made. These figures represent your intended interest only — nothing is offered, issued, or owed until Expansion Day when the Partners' governance system activates on-chain.</p>
+              </div>
+              <div style="padding:14px 16px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid var(--border)">
+                <div style="font-size:11px;font-weight:700;color:var(--text);letter-spacing:.06em;margin-bottom:6px">✎ CHANGE YOUR AMOUNTS ANYTIME</div>
+                <p style="font-size:12px;color:var(--sub);line-height:1.65;margin:0">Your reserved COG$ amounts can be freely edited at any time using the controls on this page. Increase, decrease, or zero out any class — changes are recorded immediately with no penalty or cost.</p>
+              </div>
+              <div style="padding:14px 16px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid var(--border)">
+                <div style="font-size:11px;font-weight:700;color:var(--text);letter-spacing:.06em;margin-bottom:6px">⇄ TRANSFER TO MEMBERS &amp; BUSINESSES</div>
+                <p style="font-size:12px;color:var(--sub);line-height:1.65;margin:0">Use the <strong style="color:var(--teal)">Transfer</strong> tab to send ASX or RWA COG$ to any registered Partner or business. Each entity has a unique wallet address. Transfers are immediate and recorded on the ledger.</p>
+              </div>
+              <div style="padding:14px 16px;background:rgba(96,212,184,.04);border-radius:12px;border:1px solid rgba(96,212,184,.15)">
+                <div style="font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.06em;margin-bottom:6px">◈ WHAT HAPPENS NEXT</div>
+                <p style="font-size:12px;color:var(--sub);line-height:1.65;margin:0">On Expansion Day, all reservation-only COG$ will be formalised under the Partners' on-chain governance system. Until then, your business governance participation rights are fully active.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSFER -->
+  <div class="panel" id="tab-transfer">
+    <div class="pg">
+      <!-- Receive / Send selector -->
+      <div style="display:flex;gap:12px;margin-bottom:24px">
+        <button id="xft-receive" onclick="xfMode('receive')" style="flex:1;padding:20px;border-radius:14px;border:2px solid var(--teal);background:rgba(96,212,184,.1);color:var(--teal);font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center">
+          <div style="font-size:28px;margin-bottom:6px">↓</div>
+          Receive
+          <div style="font-size:11px;font-weight:400;color:var(--sub);margin-top:4px">Get your wallet address</div>
+        </button>
+        <button id="xft-send" onclick="xfMode('send')" style="flex:1;padding:20px;border-radius:14px;border:2px solid var(--border);background:rgba(255,255,255,.02);color:var(--sub);font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center">
+          <div style="font-size:28px;margin-bottom:6px">↑</div>
+          Send
+          <div style="font-size:11px;font-weight:400;color:var(--dim);margin-top:4px">Transfer COG$ to a Partner or business</div>
+        </button>
+      </div>
+
+      <!-- ── RECEIVE PANEL ── -->
+      <div id="xf-panel-receive">
+        <div class="card">
+          <div class="card-hd"><h3>Receive COG$</h3></div>
+          <div class="card-bd">
+            <p style="font-size:13px;color:var(--sub);margin-bottom:16px">Share your wallet address with another Partner or business to receive a P2P transfer. Each token class has its own unique address.</p>
+            <!-- ASX Address -->
+            <div style="margin-bottom:16px;padding:14px;background:rgba(96,212,184,.04);border:1px solid rgba(96,212,184,.18);border-radius:10px">
+              <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">ASX Investment COG$</div>
+              <div style="font-family:monospace;font-size:13px;color:var(--teal);word-break:break-all;line-height:1.5;margin-bottom:10px" id="wa-asx">—</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn-teal" style="font-size:11px;padding:5px 12px;border-radius:6px" onclick="copyAddr('wa-asx')">Copy address</button>
+                <button class="btn-ghost" style="font-size:11px;padding:5px 12px" onclick="shareAddr('wa-asx','ASX')">Share</button>
+              </div>
+            </div>
+            <!-- RWA Address -->
+            <div style="padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px">
+              <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">RWA COG$</div>
+              <div style="font-family:monospace;font-size:13px;color:var(--teal);word-break:break-all;line-height:1.5;margin-bottom:10px" id="wa-rwa">—</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn-teal" style="font-size:11px;padding:5px 12px;border-radius:6px" onclick="copyAddr('wa-rwa')">Copy address</button>
+                <button class="btn-ghost" style="font-size:11px;padding:5px 12px" onclick="shareAddr('wa-rwa','RWA')">Share</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="card-hd"><h3>How to receive</h3></div>
+          <div class="card-bd" style="display:grid;gap:10px;font-size:12px;color:var(--sub)">
+            <div style="display:flex;gap:10px"><span style="color:var(--teal);font-weight:700;font-size:16px">1</span><div>Copy your wallet address for the correct token class</div></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--teal);font-weight:700;font-size:16px">2</span><div>Share it with the sender via message, email, or QR code</div></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--teal);font-weight:700;font-size:16px">3</span><div>Once they send, your balance updates immediately</div></div>
+            <div style="padding:10px 12px;background:rgba(96,212,184,.04);border-radius:8px;border:1px solid rgba(96,212,184,.12);font-size:11px;color:var(--dim)">Your address is cryptographically derived and cannot be reversed to your identity.</div>
+          </div>
+        </div>
+      </div><!-- /xf-panel-receive -->
+
+      <!-- ── SEND PANEL ── -->
+      <div id="xf-panel-send" style="display:none">
+        <div class="card">
+          <div class="card-hd"><h3>Send COG$</h3></div>
+          <div class="card-bd">
+            <p style="font-size:13px;color:var(--sub);margin-bottom:16px;line-height:1.6">Transfer ASX or RWA COG$ to another registered Partner or business using their wallet address. Immediate, no approval required.</p>
+            <form id="f-xfer" onsubmit="event.preventDefault();submitTransfer()">
+              <!-- Step 1: Select class -->
+              <div class="xfer-field">
+                <label>1. Select token class</label>
+                <select id="xf-class" onchange="xferClassChanged(this.value)" required>
+                  <option value="" disabled selected>Select class to transfer…</option>
+                  <option value="investment_tokens">ASX Investment COG$</option>
+                  <option value="rwa_tokens">RWA COG$</option>
+                </select>
+                <div id="xfer-balance-note" style="display:none;margin-top:6px;font-size:12px;color:var(--sub)">
+                  Your current balance: <strong id="xfer-balance-val" style="color:var(--teal)">—</strong> units
+                </div>
+              </div>
+              <!-- From → To flow -->
+              <div style="display:flex;align-items:center;gap:12px;margin:14px 0;padding:12px 16px;background:rgba(255,255,255,.02);border-radius:10px;border:1px solid var(--border)">
+                <div style="flex:1"><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">From (you)</div><div style="font-size:12px;color:var(--teal);font-family:monospace;font-weight:500" id="xf-from">Select class above</div></div>
+                <div style="color:var(--teal);font-size:22px;flex-shrink:0">→</div>
+                <div style="flex:1"><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">To</div><div style="font-size:12px;color:var(--text);font-family:monospace;font-weight:500" id="xf-to-preview">Enter below</div></div>
+              </div>
+              <!-- Step 2: Recipient -->
+              <div class="xfer-field">
+                <label>2. Recipient wallet address</label>
+                <div style="display:flex;gap:8px">
+                  <input id="xf-to" placeholder="COGS-ASX-... or COGS-RWA-..." required style="flex:1;min-width:0;font-family:monospace;font-size:12px;letter-spacing:.03em" oninput="var t=$('xf-to-preview');if(t)t.textContent=this.value||'Enter below'">
+                  <button type="button" class="btn-ghost" onclick="toggleContacts()" title="Saved contacts" style="flex-shrink:0;padding:0 13px;font-size:17px;line-height:1">👤</button>
+                </div>
+                <!-- Contacts dropdown -->
+                <div id="contacts-drop" style="display:none;margin-top:8px;background:var(--lift);border:1px solid var(--border2);border-radius:var(--r2);overflow:hidden">
+                  <div id="contacts-list"></div>
+                  <div style="padding:10px 12px;border-top:1px solid var(--border)">
+                    <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Save a new contact</div>
+                    <div style="display:flex;gap:7px;flex-wrap:wrap">
+                      <input id="c-nick" placeholder="Nickname" style="flex:1;min-width:110px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:var(--text);padding:8px 11px;font:inherit;font-size:12px">
+                      <input id="c-mn" placeholder="Wallet address (COGS-ASX-...)" style="flex:1.4;min-width:150px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:var(--text);padding:8px 11px;font:inherit;font-size:12px">
+                      <button type="button" class="btn-teal" style="font-size:11px;padding:6px 12px;border-radius:6px" onclick="saveContact()">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Step 3: Amount -->
+              <div class="xfer-field"><label>3. Units</label><input type="number" id="xf-units" min="1" placeholder="e.g. 10" required></div>
+              <div class="xfer-field"><label>Note (optional)</label><input id="xf-note" placeholder="Reason or reference for this transfer"></div>
+              <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px">
+                <button type="submit" class="btn-teal" id="xf-submit">Send transfer</button>
+                <span style="font-size:11px;color:var(--dim)">⚠ Immediate and irreversible</span>
+              </div>
+              <div class="flash" id="xf-fl"></div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Transfer ledger -->
+        <div class="card" style="margin-top:14px">
+          <div class="card-hd"><h3>Transfer ledger</h3></div>
+          <div class="card-bd" id="xfer-history">
+            <div class="empty"><div class="empty-ico">⇄</div><div class="empty-txt">No transfers yet</div></div>
+          </div>
+        </div>
+
+        <!-- Transfer rules -->
+        <div class="card" style="margin-top:14px">
+          <div class="card-hd"><h3>Transfer rules</h3></div>
+          <div class="card-bd" style="display:grid;gap:11px">
+            <div style="padding:13px 15px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid var(--border)">
+              <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px">Which classes can be transferred?</div>
+              <div style="font-size:12px;color:var(--sub)">ASX Investment COG$ and RWA COG$ are transferable. The Business B-NFT is permanently assigned and cannot be transferred.</div>
+            </div>
+            <div style="padding:13px 15px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid var(--border)">
+              <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px">Wallet addresses</div>
+              <div style="font-size:12px;color:var(--sub)">Each business has a unique blockchain-style address per token class. Share your Receive address with senders. The address is cryptographically derived and cannot be reversed to your ABN.</div>
+            </div>
+            <div style="padding:13px 15px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid var(--border)">
+              <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px">No fiat conversion</div>
+              <div style="font-size:12px;color:var(--sub)">No COG$ class permits fiat sale, redemption, or conversion. Members may agree their own non-fiat exchange value.</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /xf-panel-send -->
+    </div>
+  </div>
+
+  <!-- PROPOSALS & POLLS -->
+  <div class="panel" id="tab-proposals">
+    <div class="pg">
+      <div class="g2">
+        <div class="col">
+          <div style="margin-bottom:24px">
+            <div style="font-family:var(--serif);font-size:28px;font-weight:300;margin-bottom:6px;line-height:1.1">Your voice matters equally.</div>
+            <p style="font-size:13px;color:var(--sub)">Responses are anonymous. Tallies show counts only. One equal voice per business entity, regardless of size or holdings.</p>
+          </div>
+          <div id="props-open">
+            <div class="sk" style="height:140px;border-radius:20px;margin-bottom:12px"></div>
+          </div>
+          <div class="acc-section" id="props-past-section" style="display:none">
+            <div class="acc-section-hd" onclick="toggleAcc('props-past')">
+              <h4>Previous proposals <span class="acc-count" id="props-past-count">0</span></h4>
+              <span class="acc-chevron">▼</span>
+            </div>
+            <div class="acc-body" id="props-past"></div>
+          </div>
+          <div style="margin-top:32px">
+            <div style="font-family:var(--serif);font-size:20px;font-weight:300;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(96,212,184,.12)">Formal Polls</div>
+            <div id="polls-open">
+              <div class="sk" style="height:100px;border-radius:20px"></div>
+            </div>
+            <div class="acc-section" id="polls-past-section" style="display:none">
+              <div class="acc-section-hd" onclick="toggleAcc('polls-past')">
+                <h4>Previous polls <span class="acc-count" id="polls-past-count">0</span></h4>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="acc-body" id="polls-past"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card" style="position:sticky;top:76px">
+            <div class="card-hd"><h3>Voting integrity</h3></div>
+            <div class="card-bd" style="display:grid;gap:11px">
+              <div style="padding:12px 14px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid var(--border)">
+                <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">🔒 Fully anonymous</div>
+                <div style="font-size:12px;color:var(--sub)">Your choice is stored against a cryptographic receipt hash. Only tally counts are visible — never your identity or choice.</div>
+              </div>
+              <div style="padding:12px 14px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid var(--border)">
+                <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px">⬡ One equal vote</div>
+                <div style="font-size:12px;color:var(--sub)">Every B-NFT business has exactly one vote per proposal regardless of token holdings, business size, or any other factor.</div>
+              </div>
+              <div style="padding:12px 14px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid var(--border)">
+                <div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:4px">◈ Update your response</div>
+                <div style="font-size:12px;color:var(--sub)">While open, you can change your response — including your comment. Only your most recent submission counts.</div>
+              </div>
+              <div style="padding:12px 14px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid var(--border)">
+                <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:4px">Founding phase</div>
+                <div style="font-size:12px;color:var(--sub)">Community proposals are governance-building. Formal polls carry binding effect once constitutionally prescribed under the JVPA.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS / INBOX -->
+  <div class="panel" id="tab-news">
+    <div class="pg">
+      <div class="g2">
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+            <div>
+              <div style="font-family:var(--serif);font-size:28px;font-weight:300;margin-bottom:4px">Inbox</div>
+              <p style="font-size:13px;color:var(--sub)">Foundation announcements, governance notices and system updates.</p>
+            </div>
+            <button class="btn-ghost" onclick="markAllRead()" style="font-size:12px">Mark all read</button>
+          </div>
+          <div id="news-unread">
+            <div class="sk" style="height:80px;border-radius:20px;margin-bottom:12px"></div>
+          </div>
+          <div class="acc-section" id="news-read-section" style="display:none">
+            <div class="acc-section-hd" onclick="toggleAcc('news-read')">
+              <h4>Read messages <span class="acc-count" id="news-read-count">0</span></h4>
+              <span class="acc-chevron">▼</span>
+            </div>
+            <div class="acc-body" id="news-read"></div>
+          </div>
+        </div>
+        <div class="card" style="align-self:start;position:sticky;top:76px">
+          <div class="card-hd"><h3>Message types</h3></div>
+          <div class="card-bd" style="display:grid;gap:10px;font-size:12px;color:var(--sub)">
+            <div style="display:flex;gap:10px;align-items:center"><span class="ntype ntype-ann" style="flex-shrink:0">Announcement</span><span>Foundation news, milestones</span></div>
+            <div style="display:flex;gap:10px;align-items:center"><span class="ntype ntype-appr" style="flex-shrink:0">Approval</span><span>Vote results, tally outcomes</span></div>
+            <div style="display:flex;gap:10px;align-items:center"><span class="ntype ntype-pay" style="flex-shrink:0">Payment</span><span>Fee confirmations, updates</span></div>
+            <div style="display:flex;gap:10px;align-items:center"><span class="ntype ntype-sys" style="flex-shrink:0">System</span><span>Security alerts, status changes</span></div>
+            <div style="margin-top:4px;padding-top:10px;border-top:1px solid var(--border);color:var(--dim)">COG$ will never ask for your password or financial details via inbox message.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div class="panel" id="tab-activity">
+    <div class="pg">
+      <div class="card">
+        <div class="card-hd"><h3>Activity Log</h3></div>
+        <div class="card-bd" id="activity-list" style="padding:0 18px">
+          <div class="empty"><div class="empty-ico">◈</div><div class="empty-txt">No activity recorded</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="panel" id="tab-profile">
+    <div class="pg">
+      <div class="card">
+        <div class="card-hd"><h3>Business Profile</h3></div>
+        <div class="card-bd">
+          <div class="pf-row"><span class="pk">Legal Name</span><span class="pv" id="p-name">—</span></div>
+          <div class="pf-row"><span class="pk">Trading Name</span><span class="pv" id="p-trading">—</span></div>
+          <div class="pf-row"><span class="pk">ABN</span><span class="pv" id="p-abn">—</span></div>
+          <div class="pf-row"><span class="pk">Entity Type</span><span class="pv" id="p-entity">—</span></div>
+          <div class="pf-row"><span class="pk">Responsible Person</span><span class="pv" id="p-contact">—</span></div>
+          <div class="pf-row"><span class="pk">Position</span><span class="pv" id="p-position">—</span></div>
+          <div class="pf-row"><span class="pk">Email</span><span class="pv" id="p-email">—</span></div>
+          <div class="pf-row"><span class="pk">Mobile</span><span class="pv" id="p-mobile">—</span></div>
+          <div class="pf-row"><span class="pk">State</span><span class="pv" id="p-state">—</span></div>
+          <div class="pf-row"><span class="pk">Wallet Status</span><span class="pv" id="p-ws">—</span></div>
+          <div class="pf-row"><span class="pk">Support Code</span><span class="pv" style="font-family:monospace" id="p-sc">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#vault -->
+
+<script>
+(function(){
+'use strict';
+var ROOT = '../';
+var API  = ROOT + '_app/api/index.php?route=';
+var D = null;
+
+function $(id){ return document.getElementById(id); }
+function esc(v){ return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtAUD(v){ return '$'+Number(v||0).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function dt(v){ if(!v)return''; var d=new Date((v+'').replace(' ','T')); return isNaN(d)?v:d.toLocaleString('en-AU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+
+async function api(route, opts){
+  opts = opts || {};
+  var timeoutMs = opts.timeoutMs || 20000;
+  var ctrl = new AbortController();
+  var tid = setTimeout(function(){ ctrl.abort(); }, timeoutMs);
+  try {
+    var r = await fetch(API+route, Object.assign({credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},signal:ctrl.signal}, opts));
+    var txt = await r.text();
+    var j; try{j=JSON.parse(txt);}catch(e){j={success:false,error:txt};}
+    if(!r.ok||j.success===false) throw new Error(j.error||'Request failed ('+r.status+')');
+    return j.data!==undefined?j.data:j;
+  } catch(e){
+    if (e && e.name === 'AbortError') {
+      throw new Error('Request timed out after ' + Math.round(timeoutMs/1000) + 's. The server did not respond.');
+    }
+    throw e;
+  } finally {
+    clearTimeout(tid);
+  }
+}
+
+function flash(id,msg,kind){ var el=$(id); if(!el)return; el.textContent=msg; el.className='flash show flash-'+(kind||'info'); }
+
+/* ── Tab switching ── */
+function tab(name){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='tab-'+name);});
+  document.querySelectorAll('.tnb').forEach(function(b){b.classList.toggle('on',b.dataset.tab===name);});
+  // Refresh live vault data on every tab switch — throttled to once per 5 s
+  // so rapid clicks don't spam the API.
+  if(name!=='settings') throttledRefresh();
+}
+window.tab=tab;
+
+var _lastRefresh=0;
+function throttledRefresh(){
+  var now=Date.now();
+  if(now-_lastRefresh<5000) return;
+  _lastRefresh=now;
+  loadVault();
+}
+document.querySelectorAll('.tnb').forEach(function(b){b.addEventListener('click',function(){tab(b.dataset.tab);});});
+
+/* ── Render ── */
+function renderAll(d){
+  D = window.D = d;
+  $('id-name').textContent = d.legal_name||'Business';
+  $('id-trading').textContent = d.trading_name ? 'Trading as: '+d.trading_name : '';
+  $('id-abn').textContent = (d.abn||'').replace(/(\d{2})(\d{3})(\d{3})(\d{3})/,'$1 $2 $3 $4');
+  $('id-entity').textContent = d.entity_type||'Business';
+  $('id-state').textContent = d.state||'—';
+
+  // KPIs — use invest_tokens (API field name) and include rwa
+  // Reservation class COGs only: ASX Investment, RWA, Business Property, Landholder
+  // Excludes: BNFT fee, Donation (D), Pay It Forward (P), LR, kS-NFT
+  var total = +(d.invest_tokens||d.investment_tokens||0) + +(d.rwa_tokens||0) + +(d.reserved_tokens||0) + +(d.landholder_tokens||0);
+  $('kpi-total').textContent = total.toLocaleString();
+  $('kpi-val').textContent = fmtAUD(d.reservation_value);
+
+  // Holdings
+  renderHoldings(d);
+
+  // Transfer — wallet addresses
+  var wa = d.wallet_addresses || {};
+  var xf=$('xf-from'); if(xf) xf.textContent=wa.investment_tokens||d.abn||'—';
+  var waAsx=$('wa-asx'); if(waAsx) waAsx.textContent=wa.investment_tokens||'—';
+  var waRwa=$('wa-rwa'); if(waRwa) waRwa.textContent=wa.rwa_tokens||'—';
+
+  // Transfer ledger
+  renderXferHistory(d.pending_transfers||[], d.abn);
+
+  // Summary
+  $('ht-total').textContent = total.toLocaleString();
+  $('ht-val').textContent = fmtAUD(d.reservation_value);
+  $('ht-intent').textContent = d.intent_status||'proposed';
+
+  // Activity (overview + full)
+  renderActivity(d.events||[]);
+
+  // News
+  renderNews(d.announcements||[]);
+
+  // Proposals & Polls
+  renderProposals(d.proposals||[]);
+
+  // Pending orders (D/PIF payment intents awaiting payment)
+  renderPendingOrders(d);
+
+  // Profile
+  $('p-name').textContent = d.legal_name||'—';
+  $('p-trading').textContent = d.trading_name||'—';
+  $('p-abn').textContent = d.abn||'—';
+  $('p-entity').textContent = d.entity_type||'—';
+  $('p-contact').textContent = d.contact_name||'—';
+  $('p-position').textContent = d.position_title||'—';
+  $('p-email').textContent = d.email||'—';
+  $('p-mobile').textContent = d.mobile||'—';
+  $('p-state').textContent = d.state||'—';
+  $('p-ws').textContent = d.wallet_status||'—';
+  $('p-sc').textContent = d.support_code_display||'—';
+
+  // Payment pill
+  renderPayment(d);
+}
+
+var CLASSES = [
+  {key:'invest_tokens',        field:'invest_tokens',        label:'ASX Investment COG$',   ico:'◇', col:'var(--teal)',  price:4,  alwaysShow:true,  sendable:true,  desc:'CHESS-held ASX resource company shares'},
+  {key:'rwa_tokens',           field:'rwa_tokens',           label:'RWA COG$',              ico:'◇', col:'var(--sub)',   price:4,  alwaysShow:true,  sendable:true,  desc:'Real-world asset linked token'},
+  {key:'reserved_tokens',      field:'reserved_tokens',      label:'Business Property COG$',ico:'◇', col:'var(--dim)',   price:40, alwaysShow:false, sendable:false, desc:'Business property linked token'},
+  {key:'donation_tokens',      field:'donation_tokens',      label:'Donation COG$',         ico:'◆', col:'#52b87a',     price:4,  alwaysShow:false, sendable:false, desc:'Sub-Trust C community project funding'},
+  {key:'pay_it_forward_tokens',field:'pay_it_forward_tokens',label:'Pay It Forward COG$',   ico:'◆', col:'#5a9ed4',     price:4,  alwaysShow:false, sendable:false, desc:'Sponsors partnership for those who cannot afford it'},
+  {key:'community_tokens',     field:'community_tokens',     label:'Community COG$',        ico:'◈', col:'#8bb7ff',     price:0,  alwaysShow:false, sendable:false, editable:false, desc:'Opening community exchange allocation for business participation'},
+  {key:'landholder_tokens',    field:'landholder_tokens',    label:'Landholder COG$',       ico:'◆', col:'#c8973e',     price:4,  alwaysShow:false, sendable:false, desc:'Eligible land-based COG$ allocation'},
+];
+
+function renderHoldings(d){
+  var el=$('holdings-list'); if(!el) return;
+  var html='';
+  CLASSES.forEach(function(c){
+    var val=+(d[c.key]||0);
+    if(!c.alwaysShow && val===0) return;
+    var eid='ie-'+c.key;
+    var amtLabel = c.key==='community_tokens' ? 'live' : 'reserved';
+    var canEdit = c.editable !== false;
+    html+='<div class="tr">'
+      +'<div class="tr-ico" style="color:'+c.col+'">'+c.ico+'</div>'
+      +'<div class="tr-inf"><div class="tr-name">'+esc(c.label)+'</div><div class="tr-cls">'+esc(c.desc)+'</div></div>'
+      +'<div class="tr-val"><div class="tr-amt">'+val.toLocaleString()+'</div><div class="tr-amt-label">'+amtLabel+'</div></div>'
+      +'<div style="display:flex;gap:4px">'
+      +(canEdit?'<button class="tr-edit" onclick="toggleIE(\''+eid+'\')">Edit</button>':'')
+      +(c.sendable?'<button class="tr-edit" style="color:#5a9ed4;border-color:rgba(90,158,212,.3)" onclick="sendSpecificClass(\''+c.key+'\')">Send</button>':'')
+      +'</div>'
+      +'</div>';
+    if(canEdit){
+      html+='<div class="iedit" id="'+eid+'">'
+        +'<div class="iedit-row">'
+        +'<span style="font-size:12px;color:var(--sub)">Reserve:</span>'
+        +'<input type="number" min="0" max="'+(c.key==="reserved_tokens"?1000:100000)+'" value="'+val+'" id="iev-'+c.key+'" oninput="livePreview(\''+c.key+'\','+c.price+')">'
+        +'<span style="font-size:11px;color:var(--dim)">≈</span><span style="font-size:18px;font-weight:700;color:#52e899;margin-left:6px" id="prev-'+c.key+'">'+fmtAUD(val*c.price)+'</span>'
+        +'</div>'
+        +'<textarea class="iedit-note" id="ien-'+c.key+'" placeholder="Reason for change (optional)"></textarea>'
+        +'<div class="iedit-acts">'
+        +'<button class="btn-teal-xs" onclick="saveEdit(\''+c.key+'\',\''+c.field+'\','+c.price+')">Save</button>'
+        +'<button class="btn-ghost" style="font-size:11px;padding:5px 12px" onclick="toggleIE(\''+eid+'\')">Cancel</button>'
+        +'</div>'
+        +'<div class="flash" id="ief-'+c.key+'"></div>'
+        +'</div>';
+    }
+  });
+  el.innerHTML=html;
+}
+
+window.toggleIE = function(id){
+  var el=document.getElementById(id); if(!el) return;
+  el.classList.toggle('on');
+};
+
+window.livePreview = function(key, price){
+  var inp=$('iev-'+key); if(!inp) return;
+  var val=Math.max(0,parseInt(inp.value)||0);
+  var prev=$('prev-'+key); if(prev) prev.textContent=fmtAUD(val*price);
+};
+
+window.saveEdit = async function(key, field, price){
+  var inp=$('iev-'+key); if(!inp) return;
+  var newVal=Math.max(0,parseInt(inp.value)||0);
+  var note=($('ien-'+key)?.value||'').trim();
+  var payload={}; payload[field]=newVal; payload.note=note||'Business vault edit: '+key;
+  try{
+    var r=await api('vault/business-update',{method:'POST',body:JSON.stringify(payload)});
+    if(D){
+      if(r[field]!==undefined) D[field]=r[field];
+      if(r[key]!==undefined) D[key]=r[key];
+      if(r.reservation_value!==undefined) D.reservation_value=r.reservation_value;
+      if(r.tokens_total!==undefined) D.total_tokens=r.tokens_total;
+    }
+    flash('ief-'+key,'Saved.','ok');
+    toggleIE('ie-'+key);
+    renderAll(D);
+  }catch(e){
+    flash('ief-'+key,e.message||'Save failed.','err');
+  }
+};
+
+window.sendSpecificClass = function(tokenKey){
+  tab('transfer');
+  xfMode('send');
+  var sel=$('xf-class');
+  if(sel){ sel.value=tokenKey; if(typeof xferClassChanged==='function') xferClassChanged(tokenKey); }
+};
+
+function renderActivity(events){
+  var ov=$('ov-activity');
+  var full=$('activity-list');
+  var recent=events.slice(0,5);
+  if(!events.length){
+    if(ov) ov.innerHTML='<div class="empty"><div class="empty-ico">◈</div><div class="empty-txt">No activity yet</div></div>';
+    return;
+  }
+  var html=function(list){ return list.map(function(e){ return '<div class="evt"><div class="evt-dot"></div><div><div class="evt-msg">'+esc(e.description||e.event_type)+'</div><div class="evt-date">'+dt(e.created_at)+'</div></div></div>'; }).join(''); };
+  if(ov) ov.innerHTML=html(recent);
+  if(full) full.innerHTML=html(events);
+}
+
+function newsChip(a){
+  var t=(a.type||a.message_type||'info').toLowerCase();
+  if(t==='governance'||t==='approval') return {cls:'ntype-appr',label:'Governance'};
+  if(t==='payment') return {cls:'ntype-pay',label:'Payment'};
+  if(t==='system') return {cls:'ntype-sys',label:'System'};
+  return {cls:'ntype-ann',label:'Announcement'};
+}
+
+function renderNews(anns){
+  var unread=anns.filter(function(a){return!a.is_read;});
+  var read=anns.filter(function(a){return!!a.is_read;});
+
+  var unreadEl=$('news-unread');
+  if(unreadEl){
+    if(!unread.length){
+      unreadEl.innerHTML='<div class="empty" style="padding:24px 0"><div class="empty-ico">◉</div><div class="empty-txt">All caught up — no unread messages</div></div>';
+    } else {
+      unreadEl.innerHTML=unread.map(function(a){
+        var c=newsChip(a);
+        return '<div class="news-item unread" id="ni-'+a.id+'">'
+          +'<div class="news-meta"><span class="ntype '+esc(c.cls)+'">'+esc(c.label)+'</span><span class="ndate">'+dt(a.created_at)+'</span><div class="ndot"></div></div>'
+          +'<div class="nsubj">'+esc(a.title||'Update')+'</div>'
+          +(a.body?'<div class="nbody">'+esc(a.body)+'</div>':'')
+          +'<button class="n-read" onclick="markRead('+a.id+')">Mark as read</button>'
+          +'</div>';
+      }).join('');
+    }
+  }
+
+  var readSec=$('news-read-section');
+  var readEl=$('news-read');
+  var readCnt=$('news-read-count');
+  if(readSec) readSec.style.display=read.length?'block':'none';
+  if(readCnt) readCnt.textContent=read.length;
+  if(readEl){
+    readEl.innerHTML=read.map(function(a){
+      var c=newsChip(a);
+      return '<div>'
+        +'<div class="news-compact" id="nc-'+a.id+'" onclick="toggleNewsItem('+a.id+')">'
+        +'<span class="news-compact-type"><span class="ntype '+esc(c.cls)+'" style="font-size:9px;padding:2px 7px">'+esc(c.label)+'</span></span>'
+        +'<span class="news-compact-subj">'+esc(a.title||'Update')+'</span>'
+        +'<span class="news-compact-date">'+dt(a.created_at)+'</span>'
+        +'<span class="news-compact-chev">▼</span>'
+        +'</div>'
+        +'<div class="news-expand-body" id="neb-'+a.id+'">'
+        +(a.body?esc(a.body):'<span style="color:var(--dim)">No additional content.</span>')
+        +'</div></div>';
+    }).join('');
+  }
+
+  var badge=$('news-badge');
+  if(badge){ badge.textContent=unread.length; badge.classList.toggle('hidden',unread.length<1); }
+}
+
+window.toggleNewsItem = function(id){
+  var row=document.getElementById('nc-'+id);
+  var body=document.getElementById('neb-'+id);
+  if(row) row.classList.toggle('open');
+  if(body) body.classList.toggle('open');
+};
+
+window.markRead = async function(id){
+  try{
+    await api('vault/mark-read',{method:'POST',body:JSON.stringify({announcement_id:id, for_business:true})});
+    var el=$('ni-'+id); if(!el) return;
+    el.style.transition='opacity .35s ease, max-height .35s ease, padding .35s ease, margin .35s ease';
+    el.style.opacity='0';
+    el.style.maxHeight=el.offsetHeight+'px';
+    el.style.overflow='hidden';
+    setTimeout(function(){ el.style.maxHeight='0'; el.style.padding='0'; el.style.margin='0'; el.style.borderWidth='0'; }, 50);
+    setTimeout(function(){ el.remove(); loadVault(); }, 400);
+    var remaining=document.querySelectorAll('.news-item.unread').length-1;
+    var badge=$('news-badge');
+    if(badge){ badge.textContent=Math.max(0,remaining); if(remaining<1) badge.classList.add('hidden'); }
+  }catch(e){}
+};
+
+window.markAllRead = function(){
+  var promises=[];
+  document.querySelectorAll('.news-item.unread').forEach(function(el){
+    var b=el.querySelector('.n-read');
+    if(b){ var m=b.getAttribute('onclick').match(/\d+/); if(m) promises.push(markRead(parseInt(m[0]))); }
+  });
+  return Promise.all(promises);
+};
+
+window.toggleAcc = function(id){
+  var sec=document.getElementById(id+'-section');
+  if(sec) sec.classList.toggle('open');
+};
+
+function renderProposals(proposals){
+  var open=[], past=[];
+  (proposals||[]).forEach(function(p){ if(p.status==='open') open.push(p); else past.push(p); });
+
+  var propsOpen=$('props-open');
+  if(propsOpen){
+    if(!open.length){
+      propsOpen.innerHTML='<div class="empty" style="padding:24px 0"><div class="empty-ico">✦</div><div class="empty-txt">No open proposals</div></div>';
+    } else {
+      propsOpen.innerHTML=open.map(function(p){
+        return '<div class="card" style="margin-bottom:12px"><div class="card-hd"><h3>'+esc(p.title)+'</h3><span class="chip chip-teal">Open</span></div>'
+          +'<div class="card-bd">'+(p.summary?'<p style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px">'+esc(p.summary)+'</p>':'')
+          +(p.body?'<p style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px">'+esc(p.body)+'</p>':'')
+          +'<div style="font-size:11px;color:var(--dim)">Opened '+dt(p.created_at)+(p.closes_at?' · Closes '+dt(p.closes_at):'')+'</div>'
+          +'</div></div>';
+      }).join('');
+    }
+  }
+
+  var pastSec=$('props-past-section');
+  var pastEl=$('props-past');
+  var pastCnt=$('props-past-count');
+  if(pastSec) pastSec.style.display=past.length?'block':'none';
+  if(pastCnt) pastCnt.textContent=past.length;
+  if(pastEl){
+    pastEl.innerHTML=past.map(function(p){
+      return '<div style="padding:12px 16px;border-bottom:1px solid var(--border)">'
+        +'<div style="font-size:13px;font-weight:500;color:var(--text)">'+esc(p.title)+'</div>'
+        +'<div style="font-size:11px;color:var(--dim);margin-top:4px">'+esc(p.status||'closed')+' · '+dt(p.created_at)+'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  // Formal Polls — render live polls from API, fall back to placeholder if none yet
+  var pollsOpen=$('polls-open');
+  var pollsPastSec=$('polls-past-section');
+  var pollsPastEl=$('polls-past');
+  var pollsPastCnt=$('polls-past-count');
+
+  var polls = (window.D && window.D.polls) ? window.D.polls : [];
+  var openPolls = polls.filter(function(p){ return p.status==='open'||p.status==='scheduled'; });
+  var pastPolls  = polls.filter(function(p){ return p.status==='closed'||p.status==='certified'; });
+
+  var typeLabels = {
+    binding_resolution:'Binding Resolution',formal_vote:'Formal Vote',
+    certification_vote:'Certification Vote',local_decision_vote:'Local Decision',
+    member_resolution:'Member Resolution'
+  };
+
+  if(pollsOpen){
+    if(!polls.length){
+      // No DB polls yet — show placeholder
+      pollsOpen.innerHTML='<div class="poll-card">'
+        +'<div class="prop-meta"><span class="ptype ptype-re" style="background:rgba(82,184,122,.06)">Formal Poll</span><span class="pstatus">Date TBA</span></div>'
+        +'<div class="poll-title">Trustee Governance — Trustee Appointment Direction</div>'
+        +'<div class="poll-body">All Partners and businesses will cast a formal binding direction on Trustee appointment and removal in accordance with the JV partnership structure. This vote determines who is authorised to perform Trustee Functions on behalf of the partnership. The date will be announced after Governance Foundation Day.</div>'
+        +'<div class="pbin-row"><button class="pbin-btn pbin-yes" disabled>Yes</button><button class="pbin-btn pbin-no" disabled>No</button></div>'
+        +'<div class="int-badge">Formal poll · One-business-one-vote · Cryptographic receipt · Immutable tally · Anonymous storage</div>'
+        +'</div>';
+    } else {
+      pollsOpen.innerHTML = openPolls.map(function(p){
+        var isOpen = p.status==='open';
+        var my = p.my_vote;
+        var total = +p.total_votes||0;
+        var tally = p.tally||{};
+        var typeLabel = typeLabels[p.poll_type]||p.poll_type||'Formal Poll';
+        var statusText = isOpen?'● Open':(p.status==='scheduled'?'Scheduled':'');
+        var tallyHtml = total>0?'<div class="tally" style="margin-bottom:14px">'
+          +['yes','no'].map(function(ch){
+            var v=(tally[ch]&&tally[ch].votes)||0;
+            var pct=total>0?Math.round(v/total*100):0;
+            return '<div class="trow"><div class="trow-lbl">'+ch+'</div>'
+              +'<div class="tbar"><div class="tfill '+(ch==='yes'?'tfill-yes':'tfill-no')+'" style="width:'+pct+'%"></div></div>'
+              +'<div class="tpct">'+pct+'%</div></div>';
+          }).join('')
+          +'<div class="ttotal">'+total.toLocaleString()+' ballot'+(total!==1?'s':'')+'</div></div>':'';
+        var voteHtml = (isOpen||p.status==='scheduled')?'<div class="pbin-row" style="margin-bottom:10px">'
+          +'<button class="pbin-btn pbin-yes '+(my&&my.choice==='yes'?'on':'')+'" id="pbtn-yes-'+p.id+'"'
+          +' onclick="castPoll('+p.id+',\'yes\',this)" '+((!isOpen||my)?'disabled':'')+'>'+((my&&my.choice==='yes')?'✓ Voted Yes':'Yes')+'</button>'
+          +'<button class="pbin-btn pbin-no '+(my&&my.choice==='no'?'on':'')+'" id="pbtn-no-'+p.id+'"'
+          +' onclick="castPoll('+p.id+',\'no\',this)" '+((!isOpen||my)?'disabled':'')+'>'+((my&&my.choice==='no')?'✓ Voted No':'No')+'</button>'
+          +'</div>':'';
+        var receiptHtml = (my&&my.receipt)?'<div class="anon" style="margin-top:8px">Your vote is recorded. Receipt: <span style="font-family:monospace;font-size:11px;color:var(--dim)">'+esc(my.receipt.substring(0,20))+'…</span></div>':'';
+        return '<div class="poll-card" id="poll-'+p.id+'">'
+          +'<div class="prop-meta"><span class="ptype ptype-re" style="background:rgba(82,184,122,.06)">'+esc(typeLabel)+'</span>'
+          +'<span class="pstatus">'+esc(statusText)+'</span>'
+          +(p.closes_at&&isOpen?'<span class="pstatus">closes '+dt(p.closes_at)+'</span>':'')+'</div>'
+          +'<div class="poll-title">'+esc(p.title)+'</div>'
+          +(p.summary?'<div class="poll-body">'+esc(p.summary)+'</div>':'')
+          +tallyHtml+voteHtml+receiptHtml
+          +'<div class="flash" id="pf-'+p.id+'"></div>'
+          +'<div class="int-badge">Formal poll · One-business-one-vote · Cryptographic receipt · Immutable tally · Anonymous storage</div>'
+          +'</div>';
+      }).join('')||'<div class="empty" style="padding:24px 0"><div class="empty-ico">✦</div><div class="empty-txt">No open polls</div></div>';
+    }
+  }
+
+  if(pollsPastSec) pollsPastSec.style.display=pastPolls.length?'block':'none';
+  if(pollsPastCnt) pollsPastCnt.textContent=pastPolls.length;
+  if(pollsPastEl){
+    pollsPastEl.innerHTML=pastPolls.map(function(p){
+      return '<div style="padding:12px 16px;border-bottom:1px solid var(--border)">'
+        +'<div style="font-size:13px;font-weight:500;color:var(--text)">'+esc(p.title)+'</div>'
+        +'<div style="font-size:11px;color:var(--dim);margin-top:4px">'+esc(p.status==='certified'?'✓ Certified':'Closed')+' · '+dt(p.closes_at||p.created_at)+'</div>'
+        +'</div>';
+    }).join('');
+  }
+}
+
+window.castPoll = async function(pollId, choice, btn){
+  var btns=[document.getElementById('pbtn-yes-'+pollId),document.getElementById('pbtn-no-'+pollId)];
+  btns.forEach(function(b){if(b)b.disabled=true;});
+  flash('pf-'+pollId,'Recording binding vote…','info');
+  try{
+    var r=await api('vault/cast-poll',{method:'POST',body:JSON.stringify({poll_id:pollId,choice:choice})});
+    btns.forEach(function(b){if(b){b.classList.remove('on');}});
+    if(btn){btn.classList.add('on');btn.textContent=(choice==='yes'?'✓ Voted Yes':'✓ Voted No');}
+    if(D&&D.polls){
+      var poll=D.polls.find(function(p){return p.id===pollId;});
+      if(poll) poll.my_vote={choice:choice,receipt:r.receipt||''};
+    }
+    flash('pf-'+pollId,'Your binding vote is recorded with a cryptographic receipt.','ok');
+  }catch(e){
+    btns.forEach(function(b){if(b)b.disabled=false;});
+    flash('pf-'+pollId,e.message||'Could not record vote.','err');
+  }
+};
+
+function renderPayment(d){
+  var wrap=$('payment-pill-wrap');
+  var tb=$('tb-status');
+  if(wrap) wrap.innerHTML='';
+  if(tb) tb.innerHTML='';
+  var status=(d.payment_status||'pending').toLowerCase();
+  if(status==='paid'){
+    if(tb){ var s=document.createElement('span'); s.style.cssText='font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.06em'; s.textContent='✓ SECURED'; tb.appendChild(s); }
+  } else {
+    if(wrap){
+      var pill=document.createElement('button');
+      pill.className='payment-pill payment-pill-due';
+      pill.textContent='● Payment Due — $40.00';
+      pill.title='Click to pay your business partnership contribution';
+      pill.addEventListener('click', openBizPayModal);
+      wrap.appendChild(pill);
+    }
+  }
+  // Gift pool outstanding pill (pending Donation / Pay It Forward orders)
+  var gpOut = parseFloat(d.gift_pool_outstanding||0);
+  if(gpOut > 0 && wrap){
+    var gpPill = document.createElement('button');
+    gpPill.className = 'payment-pill payment-pill-due';
+    gpPill.textContent = '● Community Payment — $' + gpOut.toFixed(2);
+    gpPill.title = 'Outstanding Donation / Pay It Forward order — click to pay';
+    gpPill.addEventListener('click', function(){ window.openPaymentRequiredModal && window.openPaymentRequiredModal(); });
+    wrap.appendChild(gpPill);
+  }
+}
+
+function openBizPayModal(){
+  var abn = D?.abn || '';
+  var overlay = document.createElement('div');
+  overlay.id = 'biz-pay-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML =
+    '<div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:28px 30px;max-width:480px;width:94%;max-height:90vh;overflow-y:auto">'+
+    '<h3 style="font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:16px;color:var(--text)">Pay business partnership contribution — $40.00</h3>'+
+    '<div style="margin-bottom:18px;padding:14px 16px;background:rgba(82,184,122,.06);border:1px solid rgba(82,184,122,.22);border-radius:12px">'+
+    '<div style="font-size:11px;font-weight:700;color:#52b87a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">★ Preferred — Bank Transfer (no fees)</div>'+
+    '<p style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px">Direct bank transfer avoids third-party transaction fees. Your business vault will be activated once payment is confirmed by admin (usually within 1–2 business days).</p>'+
+    '<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px 16px">'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(96,212,184,.08);font-size:13px"><span style="color:var(--sub)">PayID</span><span style="font-family:monospace;font-weight:600;color:var(--text)">0494 578 706</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(96,212,184,.08);font-size:13px"><span style="color:var(--sub)">Account name</span><span style="font-weight:600;color:var(--text);font-size:12px">The Trustee for COGS of Australia Foundation Hybrid Trust</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(96,212,184,.08);font-size:13px"><span style="color:var(--sub)">BSB</span><span style="font-family:monospace;font-weight:600;color:var(--text)">182-182</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(96,212,184,.08);font-size:13px"><span style="color:var(--sub)">Account</span><span style="font-family:monospace;font-weight:600;color:var(--text)">035 249 275</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(96,212,184,.08);font-size:13px"><span style="color:var(--sub)">Amount</span><span style="font-family:monospace;font-weight:700;color:#52e899">$40.00 AUD</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px"><span style="color:var(--sub)">Reference</span><span style="font-family:monospace;font-weight:700;color:var(--teal)">'+esc(abn||'your ABN')+'</span></div>'+
+    '</div>'+
+    '<p style="font-size:12px;color:var(--dim);margin-top:8px">Use your <strong style="color:var(--text)">ABN</strong> as the payment reference for all business payments (partnership contribution, Donation, Pay It Forward).</p>'+
+    '</div>'+
+    '<div style="padding:14px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;margin-bottom:14px">'+
+    '<div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Alternative — Pay by Card (Stripe)</div>'+
+    '<p style="font-size:13px;color:var(--dim);line-height:1.6">Card payments incur third-party processing fees. Your vault is activated instantly once Stripe confirms payment.</p>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">'+
+    '<button class="btn-teal" onclick="closeBizPay();location.reload();" style="padding:10px 20px">I\'ve paid by bank transfer — refresh</button>'+
+    '<button class="btn-ghost" onclick="closeBizPay()">Close</button>'+
+    '</div>'+
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) closeBizPay(); });
+}
+
+window.closeBizPay = function(){
+  var o = document.getElementById('biz-pay-overlay');
+  if(o) o.remove();
+};
+
+/* ── Transfer ── */
+window.xfMode = function(mode){
+  var recv=$('xf-panel-receive'), send=$('xf-panel-send');
+  var btnR=$('xft-receive'), btnS=$('xft-send');
+  if(mode==='send'){
+    if(recv) recv.style.display='none';
+    if(send) send.style.display='';
+    if(btnR){ btnR.style.borderColor='var(--border)'; btnR.style.background='rgba(255,255,255,.02)'; btnR.style.color='var(--sub)'; }
+    if(btnS){ btnS.style.borderColor='var(--teal)'; btnS.style.background='rgba(96,212,184,.1)'; btnS.style.color='var(--teal)'; }
+  } else {
+    if(recv) recv.style.display='';
+    if(send) send.style.display='none';
+    if(btnR){ btnR.style.borderColor='var(--teal)'; btnR.style.background='rgba(96,212,184,.1)'; btnR.style.color='var(--teal)'; }
+    if(btnS){ btnS.style.borderColor='var(--border)'; btnS.style.background='rgba(255,255,255,.02)'; btnS.style.color='var(--sub)'; }
+  }
+};
+
+window.copyAddr = function(id){
+  var el=$(id); if(!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).catch(function(){});
+};
+
+window.shareAddr = function(id, label){
+  var el=$(id); if(!el) return;
+  var addr=el.textContent.trim();
+  if(navigator.share){ navigator.share({title:'COG$ '+label+' Address',text:addr}).catch(function(){}); }
+  else { window.copyAddr(id); }
+};
+
+window.xferClassChanged = function(val){
+  var wa = D?.wallet_addresses || {};
+  var fromEl=$('xf-from');
+  if(val==='investment_tokens' && fromEl) fromEl.textContent = wa.investment_tokens||D?.abn||'—';
+  if(val==='rwa_tokens' && fromEl) fromEl.textContent = wa.rwa_tokens||D?.abn||'—';
+  // Show balance
+  var balNote=$('xfer-balance-note'), balVal=$('xfer-balance-val');
+  if(balNote && balVal && D){
+    var bal = +(D[val]||0);
+    balVal.textContent = bal.toLocaleString();
+    balNote.style.display='block';
+  }
+};
+
+// ── Contacts (stored in localStorage) ──
+var _contactsKey = 'cogs_biz_contacts_' + (window.location.hostname||'');
+function loadContacts(){ try{ return JSON.parse(localStorage.getItem(_contactsKey))||[]; }catch(e){ return []; } }
+function storeContacts(cs){ try{ localStorage.setItem(_contactsKey, JSON.stringify(cs)); }catch(e){} }
+
+window.toggleContacts = function(){
+  var drop=$('contacts-drop');
+  if(!drop) return;
+  drop.style.display = drop.style.display==='none'?'block':'none';
+  renderContactsList();
+};
+
+function renderContactsList(){
+  var list=$('contacts-list'); if(!list) return;
+  var cs=loadContacts();
+  if(!cs.length){ list.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--dim)">No saved contacts</div>'; return; }
+  list.innerHTML=cs.map(function(c,i){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s" onmouseover="this.style.background=\'rgba(96,212,184,.06)\'" onmouseout="this.style.background=\'\'" onclick="pickContact(\''+esc(c.mn)+'\')">'
+      +'<div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text)">'+esc(c.nick)+'</div><div style="font-size:11px;color:var(--dim);font-family:monospace;letter-spacing:.03em">'+esc(c.mn)+'</div></div>'
+      +'<button type="button" style="background:none;border:none;color:var(--dim);font-size:12px;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="event.stopPropagation();deleteContact('+i+')" title="Remove">✕</button>'
+      +'</div>';
+  }).join('');
+}
+
+window.pickContact = function(addr){
+  var inp=$('xf-to'); if(inp) inp.value=addr;
+  var prev=$('xf-to-preview'); if(prev) prev.textContent=addr;
+  var drop=$('contacts-drop'); if(drop) drop.style.display='none';
+};
+
+window.saveContact = function(){
+  var nick=($('c-nick')?.value||'').trim();
+  var mn=($('c-mn')?.value||'').trim();
+  if(!nick||!mn) return;
+  var cs=loadContacts();
+  cs.push({nick:nick,mn:mn});
+  storeContacts(cs);
+  if($('c-nick')) $('c-nick').value='';
+  if($('c-mn')) $('c-mn').value='';
+  renderContactsList();
+};
+
+window.deleteContact = function(i){
+  var cs=loadContacts();
+  cs.splice(i,1);
+  storeContacts(cs);
+  renderContactsList();
+};
+
+function renderXferHistory(transfers, abn){
+  var el=$('xfer-history'); if(!el) return;
+  if(!transfers||!transfers.length){ el.innerHTML='<div class="empty"><div class="empty-ico">⇄</div><div class="empty-txt">No transfers yet</div></div>'; return; }
+  el.innerHTML=transfers.map(function(t){
+    var out=String(t.sender_subject_ref||'')===String(abn||'');
+    return '<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+      +'<div style="width:8px;height:8px;border-radius:50%;background:'+(out?'var(--warn)':'var(--ok)')+';flex-shrink:0"></div>'
+      +'<div style="flex:1"><div style="font-size:13px;color:var(--text)">'+(out?'Sent to ':'Received from ')+esc(out?t.recipient_subject_ref:t.sender_subject_ref)+'</div>'
+      +'<div style="font-size:11px;color:var(--dim)">'+esc(t.token_key||'')+' · '+Number(t.units||0).toLocaleString()+' units · '+dt(t.created_at)+'</div>'
+      +(t.note?'<div style="font-size:11px;color:var(--sub);margin-top:2px">'+esc(t.note)+'</div>':'')
+      +'</div></div>';
+  }).join('');
+}
+
+window.submitTransfer = async function(){
+  var cls=$('xf-class')?.value;
+  var to=($('xf-to')?.value||'').trim();
+  var units=parseInt($('xf-units')?.value)||0;
+  var note=($('xf-note')?.value||'').trim();
+  if(!cls){ flash('xf-fl','Please select a token class.','err'); return; }
+  if(!to){ flash('xf-fl','Please enter the recipient wallet address.','err'); return; }
+  if(units<1){ flash('xf-fl','Units must be at least 1.','err'); return; }
+  var btn=$('xf-submit');
+  if(btn){ btn.disabled=true; btn.textContent='Sending…'; }
+  try{
+    await api('vault/business-transfer',{method:'POST',body:JSON.stringify({token_class:cls,to_ref:to,units:units,note:note})});
+    flash('xf-fl','Transfer sent successfully.','ok');
+    if($('xf-to')) $('xf-to').value='';
+    if($('xf-units')) $('xf-units').value='';
+    if($('xf-note')) $('xf-note').value='';
+    if($('xf-to-preview')) $('xf-to-preview').textContent='Enter below';
+    // Full reload so KPIs, holdings and activity all update
+    _lastRefresh=Date.now(); // reset throttle — transfer is a known state change
+    setTimeout(loadVault, 600);
+  }catch(e){ flash('xf-fl',e.message||'Transfer failed.','err'); }
+  if(btn){ btn.disabled=false; btn.textContent='Send transfer'; }
+};
+
+/* ── Logout ── */
+$('logout-btn').addEventListener('click', async function(){
+  if(!window.confirm('Are you sure you want to leave?')) return;
+  try{ await api('auth/logout',{method:'POST',body:'{}',timeoutMs:5000}); }catch(e){}
+  try{ window.close(); }catch(e){}
+  setTimeout(function(){
+    window.location.replace(ROOT+'index.html?signed_out=1');
+  }, 200);
+});
+
+/* ════════════════════════════
+   IDLE AUTO-LOGOUT
+   Business Partner is logged out after 2 minutes of inactivity.
+   A 30-second warning toast appears at 90 seconds. Any activity
+   (mouse, key, scroll, touch, click) resets the timer. Also locks
+   when the tab has been hidden for 30+ seconds.
+════════════════════════════ */
+var IDLE_LOGOUT_MS  = 120000; // 2 minutes
+var IDLE_WARNING_MS = 90000;  // 90 seconds — warning appears
+var HIDDEN_LOCK_MS  = 30000;  // 30 seconds — tab hidden threshold
+
+var _idleWarnTid = null;
+var _idleLogoutTid = null;
+var _hiddenAt = 0;
+var _idleArmed = false;
+
+function armIdleLogout(){
+  if (_idleArmed) { resetIdleTimer(); return; }
+  _idleArmed = true;
+  resetIdleTimer();
+  ['mousemove','mousedown','keydown','scroll','touchstart','click','wheel']
+    .forEach(function(ev){ window.addEventListener(ev, resetIdleTimer, {passive:true}); });
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+}
+
+function resetIdleTimer(){
+  if (!_idleArmed) return;
+  clearTimeout(_idleWarnTid);
+  clearTimeout(_idleLogoutTid);
+  hideIdleWarning();
+  _idleWarnTid   = setTimeout(showIdleWarning, IDLE_WARNING_MS);
+  _idleLogoutTid = setTimeout(performIdleLogout, IDLE_LOGOUT_MS);
+}
+
+function showIdleWarning(){
+  var w = $('idle-warning-toast');
+  if (!w) {
+    w = document.createElement('div');
+    w.id = 'idle-warning-toast';
+    w.setAttribute('role','status');
+    w.setAttribute('aria-live','polite');
+    w.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);'+
+      'z-index:500;padding:12px 20px;border-radius:10px;'+
+      'background:linear-gradient(135deg,#0f2d28,#08181a);'+
+      'color:#7be3d6;border:1px solid rgba(123,227,214,.35);'+
+      'font-size:.85rem;font-weight:500;letter-spacing:.02em;'+
+      'box-shadow:0 14px 36px rgba(0,0,0,.6);opacity:0;transition:opacity .22s ease;'+
+      'max-width:calc(100vw - 40px);text-align:center';
+    w.innerHTML = 'Signing you out soon &mdash; move your mouse or tap to stay logged in.';
+    document.body.appendChild(w);
+  }
+  w.style.display = 'block';
+  requestAnimationFrame(function(){ w.style.opacity = '1'; });
+}
+
+function hideIdleWarning(){
+  var w = $('idle-warning-toast');
+  if (!w) return;
+  w.style.opacity = '0';
+  setTimeout(function(){ if (w) w.style.display = 'none'; }, 240);
+}
+
+async function performIdleLogout(){
+  _idleArmed = false;
+  clearTimeout(_idleWarnTid);
+  clearTimeout(_idleLogoutTid);
+  hideIdleWarning();
+  try { await api('auth/logout', {method:'POST', body:'{}', timeoutMs:5000}); } catch(e){}
+  window.location.replace(ROOT+'community/index.html?signed_out=inactivity');
+}
+
+function handleVisibilityChange(){
+  if (document.hidden) {
+    _hiddenAt = Date.now();
+  } else if (_hiddenAt > 0) {
+    var gone = Date.now() - _hiddenAt;
+    _hiddenAt = 0;
+    if (gone >= HIDDEN_LOCK_MS) { performIdleLogout(); return; }
+    resetIdleTimer();
+  }
+}
+
+/* ── Load vault ── */
+async function loadVault(){
+  try{
+    var d = await api('vault/business');
+    $('vault').classList.remove('hidden');
+    renderAll(d);
+    armIdleLogout();
+  }catch(e){
+    console.error('[business-vault]',e.message);
+    if(!D) window.location.replace(ROOT+'community/index.html');
+  }
+}
+loadVault();
+
+/* ── Gift pool purchase ── */
+window.gpAdj = function(type, delta){
+  var el = document.getElementById('gp-'+type);
+  if(!el) return;
+  var v = Math.max(0, (parseInt(el.value)||0) + delta);
+  el.value = v;
+  gpRecalc();
+};
+
+function gpRecalc(){
+  var don = Math.max(0, parseInt(document.getElementById('gp-don')?.value)||0);
+  var pif = Math.max(0, parseInt(document.getElementById('gp-pif')?.value)||0);
+  var total = (don + pif) * 4;
+  var el = document.getElementById('gp-total');
+  if(el) el.textContent = '$' + total.toFixed(2);
+  var orderBtn = document.getElementById('gp-order-btn');
+  if(orderBtn) orderBtn.disabled = total <= 0;
+}
+
+// Listen for manual input changes
+['gp-don','gp-pif'].forEach(function(id){
+  var el = document.getElementById(id);
+  if(el) el.addEventListener('input', gpRecalc);
+});
+
+// Expose IIFE-scoped symbols on window so functions defined outside the IIFE can access them
+window.D          = D;
+window.loadVault  = loadVault;
+window.esc        = esc;
+window.flash      = flash;
+window.api        = api;
+window.gpRecalc   = gpRecalc;
+
+})(); /* end IIFE */
+
+/* ── Pending Orders card ────────────────────────────────── */
+function renderPendingOrders(d){
+  var card = document.getElementById('pending-orders-card');
+  var bd   = document.getElementById('pending-orders-bd');
+  if(!card||!bd) return;
+  var lines = d.gift_pool_unpaid_lines || [];
+  if(!lines.length){ card.style.display='none'; return; }
+  card.style.display='';
+  var html = lines.map(function(l){
+    var amt = (l.units * l.price).toFixed(2);
+    var cls = l.token_class;
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid rgba(196,96,96,.15);background:rgba(196,96,96,.04);margin-bottom:8px;flex-wrap:wrap">'
+      +'<div style="flex:1;min-width:140px">'
+        +'<div style="font-size:13px;font-weight:600;color:var(--text)">'+esc(l.label)+'</div>'
+        +'<div style="font-size:12px;color:var(--dim)">'+l.units+' \xd7 $'+l.price.toFixed(2)+' = <strong style="color:var(--err)">$'+amt+'</strong> unpaid</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+        +'<button class="btn-teal" style="font-size:12px;padding:6px 12px" onclick="openPaymentRequiredModal()">Pay now</button>'
+        +'<button class="btn-ghost" style="font-size:12px;padding:6px 12px;color:var(--err);border-color:rgba(196,96,96,.3)" onclick="cancelGiftOrderByClass(\''+esc(cls)+'\')">Cancel</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+  var total = lines.reduce(function(s,l){return s+l.units*l.price;},0);
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-top:4px">'
+    +'<div style="font-size:14px;font-weight:700;color:var(--err)">Total outstanding: $'+total.toFixed(2)+'</div>'
+    +'<button class="btn-ghost" style="font-size:12px;padding:6px 12px;color:var(--err);border-color:rgba(196,96,96,.3)" onclick="cancelAllGiftOrders()">Cancel all</button>'
+  +'</div>';
+  bd.innerHTML = html;
+}
+
+window.cancelAllGiftOrders = async function(){
+  if(!confirm('Cancel all unpaid Donation and Pay It Forward orders? This cannot be undone.')) return;
+  var fl = document.getElementById('gp-pay-flash');
+  try{
+    var r = await api('vault/cancel-gift-order',{method:'POST',body:JSON.stringify({cancel_all:true})});
+    if(fl){ fl.className='flash show flash-ok'; fl.textContent=(r.total_cancelled||'0')+' item(s) cancelled.'; }
+    loadVault();
+  }catch(e){
+    if(fl){ fl.className='flash show flash-err'; fl.textContent=e.message||'Cancellation failed.'; }
+  }
+};
+
+window.cancelGiftOrderByClass = async function(cls){
+  var label = {donation_tokens:'Donation COG$',pay_it_forward_tokens:'Pay It Forward COG$'}[cls]||cls;
+  if(!confirm('Cancel your unpaid '+label+' order?')) return;
+  var fl = document.getElementById('gp-pay-flash');
+  try{
+    await api('vault/cancel-gift-order',{method:'POST',body:JSON.stringify({token_class:cls})});
+    loadVault();
+  }catch(e){
+    if(fl){ fl.className='flash show flash-err'; fl.textContent=e.message||'Cancellation failed.'; }
+    else alert(e.message||'Cancellation failed.');
+  }
+};
+
+/* Opens a pay-now modal for already-pending orders (from pending-orders-card) */
+window.openPaymentRequiredModal = function(){
+  var outstanding = parseFloat(D&&D.gift_pool_outstanding||0);
+  if(outstanding<=0){ loadVault(); return; }
+  var abn   = D&&D.abn||'';
+  var lines = (D&&D.gift_pool_unpaid_lines)||[];
+  var lineHtml = lines.map(function(l){
+    return '<div class="pay-bank-row">'
+      +'<span class="pay-bank-key">'+esc(l.label)+'</span>'
+      +'<span class="pay-bank-val">'+l.units+' \xd7 $'+l.price.toFixed(2)+' = $'+l.amount.toFixed(2)+'</span>'
+    +'</div>';
+  }).join('');
+  var title = document.getElementById('pay-modal-title');
+  var body  = document.getElementById('pay-modal-body');
+  var bg    = document.getElementById('pay-modal-bg');
+  if(!title||!body||!bg) return;
+  title.textContent = 'Payment Required \u2014 $'+outstanding.toFixed(2);
+  body.innerHTML =
+    '<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">'+lineHtml+'</div>'
+    +'<div style="padding:14px 16px;background:rgba(82,184,122,.06);border:1px solid rgba(82,184,122,.22);border-radius:12px;margin-bottom:14px">'
+      +'<div style="font-size:11px;font-weight:700;color:#52b87a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">\u2605 Bank Transfer (no fees)</div>'
+      +'<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px 16px">'
+        +'<div class="pay-bank-row"><span class="pay-bank-key">PayID</span><span class="pay-bank-val">0494 578 706</span></div>'
+        +'<div class="pay-bank-row"><span class="pay-bank-key">Account name</span><span class="pay-bank-val" style="font-size:11px">The Trustee for COGS of Australia Foundation Hybrid Trust</span></div>'
+        +'<div class="pay-bank-row"><span class="pay-bank-key">BSB</span><span class="pay-bank-val">182-182</span></div>'
+        +'<div class="pay-bank-row"><span class="pay-bank-key">Account</span><span class="pay-bank-val">035 249 275</span></div>'
+        +'<div class="pay-bank-row"><span class="pay-bank-key">Amount</span><span class="pay-bank-val" style="color:#52e899;font-weight:700">$'+outstanding.toFixed(2)+' AUD</span></div>'
+        +'<div class="pay-bank-row" style="border:none"><span class="pay-bank-key">Reference</span><span class="pay-bank-val" style="color:var(--teal)">'+esc(abn)+'</span></div>'
+      +'</div>'
+      +'<p style="font-size:12px;color:var(--dim);margin-top:8px">Use your <strong style="color:var(--text)">ABN</strong> as the payment reference.</p>'
+    +'</div>'
+    +'<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
+      +'<button class="btn-teal" onclick="document.getElementById(\'pay-modal-bg\').classList.remove(\'show\');loadVault();">I\'ve paid \u2014 refresh vault</button>'
+      +'<button class="btn-ghost" onclick="document.getElementById(\'pay-modal-bg\').classList.remove(\'show\')">Close</button>'
+    +'</div>';
+  bg.classList.add('show');
+};
+
+/* ── Three-stage gift pool purchase flow ───────────────── */
+
+/* Stage 1: "Place Order" button — build items list and show confirmation modal */
+window.openBizGiftPoolPurchase = function(){
+  var don = Math.max(0, parseInt(document.getElementById('gp-don')?.value)||0);
+  var pif = Math.max(0, parseInt(document.getElementById('gp-pif')?.value)||0);
+  if(don + pif < 1) return;
+  var items = [];
+  if(don > 0) items.push({cls:'donation_tokens',       label:'Donation COG$',          units:don, price:4});
+  if(pif > 0) items.push({cls:'pay_it_forward_tokens', label:'Pay It Forward COG$',     units:pif, price:4});
+  showBizPaymentModal(items);
+};
+
+/* Stage 2a: Confirmation modal with disclaimer checkbox */
+function showBizPaymentModal(items){
+  var totalAmt = items.reduce(function(s,i){ return s + i.units * i.price; }, 0);
+  var lineHtml = items.map(function(i){
+    return '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)">'
+      +'<span style="color:var(--sub)">'+i.units.toLocaleString()+' \xd7 '+esc(i.label)+'</span>'
+      +'<span style="font-weight:600;color:var(--text)">$'+(i.units*i.price).toFixed(2)+'</span>'
+    +'</div>';
+  }).join('');
+  window._bizGpPendingItems = items;
+  var title = document.getElementById('pay-modal-title');
+  var body  = document.getElementById('pay-modal-body');
+  var bg    = document.getElementById('pay-modal-bg');
+  if(!title||!body||!bg) return;
+  title.textContent = 'Confirm Payment Intent';
+  body.innerHTML =
+    '<div style="margin-bottom:14px">'+lineHtml+'</div>'
+    +'<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:15px;font-weight:700"><span style="color:var(--text)">Total</span><span style="color:#52e899">$'+totalAmt.toFixed(2)+' AUD</span></div>'
+    +'<div style="padding:14px;background:var(--errb);border:1px solid rgba(196,96,96,.3);border-radius:var(--r2);margin:16px 0">'
+      +'<div style="font-size:12px;font-weight:700;color:var(--err);margin-bottom:8px">\u26a0 Important \u2014 please read before confirming</div>'
+      +'<div style="font-size:12px;color:var(--sub);line-height:1.65;display:grid;gap:6px">'
+        +'<div>\ud83d\udcb3 <strong style="color:var(--text)">Payment is required before COG$ are issued.</strong> Reserving units here does not allocate them \u2014 your COG$ are only allocated once payment is received and verified by the Foundation.</div>'
+        +'<div>\ud83e\uddfe These COG$ are <strong style="color:var(--text)">NOT currently tax-deductible.</strong> The Foundation is seeking an ATO product ruling. Do not claim a deduction until you receive written confirmation that ATO approval has been granted.</div>'
+      +'</div>'
+    +'</div>'
+    +'<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;padding:12px;background:rgba(255,255,255,.03);border-radius:var(--r2);border:1px solid var(--border)">'
+      +'<input type="checkbox" id="tax-agree-cb" style="margin-top:2px;accent-color:var(--gold);width:18px;height:18px;flex-shrink:0">'
+      +'<span style="font-size:13px;color:var(--text);line-height:1.55">I understand that <strong>payment is required before COG$ are issued</strong>, and that these COG$ are <strong>not currently tax-deductible</strong>. I agree to proceed.</span>'
+    +'</label>'
+    +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">'
+      +'<button class="btn-teal" id="pay-confirm-btn" onclick="bizConfirmPaymentIntent()">Pay now \u2014 $'+totalAmt.toFixed(2)+' AUD</button>'
+      +'<button class="btn-ghost" id="pay-later-btn" onclick="bizPayLater()">Pay later</button>'
+      +'<button class="btn-ghost" onclick="document.getElementById(\'pay-modal-bg\').classList.remove(\'show\')" style="opacity:.6">Cancel</button>'
+    +'</div>'
+    +'<p style="font-size:11px;color:var(--dim);margin:8px 0 0"><strong>Pay now</strong> records your order and shows bank transfer details. <strong>Pay later</strong> saves your order for later.</p>'
+    +'<div class="flash" id="pay-modal-fl" style="margin-top:12px"></div>';
+  bg.classList.add('show');
+}
+
+/* Stage 2b: "Pay now" — record intents then show bank/card details */
+window.bizConfirmPaymentIntent = async function(){
+  var cb = document.getElementById('tax-agree-cb');
+  if(!cb||!cb.checked){ flash('pay-modal-fl','Please tick the box to confirm you understand the tax notice.','err'); return; }
+  var items = window._bizGpPendingItems || [];
+  if(!items.length) return;
+  var btn = document.getElementById('pay-confirm-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Processing\u2026'; }
+  document.getElementById('pay-later-btn').disabled = true;
+  try{
+    // Record all payment intents
+    for(var i=0; i<items.length; i++){
+      await api('vault/payment-intent',{method:'POST',body:JSON.stringify({
+        token_class: items[i].cls,
+        units:       items[i].units,
+        tax_disclaimer_agreed: true
+      })});
+    }
+    var totalAmt = items.reduce(function(s,i){ return s + i.units * i.price; }, 0);
+    var abn = D&&D.abn||'';
+    var title = document.getElementById('pay-modal-title');
+    var body  = document.getElementById('pay-modal-body');
+    title.textContent = 'Payment Recorded \u2014 $'+totalAmt.toFixed(2);
+    body.innerHTML =
+      '<div style="margin-bottom:18px;padding:14px 16px;background:rgba(82,184,122,.06);border:1px solid rgba(82,184,122,.22);border-radius:12px">'
+        +'<div style="font-size:11px;font-weight:700;color:#52b87a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">\u2605 Preferred \u2014 Bank Transfer (no fees)</div>'
+        +'<p style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px">Direct bank transfer avoids third-party fees. Your COG$ will be activated once payment is confirmed (usually 1\u20132 business days).</p>'
+        +'<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px 16px">'
+          +'<div class="pay-bank-row"><span class="pay-bank-key">PayID</span><span class="pay-bank-val">0494 578 706</span></div>'
+          +'<div class="pay-bank-row"><span class="pay-bank-key">Account name</span><span class="pay-bank-val" style="font-size:11px">The Trustee for COGS of Australia Foundation Hybrid Trust</span></div>'
+          +'<div class="pay-bank-row"><span class="pay-bank-key">BSB</span><span class="pay-bank-val">182-182</span></div>'
+          +'<div class="pay-bank-row"><span class="pay-bank-key">Account</span><span class="pay-bank-val">035 249 275</span></div>'
+          +'<div class="pay-bank-row"><span class="pay-bank-key">Amount</span><span class="pay-bank-val" style="color:#52e899;font-weight:700">$'+totalAmt.toFixed(2)+' AUD</span></div>'
+          +'<div class="pay-bank-row" style="border:none"><span class="pay-bank-key">Reference</span><span class="pay-bank-val" style="color:var(--teal)">'+esc(abn)+'</span></div>'
+        +'</div>'
+        +'<p style="font-size:12px;color:var(--dim);margin-top:8px">Use your <strong style="color:var(--text)">ABN</strong> as the payment reference.</p>'
+      +'</div>'
+      +'<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
+        +'<button class="btn-teal" onclick="document.getElementById(\'pay-modal-bg\').classList.remove(\'show\');loadVault();">I\'ve paid by bank transfer \u2014 refresh</button>'
+        +'<button class="btn-ghost" onclick="document.getElementById(\'pay-modal-bg\').classList.remove(\'show\');loadVault();">Close</button>'
+      +'</div>';
+    // Reset inputs and refresh vault so pending orders pill appears
+    ['gp-don','gp-pif'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value='0'; });
+    gpRecalc();
+    setTimeout(loadVault, 500);
+  }catch(e){
+    flash('pay-modal-fl', e.message||'Could not process payment intent.','err');
+    if(btn){ btn.disabled=false; btn.textContent='Pay now \u2014 $'+(items.reduce(function(s,i){return s+i.units*i.price;},0)).toFixed(2)+' AUD'; }
+    document.getElementById('pay-later-btn').disabled = false;
+  }
+};
+
+/* Stage 2c: "Pay later" — record intents, show order-saved confirmation */
+window.bizPayLater = async function(){
+  var cb = document.getElementById('tax-agree-cb');
+  if(!cb||!cb.checked){ flash('pay-modal-fl','Please tick the box to confirm you understand the tax notice.','err'); return; }
+  var items = window._bizGpPendingItems || [];
+  if(!items.length) return;
+  var btn = document.getElementById('pay-later-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Saving\u2026'; }
+  document.getElementById('pay-confirm-btn').disabled = true;
+  try{
+    for(var i=0; i<items.length; i++){
+      await api('vault/payment-intent',{method:'POST',body:JSON.stringify({
+        token_class: items[i].cls,
+        units:       items[i].units,
+        tax_disclaimer_agreed: true
+      })});
+    }
+    var totalAmt = items.reduce(function(s,i){ return s + i.units * i.price; }, 0);
+    var title = document.getElementById('pay-modal-title');
+    var body  = document.getElementById('pay-modal-body');
+    title.textContent = 'Order Recorded';
+    body.innerHTML =
+      '<div style="text-align:center;padding:20px 0">'
+        +'<div style="font-size:48px;margin-bottom:12px">\u2713</div>'
+        +'<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">Your order has been saved</div>'
+        +'<div style="font-size:14px;color:var(--sub);line-height:1.6;max-width:380px;margin:0 auto">Your outstanding payment of <strong style="color:#52e899">$'+totalAmt.toFixed(2)+' AUD</strong> is recorded. You can pay at any time using the <em>Payment Required</em> button in your vault.</div>'
+        +'<button class="btn-ghost" style="margin-top:20px" onclick="document.getElementById(\'pay-modal-bg\').classList.remove(\'show\');loadVault();">Done</button>'
+      +'</div>';
+    ['gp-don','gp-pif'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value='0'; });
+    gpRecalc();
+    setTimeout(loadVault, 500);
+  }catch(e){
+    flash('pay-modal-fl', e.message||'Could not save your order.','err');
+    if(btn){ btn.disabled=false; btn.textContent='Pay later'; }
+    document.getElementById('pay-confirm-btn').disabled = false;
+  }
+};
+
+window.payModalClose = function(e){
+  if(e.target===document.getElementById('pay-modal-bg')){
+    document.getElementById('pay-modal-bg').classList.remove('show');
+    if(typeof loadVault==='function') loadVault();
+  }
+};
+
+</script>
+
+<!-- Pay modal -->
+<div class="pay-modal-bg" id="pay-modal-bg" onclick="payModalClose(event)">
+  <div class="pay-modal">
+    <h3 id="pay-modal-title">Confirm Payment Intent</h3>
+    <div id="pay-modal-body"></div>
+  </div>
+</div>
+
+</body>
+</html>

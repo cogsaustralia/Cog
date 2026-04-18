@@ -1,0 +1,974 @@
+[01-Apr-2026 09:52:02 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(8): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:57:30 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(8): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:57:31 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/members.php(7): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:57:34 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/payments.php(7): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:57:35 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php(7): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:57:36 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/payments.php(7): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:57:42 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/payments.php(7): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:58:23 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(8): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 09:58:33 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:19
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(8): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 19
+[01-Apr-2026 10:02:22 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:84
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(8): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 84
+[01-Apr-2026 10:02:50 UTC] PHP Fatal error:  Uncaught RuntimeException: Database name is not configured. in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:84
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(8): ops_db()
+#1 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 84
+[01-Apr-2026 10:06:43 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[28000] [1045] Access denied for user 'cogsaust'@'localhost' (using password: NO) in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:96
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(96): PDO->__construct()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(105): ops_db_connect()
+#2 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(192): ops_db()
+#3 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(212): ops_sync_admin_session_from_api()
+#4 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(7): ops_require_admin()
+#5 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 96
+[01-Apr-2026 10:07:12 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[28000] [1045] Access denied for user 'cogsaust'@'localhost' (using password: NO) in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:96
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(96): PDO->__construct()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(105): ops_db_connect()
+#2 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(192): ops_db()
+#3 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(212): ops_sync_admin_session_from_api()
+#4 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(7): ops_require_admin()
+#5 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 96
+[01-Apr-2026 10:15:59 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[28000] [1045] Access denied for user 'cogsaust'@'localhost' (using password: NO) in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php:96
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(96): PDO->__construct()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(105): ops_db_connect()
+#2 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(192): ops_db()
+#3 /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php(212): ops_sync_admin_session_from_api()
+#4 /home4/cogsaust/test.cogsaustralia.org/admin/dashboard.php(7): ops_require_admin()
+#5 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/includes/ops_workflow.php on line 96
+[01-Apr-2026 10:58:41 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_fetch_all() in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:27
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 27
+[01-Apr-2026 10:58:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_fetch_all() in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:27
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 27
+[01-Apr-2026 11:10:40 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_fetch_all() in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:27
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 27
+[02-Apr-2026 12:50:04 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(201): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 12:50:08 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(201): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 12:53:48 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(201): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 12:53:56 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(201): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 12:54:01 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(201): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 12:54:52 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(201): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 12:54:56 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(201): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 13:23:53 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 13:24:04 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 13:36:59 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 13:43:59 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 13:44:05 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 13:44:44 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 13:45:10 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 21:20:15 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipient_email' in 'SELECT' in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php:15
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(15): PDOStatement->execute()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php(203): rows()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 15
+[02-Apr-2026 21:21:17 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 198
+[02-Apr-2026 21:30:24 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 198
+[02-Apr-2026 21:30:32 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 198
+[02-Apr-2026 21:37:16 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 198
+[02-Apr-2026 21:37:31 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/test.cogsaustralia.org/admin/email_access.php on line 198
+[02-Apr-2026 23:03:59 UTC] PHP Parse error:  Unmatched '}' in /home4/cogsaust/test.cogsaustralia.org/admin/members.php on line 127
+[02-Apr-2026 23:04:01 UTC] PHP Parse error:  Unmatched '}' in /home4/cogsaust/test.cogsaustralia.org/admin/members.php on line 127
+[02-Apr-2026 23:05:25 UTC] PHP Parse error:  Unmatched '}' in /home4/cogsaust/test.cogsaustralia.org/admin/members.php on line 127
+[03-Apr-2026 05:39:24 UTC] PHP Parse error:  syntax error, unexpected token "\" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 36
+[03-Apr-2026 05:39:26 UTC] PHP Parse error:  syntax error, unexpected token "\" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 36
+[03-Apr-2026 05:40:16 UTC] PHP Parse error:  syntax error, unexpected token "\" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 36
+[03-Apr-2026 05:43:17 UTC] PHP Parse error:  syntax error, unexpected token "\" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 36
+[03-Apr-2026 06:24:44 UTC] PHP Parse error:  syntax error, unexpected token "&" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 307
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "member_type" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 361
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "member_number" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 361
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "full_name" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 363
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "email" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 363
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "wallet_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 364
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "signup_payment_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 365
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "stewardship_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 366
+[03-Apr-2026 06:31:34 UTC] PHP Warning:  Undefined array key "openers" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 369
+[03-Apr-2026 06:31:34 UTC] PHP Fatal error:  Uncaught TypeError: render_code_rows(): Argument #1 ($rows) must be of type array, null given, called in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 369 and defined in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php:318
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php(369): render_code_rows()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php(436): render_member_cards()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 318
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "member_type" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 361
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "member_number" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 361
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "full_name" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 363
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "email" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 363
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "wallet_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 364
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "signup_payment_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 365
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "stewardship_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 366
+[03-Apr-2026 06:36:31 UTC] PHP Warning:  Undefined array key "openers" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 369
+[03-Apr-2026 06:36:31 UTC] PHP Fatal error:  Uncaught TypeError: render_code_rows(): Argument #1 ($rows) must be of type array, null given, called in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 369 and defined in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php:318
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php(369): render_code_rows()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php(436): render_member_cards()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 318
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "member_type" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 361
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "member_number" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 361
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "full_name" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 363
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "email" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 363
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "wallet_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 364
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "signup_payment_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 365
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "stewardship_status" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 366
+[03-Apr-2026 06:36:58 UTC] PHP Warning:  Undefined array key "openers" in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 369
+[03-Apr-2026 06:36:58 UTC] PHP Fatal error:  Uncaught TypeError: render_code_rows(): Argument #1 ($rows) must be of type array, null given, called in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 369 and defined in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php:318
+Stack trace:
+#0 /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php(369): render_code_rows()
+#1 /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php(436): render_member_cards()
+#2 {main}
+  thrown in /home4/cogsaust/test.cogsaustralia.org/admin/approvals.php on line 318
+[03-Apr-2026 08:40:12 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:12 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:12 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:12 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:19 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:19 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:19 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:19 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:40:57 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 365
+[03-Apr-2026 08:40:57 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 365
+[03-Apr-2026 08:40:57 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 365
+[03-Apr-2026 08:40:57 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 365
+[03-Apr-2026 08:41:01 UTC] PHP Warning:  Undefined array key "question" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 394
+[03-Apr-2026 08:41:01 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 394
+[03-Apr-2026 08:41:11 UTC] PHP Warning:  Undefined array key "question" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 394
+[03-Apr-2026 08:41:11 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 394
+[03-Apr-2026 08:41:23 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:41:23 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:41:23 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 08:41:23 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 21:15:01 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 21:15:01 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 21:15:01 UTC] PHP Warning:  Undefined array key "title" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[03-Apr-2026 21:15:01 UTC] PHP Warning:  Undefined array key "audience" in /home4/cogsaust/test.cogsaustralia.org/admin/messages.php on line 308
+[05-Apr-2026 12:59:36 UTC] [admin/dashboard] pending approvals KPI: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'WHERE'
+[05-Apr-2026 12:59:48 UTC] [admin/dashboard] pending approvals KPI: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'WHERE'
+[05-Apr-2026 12:59:59 UTC] [admin/dashboard] pending approvals KPI: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'WHERE'
+[05-Apr-2026 18:15:23 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 18:15:26 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 18:16:30 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 18:16:32 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 18:16:39 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 18:16:43 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 18:19:33 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 18:19:50 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 22:21:15 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:21:18 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:21:42 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:21:45 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:21:47 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 22:21:58 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:22:02 UTC] PHP Parse error:  Unclosed '{' on line 272 in /home4/cogsaust/public_html/admin/approvals.php on line 471
+[05-Apr-2026 22:31:12 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:31:14 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:32:02 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:32:08 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:32:34 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:34:04 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:34:05 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[05-Apr-2026 22:34:14 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'm.mobile' in 'SELECT' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/payments.php(153): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "member_type" in /home4/cogsaust/public_html/admin/approvals.php on line 361
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "member_number" in /home4/cogsaust/public_html/admin/approvals.php on line 361
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "full_name" in /home4/cogsaust/public_html/admin/approvals.php on line 363
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "email" in /home4/cogsaust/public_html/admin/approvals.php on line 363
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "wallet_status" in /home4/cogsaust/public_html/admin/approvals.php on line 364
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "signup_payment_status" in /home4/cogsaust/public_html/admin/approvals.php on line 365
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "stewardship_status" in /home4/cogsaust/public_html/admin/approvals.php on line 366
+[06-Apr-2026 02:23:05 UTC] PHP Warning:  Undefined array key "openers" in /home4/cogsaust/public_html/admin/approvals.php on line 369
+[06-Apr-2026 02:23:05 UTC] PHP Fatal error:  Uncaught TypeError: render_code_rows(): Argument #1 ($rows) must be of type array, null given, called in /home4/cogsaust/public_html/admin/approvals.php on line 369 and defined in /home4/cogsaust/public_html/admin/approvals.php:318
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/approvals.php(369): render_code_rows()
+#1 /home4/cogsaust/public_html/admin/approvals.php(436): render_member_cards()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/approvals.php on line 318
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "member_type" in /home4/cogsaust/public_html/admin/approvals.php on line 361
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "member_number" in /home4/cogsaust/public_html/admin/approvals.php on line 361
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "full_name" in /home4/cogsaust/public_html/admin/approvals.php on line 363
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "email" in /home4/cogsaust/public_html/admin/approvals.php on line 363
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "wallet_status" in /home4/cogsaust/public_html/admin/approvals.php on line 364
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "signup_payment_status" in /home4/cogsaust/public_html/admin/approvals.php on line 365
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "stewardship_status" in /home4/cogsaust/public_html/admin/approvals.php on line 366
+[06-Apr-2026 02:30:49 UTC] PHP Warning:  Undefined array key "openers" in /home4/cogsaust/public_html/admin/approvals.php on line 369
+[06-Apr-2026 02:30:49 UTC] PHP Fatal error:  Uncaught TypeError: render_code_rows(): Argument #1 ($rows) must be of type array, null given, called in /home4/cogsaust/public_html/admin/approvals.php on line 369 and defined in /home4/cogsaust/public_html/admin/approvals.php:318
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/approvals.php(369): render_code_rows()
+#1 /home4/cogsaust/public_html/admin/approvals.php(436): render_member_cards()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/approvals.php on line 318
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "member_type" in /home4/cogsaust/public_html/admin/approvals.php on line 361
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "member_number" in /home4/cogsaust/public_html/admin/approvals.php on line 361
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "full_name" in /home4/cogsaust/public_html/admin/approvals.php on line 363
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "email" in /home4/cogsaust/public_html/admin/approvals.php on line 363
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "wallet_status" in /home4/cogsaust/public_html/admin/approvals.php on line 364
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "signup_payment_status" in /home4/cogsaust/public_html/admin/approvals.php on line 365
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "stewardship_status" in /home4/cogsaust/public_html/admin/approvals.php on line 366
+[06-Apr-2026 02:30:52 UTC] PHP Warning:  Undefined array key "openers" in /home4/cogsaust/public_html/admin/approvals.php on line 369
+[06-Apr-2026 02:30:52 UTC] PHP Fatal error:  Uncaught TypeError: render_code_rows(): Argument #1 ($rows) must be of type array, null given, called in /home4/cogsaust/public_html/admin/approvals.php on line 369 and defined in /home4/cogsaust/public_html/admin/approvals.php:318
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/approvals.php(369): render_code_rows()
+#1 /home4/cogsaust/public_html/admin/approvals.php(436): render_member_cards()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/approvals.php on line 318
+[08-Apr-2026 03:58:15 UTC] PHP Warning:  Undefined array key "action_name" in /home4/cogsaust/public_html/admin/audit.php on line 18
+[08-Apr-2026 03:58:15 UTC] PHP Warning:  Undefined array key "action_name" in /home4/cogsaust/public_html/admin/audit.php on line 18
+[08-Apr-2026 04:36:51 UTC] PHP Warning:  Undefined array key "action_name" in /home4/cogsaust/public_html/admin/audit.php on line 18
+[08-Apr-2026 04:36:51 UTC] PHP Warning:  Undefined array key "action_name" in /home4/cogsaust/public_html/admin/audit.php on line 18
+[08-Apr-2026 04:36:51 UTC] PHP Warning:  Undefined array key "action_name" in /home4/cogsaust/public_html/admin/audit.php on line 18
+[08-Apr-2026 05:52:23 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:52:26 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:52:27 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:52:48 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:55:23 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:55:26 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:55:28 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:55:30 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:55:55 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 05:57:23 UTC] PHP Parse error:  syntax error, unexpected token "elseif" in /home4/cogsaust/public_html/admin/payments.php on line 223
+[08-Apr-2026 15:06:31 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:06:34 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:10:17 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:10:25 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:13:48 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:13:50 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:13:57 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:14:00 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:14:51 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:20:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:20:14 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:30:54 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:30:57 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:33:48 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(32): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:37:17 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(39): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:37:19 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(39): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:40:35 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(39): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[08-Apr-2026 15:45:21 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'rl.status' in 'WHERE' in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php:598
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(598): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/AccountingHooks.php(500): AccountingHooks::fetchValue()
+#2 /home4/cogsaust/public_html/admin/accounting.php(39): AccountingHooks::getFundSummary()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/AccountingHooks.php on line 598
+[09-Apr-2026 03:53:07 UTC] PHP Fatal error:  strict_types declaration must be the very first statement in the script in /home4/cogsaust/public_html/admin/dashboard.php on line 12
+[09-Apr-2026 03:54:06 UTC] PHP Fatal error:  strict_types declaration must be the very first statement in the script in /home4/cogsaust/public_html/admin/dashboard.php on line 11
+[10-Apr-2026 09:49:51 Australia/Sydney] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestation_log' doesn't exist in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/businesses.php(58): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[10-Apr-2026 09:49:54 Australia/Sydney] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestation_log' doesn't exist in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/businesses.php(58): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[10-Apr-2026 09:52:17 Australia/Sydney] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestation_log' doesn't exist in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/businesses.php(58): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[10-Apr-2026 09:52:36 Australia/Sydney] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cogsaust_TRUST.stewardship_attestation_log' doesn't exist in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:397
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(397): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(790): ops_fetch_all()
+#2 /home4/cogsaust/public_html/admin/businesses.php(58): rows()
+#3 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 397
+[15-Apr-2026 01:54:24 UTC] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function ops_require_admin(), 0 passed in /home4/cogsaust/public_html/admin/execution.php on line 4 and at least 1 expected in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:126
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/execution.php(4): ops_require_admin()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 126
+[15-Apr-2026 01:54:27 UTC] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function ops_require_admin(), 0 passed in /home4/cogsaust/public_html/admin/execution.php on line 4 and at least 1 expected in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:126
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/execution.php(4): ops_require_admin()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 126
+[15-Apr-2026 01:54:51 UTC] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function ops_require_admin(), 0 passed in /home4/cogsaust/public_html/admin/dashboard.php on line 7 and at least 1 expected in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:126
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/dashboard.php(7): ops_require_admin()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 126
+[15-Apr-2026 01:54:53 UTC] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function ops_require_admin(), 0 passed in /home4/cogsaust/public_html/admin/dashboard.php on line 7 and at least 1 expected in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:126
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/dashboard.php(7): ops_require_admin()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 126
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:17:31 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:17 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:23 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 362
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceTone in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 15:22:29 Australia/Sydney] PHP Warning:  Undefined variable $acceptanceLabel in /home4/cogsaust/public_html/admin/members.php on line 388
+[15-Apr-2026 05:52:21 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home4/cogsaust/public_html/_app/api/services/MedicareKycAgent.php:28
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/admin_kyc.php(17): MedicareKycAgent->__construct()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/_app/api/services/MedicareKycAgent.php on line 28
+[15-Apr-2026 06:51:16 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_label_settings() in /home4/cogsaust/public_html/admin/settings.php:59
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/settings.php on line 59
+[15-Apr-2026 06:59:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home4/cogsaust/public_html/_app/api/services/MedicareKycAgent.php:28
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/admin_kyc.php(17): MedicareKycAgent->__construct()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/_app/api/services/MedicareKycAgent.php on line 28
+[15-Apr-2026 06:59:25 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_label_settings() in /home4/cogsaust/public_html/admin/settings.php:59
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/settings.php on line 59
+[16-Apr-2026 02:02:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_label_settings() in /home4/cogsaust/public_html/admin/execution.php:6
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/execution.php on line 6
+[16-Apr-2026 02:02:32 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_label_settings() in /home4/cogsaust/public_html/admin/execution.php:6
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/execution.php on line 6
+[16-Apr-2026 02:02:44 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_label_settings() in /home4/cogsaust/public_html/admin/governance.php:6
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/governance.php on line 6
+[16-Apr-2026 02:04:47 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function ops_label_settings() in /home4/cogsaust/public_html/admin/messages.php:8
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/messages.php on line 8
+[16-Apr-2026 02:21:15 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home4/cogsaust/public_html/_app/api/services/MedicareKycAgent.php:28
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/admin_kyc.php(17): MedicareKycAgent->__construct()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/_app/api/services/MedicareKycAgent.php on line 28
+[16-Apr-2026 10:07:52 UTC] PHP Warning:  Undefined variable $rows in /home4/cogsaust/public_html/admin/messages.php on line 580
+[16-Apr-2026 10:07:52 UTC] PHP Warning:  Undefined variable $rows in /home4/cogsaust/public_html/admin/messages.php on line 581
+[16-Apr-2026 10:07:52 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/cogsaust/public_html/admin/messages.php on line 581
+[16-Apr-2026 10:07:52 UTC] PHP Warning:  Undefined variable $noticeTerms in /home4/cogsaust/public_html/admin/messages.php on line 595
+[16-Apr-2026 10:07:52 UTC] PHP Warning:  Undefined variable $r in /home4/cogsaust/public_html/admin/messages.php on line 597
+[16-Apr-2026 10:07:52 UTC] PHP Warning:  Trying to access array offset on null in /home4/cogsaust/public_html/admin/messages.php on line 597
+[16-Apr-2026 11:26:12 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:929
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(929): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(80): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 929
+[16-Apr-2026 11:26:19 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:929
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(929): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/rwa_valuations.php(51): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 929
+[16-Apr-2026 11:37:48 UTC] PHP Warning:  Undefined variable $templates in /home4/cogsaust/public_html/admin/messages.php on line 537
+[16-Apr-2026 11:37:48 UTC] PHP Warning:  Undefined variable $templates in /home4/cogsaust/public_html/admin/messages.php on line 538
+[16-Apr-2026 11:37:48 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/cogsaust/public_html/admin/messages.php on line 538
+[16-Apr-2026 11:37:48 UTC] PHP Warning:  Undefined variable $templateTerms in /home4/cogsaust/public_html/admin/messages.php on line 551
+[16-Apr-2026 11:37:48 UTC] PHP Warning:  Undefined variable $t in /home4/cogsaust/public_html/admin/messages.php on line 555
+[16-Apr-2026 11:37:48 UTC] PHP Warning:  Trying to access array offset on null in /home4/cogsaust/public_html/admin/messages.php on line 555
+[16-Apr-2026 11:43:08 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(80): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 11:43:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(80): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 11:43:14 UTC] PHP Warning:  Undefined variable $templates in /home4/cogsaust/public_html/admin/messages.php on line 537
+[16-Apr-2026 11:43:14 UTC] PHP Warning:  Undefined variable $templates in /home4/cogsaust/public_html/admin/messages.php on line 538
+[16-Apr-2026 11:43:14 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/cogsaust/public_html/admin/messages.php on line 538
+[16-Apr-2026 11:43:14 UTC] PHP Warning:  Undefined variable $templateTerms in /home4/cogsaust/public_html/admin/messages.php on line 551
+[16-Apr-2026 11:43:14 UTC] PHP Warning:  Undefined variable $t in /home4/cogsaust/public_html/admin/messages.php on line 555
+[16-Apr-2026 11:43:14 UTC] PHP Warning:  Trying to access array offset on null in /home4/cogsaust/public_html/admin/messages.php on line 555
+[16-Apr-2026 12:11:30 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(80): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 12:41:48 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(80): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 12:49:52 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(86): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 12:55:23 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(86): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:03:26 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:06:13 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:06:19 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:06:24 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:07:02 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:10:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:10:13 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:10:25 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:10:30 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:11:02 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '=' in /home4/cogsaust/public_html/admin/includes/ops_workflow.php:928
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/includes/ops_workflow.php(928): PDOStatement->execute()
+#1 /home4/cogsaust/public_html/admin/asx_purchases.php(99): ops_fetch_one()
+#2 {main}
+  thrown in /home4/cogsaust/public_html/admin/includes/ops_workflow.php on line 928
+[16-Apr-2026 13:14:47 UTC] [asx_purchases] data fetch error: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '='
+[16-Apr-2026 13:16:08 UTC] [asx_purchases] data fetch error: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '='
+[16-Apr-2026 13:16:14 UTC] [asx_purchases] data fetch error: SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE) and (utf8mb4_general_ci,COERCIBLE) for operation '='
+[16-Apr-2026 23:01:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[16-Apr-2026 23:01:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[16-Apr-2026 23:01:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[16-Apr-2026 23:01:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[16-Apr-2026 23:01:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[16-Apr-2026 23:01:11 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[16-Apr-2026 23:05:36 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[16-Apr-2026 23:05:36 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 Server has gone away in /home4/cogsaust/public_html/admin/godley_backfill.php:273
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_backfill.php(273): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_backfill.php on line 273
+[17-Apr-2026 03:03:12 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'b.status' in 'SELECT' in /home4/cogsaust/public_html/admin/godley_test_cleanup.php:59
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_test_cleanup.php(59): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_test_cleanup.php on line 59
+[17-Apr-2026 03:03:57 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'b.status' in 'SELECT' in /home4/cogsaust/public_html/admin/godley_test_cleanup.php:59
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_test_cleanup.php(59): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_test_cleanup.php on line 59
+[17-Apr-2026 03:06:38 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'b.status' in 'SELECT' in /home4/cogsaust/public_html/admin/godley_test_cleanup.php:59
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_test_cleanup.php(59): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_test_cleanup.php on line 59
+[17-Apr-2026 03:06:42 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'b.status' in 'SELECT' in /home4/cogsaust/public_html/admin/godley_test_cleanup.php:59
+Stack trace:
+#0 /home4/cogsaust/public_html/admin/godley_test_cleanup.php(59): PDO->query()
+#1 {main}
+  thrown in /home4/cogsaust/public_html/admin/godley_test_cleanup.php on line 59
+[17-Apr-2026 15:06:16 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home4/cogsaust/public_html/admin/reconciliation_agent.php:218
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/reconciliation_agent.php on line 218
+[17-Apr-2026 15:06:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home4/cogsaust/public_html/admin/reconciliation_agent.php:218
+Stack trace:
+#0 {main}
+  thrown in /home4/cogsaust/public_html/admin/reconciliation_agent.php on line 218
+[17-Apr-2026 20:41:04 UTC] PHP Warning:  Undefined variable $rows in /home4/cogsaust/public_html/admin/messages.php on line 580
+[17-Apr-2026 20:41:04 UTC] PHP Warning:  Undefined variable $rows in /home4/cogsaust/public_html/admin/messages.php on line 581
+[17-Apr-2026 20:41:04 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/cogsaust/public_html/admin/messages.php on line 581
+[17-Apr-2026 20:41:04 UTC] PHP Warning:  Undefined variable $noticeTerms in /home4/cogsaust/public_html/admin/messages.php on line 595
+[17-Apr-2026 20:41:04 UTC] PHP Warning:  Undefined variable $r in /home4/cogsaust/public_html/admin/messages.php on line 597
+[17-Apr-2026 20:41:04 UTC] PHP Warning:  Trying to access array offset on null in /home4/cogsaust/public_html/admin/messages.php on line 597

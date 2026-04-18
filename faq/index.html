@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <title>FAQ | COGs of Australia Foundation</title>
+  <meta name="description" content="Frequently asked questions about the COG$ Joint Venture Partnership — how Partners operate the trust, what the JVPA is, Governance Foundation Day, Expansion Day, token classes, and the entrenched founding principles.">
+  <link rel="icon" type="image/png" href="../assets/logo_webcir.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0804;--panel:rgba(16,11,4,.90);--panel2:rgba(36,26,11,.90);
+      --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8;--text2:rgba(255,248,232,.74);--muted:rgba(210,185,130,.58);
+      --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+      --shadow:0 20px 52px rgba(0,0,0,.65);
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    img{max-width:100%;height:auto}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    /* ── Background ── */
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/cogs_faq.webp') center 38%/cover no-repeat;opacity:.15;filter:sepia(.3) saturate(.85) brightness(.5)}
+    .bg-vignette{position:absolute;inset:0;background:
+      radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.65) 0%,transparent 60%),
+      radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.97) 0%,transparent 70%),
+      radial-gradient(ellipse 35% 100% at 0%   50%,rgba(10,8,4,.72) 0%,transparent 60%),
+      radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.72) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1;overflow-x:hidden}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    /* ── Header ── */
+    .site-header{border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:sticky;top:0;z-index:200;overflow:hidden}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;min-width:0}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:1;min-width:0;overflow:hidden}
+    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block}
+    .brand-copy{display:flex;flex-direction:column;gap:1px}
+    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
+    .brand-sub{font-size:.61rem;color:rgba(255,248,232,.65);letter-spacing:.04em;line-height:1.2}
+    .brand-tag{font-size:.58rem;color:var(--muted);letter-spacing:.05em;line-height:1.2}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:99px;transition:color .2s,background .2s;white-space:nowrap;letter-spacing:.02em}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold-1);background:var(--gold-pale)}
+    .nav-cta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .btn-primary{font-size:.76rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:8px 18px;border-radius:99px;white-space:nowrap;transition:opacity .2s;border:none;cursor:pointer;letter-spacing:.01em}
+    .btn-primary:hover{opacity:.88}
+    .btn-secondary{font-size:.76rem;font-weight:400;color:var(--muted);text-decoration:none;border:1px solid var(--gold-rim);padding:7px 16px;border-radius:99px;white-space:nowrap;transition:color .2s,border-color .2s,background .2s;background:none;cursor:pointer}
+    .btn-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+    .mobile-toggle{display:none;background:none;border:1px solid var(--gold-rim);color:var(--muted);padding:7px 11px;border-radius:10px;cursor:pointer;font-size:1rem;line-height:1}
+    .mobile-drawer{display:none;flex-direction:column;gap:2px;padding:10px 0 14px;border-top:1px solid var(--line)}
+    .mobile-drawer a{font-size:.88rem;color:var(--muted);text-decoration:none;padding:9px 0;border-bottom:1px solid var(--line);transition:color .2s}
+    .mobile-drawer a:last-child{border-bottom:none}
+    .mobile-drawer a:hover{color:var(--gold-1)}
+    .mobile-drawer.open{display:flex}
+
+    /* ── Disclosure ── */
+    .disclosure{background:linear-gradient(180deg,rgba(42,29,11,.55),rgba(23,17,9,.3));border-bottom:1px solid var(--line);padding:9px 24px;text-align:center}
+    .disclosure p{font-size:.73rem;color:rgba(255,244,221,.55);line-height:1.5}
+
+    /* ── Shared layout ── */
+    .section{padding:0 0 56px}
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 52px}
+    .eyebrow{display:inline-block;font-size:.67rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:5px 16px;border-radius:99px;margin-bottom:20px}
+    .kicker{display:inline-block;font-size:.64rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .lead{font-size:.97rem;font-weight:300;color:var(--text2);line-height:1.78}
+    .glass-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    .section-hd{margin-bottom:32px}
+    .section-hd h2{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:500;line-height:1.1;letter-spacing:-.03em;margin:10px 0 10px}
+    .section-hd p{font-size:.9rem;color:var(--muted);line-height:1.72;max-width:64ch}
+
+    /* ── Page hero ── */
+    .page-hero{padding:56px 0 48px}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:start}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(2rem,5vw,3.2rem);font-weight:500;line-height:1.08;letter-spacing:-.025em;margin-bottom:16px}
+
+    /* Section nav pills */
+    .section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+    .section-nav a{display:inline-flex;align-items:center;padding:8px 14px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(40,31,19,.4);color:var(--muted);font-size:.76rem;text-decoration:none;transition:.2s ease}
+    .section-nav a:hover{color:var(--text);border-color:var(--gold-rim2);background:rgba(52,40,24,.62)}
+
+    .utility-note{font-size:.78rem;color:var(--muted);line-height:1.65;margin-top:16px;max-width:52ch}
+
+    /* Hero right panel */
+    .hero-panel{padding:24px}
+    .hero-panel h3{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--gold-1);margin:10px 0 14px;line-height:1.2}
+    .hero-panel p{font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:14px}
+    .panel-cards{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+    .panel-card{padding:13px 16px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+    .panel-card strong{display:block;font-size:.86rem;font-weight:500;color:var(--text);margin-bottom:4px}
+    .panel-card p{font-size:.76rem;color:var(--muted);line-height:1.55;margin:0}
+
+    /* ── Intro cards (3-col) ── */
+    .intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:0}
+    .intro-card{padding:24px;border-radius:var(--r);background:linear-gradient(160deg,rgba(36,26,9,.94),rgba(16,11,5,.88));border:1px solid var(--gold-rim);box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .intro-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-rim2),transparent)}
+    .intro-card strong{display:block;font-family:var(--serif);font-size:1.05rem;font-weight:500;color:var(--gold-1);margin-bottom:9px;line-height:1.2}
+    .intro-card p{font-size:.8rem;color:var(--muted);line-height:1.68;margin:0}
+
+    /* ── Quote band ── */
+    .quote-band{padding:30px 36px;text-align:center}
+    .quote-band blockquote{font-family:var(--serif);font-size:clamp(1.35rem,3vw,2rem);font-style:italic;line-height:1.2;letter-spacing:-.02em;color:var(--gold-1);margin:10px 0 14px}
+    .quote-band p{font-size:.88rem;color:var(--muted);line-height:1.72;max-width:52ch;margin:0 auto}
+
+    /* ── Highlight band ── */
+    .highlight-band{padding:28px 32px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+    .highlight-band h2{font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 10px}
+    .highlight-band p{font-size:.86rem;color:var(--muted);line-height:1.7;margin:0}
+    .highlight-points{display:flex;flex-direction:column;gap:12px}
+    .highlight-point{padding:14px 16px;border-radius:13px;background:rgba(240,209,138,.04);border:1px solid var(--line)}
+    .highlight-point strong{display:block;font-size:.86rem;font-weight:500;color:var(--text);margin-bottom:3px}
+    .highlight-point span{font-size:.78rem;color:var(--muted);line-height:1.55}
+
+    /* ── Path cards (2-col) ── */
+    .path-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .path-card{padding:26px 28px;border-radius:var(--r);background:linear-gradient(160deg,rgba(28,20,8,.92),rgba(14,10,4,.85));border:1px solid var(--line);box-shadow:var(--shadow)}
+    .path-card strong{display:block;font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-1);margin-bottom:10px;line-height:1.2}
+    .path-card p{font-size:.82rem;color:var(--muted);line-height:1.68;margin:0}
+
+    /* ── Split band (CTA) ── */
+    .split-band{padding:30px 34px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center}
+    .split-band h2{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.3rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 12px}
+    .split-band .lead{font-size:.9rem;margin:0}
+    .split-band .mini-note{font-size:.76rem;color:var(--muted);margin-top:8px;font-style:italic}
+    .cta-stack{display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+
+    /* ── Accordion FAQ ── */
+    #start-here,#pathways,#governance,#rules,#technology{scroll-margin-top:90px}
+
+    .faq-stack{display:flex;flex-direction:column;gap:2px;max-width:780px;margin:0 auto}
+    .faq-item{border-radius:14px;overflow:hidden;border:1px solid var(--line);transition:border-color .2s}
+    .faq-item:has(details[open]){border-color:var(--gold-rim)}
+
+    details{background:linear-gradient(160deg,rgba(22,16,6,.88),rgba(12,9,4,.82))}
+    details[open]{background:linear-gradient(160deg,rgba(32,23,9,.94),rgba(16,11,5,.9))}
+
+    summary{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:18px 22px;cursor:pointer;user-select:none;
+      font-size:.92rem;font-weight:500;color:var(--text);line-height:1.4;
+      list-style:none;transition:color .2s;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:hover{color:var(--gold-1)}
+    details[open] summary{color:var(--gold-1);border-bottom:1px solid var(--line)}
+    summary::after{
+      content:'▼';flex-shrink:0;font-size:.6rem;color:var(--muted);
+      transition:transform .22s;margin-left:8px;
+    }
+    details[open] summary::after{transform:rotate(180deg);color:var(--gold-2)}
+
+    .faq-answer{padding:18px 22px}
+    .faq-answer p{font-size:.84rem;color:var(--text2);line-height:1.72;margin-bottom:10px}
+    .faq-answer p:last-child{margin-bottom:0}
+    .faq-answer ul{margin:8px 0 10px 18px;display:flex;flex-direction:column;gap:5px}
+    .faq-answer li{font-size:.82rem;color:var(--muted);line-height:1.6}
+
+    /* Compact variant */
+    .faq-stack--compact .faq-item summary{padding:16px 20px;font-size:.88rem}
+    .faq-stack--compact .faq-answer{padding:14px 20px}
+
+    /* ── Footer ── */
+    .site-footer{border-top:1px solid var(--line);padding:36px 28px 38px;background:rgba(8,6,2,1)}
+    .footer-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:32px;align-items:start}
+    .footer-name{font-family:var(--serif);font-size:.9rem;color:var(--gold-1);margin-bottom:8px;font-weight:600}
+    .footer-detail{font-size:.67rem;color:var(--muted);line-height:1.76}
+    .footer-col h4{font-size:.65rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .footer-links{display:flex;flex-direction:column;gap:7px}
+    .footer-links a{font-size:.76rem;color:var(--muted);text-decoration:none;line-height:1.3;transition:color .2s}
+    .footer-links a:hover{color:var(--gold-1)}
+    .footer-link-locked{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .footer-link-locked:hover{color:var(--gold-1)}
+    .lock-badge{font-size:.58rem;font-weight:500;letter-spacing:.08em;color:var(--gold-3);background:rgba(120,80,20,.25);border:1px solid rgba(140,100,30,.35);padding:1px 6px;border-radius:4px;white-space:nowrap}
+    .footer-bottom{max-width:960px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+    .footer-bottom-left{font-size:.65rem;color:rgba(210,185,130,.35);line-height:1.6}
+    .footer-bottom-right{font-size:.65rem;color:rgba(210,185,130,.35);letter-spacing:.06em;text-align:right;line-height:1.8}
+
+    /* ── Animations ── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .ha{animation:fadeUp .6s ease both}
+    .ha:nth-child(1){animation-delay:.05s}
+    .ha:nth-child(2){animation-delay:.18s}
+    .ha:nth-child(3){animation-delay:.3s}
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* ── Responsive ── */
+    @media(max-width:860px){
+      .hero-grid{grid-template-columns:1fr}
+      .intro-grid{grid-template-columns:1fr 1fr}
+      .path-grid{grid-template-columns:1fr}
+      .highlight-band{grid-template-columns:1fr}
+      .split-band{grid-template-columns:1fr}
+      .cta-stack{flex-direction:row}
+      .footer-inner{grid-template-columns:1fr 1fr}
+      .footer-inner>div:first-child{grid-column:1/-1}
+    }
+    @media(max-width:580px){
+      .nav-links{display:none}
+      .mobile-toggle{display:block}
+      .brand-copy{overflow:hidden}
+      .brand-name{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .brand-sub,.brand-tag{display:none}
+      .intro-grid{grid-template-columns:1fr}
+      .faq-stack{margin:0}
+      .footer-inner{grid-template-columns:1fr}
+      .footer-inner>div:first-child{grid-column:1}
+      .cta-stack{flex-direction:column}
+      .footer-bottom{flex-direction:column;align-items:flex-start}
+      .footer-bottom-right{text-align:left}
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+
+<div class="site-shell">
+
+  <!-- Header -->
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
+  <main>
+
+    <!-- ── Hero ── -->
+    <!-- ── Hero ── -->
+    <section class="page-hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow ha">Frequently asked questions</span>
+            <h1 class="ha">Clear answers to the questions Partners ask first.</h1>
+            <p class="lead ha">This FAQ covers what you need to know before becoming a Partner, then moves into governance, structure, and technology for those who want the deeper detail.</p>
+            <div class="ha">
+              <a class="btn-primary" href="../join/index.html">Become a Partner — $4</a>
+              <a class="btn-secondary" href="../tell-me-more/index.html" style="margin-left:10px">Tell me how it works</a>
+            </div>
+            <nav class="section-nav ha" aria-label="FAQ sections">
+              <a href="#partnership">The Partnership</a>
+              <a href="#start-here">Start here</a>
+              <a href="#pathways">Pathways</a>
+              <a href="#circular-economy">Circular Economy</a>
+              <a href="#governance">Governance</a>
+              <a href="#rules">Rules &amp; structure</a>
+              <a href="#technology">Technology</a>
+            </nav>
+          </div>
+          <!-- Right panel -->
+          <div class="hero-panel glass-card ha">
+            <span class="kicker">At a glance</span>
+            <h3>The essentials, without the noise.</h3>
+            <p>Partners own and operate the joint venture collectively. The Trustee holds the keys to the legal safe — Partners decide what happens inside it.</p>
+            <div class="panel-cards">
+              <div class="panel-card">
+                <strong>Partners hold the vote</strong>
+                <p>National governance stays with natural-person Partners — not businesses or whoever has the most capital.</p>
+              </div>
+              <div class="panel-card">
+                <strong>Businesses support utility</strong>
+                <p>Business partnerships help build real trade without taking over the human governance core.</p>
+              </div>
+              <div class="panel-card">
+                <strong>Stewardship, not speculation</strong>
+                <p>Tokens cannot be sold for cash. The structure is designed to prevent drift into fiat-based token flipping.</p>
+              </div>
+              <div class="panel-card">
+                <strong>Four spokes, one wheel</strong>
+                <p>NFT COG$, ASX COG$, RWA COG$, and Community COG$ are the structural engine of the circular economy — each minted by a different mechanism, each anchored to a different form of value.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── THE PARTNERSHIP ── -->
+    <section class="section reveal" id="partnership">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">The Partnership</span>
+          <h2>What you are actually joining.</h2>
+          <p>Six answers that place the whole structure before anything else. Read these before the rest.</p>
+        </div>
+
+        <div class="faq-stack">
+
+          <article class="faq-item" id="faq-what-am-i-joining">
+            <details>
+              <summary>What am I becoming — a member, an investor, or something else?</summary>
+              <div class="faq-answer">
+                <p>A Partner. Not a member of a fund managed by someone else, and not an investor in the conventional sense. By contributing $4 and accepting the Joint Venture Partnership Agreement, you become a Partner in the CJVM Community Joint Venture — a structure you and every other Partner collectively own, operate, and control.</p>
+                <p>The distinction matters. In a managed investment scheme, a responsible entity manages the scheme on behalf of passive investors. Here, the Partners are the operators. You and your fellow Partners govern the trust through a cryptographic governance system — Partners Polls, Community Poll votes, and proportional dividend rights. The Trustee holds legal title to trust property and performs administrative, compliance, and fiat-processing functions. The Partners run everything else.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item" id="faq-is-this-mis">
+            <details>
+              <summary>Is this a managed investment scheme?</summary>
+              <div class="faq-answer">
+                <p>No. The CJVM Hybrid Trust is not a managed investment scheme (MIS) under the Corporations Act 2001. The Foundation has self-assessed this position under section 9 of the Act.</p>
+                <p>The third limb of the MIS definition requires that Partners do not have day-to-day control over the operation of the scheme. That limb is not satisfied here — Partners exercise day-to-day control through the Partners' proprietary cryptographic governance system. Partners propose, vote on, and implement every material operational decision. The Trustee executes those decisions; the Trustee does not make them independently.</p>
+                <p>Because the structure is not a MIS, the Chapter 5C regime does not apply, no Australian Financial Services Licence is required to operate it, and no Product Disclosure Statement is required for the Tier 1 token classes. The Foundation engages with ASIC voluntarily and transparently, not as a compliance obligation.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item" id="faq-jvpa">
+            <details>
+              <summary>What is the Joint Venture Partnership Agreement?</summary>
+              <div class="faq-answer">
+                <p>The Joint Venture Partnership Agreement (JVPA) Version 5.0 (15 April 2026) is the supreme governing instrument of the COG$ Joint Venture. Every other document — the Hybrid Trust Declaration, the Sub-Trust Deeds — is subordinate to it. Where any inconsistency exists between the JVPA and the Declaration or Deeds, the JVPA prevails.</p>
+                <p>When you register as a Partner, you accept the JVPA. That acceptance is the legal act by which you become a party to the agreement on equal terms with all existing Partners. The acceptance is permanently recorded — timestamped, IP-stamped, and cryptographically hashed — in the Partner entry database and embedded in your S-NFT token metadata at minting.</p>
+                <p>The JVPA establishes: the entrenched founding principles that cannot be changed without a 75% Special Resolution; the Partners' operational authority over the trust; the Trustee's limited role; the governance poll mechanics; the First Nations partnership obligations; and the admission, transfer, and exit rules for Partners.</p>
+                <p style="font-size:.85rem;color:var(--muted)">The JVPA is provided to all new Partners during the join process. <a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline">Become a Partner to read and accept it →</a></p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item" id="faq-trustee-role">
+            <details>
+              <summary>What does the Trustee do — and what don't they do?</summary>
+              <div class="faq-answer">
+                <p>The Trustee is the key-holder of the trust safe, not the operator of the trust. The Trustee's functions are limited to: holding legal title to trust property on behalf of Partners; fiduciary duty and regulatory compliance; receiving and processing fiat income; executing investment instructions as directed by Partners; maintaining and updating the Declaration and Deeds at the direction of Partners; defending the trust in legal proceedings; and publishing quarterly financial reports and annual audited accounts to all Partners.</p>
+                <p>The Trustee must not: make investment decisions independently of Partner direction; convene, control, or interfere with Partner governance proceedings; amend the Declaration or Deeds without a valid Partners Poll direction; or engage in any activity that would constitute operating the trust as a managed investment scheme.</p>
+                <p>The current Caretaker Trustee is Thomas Boyd Cunliffe of Drake NSW. The Trustee serves at the direction of the Partners and can be appointed, removed, and replaced by Special Resolution (75% of S-NFT holders) through a Partners Poll.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item" id="faq-partners-control">
+            <details>
+              <summary>How do Partners actually control the trust?</summary>
+              <div class="faq-answer">
+                <p>Through Partners Polls conducted via the proprietary cryptographic governance system. Any 10 Partners (or 1% of all Partners, whichever is fewer) can initiate a Partners Poll. Proposals must include a description, resolution type, and proposed voting period of at least 7 days, preceded by a deliberation period of at least 7 days.</p>
+                <p>There are two resolution types. Ordinary Resolutions (simple majority) cover routine operational changes, feature deployments, interface updates, advisory matters, and new target selections. Special Resolutions (75% of S-NFT holders) cover amendments to the JVPA or Declaration, changes to smart contract architecture, and Trustee appointment or removal.</p>
+                <p>Partners also direct the portfolio company proxy votes through the Aggregate Unitholder Direction mechanism — the Trustee, as CHESS-registered holder, votes those shares in accordance with the collective direction of Partners, not at the Trustee's independent discretion.</p>
+                <p>Before the blockchain node is live, governance operates through the database and web platform. When the Partners' Sovereign Node activates on Expansion Day, governance transitions fully on-chain.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item" id="faq-expansion-day">
+            <details>
+              <summary>What is Expansion Day?</summary>
+              <div class="faq-answer">
+                <p>Expansion Day is the date on which Partners activate the Sovereign Node on the Partners Consensus Network — the Foundation's own blockchain infrastructure. It is the moment the governance and token management system transitions from the database to full on-chain operation.</p>
+                <p>Expansion Day is a Partners milestone, not a regulatory milestone. It requires nothing beyond the will of the Partners and the operational readiness of the Node. No external approval, AFSL, or regulatory confirmation is required for Expansion Day to occur. The JVPA is explicit on this point.</p>
+                <p>On Expansion Day, Tier 2 token classes (ASX COG$, Landholder COG$, RWA COG$, and others) issue to Partners who have reserved them, subject to any regulatory requirements determined by applicable law at the time. The Tier 1 classes (Personal S-NFT, Kids S-NFT, Business B-NFT, Pay It Forward, Donation COG$, Resident COG$) issue at or after Governance Foundation Day — 14 May 2026.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item" id="faq-community-polls">
+            <details>
+              <summary>What are Community Polls and how do they work?</summary>
+              <div class="faq-answer">
+                <p>Community Polls (Partners Polls) are the mechanism through which Partners exercise operational authority over the joint venture. Every material decision — from smart contract deployments to Trustee appointment, portfolio strategy, and governance rule changes — requires a Partners Poll.</p>
+                <p>The first Community Poll will be held on Governance Foundation Day, 14 May 2026. This is the first live test of the cryptographic governance system. Every Partner who has registered and set up their Independence Vault by that date will be eligible to vote.</p>
+                <p>Poll results are recorded in the governance system, published to all Partners, and — once the blockchain node is live — anchored to Ethereum mainnet as a public proof of governance outcomes. The Trustee is then directed to implement the result. The Declaration update is a recording function, not an approval function — the Trustee cannot refuse a valid poll outcome except where compliance would breach applicable law.</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── START HERE ── -->
+    <section class="section reveal" id="start-here">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Start here</span>
+          <h2>Three quick answers to get you oriented.</h2>
+          <p>These are the answers most people want before they decide whether to keep reading or go straight to the registration page.</p>
+        </div>
+
+        <div class="faq-stack faq-stack--compact">
+
+          <article class="faq-item">
+            <details>
+              <summary>What is COG$ of Australia Foundation?</summary>
+              <div class="faq-answer">
+                <p>COG$ of Australia Foundation is a community joint venture business partnership structured as a Hybrid Trust under South Australian law, governed by the CJVM Joint Venture Partnership Agreement (JVPA) as its supreme instrument. It exists to give ordinary Australians a real, legally grounded stake in the governance and long-term benefits of the nation's resource sector.</p>
+                <p>Partners hold one equal national governance vote each, receive a proportional share of dividends from the Partners Asset Pool of ASX-listed resource company shares, and collectively operate the trust through a proprietary cryptographic governance system. The Trustee holds legal title and performs administrative functions. Partners run everything else.</p>
+                <p>The trust operates three ring-fenced sub-trusts: Sub-Trust A holds the Partners Asset Pool (CHESS-registered ASX shares and real-world assets); Sub-Trust B distributes income proportionally to all Partners within 60 days of receipt; Sub-Trust C (the charitable arm) receives $2 from every Donation COG$ and directs value toward community and Country projects — with an entrenched minimum of 30% of annual Sub-Trust C distributions going to First Nations programs.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Why is the first step $4?</summary>
+              <div class="faq-answer">
+                <p>The $4 partnership contribution keeps entry open to everyone. It gives any Australian a low-threshold way to secure their place as a Partner, receive their Independence Vault, and be ready to vote on Governance Foundation Day — 14 May 2026. The amount is entrenched in the JVPA and cannot be raised without a 75% Special Resolution of S-NFT Partners.</p>
+                <p>The $4 is a partnership contribution, not an investment. It establishes your Partner record, your Foundation S-NFT blockchain reservation, and your Independence Vault. It is not a payment for a financial product.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is this not?</summary>
+              <div class="faq-answer">
+                <p>It is not a managed investment scheme — Partners exercise day-to-day control, which means the MIS definition under the Corporations Act is not satisfied. It is not a managed fund with a responsible entity making decisions on behalf of passive investors. It is not a speculative token project — all tokens are subject to a no-fiat-sale rule and cannot be sold for cash or listed on an exchange. It is not a charity — though Sub-Trust C is the charitable element, the joint venture as a whole is a community business partnership.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Is this legal and regulated?</summary>
+              <div class="faq-answer">
+                <p>The Foundation is a lawful Hybrid Trust (ABN 61 734 327 831) governed by the JVPA and Trust Declaration under South Australian law. The Foundation has self-assessed its position as a non-MIS structure under the Corporations Act — the third limb of the MIS definition (that Partners do not have day-to-day control) is not satisfied.</p>
+                <p>The Foundation engages with ASIC voluntarily, has filed an ATO class ruling application, and is progressing AUSTRAC registration. Tier 1 token classes (Personal S-NFT, Kids S-NFT, Business B-NFT, and others) issue under the existing legal structure. Tier 2 token classes activate on Expansion Day, subject to any regulatory requirements determined by applicable law at that time. No AFSL is currently held or required for the Tier 1 pathway.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Who is the Trustee and how are they held accountable?</summary>
+              <div class="faq-answer">
+                <p>The current Caretaker Trustee is Thomas Boyd Cunliffe of Drake NSW. The Trustee serves at the direction of the Partners and owes a fiduciary duty to all Partners. Partners can remove and replace the Trustee by Special Resolution (75% of S-NFT holders) at any time through a Partners Poll.</p>
+                <p>The Trustee is required to publish quarterly financial reports and annual audited accounts to all Partners, notify Partners of all material regulatory correspondence in real time, and execute multisignature operations only as authorised by the required 3-of-Board threshold. The Trustee does not exercise independent discretion over governance, investment direction, or operational decisions.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Can I cancel or get a refund?</summary>
+              <div class="faq-answer">
+                <p>The $4 partnership contribution is a one-time payment and is not refundable — it funds your permanent Partner record and vault setup. Partners may exit by converting their COG$ Token to Donation COG$ (irrevocable), P2P transfer to another eligible Partner (gift or goods/services only — no fiat), written surrender through the System, or on death subject to the inheritance rights in the Declaration. Any COG$ class reservations you have recorded in your Independence Vault carry no obligation and can be changed or cancelled at any time before activation.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What if I stop using my vault for a long time?</summary>
+              <div class="faq-answer">
+                <p>The joint venture is not a passive investment — Partners carry a light but real participation obligation. The JVPA asks each Partner to access their Independence Vault at least once every 12 months. A Partner who does not access the System for a continuous 24 months is classified as a <strong>Dormant Partner</strong>.</p>
+                <p>Being Dormant is not an expulsion. You keep every beneficial entitlement — your token, your income unit, your accrued Sub-Trust B distributions — but your governance vote is suspended until you log back in. The moment you re-engage with the System, your vote is reinstated.</p>
+                <p>The Trustee must send you a written notice at the 18-month mark so you have time to re-engage before Dormant status applies. Dormant classification cannot be used to diminish any beneficial right and is not a ground for expulsion. (JVPA clause 4.11.)</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is the Independence Vault?</summary>
+              <div class="faq-answer">
+                <p>Your Independence Vault is your personal Partner dashboard issued on registration. It is where you vote on Partners Polls and Community Polls, view and manage your token holdings, make peer-to-peer transfers, track governance activity, and receive Foundation notices and announcements. As a Partner, you direct operations through the vault — it is your operational interface, not just an information page. It is secure, private, and accessible from any device.</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PATHWAYS ── -->
+    <section class="section reveal" id="pathways">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Pathways</span>
+          <h2>How Partners and businesses fit in.</h2>
+          <p>Every individual becomes a personal Partner first. Businesses, families, and landholders have additional pathways alongside that core.</p>
+        </div>
+
+        <div class="faq-stack faq-stack--compact">
+
+          <article class="faq-item">
+            <details>
+              <summary>What is the personal Partner pathway?</summary>
+              <div class="faq-answer">
+                <p>The personal pathway is the main entry point. You contribute $4, accept the JVPA, and become a Partner holding one Personal S-NFT COG$ Token — yours permanently, soulbound (non-transferable), and linked to one equal national governance vote. You also receive one Sub-Trust B income unit for dividend participation. Families can explore the Kids S-NFT, Pay It Forward, and Landholder pathways as extensions from the personal Partnership.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is the business Partner pathway?</summary>
+              <div class="faq-answer">
+                <p>A once-only, entity-bound partnership linked to a verified ABN and tied to a responsible person who already holds a Personal S-NFT. It cannot be transferred, sold, pledged, or assigned. A Business B-NFT Partner participates in the economic and trade utility of the joint venture. Businesses contribute $40 as a business partnership contribution.</p>
+                <p>Businesses participate positively: through the circular economy network, income units, and open partnership in the joint venture structure. The limited governance role is a constitutional protection — human civic governance stays with natural-person Partners while businesses bring practical utility to the network.</p>
+                <p>The $40 contribution is ratcheted: an entrenched provision of the Declaration (cl.35(y)) allows the B-NFT fee to be increased by 75% Special Resolution of Partners, but it can never be decreased, and can never be set below the Personal S-NFT fee of $4.00. Existing Business Partners are not asked to top up when an increase is approved — any increase applies only to Business Partners joining after that resolution.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Do businesses get a governance vote?</summary>
+              <div class="faq-answer">
+                <p>Business B-NFT Partners hold one limited governance vote — on Trustee appointment, removal, or replacement matters only. They do not hold national governance votes on Partnership-wide matters. That core remains with personal S-NFT Partners: one person, one vote, regardless of how much capital anyone holds.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are the two milestone dates?</summary>
+              <div class="faq-answer">
+                <p><strong>Governance Foundation Day — 14 May 2026:</strong> The first activation milestone and the first live Community Poll. Once Tier 1 pre-conditions are met — FNAC constituted, KYC/AML program in place, Stewardship Awareness module deployed, and trust bank account established — Tier 1 token classes issue: Personal S-NFT, Kids S-NFT, Business B-NFT, Pay It Forward, Donation COG$, and Resident COG$.</p>
+                <p><strong>Expansion Day:</strong> The date Partners activate the Sovereign Node on the Partners Consensus Network — the Foundation's own blockchain infrastructure. Expansion Day is a Partners milestone. It requires nothing beyond the will of Partners and operational readiness of the Node. No external approval or regulatory confirmation is required. Tier 2 token classes (ASX COG$, Landholder COG$, RWA COG$) activate on Expansion Day, subject to any regulatory requirements determined by applicable law.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item" id="faq-token-classes">
+            <details>
+              <summary>What token classes are there and what do they each do?</summary>
+              <div class="faq-answer">
+                <p><strong>Personal S-NFT COG$</strong> — soulbound, one per natural person, one national governance vote, one Sub-Trust B income unit. $4.</p>
+                <p><strong>Kids S-NFT COG$</strong> — $1 per child. Parent or guardian holds proxy vote until the child turns 18, at which point the token automatically converts to a full Personal S-NFT. One Sub-Trust B income unit held in trust until conversion.</p>
+                <p><strong>Business B-NFT COG$</strong> — entity-bound, linked to verified ABN. One vote on Trustee structure matters only. One Sub-Trust B income unit. $40.</p>
+                <p><strong>Pay It Forward COG$</strong> — funds another person's Personal S-NFT. Does not carry a personal income unit before allocation; on allocation it is cancelled and the funded token is issued as the appropriate class.</p>
+                <p><strong>Donation COG$</strong> — $2 of the issue price goes directly to Sub-Trust C (charitable arm). The D-class income unit is held for Sub-Trust C, not the donor personally.</p>
+                <p><strong>Resident COG$ / Landholder COG$</strong> — place-linked tokens providing additional local weighting in affected-zone decisions. Landholder COG$ is issued automatically at zero cost to LALCs and Prescribed Bodies Corporate.</p>
+                <p><strong>ASX COG$ / RWA COG$</strong> — the asset-side classes that activate on Expansion Day and link Partners' participation to the Partners Asset Pool of CHESS-registered ASX shares and real-world assets.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Do all token classes carry dividend rights?</summary>
+              <div class="faq-answer">
+                <p>S-NFT, Kids S-NFT, B-NFT, Landholder COG$, and ASX COG$ classes carry corresponding Sub-Trust B income units where validly issued. Donation COG$ does not give the donor a personal income unit — the D-class income unit is held for Sub-Trust C. Unallocated Pay It Forward and Resident COG$ do not carry a personal Sub-Trust B income entitlement.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Can my kids join?</summary>
+              <div class="faq-answer">
+                <p>Yes. Kids S-NFT COG$ is available for $1 per child, acquired by a parent or guardian who already holds a Personal S-NFT. Each Kids S-NFT carries one national governance vote exercised by the parent or guardian as proxy until the child turns 18, at which point it automatically converts to a full Personal S-NFT COG$ in the child's own name. Each Kids S-NFT also carries one Sub-Trust B income unit held in trust until conversion.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is the Landholder pathway?</summary>
+              <div class="faq-answer">
+                <p>The resident- and landholder-linked pathway provides additional, limited weighting in local Affected Zone decisions where place-based consequences are concentrated. Landholder COG$ is issued automatically at zero cost to LALCs and Prescribed Bodies Corporate — this is an entrenched founding principle of the JVPA. The per-hectare cap is 1,000 COG$ per hectare. Landholder COG$ may only be transferred to another eligible Landholder Partner and carries a specific property-title transfer election when the underlying land changes hands.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Can I help someone else become a Partner?</summary>
+              <div class="faq-answer">
+                <p>Yes. The Pay It Forward pathway lets Partners fund the $4 contribution for another person — including people experiencing hardship or documentation barriers. You can also share your invitation code from inside your Independence Vault. Every Partner you invite strengthens the partnership's collective governance voice.</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CIRCULAR ECONOMY ── -->
+    <section class="section reveal" id="circular-economy">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">The COG$ Circular Economy</span>
+          <h2>The Four Spokes — and how the wheel works.</h2>
+          <p>The Four Spokes are the structural engine of the COG$ circular economy — the mechanisms by which value is created, anchored, and circulated. The governance, charitable, and place-based token classes operate within and alongside this structure. Together they form the complete token architecture of the COG$ of Australia Foundation.</p>
+        </div>
+
+        <div class="faq-stack faq-stack--compact">
+
+          <article class="faq-item">
+            <details>
+              <summary>What is COG$ in the circular economy context?</summary>
+              <div class="faq-answer">
+                <p>COG$ is the currency system of the COG$ of Australia Foundation's circular economy — a community-led model that circulates value between Partners and their communities without extraction or speculation. It is not a single token but a four-spoke architecture, with each token type serving a distinct purpose across identity, equity, resource, and exchange.</p>
+                <p>The Four Spokes are the foundational structural layer. Other token classes — including governance tokens (Personal S-NFT, Kids S-NFT, Business B-NFT), place-based tokens (Landholder COG$, Resident COG$), and charitable tokens (Donation COG$, Pay It Forward) — operate within and alongside the structure the Four Spokes create. Together they form the complete token architecture of the partnership.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are the four spoke token types?</summary>
+              <div class="faq-answer">
+                <p>The four spoke token types are NFT COG$, ASX COG$, RWA COG$, and Community COG$ (CC). Each is minted differently, anchored to a different form of value, and plays a specific role in the circular economy. Together they form the four spokes that keep value moving within the community.</p>
+                <p>Each spoke carries its own hard minting constraint — there is no mechanism for any spoke token to be minted without a corresponding real-world input. This is what makes inflation structurally impossible by design rather than by policy.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are NFT COG$?</summary>
+              <div class="faq-answer">
+                <p>NFT COG$ are the spoke of identity. Minted once at the moment an individual Partner or business joins the community, each NFT COG$ is permanently and uniquely bound to that participant. They are not transferable, not replicable, and not a currency — they are a governance instrument and a membership record.</p>
+                <p>This spoke grows only as the community genuinely grows, one consenting participant at a time. You cannot manufacture participants to mint more identity tokens.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are ASX COG$?</summary>
+              <div class="faq-answer">
+                <p>ASX COG$ are the spoke of equity. Minted against a pooled holding of shares in ASX-listed resource companies, every token represents a proportional stake in that pool and cannot exist without a corresponding share underpinning it.</p>
+                <p>This spoke expands only when the pool itself expands — through new company partnerships or additional share contributions — keeping it transparent, market-anchored, and directly tied to the performance of real resource companies. They cannot be redeemed for fiat currency.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are RWA COG$?</summary>
+              <div class="faq-answer">
+                <p>RWA COG$ are the spoke of resource — not yet in circulation. Each will be minted via smart contract and tied to an independently verified, in-situ resource — minerals, biological assets, or other natural assets valued before any extraction or harvest occurs. Minting is fixed at the point of verified valuation.</p>
+                <p>If the underlying resource increases in value, existing tokens appreciate — no new tokens are minted. This spoke can only grow through the registration of additional independently verified resources, making inflation structurally impossible by design. Like all COG$ tokens, RWA COG$ cannot be converted to fiat currency.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are Community COG$ (CC)?</summary>
+              <div class="faq-answer">
+                <p>Community COG$ are the spoke of exchange — the everyday transactional currency of the partnership. Carrying no directly linked underlying asset, their value is social and consensual: what Partners agree they are worth through the exchange of real goods and services.</p>
+                <p>Every Individual Partner receives 1,000 CC (¢©) upon entry; every Business Partner receives 10,000 CC. Beyond that, Partners may mint and issue additional CC only in exchange for genuine goods or services contributed to the Community Joint Venture Partnership. This spoke grows in direct proportion to the productive activity of the community itself.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is the no-fiat rule?</summary>
+              <div class="faq-answer">
+                <p>The no-fiat rule is one of the COG$ model's foundational protocols. No COG$ token of any type can be converted to or exchanged for Australian dollars or any other fiat currency. Value generated within the circular economy stays within the circular economy — circulating between Partners through goods, services, and appreciating assets rather than flowing out.</p>
+                <p>This rule is what keeps the model circular rather than extractive, and it removes the speculative incentive that undermines most token-based systems. It is an entrenched founding principle of the Joint Venture Partnership Agreement — it cannot be removed by any board decision, trustee action, or ordinary resolution.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Can more tokens just be printed?</summary>
+              <div class="faq-answer">
+                <p>No. Each token type carries its own hard minting constraint:</p>
+                <ul>
+                  <li>NFT COG$ require a real new participant joining the community.</li>
+                  <li>ASX COG$ require growth in the underlying share pool.</li>
+                  <li>RWA COG$ require additional independently verified in-situ resources.</li>
+                  <li>Community COG$ require real goods or services exchanged within the partnership.</li>
+                </ul>
+                <p>There is no mechanism — for any spoke token type — to mint without a corresponding real-world input. Inflation is structurally prevented at every spoke of the wheel.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Does COG$ have anything to do with cryptocurrency speculation?</summary>
+              <div class="faq-answer">
+                <p>No. COG$ tokens are not listed on exchanges, cannot be traded for profit, and cannot be converted to fiat currency. They are functional instruments within a closed circular economy — each one designed to do a specific job in service of the community, not to generate speculative returns.</p>
+                <p>The features that define speculative token projects are specifically absent here: no exchange listing, no cash-out mechanism, no pump-and-dump dynamic, no pathway designed to make early holders rich at the expense of those who come later. The no-fiat rule removes that incentive entirely, by design.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>How is value maintained across the system?</summary>
+              <div class="faq-answer">
+                <p>Three of the four spoke token types are anchored to independently verifiable real-world assets — listed shares, verified in-situ resources, and confirmed community membership. Community COG$ are grounded in real goods and services exchanged between Partners.</p>
+                <p>Value across the system is sustained because every spoke token in circulation represents something real, and the no-fiat rule ensures that value remains in circulation rather than being extracted. The circular economy is honest by architecture: value moves between Partners and their communities, always grounded in something verifiable.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Is COG$ regulated?</summary>
+              <div class="faq-answer">
+                <p>The Foundation has sought product and class rulings from the ATO on the Partnership's activities to ensure the model operates with full tax transparency and within all applicable frameworks. The Foundation engages with ASIC voluntarily and transparently. Regulatory clarity is an active and ongoing priority.</p>
+                <p>The CJVM Hybrid Trust has self-assessed its position as a non-managed investment scheme structure. The Tier 1 token classes operate under the existing legal structure. Tier 2 token classes activate on Expansion Day, subject to any regulatory requirements determined by applicable law at that time.</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── GOVERNANCE ── -->
+    <section class="section reveal" id="governance">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Governance</span>
+          <h2>Who holds the voice, and how it works.</h2>
+          <p>Partners operate the trust. The Trustee holds the keys. This section explains how that operates in practice.</p>
+        </div>
+
+        <div class="faq-stack">
+
+          <article class="faq-item" id="faq-one-vote">
+            <details>
+              <summary>Who gets a national governance vote?</summary>
+              <div class="faq-answer">
+                <p>Each natural-person S-NFT Partner holds one equal vote on Partnership-wide matters. More token value does not buy more national voice — this is an entrenched founding principle that cannot be changed without a 75% Special Resolution. The anti-capture cap of 1,000,000 Units across all classes (excluding auto-allocated Resident COG$, which do not count toward the cap) further prevents concentration.</p>
+                <p>Portfolio-company AGM votes are not cast individually by Partners in their own names. The Trustee, as the registered CHESS holder, votes those shares in line with the aggregate direction recorded from Partners through the Aggregate Unitholder Direction mechanism in the Declaration.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Who controls Trustee appointment and removal?</summary>
+              <div class="faq-answer">
+                <p>Partners do. The Trustee is appointed and removed by Special Resolution (75% of S-NFT holders) through a Partners Poll. From Expansion Day, the Appointer power vests collectively in the holders of Personal S-NFT COG$ then validly issued, acting collectively. This is the defining characteristic of the joint venture — the Trustee serves at the direction of Partners, not the other way around.</p>
+                <p>During the MD Lock Period, Thomas Boyd Cunliffe as Caretaker Trustee can only be removed for cause on specific grounds defined in the Declaration — material breach of fiduciary duty, incapacity, bankruptcy, conviction for dishonesty, or a court order. This lock-period protection exists to ensure the founding structure cannot be captured before governance is fully operational.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are Affected Zones and local decision votes?</summary>
+              <div class="faq-answer">
+                <p>An Affected Zone is a geographic area declared when a Foundation action materially affects a residential community or Country — for example, where a portfolio company proposes resource extraction near a community. Partners inside a declared Affected Zone receive additional weighted vote units on local decision votes affecting that area.</p>
+                <p>Eligibility is based on verified address and boundary evidence, not live device location. The weighting rules are designed to be co-designed with the First Nations Advisory Council and Traditional Owner groups.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>How are First Nations and Traditional Owner rights embedded?</summary>
+              <div class="faq-answer">
+                <p>The First Nations Advisory Council (FNAC) is a standing advisory body with entrenched constitutional standing — it cannot be removed or sidelined by any Partners Poll without a 75% Special Resolution. The FPIC (Free, Prior and Informed Consent) obligation applies to any action requiring it, and a Partners Poll does not override that requirement. ICIP (Indigenous Cultural and Intellectual Property) protections are embedded in the system.</p>
+                <p>Landholder COG$ is issued automatically at zero cost to LALCs and Prescribed Bodies Corporate. The FNAC must certify the Sovereign Node before Expansion Day. The FNAC retains one certified copy of the Declaration at all times. These are entrenched founding principles under JVPA clause 1.5(k).</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>How does proxy voting at portfolio company AGMs work?</summary>
+              <div class="faq-answer">
+                <p>The Foundation holds CHESS-registered shares in ASX-listed resource companies directly — not through an intermediary. The Trustee is the registered CHESS holder and therefore has the vote at those companies' AGMs. But the Trustee does not exercise that vote independently.</p>
+                <p>Partners direct how those shares are voted through the Aggregate Unitholder Direction mechanism. Partners signal their preferred AGM vote outcome through the governance system. The Trustee aggregates that direction and votes the CHESS-registered shares accordingly. The minimum shareholding target in Poor ESG companies is 5% — the ESG activist mandate is an entrenched principle.</p>
+                <p>Before any material portfolio-company vote, the Trustee opens a voting period of <strong>not less than 10 business days</strong> during which every S-NFT Partner can cast their preference through their Independence Vault. Where a portfolio company's timeframe does not permit a full 10-business-day window, an expedited minimum of 48 hours applies. The option receiving the simple majority of preferences cast becomes the Aggregate Unitholder Direction, and the Trustee must vote the CHESS shares accordingly — no independent discretion. Outcomes are published to all Partners within 5 business days of the meeting. (Declaration clause 13A.)</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── RULES & STRUCTURE ── -->
+    <section class="section reveal" id="rules">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Rules &amp; structure</span>
+          <h2>How the structure is designed to protect its purpose.</h2>
+          <p>The architecture, key boundaries, and rules intended to prevent drift and keep the joint venture aligned with its founding principles.</p>
+        </div>
+
+        <div class="faq-stack">
+
+          <article class="faq-item">
+            <details>
+              <summary>What are the three ring-fenced sub-trusts?</summary>
+              <div class="faq-answer">
+                <p><strong>Sub-Trust A — Partners Asset Pool Unit Trust:</strong> Holds all joint venture assets including CHESS-registered ASX shares and blockchain-verified real-world assets. Sub-Trust A has no power of sale — the Trustee's only permitted responses to portfolio company conduct are shareholder activism and engagement. Sub-Trust A is the sole registry and issuing authority for all Unit Classes.</p>
+                <p><strong>Sub-Trust B — Dividend Distribution Trust:</strong> The mandatory income distribution channel. Where income is generated, it must be distributed proportionally to all Beneficial Unit holders within 60 days of receipt. This is not discretionary — failure to distribute is a breach of trust. The Beneficiary Distribution Stream is split 50/50 from Sub-Trust A dividends. The Donation Dividend Stream is split 50% to Sub-Trust B, 25% mandatory reinvestment, 25% Trustee administration.</p>
+                <p><strong>Sub-Trust C — Community Projects Fund (Charitable):</strong> The charitable arm. Receives $2 directly from the issue price of every Donation COG$, plus a proportional share of the Donation Dividend Stream through Sub-Trust B. Not less than <strong>30% of annual Sub-Trust C distributions</strong> must go to First Nations programs — an entrenched provision (cl.35(a) read with cl.33E.3) that cannot be reduced or removed by any resolution. The Trustee of Sub-Trust C must seek ACNC registration at or before Expansion Day. Grants are subject to FNAC consultation and compliant Grant Guidelines.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Which instrument governs the joint venture?</summary>
+              <div class="faq-answer">
+                <p>The JVPA is the supreme governing instrument. The instrument hierarchy, from highest to lowest, is: (1) the Joint Venture Partnership Agreement v5.0; (2) the CJVM Hybrid Trust Declaration v16 and the Sub-Trust Deeds A, B, and C; (3) the Partners' Smart Contract System. Where any inconsistency exists between these instruments, the higher instrument prevails and the Trustee must amend the lower instrument accordingly within 30 days.</p>
+                <p>The public Black and White Paper is a constitutional companion that explains the structure in plain language — it does not replace the JVPA or Declaration.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is CHESS and how is it used here?</summary>
+              <div class="faq-answer">
+                <p>CHESS is the Clearing House Electronic Subregister System — the official ASX system for recording share ownership in Australian listed companies. When the Foundation acquires shares in an ASX-listed resource company, those shares are held directly on the CHESS register in the Foundation's name as Trustee. This is real, traceable, legally recognised ownership — not symbolic or hypothetical. No intermediaries sit between the Foundation and the CHESS register. Direct CHESS registration is an entrenched founding principle under JVPA clause 1.5(c).</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What are the entrenched founding principles?</summary>
+              <div class="faq-answer">
+                <p>The entrenched founding principles are the constitutional bedrock of the joint venture — they cannot be amended except by a 75% Special Resolution of S-NFT Partners, followed by a Declaration amendment directed by Partners Poll. They are established in JVPA clause 1.5 and include:</p>
+                <ul>
+                  <li>One Partner, one vote for national governance (S-NFT holders)</li>
+                  <li>Direct CHESS registration — no intermediaries</li>
+                  <li>Anti-capture cap of 1,000,000 Units across all classes (excluding auto-allocated Resident COG$)</li>
+                  <li>Dividend splits: 50/50 Beneficiary Distribution Stream</li>
+                  <li>Soulbound nature of Personal S-NFT COG$</li>
+                  <li>12-month Stewardship Season lock on ASX COG$</li>
+                  <li>No fiat sale, redemption, or exchange listing of any COG$ Token</li>
+                  <li>3-of-Board multisignature for all Partners Vault operations</li>
+                  <li>First Nations Advisory Council, FPIC obligations, ICIP protections</li>
+                  <li>Minimum 5% shareholding in Poor ESG targets (activist mandate)</li>
+                  <li>Permanent, non-disposable Partners Asset Pool</li>
+                  <li>Automatic zero-cost Landholder COG$ for LALCs and PBCs</li>
+                  <li>Fixed partnership contributions: $4 Personal S-NFT, $1 Kids S-NFT</li>
+                  <li>Partners' right to develop and operate their own blockchain infrastructure</li>
+                </ul>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is the no-fiat rule?</summary>
+              <div class="faq-answer">
+                <p>All COG$ Tokens — across every class — are permanently subject to a prohibition on fiat sale, redemption, or exchange listing. Tokens cannot be sold for cash, traded on an exchange, or converted to fiat currency. A prohibited fiat transaction is void ab initio — treated as void from the beginning. This rule is entrenched and cannot be removed or amended without a 75% Special Resolution.</p>
+                <p>Fiat-denominated issue prices, Sub-Trust B distributions, and the $2 Sub-Trust C payment per Donation COG$ are not affected — these are operational flows within the trust, not secondary market trading of tokens.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Can tokens be transferred between Partners?</summary>
+              <div class="faq-answer">
+                <p>Personal S-NFT tokens are soulbound — non-transferable by design. Partners may exit by converting to Donation COG$ (irrevocable), written surrender, or on death subject to inheritance rights in the Declaration.</p>
+                <p>ASX COG$ may be transferred after the 12-month Stewardship Season lock period — gift or exchange for goods/services only, between KYC-verified Partners, at an agreed non-fiat value. Eligible holders may also convert ASX COG$ one-for-one into Landholder COG$ or Donation COG$. Landholder COG$ may be transferred only to another eligible Landholder Partner. All permitted dealings run through the Foundation Community Vault with required authorisations.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What is RWA in this context?</summary>
+              <div class="faq-answer">
+                <p>RWA means Real World Asset. In the COG$ context, it refers to lawful ways of recognising or monetising resource value in place — rather than assuming extraction is the only path. Examples include royalty structures, conservation finance, biodiversity or carbon-linked mechanisms, green-bond-style structures, and future forms of in-situ reserve recognition. RWA COG$ is a Tier 2 token class that activates on Expansion Day.</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TECHNOLOGY ── -->
+    <section class="section reveal" id="technology">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Technology</span>
+          <h2>Helpful to know, but not essential on your first read.</h2>
+          <p>This section matters, but it should not get in the way of understanding the partnership and governance model first.</p>
+        </div>
+
+        <div class="faq-stack faq-stack--compact">
+
+          <article class="faq-item">
+            <details>
+              <summary>What is the Partners Community Vault?</summary>
+              <div class="faq-answer">
+                <p>The Partners Community Vault is the Foundation-operated multi-signature blockchain wallet and smart-contract system used for minting, registry, geo-fencing, eligibility verification, transfer controls, and other controlled token operations. Core operations require the cryptographic authorisation of at least three Board Directors (3-of-Board multisignature). It is the operational registry and control layer — for Partners Asset Pool holdings, the CHESS Register remains the primary legal record of ownership.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Is the Partners Community Vault the same as my Independence Vault?</summary>
+              <div class="faq-answer">
+                <p>No. The Partners Community Vault is the Foundation-side control layer — it requires Board-level multisignature and handles minting and registry operations. The Independence Vault is your personal Partner dashboard — where you vote, view your token holdings, make transfers, and access governance. They are connected but separate layers.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>Is blockchain always the definitive legal record?</summary>
+              <div class="faq-answer">
+                <p>Not in every respect. For Partners Asset Pool holdings, the CHESS Register is the primary legal record of share ownership. The on-chain record is a supplementary transparency layer. Where the Declaration expressly gives on-chain records priority over an off-chain register for a specific purpose, that rule applies. In any discrepancy over holdings data, the CHESS record prevails. For JVPA acceptance records, the S-NFT on-chain metadata prevails over the database record as the primary acceptance evidence.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What blockchain infrastructure is planned?</summary>
+              <div class="faq-answer">
+                <p>The Partners' Sovereign Node on the Partners Consensus Network — the Foundation's own controlled infrastructure — activates on Expansion Day. Before that, a controlled permissioned EVM architecture is planned: Hyperledger Besu as the governance and compliance core; Ethereum mainnet for public proof anchoring of governance outcomes and vote result proofs; and Base as a Partner-facing UX layer. No single vendor, protocol, or third-party infrastructure is constitutionally mandated — the Partners may migrate to any Approved Ledger Infrastructure by Partners Poll.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="faq-item">
+            <details>
+              <summary>What role do AI agents play?</summary>
+              <div class="faq-answer">
+                <p>AI agents assist with preparation, support, routing, monitoring, verification, drafting, reconciliation, and explanation. They are not authorised to act as autonomous final decision-makers over Partner rights, token issuance, wallet recovery, or governance outcomes. Human Partners exercise the governance authority — AI tools support the operational efficiency of the system.</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA ── -->
+    <section class="section reveal">
+      <div class="container" style="text-align:center;padding-bottom:60px">
+        <span class="kicker">Still deciding?</span>
+        <h2 style="font-family:var(--serif);font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:500;margin:12px auto 14px;max-width:540px;line-height:1.2">Start with the basics. The deeper detail will still be here.</h2>
+        <p style="font-size:.9rem;color:var(--muted);max-width:480px;margin:0 auto 28px;line-height:1.7">You do not need to master every governance or technology detail on your first visit. The first step is simply becoming a Partner.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+          <a class="btn-primary" href="../join/index.html">Become a Partner — $4</a>
+          <a class="btn-secondary" href="../tell-me-more/index.html">Tell me more</a>
+          <a class="btn-secondary" href="../skeptic/index.html">Skeptic's guide →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+
+
+</div>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.07});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+<script src="/assets/ask-widget.js"></script>
+</body>
+<script>
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.07});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+</html>

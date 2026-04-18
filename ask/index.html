@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COGs of Australia Foundation | Ask COG$</title>
+  <meta name="description" content="Ask COG$ — get grounded answers about COGs of Australia Foundation from our source pack.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <style>
+    .ask-wrap{max-width:680px;margin:0 auto;padding:2rem 1.25rem}
+    .ask-wrap h1{font-size:1.6rem;margin-bottom:.5rem}
+    .ask-wrap .lead{color:var(--text2);margin-bottom:1.5rem;line-height:1.6;font-size:.92rem}
+    .ask-field{display:flex;gap:.5rem;margin-bottom:1.25rem}
+    .ask-field textarea{flex:1;resize:vertical;min-height:64px;padding:.75rem 1rem;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:.9rem}
+    .ask-field textarea:focus{outline:none;border-color:var(--gold-2)}
+    .ask-field button{align-self:flex-end}
+    .ask-answer{background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.15);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;color:var(--text2);font-size:.9rem;line-height:1.7}
+    .ask-answer p{margin:0 0 .6rem}
+    .ask-prompts{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+    .ask-prompts button{font-size:.78rem;padding:.45rem .85rem;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;transition:border-color .2s}
+    .ask-prompts button:hover{border-color:var(--gold-2)}
+    .source-pill{padding:.6rem .85rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);margin-bottom:.5rem;font-size:.82rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+    .source-pill strong{color:var(--text)}
+    .source-pill span{color:var(--muted);font-size:.75rem}
+    .source-pill a{color:var(--gold-2);font-size:.78rem}
+    .muted{color:var(--muted)}
+    .sources-section{margin-top:1.5rem}
+    .sources-section h3{font-size:.85rem;color:var(--gold-2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem}
+    .ask-toolbar{display:flex;gap:.5rem;margin-bottom:.75rem}
+  </style>
+</head>
+<body class="entry-body" data-root="../" data-page="ask">
+  <main>
+    <section class="entry-screen entry-screen-static" role="region" aria-label="Ask COG$">
+      <div class="entry-background" aria-hidden="true"></div>
+      <div class="entry-content container">
+
+        <div class="entry-brand">
+          <img src="../assets/logo_webcir.png" alt="COGs of Australia Foundation logo">
+          <span>COGs of Australia Foundation</span>
+        </div>
+
+        <div class="ask-wrap">
+          <h1>Ask COG$</h1>
+          <p class="lead">Get grounded answers about the Foundation — governance, tokens, the vault, community structure, and more — drawn directly from our source documents.</p>
+
+          <form data-ask-form>
+            <div class="ask-field">
+              <textarea id="ask-question" placeholder="Type your question…" rows="2"></textarea>
+              <button type="submit" class="btn-primary" style="white-space:nowrap">Ask →</button>
+            </div>
+          </form>
+
+          <div class="ask-prompts">
+            <button data-ask-prompt="What is the Independence Vault?">Independence Vault</button>
+            <button data-ask-prompt="How does the one member one vote system work?">One member, one vote</button>
+            <button data-ask-prompt="What are the different COG$ token classes?">Token classes</button>
+            <button data-ask-prompt="How does stewardship governance work?">Stewardship</button>
+            <button data-ask-prompt="What is the Community Basket?">Community Basket</button>
+          </div>
+
+          <div class="ask-toolbar">
+            <button data-ask-clear class="btn-secondary" style="font-size:.78rem;padding:.4rem .85rem">Clear</button>
+          </div>
+
+          <div class="ask-answer" data-ask-answer>
+            <p class="muted">Ask a question to see a grounded answer here.</p>
+          </div>
+
+          <div data-ask-used-sources hidden class="sources-section">
+            <h3>Sources used</h3>
+            <div data-ask-source-list></div>
+          </div>
+
+          <div class="sources-section" style="margin-top:2rem">
+            <h3>Active source pack</h3>
+            <div data-ask-active-sources>
+              <p class="muted">Loading sources…</p>
+            </div>
+          </div>
+
+          <div style="margin-top:2rem;text-align:center">
+            <a class="btn-secondary" href="../index.html">← Back to home</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+  <script src="../assets/ask.js?v=4" defer></script>
+  <script src="../assets/frontend.js?v=4" defer></script>
+</body>
+</html>

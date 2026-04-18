@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Partnership Confirmed | COG$ of Australia Foundation</title>
+  <meta name="description" content="Your B-NFT Business Partnership is confirmed. Welcome to the Foundation.">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/png" href="/assets/logo_webcir.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --bg:#0a0804;--panel:rgba(16,11,4,.90);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-3:#7a5518;
+  --gold-pale:rgba(240,209,138,.10);--gold-rim:rgba(240,209,138,.20);--gold-rim2:rgba(240,209,138,.42);
+  --text:#fff8e8;--text2:rgba(255,248,232,.74);--muted:rgba(210,185,130,.58);
+  --line:rgba(240,209,138,.13);--line2:rgba(240,209,138,.28);
+  --ok:#52b87a;--okb:rgba(82,184,122,.12);--okr:rgba(82,184,122,.35);
+  --shadow:0 20px 52px rgba(0,0,0,.65);
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--r:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-img{position:absolute;inset:0;background:url('../assets/cogs_build.webp') center 35%/cover no-repeat;opacity:.13;filter:sepia(.3) saturate(.8) brightness(.5)}
+.bg-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.97) 0%,transparent 70%),radial-gradient(ellipse 90% 50% at 50% 0%,rgba(10,8,4,.6) 0%,transparent 60%)}
+.site-shell{position:relative;z-index:1}
+.container{max-width:960px;margin:0 auto;padding:0 24px}
+
+/* Buttons */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:12px 24px;border-radius:99px;transition:opacity .2s;border:none;cursor:pointer;white-space:nowrap}
+.btn-primary:hover{opacity:.88}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);text-decoration:none;border:1px solid var(--gold-rim);padding:10px 20px;border-radius:99px;transition:color .2s,border-color .2s,background .2s;background:none;white-space:nowrap}
+.btn-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+
+/* Hero */
+.welcome-hero{padding:56px 0 44px;text-align:center}
+.success-badge{display:inline-flex;align-items:center;gap:8px;font-size:.67rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ok);background:var(--okb);border:1px solid var(--okr);padding:6px 18px;border-radius:99px;margin-bottom:22px}
+.success-badge::before{content:'\2713';font-size:.8rem}
+.welcome-hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.4rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin-bottom:14px}
+.welcome-hero h1 em{font-style:italic;color:var(--gold-1)}
+.welcome-hero .lead{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.78;max-width:56ch;margin:0 auto 28px}
+
+/* Business card */
+.biz-card-wrap{max-width:580px;margin:0 auto 48px}
+.biz-card{background:linear-gradient(160deg,rgba(52,38,15,.98),rgba(18,14,10,.96));border:1px solid var(--gold-rim2);border-radius:22px;padding:26px 28px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.biz-card::after{content:'';position:absolute;inset:auto -40px -45px auto;width:180px;height:180px;background:url('../assets/cogs_coin_web.webp') center/contain no-repeat;opacity:.07;pointer-events:none}
+.biz-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+.biz-token-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(240,209,138,.08);color:var(--gold-1);font-size:.76rem;font-weight:600;white-space:nowrap;flex-shrink:0}
+.biz-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);display:block;margin-bottom:6px}
+.biz-abn{font-family:var(--serif);font-size:1.4rem;font-weight:600;color:var(--gold-1);letter-spacing:.04em;margin:0}
+.biz-sub{font-size:.76rem;color:var(--muted);margin-top:4px}
+.biz-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.biz-field{padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px}
+.biz-field span{display:block;font-size:.63rem;letter-spacing:.09em;text-transform:uppercase;color:rgba(240,209,138,.65);margin-bottom:3px}
+.biz-field strong{font-size:.88rem;color:var(--text);font-weight:400}
+
+/* Vault CTA */
+.vault-cta{background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,60,.06));border:1px solid var(--gold-rim2);border-radius:20px;padding:28px 30px;text-align:center;margin-bottom:56px;max-width:600px;margin-left:auto;margin-right:auto}
+.vault-cta h2{font-family:var(--serif);font-size:1.7rem;font-weight:500;color:var(--gold-1);margin-bottom:10px}
+.vault-cta p{font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:20px;max-width:46ch;margin-left:auto;margin-right:auto}
+.vault-cta-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.vault-fee{font-size:.78rem;color:var(--muted);margin-top:14px;line-height:1.6}
+.vault-fee strong{color:var(--gold-2)}
+
+/* Foundation day bands */
+.fday-band{background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,60,.05));border:1px solid var(--gold-rim);border-radius:var(--r);padding:28px 32px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;margin-bottom:20px}
+.fday-band h2{font-family:var(--serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:500;line-height:1.15;margin-bottom:8px;color:var(--gold-1)}
+.fday-band p{font-size:.88rem;color:var(--text2);line-height:1.7;max-width:52ch}
+.fday-badge{display:inline-flex;align-items:center;gap:6px;font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);background:rgba(240,209,138,.08);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;margin-bottom:12px}
+.fday-date{text-align:right;flex-shrink:0}
+.fday-date strong{display:block;font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--gold-1);line-height:1.1}
+.fday-date span{font-size:.76rem;color:var(--muted)}
+.fday-tba{font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--gold-2);display:block;line-height:1.2}
+.fday-re-note{margin-top:14px;padding:12px 16px;background:rgba(240,209,138,.05);border:1px solid var(--line);border-radius:12px;font-size:.8rem;color:var(--text2);line-height:1.68}
+.fday-re-note strong{color:var(--gold-1)}
+
+/* Involvement grid */
+.involve-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.involve-card{padding:22px;border-radius:var(--r);background:linear-gradient(160deg,rgba(32,23,10,.90),rgba(16,11,5,.82));border:1px solid var(--line);transition:border-color .2s}
+.involve-card:hover{border-color:var(--gold-rim)}
+.involve-ico{font-size:1.5rem;display:block;margin-bottom:12px}
+.involve-card h3{font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin-bottom:7px}
+.involve-card p{font-size:.8rem;color:var(--muted);line-height:1.68;margin:0}
+.involve-card a{display:inline-block;margin-top:10px;font-size:.76rem;color:var(--gold-2);text-decoration:underline;text-underline-offset:2px}
+
+/* Links band */
+.links-band{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:50px}
+.link-card{display:flex;align-items:center;gap:16px;padding:18px 20px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:16px;text-decoration:none;color:var(--text);transition:border-color .2s,background .2s}
+.link-card:hover{border-color:var(--gold-rim);background:rgba(240,209,138,.04)}
+.link-card-ico{width:40px;height:40px;border-radius:12px;background:rgba(240,209,138,.08);border:1px solid var(--gold-rim);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.link-card-copy strong{display:block;font-size:.9rem;color:var(--gold-1);margin-bottom:3px}
+.link-card-copy p{margin:0;font-size:.78rem;color:var(--muted);line-height:1.4}
+.link-arrow{margin-left:auto;color:var(--gold-2);font-size:.9rem;opacity:.5}
+
+/* Reassure strip */
+.reassure-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:40px}
+.reassure-item{text-align:center;padding:10px}
+.reassure-item strong{display:block;font-size:.86rem;color:var(--text);margin-bottom:4px}
+.reassure-item p{margin:0;font-size:.76rem;color:var(--muted);line-height:1.5}
+
+/* Disc strip */
+.disc-strip{background:linear-gradient(180deg,rgba(42,29,11,.55),rgba(23,17,9,.3));border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:50px;text-align:center}
+.disc-strip p{font-size:.74rem;color:rgba(255,244,221,.48);line-height:1.65;margin:0}
+.disc-strip a{color:rgba(255,244,221,.55);text-decoration:underline}
+
+/* Shared layout */
+.section{padding:0 0 52px}
+.divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 0 50px}
+.kicker{display:inline-block;font-size:.64rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+.section-hd{margin-bottom:28px;text-align:center}
+.section-hd h2{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.4rem);font-weight:500;line-height:1.1;letter-spacing:-.022em;margin-bottom:10px}
+.section-hd p{font-size:.9rem;color:var(--muted);line-height:1.7;max-width:58ch;margin:0 auto}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.ha{animation:fadeUp .65s ease both}
+.ha:nth-child(1){animation-delay:.05s}
+.ha:nth-child(2){animation-delay:.18s}
+.ha:nth-child(3){animation-delay:.30s}
+.ha:nth-child(4){animation-delay:.42s}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:760px){
+  .involve-grid{grid-template-columns:1fr 1fr}
+  .fday-band{grid-template-columns:1fr}
+  .fday-date{text-align:left}
+  .links-band{grid-template-columns:1fr}
+  .reassure-strip{grid-template-columns:1fr}
+  .biz-fields{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .involve-grid{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body>
+<div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
+<div class="site-shell">
+
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
+  <main>
+
+    <!-- &#9552;&#9552; HERO &#9552;&#9552; -->
+    <section class="welcome-hero">
+      <div class="container">
+
+        <div class="success-badge ha">B-NFT partnership confirmed</div>
+        <h1 class="ha"><span id="biz-greeting">Your business is</span> <em>in</em>.</h1>
+        <p class="lead ha">Your business partnership is recorded and your vault is ready to set up. Your next step is to open your Business Independence Vault &mdash; that&rsquo;s where your governance participation lives and where your $40 payment link is waiting.</p>
+
+        <!-- Business partnership card -->
+        <div class="biz-card-wrap ha">
+          <div class="biz-card">
+            <div class="biz-card-top">
+              <div>
+                <span class="biz-eyebrow">Business Partner record</span>
+                <p class="biz-abn" id="biz-abn">Generating&hellip;</p>
+                <p class="biz-sub">Keep this &mdash; your ABN is your business vault key inside COG$.</p>
+              </div>
+              <div class="biz-token-pill">&#x1F3E2; Business B-NFT</div>
+            </div>
+            <div class="biz-fields">
+              <div class="biz-field"><span>Legal name</span><strong id="biz-legal-name">&mdash;</strong></div>
+              <div class="biz-field"><span>Responsible person</span><strong id="biz-contact">&mdash;</strong></div>
+              <div class="biz-field"><span>Status</span><strong style="color:var(--ok)">Partnership lodged</strong></div>
+              <div class="biz-field"><span>Fee due</span><strong id="biz-fee" style="color:var(--gold-1)">$40.00</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vault CTA -->
+        <div class="vault-cta ha">
+          <h2>Open your Business Independence Vault</h2>
+          <p>Your vault is where you participate in governance, manage your business partnership, and complete your $40 payment through Stripe. It takes less than two minutes to set up.</p>
+          <div class="vault-cta-actions">
+            <a class="btn-primary" id="vault-link" href="../wallets/business.html?mode=setup">
+              Open Business Vault &rarr;
+            </a>
+            <a class="btn-secondary" href="../faq/index.html">FAQ</a>
+          </div>
+          <p class="vault-fee">Payment of <strong id="vault-fee-amount">$40.00</strong> is completed inside your vault via Stripe. Your partnership record is already created &mdash; the fee confirms it.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- &#9552;&#9552; FOUNDATION DAYS &#9552;&#9552; -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Upcoming milestones</span>
+          <h2>Two Foundation Days ahead.</h2>
+          <p>As a personal COG$ Partner you have a vote in the first. As a B-NFT Business Partner, you have a specific vote in the second.</p>
+        </div>
+
+        <!-- Governance Foundation Day -->
+        <div class="fday-band">
+          <div>
+            <div class="fday-badge">&#x2713; Your personal Partner vote is ready</div>
+            <h2>Foundation Governance Day &mdash; 14 May 2026</h2>
+            <p>The first online community governance poll. Every personal S-NFT Partner gets one equal vote. With your vault set up you&rsquo;ll be ready to participate. Discussions, proposals, and updates will flow through your vault as we approach the day.</p>
+          </div>
+          <div class="fday-date">
+            <strong>14 May<br>2026</strong>
+            <span>Foundation Governance Day</span>
+          </div>
+        </div>
+
+        <!-- Investment Foundation Day / RE Election -->
+        <div class="fday-band">
+          <div>
+            <div class="fday-badge">&#x1F3E2; Your B-NFT vote counts here</div>
+            <h2>Expansion Day &mdash; Trustee election</h2>
+            <p>Before Tier 2 token classes can issue &mdash; ASX COG$, RWA COG$, Landholder COG$ &mdash; the Foundation must formally activate the Expansion Day infrastructure, subject to any regulatory requirements determined by applicable law at the time of activation.</p>
+            <div class="fday-re-note">
+              <strong>This is where your B-NFT vote counts.</strong> Under the Declaration, Business B-NFT Partners hold one governance vote specifically on the appointment, removal, or replacement of the Trustee structure. This is the vote that formally unlocks the investment-linked pathways. Date to be advised once regulatory pre-conditions are satisfied.
+            </div>
+          </div>
+          <div class="fday-date">
+            <span class="fday-tba">Date to be<br>advised</span>
+            <span style="margin-top:6px;display:block">Expansion Day</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- &#9552;&#9552; GET INVOLVED &#9552;&#9552; -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Get involved</span>
+          <h2>There&rsquo;s more than waiting.</h2>
+          <p>While the Foundation progresses the compliance pathway, here are ways to go deeper now.</p>
+        </div>
+        <div class="involve-grid">
+          <div class="involve-card">
+            <span class="involve-ico">&#x1F4D6;</span>
+            <h3>Read the Black &amp; White Paper</h3>
+            <p>The full constitutional statement and founding document &mdash; written in plain language. Understand the structure your business is now part of.</p>
+            <a href="../bw_paper/index.html">Read the paper &rarr;</a>
+          </div>
+          <div class="involve-card">
+            <span class="involve-ico">&#x1F310;</span>
+            <h3>Bring another business in</h3>
+            <p>The more participating businesses in the network, the more real-world utility COG$ has for every Partner. A conversation costs nothing.</p>
+            <a href="../businesses/index.html">Business interest form &rarr;</a>
+          </div>
+          <div class="involve-card">
+            <span class="involve-ico">&#x1F33E;</span>
+            <h3>Affected land or community?</h3>
+            <p>If your business operates near exploration or mining tenements, the Landholder pathway provides additional weighted standing in local decisions.</p>
+            <a href="../landholders/index.html">Landholder pathway &rarr;</a>
+          </div>
+          <div class="involve-card">
+            <span class="involve-ico">&#x1F50D;</span>
+            <h3>Harder questions?</h3>
+            <p>Regulatory standing, supply controls, governance protections, and honest answers to the questions most people are too polite to ask.</p>
+            <a href="../skeptic/index.html">Skeptic&rsquo;s Guide &rarr;</a>
+          </div>
+          <div class="involve-card">
+            <span class="involve-ico">&#x1F46A;</span>
+            <h3>Family partnership</h3>
+            <p>Your household can join individually. Children under 18 join for $1 with a parent or guardian. One vote each, for life.</p>
+            <a href="../kids/index.html">Kids partnership &rarr;</a>
+          </div>
+          <div class="involve-card">
+            <span class="involve-ico">&#x1F49B;</span>
+            <h3>Support the mission</h3>
+            <p>Golden COG$ lets you contribute time, skills, and resources &mdash; and be recognised for it. Legal, compliance, and policy backgrounds especially valued.</p>
+            <a href="../gold-cogs/index.html">Golden COG$ &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- &#9552;&#9552; COMMUNITY LINKS &#9552;&#9552; -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-hd">
+          <span class="kicker">Community</span>
+          <h2>Stay connected as we build.</h2>
+          <p>Updates, discussions, and governance preparation happen through the vault and community pages.</p>
+        </div>
+        <div class="links-band">
+          <a class="link-card" href="../community/index.html">
+            <div class="link-card-ico">&#x1F310;</div>
+            <div class="link-card-copy">
+              <strong>Community hub</strong>
+              <p>News, updates, and Partner activity as Governance Foundation Day approaches.</p>
+            </div>
+            <span class="link-arrow">&rarr;</span>
+          </a>
+          <a class="link-card" href="../faq/index.html">
+            <div class="link-card-ico">&#x2753;</div>
+            <div class="link-card-copy">
+              <strong>Frequently asked questions</strong>
+              <p>Governance, stewardship, the vault, tokens, and more.</p>
+            </div>
+            <span class="link-arrow">&rarr;</span>
+          </a>
+          <a class="link-card" href="../vision/index.html">
+            <div class="link-card-ico">&#x25C8;</div>
+            <div class="link-card-copy">
+              <strong>The Vision</strong>
+              <p>The full structural vision &mdash; Country, Community, Co-operation.</p>
+            </div>
+            <span class="link-arrow">&rarr;</span>
+          </a>
+          <a class="link-card" href="../wallets/business.html">
+            <div class="link-card-ico">&#x1F3E6;</div>
+            <div class="link-card-copy">
+              <strong>Business Independence Vault</strong>
+              <p>Complete your setup and make your $40 payment here.</p>
+            </div>
+            <span class="link-arrow">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- &#9552;&#9552; REASSURE + DISCLAIMER &#9552;&#9552; -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="reassure-strip">
+          <div class="reassure-item">
+            <strong>ABN-linked partnership</strong>
+            <p>Your B-NFT is permanently linked to your ABN &mdash; soulbound and non-transferable without board approval.</p>
+          </div>
+          <div class="reassure-item">
+            <strong>$40 once only</strong>
+            <p>One administration fee. No subscription. No ongoing cost. Payable inside your vault via Stripe.</p>
+          </div>
+          <div class="reassure-item">
+            <strong>Not for profit</strong>
+            <p>COG$ is a stewardship structure. Community benefit is built into the architecture.</p>
+          </div>
+        </div>
+        <div class="disc-strip">
+          <p>Founding-phase beta registration. No financial product has been offered or issued. No entitlement, issuance, or financial claim is active until Expansion Day conditions are met. Expansion Day and Tier 2 token classes are subject to any regulatory requirements determined by applicable law at the time of activMD, and ATO clearance &mdash; conditions mandatory and not waivable. <a href="../terms/">Terms</a> &middot; <a href="../skeptic/">Regulatory standing</a></p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="cogs-footer"></div>
+  <script src="/assets/site-footer.js"></script>
+  <script src="/assets/ask-widget.js"></script>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  /* Read from sessionStorage (set by join_index.html on submit) then URL params */
+  var ss = {};
+  try {
+    ss = JSON.parse(sessionStorage.getItem('cogs_bnft_thankyou') || '{}');
+    sessionStorage.removeItem('cogs_bnft_thankyou');
+  } catch(e) {}
+  var p = new URLSearchParams(window.location.search);
+
+  var abn         = (ss.abn          || p.get('abn')   || '').trim();
+  var legalName   = (ss.legal_name   || '').trim();
+  var tradingName = (ss.trading_name || '').trim();
+  var contactName = (ss.contact_name || p.get('name')  || '').trim();
+  var email       = (ss.email        || p.get('email') || '').trim();
+  var fee         = (ss.joining_fee_due_now || '$40.00').trim();
+  var walletPath  = (ss.wallet_path  || 'wallets/business.html').trim();
+
+  /* ABN display */
+  var abnEl = document.getElementById('biz-abn');
+  if (abnEl) abnEl.textContent = abn || 'Check your email';
+
+  /* Business name &#8212; prefer trading name, fall back to legal */
+  var displayName = tradingName || legalName || '';
+  var legalEl = document.getElementById('biz-legal-name');
+  if (legalEl) legalEl.textContent = displayName || legalName || '&mdash;';
+
+  /* Contact name */
+  var contactEl = document.getElementById('biz-contact');
+  if (contactEl) contactEl.textContent = contactName || '&mdash;';
+
+  /* Personalise heading */
+  var greetEl = document.getElementById('biz-greeting');
+  if (greetEl && (displayName || contactName)) {
+    var whom = displayName || contactName.split(' ')[0];
+    greetEl.textContent = whom + ' is';
+  }
+
+  /* Fee */
+  var feeEl = document.getElementById('biz-fee');
+  if (feeEl) feeEl.textContent = fee;
+  var vaultFeeEl = document.getElementById('vault-fee-amount');
+  if (vaultFeeEl) vaultFeeEl.textContent = fee;
+
+  /* Vault link &#8212; point to business wallet with ABN */
+  if (abn) {
+    var vaultBase = '../' + walletPath.replace(/^\//, '') + '?mode=setup&abn=' + encodeURIComponent(abn);
+    if (email) vaultBase += '&email=' + encodeURIComponent(email);
+    var vl = document.getElementById('vault-link');
+    if (vl) vl.href = vaultBase;
+    /* Also update the links-band vault card */
+    var vaultCard = document.querySelector('a[href="../wallets/business.html"]');
+    if (vaultCard) vaultCard.href = vaultBase;
+  }
+
+});
+
+/* Scroll reveal */
+(function() {
+  if (!window.IntersectionObserver) return;
+  var io = new IntersectionObserver(function(es) {
+    es.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>
