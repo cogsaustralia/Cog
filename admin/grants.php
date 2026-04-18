@@ -128,6 +128,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // ── Record DGR gift received ──────────────────────────────────────
+        if ($action === 'acquit') {
+            $id           = (int)($_POST['grant_id'] ?? 0);
+            $acquittalRef = trim((string)($_POST['acquittal_ref'] ?? ''));
+            $acquittalNote= trim((string)($_POST['acquittal_note'] ?? ''));
+            if (!$id) throw new RuntimeException('Grant ID missing.');
+            $g = gr_rows($pdo, "SELECT * FROM grants WHERE id=? LIMIT 1", [$id]);
+            if (empty($g)) throw new RuntimeException('Grant not found.');
+            if ($g[0]['status'] !== 'disbursed') throw new RuntimeException('Only disbursed grants can be acquitted.');
+            $pdo->prepare(
+                "UPDATE grants SET status='acquitted', acquittal_received_at=UTC_TIMESTAMP(),
+                 bank_reference=COALESCE(?,bank_reference), notes=CONCAT(COALESCE(notes,''),?),
+                 updated_at=UTC_TIMESTAMP() WHERE id=?"
+            )->execute([
+                $acquittalRef ?: null,
+                $acquittalNote ? "\nACQUITTAL: {$acquittalNote}" : '',
+                $id,
+            ]);
+            $flash = "Grant {$g[0]['grant_ref']} acquitted — charitable purpose verified.";
+        }
+
+        // ── Record DGR gift received ──────────────────────────────────────
         if ($action === 'record_gift') {
             $donorName  = trim((string)($_POST['donor_name'] ?? ''));
             $amountStr  = trim((string)($_POST['gift_amount'] ?? ''));
@@ -303,6 +324,15 @@ table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10p
             <input type="hidden" name="grant_id" value="<?php echo (int)$g['id']; ?>">
             <input type="text" name="bank_reference" placeholder="Bank ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:#0f1720;border:1px solid var(--line);color:var(--text)">
             <button type="submit" class="btn btn-sm btn-gold" onclick="return confirm('Disburse <?php echo gr_h($g['grant_ref']); ?>? This emits Godley entries.')">Disburse + Godley</button>
+          </form>
+        <?php endif; ?>
+        <?php if ($g['status']==='disbursed'): ?>
+          <form method="post" style="display:flex;gap:4px;align-items:center">
+            <input type="hidden" name="_csrf" value="<?php echo gr_h($csrfToken); ?>">
+            <input type="hidden" name="action" value="acquit">
+            <input type="hidden" name="grant_id" value="<?php echo (int)$g['id']; ?>">
+            <input type="text" name="acquittal_ref" placeholder="Acquittal ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:#0f1720;border:1px solid var(--line);color:var(--text)">
+            <button type="submit" class="btn btn-sm btn-ok" onclick="return confirm('Mark <?php echo gr_h($g['grant_ref']); ?> as acquitted?')">Acquit</button>
           </form>
         <?php endif; ?>
       </td>

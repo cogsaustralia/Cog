@@ -40,9 +40,13 @@ class LedgerEmitter
         'payment_to_admin', 'stripe_fee', 'gst_itc', 'operating_expense', 'trustee_fee',
         // Transit within Sub-Trust A
         'sta_transit', 'donation_direct_c',
-        // Dividend flows
+        // Income flows
         'dividend_receipt', 'bds_split', 'dds_split', 'reinvest_internal',
-        'interest_income',   // interest and general income to STA-OPERATING
+        'interest_income',       // interest income to STA-OPERATING
+        'other_income',          // general / RWA yield income to STA-OPERATING
+        'franking_credit',       // franking credit receivable from ATO (EXTERNAL-ATO asset)
+        // Tax
+        'tax_withholding',       // TFN withholding deducted at source — receivable from ATO
         // Sub-Trust B distributions
         'stb_distribution', 'bonus_election_netting',
         // Sub-Trust C flows
@@ -431,6 +435,26 @@ class LedgerEmitter
                           'classification' => 'asset',  'flow_category' => 'tax_withholding'];
         }
         return $entries;
+    }
+
+    /**
+     * Franking credit receivable — recorded when a franked dividend is received.
+     * Franking credits are a tax offset receivable from the ATO equal to the
+     * corporate tax already paid on the dividend (typically 30% of gross).
+     * Recorded as: EXTERNAL-ATO debit (asset receivable) | STA-OPERATING credit
+     * (reduces net income already recorded at gross).
+     * SubTrustA Deed cl.16.2 — statutory trust record must reflect all income.
+     *
+     * @param int $frankingCents  Franking credit amount in cents
+     */
+    public static function buildFrankingCreditEntries(int $frankingCents): array
+    {
+        return [
+            ['account_key' => 'EXTERNAL-ATO',     'type' => 'debit',  'amount_cents' => $frankingCents,
+             'classification' => 'asset',   'flow_category' => 'franking_credit'],
+            ['account_key' => 'STA-OPERATING',    'type' => 'credit', 'amount_cents' => $frankingCents,
+             'classification' => 'income',  'flow_category' => 'franking_credit'],
+        ];
     }
 
     /**

@@ -195,6 +195,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             if ($res['status'] === 'error')
                                 throw new RuntimeException('DDS Godley emission failed: ' . $res['message']);
                         }
+                        // Franking credits — separate emission if present (SubTrustA cl.16.2)
+                        if ($frankCents > 0) {
+                            $res = LedgerEmitter::emitTransaction(
+                                $pdo, "GDLY-FRANK-{$evtRef}", 'dividend_events', $evtId,
+                                LedgerEmitter::buildFrankingCreditEntries($frankCents), $divDate
+                            );
+                            if ($res['status'] === 'error')
+                                throw new RuntimeException('Franking credit Godley emission failed: ' . $res['message']);
+                        }
                     }
                 }
                 $pdo->commit();
