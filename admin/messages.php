@@ -921,6 +921,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
     <?php if (!$languageAuditRows): ?><tr><td colspan="5" class="empty">No flagged records found.</td></tr><?php endif; ?>
     <?php foreach ($languageAuditRows as $row): ?><tr><td class="code"><?= h($row['source']) ?></td><td class="code"><?= h($row['ref']) ?></td><td><?= h($row['title']) ?></td><td><?= h($row['terms']) ?></td><td><a class="btn-secondary" href="<?= h($row['link']) ?>">Open</a></td></tr><?php endforeach; ?>
   </tbody></table></div>
+  </div>
 </div>
 <?php endif; ?>
 <?php
