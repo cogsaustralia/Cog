@@ -180,17 +180,11 @@ function activity_label(string $type): string {
 
 <title>Admin Dashboard | COG$ of Australia Foundation</title>
 <style>
-/* ── Design tokens ── *//* ── Layout ── */
-.main{padding:24px 28px;min-width:0}
-.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:26px}
+/* ── Dashboard-specific layout ── */
 .topbar-left .eyebrow{font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .topbar-left h1{font-size:1.9rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
 .topbar-left p{color:var(--sub);font-size:13px;line-height:1.5;max-width:480px}
 .topbar-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;padding-top:4px}
-.btn{display:inline-block;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;transition:opacity .15s}
-.btn:hover{opacity:.82}
-.btn-gold{background:var(--gold);color:#201507;border:1px solid rgba(212,178,92,.3)}
-.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}
 
 /* ── Dashboard guide panels ── */
 .dashboard-intro-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:22px}
@@ -198,44 +192,6 @@ function activity_label(string $type): string {
 .dashboard-guide-stack{display:flex;flex-direction:column;gap:16px}
 .card-head h2{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 
-/* ── Priority strip ── */
-.priority-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;min-height:36px;align-items:center}
-.priority-strip .strip-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--sub);flex-shrink:0}
-.action-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;transition:opacity .15s;white-space:nowrap}
-.action-pill:hover{opacity:.82}
-.action-pill::before{content:'';width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.action-pill.high{background:rgba(196,96,96,.15);color:var(--err);border:1px solid rgba(196,96,96,.25)}
-.action-pill.high::before{background:var(--err);box-shadow:0 0 6px rgba(196,96,96,.6)}
-.action-pill.medium{background:var(--warnb);color:var(--warn);border:1px solid rgba(200,144,26,.25)}
-.action-pill.medium::before{background:var(--warn);box-shadow:0 0 6px rgba(200,144,26,.5)}
-.action-pill.low{background:var(--blueb);color:var(--blue);border:1px solid rgba(90,158,212,.2)}
-.action-pill.low::before{background:var(--blue)}
-.strip-clear{font-size:12px;color:var(--ok);font-weight:600;padding:5px 10px;background:var(--okb);border:1px solid rgba(82,184,122,.2);border-radius:999px}
-
-/* ── Stat cards ── */
-.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
-.stat-card{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:border-color .18s}
-.stat-card:hover{border-color:var(--line2)}
-.stat-card a{display:block}
-.stat-label{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.stat-value{font-size:2rem;font-weight:800;line-height:1;letter-spacing:-.03em}
-.stat-sub{font-size:11px;color:var(--dim);margin-top:6px}
-.stat-card.action-needed .stat-value{color:var(--warn)}
-.stat-card.action-needed::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--warn),transparent)}
-.stat-card.high-action .stat-value{color:var(--err)}
-.stat-card.high-action::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--err),transparent)}
-.stat-card.ok .stat-value{color:var(--ok)}
-
-/* ── Main grid ── */
-.main-grid{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
-.left-col{display:flex;flex-direction:column;gap:18px}
-
-/* ── Cards ── */
-.card{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
-.card-head h2{font-size:14px;font-weight:700;letter-spacing:-.01em}
-.card-head a{font-size:12px;color:var(--gold);font-weight:600}
-.card-body{padding:18px 20px}
 
 /* ── Funnel ── */
 .funnel{display:flex;align-items:stretch;gap:0}
