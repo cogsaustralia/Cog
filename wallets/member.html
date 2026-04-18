@@ -1999,8 +1999,8 @@ function renderHoldings(d){
   const kycStatus = d.kyc_status || 'none';
   const paid = (d.payment_status||'pending').toLowerCase() === 'paid';
 
-  // Outstanding kids payments from gift_pool_unpaid_lines
-  const unpaidKids = (d.gift_pool_unpaid_lines||[]).filter(function(r){ return r.token_class === 'kids_tokens'; });
+  // Outstanding kids payments — now from dedicated kids_pending_orders field
+  const unpaidKids = Array.isArray(d.kids_pending_orders) ? d.kids_pending_orders : [];
   const unpaidKidsTotal = unpaidKids.reduce(function(s,r){ return s + Number(r.amount||0); }, 0);
   const unpaidKidsUnits = unpaidKids.reduce(function(s,r){ return s + (parseInt(r.units||0,10)||0); }, 0);
 
@@ -2180,7 +2180,7 @@ async function submitKidsOrder(){
   if(btn){ btn.disabled = true; btn.textContent = 'Recording…'; }
   flash('kids-fl','');
   try{
-    await api('vault/payment-intent',{method:'POST',body:JSON.stringify({ token_class:'kids_tokens', units:qty, tax_disclaimer_agreed:true })});
+    await api('vault/kids-order',{method:'POST',body:JSON.stringify({ units:qty, tax_disclaimer_agreed:true })});
     flash('kids-fl', qty + ' Kids S-NFT order recorded. Payment is now pending.','ok');
     if(el('kids-order-qty')) el('kids-order-qty').value = '0';
     const v = await api('vault/member');
@@ -2345,13 +2345,26 @@ async function payGiftPoolByCard(items){
 }
 
 async function cancelGiftOrderByClass(cls){
-  const labels = {kids_tokens:'Kids S-NFT', donation_tokens:'Donation COG$', pay_it_forward_tokens:'Pay It Forward'};
+  const labels = {donation_tokens:'Donation COG$', pay_it_forward_tokens:'Pay It Forward'};
   const label = labels[cls] || cls;
   if(!confirm('Cancel all unpaid ' + label + ' orders? This cannot be undone.')) return;
   flash('gp-pay-flash','');
   try{
     await api('vault/cancel-gift-order',{method:'POST',body:JSON.stringify({token_class:cls})});
     flash('gp-pay-flash',label + ' order cancelled.','ok');
+    const v = await api('vault/member');
+    openVault(v);
+  }catch(e){
+    flash('gp-pay-flash',e.message||'Could not cancel the order.','err');
+  }
+}
+
+async function cancelKidsOrder(){
+  if(!confirm('Cancel all pending Kids S-NFT orders? This cannot be undone.')) return;
+  flash('gp-pay-flash','');
+  try{
+    await api('vault/cancel-kids-order',{method:'POST',body:'{}'});
+    flash('gp-pay-flash','Kids S-NFT order cancelled.','ok');
     const v = await api('vault/member');
     openVault(v);
   }catch(e){
@@ -2861,6 +2874,7 @@ window.adjustGiftQty = adjustGiftQty;
 window.submitKidsOrder = submitKidsOrder;
 window.submitCharityOrders = submitCharityOrders;
 window.cancelGiftOrderByClass = cancelGiftOrderByClass;
+window.cancelKidsOrder        = cancelKidsOrder;
 window.payGiftPoolByCard      = payGiftPoolByCard;
 window.renderIdentity   = renderIdentity;
 window.renderPolls      = renderPolls;
@@ -3312,8 +3326,8 @@ function renderTabGive(d){
     }
   }
 
-  // Kids S-NFT pending lines
-  var kidsLines = unpaid.filter(function(r){ return r.token_class === 'kids_tokens'; });
+  // Kids S-NFT pending orders — dedicated pathway, separate from gift pool
+  var kidsLines = Array.isArray(d.kids_pending_orders) ? d.kids_pending_orders : [];
   var kidsPending = document.getElementById('kids-pending-actions');
   var kidsLines_el = document.getElementById('kids-pending-lines');
   if(kidsPending && kidsLines_el){
@@ -3327,7 +3341,7 @@ function renderTabGive(d){
           +   ' <span style="color:var(--text3);">×'+units+' &mdash; $'+amt+' outstanding</span>'
           + '</div>'
           + '<button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(196,96,96,.3);flex-shrink:0"'
-          +   " onclick=\"cancelGiftOrderByClass('kids_tokens')\">"
+          +   " onclick=\"cancelKidsOrder()\">"
           +   'Cancel order</button>'
           + '</div>';
       }).join('');
