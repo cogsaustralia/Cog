@@ -646,6 +646,7 @@ ob_start();
     ['title' => 'Open or schedule', 'body' => 'Use the status and open time to control whether the notice is visible immediately or later.'],
   ]),
 ]) ?>
+<?php
     $wmPaged = msg_paginate($pdo, 'wallet_messages', 'SELECT * FROM wallet_messages ORDER BY id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'wallet_messages'));
     $rows = $wmPaged['rows'];
     $r = $editNotice ?: ['id'=>'','audience_scope'=>'all','title'=>'','body'=>'','status'=>'draft','sent_at'=>'','expires_at'=>''];
@@ -653,39 +654,35 @@ ob_start();
 ?>
 <div class="row-grid">
   <div class="card">
-  <div class="card-head"><h2>Partner notices</h2></div>
-  <div class="card-body">
-    <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Read</th><th>Sent / expires</th><th>Terms</th><th></th></tr></thead><tbody>
+    <div class="card-head"><h2>Partner notices</h2></div>
+    <div class="card-body table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Read</th><th>Sent / expires</th><th>Terms</th><th></th></tr></thead><tbody>
       <?php if (!$rows): ?><tr><td colspan="7" class="empty">No notices found.</td></tr><?php endif; ?>
       <?php foreach ($rows as $row):
         $uiStatus = msg_wallet_status_to_ui((string)$row['status']);
         $terms = array_unique(array_merge(msg_flagged_terms((string)$row['title']), msg_flagged_terms((string)($row['summary'] . ' ' . $row['body']))));
-        // Read count for this notice
         $readCount = 0;
         if (ops_has_table($pdo, 'wallet_message_reads')) {
-            try {
-                $rc = $pdo->prepare('SELECT COUNT(DISTINCT member_id) FROM wallet_message_reads WHERE message_id = ?');
-                $rc->execute([(int)$row['id']]);
-                $readCount = (int)$rc->fetchColumn();
-            } catch (Throwable $ignored) {}
+            try { $rc = $pdo->prepare('SELECT COUNT(DISTINCT member_id) FROM wallet_message_reads WHERE message_id = ?'); $rc->execute([(int)$row['id']]); $readCount = (int)$rc->fetchColumn(); } catch (Throwable $ignored) {}
         }
       ?>
       <tr>
         <td><?= h($row['title']) ?></td>
         <td><?= h($row['audience_scope'] ?? msg_scope_from_legacy_audience($row['audience'] ?? 'all')) ?></td>
         <td><?= msg_status_badge($uiStatus) ?></td>
-        <td><a href="./messages.php?section=wallet_messages&read_track=<?= (int)$row['id'] ?>" style="font-size:.8rem"><?= $readCount ?> read</a></td>
+        <td><a href="./messages.php?section=wallet_messages&read_track=<?= (int)$row['id'] ?>" class="small"><?= $readCount ?> read</a></td>
         <td class="small"><?= h((string)($row['sent_at'] ?? '—')) ?><br><?= h((string)($row['expires_at'] ?? '—')) ?></td>
         <td><?= $terms ? h(implode(', ', $terms)) : '—' ?></td>
         <td class="actions"><a class="btn-secondary" href="./messages.php?section=wallet_messages&edit=<?= (int)$row['id'] ?>">Edit</a><form method="post" style="display:inline"><input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="close_early"><input type="hidden" name="target" value="wallet_messages"><input type="hidden" name="id" value="<?= (int)$row['id'] ?>"><button class="btn-secondary" type="submit">Close</button></form></td>
       </tr>
       <?php endforeach; ?>
-    </tbody></table></div>
+    </tbody></table>
     <?= render_pager(msg_section_pager_base('wallet_messages'), $wmPaged['page'], $wmPaged['totalPages'], $wmPaged['total'], 'notice') ?>
+    </div>
   </div>
   <div class="card">
-    <h3 style="margin-top:0"><?= !empty($r['id']) ? 'Edit partner notice' : 'New partner notice' ?></h3>
-    <?php if ($noticeTerms): ?><div class="msg warn"><?= h(msg_warning_html($noticeTerms)) ?></div><?php endif; ?>
+    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit partner notice' : 'New partner notice' ?></h2></div>
+    <div class="card-body">
+    <?php if ($noticeTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($noticeTerms)) ?></div><?php endif; ?>
     <form method="post">
       <input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="save_wallet_notice"><input type="hidden" name="id" value="<?= h((string)$r['id']) ?>">
       <div class="field"><label>Audience</label><select name="audience"><option value="all" <?= (($r['audience_scope'] ?? 'all') === 'all') ? 'selected' : '' ?>>All <?= h($partnerLabel) ?>s</option><option value="personal" <?= (($r['audience_scope'] ?? '') === 'personal') ? 'selected' : '' ?>>Personal only</option><option value="business" <?= (($r['audience_scope'] ?? '') === 'business') ? 'selected' : '' ?>>Business only</option><option value="landholder" <?= (($r['audience_scope'] ?? '') === 'landholder') ? 'selected' : '' ?>>Landholder only</option></select></div>
@@ -694,104 +691,61 @@ ob_start();
       <div class="field"><label>Status</label><select name="status"><option value="draft" <?= msg_wallet_status_to_ui((string)($r['status'] ?? 'draft')) === 'draft' ? 'selected' : '' ?>>Draft</option><option value="open" <?= msg_wallet_status_to_ui((string)($r['status'] ?? 'draft')) === 'open' ? 'selected' : '' ?>>Open</option><option value="closed" <?= msg_wallet_status_to_ui((string)($r['status'] ?? 'draft')) === 'closed' ? 'selected' : '' ?>>Closed</option></select></div>
       <div class="field"><label>Open at (Sydney)</label><input type="datetime-local" name="open_at" value="<?= !empty($r['sent_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['sent_at']))) : '' ?>"></div>
       <div class="field"><label>Close at (Sydney)</label><input type="datetime-local" name="close_at" value="<?= !empty($r['expires_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['expires_at']))) : '' ?>"></div>
-      <button class="btn" type="submit">Save notice</button>
+      <button class="btn btn-gold" type="submit">Save notice</button>
     </form>
+    </div>
   </div>
 </div>
 
 <?php
-// ── Read tracking panel — shown when ?read_track=<notice_id> ─────────────────
 $trackId = (int)($_GET['read_track'] ?? 0);
 if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table($pdo, 'wallet_messages')):
     $trackNotice = msg_one($pdo, 'SELECT id, title, audience_scope, sent_at FROM wallet_messages WHERE id = ? LIMIT 1', [$trackId]);
     if ($trackNotice):
-        // Partners who have read it
-        $readRows = [];
-        $unreadRows = [];
+        $readRows = []; $unreadRows = [];
         try {
-            $readStmt = $pdo->prepare('
-                SELECT m.id AS member_id, m.full_name, m.email, m.mobile,
-                       wmr.read_at
-                FROM wallet_message_reads wmr
-                JOIN snft_memberships m ON m.id = wmr.member_id
-                WHERE wmr.message_id = ?
-                ORDER BY wmr.read_at DESC
-            ');
+            $readStmt = $pdo->prepare('SELECT m.id AS member_id, m.full_name, m.email, m.mobile, wmr.read_at FROM wallet_message_reads wmr JOIN snft_memberships m ON m.id = wmr.member_id WHERE wmr.message_id = ? ORDER BY wmr.read_at DESC');
             $readStmt->execute([$trackId]);
             $readRows = $readStmt->fetchAll();
-
-            // Partners who should have seen it but haven't read it
             $scope = (string)($trackNotice['audience_scope'] ?? 'all');
-            $unreadQuery = '
-                SELECT m.id AS member_id, m.full_name, m.email, m.mobile
-                FROM snft_memberships m
-                WHERE m.id NOT IN (
-                    SELECT member_id FROM wallet_message_reads WHERE message_id = ?
-                )
-            ';
-            if ($scope === 'personal') {
-                $unreadQuery .= " AND m.member_type = 'personal'";
-            } elseif ($scope === 'business') {
-                $unreadQuery .= " AND m.member_type = 'business'";
-            }
+            $unreadQuery = 'SELECT m.id AS member_id, m.full_name, m.email, m.mobile FROM snft_memberships m WHERE m.id NOT IN (SELECT member_id FROM wallet_message_reads WHERE message_id = ?)';
+            if ($scope === 'personal') { $unreadQuery .= " AND m.member_type = 'personal'"; }
+            elseif ($scope === 'business') { $unreadQuery .= " AND m.member_type = 'business'"; }
             $unreadQuery .= ' ORDER BY m.full_name ASC';
             $unreadStmt = $pdo->prepare($unreadQuery);
             $unreadStmt->execute([$trackId]);
             $unreadRows = $unreadStmt->fetchAll();
-        } catch (Throwable $e) {
-            // Fail gracefully
-        }
+        } catch (Throwable $e) {}
 ?>
-<div class="card" style="margin-top:18px">
-  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+<div class="card">
+  <div class="card-head">
     <div>
-      <h3 style="margin:0 0 4px">Read tracking — <?= h($trackNotice['title']) ?></h3>
-      <div style="font-size:.8rem;color:var(--muted)">Audience: <?= h($trackNotice['audience_scope'] ?? 'all') ?> &middot; Sent: <?= h((string)($trackNotice['sent_at'] ?? 'not sent')) ?></div>
+      <h2 style="margin:0 0 2px">Read tracking — <?= h($trackNotice['title']) ?></h2>
+      <div class="muted small">Audience: <?= h($trackNotice['audience_scope'] ?? 'all') ?> · Sent: <?= h((string)($trackNotice['sent_at'] ?? 'not sent')) ?></div>
     </div>
-    <a href="./messages.php?section=wallet_messages" class="btn-secondary" style="font-size:.8rem">Back to notices</a>
+    <a href="./messages.php?section=wallet_messages" class="btn-secondary">← Back to notices</a>
   </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-
-    <!-- READ -->
-    <div>
-      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px">
-        Read &mdash; <?= count($readRows) ?> Partner<?= count($readRows)!==1?'s':'' ?>
-      </div>
-      <?php if (!$readRows): ?>
-        <div style="font-size:.84rem;color:var(--muted);padding:10px 0">No Partners have read this notice yet.</div>
-      <?php else: ?>
-        <div class="table-wrap"><table><thead><tr><th>Partner</th><th>Email / mobile</th><th>Read at</th></tr></thead><tbody>
+  <div class="card-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div class="eyebrow">Read — <?= count($readRows) ?> Partner<?= count($readRows)!==1?'s':'' ?></div>
+        <?php if (!$readRows): ?><p class="muted small">No Partners have read this notice yet.</p>
+        <?php else: ?><div class="table-wrap"><table><thead><tr><th>Partner</th><th>Email / mobile</th><th>Read at</th></tr></thead><tbody>
           <?php foreach ($readRows as $rr): ?>
-          <tr>
-            <td><?= h($rr['full_name'] ?? '—') ?></td>
-            <td class="small"><?= h($rr['email'] ?? '—') ?><br><?= h($rr['mobile'] ?? '') ?></td>
-            <td class="small"><?= h((string)($rr['read_at'] ?? '—')) ?></td>
-          </tr>
+          <tr><td><?= h($rr['full_name'] ?? '—') ?></td><td class="small"><?= h($rr['email'] ?? '—') ?><br><?= h($rr['mobile'] ?? '') ?></td><td class="small"><?= h((string)($rr['read_at'] ?? '—')) ?></td></tr>
           <?php endforeach; ?>
-        </tbody></table></div>
-      <?php endif; ?>
-    </div>
-
-    <!-- NOT READ -->
-    <div>
-      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px">
-        Not read &mdash; <?= count($unreadRows) ?> Partner<?= count($unreadRows)!==1?'s':'' ?>
+        </tbody></table></div><?php endif; ?>
       </div>
-      <?php if (!$unreadRows): ?>
-        <div style="font-size:.84rem;color:var(--muted);padding:10px 0">All eligible Partners have read this notice.</div>
-      <?php else: ?>
-        <div class="table-wrap" style="max-height:400px;overflow-y:auto"><table><thead><tr><th>Partner</th><th>Email / mobile</th></tr></thead><tbody>
+      <div>
+        <div class="eyebrow">Not read — <?= count($unreadRows) ?> Partner<?= count($unreadRows)!==1?'s':'' ?></div>
+        <?php if (!$unreadRows): ?><p class="muted small">All eligible Partners have read this notice.</p>
+        <?php else: ?><div class="table-wrap" style="max-height:400px;overflow-y:auto"><table><thead><tr><th>Partner</th><th>Email / mobile</th></tr></thead><tbody>
           <?php foreach ($unreadRows as $ur): ?>
-          <tr>
-            <td><?= h($ur['full_name'] ?? '—') ?></td>
-            <td class="small"><?= h($ur['email'] ?? '—') ?><br><?= h($ur['mobile'] ?? '') ?></td>
-          </tr>
+          <tr><td><?= h($ur['full_name'] ?? '—') ?></td><td class="small"><?= h($ur['email'] ?? '—') ?><br><?= h($ur['mobile'] ?? '') ?></td></tr>
           <?php endforeach; ?>
-        </tbody></table></div>
-      <?php endif; ?>
+        </tbody></table></div><?php endif; ?>
+      </div>
     </div>
-
   </div>
 </div>
 <?php endif; endif; ?>
