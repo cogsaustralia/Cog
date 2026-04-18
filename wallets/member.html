@@ -599,7 +599,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
 /* ── App shell (rail + content) — activated in Phase 2 ── */
 /* On desktop, vault wraps into grid. Rail left, content right. */
-@media(min-width:900px){
+@media(min-width:768px){
   .vault-shell{display:flex;min-height:100vh}
   .app-rail{display:flex}
   /* When rail is present, topbar and tab-nav shift right to content area */
@@ -1093,36 +1093,16 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         </div>
       </div>
 
-      <!-- Kids S-NFT — managed in Overview identity card.
-           All IDs kept as hidden stubs so renderTabGive / submitKidsOrder continue to work. -->
-      <div class="card">
-        <div class="card-hd">
-          <h3>Kids S-NFT</h3>
-          <span style="font-size:.72rem;color:var(--text3)">$1 per child &middot; Class kS</span>
+      <!-- Kids S-NFT stubs — IDs required by renderTabGive/submitKidsOrder/cancelGiftOrderByClass.
+           No visible card. Full management is in Overview identity card. -->
+      <div style="display:none" aria-hidden="true">
+        <div id="give-kyc-notice"></div>
+        <button id="kids-order-btn" onclick="submitKidsOrder()"></button>
+        <input id="kids-order-qty" type="number" value="0">
+        <div id="kids-pending-actions">
+          <div id="kids-pending-lines"></div>
         </div>
-        <div class="card-bd">
-          <p style="font-size:.84rem;color:var(--text3);margin-bottom:14px;line-height:1.65">Each child under 18 receives a permanent Partner number, a soulbound kS-NFT token, and a proportional Sub-Trust B income unit &mdash; on equal terms with every other Partner. The kS-NFT is additional to the guardian&apos;s own S-NFT and held by the guardian until the child turns 18.</p>
-          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--gold-bg);border:1px solid var(--gold-bdr);border-radius:var(--r2);cursor:pointer" onclick="tab('overview')">
-            <span style="font-size:1.3rem;color:var(--gold)">&#9672;</span>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:2px">Register Kids S-NFTs in your identity card</div>
-              <div style="font-size:.76rem;color:var(--text3);line-height:1.5">KYC verification, ordering, and child records are managed from your Overview tab identity section, alongside your own S-NFT.</div>
-            </div>
-            <span style="color:var(--gold);font-size:1rem;flex-shrink:0">&#8594;</span>
-          </div>
-          <!-- Hidden stubs — IDs required by renderTabGive, submitKidsOrder, cancelGiftOrderByClass -->
-          <div style="display:none">
-            <div id="give-kyc-notice"></div>
-            <button id="kids-order-btn" onclick="submitKidsOrder()"></button>
-            <input id="kids-order-qty" type="number" value="0">
-          </div>
-          <div id="kids-pending-actions" style="display:none;margin-top:14px;padding:10px 0;border-top:1px solid var(--border)">
-            <div style="font-size:.76rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Pending &mdash; awaiting payment</div>
-            <div id="kids-pending-lines"></div>
-            <div style="font-size:.76rem;color:var(--text3);margin-top:8px;line-height:1.55">Pay $1 per child by bank transfer using your Partner number as reference. Use PayID <span style="font-family:var(--mono);color:var(--text2)">0494 578 706</span>.</div>
-          </div>
-          <div class="flash" id="kids-fl" style="margin-top:10px"></div>
-        </div>
+        <div id="kids-fl"></div>
       </div>
 
       <!-- Pending orders -->
