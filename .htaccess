@@ -1,0 +1,197 @@
+# =============================================================================
+# COG$ of Australia Foundation — Root .htaccess (UPDATED with Phase 5.2)
+# cogsaustralia.org / public_html
+# =============================================================================
+
+Options -Indexes -MultiViews
+ServerSignature Off
+
+# ── Engine ────────────────────────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ── Block dotfiles (except .well-known for SSL/ACME) ─────────────────────
+  RewriteRule (^|/)\.(?!well-known) - [F,L]
+
+  # ── API: let _app/api handle its own routing (MUST precede directory block) ─
+  RewriteRule ^_app/api/ - [L]
+
+  # ── Block direct access to private directories ────────────────────────────
+  RewriteRule ^(_app|_private|database|docs|inc)(/|$) - [F,L]
+
+  # ── Block .env (belt and braces — also covered by FilesMatch below) ───────
+  RewriteRule ^\.env$ - [F,L]
+
+  # ── Redirect /business → /businesses/ (301 permanent) ────────────────────
+  RedirectMatch 301 ^/business/?$ /businesses/
+
+  # ── Serve real files and directories as-is ───────────────────────────────
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # ── Everything else: route to index.html (SPA-style fallback) ────────────
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ── Force HTTPS ───────────────────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP_HOST} ^(www\.)?cogsaustralia\.org$ [NC]
+  RewriteRule ^ https://cogsaustralia.org%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ── www → non-www canonical ───────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTPS} on
+  RewriteCond %{HTTP_HOST} ^www\.cogsaustralia\.org$ [NC]
+  RewriteRule ^ https://cogsaustralia.org%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ── Security headers ──────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+
+  # Prevent clickjacking
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Stop MIME sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Referrer policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Permissions policy — disable sensors not used
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+  # XSS protection (legacy browsers)
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # HSTS — tell browsers to always use HTTPS (1 year)
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Content Security Policy
+  # - default: same origin only
+  # - scripts: same origin + cdnjs (QR) + Cloudflare decode + Stripe
+  # - styles: same origin + Google Fonts
+  # - fonts: same origin + Google Fonts
+  # - images: same origin + data URIs (coin animation canvas)
+  # - connect: same origin + Stripe API
+  # - frame: Stripe checkout iframe
+  Header always set Content-Security-Policy "\
+default-src 'self'; \
+script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn-cgi.cloudflare.com https://js.stripe.com; \
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; \
+font-src 'self' https://fonts.gstatic.com; \
+img-src 'self' data:; \
+connect-src 'self' https://api.stripe.com; \
+frame-src https://js.stripe.com; \
+object-src 'none'; \
+base-uri 'self'; \
+form-action 'self'"
+
+</IfModule>
+
+# ── PHASE 5.2 OPTIMIZATION: ENHANCED CACHE CONTROL ──────────────────────────
+# (Updated for minified assets and Vary header for compression)
+<IfModule mod_headers.c>
+
+  # HTML pages: never cache (always fresh)
+  <FilesMatch "\.(html?)$">
+    Header set Cache-Control "no-cache, must-revalidate, max-age=3600"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+
+  # API responses and JSON: never cache
+  <FilesMatch "\.(json|webmanifest|xml)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+
+  # CSS and JS (minified AND original): cache for 1 month
+  # Browsers will use cached version unless file changes
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+    Header append Vary "Accept-Encoding"
+  </FilesMatch>
+
+  # Service worker: never cache (always check for updates)
+  <Files "sw.js">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  </Files>
+
+  # Images, fonts, webp, pdf: long-lived (1 year)
+  # These are typically versioned or have stable filenames
+  <FilesMatch "\.(png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot|pdf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+    Header append Vary "Accept-Encoding"
+  </FilesMatch>
+
+</IfModule>
+
+# ── PHASE 5.2 OPTIMIZATION: GZIP COMPRESSION ──────────────────────────────────
+# Compress text-based assets for faster delivery
+<IfModule mod_deflate.c>
+  # Compress HTML
+  AddOutputFilterByType DEFLATE text/html
+  
+  # Compress CSS (original and minified)
+  AddOutputFilterByType DEFLATE text/css
+  
+  # Compress JavaScript (original and minified)
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  
+  # Compress JSON
+  AddOutputFilterByType DEFLATE application/json
+  
+  # Compress plain text and XML
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  
+  # Compress SVG
+  AddOutputFilterByType DEFLATE image/svg+xml
+  
+  # Compress web fonts
+  AddOutputFilterByType DEFLATE font/woff2
+  AddOutputFilterByType DEFLATE font/woff
+  
+  # Browser compatibility
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-param
+  BrowserMatch \bMSIE !no-param !gzip-only-text/html
+</IfModule>
+
+# ── Block direct access to sensitive files ────────────────────────────────────
+<FilesMatch "^(\.env|\.env\..*|\.htpasswd|composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|.*\.sql|.*\.sh|.*\.md)$">
+  Require all denied
+</FilesMatch>
+
+# ── Block PHP execution outside _app and admin ────────────────────────────────
+# PHP should never execute from assets/, wallets/, join/ etc.
+<FilesMatch "\.php$">
+  Require all denied
+</FilesMatch>
+<Directory "/home*/*/public_html/_app">
+  <FilesMatch "\.php$">
+    Require all granted
+  </FilesMatch>
+</Directory>
+<Directory "/home*/*/public_html/admin">
+  <FilesMatch "\.php$">
+    Require all granted
+  </FilesMatch>
+</Directory>
+
+# ── MIME types ────────────────────────────────────────────────────────────────
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+# ── Error pages ───────────────────────────────────────────────────────────────
+ErrorDocument 403 /index.html
+ErrorDocument 404 /index.html
