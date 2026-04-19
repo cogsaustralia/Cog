@@ -90,7 +90,7 @@ if (!function_exists('admin_sidebar_styles_once')) {
 .sidebar .side-section{margin-bottom:4px}
 .sidebar .side-toggle{display:flex;align-items:center;justify-content:space-between;padding:6px 9px;margin:0 0 2px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);cursor:pointer;user-select:none;transition:background .15s,border-color .15s}
 .sidebar .side-toggle:hover{background:rgba(255,255,255,.04);border-color:var(--line2)}
-.sidebar .side-toggle .side-label{font-size:10.5px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin:0;white-space:nowrap;overflow:hidden}
+.sidebar .side-toggle .side-label{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin:0;white-space:normal;overflow:hidden;line-height:1.3}
 .sidebar .side-toggle .side-chev{font-size:9px;color:var(--dim);transition:transform .2s;flex-shrink:0}
 .sidebar .side-section.open .side-toggle{border-color:var(--goldb);background:rgba(212,178,92,.04)}
 .sidebar .side-section.open .side-toggle .side-label{color:var(--gold)}
@@ -162,8 +162,8 @@ if (!function_exists('admin_sidebar_render')) {
         $groups = [
             'Control Plane' => [
                 ['key' => 'dashboard',         'label' => '◈  Dashboard',               'href' => './dashboard.php'],
-                ['key' => 'partner_registry',  'label' => '👥  Partner Registry',        'href' => './members.php'],
-                ['key' => 'businesses',        'label' => '🏢  Business Registry',       'href' => './businesses.php'],
+                ['key' => 'partner_registry',  'label' => '👥  Partners',               'href' => './members.php'],
+                ['key' => 'businesses',        'label' => '🏢  Businesses',             'href' => './businesses.php'],
                 ['key' => 'payments',          'label' => '💳  Payments',                'href' => './payments.php'],
                 ['key' => 'approvals',         'label' => '✅  Approvals',               'href' => './approvals.php'],
                 ['key' => 'kids',              'label' => '👶  Kids kS-NFT',             'href' => './kids.php'],
@@ -173,13 +173,13 @@ if (!function_exists('admin_sidebar_render')) {
             ],
             'Governance & Evidence' => [
                 ['key' => 'governance',        'label' => '🗳  Governance',              'href' => './governance.php'],
-                ['key' => 'operations',        'label' => '🤝  Partner Operations',      'href' => './operations.php'],
-                ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',           'href' => './foundation_day.php'],
+                ['key' => 'operations',        'label' => '🤝  Partner Ops',            'href' => './operations.php'],
+                ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',          'href' => './foundation_day.php'],
                 ['key' => 'communications',    'label' => '📣  Communications',          'href' => './messages.php'],
                 ['key' => 'zones',             'label' => '📍  Zones & Eligibility',     'href' => './zones.php'],
                 ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',        'href' => './evidence_reviews.php'],
-                ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',              'href' => './admin_kyc.php'],
-                ['key' => 'exceptions',        'label' => '⚠  Exceptions',               'href' => './exceptions.php'],
+                ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',             'href' => './admin_kyc.php'],
+                ['key' => 'exceptions',        'label' => '⚠  Exceptions',              'href' => './exceptions.php'],
                 ['key' => 'audit',             'label' => '📜  Audit / Recovery',        'href' => './audit.php'],
                 ['key' => 'audit_access',      'label' => '🔐  Audit Access',             'href' => './audit_access.php'],
             ],
@@ -192,7 +192,7 @@ if (!function_exists('admin_sidebar_render')) {
             ],
             'Infrastructure & Security' => [
                 ['key' => 'infrastructure',    'label' => '🛰  Sovereign Infrastructure', 'href' => './infrastructure.php'],
-                ['key' => 'accounting',        'label' => '📊  Trust Accounting',        'href' => './accounting.php'],
+                ['key' => 'accounting',        'label' => '📊  Accounting',             'href' => './accounting.php'],
                 ['key' => 'reconciliation',    'label' => '🤖  Reconciliation Agent',    'href' => './reconciliation_agent.php'],
                 ['key' => 'expenses',          'label' => '🧾  Expenses',                'href' => './expenses.php'],
                 ['key' => 'trust_income',      'label' => '💰  Trust Income',            'href' => './trust_income.php'],
@@ -202,13 +202,13 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'email_access',      'label' => '📮  Email Access',            'href' => './email_access.php'],
                 ['key' => 'operator_security', 'label' => '🔐  Operator Security',       'href' => './operator_security.php'],
             ],
-            'Legacy Bridge Diagnostics' => [
+            'Legacy Bridge' => [
                 ['key' => 'reconciliation',     'label' => '🔍  Reconciliation',         'href' => './reconciliation.php'],
                 ['key' => 'mint_queue',         'label' => '⛏  Mint Queue (bridge)',    'href' => './mint_queue.php'],
                 ['key' => 'mint_batches',       'label' => '📦  Mint Batches (bridge)',  'href' => './mint_batches.php'],
                 ['key' => 'chain_handoff',      'label' => '🔗  Chain Handoff (bridge)', 'href' => './chain_handoff.php'],
                 ['key' => 'session_check',      'label' => '🔐  Session Check',          'href' => './session-check.php'],
-                ['key' => 'legacy_dependencies','label' => '🧩  Legacy Bridge Status',   'href' => './legacy-dependencies.php'],
+                ['key' => 'legacy_dependencies','label' => '🧩  Bridge Status',          'href' => './legacy-dependencies.php'],
             ],
             'Communications Detail' => [
                 ['key' => 'wallet_messages',       'label' => '✉  Wallet Notices',      'href' => './messages.php?section=wallet_messages'],
