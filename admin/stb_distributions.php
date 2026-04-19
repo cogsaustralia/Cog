@@ -228,10 +228,10 @@ ob_start();
 <?php if ($flash): ?><div class="alert <?php echo $flashType === 'ok' ? 'alert-ok' : 'alert-err'; ?>"><?php echo stb_h($flash); ?></div><?php endif; ?>
 
 <div class="stat-grid">
-  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--ok)"><?php echo stb_dollars($stbBalance); ?></div><div class="stat-label">STB balance (Godley)</div></div></div></div>
-  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--blue)"><?php echo number_format($totalUnitsCalc + $stcUnitsCalc); ?></div><div class="stat-label">Eligible beneficial units</div></div></div></div>
-  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--text)"><?php echo number_format($totalUnitsCalc); ?></div><div class="stat-label">Member units</div></div></div></div>
-  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--gold)"><?php echo number_format($stcUnitsCalc); ?></div><div class="stat-label">STC units (D-class)</div></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--ok)"><?php echo stb_dollars($stbBalance); ?></div><div class="stat-label">STB balance (Godley)</div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--blue)"><?php echo number_format($totalUnitsCalc + $stcUnitsCalc); ?></div><div class="stat-label">Eligible beneficial units</div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--text)"><?php echo number_format($totalUnitsCalc); ?></div><div class="stat-label">Member units</div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--gold)"><?php echo number_format($stcUnitsCalc); ?></div><div class="stat-label">STC units (D-class)</div></div></div>
 </div>
 
 <?= ops_admin_collapsible_help('Page guide & workflow', [
@@ -240,7 +240,7 @@ ob_start();
     'Step 2 — Approve: review the calculation, then approve the run for payment.',
     'Step 3 — Complete: once funds are paid out, mark complete. This emits the Godley STB distribution entries and records benefit_flow_records.',
     'STC receives 1 unit per Donation COG$ token issued — Sub-Trust C is the D-class Beneficial Unit Holder.',
-]);,
+  ]),
 ]) ?>
 <?php if (!$hasDistRuns): ?>
   <div class="alert alert-err">distribution_runs table not found. Run accounting schema SQL first.</div>
