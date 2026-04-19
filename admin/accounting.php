@@ -710,9 +710,6 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
 
 <?php endif; ?>
 
-</main>
-</div>
-
 <!-- ── Invariant drill modal ─────────────────────────────────────────────── -->
 <div class="inv-modal-bg" id="invModalBg">
   <div class="inv-modal">
