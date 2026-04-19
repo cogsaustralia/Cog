@@ -497,8 +497,9 @@ if ($action === 'my-code') {
 
         // Fetch the Partner's active code
         $stmt = $db->prepare(
-            'SELECT id, public_code, invite_token, use_count, allowed_entry_type,
-                    max_uses, expires_at, created_at
+            'SELECT id, public_code, invite_token, use_count,
+                    COALESCE(share_count, 0) AS share_count,
+                    allowed_entry_type, max_uses, expires_at, created_at
              FROM   partner_invite_codes
              WHERE  inviter_partner_id = ?
                AND  status = ?
@@ -549,6 +550,7 @@ if ($action === 'my-code') {
             'public_code' => $publicCode,
             'invite_link' => $inviteLink,
             'use_count'   => $useCount,
+            'share_count' => $code ? (int)($code['share_count'] ?? 0) : 0,
             'recent'      => $recent,
         ]);
 
@@ -558,6 +560,74 @@ if ($action === 'my-code') {
     }
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+// ACTION: share
+// POST invitations/share
+// Body: { code: string, channel: 'whatsapp'|'sms'|'email'|'copy' }
+// Partner-authenticated — increments share_count on the code row each time
+// the Partner dispatches an invite via any channel. Non-fatal if column
+// does not yet exist (migration may not have run).
+// ═════════════════════════════════════════════════════════════════════════════
+if ($action === 'share') {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+
+    $memberId = (int)($principal['principal_id'] ?? 0);
+    if ($memberId <= 0) apiError('Could not resolve Partner identity.', 401);
+
+    $body    = jsonBody();
+    $rawCode = strtoupper(trim(sanitize($body['code'] ?? '')));
+    $channel = strtolower(trim(sanitize($body['channel'] ?? 'unknown')));
+
+    if ($rawCode === '') apiError('code is required.');
+    if (!inv_table_exists($db, 'partner_invite_codes')) {
+        // Table not ready — succeed silently so the UI is not blocked
+        apiSuccess(['recorded' => false, 'reason' => 'table_missing']);
+    }
+
+    try {
+        // Resolve members.id → partners.id
+        $partnerId = 0;
+        if (inv_table_exists($db, 'partners')) {
+            $pStmt = $db->prepare('SELECT id FROM partners WHERE member_id = ? AND partner_kind = ? LIMIT 1');
+            $pStmt->execute([$memberId, 'personal']);
+            $pRow = $pStmt->fetch(PDO::FETCH_ASSOC);
+            $partnerId = $pRow ? (int)$pRow['id'] : 0;
+        }
+
+        // Verify the code belongs to this Partner
+        $stmt = $db->prepare(
+            'SELECT id FROM partner_invite_codes
+             WHERE public_code = ? AND inviter_partner_id = ? AND status = ?
+             LIMIT 1'
+        );
+        $stmt->execute([$rawCode, $partnerId, 'active']);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            // Code not found or belongs to someone else — succeed silently
+            apiSuccess(['recorded' => false, 'reason' => 'not_found']);
+        }
+
+        // Increment share_count — column may not exist yet if migration pending
+        $cols = inv_cols($db, 'partner_invite_codes');
+        if (isset($cols['share_count'])) {
+            $db->prepare(
+                'UPDATE partner_invite_codes
+                 SET share_count = share_count + 1, updated_at = NOW()
+                 WHERE id = ?'
+            )->execute([(int)$row['id']]);
+        }
+
+        apiSuccess(['recorded' => true, 'channel' => $channel]);
+
+    } catch (Throwable $e) {
+        error_log('[invitations/share] ' . $e->getMessage());
+        // Non-fatal — don't break the UI if tracking fails
+        apiSuccess(['recorded' => false, 'reason' => 'error']);
+    }
+}
+
 // ── Unknown sub-action ────────────────────────────────────────────────────────
-apiError("Unknown invitations action: {$action}. Valid actions: validate, create, revoke, report, my-code.", 404);
+apiError("Unknown invitations action: {$action}. Valid actions: validate, create, revoke, report, my-code, share.", 404);
 

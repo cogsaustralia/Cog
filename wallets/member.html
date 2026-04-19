@@ -1731,15 +1731,16 @@ function renderInviteCard(d){
   var link = code
     ? siteOrigin + '/?invite=' + encodeURIComponent(code)
     : (d.invite_link || d.share_url || siteOrigin + '/');
-  var uses = Number(d.use_count || 0);
+  var shares = Number(d.share_count || 0);
+  var joined = Number(d.use_count || 0);
   if(!code){ wrap.style.display='none'; return; }
   var paid = !!(window._vaultData && (window._vaultData.payment_status||'').toLowerCase()==='paid');
   if(!paid){ wrap.style.display='none'; return; }
   var recent = Array.isArray(d.recent) ? d.recent : [];
   var names = recent.slice(0,8).map(function(r){ return esc(r.first_name||(r.name||'').split(' ')[0]||''); }).filter(Boolean);
-  var namesLine = names.length
-    ? names.join(' &middot; ')+(recent.length>8?' &middot; +'+(recent.length-8)+' more':'')
-    : '<span style="color:var(--text3);font-style:italic;font-weight:400">No Partners invited yet</span>';
+  var joinedLine = joined > 0
+    ? (names.length ? names.join(' &middot; ')+(recent.length>8?' &middot; +'+(recent.length-8)+' more':'') : joined+' Partner'+(joined===1?'':'s'))
+    : '<span style="color:var(--text3);font-style:italic;font-weight:400">No Partners joined yet</span>';
   wrap.style.display = '';
   // Store code/link on a container element so onclick handlers read via dataset — no quoting issues
   wrap.innerHTML =
@@ -1748,8 +1749,8 @@ function renderInviteCard(d){
     + '<div class="ov-stag-sub">Your governance vote is equal to every other Partner\u2019s. Bring the next Partner.</div>'
     + '<div class="ov-stag-meta">'
     +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Your invite code</div><div class="ov-stag-meta-val">'+esc(code)+'</div></div>'
-    +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Partners invited</div><div class="ov-stag-meta-val count">'+uses+'</div></div>'
-    +   '<div class="ov-stag-meta-block" style="flex:1 1 auto;min-width:140px"><div class="ov-stag-meta-lbl">Joined so far</div><div class="ov-stag-meta-val names">'+namesLine+'</div></div>'
+    +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Partners invited</div><div class="ov-stag-meta-val count" id="stag-share-count">'+shares+'</div></div>'
+    +   '<div class="ov-stag-meta-block" style="flex:1 1 auto;min-width:140px"><div class="ov-stag-meta-lbl">Joined so far</div><div class="ov-stag-meta-val names">'+joinedLine+'</div></div>'
     + '</div>'
     + '<div class="ov-stag-actions">'
     +   '<button class="ov-stag-btn" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.3);color:#25d366" data-channel="whatsapp" onclick="stagShare(this)">&#x1F4AC; WhatsApp</button>'
@@ -1783,7 +1784,16 @@ function stagShare(btn){
   if(!card) return;
   var code = card.dataset.code || '';
   var link = card.dataset.link || '';
+  // Open the share channel immediately — don't block on the API call
   ivShare(btn.dataset.channel, code, link);
+  // Optimistically increment the displayed counter
+  var counter = document.getElementById('stag-share-count');
+  if(counter){ counter.textContent = String(Number(counter.textContent||0) + 1); }
+  // Record the share server-side (fire-and-forget — non-fatal)
+  api('invitations/share', {
+    method: 'POST',
+    body: JSON.stringify({ code: code, channel: btn.dataset.channel })
+  }).catch(function(){}); // silent — share already dispatched
 }
 async function completeCurrentJvpaRecord(){
   var btn = el('jvpa-complete-btn');
