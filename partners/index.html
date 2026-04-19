@@ -2288,39 +2288,10 @@ var PARTICIPATION_AREA_LABELS = {
 };
 
 function renderParticipationPill(data){
+  // Participation pill hidden from header — areas shown in identity card instead.
+  // Keep function so calls don't throw, but never show the wrapper.
   var wrap  = document.getElementById('participation-pill-wrap');
-  var pill  = document.getElementById('participation-pill');
-  var label = document.getElementById('participation-pill-label');
-  var tags  = document.getElementById('participation-areas-tags');
-  if(!wrap || !pill || !label) return;
-
-  var completed = !!(data && data.participation_completed);
-  var areas     = (data && data.participation_areas) ? data.participation_areas : [];
-  var selectedSet = new Set(areas);
-
-  wrap.style.display = '';
-
-  if(completed){
-    pill.className = 'participation-pill complete';
-    label.textContent = 'Partners Participation recorded ✓ — click to edit';
-    if(tags){
-      tags.style.display = '';
-      // Render ALL 9 areas — green for selected, gold for unselected.
-      // Maintains the declared label order for consistency.
-      var html = '';
-      Object.keys(PARTICIPATION_AREA_LABELS).forEach(function(key){
-        var on = selectedSet.has(key);
-        html += '<span class="part-area-tag ' + (on ? 'on' : 'off') + '">'
-             + (on ? '✓ ' : '○ ')
-             + PARTICIPATION_AREA_LABELS[key] + '</span>';
-      });
-      tags.innerHTML = html;
-    }
-  } else {
-    pill.className = 'participation-pill incomplete';
-    label.textContent = 'Partners Participation — complete on first vault entry';
-    if(tags) tags.style.display = 'none';
-  }
+  if(wrap) wrap.style.display = 'none';
 }
 
 // ── Important News (wallet notices on hub) ──
