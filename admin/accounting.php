@@ -166,6 +166,87 @@ $adminBalColor = ($adminFundBal > 0) ? 'var(--ok)' : 'var(--err)';
 
 ob_start();
 ?>
+<style>
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(155px,1fr)); gap:14px; margin-bottom:22px; }
+.stat { background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--r2); padding:16px 18px; text-align:center; }
+.stat-val { font-size:1.6rem; font-weight:800; margin-bottom:4px; }
+.grid2 { display:grid; grid-template-columns:1.1fr .9fr; gap:18px; }
+@media(max-width:980px) { .grid2 { grid-template-columns:1fr; } }
+.acct-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; background:rgba(255,255,255,.04); border:1px solid var(--line); }
+.acct-dot { width:8px; height:8px; border-radius:50%; }
+.acct-dot.a { background:var(--blue); }
+.acct-dot.b { background:var(--ok); }
+.acct-dot.c { background:var(--purple); }
+/* ── Invariant strip ── */
+.inv-strip { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.inv-pill { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid transparent; cursor:default; }
+.inv-pill.ok  { background:rgba(82,184,122,.1);  border-color:rgba(82,184,122,.3);  color:var(--ok); }
+.inv-pill.err { background:rgba(196,96,96,.12);  border-color:rgba(196,96,96,.35);  color:var(--err); cursor:pointer; }
+.inv-pill.err:hover { background:rgba(196,96,96,.2); }
+.inv-pill .inv-code { font-size:10px; font-weight:800; opacity:.7; font-family:monospace; }
+.inv-pill .inv-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.inv-pill.ok  .inv-dot { background:var(--ok); }
+.inv-pill.err .inv-dot { background:var(--err); box-shadow:0 0 6px var(--err); }
+/* ── Godley matrix ── */
+.godley-wrap { overflow-x:auto; margin-bottom:22px; }
+.godley-table { border-collapse:collapse; font-size:12px; min-width:600px; width:100%; }
+.godley-table th, .godley-table td { padding:7px 10px; border:1px solid var(--line); text-align:right; white-space:nowrap; }
+.godley-table th { background:var(--panel2); color:var(--dim); font-size:10px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
+.godley-table th.acct-col { text-align:left; min-width:190px; position:sticky; left:0; z-index:2; background:var(--panel2); }
+.godley-table td.acct-col { text-align:left; position:sticky; left:0; z-index:1; background:var(--panel); font-weight:600; font-size:11.5px; }
+.godley-table td.acct-col .acct-sub { font-size:10px; color:var(--dim); font-weight:400; display:block; margin-top:1px; }
+.godley-table tr.sector-head td, .godley-table tr.sector-head th { background:rgba(255,255,255,.03); color:var(--sub); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; border-bottom:1px solid var(--line2); }
+.godley-table tr.sector-head td.acct-col { background:rgba(255,255,255,.03); }
+.godley-table tr.sector-total td { background:rgba(255,255,255,.02); font-weight:700; border-top:2px solid var(--line2); font-size:11.5px; }
+.godley-table tr.sector-total td.acct-col { background:rgba(255,255,255,.02); }
+.godley-table td.zero { color:var(--dim); }
+.godley-table td.pos  { color:var(--ok); }
+.godley-table td.neg  { color:var(--err); }
+.cell-dr { font-size:10px; color:var(--err); display:block; }
+.cell-cr { font-size:10px; color:var(--ok);  display:block; }
+.godley-table tr.grand-total td { background:var(--panel2); font-weight:800; font-size:12.5px; border-top:2px solid var(--line2); color:var(--text); }
+.godley-table tr.grand-total td.acct-col { background:var(--panel2); }
+.godley-table td a.cell-link { color:inherit; text-decoration:none; display:block; }
+.godley-table td a.cell-link:hover { text-decoration:underline; opacity:.85; }
+/* ── Balance sheet ── */
+.bs-grid { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0; border:1px solid var(--line); border-radius:var(--r2); overflow:hidden; margin-top:4px; }
+.bs-col { border-right:1px solid var(--line); }
+.bs-col:last-child { border-right:none; }
+.bs-head { background:var(--panel2); padding:10px 14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; border-bottom:1px solid var(--line); }
+.bs-head.a { color:var(--blue); }
+.bs-head.b { color:var(--ok); }
+.bs-head.c { color:var(--purple); }
+.bs-head.cons { color:var(--gold); }
+.bs-row { display:flex; justify-content:space-between; align-items:baseline; padding:7px 14px; border-top:1px solid var(--line); font-size:12px; gap:8px; }
+.bs-row:first-of-type { border-top:none; }
+.bs-row .bs-name { color:var(--sub); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bs-row .bs-val { font-weight:700; white-space:nowrap; }
+.bs-row .bs-val.pos { color:var(--ok); }
+.bs-row .bs-val.neg { color:var(--err); }
+.bs-row .bs-val.zero { color:var(--dim); }
+.bs-total { background:rgba(255,255,255,.03); border-top:2px solid var(--line2) !important; }
+.bs-total .bs-name { font-weight:700; color:var(--text); }
+/* ── Compliance tracker ── */
+.comp-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.comp-tab { padding:5px 12px; border-radius:8px; font-size:11.5px; font-weight:700; border:1px solid var(--line); background:var(--panel2); color:var(--sub); cursor:pointer; }
+.comp-tab.active { background:rgba(196,96,96,.15); border-color:rgba(196,96,96,.35); color:var(--err); }
+.comp-tab.ok { background:rgba(82,184,122,.08); border-color:rgba(82,184,122,.25); color:var(--ok); cursor:default; }
+.comp-panel { display:none; }
+.comp-panel.active { display:block; }
+.comp-deadline-badge { display:inline-block; padding:2px 8px; border-radius:5px; font-size:10px; font-weight:800; }
+.comp-deadline-badge.overdue { background:var(--errb); color:var(--err); }
+.comp-deadline-badge.soon { background:var(--warnb); color:var(--warn); }
+.comp-deadline-badge.safe { background:var(--okb); color:var(--ok); }
+/* ── Invariant drill modal ── */
+.inv-modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:1000; align-items:center; justify-content:center; }
+.inv-modal-bg.open { display:flex; }
+.inv-modal { background:var(--panel); border:1px solid var(--line2); border-radius:var(--r); padding:0; max-width:760px; width:94vw; max-height:80vh; display:flex; flex-direction:column; }
+.inv-modal-head { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--line); }
+.inv-modal-close { background:none; border:none; color:var(--sub); font-size:1.3rem; cursor:pointer; padding:4px 8px; border-radius:6px; }
+.inv-modal-close:hover { color:var(--text); background:rgba(255,255,255,.06); }
+.inv-modal-body { overflow-y:auto; padding:16px 20px; flex:1; }
+</style>
+<?php ops_admin_help_assets_once(); ?>
 <div class="card">
   <div class="card-head">
     <h1 style="margin:0">Trust Accounting <?php echo ops_admin_help_button('Trust accounting', 'Finance control view for trust balances, transfers, compliance deadlines, and reconciliation across Sub-Trust A, B, and C.'); ?></h1>
