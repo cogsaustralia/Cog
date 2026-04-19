@@ -49,6 +49,16 @@
     .event-meta strong{color:var(--gold-1)}
     .hero-rule{border:none;height:1px;background:linear-gradient(to right,transparent,var(--gold-rim2),transparent);max-width:360px;margin:0 auto}
 
+    /* ── Audio player ── */
+    .audio-panel{background:rgba(16,11,4,.92);border:1px solid var(--line2);border-radius:var(--r);padding:22px 26px;margin-bottom:0;max-width:760px;margin-left:auto;margin-right:auto}
+    .audio-label{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px}
+    .audio-speaker{font-family:var(--serif);font-size:1rem;color:var(--text);margin-bottom:14px;line-height:1.5}
+    .audio-speaker span{color:var(--text2);font-size:.9rem;font-style:italic}
+    audio{width:100%;height:44px;border-radius:8px;outline:none}
+    audio::-webkit-media-controls-panel{background:rgba(36,26,11,.95)}
+    audio::-webkit-media-controls-play-button{filter:invert(.85) sepia(1) saturate(2) hue-rotate(5deg)}
+    audio::-webkit-media-controls-timeline{filter:invert(.85) sepia(1) saturate(2) hue-rotate(5deg)}
+
     /* ── Prose body ── */
     .address-body{padding:60px 0 80px}
     .prose{font-family:var(--serif);font-size:clamp(1.02rem,1.6vw,1.18rem);line-height:1.88;color:var(--text2);max-width:760px;margin:0 auto}
@@ -119,6 +129,23 @@
         <hr class="hero-rule">
       </div>
     </section>
+
+    <!-- ── Audio ── -->
+    <div style="padding:0 0 48px">
+      <div class="container">
+        <div class="audio-panel fade-up-3">
+          <div class="audio-label">Listen to the address as delivered</div>
+          <div class="audio-speaker">
+            Thomas Boyd Cunliffe — Caretaker Trustee and Community Coordinator<br>
+            <span>Lunatic Hotel, Drake Village NSW &nbsp;·&nbsp; Monday 20 April 2026</span>
+          </div>
+          <audio controls preload="metadata">
+            <source src="/assets/drake-founding-address-20april2026.mp3" type="audio/mpeg">
+            Your browser does not support the audio element. <a href="/assets/drake-founding-address-20april2026.mp3" style="color:var(--gold-1)">Download the recording</a>.
+          </audio>
+        </div>
+      </div>
+    </div>
 
     <!-- ── Address body ── -->
     <section class="address-body">
