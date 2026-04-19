@@ -361,8 +361,6 @@ ob_start();
   </div>
 </div>
 
-</main></div>
-
 <?php
 $body = ob_get_clean();
 ops_render_page('Grants', 'grants', $body, $flash ?? null, 'ok');

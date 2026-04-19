@@ -322,7 +322,6 @@ ob_start();
 
 <?php endif; ?>
 
-</main></div>
 <script>
 var totalUnits = <?php echo $totalUnitsCalc + $stcUnitsCalc; ?>;
 function previewCalc() {

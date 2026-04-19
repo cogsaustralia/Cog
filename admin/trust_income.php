@@ -434,9 +434,6 @@ ob_start();
 
 <?php endif; ?>
 
-</main>
-</div>
-
 <script>
 function calcNet(el) {
     var gross = parseFloat(document.querySelector('[name=gross_amount]').value) || 0;
@@ -445,7 +442,6 @@ function calcNet(el) {
     document.getElementById('net_display').value = '$' + net.toFixed(2);
 }
 </script>
-</body>
 
 <?php
 $body = ob_get_clean();
