@@ -56,44 +56,41 @@ $liveRows = ops_table_exists($pdo, 'v_foundation_rwa_assets_live') ? ops_fetch_a
 
 ob_start();
 ?>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('RWA Valuation Ledger', 'What this page does', 'Use this page to record the verified value of each registered RWA asset. These valuation records drive the live RWA book value shown to Partners and form the economic basis for RWA-token capacity.', [
+    'Each submission creates one dated valuation record for the selected asset.',
+    'Valuation method and evidence reference should be recorded for auditability.',
+    'The latest valuation per asset is used for live capacity calculations.',
+    'Older records are retained as the historical valuation trail.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Follow this sequence when working with this page.', [
+    ['title' => 'Select the asset', 'body' => 'Choose the registered RWA asset being valued.'],
+    ['title' => 'Enter the valuation', 'body' => 'Record the value in AUD cents, date, method, and evidence reference.'],
+    ['title' => 'Review live values', 'body' => 'The live table below shows the current position from the latest valuation per asset.'],
+    ['title' => 'Monitor capacity', 'body' => 'RWA COG$ capacity updates automatically as new valuations are recorded.'],
+  ]),
+  ops_admin_guide_panel('How to use this page', 'Each section serves a different purpose.', [
+    ['title' => 'Add valuation form', 'body' => 'One submission = one dated valuation record. Not an edit of a previous one.'],
+    ['title' => 'Current live values', 'body' => 'Latest valuation per asset — this is what drives live capacity.'],
+    ['title' => 'Recent valuation records', 'body' => 'Full historical trail of all valuation submissions.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses appear throughout this page.', [
+    ['label' => 'Active valuation', 'body' => 'The most recent record for an asset — used for live capacity.'],
+    ['label' => 'Superseded', 'body' => 'An older valuation replaced by a newer one. Retained for audit history.'],
+    ['label' => 'Pending verification', 'body' => 'Valuation submitted but evidence not yet confirmed.'],
+  ]),
+]) ?>
+
 <div class="grid" style="gap:18px">
-  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('RWA valuation ledger', 'What this page does', 'Use this page to record the verified value of each registered RWA asset. These valuation records drive the live RWA book value shown to Partners and will become the economic basis for later RWA-token backing.', [
-      'Record the date, basis, and amount of each verified valuation event.',
-      'Keep source references and notes so each valuation can be traced later.',
-      'Use the latest valuation as the live asset value shown in the register and Partners display.',
-      'Prepare the backing numbers required for later RWA token mint allocations.',
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_workflow_panel('Typical workflow', 'Create the RWA asset first, then record valuation events over time as the asset is recognised, revalued, or updated.', [
-      ['title' => 'Choose the asset', 'body' => 'Select an active RWA asset from the register.'],
-      ['title' => 'Record the valuation event', 'body' => 'Enter the valuation date, valuation basis, amount, and any supporting source reference.'],
-      ['title' => 'Review the live position', 'body' => 'The latest valuation per asset becomes the current live book value and token-backing capacity.'],
-      ['title' => 'Use the figures for backing control', 'body' => 'Stage 3 will allocate RWA token minting against this verified value at $4 of asset value per RWA COG$.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_guide_panel('How to read this page', 'This page works as the valuation ledger for registered RWA assets.', [
-      ['title' => 'Top cards', 'body' => 'Summarise the current RWA-wide verified value and backing capacity.'],
-      ['title' => 'Asset valuation form', 'body' => 'Creates a new valuation record for the selected asset.'],
-      ['title' => 'Current live values', 'body' => 'Shows the latest current valuation for each asset from the live Stage 1 view.'],
-      ['title' => 'Recent valuation records', 'body' => 'The historical ledger of valuation events entered for assets.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_status_panel('Field guide', 'These are the key valuation concepts used on this page.', [
-      ['label' => 'Valuation basis', 'body' => 'A short label for the method or evidence basis used, such as JORC, board valuation, independent report, or acquisition cost.'],
-      ['label' => 'Valuation amount', 'body' => 'The current recognised value of the asset at that valuation event.'],
-      ['label' => 'Valuation units', 'body' => 'Optional unit representation; if left blank, the page estimates units using the $4-per-token rule.'],
-      ['label' => 'Source reference', 'body' => 'Document, report, or other external reference used to support the valuation event.'],
-  ]),
-]) ?>
+  
+
+
+
 <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
-    <div class="card"><div class="card-head"><h2>RWA verified value</h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rv_money((int)($capacity['source_book_value_cents'] ?? 0)) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ backed</h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rv_num((float)($capacity['cogs_backed'] ?? 0), 0) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ minted</h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rv_num((float)($capacity['cogs_minted'] ?? 0), 0) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Calculated from the latest live RWA valuation figures at the $4-per-token rule.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rv_num((float)($capacity['cogs_available_to_back'] ?? 0), 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>RWA verified value</h2></div><div class="card-body"><div class="stat-value"><?= rv_money((int)($capacity['source_book_value_cents'] ?? 0)) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ backed</h2></div><div class="card-body"><div class="stat-value"><?= rv_num((float)($capacity['cogs_backed'] ?? 0), 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ minted</h2></div><div class="card-body"><div class="stat-value"><?= rv_num((float)($capacity['cogs_minted'] ?? 0), 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Calculated from the latest live RWA valuation figures at the $4-per-token rule.') ?></h2></div><div class="card-body"><div class="stat-value"><?= rv_num((float)($capacity['cogs_available_to_back'] ?? 0), 0) ?></div></div></div>
   </div>
 
   <div class="card">

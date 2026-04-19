@@ -157,32 +157,35 @@ $recentAllocations = ops_has_table($pdo, 'stewardship_backing_allocations') ? ab
     ORDER BY sba.id DESC LIMIT 40") : [];
 
 ob_start(); ?>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 3 · Asset Collateral', 'What this page does', 'This page connects approved ASX and RWA token demand to real settled asset value. It is the control surface between the asset register, approvals, and execution.', [
+    'Review available capacity from both ASX and RWA asset sources.',
+    'Allocate backing to approved token requests before creating execution requests.',
+    'Each allocation links a specific approval to a specific asset source.',
+    'Unallocated capacity shows how much token demand can still be supported.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Follow this sequence when working with this page.', [
+    ['title' => 'Check capacity', 'body' => 'Review available ASX and RWA capacity at the top of the page.'],
+    ['title' => 'Find approved requests', 'body' => 'The table shows approved requests that still need a backing allocation.'],
+    ['title' => 'Allocate backing', 'body' => 'Link each approval to an asset source with the allocation form.'],
+    ['title' => 'Proceed to execution', 'body' => 'Once backing is allocated, the request is ready for the Execution page.'],
+  ]),
+  ops_admin_guide_panel('How to use this page', 'Each section serves a different purpose.', [
+    ['title' => 'Capacity summary', 'body' => 'Current unallocated capacity from ASX holdings and RWA assets.'],
+    ['title' => 'Approved requests awaiting collateral', 'body' => 'These are the items that need a backing allocation before execution.'],
+    ['title' => 'Recent allocations', 'body' => 'Audit trail of backing allocations already recorded.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses appear throughout this page.', [
+    ['label' => 'Awaiting collateral', 'body' => 'Approval exists but no backing allocation has been recorded yet.'],
+    ['label' => 'Collateral allocated', 'body' => 'Backing linked to an asset source. Ready for execution.'],
+    ['label' => 'Executed', 'body' => 'Tokens have been minted and the collateral allocation is closed.'],
+  ]),
+]) ?>
+
 <div class="grid" style="gap:18px">
-  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('Stage 3 · Asset backing', 'What this page does', 'This page connects approved ASX and RWA token demand to real settled asset value. It is the control surface between the asset registry, approvals, and execution.', [
-      'Allocate real ASX trade lots or RWA valuation value to approved stewardship token requests.',
-      'Work at the fixed rule of $4 of backing value per stewardship token.',
-      'Only fully backed approvals should move forward into execution.',
-      'Published execution turns reserved backing into minted backing and updates stewardship positions.',
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_workflow_panel('Typical workflow', 'Move from approved request to backed request, then into execution.', [
-      ['title' => 'Approve the request', 'body' => 'Approvals sets the stewardship token request to approved, but asset-backed classes remain gated until backing is allocated.'],
-      ['title' => 'Allocate live backing', 'body' => 'Reserve enough settled ASX purchase value or RWA valuation value to cover the approved units.'],
-      ['title' => 'Create the execution request', 'body' => 'Only once the request is fully backed should it move into the execution console.'],
-      ['title' => 'Publish the batch', 'body' => 'Publication marks the backing as minted and grows the live stewardship position.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_status_panel('Status guide', 'Use these meanings consistently on backing allocations.', [
-      ['label' => 'Awaiting asset backing', 'body' => 'The approval is real, but not yet supported by enough live asset value.'],
-      ['label' => 'Reserved', 'body' => 'Asset value has been set aside for the approval but is not yet attached to an execution request.'],
-      ['label' => 'Mint ready', 'body' => 'The backing is attached to the execution request and ready to move through the execution console.'],
-      ['label' => 'Minted', 'body' => 'The batch has published and the backing is now part of the live minted stewardship position.'],
-      ['label' => 'Cancelled', 'body' => 'The reservation was released before minting and no longer counts toward coverage.'],
-  ]),
-]) ?>
+  
+
+
 <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
     <?php foreach (['ASX','RWA'] as $grp): $c = $capacity[$grp] ?? ['source_book_value_cents'=>0,'cogs_backed'=>0,'cogs_minted'=>0,'cogs_available_to_back'=>0]; ?>
       <div class="card"><div class="card-head"><h2><?= ops_h($grp) ?> capacity</h2></div><div class="card-body">
@@ -195,7 +198,7 @@ ob_start(); ?>
   </div>
 
   <div class="card">
-    <div class="card-head"><h2>Approved requests awaiting backing <?= ops_admin_help_button('Approved requests awaiting backing', 'Allocate backing here before you create execution requests for ASX or RWA token approvals.') ?></h2></div>
+    <div class="card-head"><h2>Approved requests awaiting collateral <?= ops_admin_help_button('Approved requests awaiting collateral', 'Allocate collateral here before you create execution requests for ASX or RWA token approvals.') ?></h2></div>
     <div class="card-body table-wrap">
       <table>
         <thead><tr><th>Partner</th><th>Class</th><th>Approved</th><th>Backing status</th><th>Allocate</th></tr></thead>
@@ -231,7 +234,7 @@ ob_start(); ?>
   </div>
 
   <div class="card">
-    <div class="card-head"><h2>Recent backing allocations</h2></div>
+    <div class="card-head"><h2>Recent collateral allocations</h2></div>
     <div class="card-body table-wrap">
       <table>
         <thead><tr><th>Source</th><th>Partner</th><th>Class</th><th>Units</th><th>Value</th><th>Status</th><th>Action</th></tr></thead>
@@ -254,4 +257,4 @@ ob_start(); ?>
 </div>
 <?php
 $body = ob_get_clean();
-ops_render_page('Asset Backing', 'asset_backing', $body, $flash, $flashType);
+ops_render_page('Asset Collateral', 'asset_backing', $body, $flash, $flashType);

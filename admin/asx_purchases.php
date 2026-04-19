@@ -185,6 +185,32 @@ try {
 ob_end_clean(); // Discard outer buffer — eliminates any pre-doctype output (notices, whitespace from includes)
 ob_start();     // Inner buffer — captures page body for ops_render_page
 ?>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('ASX Purchase Ledger', 'What this page does', 'Use this page to record actual blocks of ASX shares purchased by the partnership. These purchase lots drive the live totals for shares held, weighted average price, total book value, and ASX-token capacity.', [
+    'Each submission creates one ledgered purchase lot for a registered ASX holding.',
+    'Use pending until the trade is settled — pending lots do not inflate live capacity.',
+    'Upload the broker confirmation PDF to create a full evidence trail per lot.',
+    'Chain attestation anchors the document hash to the blockchain record.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Follow this sequence when working with this page.', [
+    ['title' => 'Select the holding', 'body' => 'Choose the registered ASX company this purchase belongs to.'],
+    ['title' => 'Enter trade details', 'body' => 'Record the date, share count, price per share, and broker reference.'],
+    ['title' => 'Set status to pending', 'body' => 'Keep as pending until CHESS settlement is confirmed.'],
+    ['title' => 'Mark settled', 'body' => 'Update to settled once the shares appear in the CHESS registry.'],
+    ['title' => 'Upload broker confirmation', 'body' => 'Attach the PDF to complete the evidence trail.'],
+  ]),
+  ops_admin_guide_panel('How to use this page', 'Each section serves a different purpose.', [
+    ['title' => 'Add purchase lot form', 'body' => 'One form submission = one trade lot. Do not batch multiple trades.'],
+    ['title' => 'Recent purchase lots', 'body' => 'Full ledger of all recorded lots with status and book value.'],
+    ['title' => 'Document vault', 'body' => 'Upload and verify broker PDFs. Each upload is SHA-256 hashed.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses appear throughout this page.', [
+    ['label' => 'Pending', 'body' => 'Trade recorded but not yet CHESS-settled. Does not count toward capacity.'],
+    ['label' => 'Settled', 'body' => 'Shares confirmed in CHESS. Contributes to live book value and capacity.'],
+    ['label' => 'Failed / cancelled', 'body' => 'Trade did not proceed. Excluded from all capacity calculations.'],
+  ]),
+]) ?>
+
 <div class="grid" style="gap:18px">
   <?php if ($dbError): ?>
   <div class="card" style="border-left:4px solid var(--color-error,#c0392b)">
@@ -198,42 +224,15 @@ ALTER TABLE `asx_holdings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unic
     </div>
   </div>
   <?php endif; ?>
-  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('ASX purchase ledger', 'What this page does', 'Use this page to record actual blocks of ASX shares purchased by the partnership. These purchase lots drive the live totals for shares held, weighted average price, total book value, and later ASX-token backing capacity.', [
-      'Record each purchase lot with shares, price, date, and settlement state.',
-      'Keep pending, settled, and failed lots separate so live book value stays clean.',
-      'Allow the holding roll-up to recalculate automatically from settled lots.',
-      'Prepare the real economic backing for later ASX token mint allocations.',
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_workflow_panel('Typical workflow', 'Create the company line first, then record each actual trade lot as it occurs.', [
-      ['title' => 'Choose the holding', 'body' => 'Select the ASX line the purchase belongs to. Create it first on ASX Holdings if it does not exist yet.'],
-      ['title' => 'Record the trade lot', 'body' => 'Enter shares, price paid, brokerage, dates, and the settlement status for the purchase.'],
-      ['title' => 'Settle the lot', 'body' => 'Only settled lots should inflate the live holding totals and backing value.'],
-      ['title' => 'Use live totals for backing control', 'body' => 'Stage 3 will allocate these settled lots to ASX token minting at $4 of shares per ASX COG$.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_guide_panel('How to read this page', 'The top cards show the ASX-wide backing position. The table below shows the lot-by-lot ledger.', [
-      ['title' => 'Book value', 'body' => 'The recorded cost basis of settled ASX share lots, including any brokerage rolled into the holding summary.'],
-      ['title' => 'COG$ backed / available', 'body' => 'How much ASX token capacity has already been reserved and how much remains free.'],
-      ['title' => 'Trade status', 'body' => 'Pending lots are recorded but not yet counted into the live holding total. Settled lots are active backing. Failed lots are excluded.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_status_panel('Field guide', 'These are the important operational meanings on the purchase ledger.', [
-      ['label' => 'Shares purchased', 'body' => 'The exact number of listed shares acquired in the recorded lot.'],
-      ['label' => 'Price per share', 'body' => 'Enter the actual purchase price paid per share. Total cost is calculated from this.'],
-      ['label' => 'Brokerage', 'body' => 'Transaction-level dealing cost. This is included in the settled holding book value.'],
-      ['label' => 'Settlement status', 'body' => 'Use settled only when the lot is truly complete and can support token backing.'],
-  ]),
-]) ?>
+  
+
+
+
 <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
-    <div class="card"><div class="card-head"><h2>ASX book value <?= ops_admin_help_button('ASX book value', 'This is the aggregate settled ASX share cost basis from the live backing-capacity view.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= ap_money((float)($capacity['source_book_value_cents'] ?? 0)) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ backed</h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= ap_num((float)($capacity['cogs_backed'] ?? 0), 0) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ minted</h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= ap_num((float)($capacity['cogs_minted'] ?? 0), 0) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Calculated at 1 ASX COG$ = $4 of settled ASX shares.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= ap_num((float)($capacity['cogs_available_to_back'] ?? 0), 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>ASX book value <?= ops_admin_help_button('ASX book value', 'This is the aggregate settled ASX share cost basis from the live backing-capacity view.') ?></h2></div><div class="card-body"><div class="stat-value"><?= ap_money((float)($capacity['source_book_value_cents'] ?? 0)) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ backed</h2></div><div class="card-body"><div class="stat-value"><?= ap_num((float)($capacity['cogs_backed'] ?? 0), 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ minted</h2></div><div class="card-body"><div class="stat-value"><?= ap_num((float)($capacity['cogs_minted'] ?? 0), 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Calculated at 1 ASX COG$ = $4 of settled ASX shares.') ?></h2></div><div class="card-body"><div class="stat-value"><?= ap_num((float)($capacity['cogs_available_to_back'] ?? 0), 0) ?></div></div></div>
   </div>
 
   <div class="card">

@@ -84,44 +84,41 @@ $editTicker = (string)($editRow['asx_code'] ?? $editRow['ticker'] ?? '');
 ob_end_clean(); // Discard outer buffer — eliminates any pre-doctype output
 ob_start();     // Inner buffer — captures page body for ops_render_page
 ?>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('ASX Holdings Register', 'What this page does', 'Use this page to create and maintain the live registry of ASX-listed shareholdings held by the partnership. Each line represents one listed company and becomes the roll-up source for share count, weighted average purchase price, total book value, and token-capacity.', [
+    'Create one registry line per ASX company — for example ASX:LGM.',
+    'Maintain company identity, HIN/CHESS reference, stewardship stream, and notes.',
+    'Review live share count, book value, and capacity once purchase lots have been entered.',
+    'Move to ASX Purchases after creating the holding to record actual trade lots.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Follow this sequence when working with this page.', [
+    ['title' => 'Add the holding line', 'body' => 'Create the company record here. This is the identity anchor.'],
+    ['title' => 'Record purchase lots', 'body' => 'Go to ASX Purchases and enter each block of shares acquired.'],
+    ['title' => 'Review live totals', 'body' => 'Book value and capacity update automatically from settled lots.'],
+    ['title' => 'Monitor ESG status', 'body' => 'Flag poor ESG targets to support proxy voting and stewardship decisions.'],
+  ]),
+  ops_admin_guide_panel('How to use this page', 'Each section serves a different purpose.', [
+    ['title' => 'Holdings form', 'body' => 'Create or edit a company line. Only one line per ASX code.'],
+    ['title' => 'Live holdings table', 'body' => 'Shows rolled-up totals per company from the purchase ledger.'],
+    ['title' => 'COG$ capacity', 'body' => 'Unallocated token capacity calculated at $4 of settled shares per COG$.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses appear throughout this page.', [
+    ['label' => 'Active', 'body' => 'Holding is live and contributes to the portfolio.'],
+    ['label' => 'Suspended / retired', 'body' => 'Holding is no longer active in the portfolio.'],
+    ['label' => 'Poor ESG target', 'body' => 'Flagged for active stewardship intervention at AGM/EGM.'],
+  ]),
+]) ?>
+
 <div class="grid" style="gap:18px">
-  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('ASX holdings register', 'What this page does', 'Use this page to create and maintain the live registry of ASX-listed shareholdings held by the partnership. Each line represents one listed company and becomes the roll-up source for share count, weighted average purchase price, total book value, and future token-backing capacity.', [
-      'Create one registry line per ASX company, for example ASX:LGM.',
-      'Maintain company identity, HIN/CHESS reference, stewardship stream, and notes.',
-      'Review live share count, book value, and backing capacity once purchase lots have been entered.',
-      'Move to ASX Purchases after creating the holding to record actual trade lots.',
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_workflow_panel('Typical workflow', 'Start by creating the listed company record, then record purchase lots on the purchases page. The live totals here recalculate from those lots.', [
-      ['title' => 'Create or update the holding line', 'body' => 'Record the ASX code, company name, and custody context once for the company.'],
-      ['title' => 'Enter purchase lots', 'body' => 'Use the ASX Purchases page to record blocks of shares, trade dates, cost, and settlement status.'],
-      ['title' => 'Review live totals', 'body' => 'This page then shows shares held, weighted average cost, total book value, and how much ASX token capacity remains.'],
-      ['title' => 'Use the totals for backing control', 'body' => 'Stage 3 will allocate settled book value to ASX token minting at $4 of shares per ASX COG$.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_guide_panel('How to read this page', 'The top cards show the current live foundation position, while the table below shows each ASX company line individually.', [
-      ['title' => 'Holdings lines', 'body' => 'How many separate ASX company holdings are currently registered.'],
-      ['title' => 'Shares held', 'body' => 'The live total of settled shares recorded across the ASX purchase ledger.'],
-      ['title' => 'Book value', 'body' => 'The total recorded cost basis for settled ASX share purchases.'],
-      ['title' => 'COG$ backed / minted / available', 'body' => 'Backed means value already reserved for token support, minted means already issued, and available means still unallocated at the $4-per-token rule.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_status_panel('Field guide', 'These fields control the identity and stewardship posture of the holding line.', [
-      ['label' => 'ASX code', 'body' => 'Use the exchange code form, for example ASX:LGM. This is the label shown in the live asset pool.'],
-      ['label' => 'Funded by stream', 'body' => 'Identifies whether the holding is mainly attributable to beneficiary capital, donation flow, or a mixed funding basis.'],
-      ['label' => 'Poor ESG target', 'body' => 'Flags that the holding is being stewarded as a poor-ESG target under the partnership strategy.'],
-      ['label' => 'CHESS / HIN ref', 'body' => 'Optional operational reference for custody tracing.'],
-  ]),
-]) ?>
+  
+
+
+
 <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
-    <div class="card"><div class="card-head"><h2>Holding lines <?= ops_admin_help_button('Holding lines', 'The number of separate listed equity lines currently registered for the partnership.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= asx_num($summary['lines']) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>Shares held <?= ops_admin_help_button('Shares held', 'Settled shares currently recorded across all ASX purchase lots.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= asx_num($summary['shares'], 0) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>Book value <?= ops_admin_help_button('Book value', 'Total recorded cost basis of settled ASX share purchases.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= asx_money($summary['book']) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Unallocated ASX token capacity calculated at 1 ASX COG$ = $4 of settled ASX shares.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= asx_num($summary['available'], 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>Holding lines <?= ops_admin_help_button('Holding lines', 'The number of separate listed equity lines currently registered for the partnership.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_num($summary['lines']) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>Shares held <?= ops_admin_help_button('Shares held', 'Settled shares currently recorded across all ASX purchase lots.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_num($summary['shares'], 0) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>Book value <?= ops_admin_help_button('Book value', 'Total recorded cost basis of settled ASX share purchases.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_money($summary['book']) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Unallocated ASX token capacity calculated at 1 ASX COG$ = $4 of settled ASX shares.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_num($summary['available'], 0) ?></div></div></div>
   </div>
 
   <div class="card" id="holding-form">
@@ -131,13 +128,13 @@ ob_start();     // Inner buffer — captures page body for ops_render_page
         <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
         <input type="hidden" name="action" value="save_holding">
         <input type="hidden" name="holding_id" value="<?= ops_h((string)$editRow['id']) ?>">
-        <label><div class="muted" style="margin-bottom:6px">ASX code <?= ops_admin_help_button('ASX code', 'Use the exchange code form such as ASX:LGM.') ?></div><input type="text" name="ticker" value="<?= ops_h($editTicker) ?>" placeholder="ASX:LGM" style="width:100%"></label>
-        <label><div class="muted" style="margin-bottom:6px">Company name</div><input type="text" name="company_name" value="<?= ops_h((string)$editRow['company_name']) ?>" placeholder="Legacy Minerals Holdings Limited" style="width:100%"></label>
-        <label><div class="muted" style="margin-bottom:6px">CHESS / HIN ref</div><input type="text" name="chess_hin" value="<?= ops_h((string)($editRow['chess_hin'] ?? '')) ?>" placeholder="Optional" style="width:100%"></label>
-        <label><div class="muted" style="margin-bottom:6px">Funded by stream <?= ops_admin_help_button('Funded by stream', 'This is a stewardship classification, not a bank-account field.') ?></div><select name="funded_by_stream" style="width:100%"><option value="beneficiary"<?= (($editRow['funded_by_stream'] ?? '') === 'beneficiary') ? ' selected' : '' ?>>Beneficiary</option><option value="donation"<?= (($editRow['funded_by_stream'] ?? '') === 'donation') ? ' selected' : '' ?>>Donation</option><option value="mixed"<?= (($editRow['funded_by_stream'] ?? '') === 'mixed') ? ' selected' : '' ?>>Mixed</option></select></label>
-        <label style="display:flex;align-items:center;gap:8px;margin-top:24px"><input type="checkbox" name="is_poor_esg_target" value="1"<?= !empty($editRow['is_poor_esg_target']) ? ' checked' : '' ?>> Poor ESG stewardship target</label>
-        <label style="grid-column:1/-1"><div class="muted" style="margin-bottom:6px">Notes</div><textarea name="notes" rows="4" style="width:100%"><?= ops_h((string)($editRow['notes'] ?? '')) ?></textarea></label>
-        <div style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap"><button type="submit">Save holding</button><a class="mini-btn secondary" href="./asx_holdings.php">Clear</a><a class="mini-btn secondary" href="./asx_purchases.php">Go to ASX Purchases</a></div>
+        <div class="field"><label>ASX code <?= ops_admin_help_button('ASX code', 'Use the exchange code form such as ASX:LGM.') ?></label><input type="text" name="ticker" value="<?= ops_h($editTicker) ?>" placeholder="ASX:LGM"></div>
+        <div class="field"><label>Company name</label><input type="text" name="company_name" value="<?= ops_h((string)$editRow['company_name']) ?>" placeholder="Legacy Minerals Holdings Limited"></div>
+        <div class="field"><label>CHESS / HIN ref</label><input type="text" name="chess_hin" value="<?= ops_h((string)($editRow['chess_hin'] ?? '')) ?>" placeholder="Optional"></div>
+        <div class="field"><label>Funded by stream <?= ops_admin_help_button('Funded by stream', 'This is a stewardship classification, not a bank-account field.') ?></label><select name="funded_by_stream"><option value="beneficiary"<?= (($editRow['funded_by_stream'] ?? '') === 'beneficiary') ? ' selected' : '' ?>>Beneficiary</option><option value="donation"<?= (($editRow['funded_by_stream'] ?? '') === 'donation') ? ' selected' : '' ?>>Donation</option><option value="mixed"<?= (($editRow['funded_by_stream'] ?? '') === 'mixed') ? ' selected' : '' ?>>Mixed</option></select></div>
+        <div class="field" style="flex-direction:row;align-items:center;gap:8px;margin-top:4px"><label style="font-weight:400"><input type="checkbox" name="is_poor_esg_target" value="1"<?= !empty($editRow['is_poor_esg_target']) ? ' checked' : '' ?>> Poor ESG stewardship target</label></div>
+        <div class="field" style="grid-column:1/-1"><label>Notes</label><textarea name="notes" rows="4"><?= ops_h((string)($editRow['notes'] ?? '')) ?></textarea></div>
+        <div style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-gold" type="submit">Save holding</button><a class="mini-btn secondary" href="./asx_holdings.php">Clear</a><a class="mini-btn secondary" href="./asx_purchases.php">Go to ASX Purchases</a></div>
       </form>
     </div>
   </div>

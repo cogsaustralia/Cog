@@ -183,12 +183,12 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'audit',             'label' => '📜  Audit / Recovery',        'href' => './audit.php'],
                 ['key' => 'audit_access',      'label' => '🔐  Audit Access',             'href' => './audit_access.php'],
             ],
-            'Assets & Backing' => [
+            'Assets & Reserves' => [
                 ['key' => 'asx_holdings',       'label' => '📈  ASX Holdings',            'href' => './asx_holdings.php'],
                 ['key' => 'asx_purchases',      'label' => '🧾  ASX Purchases',           'href' => './asx_purchases.php'],
                 ['key' => 'rwa_assets',         'label' => '🪨  RWA Assets',              'href' => './rwa_assets.php'],
                 ['key' => 'rwa_valuations',     'label' => '💠  RWA Valuations',          'href' => './rwa_valuations.php'],
-                ['key' => 'asset_backing',      'label' => '🧷  Asset Backing',           'href' => './asset_backing.php'],
+                ['key' => 'asset_backing',      'label' => '🧷  Collateral',           'href' => './asset_backing.php'],
             ],
             'Infrastructure & Security' => [
                 ['key' => 'infrastructure',    'label' => '🛰  Sovereign Infrastructure', 'href' => './infrastructure.php'],

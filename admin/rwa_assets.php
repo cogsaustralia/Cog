@@ -134,44 +134,41 @@ if (!$editRow) { $editRow = ['id'=>'','asset_code'=>'','asset_key'=>'','asset_na
 
 ob_start();
 ?>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('RWA Asset Register', 'What this page does', 'Use this page to register each real-world asset held or stewarded by the partnership. Each line becomes the identity anchor for valuation records, live display, and RWA-token capacity.', [
+    'Create one registry line per distinct real-world asset.',
+    'Asset type, location, and First Nations approval status are recorded here.',
+    'Valuation records are entered separately on the RWA Valuations page.',
+    'Capacity calculations use the latest valuation per asset.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Follow this sequence when working with this page.', [
+    ['title' => 'Register the asset', 'body' => 'Create the identity record here with type, location, and approval status.'],
+    ['title' => 'Record valuations', 'body' => 'Go to RWA Valuations to add dated valuation records for each asset.'],
+    ['title' => 'Review live register', 'body' => 'The table below shows the current position per asset from the latest valuation.'],
+    ['title' => 'Monitor capacity', 'body' => 'RWA COG$ capacity updates as new valuations are recorded.'],
+  ]),
+  ops_admin_guide_panel('How to use this page', 'Each section serves a different purpose.', [
+    ['title' => 'Asset form', 'body' => 'Create or edit an asset identity record. Not the valuation.'],
+    ['title' => 'Live RWA register', 'body' => 'Current position per asset — values come from the latest valuation record.'],
+    ['title' => 'COG$ capacity', 'body' => 'Unallocated RWA token capacity at $4 of verified value per COG$.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses appear throughout this page.', [
+    ['label' => 'Active', 'body' => 'Asset is registered and contributes to the portfolio.'],
+    ['label' => 'Pending FNAC / FPIC', 'body' => 'Awaiting First Nations Advisory Council or FPIC approval.'],
+    ['label' => 'Suspended / retired', 'body' => 'Asset is no longer active.'],
+  ]),
+]) ?>
+
 <div class="grid" style="gap:18px">
-  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('RWA asset register', 'What this page does', 'Use this page to register each real-world asset held or stewarded by the partnership. Each line becomes the identity anchor for valuation records, live display, and later RWA-token backing control.', [
-      'Create one registry line for each RWA asset or pool you want to display.',
-      'Assign a short user-facing code so the Partners page can show the asset clearly.',
-      'Keep the resource register linked so valuations and governance evidence hang off the same asset identity.',
-      'Move to RWA Valuations after creating the asset to record book value and backing capacity.',
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_workflow_panel('Typical workflow', 'Create the asset line first, then add valuation records on the valuation page. The live totals here reflect the latest valuation record.', [
-      ['title' => 'Create the asset identity', 'body' => 'Record the code, name, type, jurisdiction, and location summary for the asset.'],
-      ['title' => 'Link the resource register', 'body' => 'The page automatically keeps the internal resource register in sync so later valuation and governance records share the same asset identity.'],
-      ['title' => 'Enter valuations', 'body' => 'Use the RWA Valuations page to record verified book value or recognition basis for the asset.'],
-      ['title' => 'Review live backing capacity', 'body' => 'This page then shows the latest valuation, RWA COG$ already backed, minted, and still available.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_guide_panel('How to read this page', 'The cards summarise the live RWA position. The register table below shows each asset individually.', [
-      ['title' => 'RWA lines', 'body' => 'How many RWA asset identities are currently active in the register.'],
-      ['title' => 'Verified value', 'body' => 'The latest valuation record available for each asset, not a market-feed estimate.'],
-      ['title' => 'COG$ available', 'body' => 'How much RWA token capacity remains free after subtracting backing already reserved or minted.'],
-      ['title' => 'Valuation basis', 'body' => 'The current basis or methodology label of the latest recorded valuation.'],
-  ]),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_status_panel('Field guide', 'These fields control the asset identity and its lifecycle.', [
-      ['label' => 'RWA code', 'body' => 'Short public-facing code used in the live asset area.'],
-      ['label' => 'Asset key', 'body' => 'Stable internal identifier used for registry linking.'],
-      ['label' => 'Asset type', 'body' => 'High-level class such as land, mineral right, infrastructure, or other.'],
-      ['label' => 'Status', 'body' => 'Draft for setup, active for live display and valuation use, retired to remove it from current live capacity.'],
-  ]),
-]) ?>
+  
+
+
+
 <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
-    <div class="card"><div class="card-head"><h2>Asset lines</h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rwa_num($summary['lines']) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>Verified value <?= ops_admin_help_button('Verified value', 'This comes from the latest valuation record for each active RWA asset.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rwa_money($summary['book']) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ backed</h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rwa_num($summary['backed']) ?></div></div></div>
-    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Calculated from the latest valuation basis using the Stage 1 live backing views at $4 of value per RWA COG$.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= rwa_num($summary['available']) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>Asset lines</h2></div><div class="card-body"><div class="stat-value"><?= rwa_num($summary['lines']) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>Verified value <?= ops_admin_help_button('Verified value', 'This comes from the latest valuation record for each active RWA asset.') ?></h2></div><div class="card-body"><div class="stat-value"><?= rwa_money($summary['book']) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ backed</h2></div><div class="card-body"><div class="stat-value"><?= rwa_num($summary['backed']) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Calculated from the latest valuation basis using the Stage 1 live backing views at $4 of value per RWA COG$.') ?></h2></div><div class="card-body"><div class="stat-value"><?= rwa_num($summary['available']) ?></div></div></div>
   </div>
 
   <div class="card">
