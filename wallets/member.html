@@ -3551,6 +3551,22 @@ window.submitChangeReq  = submitChangeReq;
 window.authPanel        = authPanel;
 window.renderHoldings   = renderHoldings;
 window.openPayModal     = openPayModal;
+function copyText(text, btn){
+  navigator.clipboard.writeText(text).then(function(){
+    var orig = btn ? btn.textContent : '';
+    if(btn) btn.textContent = 'Copied ✓';
+    setTimeout(function(){ if(btn) btn.textContent = orig; }, 2000);
+  }).catch(function(){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    var orig = btn ? btn.textContent : '';
+    if(btn) btn.textContent = 'Copied ✓';
+    setTimeout(function(){ if(btn) btn.textContent = orig; }, 2000);
+  });
+}
+
 window.copyText         = copyText;
 window.shareInviteLink  = shareInviteLink;
 window.ivShare          = ivShare;
