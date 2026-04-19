@@ -3821,8 +3821,8 @@ function handleProposalComments(): void {
         $limit  = min(50, max(1, (int)($_GET['limit'] ?? 20)));
         $offset = max(0, (int)($_GET['offset'] ?? 0));
 
-        $cStmt = $db->prepare("SELECT id, comment_text, submitted_at FROM proposal_comments WHERE proposal_id = ? ORDER BY submitted_at DESC LIMIT ? OFFSET ?");
-        $cStmt->execute([$proposalId, $limit, $offset]);
+        $cStmt = $db->prepare("SELECT id, comment_text, submitted_at FROM proposal_comments WHERE proposal_id = ? ORDER BY submitted_at DESC LIMIT {$limit} OFFSET {$offset}");
+        $cStmt->execute([$proposalId]);
         $comments = $cStmt->fetchAll();
 
         $cntStmt = $db->prepare("SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?");
