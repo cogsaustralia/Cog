@@ -507,6 +507,8 @@ img{max-width:100%;height:auto}
 .ov-path-dot.live{background:var(--green);box-shadow:0 0 0 3px rgba(82,184,122,.15)}
 .ov-path-dot.soon{background:var(--amber)}
 .ov-path-dot.future{background:var(--text3);opacity:.5}
+.biz-register-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:99px;border:1px solid var(--gold-bdr);background:var(--gold-bg);color:var(--gold);font-size:1rem;font-weight:600;text-decoration:none;transition:all .16s;letter-spacing:.01em}
+.biz-register-pill:hover{background:rgba(232,184,75,.16);border-color:rgba(232,184,75,.5)}
 .ov-path{position:relative;background:linear-gradient(160deg,var(--s2),var(--s1));border:1px solid var(--border);border-radius:14px;padding:13px 14px;cursor:pointer;transition:border-color .18s,box-shadow .18s,transform .12s;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;gap:5px;min-height:68px}
 .ov-path:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(0,0,0,.35);transform:translateY(-1px)}
 .ov-path-badge{position:absolute;top:-5px;right:-5px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;border-radius:99px;font-size:.7rem;font-weight:800;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 5px;box-shadow:0 2px 8px rgba(232,184,75,.4)}
@@ -3926,14 +3928,7 @@ function renderTabOverview(d){
       bpill.style.display = '';
       var mnRaw = (d && d.member_number ? d.member_number : (window._vaultData && window._vaultData.member_number ? window._vaultData.member_number : ''));
       var bizUrl = '../businesses/bnft_join.html' + (mnRaw ? '?mn=' + encodeURIComponent(mnRaw) : '');
-      bpill.innerHTML = '<a href="' + bizUrl + '" '
-        + 'style="display:inline-flex;align-items:center;gap:8px;padding:7px 16px;'
-        + 'border-radius:99px;border:1px solid var(--gold-bdr);background:var(--gold-bg);'
-        + 'color:var(--gold);font-size:1rem;font-weight:600;text-decoration:none;'
-        + 'transition:all .16s;letter-spacing:.01em"
-        + 'onmouseover="this.style.background=\'rgba(232,184,75,.16)\';this.style.borderColor=\'rgba(232,184,75,.5)\'"'
-        + 'onmouseout="this.style.background=\'var(--gold-bg)\';this.style.borderColor=\'var(--gold-bdr)\'"'
-        + '>&#127970; Register your business &rarr;</a>';
+      bpill.innerHTML = '<a href="' + bizUrl + '" class="biz-register-pill">&#127970; Register your business &rarr;</a>';
     }
   }).catch(function(){});
 
