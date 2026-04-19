@@ -437,7 +437,9 @@ ob_start(); ?>
 ]) ?>
 <div class="card">
   <div class="card-body">
-  <h2 style="margin:0 0 8px">Execution console<?= ops_admin_help_button('Execution console', 'Use this page for live execution operations only. The normal operator flow is: create request, batch, open quorum, mark quorum met, mark submitted, mark finalised, then publish. Legacy bridge tables remain visible below for diagnostics and traceability, but they are not the primary operator workflow.') ?></h2>
+  <div class="card-head"><h2>Execution console<?= ops_admin_help_button('Execution console', 'Use this page for live execution operations only. The normal operator flow is: create request, batch, open quorum, mark quorum met, mark submitted, mark finalised, then publish. Legacy bridge tables remain visible below for diagnostics and traceability, but they are not the primary operator workflow.') ?></h2></div>
+  <div class="card-body">
+
   <p class="muted">This is the authoritative execution surface for batching, quorum, submission, finality, and publication. Legacy mint and chain-handoff pages remain available as bridge diagnostics and compatibility traces only.</p>
   </div>
 </div>

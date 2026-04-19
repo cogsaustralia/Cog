@@ -55,7 +55,9 @@ ob_start(); ?>
 </div>
 <div class="stack">
   <div class="section">
-    <h2 style="margin-top:0">Create mint batch<?= ops_admin_help_button('Create mint batch', 'Create a legacy bridge batch from queue items that belong together. This is not the same as the authoritative execution batch on the Execution console.') ?></h2>
+    <div class="card-head"><h2>Create mint batch<?= ops_admin_help_button('Create mint batch', 'Create a legacy bridge batch from queue items that belong together. This is not the same as the authoritative execution batch on the Execution console.') ?></h2></div>
+  <div class="card-body">
+
     <form method="post" class="stack">
       <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
       <input type="hidden" name="action" value="create_batch">
@@ -80,7 +82,9 @@ ob_start(); ?>
   </div>
 
   <div class="section">
-    <h2 style="margin-top:0">Mint batches<?= ops_admin_help_button('Mint batches', 'Existing bridge batches created from the legacy queue. Update their bridge status here or move into Chain Handoff for export/traceability work.') ?></h2>
+    <div class="card-head"><h2>Mint batches<?= ops_admin_help_button('Mint batches', 'Existing bridge batches created from the legacy queue. Update their bridge status here or move into Chain Handoff for export/traceability work.') ?></h2></div>
+  <div class="card-body">
+
     <div class="table-wrap"><table><thead><tr><th>ID</th><th>Code</th><th>Label</th><th>Chain</th><th>Status<?= ops_admin_help_button('Batch status', 'The current bridge status of the batch. Use it to track whether the batch is still being assembled, reviewed, handed off, or rejected back.') ?></th><th>Items</th><th>Action<?= ops_admin_help_button('Update or handoff', 'Update the bridge batch status here, or open Chain Handoff when the batch is ready for the next bridge stage.') ?></th></tr></thead><tbody>
     <?php if(!$batches): ?><tr><td colspan="7">No batches created yet.</td></tr><?php endif; ?>
     <?php foreach($batches as $b): ?><tr>

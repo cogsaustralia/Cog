@@ -315,7 +315,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
   <div class="alert alert-amber">AccountingHooks.php not loaded. Upload to admin/includes/ for full automation.</div>
 <?php endif; ?>
 
-<?php echo ops_admin_info_panel(
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel(
     'Finance control surface',
     'What this page does',
     'Use this page to review how money is moving across Sub-Trust A, B, and C. It is the main control-review page for fund balances, transfer obligations, donation-ledger movement, and distribution readiness.',
@@ -325,9 +326,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         'Confirm Donation Ledger movement into Sub-Trust C.',
         'Review recent expenses, trust accounts, and distribution runs in one place.',
     ]
-); ?>
-
-<?php echo ops_admin_workflow_panel(
+),
+  ops_admin_workflow_panel(
     'Typical workflow',
     'Work from balances and exceptions toward specific records so you understand the overall position before changing or escalating anything.',
     [
@@ -336,9 +336,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['title' => 'Read the supporting records', 'body' => 'Use recent transfers, expenses, donation-ledger status, and distribution runs to understand what created the current position.'],
         ['title' => 'Escalate or correct downstream', 'body' => 'Use Expenses or the relevant operational page if you need to update a record. This page is primarily for review and control oversight.'],
     ]
-); ?>
-
-<?php echo ops_admin_guide_panel(
+),
+  ops_admin_guide_panel(
     'How to read this page',
     'Each section answers a different finance-control question.',
     [
@@ -348,9 +347,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['title' => 'Recent expenses', 'body' => 'The latest cost records so you can see what has reduced available balances.'],
         ['title' => 'Trust accounts / Donation Ledger / Distribution runs', 'body' => 'Supporting evidence for where funds sit and whether downstream obligations are being met.'],
     ]
-); ?>
-
-<?php echo ops_admin_status_panel(
+),
+  ops_admin_status_panel(
     'Status guide',
     'These labels show whether an accounting item is healthy, still in progress, or already in breach.',
     [
@@ -358,7 +356,10 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['label' => 'Pending / Draft / Calculated', 'body' => 'The item exists but still requires a later step before it is complete.'],
         ['label' => 'Overdue / Failed / Cancelled', 'body' => 'The item requires review because timing has been missed, the action failed, or it is no longer proceeding.'],
     ]
-); ?>
+),
+]) ?>
+
+
 
 <?php if (count($overdue)): ?>
   <div class="alert alert-red"><?php echo count($overdue); ?> overdue transfer<?php echo count($overdue) !== 1 ? 's' : ''; ?> — compliance deadline breached</div>
@@ -853,7 +854,7 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
 <div class="inv-modal-bg" id="invModalBg">
   <div class="inv-modal">
     <div class="inv-modal-head">
-      <h3 id="invModalTitle">Invariant violations</h3>
+      <h2 id="invModalTitle">Invariant violations</h2>
       <button class="inv-modal-close" id="invModalClose" type="button">✕</button>
     </div>
     <div class="inv-modal-body" id="invModalBody">Loading…</div>

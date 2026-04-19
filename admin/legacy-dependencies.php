@@ -34,7 +34,8 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 12px
 <?php admin_sidebar_render('legacy_dependencies'); ?>
 <main class="main">
 <?php ops_admin_help_assets_once(); ?>
-<?= ops_admin_info_panel(
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel(
     'Stage 7 — Audit, diagnostics, and control review',
     'What this page does',
     'Legacy Bridge Status is the retirement-readiness page for old admin-id and bridge-linked write paths. Use it to see whether transitional compatibility is still active and where old references still remain in the schema.',
@@ -43,9 +44,8 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 12px
         'Use it before retiring or tightening transitional auth and write paths.',
         'Counts here help confirm whether the system has truly stopped depending on old identifiers.',
     ]
-) ?>
-
-<?= ops_admin_workflow_panel(
+),
+  ops_admin_workflow_panel(
     'Typical workflow',
     'This page is usually used late in a remediation cycle, when the operator wants to know whether the bridge can be retired safely.',
     [
@@ -54,9 +54,8 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 12px
         ['title' => 'Cross-check Session Check', 'body' => 'Use the related page to verify the current session mapping and role resolution.'],
         ['title' => 'Follow the disable checklist', 'body' => 'Only retire the bridge once the listed conditions are truly met.'],
     ]
-) ?>
-
-<?= ops_admin_status_panel(
+),
+  ops_admin_status_panel(
     'Status guide',
     'The labels here tell you whether the bridge is still acting as a live compatibility layer or is ready to be retired.',
     [
@@ -64,9 +63,9 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 12px
         ['label' => 'Disabled / Retired', 'body' => 'The bridge is no longer active and is no longer needed for normal operation.'],
         ['label' => 'Active legacy writes', 'body' => 'Rows still exist in old bridge-linked columns and need review before retirement.'],
     ]
-) ?>
-
-  <div class="card" style="margin-bottom:18px">
+),
+]) ?>
+<div class="card" style="margin-bottom:18px">
     <div class="card-head"><div><div style="font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Legacy bridge diagnostics</div><h1 style="margin:0;font-size:1.8rem">Legacy Bridge Status<?= ops_admin_help_button('Legacy Bridge Status', 'This page shows whether bridge mode is still active and where old bridge-linked references are still present in the tracked schema.') ?></h1></div><a href="./session-check.php">Session Check →</a></div>
     <div class="card-body">
       <div class="note"><strong>Read-only diagnostic page.</strong> Use this screen to assess retirement readiness for legacy admin-id and bridge-linked write paths. Do not use it as an operational control surface.</div>

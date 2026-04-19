@@ -77,7 +77,9 @@ ops_admin_help_assets_once();
 </div>
 
 <div class="section">
-  <h2 style="margin-top:0">Unallocated payments<?= ops_admin_help_button('Unallocated payments', 'These are paid records where the received amount is greater than the amount currently allocated in payment_allocations. Use this as a control signal that the payment path is incomplete.') ?></h2>
+  <div class="card-head"><h2>Unallocated payments<?= ops_admin_help_button('Unallocated payments', 'These are paid records where the received amount is greater than the amount currently allocated in payment_allocations. Use this as a control signal that the payment path is incomplete.') ?></h2></div>
+  <div class="card-body">
+
   <p class="muted">Review these rows first when the reconciliation counts are not clean. A paid record should not stay partially allocated for long.</p>
   <div class="table-wrap">
     <table>

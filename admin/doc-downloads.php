@@ -38,23 +38,25 @@ $filterDoc = $_GET['doc'] ?? '';
 $filterMember = $_GET['mn'] ?? '';
 
 ob_start(); ?>
-<?= ops_admin_info_panel('Document activity', 'What this page does', 'Use this page to review which governing or reference documents have been downloaded from the library, which members downloaded them, and how often a document has been accessed. This is a traceability page, not a publishing page.', [
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Document activity', 'What this page does', 'Use this page to review which governing or reference documents have been downloaded from the library, which members downloaded them, and how often a document has been accessed. This is a traceability page, not a publishing page.', [
     'Use By Document when you want to see which files are being accessed most often.',
     'Use By Member when you want to see which documents a specific member has downloaded.',
     'Use Full Log when you need the raw chronological download trail.'
-]) ?>
-<?= ops_admin_workflow_panel('Typical workflow', 'This page is usually used for review, evidence, or follow-up rather than direct operational action.', [
+]),
+  ops_admin_workflow_panel('Typical workflow', 'This page is usually used for review, evidence, or follow-up rather than direct operational action.', [
     ['title' => 'Choose the right view', 'body' => 'Start with By Document, By Member, or Full Log depending on what question you are trying to answer.'],
     ['title' => 'Drill into the relevant record', 'body' => 'Open a document detail or member detail view to see exactly who downloaded what and when.'],
     ['title' => 'Use it as evidence', 'body' => 'Treat this page as a traceability record when confirming document access history.'],
-]) ?>
-<?= ops_admin_status_panel('How to read this page', 'The three views below answer different questions about document access.', [
+]),
+  ops_admin_status_panel('How to read this page', 'The three views below answer different questions about document access.', [
     ['label' => 'By Document', 'body' => 'Best for seeing which files are being accessed and by how many members.'],
     ['label' => 'By Member', 'body' => 'Best for reviewing one member\'s document-access history.'],
     ['label' => 'Full Log', 'body' => 'Best for the raw chronological trail of all logged download events.'],
+]),
 ]) ?>
-<div class="section">
-  <h2 style="margin-top:0">📥 Document Downloads<?= ops_admin_help_button('Document downloads', 'This page shows logged document-download events pulled from wallet events. It helps operators review who accessed governing documents and when.') ?></h2>
+<div class="card">
+  <div class="card-head"><h2>📥 Document Downloads<?= ops_admin_help_button('Document downloads', 'This page shows logged document-download events pulled from wallet events. It helps operators review who accessed governing documents and when.') ?></h2>
   <p class="muted">Track which members download governing documents from the community library. <?= count($rows) ?> total downloads logged.</p>
 
   <!-- View tabs -->
@@ -86,7 +88,7 @@ ob_start(); ?>
   <?php elseif ($view === 'documents' && $filterDoc): ?>
   <!-- ═══ SINGLE DOCUMENT DETAIL ═══ -->
   <p><a href="?view=documents" title="View downloads grouped by document" style="color:#c8973e;font-size:13px">← Back to all documents</a></p>
-  <h3 style="margin:12px 0 8px"><?= ops_h($filterDoc) ?></h3>
+  <h3><?= ops_h($filterDoc) ?></h3>
   <div class="table-wrap"><table>
     <thead><tr><th>When</th><th>Member<?= ops_admin_help_button('Member', 'The member name linked to the download event, where available.') ?></th><th>Member Number<?= ops_admin_help_button('Member Number', 'The member identifier linked to the download event.') ?></th><th>Email</th></tr></thead>
     <tbody>
@@ -127,7 +129,7 @@ ob_start(); ?>
   <p><a href="?view=members" title="View downloads grouped by member" style="color:#c8973e;font-size:13px">← Back to all members</a></p>
   <?php $m = $byMember[$filterMember] ?? null; ?>
   <?php if ($m): ?>
-  <h3 style="margin:12px 0 4px"><?= ops_h($m['name']) ?></h3>
+  <h3><?= ops_h($m['name']) ?></h3>
   <p class="muted" style="margin-bottom:12px"><?= ops_h($filterMember) ?> · <?= ops_h($m['email']) ?></p>
   <div class="table-wrap"><table>
     <thead><tr><th>When</th><th>Document<?= ops_admin_help_button('Document', 'The document downloaded by this member on that date.') ?></th></tr></thead>

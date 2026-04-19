@@ -57,7 +57,8 @@ ob_start(); ?>
 </div>
 <div class="stack">
   <div class="section">
-    <h2 style="margin-top:0">Create chain handoff<?= ops_admin_help_button('Create chain handoff', 'Create a bridge handoff record for an existing mint batch. This does not change wallet state by itself. It creates the traceable record that can carry chain target, notes, transaction references, and attestation hashes.') ?></h2>
+    <div class="card-head"><h2>Create chain handoff<?= ops_admin_help_button('Create chain handoff', 'Create a bridge handoff record for an existing mint batch. This does not change wallet state by itself. It creates the traceable record that can carry chain target, notes, transaction references, and attestation hashes.') ?></h2></div>
+  <div class="card-body">
     <form method="post" class="stack">
       <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
       <input type="hidden" name="action" value="create_handoff">
@@ -71,7 +72,8 @@ ob_start(); ?>
   </div>
 
   <div class="section">
-    <h2 style="margin-top:0">Chain handoffs<?= ops_admin_help_button('Chain handoffs', 'These are the bridge/handoff records already created. Update them as the external reference, attestation hash, or operator notes become known.') ?></h2>
+    <div class="card-head"><h2>Chain handoffs<?= ops_admin_help_button('Chain handoffs', 'These are the bridge/handoff records already created. Update them as the external reference, attestation hash, or operator notes become known.') ?></h2></div>
+  <div class="card-body">
     <div class="table-wrap"><table><thead><tr><th>ID</th><th>Batch</th><th>Status<?= ops_admin_help_button('Handoff status', 'Shows the state of the bridge handoff record itself. Use it to track whether the handoff is still preparatory, has been externally referenced, or is complete.') ?></th><th>Export hash<?= ops_admin_help_button('Export hash', 'A content hash or export-reference fingerprint for the payload associated with the handoff. Useful for audit and tamper checking.') ?></th><th>Update<?= ops_admin_help_button('Update handoff', 'Use this form to record tx/reference IDs, attestation hashes, and notes as the handoff progresses.') ?></th></tr></thead><tbody>
     <?php if(!$handoffs): ?><tr><td colspan="5">No handoff records yet.</td></tr><?php endif; ?>
     <?php foreach($handoffs as $h): ?><tr>
@@ -97,7 +99,8 @@ ob_start(); ?>
 
   <?php if($payload): ?>
   <div class="section">
-    <h2 style="margin-top:0">Selected batch payload preview<?= ops_admin_help_button('Payload preview', 'A review/export preview of the selected batch payload. It helps signers and operators confirm what is being handed off. It is not the live mint itself.') ?></h2>
+    <div class="card-head"><h2>Selected batch payload preview<?= ops_admin_help_button('Payload preview', 'A review/export preview of the selected batch payload. It helps signers and operators confirm what is being handed off. It is not the live mint itself.') ?></h2></div>
+  <div class="card-body">
     <textarea rows="20" readonly><?= ops_h(json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?></textarea>
     <p class="muted">This is the manual pre-blockchain payload preview. It is prepared for signer review and later chain handoff, not live mint execution.</p>
   </div>

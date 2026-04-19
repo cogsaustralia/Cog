@@ -199,7 +199,9 @@ ob_start();
       <div class="card-head">
         <div>
           <div class="muted small"><a href="./operations.php?area=<?= urlencode($area) ?>" class="muted">← Back to <?= ops_h($aDef['label']) ?></a></div>
-          <h2 style="margin:4px 0 0"><?= ops_h($viewThread['subject']) ?></h2>
+          <div class="card-head"><h2><?= ops_h($viewThread['subject']) ?></h2></div>
+  <div class="card-body">
+
         </div>
         <span class="st st-<?= $viewThread['status'] === 'closed' ? 'dim' : ($viewThread['status'] === 'open' ? 'warn' : 'ok') ?>"><?= ops_h($viewThread['status']) ?></span>
       </div>

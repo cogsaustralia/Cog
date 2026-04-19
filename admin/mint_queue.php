@@ -37,7 +37,9 @@ ob_start(); ?>
   ]) ?>
 </div>
 <div class="section">
-  <h2 style="margin-top:0">Manual queue and execution prep<?= ops_admin_help_button('Manual queue and execution prep', 'This page is the bridge queue for older/manual mint-preparation workflows. The main live execution lifecycle now sits on the Execution console, but this queue remains useful for evidence references, lane/status review, and bridge compatibility.') ?></h2>
+  <div class="card-head"><h2>Manual queue and execution prep<?= ops_admin_help_button('Manual queue and execution prep', 'This page is the bridge queue for older/manual mint-preparation workflows. The main live execution lifecycle now sits on the Execution console, but this queue remains useful for evidence references, lane/status review, and bridge compatibility.') ?></h2></div>
+  <div class="card-body">
+
   <div class="actions" style="margin-bottom:12px">
     <a class="btn" href="<?= ops_h(admin_url('mint_batches.php')) ?>">Open mint batches</a>
     <a class="btn-secondary" href="<?= ops_h(admin_url('chain_handoff.php')) ?>">Open chain handoff</a>

@@ -347,7 +347,9 @@ table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10p
 
 <!-- DGR Gift received -->
 <div style="margin-bottom:18px">
-  <h2 style="font-size:1.3rem;font-weight:700">DGR gift received<?php echo ops_admin_help_button('DGR gift','Records a tax-deductible gift into STC-GIFT-FUND (SubTrustC cl.11). Requires DGR endorsement by the ATO before accepting gifts. Emits gift_received Godley entries.'); ?></h2>
+  <div class="card-head"><h2>DGR gift received<?php echo ops_admin_help_button('DGR gift','Records a tax-deductible gift into STC-GIFT-FUND (SubTrustC cl.11). Requires DGR endorsement by the ATO before accepting gifts. Emits gift_received Godley entries.'); ?></h2></div>
+  <div class="card-body">
+
   <p style="color:var(--sub);font-size:13px;margin-top:6px">Record gifts received into the Sub-Trust C DGR gift fund. DGR endorsement must be in place.</p>
 </div>
 <div class="card">

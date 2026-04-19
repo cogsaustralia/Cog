@@ -447,7 +447,9 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
      ══════════════════════════════════════════════════════════════════════ -->
 <div class="topbar" style="margin-top:4px;margin-bottom:18px">
   <div>
-    <h2 style="font-size:1.3rem;font-weight:700">ASX dividend — BDS / DDS split<?php echo ops_admin_help_button('BDS/DDS dividend', 'ASX dividends must be split per Declaration cl.31.1. BDS (Beneficiary Distribution Stream): 50% reinvest in STA, 50% to STB. DDS (Donation Dividend Stream): 25% reinvest, 25% Trustee admin, 50% to STB. Both splits are entrenched — they cannot be varied by Board or Partner resolution.'); ?></h2>
+    <div class="card-head"><h2>ASX dividend — BDS / DDS split<?php echo ops_admin_help_button('BDS/DDS dividend', 'ASX dividends must be split per Declaration cl.31.1. BDS (Beneficiary Distribution Stream): 50% reinvest in STA, 50% to STB. DDS (Donation Dividend Stream): 25% reinvest, 25% Trustee admin, 50% to STB. Both splits are entrenched — they cannot be varied by Board or Partner resolution.'); ?></h2></div>
+  <div class="card-body">
+
     <p style="color:var(--sub);font-size:13px">Records dividend receipt and emits correct constitutional BDS/DDS ledger entries.</p>
   </div>
 </div>

@@ -37,7 +37,8 @@ a{color:#d4b25c;text-decoration:none}.main{padding:24px 28px}.card{background:li
 <?php admin_sidebar_render('session_check'); ?>
 <main class="main">
 <?php ops_admin_help_assets_once(); ?>
-<?= ops_admin_info_panel(
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel(
     'Stage 7 — Audit, diagnostics, and control review',
     'What this page does',
     'Session Check is a read-only diagnostic page that shows which admin identity is currently resolved, whether legacy admin-id mapping is still in use, and how the bridge-linked role view currently looks.',
@@ -46,9 +47,8 @@ a{color:#d4b25c;text-decoration:none}.main{padding:24px 28px}.card{background:li
         'Treat it as a diagnostic status page, not as an operational control surface.',
         'Use it before retiring bridge-linked auth behavior so you can confirm what is still mapped.',
     ]
-) ?>
-
-<?= ops_admin_workflow_panel(
+),
+  ops_admin_workflow_panel(
     'Typical workflow',
     'This page helps you verify the current admin identity and bridge state before making auth-retirement decisions.',
     [
@@ -57,9 +57,8 @@ a{color:#d4b25c;text-decoration:none}.main{padding:24px 28px}.card{background:li
         ['title' => 'Review dependency counts', 'body' => 'Use the table to see where bridge-linked rows still exist.'],
         ['title' => 'Move to Legacy Bridge Status if needed', 'body' => 'Use the related page for the broader retirement-readiness view.'],
     ]
-) ?>
-
-<?= ops_admin_status_panel(
+),
+  ops_admin_status_panel(
     'Status guide',
     'The labels on this page tell you whether the current admin auth state is fully modern or still partially transitional.',
     [
@@ -67,9 +66,9 @@ a{color:#d4b25c;text-decoration:none}.main{padding:24px 28px}.card{background:li
         ['label' => 'None / retired', 'body' => 'No legacy admin-id is currently attached to the active session.'],
         ['label' => 'Active dependency rows', 'body' => 'Bridge-linked rows still exist somewhere in the tracked schema.'],
     ]
-) ?>
-
-  <div class="card">
+),
+]) ?>
+<div class="card">
     <div class="card-head"><div><div style="font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Legacy bridge diagnostics</div><h1 style="margin:0;font-size:1.8rem">Session Check<?= ops_admin_help_button('Session Check', 'Use this to verify who the admin session currently resolves to and whether legacy bridge mapping is still attached.') ?></h1></div><a href="./legacy-dependencies.php">Legacy Bridge Status →</a></div>
     <div class="card-body">
       <div class="note"><strong>Read-only diagnostic page.</strong> Use this screen to confirm the current authenticated admin user, legacy bridge mapping, and role resolution before retiring transitional auth paths.</div>

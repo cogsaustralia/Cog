@@ -681,7 +681,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
 
   <?php if (!empty($bizPendingPayments)): ?>
   <div style="margin-top:28px">
-    <h2 style="font-size:1.2rem;margin:0 0 6px">Business — Pending Community Contributions <?= ops_admin_help_button('Business pending community contributions', 'These are business-side Donation COG$ and Pay It Forward payment intents still awaiting payment confirmation. Recording them here updates the money-received side only; any further sign-off happens elsewhere.') ?></h2>
+    <div class="card-head"><h2>Business — Pending Community Contributions <?= ops_admin_help_button('Business pending community contributions', 'These are business-side Donation COG$ and Pay It Forward payment intents still awaiting payment confirmation. Recording them here updates the money-received side only; any further sign-off happens elsewhere.') ?></h2></div>
+  <div class="card-body">
+
     <p style="font-size:.82rem;color:var(--muted);margin:0 0 14px">
       Donation COG$ and Pay It Forward COG$ orders placed by business members awaiting payment.
     </p>
