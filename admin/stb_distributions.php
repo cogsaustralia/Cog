@@ -294,13 +294,14 @@ th{color:var(--dim);font-weight:600;font-size:.72rem;text-transform:uppercase;le
   <div class="stat"><div class="stat-val" style="color:var(--gold)"><?php echo number_format($stcUnitsCalc); ?></div><div class="stat-label">STC units (D-class)</div></div>
 </div>
 
-<?php echo ops_admin_info_panel('Sub-Trust B distribution','What this page does','This page calculates and records proportional distributions from Sub-Trust B to all Beneficial Unit Holders. The 60-day rule (Declaration cl.31.2, SubTrustB cl.9.1) requires 100% of STB inflows to be distributed within 60 days of receipt. Completing a run emits the Godley ledger entries that clear the I4 invariant.',[
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Sub-Trust B distribution','What this page does','This page calculates and records proportional distributions from Sub-Trust B to all Beneficial Unit Holders. The 60-day rule (Declaration cl.31.2, SubTrustB cl.9.1) requires 100% of STB inflows to be distributed within 60 days of receipt. Completing a run emits the Godley ledger entries that clear the I4 invariant.',[
     'Step 1 — Calculate: enter the STB pool amount and date. The system counts eligible units and calculates cents-per-unit.',
     'Step 2 — Approve: review the calculation, then approve the run for payment.',
     'Step 3 — Complete: once funds are paid out, mark complete. This emits the Godley STB distribution entries and records benefit_flow_records.',
     'STC receives 1 unit per Donation COG$ token issued — Sub-Trust C is the D-class Beneficial Unit Holder.',
-]); ?>
-
+]);,
+]) ?>
 <?php if (!$hasDistRuns): ?>
   <div class="msg err">distribution_runs table not found. Run accounting schema SQL first.</div>
 <?php else: ?>

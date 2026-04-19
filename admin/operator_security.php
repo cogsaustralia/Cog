@@ -98,7 +98,8 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
 .muted{color:#9fb0c1}
 @media (max-width: 980px){.ops-grid{grid-template-columns:1fr}.meta-grid{grid-template-columns:1fr}}
 </style>
-<?= ops_admin_info_panel(
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel(
     'Stage 7 — Audit, diagnostics, and control review',
     'What this page does',
     'Operator Security is the live admin page for password rotation, login lockout review, and recent admin security events. Use it to keep operator access healthy and controlled.',
@@ -107,9 +108,10 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
         'Clear login lockouts only after confirming the block is stale or accidental.',
         'Review security events here before escalating to deeper audit or infrastructure investigation.',
     ]
-) ?>
-
-<?= ops_admin_workflow_panel(
+),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_workflow_panel(
     'Typical workflow',
     'Operator security actions are usually short control tasks. They should be documented through the event log and used carefully because they affect who can access the admin plane.',
     [
@@ -118,9 +120,10 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
         ['title' => 'Review lockouts', 'body' => 'Check auth rate limits before clearing them so active abuse is not accidentally ignored.'],
         ['title' => 'Check event history', 'body' => 'Use recent security events to confirm what happened and when.'],
     ]
-) ?>
-
-<?= ops_admin_guide_panel(
+),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_guide_panel(
     'How to use this page',
     'This page is for operator access hygiene, not for broader infrastructure hardening. It is most useful when login or password issues are blocking a real admin user.',
     [
@@ -129,9 +132,10 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
         ['title' => 'Auth rate limits', 'body' => 'Shows lockouts and login throttling rows so you can see whether access problems are caused by rate limiting.'],
         ['title' => 'Recent security events', 'body' => 'Provides quick traceability for password rotations and other security-related actions recorded by admin.'],
     ]
-) ?>
-
-<?= ops_admin_status_panel(
+),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_status_panel(
     'Status guide',
     'Security statuses on this page are intentionally simple so operators can tell whether the current access state is healthy or needs attention.',
     [
@@ -140,8 +144,8 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
         ['label' => 'Auth rate-limit rows', 'body' => 'These rows show recent login pressure and any active temporary lockouts.'],
         ['label' => 'Security events', 'body' => 'These are the recent operator-security actions already recorded by the system.'],
     ]
-) ?>
-
+),
+]) ?>
 <div class="ops-grid">
   <section class="ops-card">
     <div class="ops-card-head"><h2>Operator security<?= ops_admin_help_button('Operator security', 'This card identifies the admin account currently using the control plane and its immediate security posture.') ?></h2><span class="ops-chip <?= !empty($admin['two_factor_enabled']) ? 'ok' : 'warn' ?>"><?= !empty($admin['two_factor_enabled']) ? '2FA enabled' : '2FA disabled' ?></span></div>

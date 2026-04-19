@@ -158,27 +158,32 @@ $recentAllocations = ops_has_table($pdo, 'stewardship_backing_allocations') ? ab
 
 ob_start(); ?>
 <div class="grid" style="gap:18px">
-  <?= ops_admin_info_panel('Stage 3 · Asset backing', 'What this page does', 'This page connects approved ASX and RWA token demand to real settled asset value. It is the control surface between the asset registry, approvals, and execution.', [
+  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 3 · Asset backing', 'What this page does', 'This page connects approved ASX and RWA token demand to real settled asset value. It is the control surface between the asset registry, approvals, and execution.', [
       'Allocate real ASX trade lots or RWA valuation value to approved stewardship token requests.',
       'Work at the fixed rule of $4 of backing value per stewardship token.',
       'Only fully backed approvals should move forward into execution.',
       'Published execution turns reserved backing into minted backing and updates stewardship positions.',
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'Move from approved request to backed request, then into execution.', [
+  ]),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_workflow_panel('Typical workflow', 'Move from approved request to backed request, then into execution.', [
       ['title' => 'Approve the request', 'body' => 'Approvals sets the stewardship token request to approved, but asset-backed classes remain gated until backing is allocated.'],
       ['title' => 'Allocate live backing', 'body' => 'Reserve enough settled ASX purchase value or RWA valuation value to cover the approved units.'],
       ['title' => 'Create the execution request', 'body' => 'Only once the request is fully backed should it move into the execution console.'],
       ['title' => 'Publish the batch', 'body' => 'Publication marks the backing as minted and grows the live stewardship position.'],
-  ]) ?>
-  <?= ops_admin_status_panel('Status guide', 'Use these meanings consistently on backing allocations.', [
+  ]),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_status_panel('Status guide', 'Use these meanings consistently on backing allocations.', [
       ['label' => 'Awaiting asset backing', 'body' => 'The approval is real, but not yet supported by enough live asset value.'],
       ['label' => 'Reserved', 'body' => 'Asset value has been set aside for the approval but is not yet attached to an execution request.'],
       ['label' => 'Mint ready', 'body' => 'The backing is attached to the execution request and ready to move through the execution console.'],
       ['label' => 'Minted', 'body' => 'The batch has published and the backing is now part of the live minted stewardship position.'],
       ['label' => 'Cancelled', 'body' => 'The reservation was released before minting and no longer counts toward coverage.'],
-  ]) ?>
-
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+  ]),
+]) ?>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
     <?php foreach (['ASX','RWA'] as $grp): $c = $capacity[$grp] ?? ['source_book_value_cents'=>0,'cogs_backed'=>0,'cogs_minted'=>0,'cogs_available_to_back'=>0]; ?>
       <div class="card"><div class="card-head"><h2><?= ops_h($grp) ?> capacity</h2></div><div class="card-body">
         <div><strong>Source value:</strong> <?= ab_money((int)$c['source_book_value_cents']) ?></div>

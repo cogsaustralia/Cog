@@ -283,37 +283,44 @@ function activity_label(string $type): string {
   </div>
 
   <div class="dashboard-intro-grid">
-    <?= ops_admin_info_panel('Admin orientation', 'What this dashboard is for', 'Use this dashboard to understand the live operator route, see what needs action now, and move into the correct admin page with context. This page is the overview layer, not the place where approvals, execution, or governance decisions are completed.', [
+    <?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Admin orientation', 'What this dashboard is for', 'Use this dashboard to understand the live operator route, see what needs action now, and move into the correct admin page with context. This page is the overview layer, not the place where approvals, execution, or governance decisions are completed.', [
       'Start here before acting on payments, approvals, execution, governance, or diagnostics.',
       'Control Plane pages are the authoritative live workflow for day-to-day administration.',
       'Legacy Bridge Diagnostics pages remain available for bridge checks, session mapping, and retirement readiness only.',
       'Each section below explains what it measures, why it matters, and where the operator should go next.'
-    ]) ?>
-    <div class="dashboard-guide-stack">
-      <?= ops_admin_workflow_panel('Typical operator workflow', 'The most common admin path moves from intake to decision to publication. Use the control-plane pages in this order unless a diagnostic or exception tells you to investigate elsewhere.', [
+    ]),
+]) ?>
+<div class="dashboard-guide-stack">
+      <?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_workflow_panel('Typical operator workflow', 'The most common admin path moves from intake to decision to publication. Use the control-plane pages in this order unless a diagnostic or exception tells you to investigate elsewhere.', [
         ['title' => 'Payments', 'body' => 'Record or verify money received, then confirm which partner or business it belongs to.'],
         ['title' => 'Approvals', 'body' => 'Review what is ready for operational sign-off after payment and compliance requirements are met.'],
         ['title' => 'Execution', 'body' => 'Create requests, batch them, pass quorum, submit, finalise, and publish the batch lifecycle.'],
         ['title' => 'Governance / Audit', 'body' => 'Check the published result, evidence trail, and any governance or infrastructure dependency that affects the record.']
-      ]) ?>
-      <?= ops_admin_status_panel('How to read this page', 'These dashboard sections are meant to reduce operator guesswork before you open a deeper admin page.', [
+      ]),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_status_panel('How to read this page', 'These dashboard sections are meant to reduce operator guesswork before you open a deeper admin page.', [
         ['label' => 'Action needed', 'body' => 'Immediate items that require operational attention now.'],
         ['label' => 'Pipeline cards', 'body' => 'High-level counts that show where partners are in the live intake flow.'],
         ['label' => 'Diagnostics cards', 'body' => 'Bridge, auth, and readiness checks that should inform troubleshooting, not daily processing.']
-      ]) ?>
-    </div>
+      ]),
+]) ?>
+</div>
   </div>
 
-  <?= ops_admin_guide_panel('Admin section guide', 'Each admin section has a distinct job. Use this guide to decide where to go next and what each section is responsible for.', [
+  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_guide_panel('Admin section guide', 'Each admin section has a distinct job. Use this guide to decide where to go next and what each section is responsible for.', [
     ['title' => 'Payments', 'body' => 'Record or verify incoming money and confirm the intake side of the partner or business journey.'],
     ['title' => 'Approvals', 'body' => 'Apply operational sign-off after payment and compliance steps have been satisfied.'],
     ['title' => 'Execution', 'body' => 'Advance approved items through batching, quorum, submission, finalisation, and publication.'],
     ['title' => 'Partner Registry', 'body' => 'Review the current state of personal partner records, wallet status, and linked compliance details.'],
     ['title' => 'Governance & Evidence', 'body' => 'Inspect directions, governance records, auditability, and related supporting evidence.'],
     ['title' => 'Legacy Bridge Diagnostics', 'body' => 'Check transitional bridge state, session mapping, and retirement readiness without using those pages as the primary workflow.' ]
-  ]) ?>
-
-  <!-- Priority action strip -->
+  ]),
+]) ?>
+<!-- Priority action strip -->
   <div class="priority-strip">
     <span class="strip-label">Action needed</span><?= ops_admin_help_button('Action needed', 'This strip shows the most urgent items that should pull the operator into the next live admin page. These are prompts to act, not the final place where the work is completed.') ?>
     <?php if (empty($actionItems)): ?>

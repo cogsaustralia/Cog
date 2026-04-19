@@ -321,9 +321,13 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
   <details class="help-section">
     <summary>Page guide &amp; workflow</summary>
     <div class="help-section-body">
-      <?= ops_admin_info_panel('Stage 4 · Registry management', 'What this page does', 'The registry pages are the operator view of who is in the system, what evidence exists for them, what their current state is, and what should happen next.', ['Summary view is for orientation and health checks.', 'Personal registry shows Partner records, JVPA state, and readiness signals.', 'Business records are on the Business Registry page; children on the Kids page.']) ?>
-      <?= ops_admin_workflow_panel('Typical workflow', '', [['title'=>'Locate the record','body'=>'Open summary for a health check, or open the personal registry for a specific Partner.'], ['title'=>'Read the evidence trail','body'=>'Check JVPA, wallet status, contribution, G-NAF, and KYC before acting.'], ['title'=>'Use the correct next page','body'=>'Payments for money, Approvals for sign-off, KYC for identity, Execution after approval.']]) ?>
-    </div>
+      <?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 4 · Registry management', 'What this page does', 'The registry pages are the operator view of who is in the system, what evidence exists for them, what their current state is, and what should happen next.', ['Summary view is for orientation and health checks.', 'Personal registry shows Partner records, JVPA state, and readiness signals.', 'Business records are on the Business Registry page; children on the Kids page.']),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_workflow_panel('Typical workflow', '', [['title'=>'Locate the record','body'=>'Open summary for a health check, or open the personal registry for a specific Partner.'], ['title'=>'Read the evidence trail','body'=>'Check JVPA, wallet status, contribution, G-NAF, and KYC before acting.'], ['title'=>'Use the correct next page','body'=>'Payments for money, Approvals for sign-off, KYC for identity, Execution after approval.']]),
+]) ?>
+</div>
   </details>
   <?php if($error): ?><div class="msg err"><?=h($error)?></div><?php endif; ?>
 

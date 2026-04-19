@@ -22,7 +22,8 @@ ops_admin_help_assets_once();
 @media(max-width:980px){.recon-metrics{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.recon-metrics{grid-template-columns:1fr}}
 </style>
-<?= ops_admin_info_panel(
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel(
     'Stage 7 — Audit, diagnostics, and control review',
     'What this page does',
     'Reconciliation is the control-review page for money and entitlement drift between payments, allocations, approvals, and the manual queue. Use it to find items that are financially received but not yet fully matched to the next operational step.',
@@ -31,9 +32,10 @@ ops_admin_help_assets_once();
         'Treat the counts as control-review indicators, not as the page where the operational fix itself is always completed.',
         'Move to Payments, Approvals, or the legacy bridge pages to actually resolve the underlying record when needed.',
     ]
-) ?>
-
-<?= ops_admin_workflow_panel(
+),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_workflow_panel(
     'Typical workflow',
     'Reconciliation tells you where the chain between cash received and entitlement processing is incomplete.',
     [
@@ -42,9 +44,10 @@ ops_admin_help_assets_once();
         ['title' => 'Move to the source page', 'body' => 'Use Payments, Approvals, or the queue pages to correct the underlying issue.'],
         ['title' => 'Recheck this page', 'body' => 'Return here to confirm the mismatch count has actually cleared.'],
     ]
-) ?>
-
-<?= ops_admin_guide_panel(
+),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_guide_panel(
     'How to use this page',
     'This page is best used as a daily or pre-publication checkpoint. It shows where the operational ledger is out of balance between stages.',
     [
@@ -53,9 +56,10 @@ ops_admin_help_assets_once();
         ['title' => 'Pending approvals', 'body' => 'Approval requests are still waiting for an operator decision.'],
         ['title' => 'Manual queue', 'body' => 'Legacy bridge items still sitting in manual processing states.'],
     ]
-) ?>
-
-<?= ops_admin_status_panel(
+),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_status_panel(
     'Status guide',
     'These counts are signals that the financial and entitlement chain needs review.',
     [
@@ -64,8 +68,8 @@ ops_admin_help_assets_once();
         ['label' => 'Funding ready for approval', 'body' => 'Paid reservation units are ready for approval review but are not yet approved.'],
         ['label' => 'Manual queue count', 'body' => 'Legacy bridge items remain in a manual state and should be checked against the authoritative path.'],
     ]
-) ?>
-
+),
+]) ?>
 <div class="recon-metrics">
 <?php foreach($cards as $k=>$v): ?>
   <div class="card"><div class="k"><?= ops_h($k) ?></div><div class="v"><?= (int)$v ?></div></div>

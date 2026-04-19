@@ -797,7 +797,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
   </div>
 </div>
 
-<?php echo ops_admin_info_panel(
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel(
     'Trust income recording',
     'What this page does',
     'Use this page to record income received by Sub-Trust A. Each entry writes to trust_income and automatically emits the matching Godley ledger entries — debiting STA-OPERATING for cash received and crediting STA-PARTNERS-POOL as retained pool equity.',
@@ -807,9 +808,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         'Record any other income that does not come through the ASX dividend workflow.',
         'ASX dividends trigger the BDS/DDS split workflow separately — do not record them here.',
     ]
-); ?>
-
-<?php echo ops_admin_workflow_panel(
+);,
+  ops_admin_workflow_panel(
     'Typical workflow',
     'Record income promptly so the Partners Pool balance stays accurate.',
     [
@@ -818,9 +818,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['title' => 'Set the income date', 'body' => 'Use the actual date the income was received or credited, not today\'s date.'],
         ['title' => 'Check the Accounting page', 'body' => 'After recording, visit Accounting to confirm the Godley matrix reflects the new Partners Pool balance.'],
     ]
-); ?>
-
-<?php echo ops_admin_guide_panel(
+);,
+  ops_admin_guide_panel(
     'Income types',
     'Each type routes to a different ledger flow.',
     [
@@ -829,8 +828,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['title' => 'Other', 'body' => 'Any other income into Sub-Trust A not covered by the above categories.'],
         ['title' => 'ASX Dividends', 'body' => 'Not recorded here. ASX dividends trigger the BDS/DDS split workflow which distributes across Sub-Trusts A and B.'],
     ]
-); ?>
-
+);,
+]) ?>
 <div class="notice">
   ⚠ <strong>ASX dividends are not recorded here.</strong> They trigger the BDS / DDS split workflow and are entered through the dividend management pathway.
 </div>

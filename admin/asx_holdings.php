@@ -85,35 +85,39 @@ ob_end_clean(); // Discard outer buffer — eliminates any pre-doctype output
 ob_start();     // Inner buffer — captures page body for ops_render_page
 ?>
 <div class="grid" style="gap:18px">
-  <?= ops_admin_info_panel('ASX holdings register', 'What this page does', 'Use this page to create and maintain the live registry of ASX-listed shareholdings held by the partnership. Each line represents one listed company and becomes the roll-up source for share count, weighted average purchase price, total book value, and future token-backing capacity.', [
+  <?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('ASX holdings register', 'What this page does', 'Use this page to create and maintain the live registry of ASX-listed shareholdings held by the partnership. Each line represents one listed company and becomes the roll-up source for share count, weighted average purchase price, total book value, and future token-backing capacity.', [
       'Create one registry line per ASX company, for example ASX:LGM.',
       'Maintain company identity, HIN/CHESS reference, stewardship stream, and notes.',
       'Review live share count, book value, and backing capacity once purchase lots have been entered.',
       'Move to ASX Purchases after creating the holding to record actual trade lots.',
-  ]) ?>
-
-  <?= ops_admin_workflow_panel('Typical workflow', 'Start by creating the listed company record, then record purchase lots on the purchases page. The live totals here recalculate from those lots.', [
+  ]),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_workflow_panel('Typical workflow', 'Start by creating the listed company record, then record purchase lots on the purchases page. The live totals here recalculate from those lots.', [
       ['title' => 'Create or update the holding line', 'body' => 'Record the ASX code, company name, and custody context once for the company.'],
       ['title' => 'Enter purchase lots', 'body' => 'Use the ASX Purchases page to record blocks of shares, trade dates, cost, and settlement status.'],
       ['title' => 'Review live totals', 'body' => 'This page then shows shares held, weighted average cost, total book value, and how much ASX token capacity remains.'],
       ['title' => 'Use the totals for backing control', 'body' => 'Stage 3 will allocate settled book value to ASX token minting at $4 of shares per ASX COG$.'],
-  ]) ?>
-
-  <?= ops_admin_guide_panel('How to read this page', 'The top cards show the current live foundation position, while the table below shows each ASX company line individually.', [
+  ]),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_guide_panel('How to read this page', 'The top cards show the current live foundation position, while the table below shows each ASX company line individually.', [
       ['title' => 'Holdings lines', 'body' => 'How many separate ASX company holdings are currently registered.'],
       ['title' => 'Shares held', 'body' => 'The live total of settled shares recorded across the ASX purchase ledger.'],
       ['title' => 'Book value', 'body' => 'The total recorded cost basis for settled ASX share purchases.'],
       ['title' => 'COG$ backed / minted / available', 'body' => 'Backed means value already reserved for token support, minted means already issued, and available means still unallocated at the $4-per-token rule.'],
-  ]) ?>
-
-  <?= ops_admin_status_panel('Field guide', 'These fields control the identity and stewardship posture of the holding line.', [
+  ]),
+]) ?>
+<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_status_panel('Field guide', 'These fields control the identity and stewardship posture of the holding line.', [
       ['label' => 'ASX code', 'body' => 'Use the exchange code form, for example ASX:LGM. This is the label shown in the live asset pool.'],
       ['label' => 'Funded by stream', 'body' => 'Identifies whether the holding is mainly attributable to beneficiary capital, donation flow, or a mixed funding basis.'],
       ['label' => 'Poor ESG target', 'body' => 'Flags that the holding is being stewarded as a poor-ESG target under the partnership strategy.'],
       ['label' => 'CHESS / HIN ref', 'body' => 'Optional operational reference for custody tracing.'],
-  ]) ?>
-
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
+  ]),
+]) ?>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
     <div class="card"><div class="card-head"><h2>Holding lines <?= ops_admin_help_button('Holding lines', 'The number of separate listed equity lines currently registered for the partnership.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= asx_num($summary['lines']) ?></div></div></div>
     <div class="card"><div class="card-head"><h2>Shares held <?= ops_admin_help_button('Shares held', 'Settled shares currently recorded across all ASX purchase lots.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= asx_num($summary['shares'], 0) ?></div></div></div>
     <div class="card"><div class="card-head"><h2>Book value <?= ops_admin_help_button('Book value', 'Total recorded cost basis of settled ASX share purchases.') ?></h2></div><div class="card-body"><div style="font-size:1.8rem;font-weight:800"><?= asx_money($summary['book']) ?></div></div></div>

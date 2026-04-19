@@ -247,7 +247,9 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
   </div>
 </div>
 
-<?php echo ops_admin_info_panel(
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel(
     'Finance operations',
     'What this page does',
     'Use this page to record and manage operating expenses. It is the practical expense-entry and payment-tracking page for Trust A, while the Accounting page remains the wider review and control surface.',
@@ -257,9 +259,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         'Cancel items that should not proceed before they are paid.',
         'Review recent expense history and GST totals.',
     ]
-); ?>
-
-<?php echo ops_admin_workflow_panel(
+),
+  ops_admin_workflow_panel(
     'Typical workflow',
     'Work from recording to settlement so the expense log stays accurate and auditable.',
     [
@@ -268,9 +269,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['title' => 'Mark as paid only after payment occurs', 'body' => 'Use the paid action once the actual outgoing payment has happened.'],
         ['title' => 'Use Accounting for control review', 'body' => 'Return to Accounting if you need to understand how expenses affect trust balances and wider fund movement.'],
     ]
-); ?>
-
-<?php echo ops_admin_guide_panel(
+),
+  ops_admin_guide_panel(
     'How to read this page',
     'This page mixes entry and review functions, so use the top form for new records and the lower table for existing ones.',
     [
@@ -279,9 +279,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['title' => 'Expense register', 'body' => 'The latest expense records with status and inline actions.'],
         ['title' => 'Inline actions', 'body' => 'Small action buttons for marking payment or cancelling unpaid items.'],
     ]
-); ?>
-
-<?php echo ops_admin_status_panel(
+),
+  ops_admin_status_panel(
     'Status guide',
     'Expense status tells you whether an item is only recorded, ready for payment, settled, or abandoned.',
     [
@@ -289,8 +288,9 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['label' => 'Approved / Draft', 'body' => 'The item has been recorded but is not yet a completed outgoing payment.'],
         ['label' => 'Cancelled', 'body' => 'The item should not proceed and should no longer be treated as payable.'],
     ]
-); ?>
-
+),
+]),
+]) ?>
 <?php if (!$hasTable): ?>
   <div class="msg err">Accounting tables not found. Run cogs_accounting_schema.sql first.</div>
 <?php else: ?>
