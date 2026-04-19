@@ -3428,12 +3428,9 @@ function renderWalletAddresses(d){
   const list  = el('wallet-addr-list');
   if(!wrap || !list) return;
 
-  // All token classes with their addresses
+  // Only Community COG$ address shown on Exchange tab
   const classes = [
     {key:'community_tokens',  label:'Community COG$ (CC)', color:'var(--green)'},
-    {key:'investment_tokens', label:'ASX COG$',             color:'var(--gold)'},
-    {key:'rwa_tokens',        label:'RWA COG$',             color:'var(--gold)'},
-    {key:'landholder_tokens', label:'Landholder COG$ (LH)', color:'var(--gold)'},
   ];
 
   const rows = classes.filter(c => addrs[c.key]).map(c => {
