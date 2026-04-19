@@ -344,6 +344,43 @@ ob_start();
 <?php endif; ?>
 
 <?php
+// ── Summary stat cards ──────────────────────────────────────────────────────
+?>
+<div class="stats" style="margin-bottom:22px">
+  <div class="stat">
+    <div class="stat-val" style="color:var(--ok)"><?php echo ac_dollars($received); ?></div>
+    <div class="stat-label">All funds received <?php echo ops_admin_help_button('All funds received', 'Total of all paid Partner payments plus any trust income recorded (bank interest, ASX dividends, RWA yield). Every dollar that has entered Sub-Trust A from any source.'); ?></div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" style="color:var(--blue)"><?php echo ac_dollars($investRet); ?></div>
+    <div class="stat-label">Partners Asset Pool <?php echo ops_admin_help_button('Sub-Trust A Partners Asset Pool', 'Total allocated to the Partners Asset Pool — $1.00 per Personal S-NFT, $10.00 per Business NFT, $1.00 per Kids S-NFT. These funds are held for ASX share acquisition per Declaration cl.35 and Sub-Trust A Deed cl.6.2. Does not yet include interest income accrued to the pool.'); ?></div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" style="color:var(--gold)"><?php echo ac_dollars($adminFundIn); ?></div>
+    <div class="stat-label">Admin fund — total in <?php echo ops_admin_help_button('Administration Fund — total allocated in', 'Total allocated into the Sub-Trust A Administration Fund — $3.00 per Personal S-NFT, $30.00 per Business NFT. This fund pays Stripe processing fees, hosting, compliance, and other operating expenses. It is an allocation, not income.'); ?></div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" style="color:var(--err)"><?php echo ac_dollars($adminFundOut); ?></div>
+    <div class="stat-label">Admin fund — expenses paid <?php echo ops_admin_help_button('Administration Fund — expenses paid', 'Total approved and paid expenses drawn from the Administration Fund, including Stripe processing fees, printing, hosting, compliance, and other approved costs. Each expense reduces the fund balance.'); ?></div>
+  </div>
+  <div class="stat" style="border-color:<?php echo $adminBalColor; ?>">
+    <div class="stat-val" style="color:<?php echo $adminBalColor; ?>"><?php echo ac_dollars($adminFundBal); ?></div>
+    <div class="stat-label">Admin fund — balance <?php echo ops_admin_help_button('Administration Fund — available balance', 'Current unspent balance in the Administration Fund: total allocated in minus total expenses paid. This is the operating reserve available for future approved expenses. Shown in green when positive, red if expenses exceed allocations.'); ?></div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" style="color:var(--purple)"><?php echo ac_dollars($directC); ?></div>
+    <div class="stat-label">Sub-Trust C — direct transfers <?php echo ops_admin_help_button('Sub-Trust C — direct transfers completed', 'Total $2.00 direct transfers from Sub-Trust A to Sub-Trust C completed on Donation COG$ issues, per Sub-Trust C Deed cl.7.4. Each Donation COG$ sold triggers a mandatory $2.00 transfer within 2 business days.'); ?></div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" style="color:var(--blue)"><?php echo ac_dollars($toB); ?></div>
+    <div class="stat-label">Sub-Trust B — distributions paid <?php echo ops_admin_help_button('Sub-Trust B — distributions paid', 'Total transferred from Sub-Trust A to Sub-Trust B for distribution to Beneficial Unit holders under the BDS and DDS dividend streams. Sub-Trust B must distribute 100% of inflows within 60 days per cl.31.2.'); ?></div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" style="color:<?php echo $pendingCColor; ?>"><?php echo ac_dollars($pendingC); ?></div>
+    <div class="stat-label">Sub-Trust C — pending transfers <?php echo ops_admin_help_button('Sub-Trust C — transfers pending', 'Donation COG$ direct transfers to Sub-Trust C that are recorded but not yet completed. These must be completed within 2 business days of the Donation COG$ issue per Sub-Trust C Deed cl.7.4. Any amount here requires immediate attention. Shown in amber if overdue risk exists.'); ?></div>
+  </div>
+</div>
+<?php
 // ── Balance sheet card ─────────────────────────────────────────────────────
 $bsTrusts = [
     'A' => ['label'=>'Sub-Trust A','class'=>'a','rows'=>$bsA],
@@ -640,17 +677,6 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
   </div>
 </div>
 <?php endif; ?>
-
-<div class="stats">
-  <div class="stat"><div class="stat-val" style="color:var(--ok)"><?php echo ac_dollars($received); ?></div><div class="stat-label">Total received (incl. income)</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--blue)"><?php echo ac_dollars($investRet); ?></div><div class="stat-label">Investment pool (A)</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--gold)"><?php echo ac_dollars($adminFundIn); ?></div><div class="stat-label">Admin fund allocated</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--err)"><?php echo ac_dollars($adminFundOut); ?></div><div class="stat-label">Admin fund spent</div></div>
-  <div class="stat" style="border-color:<?php echo $adminBalColor; ?>"><div class="stat-val" style="color:<?php echo $adminBalColor; ?>"><?php echo ac_dollars($adminFundBal); ?></div><div class="stat-label">Admin fund available</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--purple)"><?php echo ac_dollars($directC); ?></div><div class="stat-label">Direct to Trust C</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--blue)"><?php echo ac_dollars($toB); ?></div><div class="stat-label">Distributed via B</div></div>
-  <div class="stat"><div class="stat-val" style="color:<?php echo $pendingCColor; ?>"><?php echo ac_dollars($pendingC); ?></div><div class="stat-label">Pending A to C</div></div>
-</div>
 
 <div class="grid2">
 <div>
