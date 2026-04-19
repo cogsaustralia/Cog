@@ -126,6 +126,8 @@ img{max-width:100%;height:auto}
 .tnb-badge.show{display:inline-block}
 @media(max-width:640px){.tnb-lbl{display:none}.tnb{padding:0 10px;gap:0}}
 @media(max-width:360px){.tnb{padding:0 7px}}
+/* Status chips inside tab buttons cause overflow — hidden; status shown in panel content */
+#s-identity-chip,#s-polls-chip,#s-news-chip,#s-holdings-chip{display:none!important}
 
 /* ── HEADER SPACER ── */
 .hdr-space{height:108px;flex-shrink:0}/* topbar 54 + tabs 46 + 8px buffer */
