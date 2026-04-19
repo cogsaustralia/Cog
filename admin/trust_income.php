@@ -283,7 +283,7 @@ ob_start();
   <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Record interest, RWA yield, and other income. ASX dividends are recorded through the dividend workflow.</p></div>
 </div>
 
-<?= ops_admin_collapsible_help('Page guide & workflow', [
+<?php echo ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_info_panel(
     'Trust income recording',
     'What this page does',
@@ -294,7 +294,7 @@ ob_start();
         'Record any other income that does not come through the ASX dividend workflow.',
         'ASX dividends trigger the BDS/DDS split workflow separately — do not record them here.',
     ]
-]),
+  ),
   ops_admin_workflow_panel(
     'Typical workflow',
     'Record income promptly so the Partners Pool balance stays accurate.',
@@ -304,7 +304,7 @@ ob_start();
         ['title' => 'Set the income date', 'body' => 'Use the actual date the income was received or credited, not today\'s date.'],
         ['title' => 'Check the Accounting page', 'body' => 'After recording, visit Accounting to confirm the Godley matrix reflects the new Partners Pool balance.'],
     ]
-]),
+  ),
   ops_admin_guide_panel(
     'Income types',
     'Each type routes to a different ledger flow.',
@@ -314,7 +314,7 @@ ob_start();
         ['title' => 'Other', 'body' => 'Any other income into Sub-Trust A not covered by the above categories.'],
         ['title' => 'ASX Dividends', 'body' => 'Not recorded here. ASX dividends trigger the BDS/DDS split workflow which distributes across Sub-Trusts A and B.'],
     ]
-]),
+  ),
 ]) ?>
 <div class="notice">
   ⚠ <strong>ASX dividends are not recorded here.</strong> They trigger the BDS / DDS split workflow and are entered through the dividend management pathway.
