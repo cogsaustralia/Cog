@@ -34,7 +34,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:16px;overflow-x:hidden}
 .hidden{display:none!important}
 img{max-width:100%;height:auto}
 
@@ -85,7 +85,7 @@ img{max-width:100%;height:auto}
 /* ── TOPBAR ── */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:54px;background:rgba(8,8,8,.97);border-bottom:1px solid var(--border2);backdrop-filter:blur(12px);display:flex;align-items:center;padding:0 14px;gap:8px;overflow:hidden}
 .tb-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
-.tb-brand img{width:30px;height:30px;border-radius:8px;border:1px solid var(--border2)}
+.tb-brand img{width:30px;height:30px;border-radius:50%;border:none;box-shadow:0 0 0 2px rgba(232,184,75,.3),0 0 14px rgba(232,184,75,.25)}
 .tb-brand-name{font-family:var(--serif);font-size:.95rem;font-weight:500;color:var(--gold);letter-spacing:.03em}
 @media(max-width:480px){.tb-brand-name{display:none}}
 .tb-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
@@ -243,9 +243,18 @@ img{max-width:100%;height:auto}
 .poll-receipt{font-size:.88rem;color:var(--text3);font-family:var(--mono);margin-top:6px}
 
 /* ── NEWS ITEMS ── */
-.news-item{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:9px;transition:border-color .15s}
+.news-item{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:9px;transition:border-color .15s,opacity .3s,max-height .4s}
 .news-item.unread{border-left:3px solid var(--gold)}
 .news-item:hover{border-color:var(--border2)}
+.news-section-hd{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.news-section-badge{background:var(--gold-bg);border:1px solid var(--gold-bdr);color:var(--gold);padding:1px 8px;border-radius:99px;font-size:.68rem;font-weight:700;letter-spacing:.04em}
+.news-section-badge-ann{background:var(--blue-bg,rgba(94,168,232,.08));border-color:rgba(94,168,232,.22);color:#5ea8e8}
+.n-actions{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.n-read{font-size:.8rem;font-weight:600;color:var(--green);background:var(--green-bg);border:1px solid var(--green-bdr);border-radius:99px;padding:4px 13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.n-read:hover{background:rgba(62,207,110,.15)}
+.n-dismiss{color:var(--text3);background:rgba(255,255,255,.04);border-color:var(--border);border-radius:99px}
+.n-dismiss:hover{color:var(--text2);border-color:var(--border2)}
+.n-record-note{font-size:.72rem;color:var(--text4);font-style:italic}
 .news-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
 .ntype{font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
 .ntype-ann{background:var(--gold-bg);color:var(--gold)}
@@ -764,19 +773,19 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <span class="rail-ico">&#9672;</span> Overview
     </button>
     <button class="rail-item" data-rail="holdings" onclick="tab('holdings')">
-      <span class="rail-ico">&#9671;</span> Holdings
+      <span class="rail-ico">&#9671;</span> COG$ Reservations
     </button>
     <button class="rail-item" data-rail="exchange" onclick="tab('exchange')">
       <span class="rail-ico">&#8644;</span> Exchange
     </button>
 
-    <div class="rail-section">Governance</div>
+    <div class="rail-section">COG$ Management</div>
     <button class="rail-item" data-rail="governance" onclick="tab('governance')">
-      <span class="rail-ico">&#10022;</span> Polling
+      <span class="rail-ico">&#10022;</span> COG$ Management
       <span class="rail-badge" id="rail-polls-badge" style="display:none"></span>
     </button>
     <button class="rail-item" data-rail="news" onclick="tab('news')">
-      <span class="rail-ico">&#9685;</span> News
+      <span class="rail-ico">&#9685;</span> COG$ News
       <span class="rail-badge" id="rail-news-badge" style="display:none"></span>
     </button>
 
@@ -811,7 +820,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     </span>
     <div class="tb-right">
       <button class="tb-pill" onclick="openProfileDrawer()" title="Profile &amp; settings">
-        <span>⚙</span><span class="tb-pill-lbl">Profile</span>
+        <span>⚙</span><span class="tb-pill-lbl">Update My Options</span>
       </button>
       <a class="tb-pill" href="../partners/index.html" onclick="coinTransition('../partners/index.html');return false;" title="Partners Hub">
         <span>🏠</span><span class="tb-pill-lbl">Partners Hub</span>
@@ -843,9 +852,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- Tab nav -->
   <nav class="tab-nav" role="tablist">
     <button class="tnb on" data-tab="overview" onclick="tab('overview')"><span class="tnb-ico">◈</span> Overview <span id="s-identity-chip"></span></button>
-    <button class="tnb" data-tab="governance" onclick="tab(&apos;governance&apos;)"><span class="tnb-ico">✦</span> Governance <span class="tnb-badge" id="polls-badge"></span> <span id="s-polls-chip" style="display:none"></span></button>
-    <button class="tnb" data-tab="news" onclick="tab(&apos;news&apos;)"><span class="tnb-ico">◉</span> News <span class="tnb-badge" id="news-badge"></span> <span id="s-news-chip" style="display:none"></span></button>
-    <button class="tnb" data-tab="holdings" onclick="tab('holdings')"><span class="tnb-ico">◇</span> Holdings <span id="s-holdings-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="governance" onclick="tab(&apos;governance&apos;)"><span class="tnb-ico">✦</span> COG$ Management <span class="tnb-badge" id="polls-badge"></span> <span id="s-polls-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="news" onclick="tab(&apos;news&apos;)"><span class="tnb-ico">◉</span> COG$ News <span class="tnb-badge" id="news-badge"></span> <span id="s-news-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="holdings" onclick="tab('holdings')"><span class="tnb-ico">◇</span> COG$ Reservations <span id="s-holdings-chip" style="display:none"></span></button>
     <button class="tnb" data-tab="give" onclick="tab('give')"><span class="tnb-ico">♡</span> Give</button>
     <button class="tnb" data-tab="exchange" onclick="tab('exchange')"><span class="tnb-ico">⇄</span> Exchange</button>
     <button class="tnb" data-tab="activity" onclick="tab('activity')"><span class="tnb-ico">◈</span> Activity</button>
@@ -966,7 +975,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div style="padding:10px 18px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <button class="iedit-save" id="hd-save-btn" onclick="saveResNew()" style="padding:7px 18px">Save reservations</button>
           <button class="btn btn-ghost btn-sm" onclick="resetReservations()">Reset</button>
-          <span style="font-size:.7rem;color:var(--text3);flex:1">Edit freely — no obligation, no payment required. Released after Expansion Day.</span>
+          <span style="font-size:.84rem;color:var(--text3);flex:1;line-height:1.5">Edit freely — no obligation, no payment required. Released after Expansion Day.</span>
         </div>
         <div class="flash" id="reserve-fl" style="margin:0 18px 12px"></div>
       </div>
@@ -1157,12 +1166,12 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     </div>
   </div>
 
-  <!-- ══ GOVERNANCE TAB ══ -->
+  <!-- ══ COG$ MANAGEMENT TAB ══ -->
   <div class="panel" id="tab-governance">
     <div class="pg" id="s-polls">
       <div style="margin-bottom:20px">
-        <div style="font-family:var(--serif);font-size:1.6rem;font-weight:400;color:var(--text);margin-bottom:6px;line-height:1.1">Your voice carries equal weight. <i class="info-ico" onclick="showInfo('governance-tab')" style="vertical-align:middle">?</i></div>
-        <p style="font-size:.78rem;color:var(--text3);line-height:1.65">One vote per Partner, regardless of holdings, wealth or location. Deliberate, vote, and propose — this is your operational control over the joint venture.</p>
+        <div style="font-family:var(--serif);font-size:1.6rem;font-weight:400;color:var(--text);margin-bottom:6px;line-height:1.1">COG$ Management — Proposals &amp; Polls <i class="info-ico" onclick="showInfo('governance-tab')" style="vertical-align:middle">?</i></div>
+        <p style="font-size:.84rem;color:var(--text3);line-height:1.65">Initiate proposals, join existing initiations, and vote on open Partners Polls. One equal vote per Partner regardless of holdings, wealth, or location.</p>
       </div>
 
       <!-- Active polls -->
@@ -1215,7 +1224,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <div class="pg" id="s-news">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap">
         <div>
-          <div style="font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--text);margin-bottom:4px">Inbox <i class="info-ico" onclick="showInfo('news-tab')">?</i></div>
+          <div style="font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--text);margin-bottom:4px">COG$ News &amp; Notices <i class="info-ico" onclick="showInfo('news-tab')">?</i></div>
           <p style="font-size:.76rem;color:var(--text3)" id="news-count"></p>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>
@@ -2040,7 +2049,7 @@ function renderHoldings(d){
   el('reserve-form').innerHTML = reserveEditable.map(r =>
     `<div>
       <label class="form-label">${r.label}${r.price > 0 ? ` (×$${r.price})` : ' (no obligation)'}</label>
-      <input class="form-input" id="rf-${r.key}" type="number" min="0" value="${parseFloat(d[r.key]||0).toFixed(4)}" style="font-family:var(--mono)">
+      <input class="form-input" id="rf-${r.key}" type="number" min="0" step="1" value="${Math.round(parseFloat(d[r.key]||0)||0)}" style="font-family:var(--mono)">
     </div>`
   ).join('');
 
@@ -3305,16 +3314,16 @@ function renderTabHoldings(d){
     {key:'landholder_tokens', label:'Landholder COG$',  code:'Class Lh',ico:'⬡', sym:'Lh',   symCls:'hr-sym-green'},
   ];
   resRows.innerHTML = rows.map(function(r){
-    var val = parseFloat(d[r.key]||0)||0;
+    var val = Math.round(parseFloat(d[r.key]||0)||0);
     return '<div class="tr">'+
       '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
       '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation · Released after Expansion Day</div></div>'+
-      '<div class="tr-val"><div class="tr-amt">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
+      '<div class="tr-val"><div class="tr-amt">'+val.toLocaleString('en-AU')+'</div><div class="tr-amt-label">reserved</div></div>'+
       '<button class="tr-edit" onclick="trToggle(\'hd-iedit-'+r.key+'\')">Edit</button>'+
       '</div>'+
       '<div class="iedit" id="hd-iedit-'+r.key+'">'+
       '<div class="iedit-row">'+
-      '<input type="number" id="rf-'+r.key+'" value="'+val.toFixed(4)+'" min="0" step="0.0001">'+
+      '<input type="number" id="rf-'+r.key+'" value="'+val+'" min="0" step="1" style="font-family:var(--mono)">'+
       '<button class="iedit-save" onclick="saveResNew()">Save</button>'+
       '<span class="iedit-note">No obligation. Freely editable.</span>'+
       '</div>'+
@@ -3511,72 +3520,147 @@ function _runTabRenders(d){
   obs.observe(vaultEl, {attributes:true, attributeFilter:['style']});
 })();
 
-/* ══ ENHANCED NEWS RENDER (tab-based) ══ */
+/* ══ ENHANCED NEWS RENDER ══
+   COG$ NEWS tab — two streams:
+   • Notices  (wallet_messages): collapse + record read server-side
+   • News     (announcements):   collapse only, no server recording
+   Both collapse immediately when actioned.
+   Items auto-hidden 30 days after read/closed (client-side filter).
+══════════════════════════════════════════════════════════════════ */
 function renderTabNews(d){
-  // Merge announcements (from `announcements` table) and notices (from `wallet_messages`)
-  // Tag each with _src so markOneRead calls the right endpoint.
-  var anns = (d.announcements||[]).map(function(a){
-    return Object.assign({}, a, {_src:'announcement', _dateField: a.created_at||a.sent_at||''});
-  });
+  var now = Date.now();
+  var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+  /* Tag each item with its source stream */
   var notices = (d.notices||[]).map(function(n){
-    return Object.assign({}, n, {_src:'notice', _dateField: n.sent_at||n.created_at||'',
-      title: n.title||n.subject||'', type: n.message_type||n.type||'announcement'});
+    return Object.assign({}, n, {
+      _src:'notice',
+      _date: n.sent_at||n.created_at||'',
+      title: n.subject||n.title||'',
+      type:  n.message_type||n.type||'notice'
+    });
   });
-  // Combine and sort newest-first
-  var items = anns.concat(notices).sort(function(a,b){
-    return new Date(b._dateField||0) - new Date(a._dateField||0);
+  var news = (d.announcements||[]).map(function(a){
+    return Object.assign({}, a, {
+      _src:'announcement',
+      _date: a.created_at||a.sent_at||'',
+      type:  a.type||a.message_type||'announcement'
+    });
   });
-  var unread = items.filter(function(a){ return !a.is_read; });
-  var read   = items.filter(function(a){ return  a.is_read; });
-  var list   = document.getElementById('news-list');
-  var count  = document.getElementById('news-count');
+
+  /* Auto-remove items read/closed > 30 days ago */
+  function notExpired(item){
+    var ref = 0;
+    if(item.read_at)   ref = Math.max(ref, new Date(item.read_at).getTime());
+    if(item.closed_at) ref = Math.max(ref, new Date(item.closed_at).getTime());
+    return ref === 0 || (now - ref) < THIRTY_DAYS;
+  }
+  notices = notices.filter(notExpired);
+  news    = news.filter(notExpired);
+
+  var list  = document.getElementById('news-list');
+  var count = document.getElementById('news-count');
   if(!list) return;
-  if(count) count.textContent = items.length + ' notice'+(items.length!==1?'s':'');
-  if(items.length === 0){
-    list.innerHTML = '<div class="placeholder"><strong>No notices</strong><p>Partner communications will appear here when published.</p></div>';
+
+  /* Helpers */
+  var e2 = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+  var d2 = function(s){ if(!s)return'—'; try{ return new Date(s).toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'}); }catch(_){ return s; } };
+  var typeLabel = function(t, src){
+    if(src==='announcement') return '<span class="ntype ntype-ann">News</span>';
+    var m = {
+      notice:'<span class="ntype ntype-sys">Notice</span>',
+      system:'<span class="ntype ntype-sys">Notice</span>',
+      info:'<span class="ntype ntype-sys">Notice</span>',
+      governance:'<span class="ntype ntype-gov">Governance</span>',
+      approval:'<span class="ntype ntype-appr">Approval</span>',
+      payment:'<span class="ntype ntype-pay">Payment</span>',
+      action:'<span class="ntype ntype-appr">Action Required</span>',
+    };
+    return m[t]||'<span class="ntype ntype-sys">Notice</span>';
+  };
+  var key = function(a){ return a._src+':'+a.id; };
+
+  var unreadNotices = notices.filter(function(n){ return !n.is_read; });
+  var readNotices   = notices.filter(function(n){ return  n.is_read; });
+  var unreadNews    = news.filter(function(n){ return !n.is_read; });
+  var readNews      = news.filter(function(n){ return  n.is_read; });
+  var totalAll      = notices.length + news.length;
+  var totalUnread   = unreadNotices.length + unreadNews.length;
+
+  if(count) count.textContent = totalAll + ' item'+(totalAll!==1?'s':'')+
+    (totalUnread>0 ? ' · '+totalUnread+' unread' : ' · all read');
+
+  if(totalAll === 0){
+    list.innerHTML = '<div class="placeholder"><strong>No items</strong><p>Foundation news and notices will appear here.</p></div>';
     return;
   }
-  var esc2 = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
-  var dt2 = function(s){ if(!s) return '—'; try{ return new Date(s).toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return s; } };
-  var typeLabel = function(t){
-    var m = {
-      announcement:'<span class="ntype ntype-ann">Announcement</span>',
-      governance:  '<span class="ntype ntype-gov">Governance</span>',
-      approval:    '<span class="ntype ntype-appr">Approval</span>',
-      payment:     '<span class="ntype ntype-pay">Payment</span>',
-      system:      '<span class="ntype ntype-sys">System</span>',
-      info:        '<span class="ntype ntype-sys">Info</span>',
-      action:      '<span class="ntype ntype-appr">Action Required</span>',
-    };
-    return m[t] || '<span class="ntype ntype-ann">Notice</span>';
-  };
-  // Encode src+id as a composite key for markOneRead
-  var itemKey = function(a){ return a._src + ':' + a.id; };
+
+  /* Render an unread card — notices get "Mark as read" (recorded), news gets "Dismiss" (collapse-only) */
+  function unreadCard(a){
+    var body = a.body||a.summary||'';
+    var isNotice = a._src === 'notice';
+    return '<div class="news-item unread" id="ni-'+key(a).replace(':','-')+'">'
+      + '<div class="news-meta"><span class="ndot"></span>'+typeLabel(a.type,a._src)+'<span class="ndate">'+d2(a._date)+'</span></div>'
+      + '<div class="nsubj">'+e2(a.title||'')+'</div>'
+      + (body ? '<div class="nbody">'+e2(body).replace(/\n/g,'<br>')+'</div>' : '')
+      + '<div class="n-actions">'
+      + (isNotice
+          ? '<button class="n-read" onclick="markOneRead(\''+key(a)+'\',this)">Mark as read ✓</button>'
+            + '<span class="n-record-note">Your read is recorded by the Foundation.</span>'
+          : '<button class="n-read n-dismiss" onclick="dismissNews(\''+key(a)+'\',this)">Dismiss ✕</button>')
+      + '</div>'
+      + '</div>';
+  }
+
+  /* Render a collapsed read row */
+  function readRow(a){
+    var body = a.body||a.summary||'';
+    var uid = 'nexp-'+key(a).replace(':','-');
+    return '<div class="news-compact" onclick="document.getElementById(\''+uid+'\').classList.toggle(\'open\');this.querySelector(\'.news-compact-chev\').textContent=document.getElementById(\''+uid+'\').classList.contains(\'open\')?\'▲\':\'▼\'">'
+      + '<span class="news-compact-type">'+typeLabel(a.type,a._src)+'</span>'
+      + '<span class="news-compact-subj">'+e2(a.title||'')+'</span>'
+      + '<span class="news-compact-date">'+d2(a._date)+'</span>'
+      + '<span class="news-compact-chev">▼</span>'
+      + '</div>'
+      + '<div class="news-expand-body" id="'+uid+'">'+(body?e2(body).replace(/\n/g,'<br>'):'')+'</div>';
+  }
 
   var html = '';
-  unread.forEach(function(a){
-    var body = a.body||a.summary||'';
-    html += '<div class="news-item unread">'
-      + '<div class="news-meta"><span class="ndot"></span>'+typeLabel(a.type||a.message_type||'announcement')+'<span class="ndate">'+dt2(a._dateField)+'</span></div>'
-      + '<div class="nsubj">'+esc2(a.title||'')+'</div>'
-      + (body ? '<div class="nbody">'+esc2(body).replace(/\n/g,'<br>')+'</div>' : '')
-      + '<button class="n-read" onclick="markOneRead(\''+itemKey(a)+'\',this)">Mark as read</button>'
-      + '</div>';
-  });
-  if(read.length > 0){
-    html += '<div class="acc-section" id="news-read-acc"><div class="acc-hd" onclick="toggleAcc(\'news-read-acc\')"><h4>Read messages <span class="acc-count">'+read.length+'</span></h4><span class="acc-chev">▼</span></div><div class="acc-body">';
-    read.forEach(function(a){
-      var body = a.body||a.summary||'';
-      html += '<div class="news-compact" onclick="this.classList.toggle(\'open\');var b=this.nextElementSibling;b&&b.classList.toggle(\'open\')">'
-        + '<span class="news-compact-type">'+typeLabel(a.type||a.message_type||'announcement')+'</span>'
-        + '<span class="news-compact-subj">'+esc2(a.title||'')+'</span>'
-        + '<span class="news-compact-date">'+dt2(a._dateField)+'</span>'
-        + '<span class="news-compact-chev">▼</span>'
-        + '</div>'
-        + '<div class="news-expand-body">'+(body ? esc2(body).replace(/\n/g,'<br>') : '')+'</div>';
-    });
+
+  /* ── UNREAD NOTICES ── */
+  if(unreadNotices.length > 0){
+    html += '<div class="news-section-hd">📋 Notices <span class="news-section-badge">'+unreadNotices.length+' unread</span></div>';
+    unreadNotices.forEach(function(a){ html += unreadCard(a); });
+  }
+
+  /* ── UNREAD NEWS ── */
+  if(unreadNews.length > 0){
+    html += '<div class="news-section-hd" style="margin-top:'+(unreadNotices.length?'16px':'0')+'">📰 News <span class="news-section-badge news-section-badge-ann">'+unreadNews.length+' new</span></div>';
+    unreadNews.forEach(function(a){ html += unreadCard(a); });
+  }
+
+  /* ── READ NOTICES (collapsed accordion) ── */
+  if(readNotices.length > 0){
+    html += '<div class="acc-section" id="acc-read-notices" style="margin-top:14px">'
+      + '<div class="acc-hd" onclick="toggleAcc(\'acc-read-notices\')">'
+      + '<h4>Read notices <span class="acc-count">'+readNotices.length+'</span></h4>'
+      + '<span class="acc-chev">▼</span></div>'
+      + '<div class="acc-body">';
+    readNotices.forEach(function(a){ html += readRow(a); });
     html += '</div></div>';
   }
+
+  /* ── READ NEWS (collapsed accordion) ── */
+  if(readNews.length > 0){
+    html += '<div class="acc-section" id="acc-read-news" style="margin-top:10px">'
+      + '<div class="acc-hd" onclick="toggleAcc(\'acc-read-news\')">'
+      + '<h4>Read news <span class="acc-count">'+readNews.length+'</span></h4>'
+      + '<span class="acc-chev">▼</span></div>'
+      + '<div class="acc-body">';
+    readNews.forEach(function(a){ html += readRow(a); });
+    html += '</div></div>';
+  }
+
   list.innerHTML = html;
 }
 
@@ -3588,19 +3672,41 @@ function _markReadApi(item){
   window.api('vault/mark-read', {method:'POST', body:JSON.stringify(payload)}).catch(function(){});
 }
 
+/* markOneRead — notices: collapse card + fire API (read recorded server-side) */
 function markOneRead(key, btn){
   if(!window._vaultData) return;
-  // key = 'announcement:123' or 'notice:456'
   var parts = String(key).split(':');
   var src = parts[0], id = parseInt(parts[1]||0,10);
-  var arr = src === 'notice' ? (window._vaultData.notices||[]) : (window._vaultData.announcements||[]);
+  var arr = src==='notice' ? (window._vaultData.notices||[]) : (window._vaultData.announcements||[]);
   var item = arr.find(function(a){ return a.id===id; });
   if(item && !item.is_read){
     item.is_read = true;
+    item.read_at = new Date().toISOString();
     _markReadApi(Object.assign({_src:src}, item));
+    /* Animate collapse before full re-render */
+    var card = document.getElementById('ni-'+key.replace(':','-'));
+    if(card){ card.style.transition='opacity .3s,max-height .4s'; card.style.opacity='0'; card.style.maxHeight='0'; card.style.overflow='hidden'; }
+    setTimeout(function(){
+      renderTabNews(window._vaultData);
+      updateTabBadges(window._vaultData);
+    }, 350);
+  }
+}
+
+/* dismissNews — announcements: collapse only, no server call */
+function dismissNews(key, btn){
+  if(!window._vaultData) return;
+  var parts = String(key).split(':');
+  var id = parseInt(parts[1]||0,10);
+  var arr = window._vaultData.announcements||[];
+  var item = arr.find(function(a){ return a.id===id; });
+  if(item){ item.is_read = true; item.read_at = new Date().toISOString(); }
+  var card = document.getElementById('ni-'+key.replace(':','-'));
+  if(card){ card.style.transition='opacity .3s,max-height .4s'; card.style.opacity='0'; card.style.maxHeight='0'; card.style.overflow='hidden'; }
+  setTimeout(function(){
     renderTabNews(window._vaultData);
     updateTabBadges(window._vaultData);
-  }
+  }, 350);
 }
 
 /* ══ openPayModal override to also open modal properly ══ */
@@ -3866,6 +3972,7 @@ window.saveResNew        = saveResNew;
 window.resetReservations = resetReservations;
 window.trToggle          = trToggle;
 window.markOneRead       = markOneRead;
+window.dismissNews       = dismissNews;
 window.fmtDp             = fmtDp;
 window.showInfo          = showInfo;
 window.closeInfo         = closeInfo;

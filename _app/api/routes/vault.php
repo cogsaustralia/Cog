@@ -1362,7 +1362,7 @@ function fetchWalletNotices(PDO $db, string $audienceScope, int $memberId): arra
             FROM wallet_messages m
             LEFT JOIN wallet_message_reads r
               ON r.message_id = m.id AND r.member_id = ?
-            WHERE m.status = ?
+            WHERE m.status IN (\'sent\', \'open\')
               AND (m.expires_at IS NULL OR m.expires_at > NOW())
               AND (
                     m.audience_scope = ?
@@ -1374,7 +1374,6 @@ function fetchWalletNotices(PDO $db, string $audienceScope, int $memberId): arra
         ');
         $stmt->execute([
             $memberId,
-            'sent',
             'all',            // always-visible scope
             $audienceScope,   // 'personal' | 'business' | 'landholder'
             'custom',
