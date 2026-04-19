@@ -106,5 +106,6 @@ ob_start(); ?>
   <?php endforeach; ?>
   <div class="actions"><button class="btn btn-gold" type="submit">Save settings</button></div>
 </form>
+<?php
 $body = ob_get_clean();
 ops_render_page('Settings', 'settings', $body, $flash, $flashType);
