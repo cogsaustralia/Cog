@@ -2712,8 +2712,6 @@ function renderHoldings(d){
   if (el('transfer-lock-board')) {
     const locked = [
       {title:'Community COG$', copy:'Live for transfer', tone:'blue', stat: fmt(qty('community_tokens')) + ' recorded', foot:'Exchange enabled'},
-      {title:'ASX COG$', copy:'Locked until Expansion Day', tone:'amber', stat: fmt(qty('investment_tokens')) + ' recorded', foot:'Reservation class'},
-      {title:'RWA COG$', copy:'Locked until Expansion Day', tone:'amber', stat: fmt(qty('rwa_tokens')) + ' recorded', foot:'Reservation class'},
       {title:'Landholder COG$', copy:'Locked until Expansion Day', tone:'amber', stat: fmt(qty('landholder_tokens')) + ' recorded', foot:'Reservation class'},
     ];
     el('transfer-lock-board').innerHTML = locked.map(item => pathwayCardHtml(item)).join('');
