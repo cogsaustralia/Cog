@@ -835,6 +835,25 @@
               </div>
             </div>
 
+
+            <!-- Share to invite a Partner -->
+            <div style="padding:16px 18px;text-align:center">
+              <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">Know someone who should be part of this?</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+            <button class="share-btn" onclick="shareVia('whatsapp')" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.25);color:#25d366">
+              <span style="font-size:1rem">💬</span> WhatsApp
+            </button>
+            <button class="share-btn" onclick="shareVia('sms')" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.2);color:#60d4b8">
+              <span style="font-size:1rem">📱</span> Text message
+            </button>
+            <button class="share-btn" onclick="shareVia('email')" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.2);color:#6ea8d8">
+              <span style="font-size:1rem">✉️</span> Email
+            </button>
+            <button class="share-btn" onclick="shareVia('copy')" id="copy-link-btn" style="background:rgba(240,209,138,.06);border-color:rgba(240,209,138,.15);color:var(--gold-2)">
+              <span style="font-size:1rem">🔗</span> Copy invite link
+            </button>
+          </div>
+            </div>
           </div>
 
           <!-- Legacy important-news element kept as hidden stub — renderImportantNews still references it -->
@@ -1223,22 +1242,6 @@
             <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0;font-style:italic">"It's a community trust that buys shares in Australian resource companies and holds them permanently. Dividends are split — half to Partners, half reinvested to buy more. The community votes on how those companies are governed. The resources stay in the ground unless the community — including Traditional Owners — agrees otherwise. No one can sell the basket. It just compounds, forever."</p>
           </div>
 
-          <!-- Share actions -->
-          <div style="text-align:center;margin-bottom:10px"><span style="font-size:.72rem;color:var(--muted)">Know someone who should be part of this?</span></div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
-            <button class="share-btn" onclick="shareVia('whatsapp')" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.25);color:#25d366">
-              <span style="font-size:1rem">💬</span> WhatsApp
-            </button>
-            <button class="share-btn" onclick="shareVia('sms')" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.2);color:#60d4b8">
-              <span style="font-size:1rem">📱</span> Text message
-            </button>
-            <button class="share-btn" onclick="shareVia('email')" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.2);color:#6ea8d8">
-              <span style="font-size:1rem">✉️</span> Email
-            </button>
-            <button class="share-btn" onclick="shareVia('copy')" id="copy-link-btn" style="background:rgba(240,209,138,.06);border-color:rgba(240,209,138,.15);color:var(--gold-2)">
-              <span style="font-size:1rem">🔗</span> Copy invite link
-            </button>
-          </div>
         </div>
       </section>
 
