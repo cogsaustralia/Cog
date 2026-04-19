@@ -83,7 +83,7 @@ if (!function_exists('admin_sidebar_styles_once')) {
 :root{--sidebar-w:200px;--sidebar-collapsed:52px}
 .admin-shell,.shell{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);min-height:100vh}
 .sidebar{background:linear-gradient(180deg,var(--bg),var(--panel));border-right:1px solid var(--line);padding:10px 8px;min-width:0;overflow:hidden;position:relative;transition:width .2s ease,padding .2s ease}
-.sidebar .brand{display:flex;gap:8px;align-items:center;margin:0 0 14px;padding:4px 4px 14px;border-bottom:1px solid var(--line)}
+.sidebar .brand{display:flex;gap:8px;align-items:center;margin:0 0 14px;padding:4px 38px 14px 4px;border-bottom:1px solid var(--line)}
 .sidebar .brand img{width:32px;height:32px;border-radius:50%;flex-shrink:0}
 .sidebar .brand strong{display:block;font-size:12px;line-height:1.2;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sidebar .brand span{color:var(--muted);font-size:10px}
@@ -117,7 +117,7 @@ if (!function_exists('admin_sidebar_styles_once')) {
     var sidebar=document.querySelector(".sidebar");
     var btn=document.querySelector(".sidebar-toggle");
     if(!shell||!sidebar||!btn) return;
-    var key="cogs_admin_sidebar_collapsed";
+    var key="cogs_admin_sidebar_v2";
     if(localStorage.getItem(key) !== "0"){ shell.classList.add("is-collapsed"); sidebar.classList.add("is-collapsed"); }
     btn.addEventListener("click", function(){
       shell.classList.toggle("is-collapsed");
