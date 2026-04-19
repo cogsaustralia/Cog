@@ -109,83 +109,115 @@
     <script>
         async function loadDashboard() {
             try {
-                const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=all&per_page=50');
+                const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=all&per_page=100');
                 const issues = await response.json();
                 
+                // Filter by [ALERT] and [TRENDS] labels
                 const alerts = issues.filter(issue => issue.title.includes('[ALERT]'));
                 const trends = issues.find(issue => issue.title.includes('[TRENDS]'));
                 
-                updateStatus(alerts);
-                updateMetrics(alerts);
-                updateAlerts(alerts);
+                // Only show alerts from last 7 days
+                const now = new Date();
+                const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                const recentAlerts = alerts.filter(a => new Date(a.created_at) > sevenDaysAgo);
+                
+                // Deduplicate by title (keep first/earliest occurrence)
+                const seen = new Set();
+                const deduped = [];
+                const counts = {}; // Track repeat count per error
+                
+                for (const alert of recentAlerts) {
+                    const titleKey = alert.title.replace(/\[ALERT\]\s*/i, '').trim();
+                    if (!seen.has(titleKey)) {
+                        seen.add(titleKey);
+                        deduped.push(alert);
+                        counts[titleKey] = 1;
+                    } else {
+                        counts[titleKey]++;
+                    }
+                }
+                
+                // Sort by creation date, newest first
+                deduped.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                
+                updateStatus(deduped, counts);
+                updateMetrics(deduped);
+                updateAlerts(deduped, counts);
                 updateRecommendation(trends);
                 
                 document.getElementById('updateTime').textContent = new Date().toLocaleTimeString();
             } catch (error) {
                 console.error('Error loading dashboard:', error);
-                document.getElementById('statusText').textContent = 'Error loading data';
+                document.getElementById('statusText').textContent = '❌ Data source unavailable';
             }
         }
         
-        function updateStatus(alerts) {
-            const hasRecentAlert = alerts.some(a => {
-                const createdAt = new Date(a.created_at);
-                const now = new Date();
-                return (now - createdAt) < 3600000; // Last hour
-            });
+        function updateStatus(alerts, counts) {
+            const now = new Date();
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
             
+            const hasRecentAlert = alerts.some(a => new Date(a.created_at) > oneHourAgo);
             const indicator = document.getElementById('statusIndicator');
             const text = document.getElementById('statusText');
             
             if (hasRecentAlert) {
                 indicator.className = 'status-indicator status-alert';
-                text.textContent = '🚨 ALERT ACTIVE';
+                text.textContent = '🚨 ALERT ACTIVE (Last Hour)';
+            } else if (alerts.length > 0) {
+                indicator.className = 'status-indicator status-alert';
+                text.textContent = `⚠️ ${alerts.length} Issues (Last 7d)`;
             } else {
                 indicator.className = 'status-indicator status-healthy';
                 text.textContent = '✅ HEALTHY';
             }
+            
+            document.getElementById('lastCheck').textContent = `Last check: ${now.toLocaleTimeString()} | Deduped from ${alerts.length} unique issues`;
         }
         
         function updateMetrics(alerts) {
-            if (alerts.length === 0) {
-                document.getElementById('reqPerSec').textContent = '< 2';
-                document.getElementById('errorRate').textContent = '< 8%';
-                document.getElementById('httpErrors').textContent = '0';
-                document.getElementById('phpErrors').textContent = '0';
-                return;
+            // Count error types
+            let httpErrors = 0, phpErrors = 0, dbErrors = 0;
+            
+            for (const alert of alerts) {
+                const title = alert.title.toLowerCase();
+                if (title.includes('http') || title.includes('502') || title.includes('500')) httpErrors++;
+                if (title.includes('php') || title.includes('fatal') || title.includes('exception')) phpErrors++;
+                if (title.includes('database') || title.includes('sql') || title.includes('collation')) dbErrors++;
             }
             
-            const latest = alerts[0];
-            const body = latest.body;
-            
-            const reqMatch = body.match(/Requests\/sec:\s*(\d+)/);
-            const errMatch = body.match(/Error rate:\s*(\d+)/);
-            
-            document.getElementById('reqPerSec').textContent = reqMatch ? reqMatch[1] : '—';
-            document.getElementById('errorRate').textContent = errMatch ? errMatch[1] + '%' : '—';
+            document.getElementById('reqPerSec').textContent = '—';
+            document.getElementById('errorRate').textContent = alerts.length + ' issues (7d)';
+            document.getElementById('httpErrors').textContent = httpErrors;
+            document.getElementById('phpErrors').textContent = phpErrors;
         }
         
-        function updateAlerts(alerts) {
+        function updateAlerts(alerts, counts) {
             const list = document.getElementById('alertsList');
             
             if (alerts.length === 0) {
-                list.innerHTML = '<p style="color: #64748b; text-align: center;">No alerts in the past 7 days</p>';
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">✓ No errors in the past 7 days</p>';
                 return;
             }
             
-            list.innerHTML = alerts.slice(0, 10).map(alert => `
-                <div class="alert-item">
-                    <div class="alert-time">${new Date(alert.created_at).toLocaleString()}</div>
-                    <div class="alert-title">${alert.title}</div>
-                </div>
-            `).join('');
+            list.innerHTML = alerts.slice(0, 15).map(alert => {
+                const titleKey = alert.title.replace(/\[ALERT\]\s*/i, '').trim();
+                const repeatCount = counts[titleKey];
+                const daysOld = Math.floor((new Date() - new Date(alert.created_at)) / (24 * 60 * 60 * 1000));
+                
+                return `
+                    <div class="alert-item">
+                        <div class="alert-time">${new Date(alert.created_at).toLocaleString()} (${daysOld}d ago)${repeatCount > 1 ? ` — Repeat: ${repeatCount} instances` : ''}</div>
+                        <div class="alert-title">${titleKey}</div>
+                    </div>
+                `;
+            }).join('');
         }
         
         function updateRecommendation(trends) {
             const box = document.getElementById('recommendationBox');
             
             if (!trends) {
-                box.innerHTML = '<h3>🔄 Rebuild Recommendation</h3><p>No trend data yet. Check back after your first week.</p>';
+                box.innerHTML = '<h3>🔄 Rebuild Recommendation</h3><p>No trend data yet. Monitor will auto-update every 5 minutes.</p>';
                 return;
             }
             
