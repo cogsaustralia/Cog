@@ -84,6 +84,15 @@ if ($action === 'proposal-comments') {
 if ($action === 'proposal-tallies') {
     handleProposalTallies();
 }
+if ($action === 'partner-op-threads') {
+    handlePartnerOpThreads();
+}
+if ($action === 'partner-op-reply') {
+    handlePartnerOpReply();
+}
+if ($action === 'partner-op-read') {
+    handlePartnerOpRead();
+}
 apiError('Unknown vault endpoint', 404);
 
 function memberVault(): void {
@@ -549,6 +558,13 @@ function memberVault(): void {
                 ? (json_decode($member['participation_answers'], true) ?: [])
                 : (array)$member['participation_answers'])
             : [],
+        'op_thread_summary'  => fetchOpThreadSummary($db,
+            (int)($member['id'] ?? 0),
+            !empty($member['participation_answers'])
+                ? (is_string($member['participation_answers'])
+                    ? (json_decode($member['participation_answers'], true) ?: [])
+                    : (array)$member['participation_answers'])
+                : []),
         'refreshed_at' => nowUtc(),
     ]);
 }
@@ -3771,6 +3787,353 @@ function voteOnProposal(): void {
 
     apiSuccess(['voted' => true, 'choice' => $choice, 'tally' => $tally, 'total_votes' => $total]);
 }
+
+/* ── PARTNER OPERATIONS — AREA FEED ─────────────────────────────────────────
+   Shared area noticeboard: enrolled Partners see each other's posts.
+   Admin broadcasts also appear. Author names shown only to admin.
+   Partners see each other as "A Partner" — anonymous peer display.
+────────────────────────────────────────────────────────────────────────────── */
+
+function resolveOpMember(PDO $db, array $principal): array {
+    $mStmt = $db->prepare(
+        'SELECT id, participation_answers FROM members
+         WHERE member_type = ? AND (member_number = ? OR id = ?) LIMIT 1'
+    );
+    $mStmt->execute(['personal', (string)$principal['subject_ref'], (int)$principal['principal_id']]);
+    $member = $mStmt->fetch();
+    if (!$member) apiError('Member not found.', 404);
+    $areas = [];
+    if (!empty($member['participation_answers'])) {
+        $dec = json_decode((string)$member['participation_answers'], true);
+        if (is_array($dec)) $areas = $dec;
+    }
+    return ['id' => (int)$member['id'], 'areas' => $areas];
+}
+
+function handlePartnerOpThreads(): void {
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $method    = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $info      = resolveOpMember($db, $principal);
+    $memberId  = $info['id'];
+    $areas     = $info['areas'];
+
+    if ($method === 'POST') {
+        $body    = jsonBody();
+        $areaKey = trim((string)($body['area_key'] ?? ''));
+        $subject = trim((string)($body['subject']  ?? ''));
+        $msg     = trim((string)($body['body']     ?? ''));
+
+        if (!$areaKey)                              apiError('area_key required.');
+        if (!$subject)                              apiError('Subject is required.');
+        if (!$msg)                                  apiError('Message body is required.');
+        if (strlen($msg) > 4000)                    apiError('Message too long (max 4000 characters).');
+        if (!in_array($areaKey, $areas, true))      apiError('You are not enrolled in this area.', 403);
+
+        // Insert the thread
+        $db->prepare(
+            "INSERT INTO partner_op_threads
+                (area_key, direction, subject, body, status, initiated_by_member_id, created_at, updated_at)
+             VALUES (?, 'inbound', ?, ?, 'open', ?, NOW(), NOW())"
+        )->execute([$areaKey, $subject, $msg, $memberId]);
+        $threadId = (int)$db->lastInsertId();
+
+        // Seed read-receipt rows for ALL enrolled Partners in this area EXCEPT author
+        // Uses JSON_CONTAINS on participation_answers
+        $enrolled = [];
+        try {
+            $eStmt = $db->prepare(
+                "SELECT id FROM members
+                 WHERE participation_completed = 1
+                   AND is_active = 1
+                   AND id != ?
+                   AND JSON_CONTAINS(participation_answers, JSON_QUOTE(?), '$')"
+            );
+            $eStmt->execute([$memberId, $areaKey]);
+            $enrolled = $eStmt->fetchAll();
+        } catch (Throwable) {}
+
+        if ($enrolled) {
+            $ins = $db->prepare(
+                'INSERT IGNORE INTO partner_op_broadcast_reads
+                    (thread_id, member_id, delivered_at)
+                 VALUES (?, ?, NOW())'
+            );
+            foreach ($enrolled as $e) {
+                $ins->execute([$threadId, (int)$e['id']]);
+            }
+        }
+
+        apiSuccess(['created' => true, 'thread_id' => $threadId]);
+    }
+
+    // GET — return area feed grouped by area
+    if (!$areas) { apiSuccess(['areas' => []]); }
+
+    $ph = implode(',', array_fill(0, count($areas), '?'));
+
+    // All inbound (partner-posted) threads in enrolled areas
+    $thStmt = $db->prepare(
+        "SELECT t.id, t.area_key, t.subject, t.body, t.status,
+                t.reply_count, t.last_reply_at, t.created_at,
+                t.initiated_by_member_id,
+                (t.initiated_by_member_id = ?) AS is_mine
+         FROM partner_op_threads t
+         WHERE t.direction = 'inbound'
+           AND t.area_key IN ({$ph})
+           AND t.status != 'archived'
+         ORDER BY t.created_at DESC
+         LIMIT 100"
+    );
+    $thStmt->execute(array_merge([$memberId], $areas));
+    $allThreads = $thStmt->fetchAll();
+
+    // Admin broadcasts delivered to this member
+    $bcStmt = $db->prepare(
+        "SELECT t.id, t.area_key, t.subject, t.body, t.created_at,
+                br.read_at
+         FROM partner_op_threads t
+         INNER JOIN partner_op_broadcast_reads br
+                 ON br.thread_id = t.id AND br.member_id = ?
+         WHERE t.direction = 'broadcast'
+           AND t.area_key IN ({$ph})
+         ORDER BY t.created_at DESC
+         LIMIT 50"
+    );
+    $bcStmt->execute(array_merge([$memberId], $areas));
+    $broadcasts = $bcStmt->fetchAll();
+
+    // Read state for partner threads (via broadcast_reads — seeded on post)
+    $readMap = [];
+    if ($allThreads) {
+        $tIds = array_map(fn($r) => (int)$r['id'], $allThreads);
+        $rph  = implode(',', array_fill(0, count($tIds), '?'));
+        try {
+            $rdStmt = $db->prepare(
+                "SELECT thread_id, read_at FROM partner_op_broadcast_reads
+                 WHERE thread_id IN ({$rph}) AND member_id = ?"
+            );
+            $rdStmt->execute(array_merge($tIds, [$memberId]));
+            foreach ($rdStmt->fetchAll() as $r) {
+                $readMap[(int)$r['thread_id']] = $r['read_at'];
+            }
+        } catch (Throwable) {}
+    }
+
+    // Replies for all threads
+    $replyMap = [];
+    if ($allThreads) {
+        $tIds = array_map(fn($r) => (int)$r['id'], $allThreads);
+        $rph  = implode(',', array_fill(0, count($tIds), '?'));
+        $rpStmt = $db->prepare(
+            "SELECT r.thread_id, r.body, r.direction,
+                    r.from_member_id, r.created_at,
+                    (r.from_member_id = ?) AS is_mine
+             FROM partner_op_replies r
+             WHERE r.thread_id IN ({$rph})
+             ORDER BY r.created_at ASC"
+        );
+        $rpStmt->execute(array_merge([$memberId], $tIds));
+        foreach ($rpStmt->fetchAll() as $r) {
+            $replyMap[(int)$r['thread_id']][] = [
+                'body'       => $r['body'],
+                'direction'  => $r['direction'],
+                'is_mine'    => (bool)$r['is_mine'],
+                'created_at' => $r['created_at'],
+            ];
+        }
+        // Mark outbound (admin) replies as read for this member's own threads
+        $myIds = array_values(array_filter($tIds, function($id) use ($allThreads, $memberId) {
+            foreach ($allThreads as $th) {
+                if ((int)$th['id'] === $id && (int)$th['initiated_by_member_id'] === $memberId) return true;
+            }
+            return false;
+        }));
+        if ($myIds) {
+            $mrph = implode(',', array_fill(0, count($myIds), '?'));
+            try {
+                $db->prepare(
+                    "UPDATE partner_op_replies SET read_at = NOW()
+                     WHERE thread_id IN ({$mrph}) AND direction = 'outbound' AND read_at IS NULL"
+                )->execute($myIds);
+            } catch (Throwable) {}
+        }
+    }
+
+    // Group by area
+    $byArea = [];
+    foreach ($areas as $ak) { $byArea[$ak] = ['broadcasts' => [], 'threads' => []]; }
+
+    foreach ($broadcasts as $bc) {
+        $ak = (string)$bc['area_key'];
+        if (isset($byArea[$ak])) $byArea[$ak]['broadcasts'][] = $bc;
+    }
+
+    foreach ($allThreads as $th) {
+        $ak      = (string)$th['area_key'];
+        $tid     = (int)$th['id'];
+        $is_mine = (bool)$th['is_mine'];
+        // Author display: own posts show "You", others show "A Partner"
+        $entry = [
+            'id'           => $tid,
+            'area_key'     => $ak,
+            'subject'      => $th['subject'],
+            'body'         => $th['body'],
+            'status'       => $th['status'],
+            'reply_count'  => (int)$th['reply_count'],
+            'last_reply_at'=> $th['last_reply_at'],
+            'created_at'   => $th['created_at'],
+            'is_mine'      => $is_mine,
+            'author'       => $is_mine ? 'You' : 'A Partner',
+            'read_at'      => $is_mine ? null : ($readMap[$tid] ?? null),
+            'replies'      => $replyMap[$tid] ?? [],
+        ];
+        if (isset($byArea[$ak])) $byArea[$ak]['threads'][] = $entry;
+    }
+
+    $out = [];
+    foreach ($byArea as $ak => $data) { $out[] = ['area_key' => $ak] + $data; }
+    apiSuccess(['areas' => $out]);
+}
+
+function handlePartnerOpReply(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+    $info      = resolveOpMember($db, $principal);
+    $memberId  = $info['id'];
+    $areas     = $info['areas'];
+
+    $threadId = (int)($body['thread_id'] ?? 0);
+    $msg      = trim((string)($body['body'] ?? ''));
+    if ($threadId < 1)       apiError('thread_id required.');
+    if (!$msg)               apiError('Reply body is required.');
+    if (strlen($msg) > 4000) apiError('Reply too long.');
+
+    // Verify thread is in an area this member is enrolled in
+    $tStmt = $db->prepare(
+        "SELECT id, area_key, status FROM partner_op_threads WHERE id = ? LIMIT 1"
+    );
+    $tStmt->execute([$threadId]);
+    $thread = $tStmt->fetch();
+    if (!$thread)                                          apiError('Thread not found.', 404);
+    if (!in_array((string)$thread['area_key'], $areas, true)) apiError('Not enrolled in this area.', 403);
+    if ((string)$thread['status'] === 'closed')            apiError('This thread has been closed.');
+
+    $db->prepare(
+        "INSERT INTO partner_op_replies
+            (thread_id, body, direction, from_member_id, created_at)
+         VALUES (?, ?, 'inbound', ?, NOW())"
+    )->execute([$threadId, $msg, $memberId]);
+
+    $db->prepare(
+        "UPDATE partner_op_threads
+         SET reply_count = reply_count + 1, last_reply_at = NOW(),
+             status = 'open', updated_at = NOW()
+         WHERE id = ?"
+    )->execute([$threadId]);
+
+    // Mark thread as unread for all other enrolled members who have a read receipt
+    // (so they see the new reply)
+    try {
+        $db->prepare(
+            "UPDATE partner_op_broadcast_reads
+             SET read_at = NULL
+             WHERE thread_id = ? AND member_id != ?"
+        )->execute([$threadId, $memberId]);
+    } catch (Throwable) {}
+
+    apiSuccess(['replied' => true]);
+}
+
+function handlePartnerOpRead(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+    $info      = resolveOpMember($db, $principal);
+    $memberId  = $info['id'];
+
+    $threadId = (int)($body['thread_id'] ?? 0);
+    if ($threadId < 1) apiError('thread_id required.');
+
+    // Works for both broadcast reads and partner-post reads
+    $db->prepare(
+        "UPDATE partner_op_broadcast_reads
+         SET read_at = NOW()
+         WHERE thread_id = ? AND member_id = ? AND read_at IS NULL"
+    )->execute([$threadId, $memberId]);
+
+    // If no row exists yet (own-thread case), insert one
+    $db->prepare(
+        "INSERT IGNORE INTO partner_op_broadcast_reads (thread_id, member_id, delivered_at, read_at)
+         VALUES (?, ?, NOW(), NOW())"
+    )->execute([$threadId, $memberId]);
+
+    apiSuccess(['read' => true]);
+}
+
+function fetchOpThreadSummary(PDO $db, int $memberId, array $areas): array {
+    if (!$memberId || !$areas) return [];
+    $out = [];
+    try {
+        $ph = implode(',', array_fill(0, count($areas), '?'));
+
+        // Unread partner posts: seeded in broadcast_reads when posted, read_at IS NULL
+        // Excludes own posts (no read receipt row seeded for author)
+        $ppStmt = $db->prepare(
+            "SELECT t.area_key, COUNT(*) AS unread
+             FROM partner_op_threads t
+             INNER JOIN partner_op_broadcast_reads br
+                     ON br.thread_id = t.id AND br.member_id = ? AND br.read_at IS NULL
+             WHERE t.direction = 'inbound' AND t.area_key IN ({$ph})
+             GROUP BY t.area_key"
+        );
+        $ppStmt->execute(array_merge([$memberId], $areas));
+        $unreadPosts = [];
+        foreach ($ppStmt->fetchAll() as $r) { $unreadPosts[$r['area_key']] = (int)$r['unread']; }
+
+        // Unread admin broadcasts
+        $bcStmt = $db->prepare(
+            "SELECT t.area_key, COUNT(*) AS unread
+             FROM partner_op_threads t
+             INNER JOIN partner_op_broadcast_reads br
+                     ON br.thread_id = t.id AND br.member_id = ? AND br.read_at IS NULL
+             WHERE t.direction = 'broadcast' AND t.area_key IN ({$ph})
+             GROUP BY t.area_key"
+        );
+        $bcStmt->execute(array_merge([$memberId], $areas));
+        $unreadBc = [];
+        foreach ($bcStmt->fetchAll() as $r) { $unreadBc[$r['area_key']] = (int)$r['unread']; }
+
+        // Unread admin replies on member's own threads
+        $rpStmt = $db->prepare(
+            "SELECT t.area_key, COUNT(*) AS unread
+             FROM partner_op_replies r
+             INNER JOIN partner_op_threads t ON t.id = r.thread_id
+             WHERE t.initiated_by_member_id = ?
+               AND r.direction = 'outbound'
+               AND r.read_at IS NULL
+               AND t.area_key IN ({$ph})
+             GROUP BY t.area_key"
+        );
+        $rpStmt->execute(array_merge([$memberId], $areas));
+        $unreadReplies = [];
+        foreach ($rpStmt->fetchAll() as $r) { $unreadReplies[$r['area_key']] = (int)$r['unread']; }
+
+        foreach ($areas as $ak) {
+            $out[] = [
+                'area_key'       => $ak,
+                'unread_bc'      => (int)($unreadBc[$ak]      ?? 0),
+                'unread_posts'   => (int)($unreadPosts[$ak]   ?? 0),
+                'unread_replies' => (int)($unreadReplies[$ak] ?? 0),
+            ];
+        }
+    } catch (Throwable) {}
+    return $out;
+}
+
 
 /* ── PROPOSAL TALLIES (live feed) ───────────────────────────────────────────── */
 function handleProposalTallies(): void {

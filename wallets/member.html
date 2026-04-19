@@ -2031,6 +2031,59 @@ function renderOpDrawer(areaKey){
   var broadcasts=areaData.broadcasts||[];
   var threads=areaData.threads||[];
   var h='';
+
+  /* ── Area feed: all partner posts ── */
+  var unreadCount=threads.filter(function(th){ return !th.is_mine && !th.read_at; }).length;
+  h+='<div class="op-section">';
+  h+='<div class="op-section-hd">Area posts ('+threads.length+')'+( unreadCount>0 ? ' <span style="color:var(--gold);font-size:.75rem;font-weight:700;margin-left:6px">'+unreadCount+' new</span>' : '')+'</div>';
+  if(!threads.length){
+    h+='<div style="font-size:.88rem;color:var(--text4);font-style:italic">No posts in this area yet. Be the first.</div>';
+  } else {
+    threads.forEach(function(th){
+      var replies=th.replies||[];
+      var unread=!th.is_mine && !th.read_at;
+      var statusCls=th.status==='closed'?'':' open';
+      var authorLabel=th.is_mine?'You':'A Partner';
+      var authorColour=th.is_mine?'var(--gold)':'var(--text3)';
+      h+='<div class="op-thread-item'+(unread?' unread':'')+'" id="op-th-'+th.id+'">';
+      /* Header — click toggles body */
+      h+='<div class="op-thread-hd" onclick="toggleOpThread('+th.id+')">';
+      h+='<div style="min-width:0;flex:1">';
+      h+='  <div class="op-thread-subject">'+(unread?'<span style="color:var(--gold);margin-right:5px">&#9679;</span>':'') +esc(th.subject)+'</div>';
+      h+='  <div style="font-size:.78rem;color:'+authorColour+';margin-top:2px">'+ authorLabel +' &middot; '+dtShort(th.created_at)+(th.reply_count>0?' &middot; '+th.reply_count+' repl'+(th.reply_count===1?'y':'ies'):'')+ '</div>';
+      h+='</div>';
+      h+='<span class="op-thread-status'+statusCls+'">'+(th.status==='closed'?'closed':'open')+'</span>';
+      h+='</div>';
+      /* Body — hidden by default, click-to-expand */
+      h+='<div class="op-thread-body" id="op-th-body-'+th.id+'" style="display:none">';
+      h+='<div class="op-bubble-meta">'+ authorLabel +' &middot; '+dtShort(th.created_at)+'</div>';
+      h+='<div class="op-bubble'+(th.is_mine?' out':' in')+'">'+ esc(th.body)+'</div>';
+      /* Replies */
+      replies.forEach(function(rep){
+        var fromAdmin=rep.direction==='outbound';
+        var repLabel=fromAdmin?'Foundation team':(rep.is_mine?'You':'A Partner');
+        h+='<div class="op-bubble-meta" style="margin-top:8px">'+repLabel+' &middot; '+dtShort(rep.created_at)+'</div>';
+        h+='<div class="op-bubble'+(fromAdmin?' out':rep.is_mine?' out':' in')+'">'+ esc(rep.body)+'</div>';
+      });
+      /* Reply form for open threads — any enrolled member can reply */
+      if(th.status!=='closed'){
+        h+='<div class="op-reply-form">';
+        h+='<textarea class="form-textarea" id="op-reply-ta-'+th.id+'" placeholder="Reply to this post..." style="min-height:60px;margin-bottom:6px"></textarea>';
+        h+='<button class="btn btn-ghost btn-sm" onclick="submitOpReply('+th.id+')">Post reply</button>';
+        h+='<div class="flash" id="op-reply-fl-'+th.id+'"></div></div>';
+      } else {
+        h+='<div style="padding:8px 14px;font-size:.8rem;color:var(--text4)">This thread has been closed.</div>';
+      }
+      h+='</div></div>';
+      /* Mark as read on expand — fire-and-forget */
+      if(unread){
+        api('vault/partner-op-read',{method:'POST',body:JSON.stringify({thread_id:th.id})}).catch(function(){});
+      }
+    });
+  }
+  h+='</div>';
+
+  /* ── Admin broadcasts ── */
   h+='<div class="op-section">';
   h+='<div class="op-section-hd">Foundation broadcasts ('+broadcasts.length+')</div>';
   if(!broadcasts.length){
@@ -2051,45 +2104,16 @@ function renderOpDrawer(areaKey){
     });
   }
   h+='</div>';
-  h+='<div class="op-section">';
-  h+='<div class="op-section-hd">Your messages ('+threads.length+')</div>';
-  if(!threads.length){
-    h+='<div style="font-size:.88rem;color:var(--text4);font-style:italic;margin-bottom:12px">No messages yet. Use the form below to contact the Foundation team.</div>';
-  } else {
-    threads.forEach(function(th){
-      var replies=th.replies||[];
-      var statusCls=th.status==='closed'?'':'open';
-      h+='<div class="op-thread-item">';
-      h+='<div class="op-thread-hd" onclick="toggleOpThread('+th.id+')">';
-      h+='<span class="op-thread-subject">'+esc(th.subject)+'</span>';
-      h+='<span class="op-thread-status '+statusCls+'">'+esc(th.status)+'</span>';
-      h+='</div>';
-      h+='<div class="op-thread-body" id="op-th-body-'+th.id+'" style="display:none">';
-      h+='<div class="op-bubble-meta">You &middot; '+dtShort(th.created_at)+'</div>';
-      h+='<div class="op-bubble in">'+esc(th.body)+'</div>';
-      replies.forEach(function(rep){
-        var fromAdmin=rep.direction==='outbound';
-        h+='<div class="op-bubble-meta" style="margin-top:8px">'+(fromAdmin?'Foundation team':'You')+' &middot; '+dtShort(rep.created_at)+'</div>';
-        h+='<div class="op-bubble '+(fromAdmin?'out':'in')+'">'+esc(rep.body)+'</div>';
-      });
-      if(th.status!=='closed'){
-        h+='<div class="op-reply-form">';
-        h+='<textarea class="form-textarea" id="op-reply-ta-'+th.id+'" placeholder="Add a reply..." style="min-height:60px;margin-bottom:6px"></textarea>';
-        h+='<button class="btn btn-ghost btn-sm" onclick="submitOpReply('+th.id+')">Send reply</button>';
-        h+='<div class="flash" id="op-reply-fl-'+th.id+'"></div></div>';
-      } else {
-        h+='<div style="padding:8px 14px;font-size:.8rem;color:var(--text4)">This thread has been closed by the Foundation team.</div>';
-      }
-      h+='</div></div>';
-    });
-  }
-  h+='</div>';
+
+  /* ── Compose new post ── */
   h+='<div class="op-section op-compose">';
-  h+='<div class="op-section-hd">New message to Foundation team</div>';
+  h+='<div class="op-section-hd">Post to this area</div>';
+  h+='<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px;line-height:1.5">Your post will be visible to all Partners enrolled in this area. Posts are reviewed by the Foundation team.</div>';
   h+='<input class="form-input" id="op-compose-subj" placeholder="Subject..." style="margin-bottom:8px">';
   h+='<textarea class="form-textarea" id="op-compose-body" placeholder="Your message..." style="min-height:80px;margin-bottom:8px"></textarea>';
-  h+='<button class="btn btn-gold btn-sm" onclick="submitOpThread(\''+esc(areaKey)+'\')">Send message</button>';
+  h+='<button class="btn btn-gold btn-sm" data-area="'+areaKey+'" onclick="submitOpThread(this.dataset.area)">Post to area</button>';
   h+='<div class="flash" id="op-compose-fl"></div></div>';
+
   var con=document.getElementById('op-drawer-content');
   if(con) con.innerHTML=h;
 }
@@ -4442,7 +4466,7 @@ function renderParticipationPathways(d){
   // Build unread map from op_thread_summary if available
   var unreadMap = {};
   var opSummary = Array.isArray(d.op_thread_summary) ? d.op_thread_summary : [];
-  opSummary.forEach(function(s){ unreadMap[s.area_key] = (s.unread_bc||0) + (s.unread_replies||0); });
+  opSummary.forEach(function(s){ unreadMap[s.area_key] = (s.unread_bc||0) + (s.unread_replies||0) + (s.unread_posts||0); });
 
   var allKeys = Object.keys(_PATHWAYS);
   grid.innerHTML = allKeys.map(function(k){
