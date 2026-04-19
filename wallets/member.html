@@ -3926,8 +3926,14 @@ function renderTabOverview(d){
       bpill.style.display = '';
       var mnRaw = (d && d.member_number ? d.member_number : (window._vaultData && window._vaultData.member_number ? window._vaultData.member_number : ''));
       var bizUrl = '../businesses/bnft_join.html' + (mnRaw ? '?mn=' + encodeURIComponent(mnRaw) : '');
-      bpill.innerHTML = '<a class="btn btn-gold btn-sm" style="display:inline-flex;align-items:center;gap:8px;font-weight:700" href="' + bizUrl + '">'
-        + '<span style="font-size:1rem">&#127970;</span> Register your business &rarr;</a>';
+      bpill.innerHTML = '<a href="' + bizUrl + '" '
+        + 'style="display:inline-flex;align-items:center;gap:8px;padding:7px 16px;'
+        + 'border-radius:99px;border:1px solid var(--gold-bdr);background:var(--gold-bg);'
+        + 'color:var(--gold);font-size:1rem;font-weight:600;text-decoration:none;'
+        + 'transition:all .16s;letter-spacing:.01em"
+        + 'onmouseover="this.style.background=\'rgba(232,184,75,.16)\';this.style.borderColor=\'rgba(232,184,75,.5)\'"'
+        + 'onmouseout="this.style.background=\'var(--gold-bg)\';this.style.borderColor=\'var(--gold-bdr)\'"'
+        + '>&#127970; Register your business &rarr;</a>';
     }
   }).catch(function(){});
 
