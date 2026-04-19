@@ -500,6 +500,34 @@ img{max-width:100%;height:auto}
 .ov-path-dot.live{background:var(--green);box-shadow:0 0 0 3px rgba(82,184,122,.15)}
 .ov-path-dot.soon{background:var(--amber)}
 .ov-path-dot.future{background:var(--text3);opacity:.5}
+.ov-path-badge{position:absolute;top:-4px;right:-4px;background:var(--gold);color:#000;border-radius:99px;font-size:.72rem;font-weight:800;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 4px}
+.ov-path{position:relative}
+.op-drawer-bg{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);display:none;align-items:flex-end;justify-content:flex-end}
+.op-drawer-bg.open{display:flex}
+.op-drawer{width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r) 0 0 var(--r);padding:24px 22px 32px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:0}
+@media(max-width:640px){.op-drawer{max-width:100%;border-radius:var(--r) var(--r) 0 0}}
+.op-drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.op-drawer-title{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--text)}
+.op-drawer-close{background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;padding:4px 8px}
+.op-section{margin-bottom:22px}
+.op-section-hd{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.op-bc-item{padding:12px 14px;border-radius:var(--r2);border:1px solid var(--border);background:rgba(255,255,255,.02);margin-bottom:8px}
+.op-bc-item.unread{border-color:var(--gold-bdr);background:rgba(212,178,92,.04)}
+.op-bc-subject{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.op-bc-body{font-size:.88rem;color:var(--text2);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.op-bc-meta{font-size:.78rem;color:var(--text4);margin-top:6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.op-thread-item{border:1px solid var(--border);border-radius:var(--r2);margin-bottom:10px;overflow:hidden}
+.op-thread-hd{padding:10px 14px;background:rgba(255,255,255,.02);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;cursor:pointer}
+.op-thread-subject{font-size:.9rem;font-weight:600;color:var(--text)}
+.op-thread-status{font-size:.75rem;padding:2px 7px;border-radius:99px;border:1px solid var(--border);color:var(--text3);white-space:nowrap}
+.op-thread-status.open{border-color:var(--gold-bdr);color:var(--gold)}
+.op-thread-body{padding:12px 14px;border-top:1px solid var(--border)}
+.op-bubble{border-radius:10px;padding:9px 12px;margin-bottom:7px;font-size:.88rem;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-width:88%}
+.op-bubble.out{background:rgba(212,178,92,.09);border:1px solid rgba(212,178,92,.18);color:var(--text);margin-left:auto;text-align:left}
+.op-bubble.in{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text2)}
+.op-bubble-meta{font-size:.75rem;color:var(--text4);margin-bottom:4px}
+.op-reply-form{padding:10px 14px;border-top:1px solid var(--border);background:rgba(255,255,255,.015)}
+.op-compose{padding:16px 0 0}
 .ov-path-name{font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.2}
 .ov-path-sub{font-size:.85rem;color:var(--text3);line-height:1.35;margin-left:14px}
 @media(max-width:720px){.ov-path-grid{grid-template-columns:repeat(2,1fr)}}
@@ -1300,6 +1328,17 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 </div><!-- /#vault -->
 
 <!-- ══ PROFILE DRAWER ══ -->
+<!-- OP DRAWER -->
+<div class="op-drawer-bg" id="op-drawer-bg" onclick="if(event.target===this)closeOpDrawer()">
+  <div class="op-drawer" id="op-drawer">
+    <div class="op-drawer-head">
+      <div class="op-drawer-title" id="op-drawer-title">Area Messages</div>
+      <button class="op-drawer-close" onclick="closeOpDrawer()">&#x2715;</button>
+    </div>
+    <div id="op-drawer-content"><div class="sk" style="height:120px;border-radius:12px"></div></div>
+  </div>
+</div>
+
 <div class="drawer-bg" id="profile-drawer-bg" onclick="if(event.target===this)closeProfileDrawer()">
   <div class="drawer">
     <button class="drawer-close" onclick="closeProfileDrawer()">✕</button>
@@ -1951,6 +1990,170 @@ function clearProposalVote(proposalId){
   if(typeof renderPolls === 'function') renderPolls(window._vaultData);
 }
 
+/* OP DRAWER */
+var _opDrawerArea = null;
+var _opDrawerData = null;
+var _OP_AREA_LABELS = {
+  operations_oversight:'Day-to-Day Operations',
+  governance_polls:'Governance & Polls',
+  esg_proxy_voting:'ESG & Proxy Voting',
+  first_nations:'First Nations Partnership',
+  community_projects:'Community Projects',
+  technology_blockchain:'Technology & Blockchain',
+  financial_oversight:'Financial Oversight',
+  place_based_decisions:'Place-Based Decisions',
+  education_outreach:'Education & Outreach'
+};
+function openOpDrawer(areaKey){
+  _opDrawerArea=areaKey;
+  var title=document.getElementById('op-drawer-title');
+  if(title) title.textContent=(_OP_AREA_LABELS[areaKey]||areaKey.replace(/_/g,' '))+' - Messages';
+  var con=document.getElementById('op-drawer-content');
+  if(con) con.innerHTML='<div class="sk" style="height:140px;border-radius:12px"></div>';
+  document.getElementById('op-drawer-bg').classList.add('open');
+  api('vault/partner-op-threads').then(function(r){
+    _opDrawerData=r; renderOpDrawer(areaKey);
+  }).catch(function(e){
+    var con=document.getElementById('op-drawer-content');
+    if(con) con.innerHTML='<div style="color:var(--red);padding:16px">Could not load messages: '+esc(e.message)+'</div>';
+  });
+}
+function closeOpDrawer(){
+  document.getElementById('op-drawer-bg').classList.remove('open');
+  _opDrawerArea=null;
+}
+function renderOpDrawer(areaKey){
+  var data=_opDrawerData;
+  if(!data||!data.areas) return;
+  var areaData=null;
+  for(var i=0;i<data.areas.length;i++){ if(data.areas[i].area_key===areaKey){areaData=data.areas[i];break;} }
+  if(!areaData) areaData={broadcasts:[],threads:[]};
+  var broadcasts=areaData.broadcasts||[];
+  var threads=areaData.threads||[];
+  var h='';
+  h+='<div class="op-section">';
+  h+='<div class="op-section-hd">Foundation broadcasts ('+broadcasts.length+')</div>';
+  if(!broadcasts.length){
+    h+='<div style="font-size:.88rem;color:var(--text4);font-style:italic">No broadcasts for this area yet.</div>';
+  } else {
+    broadcasts.forEach(function(bc){
+      var unread=!bc.read_at;
+      h+='<div class="op-bc-item'+(unread?' unread':'')+'" id="op-bc-'+bc.id+'">';
+      h+='<div class="op-bc-subject">'+(unread?'<span style="color:var(--gold);margin-right:6px">&#9679;</span>':'')+esc(bc.subject)+'</div>';
+      h+='<div class="op-bc-body">'+esc(bc.body)+'</div>';
+      h+='<div class="op-bc-meta"><span>'+dtShort(bc.created_at)+'</span>';
+      if(unread){
+        h+='<button class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:2px 8px" onclick="markOpBcRead('+bc.id+')">Mark read</button>';
+      } else {
+        h+='<span style="color:var(--green);font-size:.75rem">&#10003; Read</span>';
+      }
+      h+='</div></div>';
+    });
+  }
+  h+='</div>';
+  h+='<div class="op-section">';
+  h+='<div class="op-section-hd">Your messages ('+threads.length+')</div>';
+  if(!threads.length){
+    h+='<div style="font-size:.88rem;color:var(--text4);font-style:italic;margin-bottom:12px">No messages yet. Use the form below to contact the Foundation team.</div>';
+  } else {
+    threads.forEach(function(th){
+      var replies=th.replies||[];
+      var statusCls=th.status==='closed'?'':'open';
+      h+='<div class="op-thread-item">';
+      h+='<div class="op-thread-hd" onclick="toggleOpThread('+th.id+')">';
+      h+='<span class="op-thread-subject">'+esc(th.subject)+'</span>';
+      h+='<span class="op-thread-status '+statusCls+'">'+esc(th.status)+'</span>';
+      h+='</div>';
+      h+='<div class="op-thread-body" id="op-th-body-'+th.id+'" style="display:none">';
+      h+='<div class="op-bubble-meta">You &middot; '+dtShort(th.created_at)+'</div>';
+      h+='<div class="op-bubble in">'+esc(th.body)+'</div>';
+      replies.forEach(function(rep){
+        var fromAdmin=rep.direction==='outbound';
+        h+='<div class="op-bubble-meta" style="margin-top:8px">'+(fromAdmin?'Foundation team':'You')+' &middot; '+dtShort(rep.created_at)+'</div>';
+        h+='<div class="op-bubble '+(fromAdmin?'out':'in')+'">'+esc(rep.body)+'</div>';
+      });
+      if(th.status!=='closed'){
+        h+='<div class="op-reply-form">';
+        h+='<textarea class="form-textarea" id="op-reply-ta-'+th.id+'" placeholder="Add a reply..." style="min-height:60px;margin-bottom:6px"></textarea>';
+        h+='<button class="btn btn-ghost btn-sm" onclick="submitOpReply('+th.id+')">Send reply</button>';
+        h+='<div class="flash" id="op-reply-fl-'+th.id+'"></div></div>';
+      } else {
+        h+='<div style="padding:8px 14px;font-size:.8rem;color:var(--text4)">This thread has been closed by the Foundation team.</div>';
+      }
+      h+='</div></div>';
+    });
+  }
+  h+='</div>';
+  h+='<div class="op-section op-compose">';
+  h+='<div class="op-section-hd">New message to Foundation team</div>';
+  h+='<input class="form-input" id="op-compose-subj" placeholder="Subject..." style="margin-bottom:8px">';
+  h+='<textarea class="form-textarea" id="op-compose-body" placeholder="Your message..." style="min-height:80px;margin-bottom:8px"></textarea>';
+  h+='<button class="btn btn-gold btn-sm" onclick="submitOpThread(\''+esc(areaKey)+'\')">Send message</button>';
+  h+='<div class="flash" id="op-compose-fl"></div></div>';
+  var con=document.getElementById('op-drawer-content');
+  if(con) con.innerHTML=h;
+}
+function toggleOpThread(threadId){
+  var body=document.getElementById('op-th-body-'+threadId);
+  if(body) body.style.display=body.style.display==='none'?'':'none';
+}
+function dtShort(s){
+  if(!s) return '';
+  try{
+    var d=new Date(s.replace(' ','T')+'Z');
+    return d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){ return String(s); }
+}
+async function markOpBcRead(threadId){
+  try{
+    await api('vault/partner-op-read',{method:'POST',body:JSON.stringify({thread_id:threadId})});
+    var r=await api('vault/partner-op-threads');
+    _opDrawerData=r;
+    if(_opDrawerArea) renderOpDrawer(_opDrawerArea);
+    updateOpPathwayBadges(r);
+  }catch(e){ console.warn('markOpBcRead failed',e); }
+}
+async function submitOpReply(threadId){
+  var ta=document.getElementById('op-reply-ta-'+threadId);
+  var msg=(ta&&ta.value||'').trim();
+  if(!msg){ flash('op-reply-fl-'+threadId,'Please enter a reply.','err'); return; }
+  try{
+    await api('vault/partner-op-reply',{method:'POST',body:JSON.stringify({thread_id:threadId,body:msg})});
+    if(ta) ta.value='';
+    flash('op-reply-fl-'+threadId,'Reply sent.','ok');
+    var r=await api('vault/partner-op-threads');
+    _opDrawerData=r;
+    if(_opDrawerArea) renderOpDrawer(_opDrawerArea);
+  }catch(e){ flash('op-reply-fl-'+threadId,e.message||'Failed.','err'); }
+}
+async function submitOpThread(areaKey){
+  var subj=((document.getElementById('op-compose-subj')||{}).value||'').trim();
+  var body=((document.getElementById('op-compose-body')||{}).value||'').trim();
+  if(!subj){ flash('op-compose-fl','Subject is required.','err'); return; }
+  if(!body){ flash('op-compose-fl','Message is required.','err'); return; }
+  try{
+    await api('vault/partner-op-threads',{method:'POST',body:JSON.stringify({area_key:areaKey,subject:subj,body:body})});
+    flash('op-compose-fl','Message sent to Foundation team.','ok');
+    var subEl=document.getElementById('op-compose-subj');
+    var bdEl=document.getElementById('op-compose-body');
+    if(subEl) subEl.value='';
+    if(bdEl)  bdEl.value='';
+    var r=await api('vault/partner-op-threads');
+    _opDrawerData=r;
+    if(_opDrawerArea) renderOpDrawer(_opDrawerArea);
+    updateOpPathwayBadges(r);
+  }catch(e){ flash('op-compose-fl',e.message||'Failed to send.','err'); }
+}
+function updateOpPathwayBadges(data){
+  var areas=(data&&data.areas)||[];
+  areas.forEach(function(areaData){
+    var ak=areaData.area_key;
+    var unread=(areaData.broadcasts||[]).filter(function(b){ return !b.read_at; }).length;
+    var badge=document.getElementById('op-badge-'+ak);
+    if(badge){ badge.textContent=unread>0?unread:''; badge.style.display=unread>0?'':'none'; }
+  });
+}
+
 /* ── TALLY IN-PLACE UPDATER ── */
 function updateProposalTally(proposalId, tallyArr, total, myVote){
   const pid    = parseInt(proposalId, 10);
@@ -2110,11 +2313,11 @@ function renderInitiationCard(p){
   const remaining = Math.max(0, (p.initiation_threshold||0) - (p.initiator_count||0));
   let actions = '';
   if (!met) {
-    actions = `<div class="poll-actions">
-      ${joined
-        ? `<button class="btn btn-ghost btn-sm" onclick="withdrawPollInitiation(${p.id})">Withdraw my initiation</button>`
-        : `<button class="btn btn-gold btn-sm" onclick="joinPollInitiation(${p.id})">Join initiation group</button>`}
-    </div>`;
+    actions = '<div class="poll-actions">'
+      + (joined
+        ? '<button class="btn btn-ghost btn-sm" onclick="withdrawPollInitiation('+p.id+')">Withdraw my initiation</button>'
+        : '<button class="btn btn-gold btn-sm" onclick="joinPollInitiation('+p.id+')">Join initiation group</button>')
+      + '</div>';
   } else {
     actions = '<div class="poll-voted-row" style="background:var(--amber-bg);border-color:var(--amber-bdr);color:var(--amber)">Threshold met. This Partners Poll is moving into the formal poll register.</div>';
   }
@@ -4236,18 +4439,33 @@ function renderParticipationPathways(d){
   var esc = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
 
   // Show all 9 in _PATHWAYS order; selected areas get 'live' dot, others dim
+  // Build unread map from op_thread_summary if available
+  var unreadMap = {};
+  var opSummary = Array.isArray(d.op_thread_summary) ? d.op_thread_summary : [];
+  opSummary.forEach(function(s){ unreadMap[s.area_key] = (s.unread_bc||0) + (s.unread_replies||0); });
+
   var allKeys = Object.keys(_PATHWAYS);
   grid.innerHTML = allKeys.map(function(k){
     var cfg    = _PATHWAYS[k] || {label:k.replace(/_/g,' '),status:'future'};
     var active = areas.indexOf(k) >= 0;
     var dotCls = active ? 'live' : 'future';
     var infoKey = infoKeys[k] || 'governance-tab';
-    return '<div class="ov-path" onclick="showInfo(\''+infoKey+'\')" title="'+esc(cfg.label)+'">'
+    var unread  = unreadMap[k] || 0;
+    var badgeHtml = active
+      ? '<span class="ov-path-badge" id="op-badge-'+k+'" style="'+(unread>0?'':'display:none')+'">'+unread+'</span>'
+      : '';
+    var msgBtn = active
+      ? ' <button class="btn btn-ghost" style="font-size:.75rem;padding:2px 7px;margin-left:4px;margin-top:4px" onclick="event.stopPropagation();openOpDrawer(\''+k+'\')" title="Messages">&#128204;</button>'
+      : '';
+    return '<div class="ov-path" onclick="showInfo(\''+infoKey+'\')" title="'+esc(cfg.label)+'">' 
+      + badgeHtml
       + '<div class="ov-path-top">'
       +   '<span class="ov-path-dot '+dotCls+'"></span>'
       +   '<span class="ov-path-name">'+esc(cfg.label)+'</span>'
       + '</div>'
-      + (active ? '<div class="ov-path-sub">Active</div>' : '<div class="ov-path-sub" style="color:var(--text4)">Tap to learn more</div>')
+      + (active
+          ? '<div class="ov-path-sub">Active'+msgBtn+'</div>'
+          : '<div class="ov-path-sub" style="color:var(--text4)">Tap to learn more</div>')
       + '</div>';
   }).join('');
 }
@@ -4347,6 +4565,13 @@ window.pathwaySubLine    = pathwaySubLine;
 window.goToParticipation = goToParticipation;
 window.scrollToInvite    = scrollToInvite;
 window.renderParticipationPathways = renderParticipationPathways;
+window.openOpDrawer        = openOpDrawer;
+window.closeOpDrawer       = closeOpDrawer;
+window.toggleOpThread      = toggleOpThread;
+window.markOpBcRead        = markOpBcRead;
+window.submitOpReply       = submitOpReply;
+window.submitOpThread      = submitOpThread;
+window.updateOpPathwayBadges = updateOpPathwayBadges;
 
 /* ══ kS-NFT IDENTITY CARD — show/hide + Holdings summary sync ══
    Called from _runTabRenders after every openVault.
