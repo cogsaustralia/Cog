@@ -1966,50 +1966,6 @@ async function submitComment(proposalId){
     flash('prop-cmt-fl-'+proposalId, e.message||'Failed to submit.','err');
   }
 }
-  const activeInitiations = initiations.filter(p => ['submitted','sponsored'].includes(p.status));
-  const closedPolls = polls.filter(p => p.status === 'closed' || p.status === 'certified');
-
-  // Section chip
-  const activeCount = openPolls.length + activeInitiations.length;
-  el('s-polls-chip').innerHTML = activeCount > 0
-    ? chip(activeCount + ' active', 'green')
-    : chip('No active polls', 'dim');
-
-  // Show any debug error surfaced from PHP
-  const errItem = initiations.find(p => p._error);
-  if(errItem){
-    el('polls-list').innerHTML = '<div class="placeholder" style="border-color:var(--red-bdr);background:var(--red-bg)"><strong style="color:var(--red)">API error</strong><p style="color:var(--red)">' + esc(errItem._error) + '</p></div>';
-    return;
-  }
-
-  // Build active section
-  let html = '';
-
-  if(openPolls.length === 0 && activeInitiations.length === 0){
-    html = '<div class="placeholder"><strong>No active proposals or polls</strong>'
-      + '<p>Governance Foundation Day opens 14 May 2026. Use "Initiate a Partners Poll" below to draft a proposal.</p></div>';
-  } else {
-    if(activeInitiations.length > 0){
-      html += '<div style="font-size:.85rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">📋 Proposals — Initiation in Progress</div>';
-      html += activeInitiations.map(p => renderInitiationCard(p)).join('');
-      if(openPolls.length > 0) html += '<div class="divider" style="margin:18px 0"></div>';
-    }
-    if(openPolls.length > 0){
-      html += '<div style="font-size:.85rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;margin-top:'+(activeInitiations.length?'0':'0')+'">✦ Active Partners Polls</div>';
-      html += openPolls.map(p => renderPollCard(p)).join('');
-    }
-  }
-
-  el('polls-list').innerHTML = html;
-
-  // Past Partners Polls accordion
-  const closedHtml = closedPolls.length > 0
-    ? closedPolls.map(p => renderPollCard(p, true)).join('')
-    : '<div class="placeholder"><strong>No past polls</strong></div>';
-  el('past-polls').innerHTML = closedHtml;
-  const pps = document.getElementById('past-polls-section');
-  if(pps) pps.style.display = closedPolls.length > 0 ? '' : 'none';
-}
 
 
 function renderPollCard(p, past){
