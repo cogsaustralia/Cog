@@ -3568,6 +3568,15 @@ function copyText(text, btn){
 }
 
 window.copyText         = copyText;
+function shareInviteLink(code, link){
+  var message = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
+  if(navigator.share){
+    navigator.share({title:'Join me in the COG$ Joint Venture', text:message, url:link}).catch(function(){});
+    return;
+  }
+  copyText(link, {textContent:'Copy invite link'});
+}
+
 window.shareInviteLink  = shareInviteLink;
 window.ivShare          = ivShare;
 window.stagShare        = stagShare;
