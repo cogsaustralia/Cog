@@ -71,6 +71,12 @@ if ($action === 'kids-order') {
 if ($action === 'cancel-kids-order') {
     cancelKidsOrder();
 }
+if ($action === 'vote-proposal') {
+    voteOnProposal();
+}
+if ($action === 'proposal-comments') {
+    handleProposalComments();
+}
 apiError('Unknown vault endpoint', 404);
 
 function memberVault(): void {
@@ -1546,6 +1552,19 @@ function fetchProposalsForSubject(PDO $db, string $userType, string $subjectRef,
             }
         }
 
+        // Comment counts — anonymous, just totals per proposal
+        $commentCounts = [];
+        try {
+            if (api_table_exists($db, 'proposal_comments')) {
+                $ph3 = implode(',', array_fill(0, count($ids), '?'));
+                $cStmt = $db->prepare("SELECT proposal_id, COUNT(*) AS cnt FROM proposal_comments WHERE proposal_id IN ({$ph3}) GROUP BY proposal_id");
+                $cStmt->execute($ids);
+                foreach ($cStmt->fetchAll() as $row) {
+                    $commentCounts[(int)$row['proposal_id']] = (int)$row['cnt'];
+                }
+            }
+        } catch (Throwable $e) {}
+
         // Inject my_vote and tally. v4: fixed yes/maybe/no, no options_json.
         foreach ($items as &$item) {
             $raw = $myResponses[(int)$item['id']] ?? null;
@@ -1565,6 +1584,7 @@ function fetchProposalsForSubject(PDO $db, string $userType, string $subjectRef,
             $item['eligible_to_vote']  = $eligibleToVote;
             $item['open_disputes']     = (int)($disputes[$pid]['open']     ?? 0);
             $item['my_dispute_status'] = $myDisputes[$pid] ?? null;
+            $item['comment_count']     = (int)($commentCounts[$pid] ?? 0);
             $bridge = $bridgeRows[(string)($item['proposal_key'] ?? '')] ?? null;
             $item['bridge_status'] = $bridge['status'] ?? null;
             $item['bridge_id'] = isset($bridge['id']) ? (int)$bridge['id'] : null;
@@ -3697,4 +3717,106 @@ function cancelKidsOrder(): void {
         'units_cancelled' => $totalUnits,
         'kids_tokens_now' => $correctUnits,
     ]);
+}
+
+/* ── PROPOSAL VOTE ──────────────────────────────────────────────────────────── */
+function voteOnProposal(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db   = getDB();
+    $body = jsonBody();
+
+    $proposalId = (int)($body['proposal_id'] ?? 0);
+    $choice     = strtolower(trim((string)($body['choice'] ?? '')));
+    $note       = trim((string)($body['note'] ?? ''));
+
+    if ($proposalId < 1) apiError('proposal_id required.');
+    if (!in_array($choice, ['yes', 'no', 'maybe'], true)) apiError('choice must be yes, no, or maybe.');
+
+    // Resolve member legacy id
+    $subjectRef = (string)$principal['subject_ref'];
+    $mStmt = $db->prepare('SELECT id FROM snft_memberships WHERE member_number = ? LIMIT 1');
+    $mStmt->execute([$subjectRef]);
+    $memberId = (int)($mStmt->fetchColumn() ?: 0);
+    if ($memberId < 1) apiError('Member record not found.', 404);
+
+    // Verify proposal is open
+    $pStmt = $db->prepare("SELECT id, status FROM vote_proposals WHERE id = ? LIMIT 1");
+    $pStmt->execute([$proposalId]);
+    $proposal = $pStmt->fetch();
+    if (!$proposal) apiError('Proposal not found.', 404);
+    if ((string)$proposal['status'] !== 'open') apiError('This proposal is not currently open for responses.');
+
+    // Upsert response
+    $db->prepare("INSERT INTO vote_proposal_responses (proposal_id, member_id, response_value, response_note, submitted_at)
+                  VALUES (?, ?, ?, ?, UTC_TIMESTAMP())
+                  ON DUPLICATE KEY UPDATE response_value = VALUES(response_value), response_note = VALUES(response_note), submitted_at = UTC_TIMESTAMP()")
+       ->execute([$proposalId, $memberId, $choice, $note ?: null]);
+
+    // Return fresh tally
+    $tStmt = $db->prepare("SELECT response_value, COUNT(*) AS votes FROM vote_proposal_responses WHERE proposal_id = ? GROUP BY response_value");
+    $tStmt->execute([$proposalId]);
+    $tally = []; $total = 0;
+    foreach ($tStmt->fetchAll() as $row) {
+        $tally[(string)$row['response_value']] = (int)$row['votes'];
+        $total += (int)$row['votes'];
+    }
+
+    apiSuccess(['voted' => true, 'choice' => $choice, 'tally' => $tally, 'total_votes' => $total]);
+}
+
+/* ── PROPOSAL COMMENTS ─────────────────────────────────────────────────────── */
+function handleProposalComments(): void {
+    $principal = requireAuth('snft');
+    $db   = getDB();
+
+    // Ensure table exists
+    if (!api_table_exists($db, 'proposal_comments')) {
+        $db->exec("CREATE TABLE IF NOT EXISTS `proposal_comments` (
+            `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `proposal_id` bigint(20) UNSIGNED NOT NULL,
+            `comment_text` text NOT NULL,
+            `submitted_at` datetime NOT NULL DEFAULT current_timestamp(),
+            PRIMARY KEY (`id`),
+            KEY `idx_pc_proposal` (`proposal_id`),
+            KEY `idx_pc_submitted` (`submitted_at`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+          COMMENT='Anonymous comments on vote_proposals. No member_id stored — deliberately anonymous.'");
+    }
+
+    $method     = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $proposalId = (int)(($_GET['proposal_id'] ?? 0) ?: (jsonBody()['proposal_id'] ?? 0));
+    if ($proposalId < 1) apiError('proposal_id required.');
+
+    if ($method === 'POST') {
+        $body = jsonBody();
+        $text = trim((string)($body['comment_text'] ?? ''));
+        if (strlen($text) < 3)  apiError('Comment too short (minimum 3 characters).');
+        if (strlen($text) > 1000) apiError('Comment too long (maximum 1000 characters).');
+
+        // Verify proposal is open
+        $pStmt = $db->prepare("SELECT status FROM vote_proposals WHERE id = ? LIMIT 1");
+        $pStmt->execute([$proposalId]);
+        $p = $pStmt->fetch();
+        if (!$p) apiError('Proposal not found.', 404);
+        if ((string)$p['status'] !== 'open') apiError('This proposal is not open for comments.');
+
+        $db->prepare("INSERT INTO proposal_comments (proposal_id, comment_text, submitted_at) VALUES (?, ?, UTC_TIMESTAMP())")
+           ->execute([$proposalId, $text]);
+
+        apiSuccess(['commented' => true]);
+
+    } else {
+        // GET — return paginated comments newest first
+        $limit  = min(50, max(1, (int)($_GET['limit'] ?? 20)));
+        $offset = max(0, (int)($_GET['offset'] ?? 0));
+        $cStmt  = $db->prepare("SELECT id, comment_text, submitted_at FROM proposal_comments WHERE proposal_id = ? ORDER BY submitted_at DESC LIMIT ? OFFSET ?");
+        $cStmt->execute([$proposalId, $limit, $offset]);
+        $comments = $cStmt->fetchAll();
+        $total    = (int)$db->prepare("SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?")->execute([$proposalId]) ? (int)$db->query("SELECT FOUND_ROWS()")->fetchColumn() : 0;
+        $cntStmt  = $db->prepare("SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?");
+        $cntStmt->execute([$proposalId]);
+        $total    = (int)$cntStmt->fetchColumn();
+        apiSuccess(['comments' => $comments, 'total' => $total]);
+    }
 }

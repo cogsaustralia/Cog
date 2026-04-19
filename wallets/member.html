@@ -682,6 +682,35 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 .mnemonic-word{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:1rem;color:var(--text2)}
 .mnemonic-word span{display:block;font-size:.6rem;color:var(--text4);margin-bottom:2px}
 
+/* ── Governance three-tier layout ── */
+.gov-tier-hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.gov-tier-ico{font-size:1.1rem}
+.gov-tier-lbl{font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--text)}
+.gov-tier-sub{font-size:1rem;color:var(--text3);line-height:1.4;flex-basis:100%;padding-left:26px}
+.gov-empty{margin-bottom:14px}
+/* ── Proposal tally bars ── */
+.prop-tally{margin:14px 0 10px}
+.prop-tally-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.prop-tally-lbl{font-size:1rem;font-weight:600;min-width:64px}
+.prop-tally-track{flex:1;height:8px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.prop-tally-fill{height:100%;border-radius:99px;transition:width .4s ease}
+.prop-tally-pct{font-family:var(--mono);font-size:1rem;color:var(--text3);min-width:72px;text-align:right}
+/* ── Proposal vote buttons ── */
+.prop-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.prop-btn-yes{background:rgba(62,207,110,.12);border-color:var(--green-bdr);color:var(--green)}
+.prop-btn-yes:hover{background:rgba(62,207,110,.22)}
+.prop-btn-maybe{background:rgba(224,154,66,.1);border-color:rgba(224,154,66,.3);color:#e09a42}
+.prop-btn-maybe:hover{background:rgba(224,154,66,.2)}
+.prop-btn-no{background:var(--red-bg);border-color:var(--red-bdr);color:var(--red)}
+.prop-btn-no:hover{background:rgba(224,92,92,.18)}
+.prop-voted{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:10px 14px;border-radius:var(--r2);background:rgba(62,207,110,.06);border:1px solid var(--green-bdr);font-size:1rem;color:var(--text2);margin:10px 0}
+/* ── Proposal comments ── */
+.prop-comments-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.prop-comment-item{padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r2)}
+.prop-comment-text{font-size:1rem;color:var(--text2);line-height:1.55;display:block}
+.prop-comment-date{font-size:1rem;color:var(--text4);margin-top:4px;display:block;font-family:var(--mono)}
+.prop-comment-compose{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+
 /* ── Comms message bubbles (Comms tab, Phase 5) ── */
 .msg-bubble-row{display:flex;gap:10px;margin-bottom:12px;align-items:flex-end}
 .msg-bubble-row.out{flex-direction:row-reverse}
@@ -1741,12 +1770,202 @@ async function completeCurrentJvpaRecord(){
 
 /* ── POLLS & PROPOSALS ── */
 function renderPolls(d){
-  const polls       = (d.polls||[]);
+  const proposals   = (d.proposals||[]);
   const initiations = (d.poll_initiations||[]);
-  // Debug — visible in browser DevTools Console tab
-  console.log('[COG$ Management] poll_initiations:', JSON.stringify(initiations));
-  console.log('[COG$ Management] polls:', JSON.stringify(polls));
-  const openPolls   = polls.filter(p => p.status === 'open' || p.status === 'scheduled' || p.status === 'deliberation');
+  const polls       = (d.polls||[]);
+
+  console.log('[COG$ Management] proposals:', proposals.length, 'initiations:', initiations.length, 'polls:', polls.length);
+
+  const openProposals     = proposals.filter(p => p.status === 'open');
+  const closedProposals   = proposals.filter(p => p.status === 'closed' || p.status === 'archived');
+  const activeInitiations = initiations.filter(p => ['submitted','sponsored'].includes(p.status));
+  const openPolls         = polls.filter(p => ['open','scheduled','deliberation'].includes(p.status));
+  const closedPolls       = polls.filter(p => ['closed','certified'].includes(p.status));
+
+  // Tab badge — count active items across all tiers
+  const activeCount = activeInitiations.length + openProposals.length + openPolls.length;
+  el('s-polls-chip').innerHTML = activeCount > 0
+    ? chip(activeCount + ' active', 'green')
+    : chip('Nothing active', 'dim');
+
+  // Show any surfaced PHP error
+  const errItem = initiations.find(p => p._error);
+  if(errItem){
+    el('polls-list').innerHTML = '<div class="placeholder" style="border-color:var(--red-bdr);background:var(--red-bg)"><strong style="color:var(--red)">API error</strong><p style="color:var(--red)">'+esc(errItem._error)+'</p></div>';
+    return;
+  }
+
+  let html = '';
+
+  /* ── TIER 1: POLL INITIATIONS ── */
+  html += '<div class="gov-tier-hd">'+
+    '<span class="gov-tier-ico">📋</span>'+
+    '<span class="gov-tier-lbl">Poll Initiations</span>'+
+    '<span class="gov-tier-sub">Partner-submitted topics awaiting 10 seconders before the Trustee can consider them as a Proposal</span>'+
+    '</div>';
+  if(activeInitiations.length === 0){
+    html += '<div class="placeholder gov-empty">No active initiations. Use "Submit a new initiation" below to start one.</div>';
+  } else {
+    html += activeInitiations.map(p => renderInitiationCard(p)).join('');
+  }
+
+  /* ── TIER 2: PROPOSALS ── */
+  html += '<div class="gov-tier-hd" style="margin-top:22px">'+
+    '<span class="gov-tier-ico">📄</span>'+
+    '<span class="gov-tier-lbl">Proposals</span>'+
+    '<span class="gov-tier-sub">Trustee-created community consultations — Yes / No / Maybe · Non-binding · Anonymous comments</span>'+
+    '</div>';
+  if(openProposals.length === 0){
+    html += '<div class="placeholder gov-empty">No open proposals. Proposals are created by the Trustee from a Poll Initiation.</div>';
+  } else {
+    html += openProposals.map(p => renderProposalCard(p)).join('');
+  }
+
+  /* ── TIER 3: PARTNERS POLLS ── */
+  html += '<div class="gov-tier-hd" style="margin-top:22px">'+
+    '<span class="gov-tier-ico">✦</span>'+
+    '<span class="gov-tier-lbl">Partners Polls</span>'+
+    '<span class="gov-tier-sub">Binding resolutions — Yes or No only · Time-limited · Result binding on the Trustee</span>'+
+    '</div>';
+  if(openPolls.length === 0){
+    html += '<div class="placeholder gov-empty">No active binding polls. Polls are created by the Trustee when a Proposal warrants a binding decision.</div>';
+  } else {
+    html += openPolls.map(p => renderPollCard(p)).join('');
+  }
+
+  el('polls-list').innerHTML = html;
+
+  /* ── PAST ITEMS (accordion) ── */
+  const hasPast = closedProposals.length > 0 || closedPolls.length > 0;
+  let pastHtml = '';
+  if(closedProposals.length > 0){
+    pastHtml += '<div style="font-size:1rem;font-weight:600;color:var(--text3);margin:10px 0 6px">Past proposals</div>';
+    pastHtml += closedProposals.map(p => renderProposalCard(p, true)).join('');
+  }
+  if(closedPolls.length > 0){
+    pastHtml += '<div style="font-size:1rem;font-weight:600;color:var(--text3);margin:10px 0 6px">Past polls</div>';
+    pastHtml += closedPolls.map(p => renderPollCard(p, true)).join('');
+  }
+  el('past-polls').innerHTML = pastHtml || '<div class="placeholder gov-empty">No past items.</div>';
+  const pps = document.getElementById('past-polls-section');
+  if(pps) pps.style.display = hasPast ? '' : 'none';
+}
+
+/* ── PROPOSAL CARD (Tier 2) ── */
+function renderProposalCard(p, past){
+  const myVote  = p.my_vote || null;
+  const tally   = p.tally   || [];
+  const total   = p.total_votes || 0;
+  const canVote = !past && p.status === 'open' && p.eligible_to_vote !== false;
+  const comments = p.comment_count || 0;
+
+  /* Tally bars */
+  const colours = {yes:'var(--green)', maybe:'#e09a42', no:'var(--red)'};
+  const labels  = {yes:'Yes', maybe:'Maybe', no:'No'};
+  let barHtml = '<div class="prop-tally">';
+  tally.forEach(function(t){
+    const pct   = total > 0 ? Math.round((t.votes / total) * 100) : 0;
+    const col   = colours[t.label] || 'var(--text3)';
+    const lbl   = labels[t.label]  || t.label;
+    const mine  = myVote === t.label;
+    barHtml += '<div class="prop-tally-row">'
+      + '<span class="prop-tally-lbl" style="color:'+col+'">'+(mine?'✓ ':'')+lbl+'</span>'
+      + '<div class="prop-tally-track"><div class="prop-tally-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'
+      + '<span class="prop-tally-pct">'+t.votes+' ('+pct+'%)</span>'
+      + '</div>';
+  });
+  barHtml += '<div style="font-size:1rem;color:var(--text4);margin-top:6px">'+total+' response'+(total!==1?'s':'')+' · '+comments+' comment'+(comments!==1?'s':'')+'</div></div>';
+
+  /* Vote buttons */
+  let actions = '';
+  if(canVote && !myVote){
+    actions = '<div class="prop-actions">'
+      + '<button class="btn btn-sm prop-btn-yes"  onclick="castProposalVote('+p.id+',\'yes\')">Yes</button>'
+      + '<button class="btn btn-sm prop-btn-maybe" onclick="castProposalVote('+p.id+',\'maybe\')">Maybe</button>'
+      + '<button class="btn btn-sm prop-btn-no"   onclick="castProposalVote('+p.id+',\'no\')">No</button>'
+      + '</div>';
+  } else if(myVote){
+    actions = '<div class="prop-voted">✓ Your response: <strong>'+labels[myVote]+'</strong>'
+      + (canVote ? ' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="castProposalVote('+p.id+',null)">Change</button>' : '')
+      + '</div>';
+  }
+
+  /* Comment section */
+  const commentSection = (!past && p.status === 'open')
+    ? '<div class="prop-comment-wrap" id="prop-cmt-'+p.id+'">'
+      + '<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="toggleComments('+p.id+')">💬 Comments ('+comments+')</button>'
+      + '<div class="prop-comment-panel" id="prop-cmt-panel-'+p.id+'" style="display:none"></div>'
+      + '</div>'
+    : (comments > 0 ? '<div style="font-size:1rem;color:var(--text4);margin-top:8px">💬 '+comments+' anonymous comment'+(comments!==1?'s':'')+'</div>' : '');
+
+  return '<div class="poll-card">'
+    + '<div class="poll-meta">'+chip(past?'CLOSED':'OPEN', past?'dim':'green')
+    + (p.closes_at && !past ? '<span style="font-size:1rem;color:var(--text3)">Closes '+dt(p.closes_at)+'</span>' : '')
+    + '</div>'
+    + '<div class="poll-title">'+esc(p.title||'')+'</div>'
+    + (p.summary||p.body ? '<div class="poll-body">'+esc(p.summary||p.body||'')+'</div>' : '')
+    + barHtml
+    + actions
+    + commentSection
+    + '<div class="flash" id="prop-fl-'+p.id+'"></div>'
+    + '</div>';
+}
+
+async function castProposalVote(proposalId, choice){
+  const btn = document.querySelector('[onclick*="castProposalVote('+proposalId+'"]');
+  const fl  = el('prop-fl-'+proposalId);
+  try {
+    const res = await api('vault/vote-proposal', {method:'POST', body:JSON.stringify({proposal_id:proposalId, choice:choice})});
+    // Refresh vault to re-render with new vote
+    const v = await api('vault/member');
+    openVault(v);
+  } catch(e) {
+    if(fl) flash('prop-fl-'+proposalId, e.message||'Vote failed.','err');
+  }
+}
+
+function toggleComments(proposalId){
+  const panel = el('prop-cmt-panel-'+proposalId);
+  if(!panel) return;
+  if(panel.style.display !== 'none'){ panel.style.display='none'; return; }
+  panel.style.display = '';
+  panel.innerHTML = '<div class="sk" style="height:40px;border-radius:8px;margin-top:10px"></div>';
+  api('vault/proposal-comments?proposal_id='+proposalId).then(function(r){
+    const comments = r.comments || [];
+    let h = '<div class="prop-comments-list">';
+    if(comments.length === 0){
+      h += '<div style="color:var(--text4);font-size:1rem;padding:10px 0">No comments yet. Be the first.</div>';
+    } else {
+      comments.forEach(function(c){
+        h += '<div class="prop-comment-item"><span class="prop-comment-text">'+esc(c.comment_text)+'</span>'
+          + '<span class="prop-comment-date">'+dt(c.submitted_at)+'</span></div>';
+      });
+    }
+    h += '</div>'
+      + '<div class="prop-comment-compose">'
+      + '<textarea class="form-textarea" id="prop-cmt-input-'+proposalId+'" placeholder="Add an anonymous comment…" style="min-height:70px;margin-top:10px"></textarea>'
+      + '<button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="submitComment('+proposalId+')">Submit anonymously</button>'
+      + '<div class="flash" id="prop-cmt-fl-'+proposalId+'"></div>'
+      + '</div>';
+    panel.innerHTML = h;
+  }).catch(function(e){ panel.innerHTML = '<div style="color:var(--red)">Could not load comments.</div>'; });
+}
+
+async function submitComment(proposalId){
+  const ta   = el('prop-cmt-input-'+proposalId);
+  const text = (ta?.value||'').trim();
+  if(text.length < 3){ flash('prop-cmt-fl-'+proposalId,'Comment too short.','err'); return; }
+  try {
+    await api('vault/proposal-comments', {method:'POST', body:JSON.stringify({proposal_id:proposalId, comment_text:text})});
+    ta.value = '';
+    flash('prop-cmt-fl-'+proposalId,'Comment submitted anonymously.','ok');
+    toggleComments(proposalId); // close
+    setTimeout(function(){ toggleComments(proposalId); }, 300); // reopen with fresh data
+    const v = await api('vault/member'); openVault(v); // refresh count
+  } catch(e) {
+    flash('prop-cmt-fl-'+proposalId, e.message||'Failed to submit.','err');
+  }
+}
   const activeInitiations = initiations.filter(p => ['submitted','sponsored'].includes(p.status));
   const closedPolls = polls.filter(p => p.status === 'closed' || p.status === 'certified');
 
@@ -3047,6 +3266,9 @@ window.doTransfer       = doTransfer;
 window.confirmSend      = confirmSend;
 window.xfrEditReturn    = xfrEditReturn;
 window.xfrCancel        = xfrCancel;
+window.castProposalVote = castProposalVote;
+window.toggleComments   = toggleComments;
+window.submitComment    = submitComment;
 window.saveReservations = saveReservations;
 window.setElection      = setElection;
 window.markAllRead      = markAllRead;
