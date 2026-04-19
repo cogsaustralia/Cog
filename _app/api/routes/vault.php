@@ -400,6 +400,7 @@ function memberVault(): void {
                 $inviteCode = [
                     'has_code' => true,
                     'public_code' => (string)$icRow['public_code'],
+                    'code'        => (string)$icRow['public_code'],  // JS alias
                     'use_count' => $useCount,
                     'max_uses' => $maxUses,
                     'uses_remaining' => $maxUses !== null ? max(0, $maxUses - $useCount) : null,

@@ -494,7 +494,7 @@ if ($action === 'my-code') {
 
         if ($code) {
             $publicCode = (string)$code['public_code'];
-            $inviteLink = $baseUrl . '/join/?invite=' . urlencode((string)$code['invite_token']);
+            $inviteLink = $baseUrl . '/?invite=' . urlencode((string)$code['public_code']);
             $useCount   = (int)($code['use_count'] ?? 0);
 
             // Fetch recent accepted invitations (last 10)

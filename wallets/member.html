@@ -965,6 +965,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div class="ov-path-grid" id="ov-path-grid"></div>
       </div>
 
+      <!-- E: Invite card — rendered by stag hunt section when paid -->
+      <div id="invite-wrap" style="margin-top:18px"></div>
+
       <!-- ══ HIDDEN STUBS ══
            All identity/invite/kS-NFT management moved to Partners Hub.
            IDs preserved here for JS compatibility — nothing visible. -->
@@ -983,7 +986,6 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <!-- kS-NFT / invite stubs -->
         <div id="ov-ksnft-card"></div>
         <div id="ov-invite-anchor"></div>
-        <div id="invite-wrap"></div>
         <div id="kyc-cta"></div>
         <div id="kyc-panel"></div>
         <div id="classs-family-block"></div>
@@ -4549,8 +4551,12 @@ window.addEventListener('load', function(){
     var wrap = document.getElementById('invite-wrap');
     if(!wrap) return;
     if(!data){ wrap.style.display = 'none'; return; }
-    var code = data.public_code || data.code || '';
-    var link = data.invite_link || data.share_url || '';
+    var code = (data.public_code || data.code || '').trim();
+    // Always build link from code so it points to home page with ?invite=
+    var siteOrigin = window.location.origin || 'https://cogsaustralia.org';
+    var link = code
+      ? siteOrigin + '/?invite=' + encodeURIComponent(code)
+      : (data.invite_link || data.share_url || siteOrigin + '/');
     var uses = Number(data.use_count || 0);
     var hasCode = !!(data.has_code || code);
     if(!hasCode || !code){ wrap.style.display = 'none'; return; }

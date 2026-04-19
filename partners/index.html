@@ -2691,8 +2691,14 @@ function renderHubInvite(data){
   if(!paid){ card.style.display='none'; return; }
 
   card.style.display = '';
-  var code   = esc2(invite.code||'');
-  var link   = invite.invite_link || invite.share_url || '';
+  var rawCode = (invite.public_code || invite.code || '').trim();
+  var code    = esc2(rawCode);
+  // Always build the link from the code so it's correct even if API returns stale field
+  var origin  = window.location.origin || 'https://cogsaustralia.org';
+  var siteRoot = origin.replace(/\/partners$/, '').replace(/\/partners\/.*$/, '');
+  var link    = rawCode
+    ? siteRoot + '/?invite=' + encodeURIComponent(rawCode)
+    : (invite.invite_link || invite.share_url || siteRoot + '/');
   var uses   = Number(invite.use_count||0);
   var recent = Array.isArray(invite.recent) ? invite.recent : [];
   var names  = recent.slice(0,8).map(function(r){ return esc2(r.first_name||(r.name||'').split(' ')[0]||''); }).filter(Boolean);
