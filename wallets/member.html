@@ -159,10 +159,17 @@ img{max-width:100%;height:auto}
 
 /* ── KPI GRID ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
-.kpi-val{font-family:var(--serif);font-size:1.8rem;font-weight:600;color:var(--gold);line-height:1.1}
-.kpi-lbl{font-size:.78rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:5px}
-.kpi-sub{font-size:.76rem;color:rgba(255,255,255,.45);margin-top:4px}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:18px 16px;text-align:left;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
+.kpi-gold::after{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.kpi-green::after{background:linear-gradient(90deg,transparent,var(--green),transparent)}
+.kpi-teal::after{background:linear-gradient(90deg,transparent,#60d4b8,transparent)}
+.kpi-val{font-family:var(--serif);font-size:2.2rem;font-weight:500;color:var(--gold);line-height:1.05;margin-top:6px;letter-spacing:-.02em}
+.kpi-gold .kpi-val{color:var(--gold)}
+.kpi-green .kpi-val{color:var(--green)}
+.kpi-teal .kpi-val{color:#60d4b8}
+.kpi-lbl{font-size:.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.09em}
+.kpi-sub{font-size:.76rem;color:rgba(255,255,255,.4);margin-top:6px}
 @media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr}.kpi:last-child{grid-column:span 2}}
 
 /* ── CARDS ── */
@@ -548,21 +555,22 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 .sec-hd-title{font-family:var(--serif);font-size:1.6rem;font-weight:500;color:var(--text);line-height:1.1}
 
 /* ── Segmented tab control (wallet sub-views) ── */
-.seg-tabs{display:flex;gap:2px;background:rgba(255,255,255,.05);border-radius:99px;padding:3px}
-.seg-tab{padding:5px 14px;border-radius:99px;font:inherit;font-size:.8rem;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
-.seg-tab.on{background:var(--s2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.seg-tabs{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--gold-bdr);background:var(--s1);border-radius:99px}
+.seg-tab{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:99px;font:inherit;font-size:.8rem;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .14s;white-space:nowrap}
+.seg-tab.on{background:var(--gold);color:#0a0a0a}
 .seg-tab:hover:not(.on){color:var(--text2)}
 
 /* ── Wallet hero card ── */
 .wallet-hero{margin-bottom:16px}
-.wallet-card{background:linear-gradient(135deg,rgba(18,18,18,.97),rgba(10,10,10,.95));border:1px solid var(--border2);border-radius:var(--r);padding:22px 20px;position:relative;overflow:hidden;box-shadow:var(--sh-gold)}
-.wallet-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 5%,var(--gold) 50%,transparent 95%);opacity:.6}
-.wallet-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
-.wallet-balance{font-family:var(--serif);font-size:3.2rem;font-weight:600;color:var(--gold);line-height:1;letter-spacing:-.02em;margin-bottom:4px}
-.wallet-balance .unit{font-size:1.2rem;font-weight:400;color:var(--gold2);margin-left:8px;letter-spacing:.04em}
-.wallet-balance-sub{font-size:.76rem;color:var(--text3);margin-bottom:16px;font-family:var(--mono)}
-.wallet-row-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.wallet-meta{display:flex;gap:18px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border)}
+.wallet-card{background:linear-gradient(135deg,#181410 0%,#0c0a08 52%,#1a1508 100%);border:1px solid var(--gold-bdr);border-radius:var(--r);padding:26px 22px;position:relative;overflow:hidden;box-shadow:0 18px 60px rgba(232,184,75,.13)}
+.wallet-card::before{content:'';position:absolute;top:-40%;right:-10%;width:70%;height:180%;background:radial-gradient(circle,rgba(232,184,75,.18),transparent 55%);pointer-events:none}
+.wallet-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 5%,var(--gold) 50%,transparent 95%);opacity:.7}
+.wallet-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;position:relative;z-index:1}
+.wallet-balance{font-family:var(--serif);font-size:3.2rem;font-weight:600;color:#fff;line-height:1;letter-spacing:-.03em;margin-bottom:4px;position:relative;z-index:1}
+.wallet-balance .unit{font-size:1.2rem;font-weight:400;color:var(--gold);margin-left:8px;letter-spacing:.04em}
+.wallet-balance-sub{font-size:.76rem;color:var(--text3);margin-bottom:16px;font-family:var(--mono);position:relative;z-index:1}
+.wallet-row-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;position:relative;z-index:1}
+.wallet-meta{display:flex;gap:18px;flex-wrap:wrap;padding-top:14px;border-top:1px solid rgba(232,184,75,.18);position:relative;z-index:1}
 .wallet-meta-blk{}
 .wallet-meta-blk .uc{display:block;margin-bottom:3px}
 .wallet-meta-blk .v{font-family:var(--mono);font-size:.78rem;color:var(--text2)}
@@ -618,6 +626,41 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 .chain-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(62,207,110,.15);animation:pulse-dot 1.6s ease-in-out infinite;flex-shrink:0}
 .chain-dot.amber{background:var(--amber);box-shadow:0 0 0 3px rgba(224,154,66,.15)}
 .chain-dot.dim{background:var(--text3);box-shadow:none;animation:none}
+
+/* ── Transaction / activity icon circles ── */
+.tx-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;flex-shrink:0}
+.tx-ico-in{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bdr)}
+.tx-ico-out{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bdr)}
+.tx-ico-sys{background:rgba(232,184,75,.08);color:var(--gold);border:1px solid var(--gold-bdr)}
+.tx-ico-vote{background:var(--blue-bg,rgba(94,168,232,.08));color:#5ea8e8;border:1px solid rgba(94,168,232,.22)}
+
+/* ── Holdings row token symbol badges ── */
+.hr-sym{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:.75rem;flex-shrink:0;overflow:hidden}
+.hr-sym-gold{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-bdr)}
+.hr-sym-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bdr)}
+.hr-sym-amber{background:var(--amber-bg,rgba(224,154,66,.08));color:#e09a42;border:1px solid rgba(224,154,66,.24)}
+.hr-sym-teal{background:rgba(96,212,184,.07);color:#60d4b8;border:1px solid rgba(96,212,184,.22)}
+.hr-sym-silver{background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border2)}
+.hr-sym img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+
+/* ── Copyable member number chip ── */
+.copyable{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;cursor:pointer;transition:border-color .15s,color .15s;user-select:all}
+.copyable:hover{border-color:var(--border2);color:var(--text)}
+.copyable-ico{font-size:.8rem;color:var(--text3);flex-shrink:0}
+
+/* ── Activity event log rows ── */
+.event-row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid rgba(255,255,255,.04)}
+.event-row:last-child{border-bottom:none}
+.event-row:hover{background:rgba(255,255,255,.015)}
+.event-time{font-family:var(--mono);font-size:.68rem;color:var(--text4);flex-shrink:0;min-width:130px}
+.event-desc{font-size:.82rem;color:var(--text2);flex:1;line-height:1.45}
+
+/* ── Exchange balance hero — Community COG$ ── */
+.xch-balance-hero{text-align:center;padding:24px 20px;background:linear-gradient(135deg,rgba(96,212,184,.06),rgba(96,212,184,.02));border:1px solid rgba(96,212,184,.2);border-radius:var(--r);margin-bottom:14px;position:relative;overflow:hidden}
+.xch-balance-hero::before{content:'';position:absolute;top:-60%;right:-20%;width:50%;height:220%;background:radial-gradient(circle,rgba(96,212,184,.12),transparent 60%);pointer-events:none}
+.xch-balance-val{font-family:var(--serif);font-size:2.8rem;font-weight:500;color:#60d4b8;line-height:1;position:relative;z-index:1}
+.xch-balance-lbl{font-size:.76rem;color:var(--text3);margin-top:6px;position:relative;z-index:1}
+.xch-balance-coin{width:28px;height:28px;border-radius:50%;vertical-align:middle;margin-right:8px;position:relative;top:-2px}
 
 /* ── Hash display pill ── */
 .hash-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.72rem;color:var(--text3);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:4px 10px;word-break:break-all}
@@ -819,7 +862,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="ov-strip">
         <div class="ov-strip-id">
           <div class="ov-strip-name" id="id-name">Loading…</div>
-          <div class="ov-strip-mn" id="id-mn">—</div>
+          <div class="ov-strip-mn" id="id-mn"></div>
         </div>
         <div class="id-card-chips" id="ov-status-pill"></div>
         <span id="id-email" style="display:none"></span>
@@ -882,7 +925,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="card" style="margin-bottom:12px">
         <!-- Personal S-NFT -->
         <div class="tr">
-          <div class="tr-ico">&#9672;</div>
+          <div class="hr-sym hr-sym-gold">S</div>
           <div class="tr-inf">
             <div class="tr-name">Personal S-NFT</div>
             <div class="tr-cls">Class S &middot; Soulbound &middot; One equal national governance vote</div>
@@ -896,7 +939,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
              classs-family-block lives in Overview; renderHoldings writes into it there. -->
         <div id="hd-ksnft-summary" style="display:none">
           <div class="tr" style="background:rgba(232,184,75,.03)">
-            <div class="tr-ico" style="font-size:.75rem;font-weight:700;letter-spacing:-.02em">kS</div>
+            <div class="hr-sym hr-sym-amber">kS</div>
             <div class="tr-inf">
               <div class="tr-name">Kids S-NFT <span style="font-size:.72rem;font-weight:400;color:var(--text3)">&mdash; managed in Overview</span></div>
               <div class="tr-cls">Class kS &middot; Guardian-held soulbound token &middot; converts to Class S on child&apos;s 18th birthday</div>
@@ -933,7 +976,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div class="sec-divider">Resident COG$</div>
         <div class="card">
           <div class="tr">
-            <div class="tr-ico">📍</div>
+            <div class="hr-sym hr-sym-teal">Lr</div>
             <div class="tr-inf">
               <div class="tr-name">Resident COG$</div>
               <div class="tr-cls">Class Lr · Address-bound · Admin-activated via GNAF zone verification</div>
@@ -1050,7 +1093,10 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- Balance hero -->
       <div class="xch-balance-hero">
-        <div class="xch-balance-val" id="xch-balance-val">—</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;position:relative;z-index:1">
+          <img src="../assets/cogs_coin_web.png" alt="COG$" class="xch-balance-coin">
+          <div class="xch-balance-val" id="xch-balance-val">—</div>
+        </div>
         <div class="xch-balance-lbl">Community COG$ available</div>
       </div>
 
@@ -1082,7 +1128,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- Send panel -->
       <div class="xch-panel card" id="xch-panel-send">
-        <div class="card-hd"><h3>Transfer Community COG$</h3><button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button></div>
+        <div class="card-hd">
+          <h3><img src="../assets/cogs_coin_web.png" alt="" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:6px;position:relative;top:-1px">Transfer Community COG$</h3>
+          <button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button></div>
         <div class="card-bd">
           <p style="font-size:.76rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Only Community COG$ can move Partner-to-Partner right now. Stewardship reservation classes (ASX, RWA, Landholder) are Released after Expansion Day.</p>
           <div id="transfer-available-board" style="display:none"></div>
@@ -1427,7 +1475,10 @@ function openVault(d){
 
 /* ── IDENTITY ── */
 function renderIdentity(d){
-  el('id-mn').textContent    = fmtMN(d.member_number||'');
+  const mn = fmtMN(d.member_number||'');
+  el('id-mn').innerHTML = mn
+    ? '<span class="copyable" onclick="copyMN(\''+esc(d.member_number||'')+'\',this)" title="Click to copy"><span class="copyable-ico">⎘</span>'+mn+'</span>'
+    : '—';
   el('id-name').textContent  = d.full_name||'—';
   el('id-email').textContent = d.email||'—';
   el('id-mobile').textContent= d.mobile||'—';
@@ -2455,8 +2506,17 @@ function renderLog(d){
     el('event-log').innerHTML = '<div class="placeholder"><strong>No events recorded</strong></div>';
     return;
   }
-  el('event-log').innerHTML = events.slice(0,20).map(e =>
+  function evtIco(e){
+    const t = (e.event_type||'').toLowerCase();
+    if(t.includes('p2p_transfer_sent'))    return '<div class="tx-ico tx-ico-out">↑</div>';
+    if(t.includes('p2p_transfer_received'))return '<div class="tx-ico tx-ico-in">↓</div>';
+    if(t.includes('payment')||t.includes('paid'))return '<div class="tx-ico tx-ico-in">$</div>';
+    if(t.includes('vote')||t.includes('poll'))   return '<div class="tx-ico tx-ico-vote">✦</div>';
+    return '<div class="tx-ico tx-ico-sys">◈</div>';
+  }
+  el('event-log').innerHTML = events.slice(0,30).map(e =>
     `<div class="event-row">
+      ${evtIco(e)}
       <span class="event-time">${dts(e.created_at||e.event_time)}</span>
       <span class="event-desc">${esc(e.description||e.event_type||'')}</span>
     </div>`
@@ -2793,6 +2853,23 @@ function copyAddr(addr, btn){
   });
 }
 
+function copyMN(mn, el){
+  const raw = (mn||'').replace(/\s/g,'');
+  navigator.clipboard.writeText(raw).then(function(){
+    const orig = el.innerHTML;
+    el.innerHTML = '<span class="copyable-ico">✓</span> Copied';
+    el.style.borderColor = 'var(--green)';
+    el.style.color = 'var(--green)';
+    setTimeout(function(){
+      el.innerHTML = orig;
+      el.style.borderColor = '';
+      el.style.color = '';
+    }, 1800);
+  }).catch(function(){
+    prompt('Copy your Partner number:', raw);
+  });
+}
+
 async function updateEmail(){
   const val = (el('prof-email')?.value||'').trim();
   if(!val || !val.includes('@')){
@@ -2862,6 +2939,7 @@ window.openKycPanel     = openKycPanel;
 window.submitKyc        = submitKyc;
 window.coinTransition   = coinTransition;
 window.copyAddr         = copyAddr;
+window.copyMN           = copyMN;
 window.updateEmail      = updateEmail;
 window.submitChangeReq  = submitChangeReq;
 window.authPanel        = authPanel;
@@ -3222,14 +3300,14 @@ function renderTabHoldings(d){
   var resRows = document.getElementById('hd-res-rows');
   if(!resRows) return;
   var rows = [
-    {key:'investment_tokens', label:'ASX COG$',        code:'Class A', ico:'◇'},
-    {key:'rwa_tokens',        label:'RWA COG$',         code:'Class R', ico:'◈'},
-    {key:'landholder_tokens', label:'Landholder COG$',  code:'Class Lh',ico:'⬡'},
+    {key:'investment_tokens', label:'ASX COG$',        code:'Class A', ico:'◇', sym:'ASX',  symCls:'hr-sym-gold'},
+    {key:'rwa_tokens',        label:'RWA COG$',         code:'Class R', ico:'◈', sym:'RWA',  symCls:'hr-sym-amber'},
+    {key:'landholder_tokens', label:'Landholder COG$',  code:'Class Lh',ico:'⬡', sym:'Lh',   symCls:'hr-sym-green'},
   ];
   resRows.innerHTML = rows.map(function(r){
     var val = parseFloat(d[r.key]||0)||0;
     return '<div class="tr">'+
-      '<div class="tr-ico">'+r.ico+'</div>'+
+      '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
       '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation · Released after Expansion Day</div></div>'+
       '<div class="tr-val"><div class="tr-amt">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
       '<button class="tr-edit" onclick="trToggle(\'hd-iedit-'+r.key+'\')">Edit</button>'+
