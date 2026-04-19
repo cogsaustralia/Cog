@@ -747,7 +747,8 @@
               <div class="member-chip" id="member-number-display" style="margin-top:4px;font-size:.72rem">—</div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <div class="vault-pill-wrap" id="vault-pill-wrap">
+              <!-- vault-pill-wrap kept for JS payment overlay injection — hidden, moved into identity card -->
+              <div class="vault-pill-wrap" id="vault-pill-wrap" style="display:none">
                 <a href="../wallets/member.html" class="vault-btn-primary" id="vault-pill-btn" onclick="handleVaultEntry(event);return false;">
                   <img src="../assets/cogs_coin_web.png" alt="" class="vault-coin">
                   <span>Partner Independence Vault
@@ -755,9 +756,8 @@
                     <span style="display:block;font-size:.6rem;font-weight:400;opacity:.55;margin-top:1px">Holdings · Governance · Profile</span>
                   </span>
                 </a>
-                <!-- Payment overlay — injected by JS when payment is pending -->
               </div>
-          <!-- Partners Participation Pill — hidden, managed via identity card -->
+          <!-- Partners Participation Pill — hidden -->
           <div id="participation-pill-wrap" style="display:none">
             <button class="participation-pill incomplete" id="participation-pill" onclick="handleParticipationPillClick()">
               <span>◈</span>
@@ -2323,15 +2323,30 @@ function renderHubIdentity(data){
   var kyc  = data.kyc_status || 'none';
   var kidsCount = parseInt(data.kids_tokens||0,10)||0;
   var kidsRegistered = Array.isArray(data.kids_registered) ? data.kids_registered : [];
-  var unpaidKids = (data.gift_pool_unpaid_lines||[]).filter(function(r){ return r.token_class==='kids_tokens'; });
+  var unpaidKids = Array.isArray(data.kids_pending_orders) ? data.kids_pending_orders : [];
   var unpaidKidsTotal = unpaidKids.reduce(function(s,r){ return s+Number(r.amount||0); }, 0);
   var unpaidKidsUnits = unpaidKids.reduce(function(s,r){ return s+(parseInt(r.units||0,10)||0); }, 0);
   var kycLabels = { verified:'Identity verified', pending:'Verification pending', rejected:'Verification rejected', none:'Not yet verified' };
   var kycChips  = { verified:'hub-chip-green', pending:'hub-chip-amber', rejected:'hub-chip-red', none:'hub-chip-amber' };
   var unregisteredCount = Math.max(0, kidsCount - kidsRegistered.length);
+  var kycOk = kyc === 'verified';
   var html = '';
 
-  /* S-NFT row */
+  /* ── Vault entry link — top of card ── */
+  html += '<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07)">'
+    + '<a href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" '
+    + 'style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(240,190,80,.08),rgba(200,130,20,.04));border:1px solid rgba(240,190,80,.2);border-radius:10px;text-decoration:none;transition:border-color .15s" '
+    + 'onmouseover="this.style.borderColor=\'rgba(240,190,80,.45)\'" onmouseout="this.style.borderColor=\'rgba(240,190,80,.2)\'">'
+    + '<img src="../assets/cogs_coin_web.png" alt="" style="width:36px;height:36px;border-radius:50%;flex-shrink:0">'
+    + '<div style="flex:1;min-width:0">'
+    +   '<div style="font-size:.88rem;font-weight:700;color:var(--gold-1);letter-spacing:.01em">Partner Independence Vault</div>'
+    +   '<div style="font-size:.72rem;color:var(--muted);margin-top:2px">Holdings &middot; Governance &middot; Profile</div>'
+    + '</div>'
+    + '<span style="font-size:.82rem;color:var(--gold-2);font-weight:600">Enter &rarr;</span>'
+    + '</a>'
+    + '</div>';
+
+  /* ── S-NFT row ── */
   html += '<div class="hub-id-row">'
     + '<div><div class="hub-id-label">Personal S-NFT — Class S</div>'
     + '<div class="hub-id-sub">Soulbound &middot; one equal national governance vote</div></div>'
@@ -2342,19 +2357,18 @@ function renderHubIdentity(data){
       + '<button class="hub-btn hub-btn-red" onclick="hubPayNow()">Pay $4 &rarr;</button>')
     + '</div></div>';
 
-  /* KYC row */
-  var kycChip = '<span class="hub-chip '+kycChips[kyc]+'">'+esc2(kycLabels[kyc]||'Unknown')+'</span>';
+  /* ── KYC row ── */
   html += '<div class="hub-id-row" id="hub-kyc-row">'
     + '<div><div class="hub-id-label">Identity verification</div>'
     + '<div class="hub-id-sub">Required to register Kids S-NFTs</div></div>'
     + '<div class="hub-id-right">'
-    + kycChip
+    + '<span class="hub-chip '+kycChips[kyc]+'">'+esc2(kycLabels[kyc]||'Unknown')+'</span>'
     + (kyc !== 'verified' && kyc !== 'pending'
       ? '<button class="hub-btn hub-btn-amber" onclick="hubToggleKyc()">Verify ID &rarr;</button>'
       : '')
     + '</div></div>';
 
-  /* KYC inline form — hidden until button clicked */
+  /* KYC inline form */
   if(kyc !== 'verified'){
     html += '<div id="hub-kyc-form" style="display:none" class="hub-kyc-form">'
       + '<div class="hub-field"><label>Full name (as on Medicare card)</label><input id="hkyc-name" autocomplete="name" placeholder="JANE CITIZEN"></div>'
@@ -2372,7 +2386,7 @@ function renderHubIdentity(data){
       + '</div>';
   }
 
-  /* Outstanding kids payment */
+  /* ── Outstanding kids payment ── */
   if(unpaidKidsUnits > 0){
     html += '<div class="hub-id-row" style="background:rgba(220,80,80,.05);border-radius:8px;padding:10px 12px;margin-top:4px">'
       + '<div><div class="hub-id-label" style="color:#f07a7a">&#9889; Payment outstanding — '+unpaidKidsUnits+' Kids S-NFT'+(unpaidKidsUnits!==1?'s':'')+'</div>'
@@ -2381,7 +2395,7 @@ function renderHubIdentity(data){
       + '</div>';
   }
 
-  /* kS-NFT sub-section */
+  /* ── Kids S-NFT divider ── */
   html += '<div class="hub-sub-divider">Kids S-NFT <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.7rem;margin-left:6px">for parents, grandparents &amp; guardians <button style="background:none;border:1px solid rgba(240,190,80,.3);color:rgba(240,190,80,.7);border-radius:99px;padding:1px 8px;font-size:.66rem;cursor:pointer;font-family:inherit;margin-left:4px" onclick="hubShowKsnftInfo()">?</button></span></div>';
 
   /* Registered children */
@@ -2392,28 +2406,43 @@ function renderHubIdentity(data){
     }).join('');
   }
   if(unregisteredCount > 0){
-    html += '<div style="padding:7px 12px;background:rgba(240,154,60,.07);border:1px solid rgba(240,154,60,.2);border-radius:8px;font-size:.74rem;color:#f0b870;margin-bottom:8px">'+unregisteredCount+' ordered token'+(unregisteredCount!==1?'s':'')+' pending admin registration — payment confirmation required.</div>';
+    html += '<div style="padding:7px 12px;background:rgba(240,154,60,.07);border:1px solid rgba(240,154,60,.2);border-radius:8px;font-size:.74rem;color:#f0b870;margin-bottom:8px">'+unregisteredCount+' ordered token'+(unregisteredCount!==1?'s':'')+' pending admin registration.</div>';
   }
-  if(kidsCount === 0 && kidsRegistered.length === 0){
-    html += '<div style="font-size:.76rem;color:var(--muted);padding:4px 0 8px">No Kids S-NFTs registered yet.</div>';
+  if(kidsCount === 0 && kidsRegistered.length === 0 && unpaidKidsUnits === 0){
+    html += '<div style="font-size:.76rem;color:var(--muted);padding:4px 0 6px">No Kids S-NFTs registered yet.</div>';
   }
 
-  /* Add Kids stepper */
-  var kycOk = kyc === 'verified';
-  html += '<div class="hub-id-row" style="padding-top:10px">'
-    + '<div><div class="hub-id-label">Add Kids S-NFT</div>'
-    + '<div class="hub-id-sub">$1 per child &middot; Class kS &middot; guardian-held until age 18</div></div>'
-    + '<div class="hub-id-right">'
+  /* ── Add Kids S-NFT — collapsible pill ── */
+  html += '<div style="margin-top:8px">'
+    + '<button onclick="hubToggleAddKids()" style="display:flex;align-items:center;gap:8px;width:100%;background:rgba(255,255,255,.03);border:1px solid '+(kycOk?'rgba(240,190,80,.25)':'rgba(255,255,255,.08)') +';border-radius:8px;padding:10px 14px;cursor:pointer;font-family:inherit;color:var(--text);text-align:left;transition:border-color .15s">'
+    +   '<span style="font-size:.82rem;font-weight:600;flex:1">+ Add Kids S-NFT</span>'
+    +   '<span style="font-size:.72rem;color:var(--muted)">$1 per child &middot; Class kS</span>'
+    +   '<span id="hub-kids-chev" style="font-size:.68rem;color:var(--muted);margin-left:8px;transition:transform .2s">&#9662;</span>'
+    + '</button>'
+    + '<div id="hub-kids-expand" style="display:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-top:none;border-radius:0 0 8px 8px">'
     + (kycOk
-      ? '<button class="hub-btn hub-btn-ghost" onclick="hubAdjustKids(-1)" style="width:28px;padding:4px;text-align:center">&#8722;</button>'
-      + '<input id="hub-kids-qty" type="number" min="0" value="0" style="width:52px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--text);font:inherit;font-size:.82rem;padding:4px">'
-      + '<button class="hub-btn hub-btn-ghost" onclick="hubAdjustKids(1)" style="width:28px;padding:4px;text-align:center">&#43;</button>'
-      + '<button class="hub-btn hub-btn-gold" onclick="hubOrderKids()">+ Add</button>'
-      : '<span style="font-size:.74rem;color:var(--muted)">Verify identity first</span>')
-    + '</div></div>'
-    + '<div class="hub-fl" id="hub-kids-fl"></div>';
+      ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+        + '<span style="font-size:.78rem;color:var(--text2);flex:1">How many Kids S-NFTs?</span>'
+        + '<button class="hub-btn hub-btn-ghost" onclick="hubAdjustKids(-1)" style="width:28px;padding:4px;text-align:center">&#8722;</button>'
+        + '<input id="hub-kids-qty" type="number" min="0" value="0" style="width:52px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--text);font:inherit;font-size:.82rem;padding:4px">'
+        + '<button class="hub-btn hub-btn-ghost" onclick="hubAdjustKids(1)" style="width:28px;padding:4px;text-align:center">&#43;</button>'
+        + '<button class="hub-btn hub-btn-gold" onclick="hubOrderKids()">+ Add</button>'
+        + '</div>'
+      : '<div style="font-size:.78rem;color:var(--muted);padding:4px 0">Identity verification required before adding Kids S-NFTs. <button class="hub-btn hub-btn-amber" style="margin-left:8px" onclick="hubToggleKyc()">Verify ID &rarr;</button></div>')
+    + '<div class="hub-fl" id="hub-kids-fl"></div>'
+    + '</div>'
+    + '</div>';
 
   bd.innerHTML = html;
+}
+
+function hubToggleAddKids(){
+  var exp  = document.getElementById('hub-kids-expand');
+  var chev = document.getElementById('hub-kids-chev');
+  if(!exp) return;
+  var open = exp.style.display === 'none';
+  exp.style.display  = open ? '' : 'none';
+  if(chev) chev.style.transform = open ? 'rotate(180deg)' : '';
 }
 
 /* ── Section 2: Governance — Polls & Proposals ── */
