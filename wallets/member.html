@@ -4455,9 +4455,9 @@ function renderParticipationPathways(d){
       ? '<span class="ov-path-badge" id="op-badge-'+k+'" style="'+(unread>0?'':'display:none')+'">'+unread+'</span>'
       : '';
     var msgBtn = active
-      ? ' <button class="btn btn-ghost" style="font-size:.75rem;padding:2px 7px;margin-left:4px;margin-top:4px" onclick="event.stopPropagation();openOpDrawer(\''+k+'\')" title="Messages">&#128204;</button>'
+      ? '<button class="btn btn-ghost" style="font-size:.75rem;padding:2px 7px;margin-left:4px;margin-top:4px" data-area="'+k+'" onclick="event.stopPropagation();openOpDrawer(this.dataset.area)" title="Messages">&#128204;</button>'
       : '';
-    return '<div class="ov-path" onclick="showInfo(\''+infoKey+'\')" title="'+esc(cfg.label)+'">' 
+    return '<div class="ov-path" data-info="'+infoKey+'" onclick="showInfo(this.dataset.info)" title="'+esc(cfg.label)+'">' 
       + badgeHtml
       + '<div class="ov-path-top">'
       +   '<span class="ov-path-dot '+dotCls+'"></span>'
