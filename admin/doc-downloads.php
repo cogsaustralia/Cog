@@ -168,4 +168,4 @@ ob_start(); ?>
 </div>
 <?php
 $body = ob_get_clean();
-ops_render_page('Doc Downloads', 'doc_downloads', $body);
+ops_render_page('Document Downloads', 'doc_downloads', $body);

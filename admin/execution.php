@@ -585,4 +585,4 @@ ob_start(); ?>
 </div>
 <?php
 $body = ob_get_clean();
-ops_render_page('Execution', 'execution', $body, $flash, $flashType);
+ops_render_page('Token Execution', 'execution', $body, $flash, $flashType);

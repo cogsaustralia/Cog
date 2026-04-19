@@ -222,7 +222,7 @@ $apiKeySet = ops_env('ANTHROPIC_API_KEY') !== '';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reconciliation Agent | COG$ Admin</title>
+<title>AI Reconciliation | COG$ Admin</title>
 <?php ops_admin_help_assets_once(); ?>
 <style>
 :root {

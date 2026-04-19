@@ -47,7 +47,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'audit_access.php') return 'audit_access';
         if ($script === 'doc-downloads.php') return 'doc_downloads';
         if ($script === 'reconciliation.php') return 'reconciliation';
-        if ($script === 'reconciliation_agent.php') return 'reconciliation';
+        if ($script === 'reconciliation_agent.php') return 'reconciliation_agent';
         if ($script === 'accounting.php') return 'accounting';
         if ($script === 'ledger.php') return 'accounting';
         if ($script === 'expenses.php') return 'expenses';
@@ -118,7 +118,7 @@ if (!function_exists('admin_sidebar_styles_once')) {
     var btn=document.querySelector(".sidebar-toggle");
     if(!shell||!sidebar||!btn) return;
     var key="cogs_admin_sidebar_collapsed";
-    if(localStorage.getItem(key)==="1"){ shell.classList.add("is-collapsed"); sidebar.classList.add("is-collapsed"); }
+    if(localStorage.getItem(key) !== "0"){ shell.classList.add("is-collapsed"); sidebar.classList.add("is-collapsed"); }
     btn.addEventListener("click", function(){
       shell.classList.toggle("is-collapsed");
       sidebar.classList.toggle("is-collapsed");
@@ -160,63 +160,65 @@ if (!function_exists('admin_sidebar_render')) {
         admin_sidebar_styles_once();
 
         $groups = [
-            'Control Plane' => [
-                ['key' => 'dashboard',         'label' => '◈  Dashboard',               'href' => './dashboard.php'],
-                ['key' => 'partner_registry',  'label' => '👥  Partners',               'href' => './members.php'],
-                ['key' => 'businesses',        'label' => '🏢  Businesses',             'href' => './businesses.php'],
-                ['key' => 'payments',          'label' => '💳  Payments',                'href' => './payments.php'],
-                ['key' => 'approvals',         'label' => '✅  Approvals',               'href' => './approvals.php'],
-                ['key' => 'kids',              'label' => '👶  Kids kS-NFT',             'href' => './kids.php'],
-                ['key' => 'execution',         'label' => '⛓  Execution',               'href' => './execution.php'],
-                ['key' => 'classes',           'label' => '🪙  COG$ Classes',            'href' => './classes.php'],
-                ['key' => 'settings',          'label' => '⚙  Settings',                'href' => './settings.php'],
+            'Operations' => [
+                ['key' => 'dashboard',         'label' => '◈  Dashboard',                 'href' => './dashboard.php'],
+                ['key' => 'partner_registry',  'label' => '👥  Partners',                 'href' => './members.php'],
+                ['key' => 'businesses',        'label' => '🏢  Businesses',               'href' => './businesses.php'],
+                ['key' => 'payments',          'label' => '💳  Payments',                  'href' => './payments.php'],
+                ['key' => 'approvals',         'label' => '✅  Approvals',                 'href' => './approvals.php'],
+                ['key' => 'kids',              'label' => '👶  Kids Tokens',               'href' => './kids.php'],
+                ['key' => 'execution',         'label' => '⛓  Token Execution',           'href' => './execution.php'],
+                ['key' => 'classes',           'label' => '🪙  COG$ Classes',              'href' => './classes.php'],
+                ['key' => 'settings',          'label' => '⚙  Settings',                  'href' => './settings.php'],
             ],
-            'Governance & Evidence' => [
-                ['key' => 'governance',        'label' => '🗳  Governance',              'href' => './governance.php'],
-                ['key' => 'operations',        'label' => '🤝  Partner Ops',            'href' => './operations.php'],
-                ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',          'href' => './foundation_day.php'],
-                ['key' => 'communications',    'label' => '📣  Communications',          'href' => './messages.php'],
-                ['key' => 'zones',             'label' => '📍  Zones & Eligibility',     'href' => './zones.php'],
-                ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',        'href' => './evidence_reviews.php'],
-                ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',             'href' => './admin_kyc.php'],
-                ['key' => 'exceptions',        'label' => '⚠  Exceptions',              'href' => './exceptions.php'],
-                ['key' => 'audit',             'label' => '📜  Audit / Recovery',        'href' => './audit.php'],
-                ['key' => 'audit_access',      'label' => '🔐  Audit Access',             'href' => './audit_access.php'],
+            'Governance & Compliance' => [
+                ['key' => 'governance',        'label' => '🗳  Governance',                'href' => './governance.php'],
+                ['key' => 'operations',        'label' => '🤝  Partner Operations',        'href' => './operations.php'],
+                ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',            'href' => './foundation_day.php'],
+                ['key' => 'communications',    'label' => '📣  Communications',            'href' => './messages.php'],
+                ['key' => 'zones',             'label' => '📍  Geographic Zones',          'href' => './zones.php'],
+                ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',          'href' => './evidence_reviews.php'],
+                ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',               'href' => './admin_kyc.php'],
+                ['key' => 'exceptions',        'label' => '⚠  Exceptions',                'href' => './exceptions.php'],
+                ['key' => 'audit',             'label' => '📜  Audit Log',                 'href' => './audit.php'],
+                ['key' => 'audit_access',      'label' => '🔐  Audit Access',              'href' => './audit_access.php'],
             ],
-            'Assets & Reserves' => [
-                ['key' => 'asx_holdings',       'label' => '📈  ASX Holdings',            'href' => './asx_holdings.php'],
-                ['key' => 'asx_purchases',      'label' => '🧾  ASX Purchases',           'href' => './asx_purchases.php'],
-                ['key' => 'rwa_assets',         'label' => '🪨  RWA Assets',              'href' => './rwa_assets.php'],
-                ['key' => 'rwa_valuations',     'label' => '💠  RWA Valuations',          'href' => './rwa_valuations.php'],
-                ['key' => 'asset_backing',      'label' => '🧷  Collateral',           'href' => './asset_backing.php'],
+            'Investments & Assets' => [
+                ['key' => 'asx_holdings',       'label' => '📈  ASX Holdings',             'href' => './asx_holdings.php'],
+                ['key' => 'asx_purchases',      'label' => '🧾  ASX Purchases',            'href' => './asx_purchases.php'],
+                ['key' => 'rwa_assets',         'label' => '🪨  Real-World Assets',        'href' => './rwa_assets.php'],
+                ['key' => 'rwa_valuations',     'label' => '💠  RWA Valuations',           'href' => './rwa_valuations.php'],
+                ['key' => 'asset_backing',      'label' => '🧷  Asset Collateral',         'href' => './asset_backing.php'],
             ],
-            'Infrastructure & Security' => [
-                ['key' => 'infrastructure',    'label' => '🛰  Sovereign Infrastructure', 'href' => './infrastructure.php'],
-                ['key' => 'accounting',        'label' => '📊  Accounting',             'href' => './accounting.php'],
-                ['key' => 'reconciliation',    'label' => '🤖  Reconciliation Agent',    'href' => './reconciliation_agent.php'],
-                ['key' => 'expenses',          'label' => '🧾  Expenses',                'href' => './expenses.php'],
-                ['key' => 'trust_income',      'label' => '💰  Trust Income',            'href' => './trust_income.php'],
-                ['key' => 'stb_distributions', 'label' => '📤  STB Distributions',       'href' => './stb_distributions.php'],
-                ['key' => 'grants',            'label' => '🌿  Sub-Trust C Grants',      'href' => './grants.php'],
-                ['key' => 'doc_downloads',     'label' => '📥  Doc Downloads',           'href' => './doc-downloads.php'],
-                ['key' => 'email_access',      'label' => '📮  Email Access',            'href' => './email_access.php'],
-                ['key' => 'operator_security', 'label' => '🔐  Operator Security',       'href' => './operator_security.php'],
+            'Trust Accounting' => [
+                ['key' => 'accounting',        'label' => '📊  Accounting',               'href' => './accounting.php'],
+                ['key' => 'expenses',          'label' => '🧾  Expenses',                  'href' => './expenses.php'],
+                ['key' => 'trust_income',      'label' => '💰  Trust Income',              'href' => './trust_income.php'],
+                ['key' => 'stb_distributions', 'label' => '📤  Sub-Trust B Distributions', 'href' => './stb_distributions.php'],
+                ['key' => 'grants',            'label' => '🌿  Community Grants',          'href' => './grants.php'],
             ],
-            'Legacy Bridge' => [
-                ['key' => 'reconciliation',     'label' => '🔍  Reconciliation',         'href' => './reconciliation.php'],
-                ['key' => 'mint_queue',         'label' => '⛏  Mint Queue (bridge)',    'href' => './mint_queue.php'],
-                ['key' => 'mint_batches',       'label' => '📦  Mint Batches (bridge)',  'href' => './mint_batches.php'],
-                ['key' => 'chain_handoff',      'label' => '🔗  Chain Handoff (bridge)', 'href' => './chain_handoff.php'],
-                ['key' => 'session_check',      'label' => '🔐  Session Check',          'href' => './session-check.php'],
-                ['key' => 'legacy_dependencies','label' => '🧩  Bridge Status',          'href' => './legacy-dependencies.php'],
+            'System & Administration' => [
+                ['key' => 'infrastructure',    'label' => '🛰  Blockchain Infrastructure', 'href' => './infrastructure.php'],
+                ['key' => 'reconciliation_agent', 'label' => '🤖  AI Reconciliation',     'href' => './reconciliation_agent.php'],
+                ['key' => 'doc_downloads',     'label' => '📥  Document Downloads',        'href' => './doc-downloads.php'],
+                ['key' => 'email_access',      'label' => '📮  Email Access',              'href' => './email_access.php'],
+                ['key' => 'operator_security', 'label' => '🔐  Admin Security',            'href' => './operator_security.php'],
             ],
-            'Communications Detail' => [
-                ['key' => 'wallet_messages',       'label' => '✉  Wallet Notices',      'href' => './messages.php?section=wallet_messages'],
-                ['key' => 'announcements',         'label' => '📢  Announcements',       'href' => './messages.php?section=announcements'],
-                ['key' => 'proposals',             'label' => '📝  Proposals',           'href' => './messages.php?section=proposals'],
-                ['key' => 'binding_polls',         'label' => '⚖  Binding Polls',       'href' => './messages.php?section=binding_polls'],
-                ['key' => 'stewardship_responses', 'label' => '◈  Stewardship',         'href' => './messages.php?section=stewardship_responses'],
-                ['key' => 'email_templates',       'label' => '📄  Email Templates',     'href' => './messages.php?section=email_templates'],
+            'Bridge / Diagnostics' => [
+                ['key' => 'reconciliation',     'label' => '🔍  Legacy Reconciliation',    'href' => './reconciliation.php'],
+                ['key' => 'mint_queue',         'label' => '⛏  Token Mint Queue',         'href' => './mint_queue.php'],
+                ['key' => 'mint_batches',       'label' => '📦  Token Mint Batches',       'href' => './mint_batches.php'],
+                ['key' => 'chain_handoff',      'label' => '🔗  Blockchain Handoff',       'href' => './chain_handoff.php'],
+                ['key' => 'session_check',      'label' => '🔐  Session Check',            'href' => './session-check.php'],
+                ['key' => 'legacy_dependencies','label' => '🧩  Bridge Status',            'href' => './legacy-dependencies.php'],
+            ],
+            'Communications' => [
+                ['key' => 'wallet_messages',       'label' => '✉  Wallet Notices',        'href' => './messages.php?section=wallet_messages'],
+                ['key' => 'announcements',         'label' => '📢  Announcements',         'href' => './messages.php?section=announcements'],
+                ['key' => 'proposals',             'label' => '📝  Proposals',             'href' => './messages.php?section=proposals'],
+                ['key' => 'binding_polls',         'label' => '⚖  Binding Polls',         'href' => './messages.php?section=binding_polls'],
+                ['key' => 'stewardship_responses', 'label' => '◈  Stewardship Responses', 'href' => './messages.php?section=stewardship_responses'],
+                ['key' => 'email_templates',       'label' => '📄  Email Templates',       'href' => './messages.php?section=email_templates'],
             ],
         ];
         ?>
@@ -246,7 +248,7 @@ if (!function_exists('admin_sidebar_render')) {
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
               <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c1">Using Admin</div>
               <?php if (function_exists('ops_admin_help_button')): ?>
-                <?= ops_admin_help_button('Admin navigation', 'Control Plane pages are the live operator route. Governance & Evidence pages explain legal and decision records. Legacy Bridge Diagnostics pages are for transitional checks and retirement readiness, not for primary day-to-day operations.') ?>
+                <?= ops_admin_help_button('Admin navigation', 'Operations pages are the live operator route for day-to-day tasks. Governance & Compliance pages cover legal records, evidence, and decision trails. Trust Accounting pages are for recording and reviewing all financial flows. Bridge / Diagnostics pages are for transitional checks and are not used for primary operations.') ?>
               <?php endif; ?>
             </div>
             <p style="margin:0 0 10px;color:#9fb0c1;font-size:11.5px;line-height:1.55">Start on Dashboard for orientation, then move through Payments, Approvals, and Execution for live operations. Use diagnostics only when you are checking bridge state or investigating a fault.</p>

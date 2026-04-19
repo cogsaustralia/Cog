@@ -106,4 +106,4 @@ ob_start(); ?>
   </div>
   <?php endif; ?>
 </div>
-<?php $body=ob_get_clean(); ops_render_page('Chain Handoff','chain_handoff',$body,$flash,$flashType);
+<?php $body=ob_get_clean(); ops_render_page('Blockchain Handoff','chain_handoff',$body,$flash,$flashType);

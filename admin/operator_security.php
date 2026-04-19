@@ -227,4 +227,4 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
 </div>
 <?php
 $body = (string)ob_get_clean();
-ops_render_page('Operator Security', 'operator_security', $body, $flash, $flashType);
+ops_render_page('Admin Security', 'operator_security', $body, $flash, $flashType);

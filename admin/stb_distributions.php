@@ -223,7 +223,7 @@ $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
 
 ob_start();
 ?>
-<div class="card"><div class="card-head"><h1 style="margin:0">STB Distributions</h1></div><div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Sub-Trust B distribution runs — 100% of STB inflows must be distributed within 60 days.</p></div></div>
+<div class="card"><div class="card-head"><h1 style="margin:0">Sub-Trust B Distributions</h1></div><div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Sub-Trust B distribution runs — 100% of STB inflows must be distributed within 60 days.</p></div></div>
 
 <?php if ($flash): ?><div class="alert <?php echo $flashType === 'ok' ? 'alert-ok' : 'alert-err'; ?>"><?php echo stb_h($flash); ?></div><?php endif; ?>
 

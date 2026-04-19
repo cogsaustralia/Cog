@@ -215,4 +215,4 @@ ob_start();
 </div>
 <?php
 $body = ob_get_clean();
-ops_render_page('RWA Assets', 'rwa_assets', $body, $flash, $flashType);
+ops_render_page('Real-World Assets', 'rwa_assets', $body, $flash, $flashType);
