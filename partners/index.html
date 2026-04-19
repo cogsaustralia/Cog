@@ -1849,7 +1849,7 @@ window.shareVia = async function(channel){
   var text = 'Australia\'s resources should carry Australian voices. COGs is a community joint venture partnership where Partners collectively direct governance, stewardship, and real-asset participation. Start on the landing page here: ' + url;
   switch(channel){
     case 'whatsapp':
-      window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+      window.location.href = 'https://wa.me/?text='+encodeURIComponent(text);
       break;
     case 'sms':
       window.location.href = 'sms:?body='+encodeURIComponent(text);
