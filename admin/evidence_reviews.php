@@ -94,46 +94,48 @@ $pagerBase = 'evidence_reviews.php?' . ($memberFilter > 0 ? 'member_id=' . $memb
 ob_start(); ?>
 <?php ops_admin_help_assets_once(); ?>
 <div class="stack">
-  <?= ops_admin_info_panel('Evidence · Review', 'What this page does', 'Use Evidence Reviews to create and update explicit evidence review records for intake or operational subjects. This page is for documenting review work and its outcome.', [
-    'Create a review when a subject needs documented evidence assessment.',
-    'Update the review status as the evidence is checked or resolved.',
-    'Use document references and notes so later operators can follow the trail.'
+  <?= ops_admin_collapsible_help('Page guide & workflow', [
+    ops_admin_info_panel('Evidence · Review', 'What this page does', 'Use Evidence Reviews to create and update explicit evidence review records for intake or operational subjects. This page is for documenting review work and its outcome.', [
+      'Create a review when a subject needs documented evidence assessment.',
+      'Update the review status as the evidence is checked or resolved.',
+      'Use document references and notes so later operators can follow the trail.',
+    ]),
+    ops_admin_workflow_panel('Typical workflow', 'Evidence Reviews is a controlled review register, not a payment or execution page.', [
+      ['title' => 'Create the review', 'body' => 'Choose the subject, member, review type, and optional document reference.'],
+      ['title' => 'Assess the evidence', 'body' => 'Examine the supporting material outside or alongside this page.'],
+      ['title' => 'Update the status', 'body' => 'Move the review to approved, rejected, or another relevant status with notes.'],
+      ['title' => 'Let downstream pages react', 'body' => 'Review outcomes can feed later intake, approval, or exception handling.'],
+    ]),
+    ops_admin_status_panel('Status guide', 'These statuses describe the evidence review itself.', [
+      ['label' => 'Pending', 'body' => 'Review was created but has not yet been concluded.'],
+      ['label' => 'Approved', 'body' => 'Evidence review completed successfully.'],
+      ['label' => 'Rejected', 'body' => 'Evidence did not satisfy the review requirement.'],
+      ['label' => 'Document reference', 'body' => 'Use this to link the review to an internal source or evidence item.'],
+    ]),
   ]) ?>
-
-  <?= ops_admin_workflow_panel('Typical workflow', 'Evidence Reviews is a controlled review register, not a payment or execution page.', [
-    ['title' => 'Create the review', 'body' => 'Choose the subject, member, review type, and optional document reference.'],
-    ['title' => 'Assess the evidence', 'body' => 'Examine the supporting material outside or alongside this page.'],
-    ['title' => 'Update the status', 'body' => 'Move the review to approved, rejected, or another relevant status with notes.'],
-    ['title' => 'Let downstream pages react', 'body' => 'Review outcomes can feed later intake, approval, or exception handling.']
-  ]) ?>
-
-  <?= ops_admin_status_panel('Status guide', 'These statuses describe the evidence review itself.', [
-    ['label' => 'Pending', 'body' => 'Review was created but has not yet been concluded.'],
-    ['label' => 'Approved', 'body' => 'Evidence review completed successfully.'],
-    ['label' => 'Rejected', 'body' => 'Evidence did not satisfy the review requirement.'],
-    ['label' => 'Document reference', 'body' => 'Use this to link the review to an internal source or evidence item.']
-  ]) ?>
-  <div class="section">
-    <h2 style="margin-top:0">Create evidence review <?= ops_admin_help_button('Create evidence review', 'Create a review record when a subject needs explicit evidence assessment. The review record is the auditable wrapper around the evidence decision, not the evidence file itself.') ?></h2>
+  <div class="card">
+    <div class="card-head"><h2>Create evidence review <?= ops_admin_help_button('Create evidence review', 'Create a review record when a subject needs explicit evidence assessment. The review record is the auditable wrapper around the evidence decision, not the evidence file itself.') ?></h2></div>
+    <div class="card-body">
     <form method="post" class="stack">
       <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
       <input type="hidden" name="action" value="create_review">
       <div class="form-grid">
-        <div><label>Subject type</label><select name="subject_type"><option value="member">member</option><option value="approval_request">approval_request</option><option value="mint_queue">mint_queue</option></select></div>
-        <div><label>Subject ID</label><input name="subject_id" type="number" min="1"></div>
-        <div><label>Member</label><select name="member_id"><?php foreach($members as $m): ?><option value="<?= (int)$m['id'] ?>"><?= ops_h($m['full_name'].' · '.$m['member_number'].' · '.$m['member_type']) ?></option><?php endforeach; ?></select></div>
-        <div><label>Token class</label><select name="token_class_id"><option value="0">— none —</option><?php foreach($tokenClasses as $t): ?><option value="<?= (int)$t['id'] ?>"><?= ops_h($t['display_name'].' · '.$t['class_code']) ?></option><?php endforeach; ?></select></div>
-        <div><label>Review type</label><select name="review_type"><?php foreach(ops_evidence_review_types() as $t): ?><option value="<?= $t ?>"><?= $t ?></option><?php endforeach; ?></select></div>
-        <div><label>Document reference</label><input name="document_reference"></div>
+        <div class="field"><label>Subject type</label><select name="subject_type"><option value="member">member</option><option value="approval_request">approval_request</option><option value="mint_queue">mint_queue</option></select></div>
+        <div class="field"><label>Subject ID</label><input name="subject_id" type="number" min="1"></div>
+        <div class="field"><label>Member</label><select name="member_id"><?php foreach($members as $m): ?><option value="<?= (int)$m['id'] ?>"><?= ops_h($m['full_name'].' · '.$m['member_number'].' · '.$m['member_type']) ?></option><?php endforeach; ?></select></div>
+        <div class="field"><label>Token class</label><select name="token_class_id"><option value="0">— none —</option><?php foreach($tokenClasses as $t): ?><option value="<?= (int)$t['id'] ?>"><?= ops_h($t['display_name'].' · '.$t['class_code']) ?></option><?php endforeach; ?></select></div>
+        <div class="field"><label>Review type</label><select name="review_type"><?php foreach(ops_evidence_review_types() as $t): ?><option value="<?= $t ?>"><?= $t ?></option><?php endforeach; ?></select></div>
+        <div class="field"><label>Document reference</label><input name="document_reference"></div>
       </div>
-      <div><label>Notes</label><textarea name="notes"></textarea></div>
-      <div class="actions"><button class="btn" type="submit">Create review</button></div>
+      <div class="field"><label>Notes</label><textarea name="notes"></textarea></div>
+      <div class="actions"><button class="btn btn-gold" type="submit">Create review</button></div>
     </form>
+    </div>
   </div>
 
-  <div class="section">
-    <h2 style="margin-top:0">Evidence reviews <?= ops_admin_help_button('Evidence reviews list', 'This table shows the evidence review register. Update the status and notes as the review progresses so later operators can see what happened and why.') ?></h2>
-    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>Type</th><th>Status</th><th>Doc ref</th><th>Updated</th><th>Action</th></tr></thead><tbody>
+  <div class="card">
+    <div class="card-head"><h2>Evidence reviews <?= ops_admin_help_button('Evidence reviews list', 'This table shows the evidence review register. Update the status and notes as the review progresses so later operators can see what happened and why.') ?></h2></div>
+    <div class="card-body table-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>Type</th><th>Status</th><th>Doc ref</th><th>Updated</th><th>Action</th></tr></thead><tbody>
     <?php if(!$rows): ?><tr><td colspan="7">No evidence reviews found.</td></tr><?php endif; ?>
     <?php foreach($rows as $r): ?><tr>
       <td><?= (int)$r['id'] ?></td>
@@ -156,6 +158,7 @@ ob_start(); ?>
     </tr><?php endforeach; ?>
     </tbody></table></div>
     <?= render_pager($pagerBase, $page, $totalPages, $totalReviews, 'review') ?>
+    </div>
   </div>
 </div>
 <?php $body=ob_get_clean(); ops_render_page('Evidence Reviews','evidence_reviews',$body,$flash,$flashType);

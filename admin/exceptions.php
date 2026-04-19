@@ -101,58 +101,34 @@ ops_admin_help_assets_once();
 .exception-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
 .exception-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .exception-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
-.exception-stat{padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.exception-stat{padding:14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
 .exception-stat .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
 .exception-stat strong{font-size:1.35rem;display:block}
 .exception-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .exception-form-grid .full{grid-column:1/-1}
-.field{display:grid;gap:6px}
-.field label{font-size:.86rem;color:var(--muted);font-weight:600}
-.field input,.field select,.field textarea{width:100%;padding:.85rem 1rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text)}
-.field textarea{min-height:96px;resize:vertical}
-@media (max-width:980px){.exception-grid,.exception-meta,.exception-form-grid{grid-template-columns:1fr}}
+@media(max-width:980px){.exception-grid,.exception-meta,.exception-form-grid{grid-template-columns:1fr}}
 </style>
-<?= ops_admin_info_panel(
-    'Stage 7 — Audit, diagnostics, and control review',
-    'What this page does',
-    'Exceptions is the structured work queue for issues that need human review. Use it to log, triage, investigate, and close operational, compliance, and ledger-related anomalies.',
-    [
-        'Refresh from system to pull in newly detected issues that the platform can identify automatically.',
-        'Use create / update when an operator needs to record a manual issue, escalate severity, or close a resolved item.',
-        'Treat this page as the exceptions register, not as the source page where the underlying operational fix is performed.',
-    ]
-) ?>
-
-<?= ops_admin_workflow_panel(
-    'Typical workflow',
-    'A clean exception workflow keeps the control plane auditable. The exception is recorded here, but the corrective action usually happens on another page such as Payments, Approvals, Execution, Governance, or Audit.',
-    [
-        ['title' => 'Identify', 'body' => 'Refresh from system or create a manual exception when an issue is found.'],
-        ['title' => 'Triage', 'body' => 'Set severity and status so operators can see what needs urgent action.'],
-        ['title' => 'Investigate', 'body' => 'Use the member link and details text to gather evidence and determine the cause.'],
-        ['title' => 'Resolve', 'body' => 'Update the record to resolved once the root cause has been addressed on the relevant admin page.'],
-    ]
-) ?>
-
-<?= ops_admin_guide_panel(
-    'How to use this page',
-    'This page has two jobs: maintain the live exceptions queue and let operators create or update exception records cleanly.',
-    [
-        ['title' => 'Exceptions work queue', 'body' => 'Read this top to bottom. Open and critical items are the main operator focus.'],
-        ['title' => 'Refresh from system', 'body' => 'Use this to collect new automatically-detected issues without creating duplicates for already-open items.'],
-        ['title' => 'Create / update exception', 'body' => 'Use this form for manual issues, status changes, severity escalation, or recording a final resolution.'],
-        ['title' => 'Linked member', 'body' => 'Attach a Partner only when the exception is truly about that specific person or account.'],
-    ]
-) ?>
-
-<?= ops_admin_status_panel(
-    'Status guide',
-    'These statuses tell operators whether an exception is still waiting for action or has already been closed.',
-    $statusItems
-) ?>
-
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 7 — Exceptions', 'What this page does', 'Exceptions is the structured work queue for issues that need human review. Use it to log, triage, investigate, and close operational, compliance, and ledger-related anomalies.', [
+    'Refresh from system to pull in newly detected issues automatically.',
+    'Use create / update when an operator needs to record a manual issue or close a resolved item.',
+    'Treat this page as the exceptions register, not as the source page for the fix.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'A clean exception workflow keeps the control plane auditable.', [
+    ['title' => 'Identify', 'body' => 'Refresh from system or create a manual exception when an issue is found.'],
+    ['title' => 'Triage', 'body' => 'Set severity and status so operators can see what needs urgent action.'],
+    ['title' => 'Investigate', 'body' => 'Use the member link and details text to gather evidence.'],
+    ['title' => 'Resolve', 'body' => 'Update the record to resolved once the root cause has been addressed.'],
+  ]),
+  ops_admin_guide_panel('How to use this page', 'This page has two jobs: maintain the live exceptions queue and let operators create or update records.', [
+    ['title' => 'Exceptions work queue', 'body' => 'Read top to bottom. Open and critical items are the main operator focus.'],
+    ['title' => 'Refresh from system', 'body' => 'Collects new automatically-detected issues without duplicating already-open items.'],
+    ['title' => 'Create / update exception', 'body' => 'Use for manual issues, status changes, severity escalation, or recording resolution.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses tell operators whether an exception is still waiting or has been closed.', $statusItems),
+]) ?>
 <div class="card">
-  <div class="exception-header">
+  <div class="card-head exception-header">
     <div>
       <h2 style="margin:0">Exceptions work queue<?= ops_admin_help_button('Exceptions work queue', 'This table is the live control register for operational issues that still need attention. Read open and high-severity items first.') ?></h2>
       <p class="muted" style="margin:8px 0 0">Use this register to see what is still open, what is under review, and what has already been resolved.</p>
@@ -163,6 +139,7 @@ ops_admin_help_assets_once();
       <button class="btn-secondary" type="submit">Refresh from system<?= ops_admin_help_button('Refresh from system', 'Pulls in newly detected system exceptions that are not already open. It does not close or change existing exception records.') ?></button>
     </form>
   </div>
+  <div class="card-body">
   <div class="exception-meta">
     <?php
       // Stat counts are pre-computed from DB above — already available as $openCount etc.
@@ -193,9 +170,11 @@ ops_admin_help_assets_once();
 </div>
 
 <div class="card" style="margin-top:18px">
-  <h2 style="margin-top:0">Create / update exception<?= ops_admin_help_button('Create / update exception', 'Use this form to add a manual exception, raise or lower severity, change status during investigation, or record the final resolution.') ?></h2>
-  <p class="muted">Use this form when a system refresh is not enough or when an operator needs to document and track a manual issue.</p>
-  <form method="post" class="stack">
+  <div class="card-head">
+    <h2>Create / update exception <?= ops_admin_help_button('Create / update exception', 'Use this form to add a manual exception, raise or lower severity, change status during investigation, or record the final resolution.') ?></h2>
+  </div>
+  <div class="card-body">
+  <form method="post">
     <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
     <input type="hidden" name="action" value="save_exception">
     <div class="exception-form-grid">
@@ -203,12 +182,13 @@ ops_admin_help_assets_once();
       <div class="field"><label>Type<?= ops_admin_help_button('Type', 'Choose the best available category so reporting and filtering stay meaningful.') ?></label><select name="exception_type"><?php foreach(ops_exception_types() as $t): ?><option value="<?= ops_h($t) ?>"><?= ops_h($t) ?></option><?php endforeach; ?></select></div>
       <div class="field"><label>Severity<?= ops_admin_help_button('Severity', 'Use severity to show operator urgency, not just technical complexity.') ?></label><select name="severity"><?php foreach(ops_exception_severities() as $s): ?><option value="<?= ops_h($s) ?>"><?= ops_h($s) ?></option><?php endforeach; ?></select></div>
       <div class="field"><label>Status<?= ops_admin_help_button('Status', 'Move to resolved only after the underlying issue has truly been fixed or formally waived.') ?></label><select name="status"><option value="open">open</option><option value="in_review">in_review</option><option value="resolved">resolved</option></select></div>
-      <div class="field"><label>Member<?= ops_admin_help_button('Member', 'Attach a Partner when the exception is tied to a specific person, vault, or account path. Leave blank for global/system issues.') ?></label><select name="member_id"><option value="0">— none —</option><?php foreach($members as $m): ?><option value="<?= (int)$m['id'] ?>"><?= ops_h($m['full_name'].' · '.$m['member_number']) ?></option><?php endforeach; ?></select></div>
-      <div class="field"><label>Summary<?= ops_admin_help_button('Summary', 'Write the issue in one clear sentence so another operator can understand it immediately.') ?></label><input name="summary"></div>
-      <div class="field full"><label>Details<?= ops_admin_help_button('Details', 'Use this for context, evidence, what was checked, and what page or workflow is affected.') ?></label><textarea name="details"></textarea></div>
+      <div class="field"><label>Member<?= ops_admin_help_button('Member', 'Attach a Partner when the exception is tied to a specific person, vault, or account path.') ?></label><select name="member_id"><option value="0">— none —</option><?php foreach($members as $m): ?><option value="<?= (int)$m['id'] ?>"><?= ops_h($m['full_name'].' · '.$m['member_number']) ?></option><?php endforeach; ?></select></div>
+      <div class="field"><label>Summary<?= ops_admin_help_button('Summary', 'Write the issue in one clear sentence.') ?></label><input name="summary"></div>
+      <div class="field full"><label>Details<?= ops_admin_help_button('Details', 'Context, evidence, what was checked, and what page or workflow is affected.') ?></label><textarea name="details"></textarea></div>
     </div>
-    <div class="actions"><button class="btn" type="submit">Save exception</button></div>
+    <div class="actions"><button class="btn btn-gold" type="submit">Save exception</button></div>
   </form>
+  </div>
 </div>
 <?php
 $body = ob_get_clean();

@@ -88,40 +88,16 @@ if ($reviewData && !empty($reviewData['member_id']) && function_exists('ops_part
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>KYC Review — COGS Admin</title>
 <style>
-:root{--bg:#0f1720;--panel:#17212b;--panel2:#1f2c38;--text:#eef2f7;--muted:#9fb0c1;--line:rgba(255,255,255,.08);--ok:#b8efc8;--bad:#ffb4be;--gold:#d4b25c;--warn:#ffa040}
-*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:#0f1720;color:var(--text)}
-.main{padding:20px;max-width:1100px}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px}
 .stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .stat{flex:1;min-width:120px;padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;text-align:center}
-.stat .sv{font-size:26px;font-weight:800;color:var(--gold)} .stat .sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
-.badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
-.badge-pending{background:rgba(212,178,92,.12);color:var(--gold);border:1px solid rgba(212,178,92,.2)}
-.badge-under_review{background:rgba(90,158,212,.12);color:#8ecef0;border:1px solid rgba(90,158,212,.25)}
-.badge-verified{background:rgba(82,184,122,.12);color:#7ee0a0;border:1px solid rgba(82,184,122,.25)}
-.badge-rejected{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
-table{width:100%;border-collapse:collapse}
-th,td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.05);text-align:left;font-size:13px;vertical-align:middle}
-th{color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:600;letter-spacing:.04em}
-tr:hover{background:rgba(255,255,255,.02)}
-label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px;font-weight:600}
-input,textarea,select{width:100%;background:#0f1720;border:1px solid var(--line);color:var(--text);padding:.65rem .75rem;border-radius:10px;font:inherit;font-size:13px}
-textarea{min-height:80px;resize:vertical}
-button,.btn{display:inline-block;background:var(--gold);color:#201507;border:1px solid rgba(212,178,92,.35);padding:.6rem 1rem;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none}
-.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
-.danger{background:rgba(200,61,75,.15);color:var(--bad);border-color:rgba(200,61,75,.35)}
-.sm{padding:5px 12px;font-size:12px;border-radius:8px}
-.msg{padding:10px 14px;border-radius:12px;margin-bottom:12px;font-size:13px}
-.ok{background:rgba(47,143,87,.12);color:var(--ok);border:1px solid rgba(47,143,87,.35)}
-.err{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
-.muted{color:var(--muted)} .spacer{height:12px}
+.stat .sv{font-size:1.5rem;font-weight:800;color:var(--gold)}
+.stat .sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .review-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.field-row{margin-bottom:12px}
-.field-val{font-size:20px;font-weight:700;color:var(--text);padding:10px 14px;background:rgba(212,178,92,.06);border:1px solid rgba(212,178,92,.15);border-radius:10px;letter-spacing:.1em;font-family:monospace}
+.field-val{font-size:1.2rem;font-weight:700;padding:10px 14px;background:rgba(212,178,92,.06);border:1px solid rgba(212,178,92,.15);border-radius:10px;letter-spacing:.1em;font-family:monospace}
 .info-box{padding:10px 14px;background:rgba(212,178,92,.05);border:1px solid rgba(212,178,92,.12);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
 .warn-box{padding:10px 14px;background:rgba(255,160,64,.06);border:1px solid rgba(255,160,64,.2);border-radius:10px;font-size:12px;color:var(--warn);margin-bottom:12px}
 .compliance-chip{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted)}
-.compliance-chip.ok{background:rgba(82,184,122,.12);color:#7ee0a0;border-color:rgba(82,184,122,.25)}
+.compliance-chip.ok{background:rgba(82,184,122,.12);color:var(--ok);border-color:rgba(82,184,122,.25)}
 .compliance-chip.warn{background:rgba(255,160,64,.08);color:var(--warn);border-color:rgba(255,160,64,.22)}
 .compliance-chip.bad{background:rgba(200,61,75,.12);color:var(--bad);border-color:rgba(200,61,75,.3)}
 @media(max-width:700px){.review-grid{grid-template-columns:1fr}}
@@ -133,31 +109,28 @@ button,.btn{display:inline-block;background:var(--gold);color:#201507;border:1px
 <?php admin_sidebar_render('kyc'); ?>
 <main class="main">
 
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:14px 18px;background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px">
-  <div>
-    <h1 style="margin:0;font-size:18px">🪪 Medicare KYC Review <?= ops_admin_help_button('KYC review', 'Use KYC Review to manually assess submitted Medicare card details and decide whether the identity check is verified or rejected. This page is an evidence and compliance surface, not a payment or approval page.') ?></h1>
-    <p class="muted" style="margin:4px 0 0;font-size:12px">Manual identity verification — Medicare card · Privacy Act 1988 · AML/CTF Act 2006</p>
-  </div>
+<div class="card">
+  <div class="card-head"><h1 style="margin:0">🪪 Medicare KYC Review <?= ops_admin_help_button('KYC review', 'Use KYC Review to manually assess submitted Medicare card details and decide whether the identity check is verified or rejected.') ?></h1></div>
+  <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Manual identity verification — Medicare card · Privacy Act 1988 · AML/CTF Act 2006</p></div>
 </div>
 
-<?= ops_admin_info_panel('Intake · Compliance', 'What this page does', 'Review encrypted Medicare submissions and decide whether the identity evidence supports verification. This page is used only for manual KYC review.', [
-  'Use open review when you are ready to inspect a submission in detail.',
-  'Approve only when the Medicare details and member record are consistent.',
-  'Reject when the evidence is insufficient, inconsistent, or requires resubmission.'
-]) ?>
-
-<?= ops_admin_workflow_panel('Typical workflow', 'KYC review sits alongside other intake evidence before approval and execution.', [
-  ['title' => 'Open the submission', 'body' => 'Move a pending item into review and inspect the decrypted evidence safely.'],
-  ['title' => 'Check related intake state', 'body' => 'Use the JVPA, payment, and approval chips as context around the KYC submission.'],
-  ['title' => 'Approve or reject', 'body' => 'Record the identity outcome with notes or a rejection reason.'],
-  ['title' => 'Continue the intake path', 'body' => 'Once KYC is verified, continue through the remaining compliance and approval steps.']
-]) ?>
-
-<?= ops_admin_status_panel('Status guide', 'These statuses describe the queue state, not the final trust execution state.', [
-  ['label' => 'Pending', 'body' => 'Submitted and waiting for an operator to open it.'],
-  ['label' => 'Under review', 'body' => 'Currently being reviewed by an operator.'],
-  ['label' => 'Verified', 'body' => 'Identity evidence has been accepted.'],
-  ['label' => 'Rejected', 'body' => 'The submission was declined and should not be relied on without a new submission.']
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Intake · Compliance', 'What this page does', 'Review encrypted Medicare submissions and decide whether the identity evidence supports verification. This page is used only for manual KYC review.', [
+    'Use open review when you are ready to inspect a submission in detail.',
+    'Approve only when the Medicare details and member record are consistent.',
+    'Reject only when the evidence genuinely fails the identity check.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'KYC review sits alongside other intake evidence before approval and execution.', [
+    ['title' => 'Open the submission', 'body' => 'Select the pending record to read the decrypted Medicare details.'],
+    ['title' => 'Compare details', 'body' => 'Check name, card number, and expiry against the member record.'],
+    ['title' => 'Approve or reject', 'body' => 'Record the decision with a reason so the audit trail is complete.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses describe the queue state, not the final trust execution state.', [
+    ['label' => 'Pending', 'body' => 'Submission has been received but not yet reviewed by an operator.'],
+    ['label' => 'Under review', 'body' => 'An operator has opened the submission and is actively reviewing it.'],
+    ['label' => 'Verified', 'body' => 'The Medicare details match the member record and the identity check is complete.'],
+    ['label' => 'Rejected', 'body' => 'The details did not satisfy the identity check requirement.'],
+  ]),
 ]) ?>
 
 <?php if($flash): ?><div class="msg ok"><?=h($flash)?></div><?php endif; ?>
@@ -166,17 +139,18 @@ button,.btn{display:inline-block;background:var(--gold);color:#201507;border:1px
 <div class="stat-row">
   <div class="stat"><div class="sv"><?=$pending?></div><div class="sl">Pending review</div></div>
   <div class="stat"><div class="sv" style="color:#8ecef0"><?=$review?></div><div class="sl">Under review</div></div>
-  <div class="stat"><div class="sv" style="color:#7ee0a0"><?=count(array_filter($recent,fn($r)=>$r['status']==='verified'))?></div><div class="sl">Verified (30d)</div></div>
+  <div class="stat"><div class="sv" style="color:var(--ok)"><?=count(array_filter($recent,fn($r)=>$r['status']==='verified'))?></div><div class="sl">Verified (30d)</div></div>
   <div class="stat"><div class="sv" style="color:var(--bad)"><?=count(array_filter($recent,fn($r)=>$r['status']==='rejected'))?></div><div class="sl">Rejected (30d)</div></div>
 </div>
 
 <?php if($reviewData): ?>
 <!-- ── REVIEW PANEL ─────────────────────────────────────────────────────── -->
 <div class="card">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <h2 style="margin:0;font-size:16px">Review Submission #<?=(int)$reviewData['id']?></h2>
-    <a href="./admin_kyc.php" class="btn secondary sm">← Back to queue</a>
+  <div class="card-head">
+    <h2>Review Submission #<?=(int)$reviewData['id']?></h2>
+    <a href="./admin_kyc.php" class="btn-secondary small">← Back to queue</a>
   </div>
+  <div class="card-body">
 
   <?php if(in_array($reviewData['status'],['pending','under_review'],true)): ?>
   <div class="warn-box">
@@ -263,7 +237,7 @@ button,.btn{display:inline-block;background:var(--gold);color:#201507;border:1px
 
     <!-- Approve -->
     <div style="padding:16px;background:rgba(82,184,122,.04);border:1px solid rgba(82,184,122,.15);border-radius:12px">
-      <div style="font-size:12px;font-weight:700;color:#7ee0a0;margin-bottom:8px">✓ Approve verification <?= ops_admin_help_button('Approve verification', 'Approve only when the Medicare evidence matches the member record closely enough to support identity verification. This updates the KYC status; it does not itself execute any trust action.') ?></div>
+      <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">✓ Approve verification <?= ops_admin_help_button('Approve verification', 'Approve only when the Medicare evidence matches the member record closely enough to support identity verification. This updates the KYC status; it does not itself execute any trust action.') ?></div>
       <div class="info-box">Admin confirms that the name and details on the Medicare card are consistent with the member record. An evidence hash will be created and written to the audit vault.</div>
       <form method="post">
         <input type="hidden" name="_csrf" value="<?=ops_h(admin_csrf_token())?>">
@@ -301,11 +275,9 @@ button,.btn{display:inline-block;background:var(--gold);color:#201507;border:1px
 <?php else: ?>
 <!-- ── QUEUE ────────────────────────────────────────────────────────────── -->
 <?php if($queue): ?>
-<div class="card" style="padding:0;overflow:hidden">
-  <div style="padding:12px 18px;border-bottom:1px solid var(--line)">
-    <h2 style="margin:0;font-size:15px">Pending Review Queue</h2>
-  </div>
-  <div style="overflow-x:auto">
+<div class="card">
+  <div class="card-head"><h2>Pending Review Queue</h2></div>
+  <div class="card-body table-wrap">
     <table>
       <thead>
         <tr>
@@ -351,11 +323,9 @@ button,.btn{display:inline-block;background:var(--gold);color:#201507;border:1px
 
 <!-- ── RECENT ─────────────────────────────────────────────────────────── -->
 <?php if($recent): ?>
-<div class="card" style="padding:0;overflow:hidden">
-  <div style="padding:12px 18px;border-bottom:1px solid var(--line)">
-    <h2 style="margin:0;font-size:15px">Recent Decisions (30 days)</h2>
-  </div>
-  <div style="overflow-x:auto">
+<div class="card">
+  <div class="card-head"><h2>Recent Decisions (30 days)</h2></div>
+  <div class="card-body table-wrap">
     <table>
       <thead><tr><th>#</th><th>Member</th><th>Status</th><th>Decided</th><th>Evidence hash</th></tr></thead>
       <tbody>
