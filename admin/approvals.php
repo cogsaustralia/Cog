@@ -301,7 +301,7 @@ function action_form(array $r, string $view): string {
     if ($classCode === 'PAY_IT_FORWARD_COG') {
         $pclassField = "<div style='margin-top:8px;padding:10px;background:rgba(212,178,92,.06);border:1px solid rgba(212,178,92,.2);border-radius:8px;font-size:12px'>"
             . "<label style='color:#d4b25c;font-weight:700;display:block;margin-bottom:4px'>P-Class Stage 2 — Recipient member ID (optional)</label>"
-            . "<input type='number' name='pclass_recipient_member_id' min='1' placeholder='Member ID — triggers Stage 2 Godley allocation' style='background:#0f1720;border:1px solid rgba(255,255,255,.12);color:#eef2f7;padding:6px 9px;border-radius:7px;font:inherit;font-size:12px;width:100%'>"
+            . "<input type='number' name='pclass_recipient_member_id' min='1' placeholder='Member ID — triggers Stage 2 Godley allocation' style='background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px 9px;border-radius:7px;font:inherit;font-size:12px;width:100%'>"
             . "<div style='color:#9fb0c1;font-size:11px;margin-top:4px'>If supplied, emits P-CLASS-SUSPENSE → STA-PARTNERS-POOL Godley entry on approval (cl.26.6).</div>"
             . "</div>";
     }

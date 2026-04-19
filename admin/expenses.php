@@ -204,7 +204,6 @@ function ex_status_class(string $s): string {
 @media(max-width:700px) { .form-grid { grid-template-columns:1fr; } }
 .field { display:flex; flex-direction:column; gap:5px; }
 .field label { font-size:.82rem; color:var(--sub); }
-.field input, .field select, .field textarea { background:#0f1720; border:1px solid var(--line); color:var(--text); padding:9px 11px; border-radius:10px; font:inherit; font-size:.9rem; }
 .field textarea { min-height:60px; resize:vertical; }
 .field-full { grid-column:1/-1; }
 .check-row { display:flex; align-items:center; gap:8px; grid-column:1/-1; padding:4px 0; }
@@ -225,7 +224,6 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
 .msg.err { background:rgba(200,61,75,.12); border:1px solid rgba(200,61,75,.35); color:#ffb4be; }
 .empty { color:var(--dim); font-size:13px; padding:20px 0; text-align:center; }
 .inline-form { display:inline-flex; gap:4px; align-items:center; }
-.inline-form input { background:#0f1720; border:1px solid var(--line); color:var(--text); padding:5px 8px; border-radius:6px; font:inherit; font-size:12px; width:120px; }
 .mini-btn { padding:5px 10px; border-radius:6px; font-size:11px; font-weight:700; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text); cursor:pointer; }
 .mini-btn.green { background:var(--okb); border-color:rgba(82,184,122,.25); color:var(--ok); }
 .mini-btn.red { background:var(--errb); border-color:rgba(196,96,96,.25); color:var(--err); }

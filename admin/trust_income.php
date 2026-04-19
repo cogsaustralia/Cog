@@ -308,7 +308,6 @@ a { color:inherit; text-decoration:none; }
 @media(max-width:700px) { .form-grid { grid-template-columns:1fr; } }
 .field { display:flex; flex-direction:column; gap:5px; }
 .field label { font-size:.82rem; color:var(--sub); }
-.field input, .field select, .field textarea { background:#0f1720; border:1px solid var(--line); color:var(--text); padding:9px 11px; border-radius:10px; font:inherit; font-size:.9rem; }
 .field textarea { min-height:60px; resize:vertical; }
 .field-full { grid-column:1/-1; }
 table { width:100%; border-collapse:collapse; }
@@ -761,7 +760,6 @@ a { color:inherit; text-decoration:none; }
 @media(max-width:700px) { .form-grid { grid-template-columns:1fr; } }
 .field { display:flex; flex-direction:column; gap:5px; }
 .field label { font-size:.82rem; color:var(--sub); }
-.field input, .field select, .field textarea { background:#0f1720; border:1px solid var(--line); color:var(--text); padding:9px 11px; border-radius:10px; font:inherit; font-size:.9rem; }
 .field textarea { min-height:60px; resize:vertical; }
 .field-full { grid-column:1/-1; }
 

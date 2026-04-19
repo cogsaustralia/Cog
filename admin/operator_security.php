@@ -83,7 +83,7 @@ ops_admin_help_assets_once();
 .hint{font-size:12px;line-height:1.6;color:#9fb0c1}
 .form-stack{display:grid;gap:12px}
 .form-stack label span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1;margin-bottom:6px}
-.form-stack input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#101820;color:#eef2f7}
+.form-stack input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
 .actions{display:flex;justify-content:flex-start}
 .btn{display:inline-block;padding:9px 14px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.08);cursor:pointer}
 .btn-gold{background:#d4b25c;color:#201507;border-color:rgba(212,178,92,.3)}

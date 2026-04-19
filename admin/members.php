@@ -625,7 +625,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
                     <div>
                       <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Holder type</label>
-                      <select id="pf-type-<?=(int)$r['id']?>" style="width:100%;background:#0f1720;border:1px solid rgba(255,255,255,.1);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
+                      <select id="pf-type-<?=(int)$r['id']?>" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
                         <option value="freehold">Freehold</option>
                         <option value="lalc">LALC (Aboriginal Land Rights Act)</option>
                         <option value="pbc">PBC (Native Title Act)</option>
@@ -634,7 +634,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
                     </div>
                     <div>
                       <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Jurisdiction</label>
-                      <select id="pf-juris-<?=(int)$r['id']?>" style="width:100%;background:#0f1720;border:1px solid rgba(255,255,255,.1);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
+                      <select id="pf-juris-<?=(int)$r['id']?>" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
                         <?php foreach(['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] as $st): ?>
                           <option value="<?=$st?>" <?=($r['state_code']??'')===$st?'selected':''?>><?=$st?></option>
                         <?php endforeach; ?>
@@ -644,21 +644,21 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
                     <div>
                       <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Lot number</label>
-                      <input id="pf-lot-<?=(int)$r['id']?>" type="text" placeholder="e.g. 1" style="width:100%;background:#0f1720;border:1px solid rgba(255,255,255,.1);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
+                      <input id="pf-lot-<?=(int)$r['id']?>" type="text" placeholder="e.g. 1" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
                     </div>
                     <div>
                       <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Plan number</label>
-                      <input id="pf-plan-<?=(int)$r['id']?>" type="text" placeholder="e.g. DP755123" style="width:100%;background:#0f1720;border:1px solid rgba(255,255,255,.1);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
+                      <input id="pf-plan-<?=(int)$r['id']?>" type="text" placeholder="e.g. DP755123" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
                     </div>
                   </div>
                   <div style="margin-bottom:6px">
                     <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Title reference (optional)</label>
-                    <input id="pf-title-<?=(int)$r['id']?>" type="text" placeholder="e.g. CT/12345/67" style="width:100%;background:#0f1720;border:1px solid rgba(255,255,255,.1);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
+                    <input id="pf-title-<?=(int)$r['id']?>" type="text" placeholder="e.g. CT/12345/67" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
                   </div>
                   <?php if(!empty($r['landholder_verified_at'])): ?>
                   <div style="margin-bottom:6px">
                     <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Parcel PID (from G-NAF, optional)</label>
-                    <input id="pf-pid-<?=(int)$r['id']?>" type="text" placeholder="auto-detected if blank" style="width:100%;background:#0f1720;border:1px solid rgba(255,255,255,.1);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
+                    <input id="pf-pid-<?=(int)$r['id']?>" type="text" placeholder="auto-detected if blank" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
                   </div>
                   <?php endif; ?>
                   <button

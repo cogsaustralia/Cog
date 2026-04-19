@@ -22,7 +22,7 @@ h1{margin:0 0 8px;font-size:2rem}.muted{color:var(--muted)}
 .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.panel-head h2{margin:0;font-size:1.08rem}
 .notice{padding:12px 14px;border-radius:14px;margin-bottom:12px}.notice.ok{background:rgba(47,143,87,.12);color:var(--ok);border:1px solid rgba(47,143,87,.35)}.notice.bad{background:rgba(200,61,75,.12);color:var(--bad);border:1px solid rgba(200,61,75,.35)}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:grid;gap:6px}.field label{font-size:.88rem;color:var(--muted)}
-input,select,textarea{width:100%;background:#0f1720;border:1px solid var(--line);color:var(--text);padding:.9rem 1rem;border-radius:14px;font:inherit}
+input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:.9rem 1rem;border-radius:14px;font:inherit}
 textarea{min-height:120px;resize:vertical}
 table{width:100%;border-collapse:collapse}th,td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,.08);text-align:left;vertical-align:top}th{color:var(--muted);font-weight:600}
 .chip{display:inline-block;padding:.35rem .65rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:.8rem}

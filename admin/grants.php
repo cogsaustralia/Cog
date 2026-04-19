@@ -216,7 +216,7 @@ $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
 .btn{display:inline-block;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--line2);background:var(--panel2);color:var(--text);cursor:pointer;}.btn-gold{background:var(--gold);color:#201507;border-color:rgba(212,178,92,.3);}.btn-ok{background:var(--okb);border-color:rgba(82,184,122,.3);color:var(--ok);}.btn-sm{padding:5px 12px;font-size:12px;border-radius:8px;}
 .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:18px;}.card-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);}.card-head h2{font-size:1rem;font-weight:700;}.card-body{padding:16px 20px;}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:22px;}.stat{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r2);padding:16px 18px;text-align:center;}.stat-val{font-size:1.4rem;font-weight:800;margin-bottom:4px;}.stat-label{font-size:.72rem;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}@media(max-width:700px){.form-grid{grid-template-columns:1fr;}}.field{display:flex;flex-direction:column;gap:5px;}.field label{font-size:.82rem;color:var(--sub);}.field input,.field select,.field textarea{background:#0f1720;border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:10px;font:inherit;font-size:.9rem;}.field-full{grid-column:1/-1;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}@media(max-width:700px){.form-grid{grid-template-columns:1fr;}}.field{display:flex;flex-direction:column;gap:5px;}.field label{font-size:.82rem;color:var(--sub);}.field-full{grid-column:1/-1;}
 table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10px;font-size:13px;border-top:1px solid var(--line);vertical-align:middle;}th{color:var(--dim);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-top:none;}
 .mono{font-family:monospace;font-size:12px;}.st{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:700;text-transform:uppercase;}
 .st-proposed{background:var(--warnb);color:var(--warn);}.st-fnac_review{background:rgba(155,125,212,.12);color:var(--purple);}.st-approved{background:var(--okb);color:var(--ok);}.st-disbursed{background:rgba(90,158,212,.12);color:var(--blue);}.st-acquitted{background:rgba(255,255,255,.05);color:var(--dim);}.st-cancelled{background:var(--errb);color:var(--err);}
@@ -305,7 +305,7 @@ table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10p
             <input type="hidden" name="_csrf" value="<?php echo gr_h($csrfToken); ?>">
             <input type="hidden" name="action" value="fnac_approve">
             <input type="hidden" name="grant_id" value="<?php echo (int)$g['id']; ?>">
-            <input type="text" name="fnac_approval_ref" placeholder="FNAC ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:#0f1720;border:1px solid var(--line);color:var(--text)">
+            <input type="text" name="fnac_approval_ref" placeholder="FNAC ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--text)">
             <button type="submit" class="btn btn-sm" style="background:rgba(155,125,212,.12);border-color:rgba(155,125,212,.3);color:var(--purple)">FNAC approve</button>
           </form>
         <?php endif; ?>
@@ -322,7 +322,7 @@ table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10p
             <input type="hidden" name="_csrf" value="<?php echo gr_h($csrfToken); ?>">
             <input type="hidden" name="action" value="disburse">
             <input type="hidden" name="grant_id" value="<?php echo (int)$g['id']; ?>">
-            <input type="text" name="bank_reference" placeholder="Bank ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:#0f1720;border:1px solid var(--line);color:var(--text)">
+            <input type="text" name="bank_reference" placeholder="Bank ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--text)">
             <button type="submit" class="btn btn-sm btn-gold" onclick="return confirm('Disburse <?php echo gr_h($g['grant_ref']); ?>? This emits Godley entries.')">Disburse + Godley</button>
           </form>
         <?php endif; ?>
@@ -331,7 +331,7 @@ table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10p
             <input type="hidden" name="_csrf" value="<?php echo gr_h($csrfToken); ?>">
             <input type="hidden" name="action" value="acquit">
             <input type="hidden" name="grant_id" value="<?php echo (int)$g['id']; ?>">
-            <input type="text" name="acquittal_ref" placeholder="Acquittal ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:#0f1720;border:1px solid var(--line);color:var(--text)">
+            <input type="text" name="acquittal_ref" placeholder="Acquittal ref" style="width:100px;padding:4px 7px;font-size:11px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--text)">
             <button type="submit" class="btn btn-sm btn-ok" onclick="return confirm('Mark <?php echo gr_h($g['grant_ref']); ?> as acquitted?')">Acquit</button>
           </form>
         <?php endif; ?>
