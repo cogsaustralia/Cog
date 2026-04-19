@@ -1887,13 +1887,13 @@ function memberP2PTransfer(): void {
     $db = getDB();
     $body = jsonBody();
 
-    $recipientRef = sanitize(preg_replace('/\s+/', '', (string)($body['recipient_member_number'] ?? $body['to_member_number'] ?? '')));
-    $tokenKey     = sanitize((string)($body['token_key'] ?? $body['token_class'] ?? ''));
-    $units        = max(0.0001, (float)($body['units'] ?? 0));
-    $note         = sanitize((string)($body['note'] ?? ''));
+    // Accept either a hash address (COGS-CC-...) or a member number
+    $recipientInput = sanitize(preg_replace('/\s+/', '', (string)($body['to_wallet_address'] ?? $body['recipient_member_number'] ?? $body['to_member_number'] ?? '')));
+    $tokenKey       = sanitize((string)($body['token_key'] ?? $body['token_class'] ?? 'community_tokens'));
+    $units          = max(0.0001, (float)($body['units'] ?? 0));
+    $note           = sanitize((string)($body['note'] ?? ''));
 
-    if ($recipientRef === '') apiError('Recipient Partner number is required.');
-    // Decimal classes locked until Expansion Day
+    if ($recipientInput === '') apiError('Recipient wallet address or Partner number is required.');
     if (in_array($tokenKey, ['investment_tokens', 'rwa_tokens', 'landholder_tokens', 'bus_prop_tokens'], true)) {
         apiError('ASX COG$, RWA COG$, Landholder COG$, and Business Property COG$ are locked until after Expansion Day. Only Community COG$ can transfer right now.');
     }
@@ -1901,7 +1901,22 @@ function memberP2PTransfer(): void {
     if ($units < 0.0001) apiError('Must transfer at least 0.0001 Community COG$.');
 
     $senderRef = (string)$principal['subject_ref'];
+
+    // Resolve recipient — hash address takes priority over member number
+    $recipientRef = $recipientInput;
+    if (str_starts_with(strtoupper($recipientInput), 'COGS-')) {
+        $resolved = resolveWalletAddress($db, $recipientInput);
+        if (!$resolved) apiError('Wallet address not found. Check the address and try again.', 404);
+        $resolvedClass = (string)($resolved['token_class'] ?? '');
+        if ($resolvedClass !== 'community_tokens') apiError('That address is for ' . $resolvedClass . ', not Community COG$. Use a COGS-CC-... address.');
+        $recipientRef = (string)$resolved['member_number'];
+    }
+
     if ($recipientRef === $senderRef) apiError('Cannot transfer to yourself.');
+
+    // Generate hash addresses for sender and recipient for ledger recording
+    $senderAddr    = generateWalletAddress($senderRef, 'community_tokens');
+    $recipientAddr = generateWalletAddress($recipientRef, 'community_tokens');
 
     $senderMemberStmt = $db->prepare('SELECT id FROM members WHERE member_number = ? AND member_type = ? LIMIT 1');
     $senderMemberStmt->execute([$senderRef, 'personal']);
@@ -1948,15 +1963,23 @@ function memberP2PTransfer(): void {
             $tokenKey, $units, $note ?: null,
         ]);
 
-        recordWalletEvent($db, 'snft_member', $senderRef, 'p2p_transfer_sent', 'Sent ' . $units . ' × Community COG$ → ' . $recipientRef . ($note ? ' (' . $note . ')' : ''));
-        recordWalletEvent($db, 'snft_member', $recipientRef, 'p2p_transfer_received', 'Received ' . $units . ' × Community COG$ ← ' . $senderRef . ($note ? ' (' . $note . ')' : ''));
+        $unitsFmt = number_format($units, 4);
+        recordWalletEvent($db, 'snft_member', $senderRef,    'p2p_transfer_sent',     'Sent '     . $unitsFmt . ' × Community COG$ → ' . $recipientAddr . ($note ? ' (' . $note . ')' : ''));
+        recordWalletEvent($db, 'snft_member', $recipientRef, 'p2p_transfer_received', 'Received ' . $unitsFmt . ' × Community COG$ ← ' . $senderAddr    . ($note ? ' (' . $note . ')' : ''));
         $db->commit();
     } catch (Throwable $e) {
         if ($db->inTransaction()) $db->rollBack();
         throw $e;
     }
 
-    apiSuccess(['transferred' => true, 'token_key' => $tokenKey, 'units' => $units, 'recipient' => $recipientRef, 'recorded_at' => nowUtc()]);
+    apiSuccess([
+        'transferred'      => true,
+        'token_key'        => $tokenKey,
+        'units'            => $units,
+        'sender_address'   => $senderAddr,
+        'recipient_address'=> $recipientAddr,
+        'recorded_at'      => nowUtc(),
+    ]);
 }
 
 function businessP2PTransfer(): void {

@@ -645,7 +645,15 @@ function generateWalletAddress(string $memberNumber, string $tokenClass): string
     $secret = (string)env('APP_SECRET', 'cogs_vault_default_secret');
     $payload = $memberNumber . ':' . $tokenClass . ':' . $secret;
     $hash = hash_hmac('sha256', $payload, $secret);
-    $prefix = ['investment_tokens' => 'ASX', 'rwa_tokens' => 'RWA'][$tokenClass] ?? strtoupper(substr($tokenClass, 0, 3));
+    $prefixMap = [
+        'investment_tokens' => 'ASX',
+        'rwa_tokens'        => 'RWA',
+        'community_tokens'  => 'CC',
+        'landholder_tokens' => 'LH',
+        'bus_prop_tokens'   => 'BP',
+        'lr_tokens'         => 'LR',
+    ];
+    $prefix = $prefixMap[$tokenClass] ?? strtoupper(substr($tokenClass, 0, 3));
     // 12-char hex = 48 bits of entropy (sufficient for internal ledger addresses)
     return 'COGS-' . $prefix . '-' . strtolower(substr($hash, 0, 12));
 }
@@ -656,7 +664,7 @@ function generateWalletAddress(string $memberNumber, string $tokenClass): string
  * Returns: ['rwa_tokens' => 'COGS-RWA-...', 'investment_tokens' => 'COGS-ASX-...']
  */
 function getOrCreateWalletAddresses(PDO $db, string $memberNumber, int $memberId): array {
-    $classes = ['investment_tokens', 'rwa_tokens'];
+    $classes = ['investment_tokens', 'rwa_tokens', 'community_tokens'];
     $addresses = [];
 
     foreach ($classes as $cls) {
@@ -693,7 +701,7 @@ function resolveWalletAddress(PDO $db, string $address): ?array {
     try {
         $stmt = $db->query('SELECT id, member_number FROM snft_memberships LIMIT 5000');
         foreach ($stmt->fetchAll() as $m) {
-            foreach (['investment_tokens', 'rwa_tokens'] as $cls) {
+            foreach (['investment_tokens', 'rwa_tokens', 'community_tokens', 'landholder_tokens', 'lr_tokens'] as $cls) {
                 if (generateWalletAddress((string)$m['member_number'], $cls) === $address) {
                     return ['member_id' => (int)$m['id'], 'member_number' => (string)$m['member_number'], 'token_class' => $cls];
                 }
@@ -705,7 +713,7 @@ function resolveWalletAddress(PDO $db, string $address): ?array {
     try {
         $stmt = $db->query('SELECT id, abn FROM bnft_memberships LIMIT 5000');
         foreach ($stmt->fetchAll() as $b) {
-            foreach (['investment_tokens', 'rwa_tokens'] as $cls) {
+            foreach (['investment_tokens', 'rwa_tokens', 'community_tokens', 'bus_prop_tokens'] as $cls) {
                 if (generateWalletAddress((string)$b['abn'], $cls) === $address) {
                     return ['member_id' => (int)$b['id'], 'member_number' => (string)$b['abn'], 'token_class' => $cls];
                 }

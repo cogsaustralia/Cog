@@ -1115,7 +1115,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <button class="xch-btn on" id="xch-btn-receive" onclick="xchMode('receive')">
           <span class="xch-arrow">↓</span>
           Receive
-          <span class="xch-btn-sub">Get your wallet address</span>
+          <span class="xch-btn-sub">Your COG$ wallet address</span>
         </button>
         <button class="xch-btn" id="xch-btn-send" onclick="xchMode('send')">
           <span class="xch-arrow">↑</span>
@@ -1126,11 +1126,12 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- Receive panel -->
       <div class="xch-panel on card" id="xch-panel-receive">
-        <div class="card-hd"><h3>Your receive address</h3></div>
+        <div class="card-hd"><h3>Your Community COG$ receive address</h3></div>
         <div class="card-bd">
+          <p style="font-size:.86rem;color:var(--text3);margin-bottom:16px;line-height:1.6">Share this hash address with the sender. It is unique to your Partnership and cryptographically bound to your member number.</p>
           <div id="my-wallet-addrs">
             <div id="wallet-addr-list">
-              <div class="placeholder"><strong>No wallet address yet</strong><p>Assigned when your Community COG$ holding activates.</p></div>
+              <div class="placeholder"><strong>Loading address…</strong><p>Your COG$ wallet address is being generated.</p></div>
             </div>
           </div>
         </div>
@@ -1140,30 +1141,43 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="xch-panel card" id="xch-panel-send">
         <div class="card-hd">
           <h3><img src="../assets/cogs_coin_web.png" alt="" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:6px;position:relative;top:-1px">Transfer Community COG$</h3>
-          <button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button></div>
+          <button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button>
+        </div>
         <div class="card-bd">
-          <p style="font-size:.88rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Only Community COG$ can move Partner-to-Partner right now. Stewardship reservation classes (ASX, RWA, Landholder) are Released after Expansion Day.</p>
+          <p style="font-size:.88rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Enter the recipient's 16-digit Partner number and the amount to transfer. Only Community COG$ can move Partner-to-Partner before Expansion Day.</p>
           <div id="transfer-available-board" style="display:none"></div>
           <div id="transfer-lock-board" style="display:none"></div>
           <div class="xfr-row" style="margin-bottom:12px">
             <div class="xfr-field">
               <label>Recipient Partner number</label>
-              <input class="xfr-input" id="xfr-mn" placeholder="16-digit number" style="font-family:var(--mono)" oninput="updateTransferAssist()">
+              <input class="xfr-input" id="xfr-mn" placeholder="16-digit Partner number" style="font-family:var(--mono)" oninput="updateTransferAssist()">
             </div>
             <div class="xfr-field">
-              <label>Amount</label>
-              <div style="display:flex;gap:6px;align-items:center">
-                <input class="xfr-input" id="xfr-qty" type="number" min="1" placeholder="0" oninput="updateTransferAssist()" style="flex:1">
-                <button class="btn btn-ghost btn-sm" onclick="setMaxTransfer()" style="flex-shrink:0;white-space:nowrap">Max</button>
-              </div>
+              <label>Amount (Community COG$)</label>
+              <input class="xfr-input" id="xfr-qty" type="text" inputmode="decimal" placeholder="0.0000" oninput="updateTransferAssist()" style="font-family:var(--mono)">
             </div>
           </div>
           <div id="transfer-assist" style="font-size:.86rem;color:var(--text3);margin-bottom:12px;line-height:1.55">Enter the receiving Partner number and the amount of Community COG$ to transfer.</div>
-          <button class="btn btn-gold btn-sm" id="xfr-btn" onclick="doTransfer()">Transfer Community COG$</button>
+          <button class="btn btn-gold btn-sm" id="xfr-btn" onclick="doTransfer()">Review &amp; Send →</button>
           <div class="flash" id="xfr-fl"></div>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ══ TRANSFER CONFIRM MODAL ══ -->
+  <div id="xfr-confirm-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+    <div style="background:var(--s1);border:1px solid var(--gold-bdr);border-radius:18px;padding:28px;max-width:420px;width:92%;box-shadow:0 24px 80px rgba(0,0,0,.7)">
+      <div style="font-family:var(--serif);font-size:1.4rem;font-weight:500;color:var(--text);margin-bottom:6px">Confirm transfer</div>
+      <p style="font-size:.86rem;color:var(--text3);margin-bottom:20px;line-height:1.6">Please review the details below before sending. This action cannot be undone.</p>
+      <div id="xfr-confirm-rows" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;font-size:.92rem;line-height:2"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-gold" id="xfr-confirm-send" onclick="confirmSend()">Send Community COG$ →</button>
+        <button class="btn btn-ghost" onclick="xfrEditReturn()">← Edit</button>
+        <button class="btn btn-ghost" style="color:var(--red);border-color:rgba(196,96,96,.3)" onclick="xfrCancel()">Cancel</button>
+      </div>
+      <div class="flash" id="xfr-confirm-fl" style="margin-top:12px"></div>
     </div>
   </div>
 
@@ -1439,6 +1453,10 @@ function toggleSection(id){
 ════════════════════════════ */
 function openVault(d){
   window._vaultData = d;
+  // Cache CC wallet address for transfer self-check
+  if(d.wallet_addresses && d.wallet_addresses.community_tokens){
+    d._ccAddress = d.wallet_addresses.community_tokens;
+  }
 
   // Participation gate — mandatory on first entry
   if(!d.participation_completed){
@@ -2279,38 +2297,36 @@ async function submitCharityOrders(){
   }
 }
 
-function setMaxTransfer(){
-  const max = parseInt((window._vaultData||{}).community_transfer_balance ?? (window._vaultData||{}).community_tokens ?? 0, 10) || 0;
-  if (el('xfr-qty')) el('xfr-qty').value = max > 0 ? String(max) : '';
-  updateTransferAssist();
-}
-
 function updateTransferAssist(){
   const note = el('transfer-assist');
-  const btn = el('xfr-btn');
+  const btn  = el('xfr-btn');
   if(!note) return;
-  const available = parseInt((window._vaultData||{}).community_transfer_balance ?? (window._vaultData||{}).community_tokens ?? 0, 10) || 0;
-  const mn = (el('xfr-mn')?.value||'').replace(/\s/g,'');
-  const qty = parseInt(el('xfr-qty')?.value||0,10) || 0;
-  let msg = `Available to transfer now: ${fmt(available)} Community COG$.`;
+  const available = parseFloat((window._vaultData||{}).community_transfer_balance ?? (window._vaultData||{}).community_tokens ?? 0) || 0;
+  const recipient = (el('xfr-mn')?.value||'').trim();
+  const qty = parseFloat(el('xfr-qty')?.value||0) || 0;
+  const selfAddr = (window._vaultData||{})._ccAddress || '';
+  const selfMn   = String((window._vaultData||{}).member_number||'').replace(/\s/g,'');
+
+  let msg = `Available: ${fmtDp(available)} Community COG$.`;
   let disable = false;
-  if(available < 1){
-    msg += ' No live Community COG$ is currently available in this vault.';
+
+  if(available < 0.0001){
+    msg += ' No Community COG$ available in this vault.';
+    disable = true;
+  } else if(recipient && (recipient === selfAddr || recipient.replace(/\s/g,'') === selfMn)){
+    msg += ' Cannot transfer to your own address.';
     disable = true;
   } else if(qty > 0 && qty > available){
-    msg += ` Requested amount exceeds your live balance by ${fmt(qty - available)}.`;
+    msg += ` Amount exceeds balance by ${fmtDp(qty - available)}.`;
     disable = true;
-  } else if(mn && (window._vaultData||{}).member_number && mn === String((window._vaultData||{}).member_number).replace(/\s/g,'')){
-    msg += ' You cannot transfer Community COG$ to your own Partner number.';
-    disable = true;
-  } else if(qty > 0){
-    msg += ` You are preparing to transfer ${fmt(qty)} Community COG$.`;
-  } else {
-    msg += ' Locked classes remain unavailable until Expansion Day.';
+  } else if(qty > 0 && recipient){
+    msg += ` Ready to transfer ${fmtDp(qty)} CC to ${recipient.slice(0,20)}${recipient.length>20?'…':''}.`;
   }
+
   note.textContent = msg;
   if(btn) btn.disabled = disable;
 }
+
 
 function renderPendingOrders(d){
   const card = el('pending-orders-card');
@@ -2436,40 +2452,103 @@ async function cancelKidsOrder(){
   }
 }
 
-async function doTransfer(){
-  const selfMn = String((window._vaultData||{}).member_number||'').replace(/\s/g,'');
-  const mn  = (el('xfr-mn')?.value||'').replace(/\s/g,'');
-  const qty = parseInt(el('xfr-qty')?.value||0,10);
-  const available = parseInt((window._vaultData||{}).community_transfer_balance ?? (window._vaultData||{}).community_tokens ?? 0, 10) || 0;
-  if(!mn || mn.length < 10){ flash('xfr-fl','Please enter a valid Partner number.','err'); updateTransferAssist(); return; }
-  if(selfMn && mn === selfMn){ flash('xfr-fl','You cannot transfer Community COG$ to your own Partner number.','err'); updateTransferAssist(); return; }
-  if(qty < 1){ flash('xfr-fl','Please enter at least 1 Community COG$.','err'); updateTransferAssist(); return; }
-  if(available < 1){ flash('xfr-fl','No Community COG$ is currently available for transfer in this vault.','err'); updateTransferAssist(); return; }
-  if(qty > available){ flash('xfr-fl',`Only ${fmt(available)} Community COG$ is currently available to transfer.`,'err'); updateTransferAssist(); return; }
-  if(!confirm(`Transfer ${qty} Community COG$ to Partner ${mn}?
+/* Store pending transfer details for confirm modal */
+var _xfrPending = null;
 
-This is the live Community COG$ exchange pathway inside the partnership. Locked reservation classes remain unavailable until Expansion Day.`)) return;
+function doTransfer(){
+  const d         = window._vaultData || {};
+  const selfMn    = String(d.member_number||'').replace(/\s/g,'');
+  const selfAddr  = d._ccAddress || '';
+  const recipient = (el('xfr-mn')?.value||'').trim();
+  const qtyRaw    = (el('xfr-qty')?.value||'').trim();
+  const qty       = parseFloat(qtyRaw) || 0;
+  const available = parseFloat(d.community_transfer_balance ?? d.community_tokens ?? 0) || 0;
+
+  // Validation
+  if(!recipient){ flash('xfr-fl','Enter the recipient wallet address (COGS-CC-...) or Partner number.','err'); return; }
+  if(recipient === selfAddr || recipient.replace(/\s/g,'') === selfMn){
+    flash('xfr-fl','Cannot transfer to your own address.','err'); return;
+  }
+  if(qty < 0.0001){ flash('xfr-fl','Enter an amount of at least 0.0001 Community COG$.','err'); return; }
+  if(qty > available){ flash('xfr-fl',`Only ${fmtDp(available)} CC available. Requested ${fmtDp(qty)}.`,'err'); return; }
+
   flash('xfr-fl','');
-  const btn = el('xfr-btn');
-  if(btn){ btn.disabled = true; btn.textContent = 'Transferring…'; }
+
+  // Determine if it's a hash address or member number
+  const isHash = recipient.toUpperCase().startsWith('COGS-');
+  const senderAddr = (d.wallet_addresses||{}).community_tokens || '—';
+
+  // Stash pending and open confirm modal
+  _xfrPending = { recipient, qty, available, isHash, senderAddr };
+  const modal = el('xfr-confirm-modal');
+  const rows  = el('xfr-confirm-rows');
+  if(!modal || !rows) return;
+
+  rows.innerHTML =
+    `<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:baseline">
+      <span style="color:var(--text3);font-size:.82rem">From address</span>
+      <span style="font-family:var(--mono);color:var(--green);font-size:.82rem;word-break:break-all">${esc(senderAddr)}</span>
+      <span style="color:var(--text3);font-size:.82rem">To ${isHash?'address':'Partner number'}</span>
+      <span style="font-family:var(--mono);color:var(--gold);font-size:.82rem;word-break:break-all">${esc(recipient)}</span>
+      <span style="color:var(--text3);font-size:.82rem">Token</span>
+      <span style="color:var(--text)">Community COG$ (COGS-CC)</span>
+      <span style="color:var(--text3);font-size:.82rem">Amount</span>
+      <span style="font-family:var(--serif);font-size:1.3rem;color:var(--green);font-weight:500">${fmtDp(qty)} <span style="font-size:.82rem;color:var(--text3)">CC</span></span>
+      <span style="color:var(--text3);font-size:.82rem">Remaining balance</span>
+      <span style="font-family:var(--mono);color:var(--text2)">${fmtDp(available - qty)} CC</span>
+    </div>
+    <div style="margin-top:14px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px;font-size:.8rem;color:var(--text4);line-height:1.55">This transfer is irreversible once confirmed. The hash address uniquely identifies the token class and recipient.</div>`;
+
+  flash('xfr-confirm-fl','');
+  modal.style.display = 'flex';
+}
+
+async function confirmSend(){
+  if(!_xfrPending) return;
+  const btn = el('xfr-confirm-send');
+  if(btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
+  flash('xfr-confirm-fl','');
   try{
-    await api('vault/member-transfer',{method:'POST',body:JSON.stringify({
-      to_member_number: mn,
+    await api('vault/member-transfer', {method:'POST', body:JSON.stringify({
+      to_wallet_address: _xfrPending.isHash ? _xfrPending.recipient : undefined,
+      to_member_number:  _xfrPending.isHash ? undefined : _xfrPending.recipient,
       token_key: 'community_tokens',
-      units: qty
+      units: _xfrPending.qty
     })});
-    flash('xfr-fl',`${qty} Community COG$ transferred to Partner ${mn}.`,'ok');
+    // Close modal, clear form, refresh vault
+    const sentQty = _xfrPending.qty;
+    el('xfr-confirm-modal').style.display = 'none';
     el('xfr-mn').value = '';
     el('xfr-qty').value = '';
+    _xfrPending = null;
+    updateTransferAssist();
+    flash('xfr-fl', `${fmtDp(sentQty)} Community COG$ sent successfully.`,'ok');
     const v = await api('vault/member');
     openVault(v);
   }catch(e){
-    flash('xfr-fl',e.message||'Transfer failed.','err');
-    updateTransferAssist();
+    flash('xfr-confirm-fl', e.message||'Transfer failed. Please try again.','err');
   }finally{
-    if(btn){ btn.disabled = false; btn.textContent = 'Transfer Community COG$'; }
+    if(btn){ btn.disabled = false; btn.textContent = 'Send Community COG$ →'; }
   }
 }
+
+function xfrEditReturn(){
+  const modal = el('xfr-confirm-modal');
+  if(modal) modal.style.display = 'none';
+  flash('xfr-confirm-fl','');
+}
+
+function xfrCancel(){
+  const modal = el('xfr-confirm-modal');
+  if(modal) modal.style.display = 'none';
+  el('xfr-mn').value = '';
+  el('xfr-qty').value = '';
+  _xfrPending = null;
+  flash('xfr-fl','');
+  updateTransferAssist();
+}
+
+
 
 /* ── NEWS ── */
 function renderNews(d){
@@ -2839,20 +2918,31 @@ function renderProfile(d){
 }
 
 function renderWalletAddresses(d){
-  const addrs = d.wallet_addresses||{};
-  const addr  = addrs.community_tokens || '';
-  const wrap = el('my-wallet-addrs');
-  const list = el('wallet-addr-list');
+  const addrs = d.wallet_addresses || {};
+  const wrap  = el('my-wallet-addrs');
+  const list  = el('wallet-addr-list');
   if(!wrap || !list) return;
-  if(!addr){ wrap.style.display = 'none'; list.innerHTML = ''; return; }
 
-  list.innerHTML = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Community COG$ — Receive address</div>
-        <div style="font-family:var(--mono);font-size:.84rem;color:var(--gold);word-break:break-all">${esc(addr)}</div>
+  // All token classes with their addresses
+  const classes = [
+    {key:'community_tokens',  label:'Community COG$ (CC)', color:'var(--green)'},
+    {key:'investment_tokens', label:'ASX COG$',             color:'var(--gold)'},
+    {key:'rwa_tokens',        label:'RWA COG$',             color:'var(--gold)'},
+    {key:'landholder_tokens', label:'Landholder COG$ (LH)', color:'var(--gold)'},
+  ];
+
+  const rows = classes.filter(c => addrs[c.key]).map(c => {
+    const addr = esc(addrs[c.key]);
+    return `<div style="margin-bottom:16px">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">${c.label}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="hash-pill gold" style="font-family:var(--mono);font-size:.88rem;color:${c.color};word-break:break-all;flex:1;padding:10px 14px;border-radius:10px">${addr}</div>
+        <button class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="copyAddr('${addr}',this)">Copy</button>
       </div>
-      <button class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="copyAddr('${esc(addr)}',this)">Copy</button>
     </div>`;
+  }).join('');
+
+  list.innerHTML = rows || '<div class="placeholder"><strong>No addresses yet</strong><p>Hash addresses generate on first vault load after Governance Foundation Day.</p></div>';
   wrap.style.display = '';
 }
 
@@ -2944,6 +3034,9 @@ window.submitProposal   = submitProposal;
 window.togglePropose    = togglePropose;
 window.togglePastPolls  = togglePastPolls;
 window.doTransfer       = doTransfer;
+window.confirmSend      = confirmSend;
+window.xfrEditReturn    = xfrEditReturn;
+window.xfrCancel        = xfrCancel;
 window.saveReservations = saveReservations;
 window.setElection      = setElection;
 window.markAllRead      = markAllRead;
