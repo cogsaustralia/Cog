@@ -124,7 +124,12 @@ foreach ($signoffs as $s) if (($s['status'] ?? '') === 'pending') $openSignoffs+
 ob_start(); ?>
 <style>
 .ops-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.form-grid > .field{min-width:0}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.82rem;font-weight:600;color:var(--sub)}
+.field input,.field select,.field textarea{width:100%;min-width:0;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--text);font:inherit;font-size:.85rem}
+.field textarea{min-height:80px;resize:vertical}
 .bridge-note{padding:14px 16px;border-radius:14px;background:rgba(212,178,92,.08);border:1px solid rgba(212,178,92,.2);margin-bottom:18px;font-size:.88rem;line-height:1.6}
 @media(max-width:980px){.ops-grid,.form-grid{grid-template-columns:1fr}}
 </style>
