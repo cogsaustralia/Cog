@@ -124,8 +124,7 @@ img{max-width:100%;height:auto}
 .tnb-lbl{display:inline}
 .tnb-badge{font-size:1rem;font-weight:700;background:var(--gold);color:#0a0a0a;padding:1px 5px;border-radius:99px;min-width:16px;text-align:center;display:none}
 .tnb-badge.show{display:inline-block}
-@media(max-width:640px){.tnb{padding:0 9px;font-size:.92rem;gap:3px}}
-@media(max-width:480px){.tnb-lbl{display:none}.tnb{padding:0 12px;font-size:1rem}}
+@media(max-width:640px){.tnb-lbl{display:none}.tnb{padding:0 13px;font-size:1rem;gap:0}}
 @media(max-width:360px){.tnb{padding:0 9px}}
 
 /* ── HEADER SPACER ── */
@@ -890,7 +889,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <img src="../assets/logo_webcir.png" alt="COG$">
       <span class="tb-brand-name">Partner Vault</span>
     </a>
-    <span style="flex:1;min-width:0;max-width:none;font-size:1.02rem;color:var(--text3);padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+    <span style="flex:1;min-width:0;max-width:200px;font-size:1.02rem;color:var(--text3);padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
       <strong id="tb-name" style="color:var(--text)">—</strong>
       <span id="tb-mn" style="margin-left:8px;font-family:var(--mono);font-size:1rem;letter-spacing:.04em">—</span>
     </span>
@@ -1725,114 +1724,43 @@ function loadInviteCode(){
 function renderInviteCard(d){
   var wrap = el('invite-wrap');
   if(!wrap) return;
-  if(!d) { wrap.style.display='none'; return; }
-  var code   = d.public_code || d.code || '';
-  var link   = d.invite_link || d.share_url || '';
-  var uses   = Number(d.use_count || 0);
-  var recent = Array.isArray(d.recent) ? d.recent : [];
+  if(!d){ wrap.style.display='none'; return; }
+  var code = (d.public_code || d.code || '').trim();
+  var siteOrigin = window.location.origin || 'https://cogsaustralia.org';
+  var link = code
+    ? siteOrigin + '/?invite=' + encodeURIComponent(code)
+    : (d.invite_link || d.share_url || siteOrigin + '/');
+  var uses = Number(d.use_count || 0);
   var hasCode = !!(d.has_code || code);
   if(!hasCode || !code){ wrap.style.display='none'; return; }
+  var paid = !!(window._vaultData && (window._vaultData.payment_status||'').toLowerCase()==='paid');
+  if(!paid){ wrap.style.display='none'; return; }
+
+  var ea = function(s){ return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); };
+  var recent = Array.isArray(d.recent) ? d.recent : [];
+  var names = recent.slice(0,8).map(function(r){ return esc(r.first_name||(r.name||'').split(' ')[0]||''); }).filter(Boolean);
+  var namesLine = names.length
+    ? names.join(' &middot; ') + (recent.length>8?' &middot; +'+(recent.length-8)+' more':'')
+    : '<span style="color:var(--text3);font-style:italic;font-weight:400">No Partners invited yet</span>';
+
   wrap.style.display = '';
-
-  var recentHtml = '';
-  if(recent.length > 0){
-    recentHtml = '<div class="id-row" style="margin-top:6px"><span class="id-label">Recent Partners invited</span>'
-      + '<span class="id-value">'
-      + recent.slice(0,5).map(function(r){
-          return esc(r.first_name || r.name || '') + ((r.entry_type === 'business') ? ' (business)' : '');
-        }).join(', ')
-      + (recent.length > 5 ? (' +' + (recent.length-5) + ' more') : '')
-      + '</span></div>';
-  }
-
   wrap.innerHTML =
-    '<div class="ent-row" style="margin-top:10px;align-items:flex-start">'
-    + '<span class="ent-icon">🔗</span>'
-    + '<div class="ent-text" style="width:100%">'
-    +   '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
-    +     '<div class="ent-title">Invite a Partner</div>'
-    +     chip('Your unique code','green')
-    +   '</div>'
-    +   '<div class="ent-desc">Share your code or link. Every Partner you invite strengthens the partnership\'s collective governance.</div>'
-    +   '<div class="id-grid" style="margin-top:12px">'
-    +     '<div class="id-row"><span class="id-label">Your invite code</span>'
-    +       '<span class="id-value mono" style="font-size:1.05rem;letter-spacing:.1em;color:var(--gold)">'
-    +         esc(code)
-    +         ' <button class="btn btn-ghost btn-sm" style="margin-left:6px;padding:2px 8px;font-size:1rem" onclick="copyText(\''+escAttr(code)+'\',this)">Copy</button>'
-    +       '</span>'
-    +     '</div>'
-    +     '<div class="id-row"><span class="id-label">Partners invited so far</span><span class="id-value">'+uses+'</span></div>'
-    +     recentHtml
-    +   '</div>'
-    +   '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">'
-    +     '<button class="btn btn-ghost btn-sm" onclick="copyText(\''+escAttr(link)+'\',this)">Copy invite link</button>'
-    +     '<button class="btn btn-ghost btn-sm" onclick="shareInviteLink(\''+escAttr(code)+'\',\''+escAttr(link)+'\')">Share invite link</button>'
-    +   '</div>'
+    '<div class="ov-stag">'
+    + '<div class="ov-stag-hd">The Partnership gets its weight from its Partners.</div>'
+    + '<div class="ov-stag-sub">Your governance vote is equal to every other Partner\u2019s. Bring the next Partner.</div>'
+    + '<div class="ov-stag-meta">'
+    +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Your invite code</div><div class="ov-stag-meta-val">'+esc(code)+'</div></div>'
+    +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Partners invited</div><div class="ov-stag-meta-val count">'+uses+'</div></div>'
+    +   '<div class="ov-stag-meta-block" style="flex:1 1 auto;min-width:140px"><div class="ov-stag-meta-lbl">Joined so far</div><div class="ov-stag-meta-val names">'+namesLine+'</div></div>'
+    + '</div>'
+    + '<div class="ov-stag-actions">'
+    +   '<button class="ov-stag-btn" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.3);color:#25d366" onclick="ivShare(\'whatsapp\',\''+ea(code)+'\',\''+ea(link)+'\')" title="WhatsApp">&#x1F4AC; WhatsApp</button>'
+    +   '<button class="ov-stag-btn" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.25);color:#60d4b8" onclick="ivShare(\'sms\',\''+ea(code)+'\',\''+ea(link)+'\')" title="SMS">&#x1F4F1; SMS</button>'
+    +   '<button class="ov-stag-btn" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.25);color:#6ea8d8" onclick="ivShare(\'email\',\''+ea(code)+'\',\''+ea(link)+'\')" title="Email">&#x2709; Email</button>'
+    +   '<button class="ov-stag-btn primary" onclick="ivShare(\'copy\',\''+ea(code)+'\',\''+ea(link)+'\')" title="Copy link">&#x1F517; Copy link</button>'
     + '</div>'
     + '</div>';
 }
-
-
-function copyText(text, btn){
-  navigator.clipboard.writeText(text).then(function(){
-    var orig = btn.textContent;
-    btn.textContent = 'Copied ✓';
-    setTimeout(function(){ btn.textContent = orig; }, 2000);
-  }).catch(function(){
-    // Fallback for older browsers
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    var orig = btn.textContent;
-    btn.textContent = 'Copied ✓';
-    setTimeout(function(){ btn.textContent = orig; }, 2000);
-  });
-}
-
-function escAttr(s){
-  return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');
-}
-
-
-function _ivOpenLink(href){
-  var a=document.createElement('a');
-  a.href=href; a.rel='noopener'; a.target='_blank'; a.style.display='none';
-  document.body.appendChild(a); a.click();
-  setTimeout(function(){ document.body.removeChild(a); },200);
-}
-
-function ivShare(channel, code, link){
-  var text = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
-  switch(channel){
-    case 'whatsapp':
-      _ivOpenLink('https://wa.me/?text='+encodeURIComponent(text));
-      break;
-    case 'sms':
-      _ivOpenLink('sms:?body='+encodeURIComponent(text));
-      break;
-    case 'email':
-      _ivOpenLink('mailto:?subject='+encodeURIComponent('Join me in the COG$ Joint Venture Partnership')+'&body='+encodeURIComponent(text));
-      break;
-    case 'copy':
-      copyText(link);
-      break;
-  }
-}
-
-function shareInviteLink(code, link){
-  var message = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
-  if(navigator.share){
-    navigator.share({title:'Join me in the COG$ Joint Venture', text:message, url:link}).catch(function(){});
-    return;
-  }
-  copyText(link, { textContent:'Copy invite link' });
-}
-
 async function completeCurrentJvpaRecord(){
   var btn = el('jvpa-complete-btn');
   if(btn){ btn.disabled = true; btn.textContent = 'Completing…'; }
