@@ -1930,7 +1930,7 @@ function toggleComments(proposalId){
   if(panel.style.display !== 'none'){ panel.style.display='none'; return; }
   panel.style.display = '';
   panel.innerHTML = '<div class="sk" style="height:40px;border-radius:8px;margin-top:10px"></div>';
-  api('vault/proposal-comments?proposal_id='+proposalId).then(function(r){
+  api('vault/proposal-comments&proposal_id='+proposalId).then(function(r){
     const comments = r.comments || [];
     let h = '<div class="prop-comments-list">';
     if(comments.length === 0){

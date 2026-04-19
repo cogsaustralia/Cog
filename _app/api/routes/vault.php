@@ -3784,14 +3784,15 @@ function handleProposalComments(): void {
           COMMENT='Anonymous comments on vote_proposals. No member_id stored — deliberately anonymous.'");
     }
 
-    $method     = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    $proposalId = (int)(($_GET['proposal_id'] ?? 0) ?: (jsonBody()['proposal_id'] ?? 0));
-    if ($proposalId < 1) apiError('proposal_id required.');
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
     if ($method === 'POST') {
-        $body = jsonBody();
-        $text = trim((string)($body['comment_text'] ?? ''));
-        if (strlen($text) < 3)  apiError('Comment too short (minimum 3 characters).');
+        $body       = jsonBody();
+        $proposalId = (int)($body['proposal_id'] ?? 0);
+        $text       = trim((string)($body['comment_text'] ?? ''));
+
+        if ($proposalId < 1)   apiError('proposal_id required.');
+        if (strlen($text) < 3) apiError('Comment too short (minimum 3 characters).');
         if (strlen($text) > 1000) apiError('Comment too long (maximum 1000 characters).');
 
         // Verify proposal is open
@@ -3807,16 +3808,21 @@ function handleProposalComments(): void {
         apiSuccess(['commented' => true]);
 
     } else {
-        // GET — return paginated comments newest first
+        // GET — proposal_id comes from query string (&proposal_id=N after ?route=...)
+        $proposalId = (int)($_GET['proposal_id'] ?? 0);
+        if ($proposalId < 1) apiError('proposal_id required.');
+
         $limit  = min(50, max(1, (int)($_GET['limit'] ?? 20)));
         $offset = max(0, (int)($_GET['offset'] ?? 0));
-        $cStmt  = $db->prepare("SELECT id, comment_text, submitted_at FROM proposal_comments WHERE proposal_id = ? ORDER BY submitted_at DESC LIMIT ? OFFSET ?");
+
+        $cStmt = $db->prepare("SELECT id, comment_text, submitted_at FROM proposal_comments WHERE proposal_id = ? ORDER BY submitted_at DESC LIMIT ? OFFSET ?");
         $cStmt->execute([$proposalId, $limit, $offset]);
         $comments = $cStmt->fetchAll();
-        $total    = (int)$db->prepare("SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?")->execute([$proposalId]) ? (int)$db->query("SELECT FOUND_ROWS()")->fetchColumn() : 0;
-        $cntStmt  = $db->prepare("SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?");
+
+        $cntStmt = $db->prepare("SELECT COUNT(*) FROM proposal_comments WHERE proposal_id = ?");
         $cntStmt->execute([$proposalId]);
-        $total    = (int)$cntStmt->fetchColumn();
+        $total = (int)$cntStmt->fetchColumn();
+
         apiSuccess(['comments' => $comments, 'total' => $total]);
     }
 }
