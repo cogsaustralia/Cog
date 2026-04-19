@@ -541,14 +541,20 @@
 
     /* ══ Hub sections — Identity · Governance · Communications · Invite ══ */
     .hub-sections{display:flex;flex-direction:column;gap:18px;margin-top:24px}
-    .hub-card{background:linear-gradient(135deg,rgba(28,22,10,.85),rgba(14,11,5,.7));border:1px solid var(--gold-rim);border-radius:14px;overflow:hidden}
-    .hub-card-hd{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--gold-rim)}
+    .hub-card{background:linear-gradient(135deg,rgba(28,22,10,.85),rgba(14,11,5,.7));border:1px solid var(--gold-rim);border-radius:16px;overflow:hidden;transition:border-color .2s}
+    .hub-card.collapsed .hub-card-hd{border-bottom-color:transparent}
+    .hub-card-hd{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--gold-rim);cursor:pointer;user-select:none;transition:background .15s}
+    .hub-card-hd:hover{background:rgba(240,209,138,.03)}
     .hub-card-ico{font-size:1rem;color:var(--gold-1);flex-shrink:0;width:20px;text-align:center}
     .hub-card-title{font-size:.88rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text);flex:1}
     .hub-card-badge{font-size:.66rem;padding:2px 8px;border-radius:99px;background:rgba(240,130,20,.18);border:1px solid rgba(240,130,20,.5);color:#f0c070;font-weight:600;letter-spacing:.04em}
     .hub-card-link{font-size:.72rem;color:var(--gold-2);text-decoration:none;font-weight:500;white-space:nowrap}
     .hub-card-link:hover{color:var(--gold-1);text-decoration:underline}
-    .hub-card-bd{padding:14px 18px}
+    .hub-card-chevron{font-size:.7rem;color:var(--gold-2);flex-shrink:0;transition:transform .25s cubic-bezier(.22,.68,.36,1);margin-left:4px}
+    .hub-card.collapsed .hub-card-chevron{transform:rotate(-90deg)}
+    .hub-card-bd{padding:14px 18px;animation:hubFadeIn .22s ease}
+    .hub-card.collapsed .hub-card-bd{display:none}
+    @keyframes hubFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
     /* Identity rows */
     .hub-id-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap}
     .hub-id-row:last-child{border-bottom:none}
@@ -773,8 +779,24 @@
           <div style="margin-bottom:10px">
             <span class="eyebrow ha">Community Hub</span>
           </div>
-          <h1 class="member-welcome-hd ha">Welcome, <span id="member-first-name">Partner</span>.</h1>
-          <p class="lead ha" style="max-width:62ch">Your home base — identity, governance, community growth, and everything that matters.</p>
+          <div class="member-welcome-row ha" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
+            <h1 class="member-welcome-hd" style="margin-bottom:0">Welcome, <span id="member-first-name">Partner</span>.</h1>
+            <a href="../wallets/member.html" id="hero-vault-btn" onclick="handleVaultEntry(event);return false;"
+               style="display:none;align-items:center;gap:10px;padding:10px 18px 10px 12px;
+                      background:linear-gradient(135deg,rgba(240,209,138,.18),rgba(200,151,62,.1));
+                      border:2px solid var(--gold-rim2);border-radius:14px;color:var(--gold-1);
+                      font-size:.88rem;font-weight:700;text-decoration:none;
+                      transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;
+                      box-shadow:0 4px 20px rgba(200,151,62,.2);white-space:nowrap"
+               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(200,151,62,.35)'"
+               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(200,151,62,.2)'">
+              <img src="../assets/cogs_coin_web.png" alt="" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(240,209,138,.4);flex-shrink:0">
+              <span>Open Independence Vault
+                <span style="display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:1px">Enter here &#8594;</span>
+              </span>
+            </a>
+          </div>
+          <p class="lead ha" style="max-width:62ch;margin-top:0">Your home base — identity, governance, community growth, and everything that matters.</p>
 
           <!-- Founding Partners stats -->
           <div class="comm-strip ha" id="comm-strip" style="display:none;margin-top:20px">
@@ -787,11 +809,12 @@
           <div class="hub-sections" id="hub-sections" style="display:none">
 
             <!-- Section 1: Identity card -->
-            <div class="hub-card" id="hub-identity-card">
-              <div class="hub-card-hd">
+            <div class="hub-card collapsed" id="hub-identity-card">
+              <div class="hub-card-hd" onclick="toggleHubCard('hub-identity-card')">
                 <span class="hub-card-ico">&#9672;</span>
                 <span class="hub-card-title">Identity &amp; Membership</span>
-                <span style="font-size:.72rem;color:var(--muted);font-family:var(--mono);margin-left:auto" id="hub-id-member-number"></span>
+                <span style="font-size:.72rem;color:var(--muted);font-family:var(--mono)" id="hub-id-member-number"></span>
+                <span class="hub-card-chevron">&#9660;</span>
               </div>
               <div class="hub-card-bd" id="hub-identity-bd">
                 <!-- populated by renderHubIdentity() -->
@@ -799,12 +822,13 @@
             </div>
 
             <!-- Section 2: Governance — Polls & Proposals -->
-            <div class="hub-card" id="hub-governance-card" style="display:none">
-              <div class="hub-card-hd">
+            <div class="hub-card collapsed" id="hub-governance-card" style="display:none">
+              <div class="hub-card-hd" onclick="toggleHubCard('hub-governance-card')">
                 <span class="hub-card-ico">&#10022;</span>
-                <span class="hub-card-title">COG$ Management Proposals</span>
+                <span class="hub-card-title">COG$ Management</span>
                 <span class="hub-card-badge" id="hub-gov-badge" style="display:none"></span>
-                <a class="hub-card-link" href="../wallets/member.html" onclick="hubCoinTransition('../wallets/member.html');return false;">Vote in vault &rarr;</a>
+                <a class="hub-card-link" href="../wallets/member.html" onclick="event.stopPropagation();hubCoinTransition('../wallets/member.html');return false;">Vote in vault &rarr;</a>
+                <span class="hub-card-chevron">&#9660;</span>
               </div>
               <div class="hub-card-bd" id="hub-governance-bd">
                 <!-- populated by renderHubGovernance() -->
@@ -812,12 +836,13 @@
             </div>
 
             <!-- Section 3: Communications — Notices + News -->
-            <div class="hub-card" id="hub-comms-card">
-              <div class="hub-card-hd">
+            <div class="hub-card collapsed" id="hub-comms-card">
+              <div class="hub-card-hd" onclick="toggleHubCard('hub-comms-card')">
                 <span class="hub-card-ico">&#9685;</span>
                 <span class="hub-card-title">Communications</span>
                 <span class="hub-card-badge" id="hub-comms-badge" style="display:none"></span>
-                <a class="hub-card-link" href="../wallets/member.html" onclick="hubCoinTransition('../wallets/member.html');return false;">View all in vault &rarr;</a>
+                <a class="hub-card-link" href="../wallets/member.html" onclick="event.stopPropagation();hubCoinTransition('../wallets/member.html');return false;">View all in vault &rarr;</a>
+                <span class="hub-card-chevron">&#9660;</span>
               </div>
               <div class="hub-card-bd" id="hub-comms-bd">
                 <!-- populated by renderHubComms() -->
@@ -1607,6 +1632,16 @@ function enterCommunity(data){
   window._communityData = data;
   var paymentStatus = window._partnerPaymentStatus;
   var wrap = document.getElementById('vault-pill-wrap');
+  // Show the hero inline vault button
+  var heroBtn = document.getElementById('hero-vault-btn');
+  if(heroBtn){
+    heroBtn.style.display = 'inline-flex';
+    if(paymentStatus !== 'paid'){
+      heroBtn.style.borderColor = 'rgba(240,130,20,.7)';
+      heroBtn.style.background = 'linear-gradient(135deg,rgba(240,130,20,.18),rgba(200,90,20,.1))';
+      heroBtn.querySelector('span').childNodes[0].textContent = 'Complete your Partnership';
+    }
+  }
   if(paymentStatus !== 'paid' && wrap && !document.getElementById('vault-pay-badge')){
 
     // ── Badge pulsing over the vault pill ──
@@ -2342,6 +2377,12 @@ function renderParticipationPill(data){
 /* ════════════════════════════════════════════════════════════
    HUB SECTION RENDERERS
 ════════════════════════════════════════════════════════════ */
+
+function toggleHubCard(cardId){
+  var card = document.getElementById(cardId);
+  if(!card) return;
+  card.classList.toggle('collapsed');
+}
 
 function hubCoinTransition(href){
   var overlay = document.createElement('div');
