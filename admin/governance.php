@@ -28,6 +28,103 @@ $snapshots = ops_has_table($pdo, 'vote_snapshots') ? gv_rows($pdo, 'SELECT * FRO
 $legacyProposalCount = ops_has_table($pdo, 'vote_proposals') ? gv_val($pdo, 'SELECT COUNT(*) FROM vote_proposals') : 0;
 $legacyPollCount = ops_has_table($pdo, 'wallet_polls') ? gv_val($pdo, 'SELECT COUNT(*) FROM wallet_polls') : 0;
 
+/* ── LIVE PROPOSAL TALLIES ── */
+$voteProposals = [];
+if (ops_has_table($pdo, 'vote_proposals')) {
+    $voteProposals = gv_rows($pdo,
+        "SELECT id, proposal_key, title, summary, status, audience_scope, closes_at, created_at
+         FROM vote_proposals ORDER BY id DESC LIMIT 20");
+    if ($voteProposals) {
+        $vpIds = array_map(fn($r) => (int)$r['id'], $voteProposals);
+        $ph = implode(',', array_fill(0, count($vpIds), '?'));
+        // Tallies
+        $vpTallies = [];
+        try {
+            $rs = ops_fetch_all($pdo,
+                "SELECT proposal_id, response_value, COUNT(*) AS cnt
+                 FROM vote_proposal_responses WHERE proposal_id IN ($ph)
+                 GROUP BY proposal_id, response_value", $vpIds);
+            foreach ($rs as $r) {
+                $vpTallies[(int)$r['proposal_id']][$r['response_value']] = (int)$r['cnt'];
+            }
+        } catch (Throwable $e) {}
+        // Comment counts
+        $vpCommentCounts = [];
+        if (ops_has_table($pdo, 'proposal_comments')) {
+            try {
+                $rs = ops_fetch_all($pdo,
+                    "SELECT proposal_id, COUNT(*) AS cnt
+                     FROM proposal_comments WHERE proposal_id IN ($ph)
+                     GROUP BY proposal_id", $vpIds);
+                foreach ($rs as $r) $vpCommentCounts[(int)$r['proposal_id']] = (int)$r['cnt'];
+            } catch (Throwable $e) {}
+        }
+        // Comments (latest 10 per proposal)
+        $vpComments = [];
+        if (ops_has_table($pdo, 'proposal_comments')) {
+            try {
+                $rs = ops_fetch_all($pdo,
+                    "SELECT proposal_id, comment_text, submitted_at
+                     FROM proposal_comments WHERE proposal_id IN ($ph)
+                     ORDER BY proposal_id ASC, submitted_at DESC", $vpIds);
+                foreach ($rs as $r) {
+                    $pid = (int)$r['proposal_id'];
+                    if (!isset($vpComments[$pid])) $vpComments[$pid] = [];
+                    if (count($vpComments[$pid]) < 10) $vpComments[$pid][] = $r;
+                }
+            } catch (Throwable $e) {}
+        }
+        // Inject into proposal rows
+        foreach ($voteProposals as &$vp) {
+            $pid  = (int)$vp['id'];
+            $t_   = $vpTallies[$pid] ?? [];
+            $yes  = (int)($t_['yes']   ?? 0);
+            $maybe= (int)($t_['maybe'] ?? 0);
+            $no   = (int)($t_['no']    ?? 0);
+            $total= $yes + $maybe + $no;
+            $vp['tally'] = ['yes' => $yes, 'maybe' => $maybe, 'no' => $no];
+            $vp['total_responses'] = $total;
+            $vp['comment_count']   = $vpCommentCounts[$pid] ?? 0;
+            $vp['comments']        = $vpComments[$pid] ?? [];
+        }
+        unset($vp);
+    }
+}
+
+/* ── LIVE POLL VOTE TALLIES ── */
+$walletPollsFull = [];
+if (ops_has_table($pdo, 'wallet_polls')) {
+    $walletPollsFull = gv_rows($pdo,
+        "SELECT id, poll_key, title, summary, poll_type, audience_scope,
+                status, opens_at, closes_at, certified_at, result_summary,
+                quorum_reached, community_poll_id
+         FROM wallet_polls ORDER BY id DESC LIMIT 20");
+    if ($walletPollsFull && ops_has_table($pdo, 'wallet_poll_votes')) {
+        $wpIds = array_map(fn($r) => (int)$r['id'], $walletPollsFull);
+        $ph2 = implode(',', array_fill(0, count($wpIds), '?'));
+        $wpTallies = [];
+        $wpTotals  = [];
+        try {
+            $rs = ops_fetch_all($pdo,
+                "SELECT poll_id, choice_code, COUNT(*) AS cnt
+                 FROM wallet_poll_votes WHERE poll_id IN ($ph2)
+                 GROUP BY poll_id, choice_code
+                 ORDER BY poll_id, cnt DESC", $wpIds);
+            foreach ($rs as $r) {
+                $pid = (int)$r['poll_id'];
+                $wpTallies[$pid][] = ['choice' => $r['choice_code'], 'votes' => (int)$r['cnt']];
+                $wpTotals[$pid]    = ($wpTotals[$pid] ?? 0) + (int)$r['cnt'];
+            }
+        } catch (Throwable $e) {}
+        foreach ($walletPollsFull as &$wp) {
+            $pid = (int)$wp['id'];
+            $wp['vote_tally'] = $wpTallies[$pid] ?? [];
+            $wp['total_votes']= $wpTotals[$pid]  ?? 0;
+        }
+        unset($wp);
+    }
+}
+
 $stats = [
     'Control rows' => count($controls),
     'Partners polls' => count($polls),
@@ -45,6 +142,44 @@ ob_start(); ?>
 .section-title{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0}
 @media(max-width:900px){.row-grid,.stat-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.row-grid,.stat-grid{grid-template-columns:1fr}}
+/* badge-open/closed/draft used in gv_badge() */
+.badge-open{background:rgba(82,184,122,.12);color:#7ee0a0;border:1px solid rgba(82,184,122,.25)}
+.badge-closed{background:rgba(196,96,96,.12);color:#f0a0a0;border:1px solid rgba(196,96,96,.25)}
+.badge-draft{background:rgba(212,178,92,.12);color:var(--gold);border:1px solid rgba(212,178,92,.2)}
+/* Live tally cards */
+.gv-proposal-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.gv-proposal-card.status-open{border-left:3px solid rgba(82,184,122,.5)}
+.gv-proposal-card.status-closed,.gv-proposal-card.status-archived{border-left:3px solid rgba(155,155,155,.3)}
+.gv-prop-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.gv-prop-meta{font-size:.8rem;color:var(--sub);margin-bottom:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.gv-tally{margin:0 0 14px}
+.gv-tally-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.gv-tally-lbl{font-size:.82rem;font-weight:700;min-width:52px;text-transform:uppercase;letter-spacing:.04em}
+.gv-tally-lbl.yes{color:var(--ok)}
+.gv-tally-lbl.maybe{color:#e09a42}
+.gv-tally-lbl.no{color:var(--err)}
+.gv-tally-track{flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.gv-tally-fill{height:100%;border-radius:99px;transition:width .5s ease}
+.gv-tally-fill.yes{background:var(--ok)}
+.gv-tally-fill.maybe{background:#e09a42}
+.gv-tally-fill.no{background:var(--err)}
+.gv-tally-count{font-family:var(--mono,monospace);font-size:.8rem;color:var(--sub);min-width:80px;text-align:right}
+.gv-tally-total{font-size:.8rem;color:var(--sub);margin-top:4px}
+.gv-comments-toggle{background:none;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--sub);font-size:.8rem;padding:4px 10px;cursor:pointer;margin-bottom:8px}
+.gv-comments-toggle:hover{border-color:rgba(212,178,92,.3);color:var(--gold)}
+.gv-comments-list{margin-top:8px;display:none}
+.gv-comments-list.open{display:block}
+.gv-comment-item{padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;margin-bottom:6px}
+.gv-comment-text{font-size:.85rem;color:var(--text);line-height:1.55}
+.gv-comment-date{font-size:.75rem;color:var(--dim);margin-top:3px}
+.gv-no-comments{font-size:.82rem;color:var(--dim);padding:6px 0}
+/* Poll results */
+.gv-poll-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.gv-poll-card.status-open{border-left:3px solid rgba(212,178,92,.5)}
+.gv-poll-card.status-closed,.gv-poll-card.status-certified{border-left:3px solid rgba(82,184,122,.4)}
+.gv-poll-choice{font-size:.82rem;font-weight:700;color:var(--text);min-width:120px;font-family:var(--mono,monospace)}
+.gv-live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:5px;animation:gv-pulse 2s infinite}
+@keyframes gv-pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 
 <?= ops_admin_collapsible_help('Page guide & workflow', [
@@ -90,6 +225,167 @@ ob_start(); ?>
   <?php foreach ($stats as $label => $value): ?>
     <div class="card"><div class="card-body"><div class="stat-label"><?= ops_h($label) ?></div><div class="stat-value"><?= (int)$value ?></div></div></div>
   <?php endforeach; ?>
+</div>
+
+<!-- ══ VOTE PROPOSALS — LIVE TALLY ══ -->
+<div class="card" style="margin-bottom:18px">
+  <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <h2 class="section-title">
+      <?php if (array_filter($voteProposals, fn($p) => $p['status'] === 'open')): ?>
+        <span class="gv-live-dot"></span>
+      <?php endif; ?>
+      Vote Proposals — Community Responses
+      <?= ops_admin_help_button('Vote proposals tally', 'Live Yes/Maybe/No response tallies from the member wallet. Updates every 30 seconds automatically. Comments are anonymous — no member ID is stored.') ?>
+    </h2>
+    <span style="font-size:.8rem;color:var(--sub)" id="gv-tally-ts"></span>
+  </div>
+  <div class="card-body">
+  <?php if (!$voteProposals): ?>
+    <p class="muted small">No vote proposals found.</p>
+  <?php else: ?>
+    <div id="gv-proposals-wrap">
+    <?php foreach ($voteProposals as $vp):
+      $pid    = (int)$vp['id'];
+      $tally  = $vp['tally'];
+      $total  = $vp['total_responses'];
+      $status = $vp['status'];
+      $pct    = fn(int $v) => $total > 0 ? round($v / $total * 100) : 0;
+    ?>
+    <div class="gv-proposal-card status-<?= ops_h($status) ?>" id="gv-prop-<?= $pid ?>">
+      <div class="gv-prop-title"><?= ops_h($vp['title']) ?></div>
+      <div class="gv-prop-meta">
+        <?= gv_badge($status) ?>
+        <span>ID <?= $pid ?></span>
+        <?php if ($vp['closes_at']): ?><span>Closes <?= ops_h($vp['closes_at']) ?></span><?php endif; ?>
+        <span><?= ops_h($vp['audience_scope']) ?> audience</span>
+        <span><?= (int)$vp['comment_count'] ?> comment<?= $vp['comment_count'] != 1 ? 's' : '' ?></span>
+      </div>
+      <?php if ($vp['summary']): ?>
+        <div style="font-size:.85rem;color:var(--sub);margin-bottom:12px;line-height:1.5"><?= ops_h($vp['summary']) ?></div>
+      <?php endif; ?>
+
+      <!-- Tally bars -->
+      <div class="gv-tally" id="gv-tally-<?= $pid ?>">
+        <?php foreach (['yes' => 'Yes', 'maybe' => 'Maybe', 'no' => 'No'] as $key => $lbl): ?>
+        <div class="gv-tally-row">
+          <span class="gv-tally-lbl <?= $key ?>"><?= $lbl ?></span>
+          <div class="gv-tally-track">
+            <div class="gv-tally-fill <?= $key ?>" id="gv-fill-<?= $pid ?>-<?= $key ?>"
+                 style="width:<?= $pct($tally[$key]) ?>%"></div>
+          </div>
+          <span class="gv-tally-count" id="gv-count-<?= $pid ?>-<?= $key ?>">
+            <?= $tally[$key] ?> (<?= $pct($tally[$key]) ?>%)
+          </span>
+        </div>
+        <?php endforeach; ?>
+        <div class="gv-tally-total" id="gv-total-<?= $pid ?>">
+          <?= $total ?> response<?= $total != 1 ? 's' : '' ?>
+        </div>
+      </div>
+
+      <!-- Comments toggle -->
+      <?php if ($vp['comment_count'] > 0 || !empty($vp['comments'])): ?>
+      <button class="gv-comments-toggle" onclick="gvToggleComments(this, <?= $pid ?>)">
+        💬 Show <?= (int)$vp['comment_count'] ?> anonymous comment<?= $vp['comment_count'] != 1 ? 's' : '' ?>
+      </button>
+      <div class="gv-comments-list" id="gv-cmt-<?= $pid ?>">
+        <?php if (empty($vp['comments'])): ?>
+          <div class="gv-no-comments">No comments loaded.</div>
+        <?php else: ?>
+          <?php foreach ($vp['comments'] as $cmt): ?>
+          <div class="gv-comment-item">
+            <div class="gv-comment-text"><?= ops_h($cmt['comment_text']) ?></div>
+            <div class="gv-comment-date"><?= ops_h($cmt['submitted_at']) ?></div>
+          </div>
+          <?php endforeach; ?>
+          <?php if ($vp['comment_count'] > count($vp['comments'])): ?>
+          <div class="gv-no-comments">… and <?= $vp['comment_count'] - count($vp['comments']) ?> more. View in database for full list.</div>
+          <?php endif; ?>
+        <?php endif; ?>
+      </div>
+      <?php else: ?>
+        <div style="font-size:.8rem;color:var(--dim)">No comments yet.</div>
+      <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+  </div>
+</div>
+
+<!-- ══ WALLET POLLS — BINDING VOTE RESULTS ══ -->
+<div class="card" style="margin-bottom:18px">
+  <div class="card-head">
+    <h2 class="section-title">
+      <?php if (array_filter($walletPollsFull, fn($p) => $p['status'] === 'open')): ?>
+        <span class="gv-live-dot"></span>
+      <?php endif; ?>
+      Partners Polls — Binding Vote Results
+      <?= ops_admin_help_button('Partners Polls vote results', 'Binding vote breakdowns from wallet_poll_votes. These are the formal governance instruments. Certified polls show the locked result_summary JSON. Open polls show live running tallies.') ?>
+    </h2>
+  </div>
+  <div class="card-body">
+  <?php if (!$walletPollsFull): ?>
+    <p class="muted small">No Partners Polls found.</p>
+  <?php else: ?>
+    <?php foreach ($walletPollsFull as $wp):
+      $wpid   = (int)$wp['id'];
+      $wTotal = (int)$wp['total_votes'];
+      $wTally = $wp['vote_tally'];
+      $wStatus= $wp['status'];
+      $pct2   = fn(int $v) => $wTotal > 0 ? round($v / $wTotal * 100) : 0;
+      // Parse result_summary if certified
+      $resultSummary = null;
+      if (!empty($wp['result_summary'])) {
+          try { $resultSummary = json_decode($wp['result_summary'], true); } catch (Throwable $e) {}
+      }
+    ?>
+    <div class="gv-poll-card status-<?= ops_h($wStatus) ?>">
+      <div class="gv-prop-title"><?= ops_h($wp['title'] ?: $wp['poll_key']) ?></div>
+      <div class="gv-prop-meta">
+        <?= gv_badge($wStatus) ?>
+        <span class="badge badge-draft"><?= ops_h(str_replace('_', ' ', $wp['poll_type'])) ?></span>
+        <span><?= ops_h($wp['audience_scope']) ?> audience</span>
+        <?php if ($wp['opens_at']): ?><span>Opens <?= ops_h($wp['opens_at']) ?></span><?php endif; ?>
+        <?php if ($wp['closes_at']): ?><span>Closes <?= ops_h($wp['closes_at']) ?></span><?php endif; ?>
+        <?php if ($wp['certified_at']): ?><span style="color:var(--ok)">✓ Certified <?= ops_h($wp['certified_at']) ?></span><?php endif; ?>
+        <?php if ($wp['community_poll_id']): ?><span>→ Community poll #<?= (int)$wp['community_poll_id'] ?></span><?php endif; ?>
+      </div>
+      <?php if ($wp['summary']): ?>
+        <div style="font-size:.85rem;color:var(--sub);margin-bottom:12px;line-height:1.5"><?= ops_h($wp['summary']) ?></div>
+      <?php endif; ?>
+
+      <?php if ($wTotal > 0): ?>
+      <!-- Vote breakdown bars -->
+      <div class="gv-tally">
+        <?php foreach ($wTally as $i => $row): ?>
+        <div class="gv-tally-row">
+          <span class="gv-poll-choice"><?= ops_h($row['choice']) ?></span>
+          <div class="gv-tally-track">
+            <div class="gv-tally-fill" style="width:<?= $pct2($row['votes']) ?>%;background:<?= $i === 0 ? 'var(--ok)' : ($i === count($wTally)-1 ? 'var(--err)' : '#e09a42') ?>"></div>
+          </div>
+          <span class="gv-tally-count"><?= $row['votes'] ?> (<?= $pct2($row['votes']) ?>%)</span>
+        </div>
+        <?php endforeach; ?>
+        <div class="gv-tally-total">
+          <?= $wTotal ?> vote<?= $wTotal != 1 ? 's' : '' ?> cast
+          <?php if ($wp['quorum_reached']): ?> · <span style="color:var(--ok)">✓ Quorum reached</span><?php endif; ?>
+        </div>
+      </div>
+      <?php else: ?>
+        <div style="font-size:.85rem;color:var(--dim);margin:8px 0">No votes cast yet.</div>
+      <?php endif; ?>
+
+      <?php if ($resultSummary): ?>
+      <details style="margin-top:10px">
+        <summary style="font-size:.82rem;color:var(--gold);cursor:pointer">Certified result JSON</summary>
+        <pre style="font-size:.75rem;color:var(--sub);background:rgba(0,0,0,.2);padding:10px;border-radius:8px;overflow-x:auto;margin-top:6px"><?= ops_h(json_encode($resultSummary, JSON_PRETTY_PRINT)) ?></pre>
+      </details>
+      <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
+  </div>
 </div>
 
 <div class="bridge-note">
@@ -232,4 +528,64 @@ ob_start(); ?>
     </tbody>
   </table></div>
 </div>
+<script>
+/* ── Comment toggle ── */
+function gvToggleComments(btn, pid){
+  var list = document.getElementById('gv-cmt-'+pid);
+  if(!list) return;
+  var open = list.classList.toggle('open');
+  btn.textContent = open
+    ? btn.textContent.replace('Show','Hide')
+    : btn.textContent.replace('Hide','Show');
+}
+
+/* ── Live tally refresh (30s) for open proposals ── */
+(function(){
+  var ROOT = document.body ? (document.body.dataset.root || '../') : '../';
+  var API  = ROOT + '_app/api/index.php?route=vault/proposal-tallies';
+
+  function pad(n){ return n < 10 ? '0'+n : n; }
+  function stamp(){
+    var d = new Date();
+    return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  }
+  function el(id){ return document.getElementById(id); }
+
+  function applyTally(item){
+    var pid   = item.proposal_id;
+    var total = item.total_votes || 0;
+    var tally = item.tally || [];
+    tally.forEach(function(row){
+      var lbl   = row.label;
+      var votes = row.votes || 0;
+      var pct   = total > 0 ? Math.round(votes/total*100) : 0;
+      var fill  = el('gv-fill-'+pid+'-'+lbl);
+      var count = el('gv-count-'+pid+'-'+lbl);
+      if(fill)  fill.style.width = pct+'%';
+      if(count) count.textContent = votes+' ('+pct+'%)';
+    });
+    var totEl = el('gv-total-'+pid);
+    if(totEl) totEl.textContent = total+' response'+(total!==1?'s':'');
+  }
+
+  function refresh(){
+    fetch(API, {credentials:'include'})
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        var tallies = (j.data||j).tallies || [];
+        tallies.forEach(applyTally);
+        var ts = el('gv-tally-ts');
+        if(ts) ts.textContent = 'Last updated '+stamp();
+      })
+      .catch(function(){}); // silent — admin page still works without live data
+  }
+
+  // Only start polling if there are open proposal cards on the page
+  if(document.querySelector('.gv-proposal-card.status-open')){
+    setTimeout(refresh, 2000);   // initial refresh 2s after load
+    setInterval(refresh, 30000); // then every 30s
+  }
+})();
+</script>
+
 <?php $body = ob_get_clean(); ops_render_page('Governance', 'governance', $body); ?>
