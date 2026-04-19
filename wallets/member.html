@@ -1925,8 +1925,10 @@ async function castProposalVote(proposalId, choice){
 function clearProposalVote(proposalId){
   // Locally clear my_vote so vote buttons reappear — no server call needed
   // User can then cast a new vote which overwrites the old one via upsert
+  // Cast both sides to int: PDO returns id as string, onclick passes a number
+  const pid = parseInt(proposalId, 10);
   const proposals = (window._vaultData||{}).proposals || [];
-  const p = proposals.find(function(x){ return x.id === proposalId; });
+  const p = proposals.find(function(x){ return parseInt(x.id, 10) === pid; });
   if(p){ p.my_vote = null; p.my_vote_note = null; }
   if(typeof renderPolls === 'function') renderPolls(window._vaultData);
 }

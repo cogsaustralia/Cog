@@ -3813,6 +3813,8 @@ function handleProposalComments(): void {
 
     } else {
         // GET — proposal_id from path segment (vault/proposal-comments/4) or query string fallback
+        // $subId is set in the file/include scope — must declare global to access inside this function
+        global $subId;
         $proposalId = (int)($subId ?? $_GET['proposal_id'] ?? 0);
         if ($proposalId < 1) apiError('proposal_id required.');
 
