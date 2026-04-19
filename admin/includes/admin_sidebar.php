@@ -132,19 +132,19 @@ if (!function_exists('admin_sidebar_styles_once')) {
         saveSections();
       });
     });
-    // Restore open sections + auto-open section with active link
+    // All sections start collapsed — only re-open ones user has explicitly expanded
     var saved = {};
-    try{ saved = JSON.parse(localStorage.getItem("cogs_admin_sections")||"{}"); }catch(e){}
+    try{ saved = JSON.parse(localStorage.getItem("cogs_admin_sections_v2")||"{}"); }catch(e){}
     sidebar.querySelectorAll(".side-section").forEach(function(sec){
       var id = sec.dataset.sec;
-      if(sec.querySelector(".nav a.active") || saved[id]) sec.classList.add("open");
+      if(saved[id]) sec.classList.add("open");
     });
     function saveSections(){
       var state = {};
       sidebar.querySelectorAll(".side-section").forEach(function(s){
         if(s.classList.contains("open")) state[s.dataset.sec] = 1;
       });
-      try{ localStorage.setItem("cogs_admin_sections", JSON.stringify(state)); }catch(e){}
+      try{ localStorage.setItem("cogs_admin_sections_v2", JSON.stringify(state)); }catch(e){}
     }
   }
   if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded", boot);}else{boot();}
