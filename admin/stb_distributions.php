@@ -220,64 +220,11 @@ $stcUnitsCalc = (int)(stb_ok($pdo,
 ) ?? 0);
 
 $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
-?>
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>STB Distributions | COG$ Admin</title>
-<?php ops_admin_help_assets_once(); ?>
-<style>
-:root{--bg:#0c1319;--panel:#17212b;--panel2:#1f2c38;--text:#eef2f7;--sub:#9fb0c1;--dim:#6b7f8f;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--gold:#d4b25c;--ok:#52b87a;--okb:rgba(82,184,122,.12);--warn:#c8901a;--warnb:rgba(200,144,26,.12);--err:#c46060;--errb:rgba(196,96,96,.12);--blue:#5a9ed4;--r:18px;--r2:12px;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Inter,Arial,sans-serif;background:linear-gradient(160deg,var(--bg),#101b25 60%,var(--bg));color:var(--text);min-height:100vh;}
-a{color:inherit;text-decoration:none;}
-.main{padding:24px 28px;}
-.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:26px;flex-wrap:wrap;}
-.topbar h1{font-size:1.9rem;font-weight:700;margin-bottom:6px;}
-.topbar p{color:var(--sub);font-size:13px;}
-.btn{display:inline-block;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--line2);background:var(--panel2);color:var(--text);cursor:pointer;}
-.btn-gold{background:var(--gold);color:#201507;border-color:rgba(212,178,92,.3);}
-.btn-ok{background:var(--okb);border-color:rgba(82,184,122,.3);color:var(--ok);}
-.btn-sm{padding:5px 12px;font-size:12px;border-radius:8px;}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:18px;}
-.card-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);}
-.card-head h2{font-size:1rem;font-weight:700;}
-.card-body{padding:16px 20px;}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px;}
-.stat{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r2);padding:16px 18px;text-align:center;}
-.stat-val{font-size:1.5rem;font-weight:800;margin-bottom:4px;}
-.stat-label{font-size:.72rem;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-@media(max-width:700px){.form-grid{grid-template-columns:1fr;}}
-.field{display:flex;flex-direction:column;gap:5px;}
-.field label{font-size:.82rem;color:var(--sub);}
-.field-full{grid-column:1/-1;}
-table{width:100%;border-collapse:collapse;}
-th,td{text-align:left;padding:9px 10px;font-size:13px;border-top:1px solid var(--line);vertical-align:middle;}
-th{color:var(--dim);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-top:none;}
-.mono{font-family:monospace;font-size:12px;}
-.st{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:700;text-transform:uppercase;}
-.st-calc{background:rgba(90,158,212,.12);color:var(--blue);}
-.st-approved{background:var(--okb);color:var(--ok);}
-.st-completed{background:rgba(255,255,255,.05);color:var(--dim);}
-.st-draft{background:var(--warnb);color:var(--warn);}
-.st-overdue{background:var(--errb);color:var(--err);}
-.msg{padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:13px;}
-.msg.ok{background:var(--okb);border:1px solid rgba(82,184,122,.3);color:#a0e8b8;}
-.msg.err{background:var(--errb);border:1px solid rgba(196,96,96,.3);color:#f0a0a0;}
-.empty{color:var(--dim);font-size:13px;padding:20px 0;text-align:center;}
-.preview-box{padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;margin-top:12px;font-size:12.5px;line-height:1.9;display:none;}
-</style>
-</head>
-<body>
-<div class="admin-shell">
-<?php admin_sidebar_render('stb_distributions'); ?>
-<main class="main">
 
-<div class="topbar">
-  <div>
-    <h1>Sub-Trust B distributions<?php echo ops_admin_help_button('STB Distributions','Records proportional distribution of Trust B funds to all Beneficial Unit Holders. Declaration cl.31.2 and SubTrustB cl.9.1 require 100% of STB inflows to be distributed within 60 days of receipt. Each distribution emits Godley ledger entries crediting STB-OPERATING and debiting each MEMBER account.'); ?></h1>
-    <p>Calculate, approve, and complete Sub-Trust B distributions per Declaration cl.31.2 (60-day rule).</p>
-  </div>
+ob_start();
+?>
+<div class="card"><div class="card-head"><h1 style="margin:0">STB Distributions</h1></div><div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Sub-Trust B distribution runs — 100% of STB inflows must be distributed within 60 days.</p></div></div>
+
   <div style="display:flex;gap:8px">
     <a class="btn" href="<?php echo stb_h(admin_url('trust_income.php')); ?>">Trust Income</a>
     <a class="btn" href="<?php echo stb_h(admin_url('accounting.php')); ?>">Accounting</a>
@@ -302,7 +249,7 @@ th{color:var(--dim);font-weight:600;font-size:.72rem;text-transform:uppercase;le
 ]);,
 ]) ?>
 <?php if (!$hasDistRuns): ?>
-  <div class="msg err">distribution_runs table not found. Run accounting schema SQL first.</div>
+  <div class="alert alert-err">distribution_runs table not found. Run accounting schema SQL first.</div>
 <?php else: ?>
 
 <!-- Calculate new run -->
@@ -396,4 +343,7 @@ function previewCalc() {
     document.getElementById('prev-rem').textContent = 'Remainder held in STB: $' + (rem/100).toFixed(2);
 }
 </script>
-</body></html>
+
+<?php
+$body = ob_get_clean();
+ops_render_page('STB Distributions', 'stb_distributions', $body, $flash ?? null, 'ok');

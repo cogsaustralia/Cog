@@ -163,148 +163,15 @@ if ($acctOk && $hasTable && ops_has_table($pdo, 'grants')) {
 $pendingCColor = ($pendingC > 0) ? 'var(--warn)' : 'var(--ok)';
 $dlColor = ($dlPending > 0) ? 'var(--warn)' : 'var(--ok)';
 $adminBalColor = ($adminFundBal > 0) ? 'var(--ok)' : 'var(--err)';
+
+ob_start();
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Trust Accounting | COG$ Admin</title>
-<?php ops_admin_help_assets_once(); ?>
-<style>.main { padding:24px 28px; min-width:0; }
-.topbar { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:26px; flex-wrap:wrap; }
-.topbar h1 { font-size:1.9rem; font-weight:700; margin-bottom:6px; }
-.topbar p { color:var(--sub); font-size:13px; max-width:560px; }
-.btn { display:inline-block; padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--line2); background:var(--panel2); color:var(--text); }
-
-.card { background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-bottom:18px; }
-.card-head { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--line); }
-.card-head h2 { font-size:1rem; font-weight:700; }
-.card-body { padding:16px 20px; }
-
-.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(155px,1fr)); gap:14px; margin-bottom:22px; }
-.stat { background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--r2); padding:16px 18px; text-align:center; }
-.stat-val { font-size:1.6rem; font-weight:800; margin-bottom:4px; }
-.stat-label { font-size:.72rem; color:var(--sub); text-transform:uppercase; letter-spacing:.06em; }
-
-.grid2 { display:grid; grid-template-columns:1.1fr .9fr; gap:18px; }
-@media(max-width:980px) { .grid2 { grid-template-columns:1fr; } }
-
-table { width:100%; border-collapse:collapse; }
-th, td { text-align:left; padding:9px 10px; font-size:13px; border-top:1px solid var(--line); vertical-align:top; }
-th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; border-top:none; }
-.mono { font-family:monospace; font-size:12px; }
-
-.st { display:inline-block; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase; }
-.st-ok { background:var(--okb); color:var(--ok); }
-.st-warn { background:var(--warnb); color:var(--warn); }
-.st-bad { background:var(--errb); color:var(--err); }
-.st-dim { background:rgba(255,255,255,.04); color:var(--dim); }
-
-.alert { padding:14px 18px; border-radius:var(--r2); margin-bottom:18px; font-size:13px; font-weight:600; }
-.alert-red { background:var(--errb); border:1px solid rgba(196,96,96,.3); color:#f0a0a0; }
-.alert-green { background:var(--okb); border:1px solid rgba(82,184,122,.3); color:#a0e8b8; }
-.alert-amber { background:var(--warnb); border:1px solid rgba(200,144,26,.3); color:#e8cc80; }
-
-.empty { color:var(--dim); font-size:13px; padding:20px 0; text-align:center; }
-.acct-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; background:rgba(255,255,255,.04); border:1px solid var(--line); }
-.acct-dot { width:8px; height:8px; border-radius:50%; }
-.acct-dot.a { background:var(--blue); }
-.acct-dot.b { background:var(--ok); }
-.acct-dot.c { background:var(--purple); }
-
-/* ── Invariant strip ── */
-.inv-strip { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
-.inv-pill { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:10px; font-size:12px; font-weight:700; border:1px solid transparent; cursor:default; }
-.inv-pill.ok  { background:rgba(82,184,122,.1);  border-color:rgba(82,184,122,.3);  color:var(--ok); }
-.inv-pill.err { background:rgba(196,96,96,.12);  border-color:rgba(196,96,96,.35);  color:var(--err); }
-.inv-pill .inv-code { font-size:10px; font-weight:800; opacity:.7; font-family:monospace; }
-.inv-pill .inv-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-.inv-pill.ok  .inv-dot { background:var(--ok); }
-.inv-pill.err .inv-dot { background:var(--err); box-shadow:0 0 6px var(--err); }
-
-/* ── Godley matrix ── */
-.godley-wrap { overflow-x:auto; margin-bottom:22px; }
-.godley-table { border-collapse:collapse; font-size:12px; min-width:600px; width:100%; }
-.godley-table th, .godley-table td { padding:7px 10px; border:1px solid var(--line); text-align:right; white-space:nowrap; }
-.godley-table th { background:var(--panel2); color:var(--dim); font-size:10px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
-.godley-table th.acct-col { text-align:left; min-width:190px; position:sticky; left:0; z-index:2; background:var(--panel2); }
-.godley-table td.acct-col { text-align:left; position:sticky; left:0; z-index:1; background:var(--panel); font-weight:600; font-size:11.5px; }
-.godley-table td.acct-col .acct-sub { font-size:10px; color:var(--dim); font-weight:400; display:block; margin-top:1px; }
-.godley-table tr.sector-head td, .godley-table tr.sector-head th { background:rgba(255,255,255,.03); color:var(--sub); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; border-bottom:1px solid var(--line2); }
-.godley-table tr.sector-head td.acct-col { background:rgba(255,255,255,.03); }
-.godley-table tr.sector-total td { background:rgba(255,255,255,.02); font-weight:700; border-top:2px solid var(--line2); font-size:11.5px; }
-.godley-table tr.sector-total td.acct-col { background:rgba(255,255,255,.02); }
-.godley-table td.zero { color:var(--dim); }
-.godley-table td.pos  { color:var(--ok); }
-.godley-table td.neg  { color:var(--err); }
-.cell-dr { font-size:10px; color:var(--err); display:block; }
-.cell-cr { font-size:10px; color:var(--ok);  display:block; }
-.godley-table tr.grand-total td { background:var(--panel2); font-weight:800; font-size:12.5px; border-top:2px solid var(--line2); color:var(--text); }
-.godley-table tr.grand-total td.acct-col { background:var(--panel2); }
-
-/* ── Balance sheet ── */
-.bs-grid { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0; border:1px solid var(--line); border-radius:var(--r2); overflow:hidden; margin-top:4px; }
-.bs-col { border-right:1px solid var(--line); }
-.bs-col:last-child { border-right:none; }
-.bs-head { background:var(--panel2); padding:10px 14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; border-bottom:1px solid var(--line); }
-.bs-head.a { color:var(--blue); }
-.bs-head.b { color:var(--ok); }
-.bs-head.c { color:var(--purple); }
-.bs-head.cons { color:var(--gold); }
-.bs-row { display:flex; justify-content:space-between; align-items:baseline; padding:7px 14px; border-top:1px solid var(--line); font-size:12px; gap:8px; }
-.bs-row:first-of-type { border-top:none; }
-.bs-row .bs-name { color:var(--sub); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.bs-row .bs-val { font-weight:700; white-space:nowrap; }
-.bs-row .bs-val.pos { color:var(--ok); }
-.bs-row .bs-val.neg { color:var(--err); }
-.bs-row .bs-val.zero { color:var(--dim); }
-.bs-total { background:rgba(255,255,255,.03); border-top:2px solid var(--line2) !important; }
-.bs-total .bs-name { font-weight:700; color:var(--text); }
-
-/* ── Compliance tracker ── */
-.comp-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
-.comp-tab { padding:5px 12px; border-radius:8px; font-size:11.5px; font-weight:700; border:1px solid var(--line); background:var(--panel2); color:var(--sub); cursor:pointer; transition:background .12s, color .12s; }
-.comp-tab.active { background:rgba(196,96,96,.15); border-color:rgba(196,96,96,.35); color:var(--err); }
-.comp-tab.ok { background:rgba(82,184,122,.08); border-color:rgba(82,184,122,.25); color:var(--ok); cursor:default; }
-.comp-panel { display:none; }
-.comp-panel.active { display:block; }
-.comp-deadline-badge { display:inline-block; padding:2px 8px; border-radius:5px; font-size:10px; font-weight:800; }
-.comp-deadline-badge.overdue { background:var(--errb); color:var(--err); }
-.comp-deadline-badge.soon { background:var(--warnb); color:var(--warn); }
-.comp-deadline-badge.safe { background:var(--okb); color:var(--ok); }
-
-/* ── Invariant drill modal ── */
-.inv-modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:1000; align-items:center; justify-content:center; }
-.inv-modal-bg.open { display:flex; }
-.inv-modal { background:var(--panel); border:1px solid var(--line2); border-radius:var(--r); padding:0; max-width:760px; width:94vw; max-height:80vh; display:flex; flex-direction:column; }
-.inv-modal-head { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--line); }
-.inv-modal-head h3 { font-size:1rem; font-weight:700; }
-.inv-modal-close { background:none; border:none; color:var(--sub); font-size:1.3rem; cursor:pointer; padding:4px 8px; border-radius:6px; }
-.inv-modal-close:hover { color:var(--text); background:rgba(255,255,255,.06); }
-.inv-modal-body { overflow-y:auto; padding:16px 20px; flex:1; }
-.inv-pill.err { cursor:pointer; }
-.inv-pill.err:hover { background:rgba(196,96,96,.2); }
-
-/* ── Ledger link cells ── */
-.godley-table td a.cell-link { color:inherit; text-decoration:none; display:block; }
-.godley-table td a.cell-link:hover { text-decoration:underline; opacity:.85; }
-</style>
-</head>
-<body>
-<div class="admin-shell">
-<?php admin_sidebar_render('accounting'); ?>
-<main class="main">
-
-<div class="topbar">
-  <div>
-    <h1>Trust accounting<?php echo ops_admin_help_button('Trust accounting', 'This page is the finance control view for trust balances, transfers, deadlines, accounts, donation-ledger movement, and distribution readiness. Use it to review whether money has been allocated correctly across Sub-Trust A, B, and C.'); ?></h1>
-    <p>Fund balances, inter-trust transfers, compliance deadlines, and reconciliation across Sub-Trust A, B, and C.</p>
+<div class="card">
+  <div class="card-head">
+    <h1 style="margin:0">Trust Accounting <?php echo ops_admin_help_button('Trust accounting', 'Finance control view for trust balances, transfers, compliance deadlines, and reconciliation across Sub-Trust A, B, and C.'); ?></h1>
+    <a class="btn-secondary" href="<?php echo ac_h(admin_url('dashboard.php')); ?>">Dashboard</a>
   </div>
-  <div style="display:flex;gap:8px">
-    <a class="btn" href="<?php echo ac_h(admin_url('dashboard.php')); ?>">Dashboard</a>
-  </div>
+  <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Fund balances, inter-trust transfers, compliance deadlines, and reconciliation across Sub-Trust A, B, and C.</p></div>
 </div>
 
 <?php if (!$acctOk): ?>
@@ -961,5 +828,7 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') bg.classList.remove('open'); });
 })();
 </script>
-</body>
-</html>
+
+<?php
+$body = ob_get_clean();
+ops_render_page('Trust Accounting', 'accounting', $body, $flash ?? null, 'ok');

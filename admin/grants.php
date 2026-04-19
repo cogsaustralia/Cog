@@ -204,37 +204,35 @@ $totalGrantsCents = $hasGrants ? (int)(gr_val($pdo,
 ) ?? 0) : 0;
 $fnPct = $totalGrantsCents > 0 ? round($fnGrantsCents / $totalGrantsCents * 100, 1) : 0;
 $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
-?>
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sub-Trust C Grants | COG$ Admin</title>
-<?php ops_admin_help_assets_once(); ?>
-<style>
-:root{--bg:#0c1319;--panel:#17212b;--panel2:#1f2c38;--text:#eef2f7;--sub:#9fb0c1;--dim:#6b7f8f;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--gold:#d4b25c;--ok:#52b87a;--okb:rgba(82,184,122,.12);--warn:#c8901a;--warnb:rgba(200,144,26,.12);--err:#c46060;--errb:rgba(196,96,96,.12);--blue:#5a9ed4;--purple:#9b7dd4;--r:18px;--r2:12px;}
-*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Inter,Arial,sans-serif;background:linear-gradient(160deg,var(--bg),#101b25 60%,var(--bg));color:var(--text);min-height:100vh;}a{color:inherit;text-decoration:none;}
-.main{padding:24px 28px;}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:26px;flex-wrap:wrap;}.topbar h1{font-size:1.9rem;font-weight:700;margin-bottom:6px;}.topbar p{color:var(--sub);font-size:13px;}
-.btn{display:inline-block;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--line2);background:var(--panel2);color:var(--text);cursor:pointer;}.btn-gold{background:var(--gold);color:#201507;border-color:rgba(212,178,92,.3);}.btn-ok{background:var(--okb);border-color:rgba(82,184,122,.3);color:var(--ok);}.btn-sm{padding:5px 12px;font-size:12px;border-radius:8px;}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:18px;}.card-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);}.card-head h2{font-size:1rem;font-weight:700;}.card-body{padding:16px 20px;}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:22px;}.stat{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r2);padding:16px 18px;text-align:center;}.stat-val{font-size:1.4rem;font-weight:800;margin-bottom:4px;}.stat-label{font-size:.72rem;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}@media(max-width:700px){.form-grid{grid-template-columns:1fr;}}.field{display:flex;flex-direction:column;gap:5px;}.field label{font-size:.82rem;color:var(--sub);}.field-full{grid-column:1/-1;}
-table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10px;font-size:13px;border-top:1px solid var(--line);vertical-align:middle;}th{color:var(--dim);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-top:none;}
-.mono{font-family:monospace;font-size:12px;}.st{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:700;text-transform:uppercase;}
-.st-proposed{background:var(--warnb);color:var(--warn);}.st-fnac_review{background:rgba(155,125,212,.12);color:var(--purple);}.st-approved{background:var(--okb);color:var(--ok);}.st-disbursed{background:rgba(90,158,212,.12);color:var(--blue);}.st-acquitted{background:rgba(255,255,255,.05);color:var(--dim);}.st-cancelled{background:var(--errb);color:var(--err);}
-.msg{padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:13px;}.msg.ok{background:var(--okb);border:1px solid rgba(82,184,122,.3);color:#a0e8b8;}.msg.err{background:var(--errb);border:1px solid rgba(196,96,96,.3);color:#f0a0a0;}
-.empty{color:var(--dim);font-size:13px;padding:20px 0;text-align:center;}.fn-badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:700;background:rgba(155,125,212,.12);color:var(--purple);}
-.divider{border:none;border-top:1px solid var(--line);margin:28px 0;}
-</style>
-</head>
-<body>
-<div class="admin-shell">
-<?php admin_sidebar_render('grants'); ?>
-<main class="main">
 
-<div class="topbar">
-  <div>
-    <h1>Sub-Trust C grants<?php echo ops_admin_help_button('Grants','Sub-Trust C grants and DGR gifts. Minimum 30% of grants each financial year must benefit First Nations communities (SubTrustC cl.9). Disbursing a grant emits the Godley grant_disbursement entry (STC-OPERATING → EXTERNAL-GRANTEE). DGR gifts are recorded to STC-GIFT-FUND.'); ?></h1>
-    <p>Record, approve (including FNAC review), disburse grants, and record DGR gifts. SubTrustC cl.9 — min 30% FN.</p>
-  </div>
+ob_start();
+?>
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Sub-Trust C grants', 'What this page does', 'Use this page to create, review, and manage community grants paid from Sub-Trust C. At least 30% of all grants must go to First Nations beneficiaries per the trust deed.', [
+    'Create a grant when a community benefit payment is to be made from Sub-Trust C.',
+    'Mark as disbursed only when the payment has actually been made.',
+    'Monitor the First Nations compliance percentage — must remain at or above 30%.',
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Follow the grant lifecycle from approval to acquittal.', [
+    ['title' => 'Create the grant', 'body' => 'Enter grantee, amount, purpose, financial year, and First Nations flag.'],
+    ['title' => 'Approve', 'body' => 'Governance approval before funds are disbursed.'],
+    ['title' => 'Disburse', 'body' => 'Mark as disbursed once payment has been made.'],
+    ['title' => 'Acquit', 'body' => 'Record acquittal once the grantee has reported on use of funds.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses track the grant lifecycle.', [
+    ['label' => 'Proposed', 'body' => 'Grant has been submitted but not yet approved.'],
+    ['label' => 'Approved', 'body' => 'Approved by governance — ready to disburse.'],
+    ['label' => 'Disbursed', 'body' => 'Payment made to the grantee.'],
+    ['label' => 'Acquitted', 'body' => 'Grantee has reported on use of funds.'],
+    ['label' => 'Declined / cancelled', 'body' => 'Grant did not proceed.'],
+  ]),
+]) ?>
+
+<div class="card">
+  <div class="card-head"><h1 style="margin:0">Sub-Trust C Grants</h1></div>
+  <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Community benefit grants from Sub-Trust C. Minimum 30% to First Nations beneficiaries.</p></div>
+</div>
+
   <div style="display:flex;gap:8px">
     <a class="btn" href="<?php echo gr_h(admin_url('accounting.php')); ?>">Accounting</a>
     <a class="btn" href="<?php echo gr_h(admin_url('trust_income.php')); ?>">Trust Income</a>
@@ -251,7 +249,7 @@ table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10p
 </div>
 
 <?php if ($fnPct < 30 && $totalGrantsCents > 0): ?>
-<div class="msg err">⚠ First Nations grant allocation is <?php echo $fnPct; ?>% — minimum 30% required by SubTrustC cl.9. Consider prioritising First Nations grantees.</div>
+<div class="alert alert-err">⚠ First Nations grant allocation is <?php echo $fnPct; ?>% — minimum 30% required by SubTrustC cl.9. Consider prioritising First Nations grantees.</div>
 <?php endif; ?>
 
 <!-- Create grant -->
@@ -370,4 +368,7 @@ table{width:100%;border-collapse:collapse;}th,td{text-align:left;padding:9px 10p
 </div>
 
 </main></div>
-</body></html>
+
+<?php
+$body = ob_get_clean();
+ops_render_page('Grants', 'grants', $body, $flash ?? null, 'ok');
