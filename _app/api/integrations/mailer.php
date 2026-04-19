@@ -406,7 +406,7 @@ $html = '<!DOCTYPE html>
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td width="50%" style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px">
-            <a href="' . htmlspecialchars($site) . '/community/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Community</a>
+            <a href="' . htmlspecialchars($site) . '/partners/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Community</a>
           </td>
           <td width="50%" style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px">
             <a href="' . htmlspecialchars($site) . '/faq/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; FAQ</a>
@@ -509,7 +509,7 @@ $plain = "You're in, {$firstName}.\n\n"
     . $site . "/wallets/member.html\n\n"
     . "EXPLORE COG$\n"
     . str_repeat("-", 40) . "\n"
-    . "Community:         " . $site . "/community/\n"
+    . "Community:         " . $site . "/partners/\n"
     . "FAQ:               " . $site . "/faq/\n"
     . "Our Vision:        " . $site . "/vision/\n"
     . "How It Works:      " . $site . "/how-it-works/\n"

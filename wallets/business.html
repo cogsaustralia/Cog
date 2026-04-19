@@ -293,7 +293,7 @@ img{max-width:100%;height:auto}
   <div class="tb-right">
     <span id="tb-status"></span>
     <a href="../wallets/member.html" class="tb-pill" title="Open Partner Vault" style="text-decoration:none;border-color:rgba(240,209,138,.3);color:#f0d18a;cursor:pointer"><span style="font-size:14px">👤</span><span class="tb-pill-label">Partner Vault</span></a>
-    <a href="../community/index.html" class="tb-pill" title="Back to Members Area" style="text-decoration:none;border-color:rgba(201,151,61,.3);color:#c9973d;cursor:pointer"><span style="font-size:14px">🏠</span><span class="tb-pill-label">Members Area</span></a>
+    <a href="../partners/index.html" class="tb-pill" title="Back to Members Area" style="text-decoration:none;border-color:rgba(201,151,61,.3);color:#c9973d;cursor:pointer"><span style="font-size:14px">🏠</span><span class="tb-pill-label">Members Area</span></a>
     <div class="tb-pill" onclick="tab('profile')" title="Profile &amp; settings" style="cursor:pointer">
       <span style="font-size:14px">⚙️</span><span class="tb-pill-label">Profile</span>
     </div>
@@ -1446,7 +1446,7 @@ async function performIdleLogout(){
   clearTimeout(_idleLogoutTid);
   hideIdleWarning();
   try { await api('auth/logout', {method:'POST', body:'{}', timeoutMs:5000}); } catch(e){}
-  window.location.replace(ROOT+'community/index.html?signed_out=inactivity');
+  window.location.replace(ROOT+'partners/index.html?signed_out=inactivity');
 }
 
 function handleVisibilityChange(){
@@ -1469,7 +1469,7 @@ async function loadVault(){
     armIdleLogout();
   }catch(e){
     console.error('[business-vault]',e.message);
-    if(!D) window.location.replace(ROOT+'community/index.html');
+    if(!D) window.location.replace(ROOT+'partners/index.html');
   }
 }
 loadVault();

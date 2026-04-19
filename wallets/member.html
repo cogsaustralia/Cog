@@ -3401,7 +3401,7 @@ function coinTransition(href, label){
 
 el('logout-btn')?.addEventListener('click', async function(){
   try{ await api('auth/logout',{method:'POST',body:'{}'}); }catch(e){}
-  coinTransition(ROOT + 'community/index.html', 'Returning to Partner Area');
+  coinTransition(ROOT + 'partners/index.html', 'Returning to Partner Area');
 });
 
 /* ════════════════════════════

@@ -930,7 +930,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     try { localStorage.removeItem('cogs_partner_invite_v1'); } catch(ex) {}
 
     var origin = window.location.origin;
-    var dest   = origin + '/community/index.html?welcome=1';
+    var dest   = origin + '/partners/index.html';
     if (mn)  dest += '&member=' + encodeURIComponent(mn);
     if (mob) dest += '&mobile=' + encodeURIComponent(mob);
     if (fn)  dest += '&name='   + encodeURIComponent(fn);
