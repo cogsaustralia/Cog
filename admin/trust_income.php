@@ -289,15 +289,14 @@ ob_start();
 ]) ?>
 
 <div class="card">
-  <div class="card-head"><h1 style="margin:0">Trust Income</h1></div>
-  <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Record and review all trust income — dividends, RWA yield, interest, and other receipts.</p></div>
-</div>
-
-  <div style="display:flex;gap:8px">
-    <a class="btn" href="<?php echo ti_h(admin_url('expenses.php')); ?>">Expenses</a>
-    <a class="btn" href="<?php echo ti_h(admin_url('accounting.php')); ?>">Accounting</a>
-    <a class="btn" href="<?php echo ti_h(admin_url('dashboard.php')); ?>">Dashboard</a>
+  <div class="card-head">
+    <h1 style="margin:0">Trust Income</h1>
+    <div style="display:flex;gap:8px">
+      <a class="btn-secondary" href="<?php echo ti_h(admin_url('expenses.php')); ?>">Expenses</a>
+      <a class="btn-secondary" href="<?php echo ti_h(admin_url('accounting.php')); ?>">Accounting</a>
+    </div>
   </div>
+  <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Record and review all trust income — dividends, RWA yield, interest, and other receipts.</p></div>
 </div>
 
 <?php if ($flash): ?><div class="alert alert-ok"><?php echo ti_h($flash); ?></div><?php endif; ?>

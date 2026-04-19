@@ -233,13 +233,7 @@ ob_start();
   <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Community benefit grants from Sub-Trust C. Minimum 30% to First Nations beneficiaries.</p></div>
 </div>
 
-  <div style="display:flex;gap:8px">
-    <a class="btn" href="<?php echo gr_h(admin_url('accounting.php')); ?>">Accounting</a>
-    <a class="btn" href="<?php echo gr_h(admin_url('trust_income.php')); ?>">Trust Income</a>
-  </div>
-</div>
-
-<?php if ($flash): ?><div class="msg <?php echo $flashType==='ok'?'ok':'err'; ?>"><?php echo gr_h($flash); ?></div><?php endif; ?>
+<?php if ($flash): ?><div class="alert <?php echo $flashType==='ok'?'alert-ok':'alert-err'; ?>"><?php echo gr_h($flash); ?></div><?php endif; ?>
 
 <div class="stats">
   <div class="stat"><div class="stat-val" style="color:var(--ok)"><?php echo gr_dollars($stcBalance); ?></div><div class="stat-label">STC-OPERATING balance</div></div>

@@ -225,19 +225,13 @@ ob_start();
 ?>
 <div class="card"><div class="card-head"><h1 style="margin:0">STB Distributions</h1></div><div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Sub-Trust B distribution runs — 100% of STB inflows must be distributed within 60 days.</p></div></div>
 
-  <div style="display:flex;gap:8px">
-    <a class="btn" href="<?php echo stb_h(admin_url('trust_income.php')); ?>">Trust Income</a>
-    <a class="btn" href="<?php echo stb_h(admin_url('accounting.php')); ?>">Accounting</a>
-  </div>
-</div>
+<?php if ($flash): ?><div class="alert <?php echo $flashType === 'ok' ? 'alert-ok' : 'alert-err'; ?>"><?php echo stb_h($flash); ?></div><?php endif; ?>
 
-<?php if ($flash): ?><div class="msg <?php echo $flashType === 'ok' ? 'ok' : 'err'; ?>"><?php echo stb_h($flash); ?></div><?php endif; ?>
-
-<div class="stats">
-  <div class="stat"><div class="stat-val" style="color:var(--ok)"><?php echo stb_dollars($stbBalance); ?></div><div class="stat-label">STB balance (Godley)</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--blue)"><?php echo number_format($totalUnitsCalc + $stcUnitsCalc); ?></div><div class="stat-label">Eligible beneficial units</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--text)"><?php echo number_format($totalUnitsCalc); ?></div><div class="stat-label">Member units</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--gold)"><?php echo number_format($stcUnitsCalc); ?></div><div class="stat-label">STC units (D-class)</div></div>
+<div class="stat-grid">
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--ok)"><?php echo stb_dollars($stbBalance); ?></div><div class="stat-label">STB balance (Godley)</div></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--blue)"><?php echo number_format($totalUnitsCalc + $stcUnitsCalc); ?></div><div class="stat-label">Eligible beneficial units</div></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--text)"><?php echo number_format($totalUnitsCalc); ?></div><div class="stat-label">Member units</div></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-value" style="color:var(--gold)"><?php echo number_format($stcUnitsCalc); ?></div><div class="stat-label">STC units (D-class)</div></div></div></div>
 </div>
 
 <?= ops_admin_collapsible_help('Page guide & workflow', [
