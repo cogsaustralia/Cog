@@ -963,7 +963,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="ov-path-wrap" id="ov-pathways" style="display:none">
         <div class="ov-path-hd">
           <h3 id="ov-path-title">Where you are active</h3>
-          <a href="../partners/index.html?edit_participation=1" id="ov-path-manage">Update participation areas &rarr;</a>
+          <a href="../partners/index.html?edit_participation=1" id="ov-path-manage" onclick="coinTransition('../partners/index.html?edit_participation=1');return false;">Update participation areas &rarr;</a>
         </div>
         <div class="ov-path-grid" id="ov-path-grid"></div>
       </div>
@@ -1731,21 +1731,18 @@ function renderInviteCard(d){
     ? siteOrigin + '/?invite=' + encodeURIComponent(code)
     : (d.invite_link || d.share_url || siteOrigin + '/');
   var uses = Number(d.use_count || 0);
-  var hasCode = !!(d.has_code || code);
-  if(!hasCode || !code){ wrap.style.display='none'; return; }
+  if(!code){ wrap.style.display='none'; return; }
   var paid = !!(window._vaultData && (window._vaultData.payment_status||'').toLowerCase()==='paid');
   if(!paid){ wrap.style.display='none'; return; }
-
-  var ea = function(s){ return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); };
   var recent = Array.isArray(d.recent) ? d.recent : [];
   var names = recent.slice(0,8).map(function(r){ return esc(r.first_name||(r.name||'').split(' ')[0]||''); }).filter(Boolean);
   var namesLine = names.length
-    ? names.join(' &middot; ') + (recent.length>8?' &middot; +'+(recent.length-8)+' more':'')
+    ? names.join(' &middot; ')+(recent.length>8?' &middot; +'+(recent.length-8)+' more':'')
     : '<span style="color:var(--text3);font-style:italic;font-weight:400">No Partners invited yet</span>';
-
   wrap.style.display = '';
+  // Store code/link on a container element so onclick handlers read via dataset — no quoting issues
   wrap.innerHTML =
-    '<div class="ov-stag">'
+    '<div class="ov-stag" id="ov-stag-card" data-code="' + esc(code) + '" data-link="' + esc(link) + '">'
     + '<div class="ov-stag-hd">The Partnership gets its weight from its Partners.</div>'
     + '<div class="ov-stag-sub">Your governance vote is equal to every other Partner\u2019s. Bring the next Partner.</div>'
     + '<div class="ov-stag-meta">'
@@ -1754,12 +1751,38 @@ function renderInviteCard(d){
     +   '<div class="ov-stag-meta-block" style="flex:1 1 auto;min-width:140px"><div class="ov-stag-meta-lbl">Joined so far</div><div class="ov-stag-meta-val names">'+namesLine+'</div></div>'
     + '</div>'
     + '<div class="ov-stag-actions">'
-    +   '<button class="ov-stag-btn" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.3);color:#25d366" onclick="ivShare(\'whatsapp\',\''+ea(code)+'\',\''+ea(link)+'\')" title="WhatsApp">&#x1F4AC; WhatsApp</button>'
-    +   '<button class="ov-stag-btn" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.25);color:#60d4b8" onclick="ivShare(\'sms\',\''+ea(code)+'\',\''+ea(link)+'\')" title="SMS">&#x1F4F1; SMS</button>'
-    +   '<button class="ov-stag-btn" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.25);color:#6ea8d8" onclick="ivShare(\'email\',\''+ea(code)+'\',\''+ea(link)+'\')" title="Email">&#x2709; Email</button>'
-    +   '<button class="ov-stag-btn primary" onclick="ivShare(\'copy\',\''+ea(code)+'\',\''+ea(link)+'\')" title="Copy link">&#x1F517; Copy link</button>'
+    +   '<button class="ov-stag-btn" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.3);color:#25d366" data-channel="whatsapp" onclick="stagShare(this)">&#x1F4AC; WhatsApp</button>'
+    +   '<button class="ov-stag-btn" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.25);color:#60d4b8" data-channel="sms" onclick="stagShare(this)">&#x1F4F1; SMS</button>'
+    +   '<button class="ov-stag-btn" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.25);color:#6ea8d8" data-channel="email" onclick="stagShare(this)">&#x2709; Email</button>'
+    +   '<button class="ov-stag-btn primary" data-channel="copy" onclick="stagShare(this)">&#x1F517; Copy link</button>'
     + '</div>'
     + '</div>';
+}
+
+function _ivOpenLink(href){
+  var a=document.createElement('a');
+  a.href=href; a.rel='noopener'; a.target='_blank'; a.style.display='none';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); },200);
+}
+
+function ivShare(channel, code, link){
+  var text = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
+  switch(channel){
+    case 'whatsapp': _ivOpenLink('https://wa.me/?text='+encodeURIComponent(text)); break;
+    case 'sms':      _ivOpenLink('sms:?body='+encodeURIComponent(text)); break;
+    case 'email':    _ivOpenLink('mailto:?subject='+encodeURIComponent('Join me in the COG$ Joint Venture Partnership')+'&body='+encodeURIComponent(text)); break;
+    case 'copy':     copyText(link); break;
+  }
+}
+
+// stagShare: reads code+link from parent data attrs — zero argument quoting
+function stagShare(btn){
+  var card = document.getElementById('ov-stag-card');
+  if(!card) return;
+  var code = card.dataset.code || '';
+  var link = card.dataset.link || '';
+  ivShare(btn.dataset.channel, code, link);
 }
 async function completeCurrentJvpaRecord(){
   var btn = el('jvpa-complete-btn');
@@ -3531,6 +3554,7 @@ window.openPayModal     = openPayModal;
 window.copyText         = copyText;
 window.shareInviteLink  = shareInviteLink;
 window.ivShare          = ivShare;
+window.stagShare        = stagShare;
 window.completeCurrentJvpaRecord = completeCurrentJvpaRecord;
 window.adjustGiftQty = adjustGiftQty;
 window.submitKidsOrder = submitKidsOrder;
@@ -4500,68 +4524,6 @@ function scrollToInvite(){
   }
 }
 
-/* ══ Section F — Stag Hunt invite card ═══════════════════════════════
-   Wraps the IIFE-defined renderInviteCard so Partners see a Stag-Hunt
-   framed card at the bottom of the Overview. The underlying data source
-   (api.invitations.my-code → d.invite_code) is unchanged. */
-window.addEventListener('load', function(){
-  var _origRIC = window.renderInviteCard;
-  if(typeof _origRIC !== 'function') return;
-  window.renderInviteCard = function(data){
-    var wrap = document.getElementById('invite-wrap');
-    if(!wrap) return;
-    if(!data){ wrap.style.display = 'none'; return; }
-    var code = (data.public_code || data.code || '').trim();
-    // Always build link from code so it points to home page with ?invite=
-    var siteOrigin = window.location.origin || 'https://cogsaustralia.org';
-    var link = code
-      ? siteOrigin + '/?invite=' + encodeURIComponent(code)
-      : (data.invite_link || data.share_url || siteOrigin + '/');
-    var uses = Number(data.use_count || 0);
-    var hasCode = !!(data.has_code || code);
-    if(!hasCode || !code){ wrap.style.display = 'none'; return; }
-
-    // Only show once the Partner has paid — keeps the CTA honest.
-    // (A Partner who hasn't paid themselves shouldn't be recruiting others.)
-    var paid = !!(window._vaultData && (window._vaultData.payment_status||'').toLowerCase()==='paid');
-    if(!paid){ wrap.style.display = 'none'; return; }
-
-    var esc = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
-    var escAttr = function(s){ return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); };
-    var recent = Array.isArray(data.recent) ? data.recent : [];
-    var names = recent.slice(0,8).map(function(r){ return esc(r.first_name || (r.name||'').split(' ')[0] || ''); }).filter(Boolean);
-    var namesLine = names.length
-      ? names.join(' &middot; ') + (recent.length > 8 ? ' &middot; +'+(recent.length-8)+' more' : '')
-      : '<span style="color:var(--text3);font-style:italic;font-weight:400">No Partners invited yet</span>';
-
-    wrap.style.display = '';
-    wrap.innerHTML =
-      '<div class="ov-stag">'
-      + '<div class="ov-stag-hd">The Partnership gets its weight from its Partners.</div>'
-      + '<div class="ov-stag-sub">Your governance vote is equal to every other Partner\u2019s. The collective leverage of the Partnership &mdash; at an ASX AGM, in an FPIC process, in a community &mdash; is the sum of those votes showing up together. Bring the next Partner.</div>'
-      + '<div class="ov-stag-meta">'
-      +   '<div class="ov-stag-meta-block" style="flex:0 0 auto">'
-      +     '<div class="ov-stag-meta-lbl">Your invite code</div>'
-      +     '<div class="ov-stag-meta-val">'+esc(code)+'</div>'
-      +   '</div>'
-      +   '<div class="ov-stag-meta-block" style="flex:0 0 auto">'
-      +     '<div class="ov-stag-meta-lbl">Partners invited</div>'
-      +     '<div class="ov-stag-meta-val count">'+uses+'</div>'
-      +   '</div>'
-      +   '<div class="ov-stag-meta-block" style="flex:1 1 auto;min-width:180px">'
-      +     '<div class="ov-stag-meta-lbl">Joined so far</div>'
-      +     '<div class="ov-stag-meta-val names">'+namesLine+'</div>'
-      +   '</div>'
-      + '</div>'
-      + '<div class="ov-stag-actions" style="gap:8px;flex-wrap:wrap">'
-      +   '<button class="ov-stag-btn" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.3);color:#25d366" onclick="ivShare(\'whatsapp\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Share via WhatsApp">&#x1F4AC; WhatsApp</button>'
-      +   '<button class="ov-stag-btn" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.25);color:#60d4b8" onclick="ivShare(\'sms\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Share via SMS">&#x1F4F1; SMS</button>'
-      +   '<button class="ov-stag-btn" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.25);color:#6ea8d8" onclick="ivShare(\'email\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Share via Email">&#x2709; Email</button>'
-      +   '<button class="ov-stag-btn primary" onclick="ivShare(\'copy\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Copy invite link">&#x1F517; Copy link</button>'
-      + '</div>'
-      + '</div>';
-  };
-});
 
 /* expose new globals */
 window.tab               = tab;
