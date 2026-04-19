@@ -1852,10 +1852,10 @@ window.shareVia = async function(channel){
       window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
       break;
     case 'sms':
-      window.open('sms:?body='+encodeURIComponent(text),'_blank');
+      window.location.href = 'sms:?body='+encodeURIComponent(text);
       break;
     case 'email':
-      window.open('mailto:?subject='+encodeURIComponent('You have been invited to look at COG$ of Australia')+'&body='+encodeURIComponent(text),'_blank');
+      window.location.href = 'mailto:?subject='+encodeURIComponent('You have been invited to look at COG$ of Australia')+'&body='+encodeURIComponent(text);
       break;
     case 'copy':
       navigator.clipboard.writeText(url).then(function(){
@@ -2834,7 +2834,8 @@ function hubCopyText(text, btn){
 function hubShareInvite(code, link){
   var msg='Join the COG$ Joint Venture Partnership with my invite code '+code+': '+link;
   if(navigator.share){ navigator.share({title:'Join me in the COG$',text:msg,url:link}).catch(function(){}); return; }
-  hubCopyText(link,{textContent:''}); // fallback
+  // Fallback: copy to clipboard
+  hubCopyText(link,{textContent:''});
 }
 
 // Reads data.announcements[] from the vault/member response (same source as the
