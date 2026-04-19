@@ -1696,7 +1696,9 @@ function fetchPollInitiationsForSubject(PDO $db, string $userType, string $subje
         unset($item);
         return $items;
     } catch (Throwable $e) {
-        return [];
+        error_log('[fetchPollInitiations] ' . $e->getMessage());
+        // Surface error in _debug field so vault JS can show it
+        return [['_error' => $e->getMessage(), 'status' => 'error', 'title' => 'Debug: ' . $e->getMessage()]];
     }
 }
 // ── Wallet Polls ─────────────────────────────────────────────────────────────────
