@@ -115,16 +115,18 @@ img{max-width:100%;height:auto}
 .tour-pill-btn{font-size:1.02rem;font-weight:600;color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-bdr);border-radius:99px;padding:5px 12px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
 
 /* ── TAB NAV ── */
-.tab-nav{position:fixed;top:54px;left:0;right:0;z-index:96;display:flex;background:#0c0c0c;border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 8px}
+.tab-nav{position:fixed;top:54px;left:0;right:0;z-index:96;display:flex;background:#0c0c0c;border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 4px}
 .tab-nav::-webkit-scrollbar{display:none}
-.tnb{display:flex;align-items:center;gap:6px;padding:0 16px;height:46px;font-size:1.02rem;font-weight:500;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;font-family:inherit;transition:color .15s;flex-shrink:0}
+.tnb{display:flex;align-items:center;gap:5px;padding:0 12px;height:46px;font-size:1.02rem;font-weight:500;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;font-family:inherit;transition:color .15s;flex-shrink:0}
 .tnb:hover{color:var(--text2)}
 .tnb.on{color:var(--gold);border-bottom-color:var(--gold)}
 .tnb-ico{font-size:1rem}
+.tnb-lbl{display:inline}
 .tnb-badge{font-size:1rem;font-weight:700;background:var(--gold);color:#0a0a0a;padding:1px 5px;border-radius:99px;min-width:16px;text-align:center;display:none}
 .tnb-badge.show{display:inline-block}
-@media(max-width:600px){.tnb{padding:0 10px;font-size:1.02rem;gap:4px}.tnb-ico{font-size:1rem}}
-@media(max-width:400px){.tnb{padding:0 7px}}
+@media(max-width:640px){.tnb{padding:0 9px;font-size:.92rem;gap:3px}}
+@media(max-width:480px){.tnb-lbl{display:none}.tnb{padding:0 12px;font-size:1rem}}
+@media(max-width:360px){.tnb{padding:0 9px}}
 
 /* ── HEADER SPACER ── */
 .hdr-space{height:108px;flex-shrink:0}/* topbar 54 + tabs 46 + 8px buffer */
@@ -923,13 +925,13 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
   <!-- Tab nav -->
   <nav class="tab-nav" role="tablist">
-    <button class="tnb on" data-tab="overview" onclick="tab('overview')"><span class="tnb-ico">◈</span> Overview <span id="s-identity-chip"></span></button>
-    <button class="tnb" data-tab="governance" onclick="tab(&apos;governance&apos;)"><span class="tnb-ico">✦</span> COG$ Management <span class="tnb-badge" id="polls-badge"></span> <span id="s-polls-chip" style="display:none"></span></button>
-    <button class="tnb" data-tab="news" onclick="tab(&apos;news&apos;)"><span class="tnb-ico">◉</span> COG$ News <span class="tnb-badge" id="news-badge"></span> <span id="s-news-chip" style="display:none"></span></button>
-    <button class="tnb" data-tab="holdings" onclick="tab('holdings')"><span class="tnb-ico">◇</span> COG$ Reservations <span id="s-holdings-chip" style="display:none"></span></button>
-    <button class="tnb" data-tab="give" onclick="tab('give')"><span class="tnb-ico">♡</span> Give</button>
-    <button class="tnb" data-tab="exchange" onclick="tab('exchange')"><span class="tnb-ico">⇄</span> Exchange</button>
-    <button class="tnb" data-tab="activity" onclick="tab('activity')"><span class="tnb-ico">◈</span> Activity</button>
+    <button class="tnb on" data-tab="overview" onclick="tab('overview')"><span class="tnb-ico">◈</span><span class="tnb-lbl"> Overview</span> <span id="s-identity-chip"></span></button>
+    <button class="tnb" data-tab="governance" onclick="tab('governance')"><span class="tnb-ico">✦</span><span class="tnb-lbl"> COG$ Management</span> <span class="tnb-badge" id="polls-badge"></span> <span id="s-polls-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="news" onclick="tab('news')"><span class="tnb-ico">◉</span><span class="tnb-lbl"> COG$ News</span> <span class="tnb-badge" id="news-badge"></span> <span id="s-news-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="holdings" onclick="tab('holdings')"><span class="tnb-ico">◇</span><span class="tnb-lbl"> COG$ Reservations</span> <span id="s-holdings-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="give" onclick="tab('give')"><span class="tnb-ico">♡</span><span class="tnb-lbl"> Give</span></button>
+    <button class="tnb" data-tab="exchange" onclick="tab('exchange')"><span class="tnb-ico">⇄</span><span class="tnb-lbl"> Exchange</span></button>
+    <button class="tnb" data-tab="activity" onclick="tab('activity')"><span class="tnb-ico">◈</span><span class="tnb-lbl"> Activity</span></button>
   </nav>
 
   <!-- Header spacer (topbar 54 + beta ~30 + tabs 46 + pay banner hidden) -->
