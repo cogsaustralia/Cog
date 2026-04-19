@@ -1320,16 +1320,16 @@
                 <div class="mc-sub">Kids kS-NFT</div>
                 <div class="mc-tier">Tier 1</div>
               </div>
+              <div class="mc-cell mc-cell-gold" data-tip="Business B-NFT — the business-entity membership token. Issued to registered Australian businesses at $40.00. Carries limited governance rights and a Sub-Trust B income unit. One per business.">
+                <div class="mc-ico">🏢</div>
+                <div class="mc-val mc-gold" id="mc-bnft">—</div>
+                <div class="mc-sub">Business B-NFT</div>
+                <div class="mc-tier">Tier 1</div>
+              </div>
               <div class="mc-cell mc-cell-gold" data-tip="ASX COG$ — investment-grade token tied to ASX resource company shares in the Partners Asset Pool. Subject to any regulatory requirements determined by applicable law. Lock period applies from Expansion Day. $4.00 issue price.">
                 <div class="mc-ico">📈</div>
                 <div class="mc-val mc-gold" id="mc-asx">—</div>
                 <div class="mc-sub">ASX COG$</div>
-                <div class="mc-tier t2">Tier 2</div>
-              </div>
-              <div class="mc-cell mc-cell-gold" data-tip="RWA COG$ — Real World Asset token tied to in-ground mineral value. Blockchain-verified, not speculative. Activated on Expansion Day, subject to any regulatory requirements determined by applicable law.">
-                <div class="mc-ico">🌏</div>
-                <div class="mc-val mc-gold" id="mc-rwa">—</div>
-                <div class="mc-sub">RWA COG$</div>
                 <div class="mc-tier t2">Tier 2</div>
               </div>
             </div>
@@ -1357,6 +1357,34 @@
                 <div class="mc-val mc-gold" id="mc-lr">—</div>
                 <div class="mc-sub">Resident COG$</div>
                 <div class="mc-tier">Tier 1</div>
+              </div>
+            </div>
+            <div class="mc-row mc-row-4" style="margin-top:8px">
+              <div class="mc-cell mc-cell-gold" data-tip="RWA COG$ — Real World Asset token tied to in-ground mineral value. Blockchain-verified, not speculative. Activated on Expansion Day, subject to any regulatory requirements determined by applicable law.">
+                <div class="mc-ico">🌏</div>
+                <div class="mc-val mc-gold" id="mc-rwa">—</div>
+                <div class="mc-sub">RWA COG$</div>
+                <div class="mc-tier t2">Tier 2</div>
+              </div>
+              <div class="mc-cell mc-cell-teal" data-tip="Community COG$ (Class C) — the recognition and exchange token. 1,000 allocated to every Individual Partner and 10,000 to every Business Partner on admission. Carries a Sub-Trust B income unit. P2P transferable within the community. No purchase fee.">
+                <div class="mc-ico">
+                  <img src="../assets/cogs_coin_web.png" alt="COG$" style="width:22px;height:22px;border-radius:50%;vertical-align:middle">
+                </div>
+                <div class="mc-val mc-teal" id="mc-community">—</div>
+                <div class="mc-sub">Community COG$</div>
+                <div class="mc-tier">Tier 2</div>
+              </div>
+              <div class="mc-cell mc-cell-gold" data-tip="Business Property COG$ (Class BP) — issued to eligible commercial property holders at $40.00 per unit. Carries weighted affected-zone governance rights and one Sub-Trust B income unit per validly issued unit. P2P transferable via Partners Vault with 3-of-Board multisig.">
+                <div class="mc-ico">🏗️</div>
+                <div class="mc-val mc-gold" id="mc-bp">—</div>
+                <div class="mc-sub">Business Property</div>
+                <div class="mc-tier t2">Tier 2</div>
+              </div>
+              <div class="mc-cell mc-cell-gold" style="opacity:.45;cursor:default" data-tip="Future token class — reserved for additional Unit classes the Trustee may issue at the request of Beneficiaries from time to time, as provided in the Declaration.">
+                <div class="mc-ico">⊕</div>
+                <div class="mc-val mc-gold">—</div>
+                <div class="mc-sub">Future class</div>
+                <div class="mc-tier">Reserved</div>
               </div>
             </div>
 
@@ -1670,12 +1698,15 @@ async function loadCommunityStats(){
     var c = s.classes || {};
     if(el('mc-snft')) el('mc-snft').textContent = fmt(c.snft);
     if(el('mc-ksnft')) el('mc-ksnft').textContent = fmt(c.ksnft);
+    if(el('mc-bnft')) el('mc-bnft').textContent = fmt(c.bnft);
     if(el('mc-asx')) el('mc-asx').textContent = fmt(c.asx);
     if(el('mc-rwa')) el('mc-rwa').textContent = fmt(c.rwa);
     if(el('mc-donation')) el('mc-donation').textContent = fmt(c.donation);
     if(el('mc-pif')) el('mc-pif').textContent = fmt(c.pif);
     if(el('mc-landholder')) el('mc-landholder').textContent = fmt(c.landholder);
     if(el('mc-lr')) el('mc-lr').textContent = fmt(c.lr);
+    if(el('mc-community')) el('mc-community').textContent = fmt(c.community);
+    if(el('mc-bp')) el('mc-bp').textContent = fmt(c.bp);
 
   }catch(e){ console.warn('Community stats unavailable:', e.message); }
 }

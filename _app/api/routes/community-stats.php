@@ -46,10 +46,11 @@ try {
         COALESCE(SUM(landholder_tokens), 0)                                          AS landholder,
         COALESCE(SUM(rwa_tokens), 0)                                                 AS rwa,
         COALESCE(SUM(lr_tokens), 0)                                                  AS lr,
+        COALESCE(SUM(community_tokens), 0)                                           AS community,
         COALESCE(SUM(
             reserved_tokens + investment_tokens + kids_tokens +
             donation_tokens + pay_it_forward_tokens +
-            landholder_tokens + rwa_tokens + lr_tokens
+            landholder_tokens + rwa_tokens + lr_tokens + community_tokens
         ), 0)                                                                        AS total,
         COALESCE(SUM(
             (reserved_tokens + investment_tokens +
@@ -71,7 +72,8 @@ try {
     $suburbs = (int)$db->query("SELECT COUNT(DISTINCT LOWER(suburb)) FROM snft_memberships WHERE $w AND suburb IS NOT NULL AND suburb != ''")->fetchColumn();
 
     // ── BNFT token totals — P2P transfers move tokens into business wallets ──
-    $btok = ['b_invest'=>0,'b_rwa'=>0,'b_reserved'=>0,'b_donation'=>0,'b_pif'=>0,'b_landholder'=>0];
+    $btok = ['b_invest'=>0,'b_rwa'=>0,'b_reserved'=>0,'b_donation'=>0,'b_pif'=>0,'b_landholder'=>0,'b_bus_prop'=>0,'b_community'=>0];
+    $bnft_count = 0;
     try {
         $btok = $db->query("SELECT
             COALESCE(SUM(invest_tokens),        0) AS b_invest,
@@ -79,8 +81,11 @@ try {
             COALESCE(SUM(reserved_tokens),      0) AS b_reserved,
             COALESCE(SUM(donation_tokens),      0) AS b_donation,
             COALESCE(SUM(pay_it_forward_tokens),0) AS b_pif,
-            COALESCE(SUM(landholder_tokens),    0) AS b_landholder
+            COALESCE(SUM(landholder_tokens),    0) AS b_landholder,
+            COALESCE(SUM(bus_prop_tokens),      0) AS b_bus_prop,
+            COALESCE(SUM(community_tokens),     0) AS b_community
             FROM bnft_memberships")->fetch(PDO::FETCH_ASSOC) ?: $btok;
+        $bnft_count = (int)$db->query("SELECT COUNT(*) FROM bnft_memberships")->fetchColumn();
     } catch (Throwable $e) {}
 
     $total_cogs  = (int)$tok['total']
@@ -104,12 +109,15 @@ try {
             'classes' => [
                 'snft'       => (int)$tok['snft'],
                 'ksnft'      => (int)$tok['ksnft'],
+                'bnft'       => $bnft_count,
                 'asx'        => (int)$tok['asx']       + (int)$btok['b_invest'],
                 'donation'   => (int)$tok['donation']   + (int)$btok['b_donation'],
                 'pif'        => (int)$tok['pif']        + (int)$btok['b_pif'],
                 'landholder' => (int)$tok['landholder'] + (int)$btok['b_landholder'],
                 'rwa'        => (int)$tok['rwa']        + (int)$btok['b_rwa'],
                 'lr'         => (int)$tok['lr'],
+                'community'  => (int)$tok['community']  + (int)$btok['b_community'],
+                'bp'         => (int)$btok['b_bus_prop'],
             ],
             'geo' => [
                 'states'          => $states,
