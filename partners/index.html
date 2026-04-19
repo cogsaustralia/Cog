@@ -742,7 +742,7 @@
       <section class="page-hero">
         <div class="container">
           <div class="member-bar ha">
-            <div class="member-bar-left">
+            <div class="member-bar-left" style="display:none">
               <div class="welcome-badge">◈ Partner community</div>
               <div class="member-chip" id="member-number-display" style="margin-top:4px;font-size:.72rem">—</div>
             </div>
@@ -757,8 +757,8 @@
                 </a>
                 <!-- Payment overlay — injected by JS when payment is pending -->
               </div>
-          <!-- Partners Participation Pill -->
-          <div id="participation-pill-wrap" style="margin-top:14px;display:none">
+          <!-- Partners Participation Pill — hidden, managed via identity card -->
+          <div id="participation-pill-wrap" style="display:none">
             <button class="participation-pill incomplete" id="participation-pill" onclick="handleParticipationPillClick()">
               <span>◈</span>
               <span id="participation-pill-label">Partners Participation — complete before entering your vault</span>
@@ -770,9 +770,11 @@
               <button class="btn-logout" id="logout-btn">Log out</button>
             </div>
           </div>
-          <span class="eyebrow ha">Community hub</span>
-          <h1 class="member-welcome-hd ha">Welcome back, <span id="member-first-name">Partner</span>.</h1>
-          <p class="lead ha" style="max-width:62ch">Your home base — vaults, governance, community growth, and everything that matters.</p>
+          <div style="margin-bottom:10px">
+            <span class="eyebrow ha">Community Hub</span>
+          </div>
+          <h1 class="member-welcome-hd ha">Welcome, <span id="member-first-name">Partner</span>.</h1>
+          <p class="lead ha" style="max-width:62ch">Your home base — identity, governance, community growth, and everything that matters.</p>
 
           <!-- Founding Partners stats -->
           <div class="comm-strip ha" id="comm-strip" style="display:none;margin-top:20px">
@@ -789,6 +791,7 @@
               <div class="hub-card-hd">
                 <span class="hub-card-ico">&#9672;</span>
                 <span class="hub-card-title">Identity &amp; Membership</span>
+                <span style="font-size:.72rem;color:var(--muted);font-family:var(--mono);margin-left:auto" id="hub-id-member-number"></span>
               </div>
               <div class="hub-card-bd" id="hub-identity-bd">
                 <!-- populated by renderHubIdentity() -->
@@ -799,7 +802,7 @@
             <div class="hub-card" id="hub-governance-card" style="display:none">
               <div class="hub-card-hd">
                 <span class="hub-card-ico">&#10022;</span>
-                <span class="hub-card-title">Governance</span>
+                <span class="hub-card-title">COG$ Management Proposals</span>
                 <span class="hub-card-badge" id="hub-gov-badge" style="display:none"></span>
                 <a class="hub-card-link" href="../wallets/member.html" onclick="hubCoinTransition('../wallets/member.html');return false;">Vote in vault &rarr;</a>
               </div>
@@ -1553,6 +1556,9 @@ function enterCommunity(data){
     var num = data.member_number||'';
     mnDisplay.textContent = num ? num.replace(/(.{4})(?=.)/g,'$1 ') : '';
   }
+  // Populate identity card header member number
+  var hubMn = document.getElementById('hub-id-member-number');
+  if(hubMn && data.member_number) hubMn.textContent = data.member_number.replace(/(.{4})(?=.)/g,'$1 ');
 
   // Payment nudge — shown above the community content for unpaid Partners.
   // Removed automatically once payment_status reaches 'paid' on next vault load.
