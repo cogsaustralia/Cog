@@ -917,18 +917,6 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     </div>
   </div>
 
-  <!-- Tour pill -->
-  <div class="tour-pill-banner" id="tour-pill-banner" style="display:none">
-    <div class="tour-pill-text">
-      <span class="tour-pill-icon">🧭</span>
-      <div class="tour-pill-copy">
-        <span class="tour-pill-title" id="tour-pill-title">Take the Partner vault tour</span>
-        <span class="tour-pill-sub">6 steps · your token, governance, asset pool and more</span>
-      </div>
-    </div>
-    <button class="tour-pill-btn" id="tour-pill-btn" onclick="startWalletTour()">Start tour →</button>
-  </div>
-
   <!-- Tab nav -->
   <nav class="tab-nav" role="tablist">
     <button class="tnb on" data-tab="overview" onclick="tab('overview')"><span class="tnb-ico">◈</span><span class="tnb-lbl"> Overview</span> <span id="s-identity-chip"></span></button>
@@ -3983,21 +3971,29 @@ function renderTabOverview(d){
   var ref    = document.getElementById('pay-modal-ref');
   if(ref && d.member_number) ref.textContent = (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
 
-  /* ── B: Business pill — silent check ── */
+  /* ── B: Business pill + Tour pill ── */
   var tourPill = '<button class="tour-pill-inline btn btn-ghost btn-sm" onclick="startWalletTour()" style="display:inline-flex;align-items:center;gap:6px">🧭 Partner Vault Tour</button>';
+  // Always show the tour pill immediately — business pill added once API responds
+  var bpill = document.getElementById('ov-business-pill');
+  if(bpill){
+    bpill.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px';
+    bpill.innerHTML = tourPill;
+  }
   window.api('vault/member-business').then(function(r){
-    var bpill = document.getElementById('ov-business-pill');
-    if(!bpill) return;
+    var bpill2 = document.getElementById('ov-business-pill');
+    if(!bpill2) return;
+    bpill2.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px';
     if(r && r.has_business){
-      bpill.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px';
-      bpill.innerHTML = '<a class="btn btn-ghost btn-sm" style="display:inline-flex;align-items:center;gap:6px" href="../wallets/business.html" onclick="coinTransition(\'../wallets/business.html\');return false;">&#9656; '+esc(r.trading_name||r.legal_name||'My Business')+'</a>' + tourPill;
+      bpill2.innerHTML = '<a class="btn btn-ghost btn-sm" style="display:inline-flex;align-items:center;gap:6px" href="../wallets/business.html" onclick="coinTransition(\'../wallets/business.html\');return false;">&#9656; '+esc(r.trading_name||r.legal_name||'My Business')+'</a>' + tourPill;
     } else {
-      bpill.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px';
       var mnRaw = (d && d.member_number ? d.member_number : (window._vaultData && window._vaultData.member_number ? window._vaultData.member_number : ''));
       var bizUrl = '../businesses/bnft_join.html' + (mnRaw ? '?mn=' + encodeURIComponent(mnRaw) : '');
-      bpill.innerHTML = '<a href="' + bizUrl + '" class="biz-register-pill">&#127970; Register your business &rarr;</a>' + tourPill;
+      bpill2.innerHTML = '<a href="' + bizUrl + '" class="biz-register-pill">&#127970; Register your business &rarr;</a>' + tourPill;
     }
-  }).catch(function(){});
+  }).catch(function(e){
+    console.warn('[business-pill]', e);
+    // Keep tour pill visible even if business API fails
+  });
 
   /* ── D: Participation pathways ── */
   try{ renderParticipationPathways(d); }catch(e){}
@@ -4909,21 +4905,7 @@ function tRender(){
 }
 
 function updateTourPill(){
-  var pill = document.getElementById('tour-pill-banner');
-  if(!pill) return;
-  pill.style.display = '';
-  var done = !!localStorage.getItem('cogs_vault_tour');
-  var title = document.getElementById('tour-pill-title');
-  var btn = document.getElementById('tour-pill-btn');
-  if(done){
-    pill.classList.add('ghost');
-    if(title) title.textContent = 'Partner vault tour';
-    if(btn) btn.textContent = 'Restart';
-  } else {
-    pill.classList.remove('ghost');
-    if(title) title.textContent = 'Take the Partner vault tour';
-    if(btn){ btn.textContent = 'Start tour →'; }
-  }
+  // Tour pill banner removed — tour launched via inline pill on Overview tab only
 }
 </script>
 
