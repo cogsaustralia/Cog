@@ -81,6 +81,9 @@ if ($action === 'vote-proposal') {
 if ($action === 'proposal-comments') {
     handleProposalComments();
 }
+if ($action === 'proposal-tallies') {
+    handleProposalTallies();
+}
 apiError('Unknown vault endpoint', 404);
 
 function memberVault(): void {
@@ -3768,6 +3771,67 @@ function voteOnProposal(): void {
 
     apiSuccess(['voted' => true, 'choice' => $choice, 'tally' => $tally, 'total_votes' => $total]);
 }
+
+/* ── PROPOSAL TALLIES (live feed) ───────────────────────────────────────────── */
+function handleProposalTallies(): void {
+    requireMethod('GET');
+    requireAuth('snft'); // auth check only — tally is anonymous
+    $db = getDB();
+
+    try {
+        // Fetch all open proposals
+        $stmt = $db->prepare("SELECT id FROM vote_proposals WHERE status = 'open' ORDER BY id DESC LIMIT 20");
+        $stmt->execute();
+        $ids = array_map(static fn($r) => (int)$r['id'], $stmt->fetchAll());
+
+        if (!$ids) { apiSuccess(['tallies' => []]); }
+
+        $ph = implode(',', array_fill(0, count($ids), '?'));
+        $tStmt = $db->prepare("SELECT proposal_id, response_value, COUNT(*) AS votes
+                                FROM vote_proposal_responses
+                                WHERE proposal_id IN ({$ph})
+                                GROUP BY proposal_id, response_value");
+        $tStmt->execute($ids);
+
+        $raw = [];
+        foreach ($tStmt->fetchAll() as $row) {
+            $pid = (int)$row['proposal_id'];
+            $raw[$pid][(string)$row['response_value']] = (int)$row['votes'];
+        }
+
+        // Also fetch comment counts
+        $commentCounts = [];
+        if (api_table_exists($db, 'proposal_comments')) {
+            $cStmt = $db->prepare("SELECT proposal_id, COUNT(*) AS cnt FROM proposal_comments WHERE proposal_id IN ({$ph}) GROUP BY proposal_id");
+            $cStmt->execute($ids);
+            foreach ($cStmt->fetchAll() as $row) {
+                $commentCounts[(int)$row['proposal_id']] = (int)$row['cnt'];
+            }
+        }
+
+        $tallies = [];
+        foreach ($ids as $pid) {
+            $counts = $raw[$pid] ?? [];
+            $total  = array_sum($counts);
+            $tallies[] = [
+                'proposal_id'   => $pid,
+                'tally'         => [
+                    ['label' => 'yes',   'votes' => (int)($counts['yes']   ?? 0)],
+                    ['label' => 'maybe', 'votes' => (int)($counts['maybe'] ?? 0)],
+                    ['label' => 'no',    'votes' => (int)($counts['no']    ?? 0)],
+                ],
+                'total_votes'   => $total,
+                'comment_count' => (int)($commentCounts[$pid] ?? 0),
+            ];
+        }
+
+        apiSuccess(['tallies' => $tallies]);
+
+    } catch (Throwable $e) {
+        apiSuccess(['tallies' => []]);
+    }
+}
+
 
 /* ── PROPOSAL COMMENTS ─────────────────────────────────────────────────────── */
 function handleProposalComments(): void {

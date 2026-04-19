@@ -1511,6 +1511,7 @@ function openVault(d){
 
   renderIdentity(d);
   renderPolls(d);
+  if(typeof startTallyPolling === 'function') startTallyPolling();
   renderBasket();
   renderHoldings(d);
   renderNews(d);
@@ -1862,19 +1863,19 @@ function renderProposalCard(p, past){
   /* Tally bars */
   const colours = {yes:'var(--green)', maybe:'#e09a42', no:'var(--red)'};
   const labels  = {yes:'Yes', maybe:'Maybe', no:'No'};
-  let barHtml = '<div class="prop-tally">';
+  let barHtml = '<div class="prop-tally" id="prop-tally-'+p.id+'">';
   tally.forEach(function(t){
     const pct   = total > 0 ? Math.round((t.votes / total) * 100) : 0;
     const col   = colours[t.label] || 'var(--text3)';
     const lbl   = labels[t.label]  || t.label;
     const mine  = myVote === t.label;
     barHtml += '<div class="prop-tally-row">'
-      + '<span class="prop-tally-lbl" style="color:'+col+'">'+(mine?'✓ ':'')+lbl+'</span>'
-      + '<div class="prop-tally-track"><div class="prop-tally-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'
-      + '<span class="prop-tally-pct">'+t.votes+' ('+pct+'%)</span>'
+      + '<span class="prop-tally-lbl" id="prop-tally-lbl-'+p.id+'-'+t.label+'" style="color:'+col+'">'+(mine?'✓ ':'')+lbl+'</span>'
+      + '<div class="prop-tally-track"><div class="prop-tally-fill" id="prop-tally-fill-'+p.id+'-'+t.label+'" style="width:'+pct+'%;background:'+col+'"></div></div>'
+      + '<span class="prop-tally-pct" id="prop-tally-pct-'+p.id+'-'+t.label+'">'+t.votes+' ('+pct+'%)</span>'
       + '</div>';
   });
-  barHtml += '<div style="font-size:1rem;color:var(--text4);margin-top:6px">'+total+' response'+(total!==1?'s':'')+' · '+comments+' comment'+(comments!==1?'s':'')+'</div></div>';
+  barHtml += '<div class="prop-tally-total" id="prop-tally-total-'+p.id+'" style="font-size:1rem;color:var(--text4);margin-top:6px">'+total+' response'+(total!==1?'s':'')+' · '+comments+' comment'+(comments!==1?'s':'')+'</div></div>';
 
   /* Vote buttons */
   let actions = '';
@@ -1914,9 +1915,26 @@ function renderProposalCard(p, past){
 async function castProposalVote(proposalId, choice){
   const fl = el('prop-fl-'+proposalId);
   try {
-    await api('vault/vote-proposal', {method:'POST', body:JSON.stringify({proposal_id:proposalId, choice:choice})});
-    const v = await api('vault/member');
-    openVault(v);
+    // POST vote — response contains fresh tally
+    const res = await api('vault/vote-proposal', {method:'POST', body:JSON.stringify({proposal_id:proposalId, choice:choice})});
+    // Convert dict tally {yes:N,maybe:N,no:N} → array [{label,votes}]
+    const tallyArr = ['yes','maybe','no'].map(function(lbl){
+      return {label:lbl, votes: typeof res.tally === 'object' && !Array.isArray(res.tally)
+        ? (res.tally[lbl]||0)
+        : ((res.tally||[]).find(function(x){return x.label===lbl;})||{}).votes||0};
+    });
+    // Update _vaultData so clearProposalVote and re-renders are consistent
+    const pid = parseInt(proposalId, 10);
+    if(window._vaultData && window._vaultData.proposals){
+      const p = window._vaultData.proposals.find(function(x){ return parseInt(x.id,10)===pid; });
+      if(p){ p.my_vote = choice; p.tally = tallyArr; p.total_votes = res.total_votes||0; }
+    }
+    // Animate tally bars in-place — no full reload needed
+    updateProposalTally(proposalId, tallyArr, res.total_votes||0, choice);
+    // Switch vote buttons to "voted" state
+    const actEl = document.querySelector('#prop-tally-'+proposalId+' ~ .prop-actions, .poll-card:has(#prop-tally-'+proposalId+') .prop-actions');
+    if(actEl) actEl.outerHTML = '<div class="prop-voted">✓ Your response: <strong>'+({yes:'Yes',maybe:'Maybe',no:'No'}[choice]||choice)+'</strong>'
+      +' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="clearProposalVote('+proposalId+')">Change</button></div>';
   } catch(e) {
     if(fl) flash('prop-fl-'+proposalId, e.message||'Vote failed.','err');
   }
@@ -1931,6 +1949,58 @@ function clearProposalVote(proposalId){
   const p = proposals.find(function(x){ return parseInt(x.id, 10) === pid; });
   if(p){ p.my_vote = null; p.my_vote_note = null; }
   if(typeof renderPolls === 'function') renderPolls(window._vaultData);
+}
+
+/* ── TALLY IN-PLACE UPDATER ── */
+function updateProposalTally(proposalId, tallyArr, total, myVote){
+  const pid    = parseInt(proposalId, 10);
+  const colours = {yes:'var(--green)', maybe:'#e09a42', no:'var(--red)'};
+  const labels  = {yes:'Yes', maybe:'Maybe', no:'No'};
+  tallyArr.forEach(function(row){
+    const lbl  = row.label;
+    const votes = row.votes || 0;
+    const pct  = total > 0 ? Math.round((votes / total) * 100) : 0;
+    const mine = myVote === lbl;
+    const fill = el('prop-tally-fill-'+pid+'-'+lbl);
+    const pctEl= el('prop-tally-pct-'+pid+'-'+lbl);
+    const lblEl= el('prop-tally-lbl-'+pid+'-'+lbl);
+    if(fill)  fill.style.width = pct + '%';
+    if(pctEl) pctEl.textContent = votes + ' (' + pct + '%)';
+    if(lblEl) lblEl.textContent = (mine ? '✓ ' : '') + (labels[lbl]||lbl);
+  });
+  const totEl = el('prop-tally-total-'+pid);
+  if(totEl){
+    const comments = totEl.textContent.match(/(\d+) comment/) ? parseInt(totEl.textContent.match(/(\d+) comment/)[1], 10) : 0;
+    totEl.textContent = total + ' response' + (total!==1?'s':'') + ' · ' + comments + ' comment' + (comments!==1?'s':'');
+  }
+}
+
+/* ── LIVE TALLY POLLING (30s when governance tab is active) ── */
+var _tallyInterval = null;
+function startTallyPolling(){
+  if(_tallyInterval) return; // already running
+  _tallyInterval = setInterval(function(){
+    if((window._activeTab||'') !== 'governance') return; // skip if tab not active
+    api('vault/proposal-tallies').then(function(r){
+      var tallies = r.tallies || [];
+      tallies.forEach(function(item){
+        var pid  = parseInt(item.proposal_id, 10);
+        var myV  = null;
+        // Preserve current member's own vote from _vaultData
+        if(window._vaultData && window._vaultData.proposals){
+          var p = window._vaultData.proposals.find(function(x){ return parseInt(x.id,10)===pid; });
+          if(p){ myV = p.my_vote||null; p.tally = item.tally; p.total_votes = item.total_votes; p.comment_count = item.comment_count; }
+        }
+        updateProposalTally(pid, item.tally, item.total_votes, myV);
+        // Update comment count on toggle button
+        var cmtBtn = document.querySelector('[onclick="toggleComments('+pid+')"]');
+        if(cmtBtn) cmtBtn.textContent = '\uD83D\uDCAC Comments (' + (item.comment_count||0) + ')';
+      });
+    }).catch(function(){}); // silent — live update is best-effort
+  }, 30000);
+}
+function stopTallyPolling(){
+  if(_tallyInterval){ clearInterval(_tallyInterval); _tallyInterval = null; }
 }
 
 function toggleComments(proposalId){
@@ -3237,6 +3307,9 @@ window.castProposalVote = castProposalVote;
 window.clearProposalVote = clearProposalVote;
 window.toggleComments   = toggleComments;
 window.submitComment    = submitComment;
+window.updateProposalTally = updateProposalTally;
+window.startTallyPolling   = startTallyPolling;
+window.stopTallyPolling    = stopTallyPolling;
 window.saveReservations = saveReservations;
 window.setElection      = setElection;
 window.markAllRead      = markAllRead;
