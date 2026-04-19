@@ -171,11 +171,18 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'classes',           'label' => '🪙  COG$ Classes',              'href' => './classes.php'],
                 ['key' => 'settings',          'label' => '⚙  Settings',                  'href' => './settings.php'],
             ],
+            'Communications' => [
+                ['key' => 'wallet_messages',       'label' => '✉  Wallet Notices',        'href' => './messages.php?section=wallet_messages'],
+                ['key' => 'announcements',         'label' => '📢  Announcements',         'href' => './messages.php?section=announcements'],
+                ['key' => 'proposals',             'label' => '📝  Proposals',             'href' => './messages.php?section=proposals'],
+                ['key' => 'binding_polls',         'label' => '⚖  Binding Polls',         'href' => './messages.php?section=binding_polls'],
+                ['key' => 'stewardship_responses', 'label' => '◈  Stewardship Responses', 'href' => './messages.php?section=stewardship_responses'],
+                ['key' => 'email_templates',       'label' => '📄  Email Templates',       'href' => './messages.php?section=email_templates'],
+            ],
             'Governance & Compliance' => [
                 ['key' => 'governance',        'label' => '🗳  Governance',                'href' => './governance.php'],
                 ['key' => 'operations',        'label' => '🤝  Partner Operations',        'href' => './operations.php'],
                 ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',            'href' => './foundation_day.php'],
-                ['key' => 'communications',    'label' => '📣  Communications',            'href' => './messages.php'],
                 ['key' => 'zones',             'label' => '📍  Geographic Zones',          'href' => './zones.php'],
                 ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',          'href' => './evidence_reviews.php'],
                 ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',               'href' => './admin_kyc.php'],
@@ -211,14 +218,6 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'chain_handoff',      'label' => '🔗  Blockchain Handoff',       'href' => './chain_handoff.php'],
                 ['key' => 'session_check',      'label' => '🔐  Session Check',            'href' => './session-check.php'],
                 ['key' => 'legacy_dependencies','label' => '🧩  Bridge Status',            'href' => './legacy-dependencies.php'],
-            ],
-            'Communications' => [
-                ['key' => 'wallet_messages',       'label' => '✉  Wallet Notices',        'href' => './messages.php?section=wallet_messages'],
-                ['key' => 'announcements',         'label' => '📢  Announcements',         'href' => './messages.php?section=announcements'],
-                ['key' => 'proposals',             'label' => '📝  Proposals',             'href' => './messages.php?section=proposals'],
-                ['key' => 'binding_polls',         'label' => '⚖  Binding Polls',         'href' => './messages.php?section=binding_polls'],
-                ['key' => 'stewardship_responses', 'label' => '◈  Stewardship Responses', 'href' => './messages.php?section=stewardship_responses'],
-                ['key' => 'email_templates',       'label' => '📄  Email Templates',       'href' => './messages.php?section=email_templates'],
             ],
         ];
         ?>
