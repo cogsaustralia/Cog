@@ -1663,10 +1663,17 @@ function ensurePartnersPollInitiationOpen(PDO $db, int $proposalRegisterId): arr
 }
 
 function fetchPollInitiationsForSubject(PDO $db, string $userType, string $subjectRef, int $memberId, bool $eligibleToVote): array {
-    if ($userType !== 'snft' || !hasPartnersPollInitiationSchema($db)) return [];
+    if ($userType !== 'snft' || !api_table_exists($db, 'proposal_register')) return [];
     try {
-        $stmt = $db->prepare("SELECT pr.id, pr.proposal_key, pr.title, pr.summary, pr.body, pr.status, pr.created_at, pr.updated_at, pr.linked_poll_id, pr.initiation_threshold, pr.eligible_partner_count, pr.initiation_reached_at, pr.origin_member_id, m.full_name AS origin_name, COUNT(ppi.id) AS initiator_count, MAX(CASE WHEN ppi.member_id = ? THEN 1 ELSE 0 END) AS my_initiation_status FROM proposal_register pr LEFT JOIN partners_poll_initiators ppi ON ppi.proposal_register_id = pr.id LEFT JOIN members m ON m.id = pr.origin_member_id WHERE pr.proposal_type = 'governance' AND pr.origin_type = 'partner' AND pr.status IN ('submitted','sponsored','open') GROUP BY pr.id, pr.proposal_key, pr.title, pr.summary, pr.body, pr.status, pr.created_at, pr.updated_at, pr.linked_poll_id, pr.initiation_threshold, pr.eligible_partner_count, pr.initiation_reached_at, pr.origin_member_id, m.full_name ORDER BY pr.id DESC LIMIT 20");
-        $stmt->execute([$memberId]);
+        $hasPpi = api_table_exists($db, 'partners_poll_initiators');
+        if ($hasPpi) {
+            $stmt = $db->prepare("SELECT pr.id, pr.proposal_key, pr.title, pr.summary, pr.body, pr.status, pr.created_at, pr.updated_at, pr.linked_poll_id, pr.initiation_threshold, pr.eligible_partner_count, pr.initiation_reached_at, pr.origin_member_id, m.full_name AS origin_name, COUNT(ppi.id) AS initiator_count, MAX(CASE WHEN ppi.member_id = ? THEN 1 ELSE 0 END) AS my_initiation_status FROM proposal_register pr LEFT JOIN partners_poll_initiators ppi ON ppi.proposal_register_id = pr.id LEFT JOIN members m ON m.id = pr.origin_member_id WHERE pr.proposal_type = 'governance' AND pr.origin_type = 'partner' AND pr.status IN ('submitted','sponsored','open') GROUP BY pr.id, pr.proposal_key, pr.title, pr.summary, pr.body, pr.status, pr.created_at, pr.updated_at, pr.linked_poll_id, pr.initiation_threshold, pr.eligible_partner_count, pr.initiation_reached_at, pr.origin_member_id, m.full_name ORDER BY pr.id DESC LIMIT 20");
+            $stmt->execute([$memberId]);
+        } else {
+            // partners_poll_initiators not yet created — show proposals without initiator counts
+            $stmt = $db->prepare("SELECT pr.id, pr.proposal_key, pr.title, pr.summary, pr.body, pr.status, pr.created_at, pr.updated_at, pr.linked_poll_id, pr.initiation_threshold, pr.eligible_partner_count, pr.initiation_reached_at, pr.origin_member_id, m.full_name AS origin_name, 0 AS initiator_count, (CASE WHEN pr.origin_member_id = ? THEN 1 ELSE 0 END) AS my_initiation_status FROM proposal_register pr LEFT JOIN members m ON m.id = pr.origin_member_id WHERE pr.proposal_type = 'governance' AND pr.origin_type = 'partner' AND pr.status IN ('submitted','sponsored','open') ORDER BY pr.id DESC LIMIT 20");
+            $stmt->execute([$memberId]);
+        }
         $items = $stmt->fetchAll();
         if (!$items) return [];
         foreach ($items as &$item) {
