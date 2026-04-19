@@ -174,78 +174,20 @@ function ex_status_class(string $s): string {
     if ($s === 'cancelled') return 'st-bad';
     return 'st-dim';
 }
+
+ob_start();
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Expenses | COG$ Admin</title>
-<?php ops_admin_help_assets_once(); ?>
-<style>.main { padding:24px 28px; min-width:0; }
-.topbar { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:26px; flex-wrap:wrap; }
-.topbar h1 { font-size:1.9rem; font-weight:700; margin-bottom:6px; }
-.topbar p { color:var(--sub); font-size:13px; }
-.btn { display:inline-block; padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--line2); background:var(--panel2); color:var(--text); cursor:pointer; }
-.btn-gold { background:var(--gold); color:#201507; border-color:rgba(212,178,92,.3); }
-
-.card { background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-bottom:18px; }
-.card-head { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--line); }
-.card-head h2 { font-size:1rem; font-weight:700; }
-.card-body { padding:16px 20px; }
-
-.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:22px; }
-.stat { background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--r2); padding:16px 18px; text-align:center; }
-.stat-val { font-size:1.5rem; font-weight:800; margin-bottom:4px; }
-.stat-label { font-size:.72rem; color:var(--sub); text-transform:uppercase; letter-spacing:.06em; }
-
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-@media(max-width:700px) { .form-grid { grid-template-columns:1fr; } }
-.field { display:flex; flex-direction:column; gap:5px; }
-.field label { font-size:.82rem; color:var(--sub); }
-.field textarea { min-height:60px; resize:vertical; }
-.field-full { grid-column:1/-1; }
-.check-row { display:flex; align-items:center; gap:8px; grid-column:1/-1; padding:4px 0; }
-.check-row input[type=checkbox] { width:18px; height:18px; }
-
-table { width:100%; border-collapse:collapse; }
-th, td { text-align:left; padding:9px 10px; font-size:13px; border-top:1px solid var(--line); vertical-align:top; }
-th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; border-top:none; }
-.mono { font-family:monospace; font-size:12px; }
-.st { display:inline-block; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase; }
-.st-ok { background:var(--okb); color:var(--ok); }
-.st-warn { background:var(--warnb); color:var(--warn); }
-.st-bad { background:var(--errb); color:var(--err); }
-.st-dim { background:rgba(255,255,255,.04); color:var(--dim); }
-
-.msg { padding:12px 14px; border-radius:12px; margin-bottom:16px; }
-.msg.ok { background:rgba(47,143,87,.12); border:1px solid rgba(47,143,87,.35); color:#b8efc8; }
-.msg.err { background:rgba(200,61,75,.12); border:1px solid rgba(200,61,75,.35); color:#ffb4be; }
-.empty { color:var(--dim); font-size:13px; padding:20px 0; text-align:center; }
-.inline-form { display:inline-flex; gap:4px; align-items:center; }
-.mini-btn { padding:5px 10px; border-radius:6px; font-size:11px; font-weight:700; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text); cursor:pointer; }
-.mini-btn.green { background:var(--okb); border-color:rgba(82,184,122,.25); color:var(--ok); }
-.mini-btn.red { background:var(--errb); border-color:rgba(196,96,96,.25); color:var(--err); }
-</style>
-</head>
-<body>
-<div class="admin-shell">
-<?php admin_sidebar_render('expenses'); ?>
-<main class="main">
-
-<div class="topbar">
-  <div>
-    <h1>Trust A expenses<?php echo ops_admin_help_button('Trust A expenses', 'Use this page to create, review, and update operating expense records paid from the Sub-Trust A operating account. It is the practical recording surface for costs, while Accounting remains the control overview.'); ?></h1>
-    <p>Record and manage all Foundation expenses. All expenses are paid from Sub-Trust A operating account.</p>
+<div class="card">
+  <div class="card-head">
+    <h1 style="margin:0">Trust A Expenses <?php echo ops_admin_help_button('Trust A expenses', 'Record and manage operating expenses paid from the Sub-Trust A operating account.'); ?></h1>
+    <div style="display:flex;gap:8px">
+      <a class="btn-secondary" href="<?php echo ex_h(admin_url('accounting.php')); ?>">Accounting</a>
+    </div>
   </div>
-  <div style="display:flex;gap:8px">
-    <a class="btn" href="<?php echo ex_h(admin_url('accounting.php')); ?>">Accounting</a>
-    <a class="btn" href="<?php echo ex_h(admin_url('dashboard.php')); ?>">Dashboard</a>
-  </div>
+  <div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">All expenses are paid from Sub-Trust A operating account.</p></div>
 </div>
 
-<?= ops_admin_collapsible_help('Page guide & workflow', [
 <?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_info_panel(
     'Finance operations',
@@ -287,20 +229,19 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         ['label' => 'Cancelled', 'body' => 'The item should not proceed and should no longer be treated as payable.'],
     ]
 ),
-]),
 ]) ?>
 <?php if (!$hasTable): ?>
-  <div class="msg err">Accounting tables not found. Run cogs_accounting_schema.sql first.</div>
+  <div class="alert alert-err">Accounting tables not found. Run cogs_accounting_schema.sql first.</div>
 <?php else: ?>
 
-<?php if ($flash): ?><div class="msg ok"><?php echo ex_h($flash); ?></div><?php endif; ?>
-<?php if ($error): ?><div class="msg err"><?php echo ex_h($error); ?></div><?php endif; ?>
+<?php if ($flash): ?><div class="alert alert-ok"><?php echo ex_h($flash); ?></div><?php endif; ?>
+<?php if ($error): ?><div class="alert alert-err"><?php echo ex_h($error); ?></div><?php endif; ?>
 
-<div class="stats">
-  <div class="stat"><div class="stat-val" style="color:var(--gold)"><?php echo '$' . number_format($totalPaid / 100, 2); ?></div><div class="stat-label">Total paid</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--warn)"><?php echo '$' . number_format($totalApproved / 100, 2); ?></div><div class="stat-label">Approved unpaid</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--sub)"><?php echo '$' . number_format($totalGst / 100, 2); ?></div><div class="stat-label">GST component</div></div>
-  <div class="stat"><div class="stat-val" style="color:var(--text)"><?php echo count($allExpenses); ?></div><div class="stat-label">Total entries</div></div>
+<div class="stat-grid" style="margin-bottom:18px">
+  <div class="card"><div class="card-body"><div class="stat-label">Total paid</div><div class="stat-value" style="color:var(--gold)"><?php echo '$' . number_format($totalPaid / 100, 2); ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">Approved unpaid</div><div class="stat-value" style="color:var(--warn)"><?php echo '$' . number_format($totalApproved / 100, 2); ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">GST component</div><div class="stat-value"><?php echo '$' . number_format($totalGst / 100, 2); ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">Total entries</div><div class="stat-value"><?php echo count($allExpenses); ?></div></div></div>
 </div>
 
 <!-- Add expense form -->
@@ -385,7 +326,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
   <?php if (empty($allExpenses)): ?>
     <div class="card-body"><p class="empty">No expenses recorded yet.</p></div>
   <?php else: ?>
-    <div style="overflow-x:auto">
+    <div class="table-wrap">
       <table>
         <thead>
           <tr><th>Ref</th><th>Date</th><th>Category<?php echo ops_admin_help_button('Category', 'The reporting category assigned to the expense when it was created.'); ?></th><th>Description</th><th>Payee</th><th>Amount</th><th>GST</th><th>Status<?php echo ops_admin_help_button('Status', 'Status shows whether the expense is only recorded, ready to pay, already settled, or cancelled.'); ?></th><th>Actions<?php echo ops_admin_help_button('Actions', 'Use these controls to mark an unpaid item as paid or cancel it before settlement.'); ?></th></tr>
@@ -410,7 +351,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
                   <input type="hidden" name="_csrf" value="<?php echo ex_h(admin_csrf_token()); ?>">
                   <input type="hidden" name="action" value="mark_expense_paid">
                   <input type="hidden" name="expense_id" value="<?php echo (int)$e['id']; ?>">
-                  <input type="text" name="bank_reference" placeholder="Bank ref">
+                  <input type="text" name="bank_reference" placeholder="Bank ref" style="width:90px;padding:4px 8px;font-size:11px;border-radius:6px">
                   <button type="submit" class="mini-btn green">Pay</button>
                 </form>
                 <form method="post" class="inline-form" style="margin-left:4px" onsubmit="return confirm('Cancel this expense?')">
@@ -435,7 +376,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
 
 <?php endif; ?>
 
-</main>
-</div>
-</body>
-</html>
+
+<?php
+$body = ob_get_clean();
+ops_render_page('Expenses', 'expenses', $body, $error ?? $flash ?? null, $error ? 'error' : 'ok');
