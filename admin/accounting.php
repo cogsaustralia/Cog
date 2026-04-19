@@ -192,8 +192,7 @@ ob_start();
         'Check overdue or pending transfers before compliance deadlines are breached.',
         'Confirm Donation Ledger movement into Sub-Trust C.',
         'Review recent expenses, trust accounts, and distribution runs in one place.',
-    ]
-),
+    ]),
   ops_admin_workflow_panel(
     'Typical workflow',
     'Work from balances and exceptions toward specific records so you understand the overall position before changing or escalating anything.',
@@ -202,8 +201,7 @@ ob_start();
         ['title' => 'Review deadline pressure', 'body' => 'If overdue transfers appear, open those items first because they represent compliance timing risk.'],
         ['title' => 'Read the supporting records', 'body' => 'Use recent transfers, expenses, donation-ledger status, and distribution runs to understand what created the current position.'],
         ['title' => 'Escalate or correct downstream', 'body' => 'Use Expenses or the relevant operational page if you need to update a record. This page is primarily for review and control oversight.'],
-    ]
-),
+    ]),
   ops_admin_guide_panel(
     'How to read this page',
     'Each section answers a different finance-control question.',
@@ -213,8 +211,7 @@ ob_start();
         ['title' => 'Recent transfers', 'body' => 'The latest money movements between trust accounts and pathways.'],
         ['title' => 'Recent expenses', 'body' => 'The latest cost records so you can see what has reduced available balances.'],
         ['title' => 'Trust accounts / Donation Ledger / Distribution runs', 'body' => 'Supporting evidence for where funds sit and whether downstream obligations are being met.'],
-    ]
-),
+    ]),
   ops_admin_status_panel(
     'Status guide',
     'These labels show whether an accounting item is healthy, still in progress, or already in breach.',
@@ -222,8 +219,7 @@ ob_start();
         ['label' => 'Completed / Paid / Disbursed / Acquitted', 'body' => 'The money movement or obligation has been finished successfully.'],
         ['label' => 'Pending / Draft / Calculated', 'body' => 'The item exists but still requires a later step before it is complete.'],
         ['label' => 'Overdue / Failed / Cancelled', 'body' => 'The item requires review because timing has been missed, the action failed, or it is no longer proceeding.'],
-    ]
-),
+    ]),
 ]) ?>
 
 
