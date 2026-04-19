@@ -1886,7 +1886,7 @@ function renderProposalCard(p, past){
       + '</div>';
   } else if(myVote){
     actions = '<div class="prop-voted">✓ Your response: <strong>'+labels[myVote]+'</strong>'
-      + (canVote ? ' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="castProposalVote('+p.id+',null)">Change</button>' : '')
+      + (canVote ? ' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="clearProposalVote('+p.id+')">Change</button>' : '')
       + '</div>';
   }
 
@@ -1912,16 +1912,23 @@ function renderProposalCard(p, past){
 }
 
 async function castProposalVote(proposalId, choice){
-  const btn = document.querySelector('[onclick*="castProposalVote('+proposalId+'"]');
-  const fl  = el('prop-fl-'+proposalId);
+  const fl = el('prop-fl-'+proposalId);
   try {
-    const res = await api('vault/vote-proposal', {method:'POST', body:JSON.stringify({proposal_id:proposalId, choice:choice})});
-    // Refresh vault to re-render with new vote
+    await api('vault/vote-proposal', {method:'POST', body:JSON.stringify({proposal_id:proposalId, choice:choice})});
     const v = await api('vault/member');
     openVault(v);
   } catch(e) {
     if(fl) flash('prop-fl-'+proposalId, e.message||'Vote failed.','err');
   }
+}
+
+function clearProposalVote(proposalId){
+  // Locally clear my_vote so vote buttons reappear — no server call needed
+  // User can then cast a new vote which overwrites the old one via upsert
+  const proposals = (window._vaultData||{}).proposals || [];
+  const p = proposals.find(function(x){ return x.id === proposalId; });
+  if(p){ p.my_vote = null; p.my_vote_note = null; }
+  if(typeof renderPolls === 'function') renderPolls(window._vaultData);
 }
 
 function toggleComments(proposalId){
@@ -1930,7 +1937,9 @@ function toggleComments(proposalId){
   if(panel.style.display !== 'none'){ panel.style.display='none'; return; }
   panel.style.display = '';
   panel.innerHTML = '<div class="sk" style="height:40px;border-radius:8px;margin-top:10px"></div>';
-  api('vault/proposal-comments&proposal_id='+proposalId).then(function(r){
+  // Use path segment so $id in vault.php = 'proposal-comments/{id}' → $action = 'proposal-comments'
+  // and proposal_id is extracted from the path by the handler
+  api('vault/proposal-comments/'+proposalId).then(function(r){
     const comments = r.comments || [];
     let h = '<div class="prop-comments-list">';
     if(comments.length === 0){
@@ -1948,7 +1957,7 @@ function toggleComments(proposalId){
       + '<div class="flash" id="prop-cmt-fl-'+proposalId+'"></div>'
       + '</div>';
     panel.innerHTML = h;
-  }).catch(function(e){ panel.innerHTML = '<div style="color:var(--red)">Could not load comments.</div>'; });
+  }).catch(function(e){ panel.innerHTML = '<div style="color:var(--red);padding:10px">Could not load comments: '+esc(e.message)+'</div>'; });
 }
 
 async function submitComment(proposalId){
@@ -3223,6 +3232,7 @@ window.confirmSend      = confirmSend;
 window.xfrEditReturn    = xfrEditReturn;
 window.xfrCancel        = xfrCancel;
 window.castProposalVote = castProposalVote;
+window.clearProposalVote = clearProposalVote;
 window.toggleComments   = toggleComments;
 window.submitComment    = submitComment;
 window.saveReservations = saveReservations;

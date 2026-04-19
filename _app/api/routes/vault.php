@@ -1,7 +1,11 @@
 <?php
 declare(strict_types=1);
 
-$action = trim((string)($id ?? ''), '/');
+$_vaultId = trim((string)($id ?? ''), '/');
+// Split action from optional sub-path: 'proposal-comments/4' → action='proposal-comments', subId='4'
+$_vaultParts = explode('/', $_vaultId, 2);
+$action      = $_vaultParts[0];
+$subId       = $_vaultParts[1] ?? null;  // numeric sub-id for endpoints that use it
 if ($action === 'member') {
     memberVault();
 }
@@ -3808,8 +3812,8 @@ function handleProposalComments(): void {
         apiSuccess(['commented' => true]);
 
     } else {
-        // GET — proposal_id comes from query string (&proposal_id=N after ?route=...)
-        $proposalId = (int)($_GET['proposal_id'] ?? 0);
+        // GET — proposal_id from path segment (vault/proposal-comments/4) or query string fallback
+        $proposalId = (int)($subId ?? $_GET['proposal_id'] ?? 0);
         if ($proposalId < 1) apiError('proposal_id required.');
 
         $limit  = min(50, max(1, (int)($_GET['limit'] ?? 20)));
