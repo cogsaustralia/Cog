@@ -2053,7 +2053,7 @@ function renderHoldings(d){
   el('reserve-form').innerHTML = reserveEditable.map(r =>
     `<div>
       <label class="form-label">${r.label}${r.price > 0 ? ` (×$${r.price})` : ' (no obligation)'}</label>
-      <input class="form-input" id="rf-${r.key}" type="number" min="0" step="1" value="${Math.round(parseFloat(d[r.key]||0)||0)}" style="font-family:var(--mono)">
+      <input class="form-input" id="rf-${r.key}" type="number" min="0" step="1" value="${parseFloat(d[r.key]||0).toFixed(4)}" style="font-family:var(--mono)">
     </div>`
   ).join('');
 
@@ -2204,7 +2204,7 @@ function renderHoldings(d){
 async function saveReservations(){
   const keys = ['investment_tokens','rwa_tokens','landholder_tokens'];
   const body = {role:'snft'};
-  keys.forEach(k => { body[k] = parseInt(el('rf-'+k)?.value||0,10) || 0; });
+  keys.forEach(k => { body[k] = parseFloat(el('rf-'+k)?.value||0) || 0; });
   el('reserve-save-btn').disabled = true;
   el('reserve-save-btn').textContent = 'Saving…';
   flash('reserve-fl','');
@@ -3318,16 +3318,16 @@ function renderTabHoldings(d){
     {key:'landholder_tokens', label:'Landholder COG$',  code:'Class Lh',ico:'⬡', sym:'Lh',   symCls:'hr-sym-green'},
   ];
   resRows.innerHTML = rows.map(function(r){
-    var val = Math.round(parseFloat(d[r.key]||0)||0);
+    var val = parseFloat(d[r.key]||0)||0;
     return '<div class="tr">'+
       '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
       '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation · Released after Expansion Day</div></div>'+
-      '<div class="tr-val"><div class="tr-amt">'+val.toLocaleString('en-AU')+'</div><div class="tr-amt-label">reserved</div></div>'+
+      '<div class="tr-val"><div class="tr-amt">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
       '<button class="tr-edit" onclick="trToggle(\'hd-iedit-'+r.key+'\')">Edit</button>'+
       '</div>'+
       '<div class="iedit" id="hd-iedit-'+r.key+'">'+
       '<div class="iedit-row">'+
-      '<input type="number" id="rf-'+r.key+'" value="'+val+'" min="0" step="1" style="font-family:var(--mono)">'+
+      '<input type="number" id="rf-'+r.key+'" value="'+val.toFixed(4)+'" min="0" step="1" style="font-family:var(--mono)">'+
       '<button class="iedit-save" onclick="saveResNew()">Save</button>'+
       '<span class="iedit-note">No obligation. Freely editable.</span>'+
       '</div>'+
