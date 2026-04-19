@@ -1225,21 +1225,36 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button>
         </div>
         <div class="card-bd">
-          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Enter the recipient's 16-digit Partner number and the amount to transfer. Only Community COG$ can move Partner-to-Partner before Expansion Day.</p>
+          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Enter the recipient's Community COG$ hash address (COGS-CC-...) and the amount to transfer. Only Community COG$ can move Partner-to-Partner before Expansion Day.</p>
           <div id="transfer-available-board" style="display:none"></div>
           <div id="transfer-lock-board" style="display:none"></div>
+
+          <!-- Contacts selector -->
+          <div id="xfr-contacts-row" style="display:none;margin-bottom:10px">
+            <label style="display:block;font-size:1.02rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:5px">Saved contacts</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <select id="xfr-contacts-select" class="xfr-input" style="flex:1;cursor:pointer" onchange="xfrLoadContact()">
+                <option value="">— Select a contact —</option>
+              </select>
+              <button class="btn btn-ghost btn-sm" onclick="xfrDeleteContact()" title="Delete selected contact">✕ Remove</button>
+            </div>
+          </div>
+
           <div class="xfr-row" style="margin-bottom:12px">
             <div class="xfr-field">
-              <label>Recipient Partner number</label>
-              <input class="xfr-input" id="xfr-mn" placeholder="16-digit Partner number" style="font-family:var(--mono)" oninput="updateTransferAssist()">
+              <label>Recipient hash address</label>
+              <input class="xfr-input" id="xfr-mn" placeholder="COGS-CC-..." style="font-family:var(--mono)" oninput="updateTransferAssist()">
             </div>
             <div class="xfr-field">
               <label>Amount (Community COG$)</label>
               <input class="xfr-input" id="xfr-qty" type="text" inputmode="decimal" placeholder="0.0000" oninput="updateTransferAssist()" style="font-family:var(--mono)">
             </div>
           </div>
-          <div id="transfer-assist" style="font-size:1.02rem;color:var(--text3);margin-bottom:12px;line-height:1.55">Enter the receiving Partner number and the amount of Community COG$ to transfer.</div>
-          <button class="btn btn-gold btn-sm" id="xfr-btn" onclick="doTransfer()">Review &amp; Send →</button>
+          <div id="transfer-assist" style="font-size:1.02rem;color:var(--text3);margin-bottom:12px;line-height:1.55">Enter the recipient's Community COG$ hash address and the amount to transfer.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-gold btn-sm" id="xfr-btn" onclick="doTransfer()">Review &amp; Send →</button>
+            <button class="btn btn-ghost btn-sm" onclick="xfrSaveContactPrompt()">＋ Save to contacts</button>
+          </div>
           <div class="flash" id="xfr-fl"></div>
         </div>
       </div>
@@ -2810,7 +2825,6 @@ function updateTransferAssist(){
   const recipient = (el('xfr-mn')?.value||'').trim();
   const qty = parseFloat(el('xfr-qty')?.value||0) || 0;
   const selfAddr = (window._vaultData||{})._ccAddress || '';
-  const selfMn   = String((window._vaultData||{}).member_number||'').replace(/\s/g,'');
 
   let msg = `Available: ${fmtDp(available)} Community COG$.`;
   let disable = false;
@@ -2818,14 +2832,17 @@ function updateTransferAssist(){
   if(available < 0.0001){
     msg += ' No Community COG$ available in this vault.';
     disable = true;
-  } else if(recipient && (recipient === selfAddr || recipient.replace(/\s/g,'') === selfMn)){
+  } else if(recipient && recipient === selfAddr){
     msg += ' Cannot transfer to your own address.';
+    disable = true;
+  } else if(recipient && !recipient.toUpperCase().startsWith('COGS-')){
+    msg += ' Address must start with COGS-.';
     disable = true;
   } else if(qty > 0 && qty > available){
     msg += ` Amount exceeds balance by ${fmtDp(qty - available)}.`;
     disable = true;
   } else if(qty > 0 && recipient){
-    msg += ` Ready to transfer ${fmtDp(qty)} CC to ${recipient.slice(0,20)}${recipient.length>20?'…':''}.`;
+    msg += ` Ready to transfer ${fmtDp(qty)} CC to ${recipient.slice(0,28)}${recipient.length>28?'…':''}.`;
   }
 
   note.textContent = msg;
@@ -2962,29 +2979,25 @@ var _xfrPending = null;
 
 function doTransfer(){
   const d         = window._vaultData || {};
-  const selfMn    = String(d.member_number||'').replace(/\s/g,'');
   const selfAddr  = d._ccAddress || '';
   const recipient = (el('xfr-mn')?.value||'').trim();
   const qtyRaw    = (el('xfr-qty')?.value||'').trim();
   const qty       = parseFloat(qtyRaw) || 0;
   const available = parseFloat(d.community_transfer_balance ?? d.community_tokens ?? 0) || 0;
 
-  // Validation
-  if(!recipient){ flash('xfr-fl','Enter the recipient wallet address (COGS-CC-...) or Partner number.','err'); return; }
-  if(recipient === selfAddr || recipient.replace(/\s/g,'') === selfMn){
-    flash('xfr-fl','Cannot transfer to your own address.','err'); return;
-  }
+  // Validation — hash address only
+  if(!recipient){ flash('xfr-fl','Enter the recipient Community COG$ hash address (COGS-CC-...).','err'); return; }
+  if(!recipient.toUpperCase().startsWith('COGS-')){ flash('xfr-fl','Please enter a valid Community COG$ hash address starting with COGS-.','err'); return; }
+  if(recipient === selfAddr){ flash('xfr-fl','Cannot transfer to your own address.','err'); return; }
   if(qty < 0.0001){ flash('xfr-fl','Enter an amount of at least 0.0001 Community COG$.','err'); return; }
   if(qty > available){ flash('xfr-fl',`Only ${fmtDp(available)} CC available. Requested ${fmtDp(qty)}.`,'err'); return; }
 
   flash('xfr-fl','');
 
-  // Determine if it's a hash address or member number
-  const isHash = recipient.toUpperCase().startsWith('COGS-');
   const senderAddr = (d.wallet_addresses||{}).community_tokens || '—';
 
   // Stash pending and open confirm modal
-  _xfrPending = { recipient, qty, available, isHash, senderAddr };
+  _xfrPending = { recipient, qty, available, isHash: true, senderAddr };
   const modal = el('xfr-confirm-modal');
   const rows  = el('xfr-confirm-rows');
   if(!modal || !rows) return;
@@ -2993,7 +3006,7 @@ function doTransfer(){
     `<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:baseline">
       <span style="color:var(--text3);font-size:1rem">From address</span>
       <span style="font-family:var(--mono);color:var(--green);font-size:1rem;word-break:break-all">${esc(senderAddr)}</span>
-      <span style="color:var(--text3);font-size:1rem">To ${isHash?'address':'Partner number'}</span>
+      <span style="color:var(--text3);font-size:1rem">To address</span>
       <span style="font-family:var(--mono);color:var(--gold);font-size:1rem;word-break:break-all">${esc(recipient)}</span>
       <span style="color:var(--text3);font-size:1rem">Token</span>
       <span style="color:var(--text)">Community COG$ (COGS-CC)</span>
@@ -3015,8 +3028,7 @@ async function confirmSend(){
   flash('xfr-confirm-fl','');
   try{
     await api('vault/member-transfer', {method:'POST', body:JSON.stringify({
-      to_wallet_address: _xfrPending.isHash ? _xfrPending.recipient : undefined,
-      to_member_number:  _xfrPending.isHash ? undefined : _xfrPending.recipient,
+      to_wallet_address: _xfrPending.recipient,
       token_key: 'community_tokens',
       units: _xfrPending.qty
     })});
@@ -3051,6 +3063,74 @@ function xfrCancel(){
   _xfrPending = null;
   flash('xfr-fl','');
   updateTransferAssist();
+}
+
+/* ── CONTACTS ── */
+var XFR_CONTACTS_KEY = 'cogs_cc_contacts';
+
+function xfrLoadContacts(){
+  try{ return JSON.parse(localStorage.getItem(XFR_CONTACTS_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+
+function xfrSaveContacts(list){
+  try{ localStorage.setItem(XFR_CONTACTS_KEY, JSON.stringify(list)); }
+  catch(e){}
+}
+
+function xfrRenderContactsDropdown(){
+  var list = xfrLoadContacts();
+  var row  = el('xfr-contacts-row');
+  var sel  = el('xfr-contacts-select');
+  if(!sel) return;
+  if(list.length === 0){ if(row) row.style.display = 'none'; return; }
+  if(row) row.style.display = '';
+  var opts = '<option value="">— Select a contact —</option>';
+  list.forEach(function(c, i){
+    opts += '<option value="'+i+'">'+esc(c.label)+' — '+esc(c.address.slice(0,22))+'…</option>';
+  });
+  sel.innerHTML = opts;
+}
+
+function xfrLoadContact(){
+  var sel  = el('xfr-contacts-select');
+  var inp  = el('xfr-mn');
+  if(!sel || !inp) return;
+  var idx  = parseInt(sel.value, 10);
+  if(isNaN(idx)) return;
+  var list = xfrLoadContacts();
+  if(list[idx]){ inp.value = list[idx].address; updateTransferAssist(); }
+}
+
+function xfrDeleteContact(){
+  var sel  = el('xfr-contacts-select');
+  if(!sel) return;
+  var idx  = parseInt(sel.value, 10);
+  if(isNaN(idx)){ flash('xfr-fl','Select a contact to remove.','err'); return; }
+  var list = xfrLoadContacts();
+  var removed = list.splice(idx, 1);
+  xfrSaveContacts(list);
+  xfrRenderContactsDropdown();
+  flash('xfr-fl', removed.length ? 'Contact removed.' : '','ok');
+}
+
+function xfrSaveContactPrompt(){
+  var addr = (el('xfr-mn')?.value||'').trim();
+  if(!addr){ flash('xfr-fl','Enter a hash address first, then save it to contacts.','err'); return; }
+  if(!addr.toUpperCase().startsWith('COGS-')){ flash('xfr-fl','Only valid COGS- hash addresses can be saved as contacts.','err'); return; }
+  var label = window.prompt('Enter a name for this contact (e.g. "Alice — Partner"):','');
+  if(label === null) return; // cancelled
+  label = label.trim();
+  if(!label){ flash('xfr-fl','Contact name cannot be empty.','err'); return; }
+  var list = xfrLoadContacts();
+  // Prevent duplicate addresses
+  if(list.some(function(c){ return c.address === addr; })){
+    flash('xfr-fl','This address is already saved as a contact.','err'); return;
+  }
+  list.push({ label: label, address: addr });
+  xfrSaveContacts(list);
+  xfrRenderContactsDropdown();
+  flash('xfr-fl','Contact saved: '+label,'ok');
 }
 
 
@@ -4092,6 +4172,8 @@ function renderTabExchange(d){
   if(typeof window.renderWalletAddresses === 'function') window.renderWalletAddresses(d);
   // Update send panel assist text
   if(typeof window.updateTransferAssist === 'function') window.updateTransferAssist();
+  // Render saved contacts dropdown
+  xfrRenderContactsDropdown();
 }
 
 function updateTabBadges(d){
