@@ -19,23 +19,23 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 $rows=ops_table_exists($pdo,'mint_queue')?ops_fetch_all($pdo,'SELECT mq.*, m.full_name, m.member_number, tc.class_code, tc.display_name FROM mint_queue mq JOIN members m ON m.id=mq.member_id JOIN token_classes tc ON tc.id=mq.token_class_id ORDER BY mq.id DESC'):[];
 ob_start(); ?>
 <?php ops_admin_help_assets_once(); ?>
-<div class="grid" style="margin-bottom:18px;gap:16px">
-  <?= ops_admin_info_panel('Stage 5 · Legacy bridge queue', 'What this page does', 'Mint / Manual Queue is the compatibility queue for the older mint-preparation path. It remains useful for bridge oversight, but it is not the primary execution control page. Use it to review legacy queue items, confirm lane/status alignment, and prepare items that may still need to be batched or handed off through the bridge.', [
-    'The authoritative live operator flow is on the Execution console.',
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 5 · Legacy bridge queue', 'What this page does', 'Token Mint Queue is the compatibility queue for the older mint-preparation path. It remains useful for bridge oversight, but it is not the primary execution control page. Use it to review legacy queue items, confirm lane/status alignment, and prepare items that may still need to be batched or handed off through the bridge.', [
+    'The authoritative live operator flow is on the Token Execution console.',
     'This queue is still useful for legacy compatibility, evidence references, and batch preparation tracing.',
     'Queue changes here should be made carefully because they affect the bridge interpretation of the item.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'Use this page when checking or updating the bridge queue, not when running the main live execution lifecycle.', [
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Use this page when checking or updating the bridge queue, not when running the main live execution lifecycle.', [
     ['title' => 'Review queue rows', 'body' => 'Confirm the correct member, class, lane, and queue status for each bridge item.'],
     ['title' => 'Update evidence / notes', 'body' => 'Record evidence references or operator notes that explain why the queue row is in its current state.'],
     ['title' => 'Open batches or handoff', 'body' => 'Use the linked batch and handoff pages when the queue item needs to move into those bridge stages.']
-  ]) ?>
-  <?= ops_admin_status_panel('Status guide', 'Queue statuses here describe the legacy bridge item, not the formal Partners-facing published state.', [
+  ]),
+  ops_admin_status_panel('Status guide', 'Queue statuses here describe the legacy bridge item, not the formal Partners-facing published state.', [
     ['label' => 'Ready for batch / blockchain', 'body' => 'The item is eligible to move further through the bridge path.'],
     ['label' => 'Locked / held manual', 'body' => 'The row still needs operator judgment or additional evidence before it should move.'],
     ['label' => 'Batch linked', 'body' => 'The queue row has already been attached to a mint batch and should be read with that batch record.']
-  ]) ?>
-</div>
+  ]),
+]) ?>
 <div class="section">
   <div class="card-head"><h2>Manual queue and execution prep<?= ops_admin_help_button('Manual queue and execution prep', 'This page is the bridge queue for older/manual mint-preparation workflows. The main live execution lifecycle now sits on the Execution console, but this queue remains useful for evidence references, lane/status review, and bridge compatibility.') ?></h2></div>
   <div class="card-body">

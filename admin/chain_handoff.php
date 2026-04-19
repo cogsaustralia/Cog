@@ -37,24 +37,24 @@ $handoffs = ops_table_exists($pdo,'chain_handoffs') ? ops_fetch_all($pdo, "SELEC
 $payload = $selectedBatchId > 0 ? ops_batch_payload($pdo, $selectedBatchId) : [];
 ob_start(); ?>
 <?php ops_admin_help_assets_once(); ?>
-<div class="grid" style="margin-bottom:18px;gap:16px">
-  <?= ops_admin_info_panel('Stage 5 · Bridge handoff', 'What this page does', 'Chain Handoff is the bridge page for preparing and tracking the manual or semi-manual export from a mint batch into a ledger/network handoff record. It is primarily a compatibility and audit surface, not the main execution control page.', [
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 5 · Bridge handoff', 'What this page does', 'Blockchain Handoff is the bridge page for preparing and tracking the manual or semi-manual export from a mint batch into a ledger/network handoff record. It is primarily a compatibility and audit surface, not the main execution control page.', [
     'Use this page when you need a formal handoff record tied to a legacy mint batch.',
     'The payload preview is for review and traceability, not a live mint action by itself.',
     'Transaction and attestation references belong here once a real external handoff occurs.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'Use this page after a batch exists and when a bridge/handoff record is required.', [
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'Use this page after a batch exists and when a bridge/handoff record is required.', [
     ['title' => 'Choose a mint batch', 'body' => 'Select the existing batch that should have a chain or ledger handoff record.'],
     ['title' => 'Create handoff', 'body' => 'Create the handoff record with the intended chain target and operator notes.'],
     ['title' => 'Update handoff state', 'body' => 'Record submission references, attestation hashes, and status changes as the handoff progresses.'],
-    ['title' => 'Use payload preview', 'body' => 'Review the payload for signer/operator confirmation before or alongside the external handoff.' ],
-  ]) ?>
-  <?= ops_admin_status_panel('Status guide', 'These statuses describe the bridge handoff record, not the authoritative execution batch state.', [
+    ['title' => 'Use payload preview', 'body' => 'Review the payload for signer/operator confirmation before or alongside the external handoff.'],
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses describe the bridge handoff record, not the authoritative execution batch state.', [
     ['label' => 'Prepared', 'body' => 'The handoff record exists but has not yet been externally submitted.'],
     ['label' => 'Submitted / updated', 'body' => 'The handoff has an external reference or is actively progressing.'],
     ['label' => 'Finalised / complete', 'body' => 'The bridge handoff record is settled and retained for traceability.']
-  ]) ?>
-</div>
+  ]),
+]) ?>
 <div class="stack">
   <div class="section">
     <div class="card-head"><h2>Create chain handoff<?= ops_admin_help_button('Create chain handoff', 'Create a bridge handoff record for an existing mint batch. This does not change wallet state by itself. It creates the traceable record that can carry chain target, notes, transaction references, and attestation hashes.') ?></h2></div>

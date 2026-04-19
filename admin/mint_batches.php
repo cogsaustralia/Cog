@@ -35,24 +35,24 @@ $queueRows = ops_table_exists($pdo,'mint_queue') ? ops_fetch_all($pdo, "SELECT m
 $batches = ops_table_exists($pdo,'mint_batches') ? ops_fetch_all($pdo, "SELECT mb.*, COUNT(mbi.id) item_count FROM mint_batches mb LEFT JOIN mint_batch_items mbi ON mbi.batch_id = mb.id GROUP BY mb.id ORDER BY mb.id DESC") : [];
 ob_start(); ?>
 <?php ops_admin_help_assets_once(); ?>
-<div class="grid" style="margin-bottom:18px;gap:16px">
-  <?= ops_admin_info_panel('Stage 5 · Legacy bridge batches', 'What this page does', 'Mint Batches is the older batching surface used by the mint/chain-handoff bridge workflow. It remains useful for compatibility and historical operator flow, but the authoritative live execution batching happens on the Execution console.', [
+<?= ops_admin_collapsible_help('Page guide & workflow', [
+  ops_admin_info_panel('Stage 5 · Legacy bridge batches', 'What this page does', 'Token Mint Batches is the older batching surface used by the mint/chain-handoff bridge workflow. It remains useful for compatibility and historical operator flow, but the authoritative live execution batching happens on the Token Execution console.', [
     'Use this page when you need to create or review bridge batches from queue items.',
-    'Do not confuse these legacy mint batches with the authoritative execution batches on the Execution page.',
-    'Chain Handoff works from these batch records when the bridge path is still in use.'
-  ]) ?>
-  <?= ops_admin_workflow_panel('Typical workflow', 'The bridge batch path is simpler than the main execution console but should still be used in order.', [
+    'Do not confuse these legacy mint batches with the authoritative execution batches on the Token Execution page.',
+    'Blockchain Handoff works from these batch records when the bridge path is still in use.'
+  ]),
+  ops_admin_workflow_panel('Typical workflow', 'The bridge batch path is simpler than the main execution console but should still be used in order.', [
     ['title' => 'Select queue items', 'body' => 'Choose only queue items that genuinely belong together in one bridge batch.'],
     ['title' => 'Create batch', 'body' => 'Create the legacy batch with a clear label, chain target, and notes.'],
     ['title' => 'Review / update batch', 'body' => 'Record the bridge batch status and any notes needed for later handoff.'],
-    ['title' => 'Open handoff', 'body' => 'Move into Chain Handoff when the batch needs an external bridge record or payload review.']
-  ]) ?>
-  <?= ops_admin_status_panel('Status guide', 'These statuses are bridge batch states, not the authoritative live execution statuses.', [
+    ['title' => 'Open handoff', 'body' => 'Move into Blockchain Handoff when the batch needs an external bridge record or payload review.']
+  ]),
+  ops_admin_status_panel('Status guide', 'These statuses are bridge batch states, not the authoritative live execution statuses.', [
     ['label' => 'Prepared', 'body' => 'The bridge batch exists and is being assembled or checked.'],
     ['label' => 'Reviewed / approved for handoff', 'body' => 'The batch is ready to move into the handoff/export stage.'],
     ['label' => 'Handed off / rejected back', 'body' => 'The batch has either moved out to handoff or been returned for more work.']
-  ]) ?>
-</div>
+  ]),
+]) ?>
 <div class="stack">
   <div class="section">
     <div class="card-head"><h2>Create mint batch<?= ops_admin_help_button('Create mint batch', 'Create a legacy bridge batch from queue items that belong together. This is not the same as the authoritative execution batch on the Execution console.') ?></h2></div>

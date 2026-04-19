@@ -98,19 +98,17 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
 .muted{color:#9fb0c1}
 @media (max-width: 980px){.ops-grid{grid-template-columns:1fr}.meta-grid{grid-template-columns:1fr}}
 </style>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
+<?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_info_panel(
     'Stage 7 — Audit, diagnostics, and control review',
     'What this page does',
-    'Operator Security is the live admin page for password rotation, login lockout review, and recent admin security events. Use it to keep operator access healthy and controlled.',
+    'Admin Security is the live admin page for password rotation, login lockout review, and recent admin security events. Use it to keep operator access healthy and controlled.',
     [
         'Use this page when an admin password needs to be rotated through the application rather than directly in the database.',
         'Clear login lockouts only after confirming the block is stale or accidental.',
         'Review security events here before escalating to deeper audit or infrastructure investigation.',
     ]
 ),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_workflow_panel(
     'Typical workflow',
     'Operator security actions are usually short control tasks. They should be documented through the event log and used carefully because they affect who can access the admin plane.',
@@ -121,8 +119,6 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
         ['title' => 'Check event history', 'body' => 'Use recent security events to confirm what happened and when.'],
     ]
 ),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_guide_panel(
     'How to use this page',
     'This page is for operator access hygiene, not for broader infrastructure hardening. It is most useful when login or password issues are blocking a real admin user.',
@@ -133,8 +129,6 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0c1}
         ['title' => 'Recent security events', 'body' => 'Provides quick traceability for password rotations and other security-related actions recorded by admin.'],
     ]
 ),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_status_panel(
     'Status guide',
     'Security statuses on this page are intentionally simple so operators can tell whether the current access state is healthy or needs attention.',
