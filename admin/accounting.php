@@ -263,43 +263,82 @@ ob_start();
   <div class="alert alert-amber">AccountingHooks.php not loaded. Upload to admin/includes/ for full automation.</div>
 <?php endif; ?>
 
-<?= ops_admin_collapsible_help('Page guide & workflow', [
+<?= ops_admin_collapsible_help('Accounting system — how it works and how to use it', [
   ops_admin_info_panel(
-    'Finance control surface',
-    'What this page does',
-    'Use this page to review how money is moving across Sub-Trust A, B, and C. It is the main control-review page for fund balances, transfer obligations, donation-ledger movement, and distribution readiness.',
+    'Foundation of the system',
+    'Godley Table double-entry accounting',
+    'The COG$ accounting system is built on the Godley Table methodology — a stock-flow consistent double-entry framework developed by economist Wynne Godley. Every financial transaction is recorded across multiple sector accounts so that the algebraic sum of all entries in a transaction equals zero. This is the same mathematical discipline as standard double-entry bookkeeping: every dollar that leaves one account must enter another. The system enforces this automatically — a transaction that does not sum to zero cannot be committed to the ledger.',
     [
-        'Review incoming funds and where they have been allocated.',
-        'Check overdue or pending transfers before compliance deadlines are breached.',
-        'Confirm Donation Ledger movement into Sub-Trust C.',
-        'Review recent expenses, trust accounts, and distribution runs in one place.',
+        'Every transaction has at least two ledger entries: one debit and one credit of equal amount.',
+        'Asset accounts (STA-OPERATING, STA-ADMIN-FUND, STA-PARTNERS-POOL) increase with a debit and decrease with a credit.',
+        'Member equity accounts (MEMBER-{n}) increase with a credit (the trust owes value to the Partner) and decrease with a debit.',
+        'External sector accounts (EXTERNAL-ASX, EXTERNAL-VENDOR, EXTERNAL-ATO) record counterparty flows.',
+        'The Grand Total row in the Godley matrix must always equal zero. Any non-zero grand total indicates a recording error.',
+    ]),
+  ops_admin_info_panel(
+    'The fourteen sectors',
+    'Where money sits in the framework',
+    'The COG$ trust structure is divided into fourteen sectors — each is a stewardship account column in the Godley Table. Money moves between these sectors; it never disappears. The sectors are grouped by Sub-Trust.',
+    [
+        'SUB-TRUST A: STA-OPERATING (physical bank account), STA-ADMIN-FUND (administration reserve), STA-PARTNERS-POOL (community investment pool), P-CLASS-SUSPENSE (Pay It Forward holding account).',
+        'SUB-TRUST B: STB-OPERATING (dividend distribution account — receives from A, distributes to Partners).',
+        'SUB-TRUST C: STC-OPERATING (community projects account), STC-GIFT-FUND (DGR segregated gifts).',
+        'TRUSTEE: TRUSTEE-ADMIN (receives 25% of DDS dividend stream per cl.31.1(b)).',
+        'EXTERNAL: EXTERNAL-ASX (ASX/CHESS counterparty), EXTERNAL-VENDOR (Stripe, suppliers), EXTERNAL-ATO (GST, withholding, franking credits), EXTERNAL-GRANTEE (charitable grant recipients).',
+        'PARTNERS: MEMBER-{id} accounts — one per Partner — representing the equity claim of each Beneficial Unit holder.',
+    ]),
+  ops_admin_info_panel(
+    'How Partner payments flow',
+    'S-NFT payment — the standard flow',
+    'When a Partner pays $4.00 for a Personal S-NFT, the payment triggers an automatic five-leg Godley entry via AccountingHooks.php. No manual entry is required for standard Partner payments — the webhook handles it.',
+    [
+        'MEMBER-{n} CREDIT $4.00 — the Partner\'s equity claim is established.',
+        'STA-OPERATING DEBIT $4.00 — cash arrives in the operating account.',
+        'STA-OPERATING CREDIT $4.00 — cash is immediately allocated (transit).',
+        'STA-ADMIN-FUND DEBIT $3.00 — $3 moves to the Administration Fund per Sub-Trust A Deed cl.6.2.',
+        'STA-PARTNERS-POOL DEBIT $1.00 — $1 moves to the Partners Asset Pool for investment.',
+        'Stripe fees are recorded as a separate expense: STA-ADMIN-FUND CREDIT (fund reduces) + EXTERNAL-VENDOR DEBIT (Stripe receives) + EXTERNAL-ATO DEBIT (GST Input Tax Credit).',
+    ]),
+  ops_admin_info_panel(
+    'The twelve invariants',
+    'Constitutional rules enforced in real time',
+    'Twelve invariant-check views run continuously against every ledger entry. Each view returns zero rows when the rule is satisfied and one or more rows when a breach is detected. The invariant strip at the top of this page shows live status. Any red invariant requires immediate investigation before further transactions are recorded.',
+    [
+        'I1 — Sub-trust ring-fencing: no commingling between Sub-Trust A, B, and C except via permitted BDS/DDS transfers or direct Sub-Trust C payments.',
+        'I2 — Dividend split exactness: BDS splits must be 50/50, DDS splits must be 50/25/25, within $0.01 tolerance.',
+        'I3 — 5 business day transfer: dividend splits to Sub-Trust B must be completed within 5 business days of receipt.',
+        'I4 — 60 day distribution: Sub-Trust B must distribute 100% of inflows to Partners within 60 calendar days.',
+        'I5 — 2 business day direct transfer: $2 direct payment to Sub-Trust C on each Donation COG$ must occur within 2 business days.',
+        'I6 — Partners Pool non-disposal: STA-PARTNERS-POOL may only receive inflows or execute permitted ASX asset swaps. No outflows except to EXTERNAL-ASX.',
+        'I7 — Anti-capture cap: no single Member or entity may hold more than 1,000,000 Beneficial Units across all classes.',
+        'I8 — Fixed consideration: S-NFT must be $4.00, Kids S-NFT $1.00, Business NFT $40.00. No variation permitted.',
+        'I9 — No fiat redemption: no reverse flow from STA back to a MEMBER account in cash.',
+        'I10 — First Nations grant minimum: at least 30% of Sub-Trust C grants must go to First Nations beneficiaries per financial year.',
+        'I11 — Social justice mechanism: every issued S/kS/B Class Unit must have a corresponding Beneficial Unit activated in the same transaction.',
+        'I12 — Stewardship Season lock: ASX COG$ (Class A) Units are locked for 12 months from issue and cannot be transferred during that period.',
     ]),
   ops_admin_workflow_panel(
-    'Typical workflow',
-    'Work from balances and exceptions toward specific records so you understand the overall position before changing or escalating anything.',
+    'Where to enter each transaction type',
+    'Use the correct admin page for each type of transaction. Do not enter transactions directly into phpMyAdmin — all entries must go through the admin pages so that AccountingHooks.php fires the correct Godley ledger entries automatically.',
     [
-        ['title' => 'Check the top balances', 'body' => 'Start with funds received, administration balance, reinvestment, Sub-Trust B allocations, and Sub-Trust C transfers.'],
-        ['title' => 'Review deadline pressure', 'body' => 'If overdue transfers appear, open those items first because they represent compliance timing risk.'],
-        ['title' => 'Read the supporting records', 'body' => 'Use recent transfers, expenses, donation-ledger status, and distribution runs to understand what created the current position.'],
-        ['title' => 'Escalate or correct downstream', 'body' => 'Use Expenses or the relevant operational page if you need to update a record. This page is primarily for review and control oversight.'],
-    ]),
-  ops_admin_guide_panel(
-    'How to read this page',
-    'Each section answers a different finance-control question.',
-    [
-        ['title' => 'Top metrics', 'body' => 'Headline money movements and balances across the trust structure.'],
-        ['title' => 'Overdue transfers', 'body' => 'Transfers whose compliance due date has passed and now require immediate attention.'],
-        ['title' => 'Recent transfers', 'body' => 'The latest money movements between trust accounts and pathways.'],
-        ['title' => 'Recent expenses', 'body' => 'The latest cost records so you can see what has reduced available balances.'],
-        ['title' => 'Trust accounts / Donation Ledger / Distribution runs', 'body' => 'Supporting evidence for where funds sit and whether downstream obligations are being met.'],
+        ['title' => 'Partner S-NFT / BNFT / kS-NFT payments', 'body' => 'Recorded automatically by the Stripe webhook when payment is confirmed. If a payment arrived but is missing, use Admin → Payments to record it manually. The accounting hook fires on save and writes all Godley ledger entries automatically.'],
+        ['title' => 'Operating expenses (Stripe fees, hosting, printing, compliance)', 'body' => 'Use Admin → Expenses. Enter the gross amount, GST component, payee, and date. On save, AccountingHooks writes the debit to EXTERNAL-VENDOR and credit to STA-ADMIN-FUND automatically. Do not record expenses directly in trust_expenses via phpMyAdmin.'],
+        ['title' => 'Trust income (bank interest, RWA yield, other income)', 'body' => 'Use Admin → Trust Income. Enter the gross amount, withholding (if any), income type, and date. The system writes debit to STA-OPERATING and debit to STA-PARTNERS-POOL (pool grows). ASX dividends are entered through the dividend workflow on this page, not through Trust Income.'],
+        ['title' => 'ASX dividends (BDS and DDS streams)', 'body' => 'Use Admin → Trust Income → Record Dividend. Select the stream type (BDS or DDS), enter gross amount, date, and CHESS reference. The system calculates the mandatory splits (50/50 BDS or 50/25/25 DDS) and writes all Godley entries. The 5 business day transfer deadline (I3) starts from this date.'],
+        ['title' => 'Donation COG$ issues and Sub-Trust C transfers', 'body' => 'Donation COG$ are issued through the normal token approval workflow. The $2.00 direct transfer to Sub-Trust C is triggered by AccountingHooks on approval. Monitor I5 on this page — if a transfer appears overdue, record the completion manually via trust_transfers in phpMyAdmin with status = completed.'],
+        ['title' => 'Sub-Trust B distributions (dividend payments to Partners)', 'body' => 'Use Admin → STB Distributions. Once a distribution run is calculated and approved, the system records the STB-OPERATING debit and MEMBER-{n} credit entries for each Beneficial Unit holder. Do not enter these manually.'],
+        ['title' => 'Sub-Trust C grants', 'body' => 'Use Admin → Grants. Enter the grantee, amount, purpose, and whether the grantee is a First Nations organisation (required for I10 compliance). On save, AccountingHooks writes the STC-OPERATING credit and EXTERNAL-GRANTEE debit entries.'],
+        ['title' => 'ASX share acquisitions', 'body' => 'Use Admin → ASX Holdings and ASX Purchases. When a purchase is recorded, the system writes the four-leg ASX acquisition entry: STA-PARTNERS-POOL CREDIT (cash reduces) → EXTERNAL-ASX DEBIT/CREDIT → STA-PARTNERS-POOL DEBIT (holding at cost increases). Net effect on pool value is zero — composition shifts from cash to shares.'],
+        ['title' => 'Correcting journal entries', 'body' => 'If a ledger error is discovered, do not UPDATE or DELETE existing ledger_entries rows — the ledger is an audited append-only record. Instead, post a correcting journal via phpMyAdmin using a new transaction_ref prefixed GDLY-CORRECT-. Every correcting journal must sum to zero across all entries. Contact the Trustee before posting any correcting entry.'],
     ]),
   ops_admin_status_panel(
-    'Status guide',
-    'These labels show whether an accounting item is healthy, still in progress, or already in breach.',
+    'Balance display — Dr and Cr explained',
+    'The balance sheet uses standard accounting notation. Understanding Dr and Cr is essential for reading the Godley matrix correctly.',
     [
-        ['label' => 'Completed / Paid / Disbursed / Acquitted', 'body' => 'The money movement or obligation has been finished successfully.'],
-        ['label' => 'Pending / Draft / Calculated', 'body' => 'The item exists but still requires a later step before it is complete.'],
-        ['label' => 'Overdue / Failed / Cancelled', 'body' => 'The item requires review because timing has been missed, the action failed, or it is no longer proceeding.'],
+        ['label' => 'Dr (Debit balance)', 'body' => 'For asset accounts (STA-OPERATING, STA-ADMIN-FUND, STA-PARTNERS-POOL), a Dr balance is normal and means the account holds value. The higher the Dr balance, the more the account holds. A Dr balance on an asset account is healthy.'],
+        ['label' => 'Cr (Credit balance)', 'body' => 'For asset accounts, a Cr balance would mean more money has left the account than entered it — this would indicate an error or overdraft and should be investigated immediately. Cr balances are normal and expected on MEMBER-{n} equity accounts (they represent the trust\'s obligation to Partners).'],
+        ['label' => 'Grand total = 0', 'body' => 'The grand total of all sector balances must always be zero. This is the fundamental Godley rule: every dollar in one sector is matched by a dollar in another. If the grand total is non-zero, there is a recording error that must be corrected before any further transactions.'],
+        ['label' => 'Godley matrix cells', 'body' => 'Each cell in the Godley matrix shows the net Dr or Cr balance for a specific account-flow combination. The column totals show total flow through each pathway. The row totals (sector totals) show the net position of each stewardship account across all flows.'],
     ]),
 ]) ?>
 
