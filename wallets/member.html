@@ -1797,6 +1797,31 @@ function escAttr(s){
 }
 
 
+function _ivOpenLink(href){
+  var a=document.createElement('a');
+  a.href=href; a.rel='noopener'; a.target='_blank'; a.style.display='none';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); },200);
+}
+
+function ivShare(channel, code, link){
+  var text = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
+  switch(channel){
+    case 'whatsapp':
+      _ivOpenLink('https://wa.me/?text='+encodeURIComponent(text));
+      break;
+    case 'sms':
+      _ivOpenLink('sms:?body='+encodeURIComponent(text));
+      break;
+    case 'email':
+      _ivOpenLink('mailto:?subject='+encodeURIComponent('Join me in the COG$ Joint Venture Partnership')+'&body='+encodeURIComponent(text));
+      break;
+    case 'copy':
+      copyText(link);
+      break;
+  }
+}
+
 function shareInviteLink(code, link){
   var message = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
   if(navigator.share){
@@ -3575,6 +3600,7 @@ window.renderHoldings   = renderHoldings;
 window.openPayModal     = openPayModal;
 window.copyText         = copyText;
 window.shareInviteLink  = shareInviteLink;
+window.ivShare          = ivShare;
 window.completeCurrentJvpaRecord = completeCurrentJvpaRecord;
 window.adjustGiftQty = adjustGiftQty;
 window.submitKidsOrder = submitKidsOrder;
@@ -4598,10 +4624,11 @@ window.addEventListener('load', function(){
       +     '<div class="ov-stag-meta-val names">'+namesLine+'</div>'
       +   '</div>'
       + '</div>'
-      + '<div class="ov-stag-actions">'
-      +   '<button class="ov-stag-btn primary" onclick="copyText(\u0027'+escAttr(link||code)+'\u0027,this)">Copy invite link</button>'
-      +   '<button class="ov-stag-btn" onclick="shareInviteLink(\u0027'+escAttr(code)+'\u0027,\u0027'+escAttr(link)+'\u0027)">Share</button>'
-      +   '<button class="ov-stag-btn" onclick="copyText(\u0027'+escAttr(code)+'\u0027,this)" title="Copy just the code">Copy code</button>'
+      + '<div class="ov-stag-actions" style="gap:8px;flex-wrap:wrap">'
+      +   '<button class="ov-stag-btn" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.3);color:#25d366" onclick="ivShare(\'whatsapp\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Share via WhatsApp">&#x1F4AC; WhatsApp</button>'
+      +   '<button class="ov-stag-btn" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.25);color:#60d4b8" onclick="ivShare(\'sms\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Share via SMS">&#x1F4F1; SMS</button>'
+      +   '<button class="ov-stag-btn" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.25);color:#6ea8d8" onclick="ivShare(\'email\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Share via Email">&#x2709; Email</button>'
+      +   '<button class="ov-stag-btn primary" onclick="ivShare(\'copy\',\''+escAttr(code)+'\',\''+escAttr(link)+'\')" title="Copy invite link">&#x1F517; Copy link</button>'
       + '</div>'
       + '</div>';
   };
