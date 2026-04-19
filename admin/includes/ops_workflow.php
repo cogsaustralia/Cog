@@ -867,58 +867,26 @@ if (!function_exists('ops_admin_status_panel')) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="./assets/admin.css">
-<title><?php echo ops_h($title); ?> | COG$ Admin</title>
-<style>
-.shell{display:grid;grid-template-columns:var(--sidebar-open,200px) minmax(0,1fr);min-height:100vh;width:100%;max-width:100%}
-.sidebar{background:linear-gradient(180deg,#121a23,#16212b);border-right:1px solid var(--line);padding:24px 18px}
-.brand{display:flex;gap:12px;align-items:center;margin-bottom:24px}
-.brand img{width:44px;height:44px;border-radius:50%}
-.brand strong{display:block}
-.brand span{color:var(--muted);font-size:.9rem}
-.side-section{margin-bottom:24px}
-.side-label{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px}
-.nav{display:grid;gap:10px}
-.nav a{display:block;text-decoration:none;color:var(--text);padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}
-.nav a.active{background:linear-gradient(180deg,#d4b25c,#b98b2f);color:#201507;border-color:rgba(212,178,92,.35);font-weight:800}
-.main{padding:26px;min-width:0;max-width:100%}
-.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px;flex-wrap:wrap}
-.eyebrow{display:inline-block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-h1{margin:0 0 8px;font-size:2rem}
-.muted{color:var(--muted)}
-.button{display:inline-block;text-decoration:none;padding:.85rem 1rem;border-radius:14px;font-weight:800;border:1px solid rgba(212,178,92,.35);background:linear-gradient(180deg,#d4b25c,#b98b2f);color:#201507}
-.button.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
-.card,.section,.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 18px 45px rgba(0,0,0,.22)}
-.grid{display:grid;gap:18px}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,.08);text-align:left;vertical-align:top}
-th{color:var(--muted);font-weight:600}
-.msg,.okbox{padding:12px 14px;border-radius:14px;margin-bottom:16px;background:rgba(47,143,87,.12);border:1px solid rgba(47,143,87,.35);color:var(--ok)}
-.err{padding:12px 14px;border-radius:14px;margin-bottom:16px;background:rgba(200,61,75,.12);border:1px solid rgba(200,61,75,.35);color:var(--bad)}
-input,select,textarea,button{font:inherit}
-button,.mini-btn{display:inline-block;background:#d4b25c;color:#201507;border:1px solid rgba(212,178,92,.35);padding:.8rem 1rem;border-radius:12px;font-weight:700;text-decoration:none;cursor:pointer}
-.mini-btn.secondary,button.secondary{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
-@media (max-width:900px){.shell{grid-template-columns:minmax(0,1fr)}.main{padding:18px;padding-top:58px}}
-</style>
+<title><?php echo ops_h($title); ?> | COG$ of Australia Foundation</title>
+<?php admin_sidebar_styles_once(); ?>
+<?php if (function_exists('ops_admin_help_assets_once')) ops_admin_help_assets_once(); ?>
 </head>
 <body>
-<div class="shell">
+<div class="admin-shell">
 <?php admin_sidebar_render($active); ?>
 <main class="main">
   <div class="topbar">
-    <div>
-      <span class="eyebrow">Admin shell</span>
+    <div class="topbar-left">
+      <p class="eyebrow">Admin control plane</p>
       <h1><?php echo ops_h($title); ?></h1>
-      <p class="muted">Aligned with the current dashboard shell.</p>
     </div>
-    <div>
-      <a class="button" href="<?php echo ops_h(admin_url('dashboard.php')); ?>">Dashboard</a>
-      <a class="button secondary" href="<?php echo ops_h(admin_url('messages.php')); ?>">Communications</a>
+    <div class="topbar-right">
+      <a class="btn btn-gold" href="<?php echo ops_h(admin_url('dashboard.php')); ?>">Dashboard</a>
+      <a class="btn" href="<?php echo ops_h(admin_url('logout.php')); ?>" style="color:var(--err);border-color:rgba(196,96,96,.3)">Logout</a>
     </div>
   </div>
   <?php if ($flash): ?>
-    <div class="<?php echo $flashType === 'error' ? 'err' : 'msg'; ?>"><?php echo ops_h((string)$flash); ?></div>
+    <div class="alert <?php echo $flashType === 'error' ? 'alert-err' : 'alert-ok'; ?>"><?php echo ops_h((string)$flash); ?></div>
   <?php endif; ?>
   <?php echo $body; ?>
 </main>

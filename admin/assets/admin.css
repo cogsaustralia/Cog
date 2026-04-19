@@ -179,6 +179,40 @@ tr:hover { background: rgba(255,255,255,.02); }
 .muted   { color: var(--muted); }
 .small   { font-size: .88rem; }
 
+/* ── Topbar sub-elements ── */
+.topbar-left .eyebrow { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.topbar-left h1 { font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: 4px; }
+.topbar-left p  { color: var(--sub); font-size: 13px; line-height: 1.5; max-width: 520px; }
+.topbar-right   { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; padding-top: 4px; }
+
+/* ── Legacy compat — ops_render_page pages ── */
+/* .grid used as layout container in asset/ASX pages */
+.grid { display: grid; gap: 16px; }
+/* .mini-btn = compact action button */
+.mini-btn {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--line2);
+  background: var(--panel2);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.mini-btn:hover { background: rgba(255,255,255,.08); }
+.mini-btn.secondary { background: rgba(255,255,255,.04); color: var(--sub); }
+.mini-btn.green { background: rgba(82,184,122,.15); border-color: rgba(82,184,122,.3); color: var(--ok); }
+.mini-btn.red   { background: var(--errb); border-color: rgba(196,96,96,.3); color: var(--err); }
+/* .err — legacy error div (audit.php etc.) */
+div.err { padding: 12px 16px; border-radius: var(--r2); margin-bottom: 16px; font-size: 13px; font-weight: 600; background: var(--errb); border: 1px solid rgba(196,96,96,.3); color: #f0a0a0; }
+/* .button — legacy gold CTA (index.php) */
+.button { display: inline-block; text-decoration: none; padding: 8px 16px; border-radius: 12px; font-weight: 700; border: 1px solid rgba(212,178,92,.35); background: rgba(212,178,92,.15); color: var(--gold); }
+.button.secondary { background: rgba(255,255,255,.04); color: var(--text); border-color: var(--line); }
+
 /* ── Responsive ── */
 @media (max-width: 700px) {
   .main { padding: 16px 14px; }
