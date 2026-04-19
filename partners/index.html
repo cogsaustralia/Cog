@@ -1678,6 +1678,10 @@ function enterCommunity(data){
   renderHubInvite(data);
   var hubSections = document.getElementById('hub-sections');
   if(hubSections) hubSections.style.display = '';
+  // Auto-open participation editor if linked from IV
+  if(new URLSearchParams(window.location.search).get('edit_participation') === '1'){
+    setTimeout(function(){ if(typeof openParticipationEditor==='function') openParticipationEditor(); }, 300);
+  }
   renderFoundationHoldings(data);
   loadCommunityStats();
   setInterval(loadCommunityStats, 60000);
