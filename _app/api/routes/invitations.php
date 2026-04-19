@@ -473,6 +473,28 @@ if ($action === 'my-code') {
     }
 
     try {
+        // inviter_partner_id in partner_invite_codes references partners.id,
+        // not members.id — resolve the correct partners.id first.
+        $partnerId = 0;
+        if (inv_table_exists($db, 'partners')) {
+            $pStmt = $db->prepare(
+                'SELECT id FROM partners WHERE member_id = ? AND partner_kind = ? LIMIT 1'
+            );
+            $pStmt->execute([$memberId, 'personal']);
+            $pRow = $pStmt->fetch(PDO::FETCH_ASSOC);
+            $partnerId = $pRow ? (int)$pRow['id'] : 0;
+        }
+        if ($partnerId <= 0) {
+            // No partners row yet — return empty gracefully
+            apiSuccess([
+                'has_code'    => false,
+                'public_code' => null,
+                'invite_link' => null,
+                'use_count'   => 0,
+                'recent'      => [],
+            ]);
+        }
+
         // Fetch the Partner's active code
         $stmt = $db->prepare(
             'SELECT id, public_code, invite_token, use_count, allowed_entry_type,
@@ -483,7 +505,7 @@ if ($action === 'my-code') {
              ORDER  BY id DESC
              LIMIT  1'
         );
-        $stmt->execute([$memberId, 'active']);
+        $stmt->execute([$partnerId, 'active']);
         $code = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $baseUrl    = defined('SITE_BASE_URL') ? rtrim((string)SITE_BASE_URL, '/') : 'https://cogsaustralia.org';
@@ -498,6 +520,7 @@ if ($action === 'my-code') {
             $useCount   = (int)($code['use_count'] ?? 0);
 
             // Fetch recent accepted invitations (last 10)
+            // partner_invitations.inviter_partner_id also references partners.id
             if (inv_table_exists($db, 'partner_invitations')) {
                 $recStmt = $db->prepare(
                     'SELECT pi.entry_type, pi.accepted_at,
@@ -509,7 +532,7 @@ if ($action === 'my-code') {
                      ORDER  BY pi.accepted_at DESC
                      LIMIT  10'
                 );
-                $recStmt->execute([$memberId]);
+                $recStmt->execute([$partnerId]);
                 foreach ($recStmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
                     $recent[] = [
                         'entry_type'  => $row['entry_type'],
