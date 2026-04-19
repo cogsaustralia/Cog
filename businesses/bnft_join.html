@@ -418,8 +418,16 @@ async function apiCall(route, opts){
   return j.data!==undefined?j.data:j;
 }
 
-/* ── Pre-fill from member session ── */
+/* ── Pre-fill from URL param + member session ── */
 (async function(){
+  // Show member number from ?mn= immediately before session loads
+  var _urlMn = new URLSearchParams(window.location.search).get('mn') || '';
+  if(_urlMn){
+    var miEl=document.getElementById('member-info');
+    var miNum=document.getElementById('mi-number');
+    if(miEl) miEl.style.display='';
+    if(miNum) miNum.textContent=_urlMn.replace(/(.{4})(?=.)/g,'$1 ');
+  }
   try{
     var d = await apiCall('vault/member');
     if(!d || !d.full_name) return;

@@ -3897,7 +3897,7 @@ function renderTabOverview(d){
     } else {
       bpill.style.display = '';
       var mnRaw = (d && d.member_number ? d.member_number : (window._vaultData && window._vaultData.member_number ? window._vaultData.member_number : ''));
-      var bizUrl = '../join/business.html' + (mnRaw ? '?mn=' + encodeURIComponent(mnRaw) : '');
+      var bizUrl = '../businesses/bnft_join.html' + (mnRaw ? '?mn=' + encodeURIComponent(mnRaw) : '');
       bpill.innerHTML = '<a class="btn btn-gold btn-sm" style="display:inline-flex;align-items:center;gap:8px;font-weight:700" href="' + bizUrl + '">'
         + '<span style="font-size:1rem">&#127970;</span> Register your business &rarr;</a>';
     }
