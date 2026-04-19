@@ -169,7 +169,7 @@ img{max-width:100%;height:auto}
 .kpi-green .kpi-val{color:var(--green)}
 .kpi-teal .kpi-val{color:#60d4b8}
 .kpi-lbl{font-size:.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.09em}
-.kpi-sub{font-size:.76rem;color:rgba(255,255,255,.4);margin-top:6px}
+.kpi-sub{font-size:.82rem;color:rgba(255,255,255,.4);margin-top:6px}
 @media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr}.kpi:last-child{grid-column:span 2}}
 
 /* ── CARDS ── */
@@ -225,8 +225,9 @@ img{max-width:100%;height:auto}
 .poll-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,var(--gold) 50%,transparent 95%);opacity:.45}
 .poll-card:hover{border-color:var(--border2)}
 .poll-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.poll-title{font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.35}
-.poll-body{font-size:.9rem;color:var(--text3);line-height:1.68;margin-bottom:14px}
+.poll-title{font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.35}
+.poll-body{font-size:.92rem;color:var(--text3);line-height:1.68;margin-bottom:14px}
+.tally-item{font-size:.8rem;font-weight:600;color:var(--text3);padding:4px 10px;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
 .poll-tally{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap}
 .tally-item{font-size:.72rem;font-weight:600;color:var(--text3);padding:4px 10px;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
 .tally-yes{color:var(--green)}
@@ -261,11 +262,11 @@ img{max-width:100%;height:auto}
 .ntype-gov,.ntype-appr{background:rgba(62,207,110,.08);color:var(--green)}
 .ntype-pay{background:rgba(62,207,110,.08);color:var(--green)}
 .ntype-sys{background:var(--blue-bg);color:var(--blue)}
-.ndate{font-size:.88rem;color:var(--text3)}
+.ndate{font-size:.82rem;color:var(--text3)}
 .ndot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;animation:ndot-pulse 1.8s ease-in-out infinite}
 @keyframes ndot-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.nsubj{font-size:.88rem;font-weight:600;margin-bottom:5px;color:var(--text)}
-.nbody{font-size:.9rem;color:var(--text3);line-height:1.65}
+.nsubj{font-size:.96rem;font-weight:600;margin-bottom:5px;color:var(--text)}
+.nbody{font-size:.92rem;color:var(--text3);line-height:1.65}
 .n-read{background:none;border:none;font-size:.88rem;color:var(--text3);padding:0;margin-top:10px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-family:inherit;transition:color .15s;display:block}
 .n-read:hover{color:var(--text2)}
 /* Compact read items */
@@ -288,7 +289,7 @@ img{max-width:100%;height:auto}
 .acc-section{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:14px}
 .acc-hd{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;cursor:pointer;background:rgba(255,255,255,.02)}
 .acc-hd:hover{background:rgba(255,255,255,.04)}
-.acc-hd h4{font-size:.8rem;font-weight:600;color:var(--text2);margin:0;display:flex;align-items:center;gap:8px}
+.acc-hd h4{font-size:.9rem;font-weight:600;color:var(--text2);margin:0;display:flex;align-items:center;gap:8px}
 .acc-count{font-size:.65rem;font-weight:700;background:var(--gold-bg);color:var(--gold);padding:1px 7px;border-radius:99px;border:1px solid var(--gold-bdr)}
 .acc-chev{font-size:.88rem;color:var(--text3);transition:transform .2s}
 .acc-body{display:none;border-top:1px solid var(--border)}
@@ -381,7 +382,7 @@ img{max-width:100%;height:auto}
 .tour-step{display:none}
 .tour-step.active{display:block}
 .tour-step h3{font-family:var(--serif);font-size:1.2rem;font-weight:500;margin-bottom:12px;color:var(--text)}
-.tour-step p{font-size:.8rem;color:var(--text3);line-height:1.68}
+.tour-step p{font-size:.88rem;color:var(--text3);line-height:1.68}
 .tour-nav{display:flex;align-items:center;justify-content:space-between;margin-top:22px;gap:12px}
 .tour-prog{display:flex;gap:5px}
 .tour-dot{width:7px;height:7px;border-radius:50%;background:var(--border2)}
@@ -393,7 +394,7 @@ img{max-width:100%;height:auto}
 .pg-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:28px;max-width:580px;width:100%;box-shadow:var(--sh);max-height:90vh;overflow-y:auto}
 .pg-step{display:none}.pg-step.active{display:block}
 .pg-card h2{font-family:var(--serif);font-size:1.4rem;font-weight:500;margin-bottom:12px;color:var(--text)}
-.pg-sub{font-size:.8rem;color:var(--text3);line-height:1.7;margin-bottom:20px}
+.pg-sub{font-size:.88rem;color:var(--text3);line-height:1.7;margin-bottom:20px}
 .pg-ack-btn{width:100%;padding:13px;border-radius:var(--r);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0a;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;border:none}
 .pg-area-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
 @media(max-width:480px){.pg-area-grid{grid-template-columns:1fr}}
@@ -418,7 +419,7 @@ img{max-width:100%;height:auto}
 .ov-prompt-dim .ov-prompt-ico{color:var(--text3)}
 .ov-prompt-body{flex:1;min-width:0}
 .ov-prompt-title{font-size:.94rem;font-weight:600;color:var(--text);margin-bottom:3px}
-.ov-prompt-sub{font-size:.8rem;color:var(--text3);line-height:1.55}
+.ov-prompt-sub{font-size:.88rem;color:var(--text3);line-height:1.55}
 .ov-prompt-arrow{font-size:1.1rem;color:var(--text3);flex-shrink:0}
 .ov-prompt-gold .ov-prompt-arrow{color:var(--gold)}
 
@@ -453,7 +454,7 @@ img{max-width:100%;height:auto}
 .ent-item-ico.amber{background:var(--amber-bg);border-color:var(--amber-bdr);color:var(--amber)}
 .ent-item-body{flex:1;min-width:0}
 .ent-item-title{font-size:.94rem;font-weight:600;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ent-item-desc{font-size:.82rem;color:var(--text3);line-height:1.6}
+.ent-item-desc{font-size:.88rem;color:var(--text3);line-height:1.6}
 .ent-item-arrow{font-size:.9rem;color:var(--text3);flex-shrink:0;margin-top:10px}
 /* ── Overview redesign ── */
 .cc-ico{height:18px;width:18px;border-radius:50%;vertical-align:middle;margin-right:5px;object-fit:cover;flex-shrink:0}
@@ -577,7 +578,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 .wallet-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;position:relative;z-index:1}
 .wallet-balance{font-family:var(--serif);font-size:3.2rem;font-weight:600;color:#fff;line-height:1;letter-spacing:-.03em;margin-bottom:4px;position:relative;z-index:1}
 .wallet-balance .unit{font-size:1.2rem;font-weight:400;color:var(--gold);margin-left:8px;letter-spacing:.04em}
-.wallet-balance-sub{font-size:.76rem;color:var(--text3);margin-bottom:16px;font-family:var(--mono);position:relative;z-index:1}
+.wallet-balance-sub{font-size:.88rem;color:var(--text3);margin-bottom:16px;font-family:var(--mono);position:relative;z-index:1}
 .wallet-row-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;position:relative;z-index:1}
 .wallet-meta{display:flex;gap:18px;flex-wrap:wrap;padding-top:14px;border-top:1px solid rgba(232,184,75,.18);position:relative;z-index:1}
 .wallet-meta-blk{}
@@ -820,7 +821,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     </span>
     <div class="tb-right">
       <button class="tb-pill" onclick="openProfileDrawer()" title="Profile &amp; settings">
-        <span>⚙</span><span class="tb-pill-lbl">Update My Options</span>
+        <span>⚙</span><span class="tb-pill-lbl">Profile</span>
       </button>
       <a class="tb-pill" href="../partners/index.html" onclick="coinTransition('../partners/index.html');return false;" title="Partners Hub">
         <span>🏠</span><span class="tb-pill-lbl">Partners Hub</span>
@@ -973,7 +974,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div style="padding:16px 18px"><div class="sk" style="height:40px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:40px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:40px;border-radius:8px"></div></div>
         </div>
         <div style="padding:10px 18px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <button class="iedit-save" id="hd-save-btn" onclick="saveResNew()" style="padding:7px 18px">Save reservations</button>
+          <button class="iedit-save" id="hd-save-btn" onclick="saveResNew()" style="padding:7px 18px">Update My Options</button>
           <button class="btn btn-ghost btn-sm" onclick="resetReservations()">Reset</button>
           <span style="font-size:.84rem;color:var(--text3);flex:1;line-height:1.5">Edit freely — no obligation, no payment required. Released after Expansion Day.</span>
         </div>
@@ -995,7 +996,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
               <div class="tr-amt-label">allocated</div>
             </div>
           </div>
-          <div style="padding:10px 18px 14px;font-size:.74rem;color:var(--text3);border-top:1px solid var(--border)">Allocated by the Foundation based on your verified address within a declared affected zone. Non-transferable and non-editable.</div>
+          <div style="padding:10px 18px 14px;font-size:.86rem;color:var(--text3);border-top:1px solid var(--border)">Allocated by the Foundation based on your verified address within a declared affected zone. Non-transferable and non-editable.</div>
         </div>
       </div>
 
@@ -1141,7 +1142,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <h3><img src="../assets/cogs_coin_web.png" alt="" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:6px;position:relative;top:-1px">Transfer Community COG$</h3>
           <button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button></div>
         <div class="card-bd">
-          <p style="font-size:.76rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Only Community COG$ can move Partner-to-Partner right now. Stewardship reservation classes (ASX, RWA, Landholder) are Released after Expansion Day.</p>
+          <p style="font-size:.88rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Only Community COG$ can move Partner-to-Partner right now. Stewardship reservation classes (ASX, RWA, Landholder) are Released after Expansion Day.</p>
           <div id="transfer-available-board" style="display:none"></div>
           <div id="transfer-lock-board" style="display:none"></div>
           <div class="xfr-row" style="margin-bottom:12px">
@@ -1157,7 +1158,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
               </div>
             </div>
           </div>
-          <div id="transfer-assist" style="font-size:.74rem;color:var(--text3);margin-bottom:12px;line-height:1.55">Enter the receiving Partner number and the amount of Community COG$ to transfer.</div>
+          <div id="transfer-assist" style="font-size:.86rem;color:var(--text3);margin-bottom:12px;line-height:1.55">Enter the receiving Partner number and the amount of Community COG$ to transfer.</div>
           <button class="btn btn-gold btn-sm" id="xfr-btn" onclick="doTransfer()">Transfer Community COG$</button>
           <div class="flash" id="xfr-fl"></div>
         </div>
@@ -1188,7 +1189,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <span id="propose-chevron" style="color:var(--text3);font-size:.7rem">▼</span>
         </button>
         <div class="propose-body" id="propose-body">
-          <p style="font-size:.76rem;color:var(--text3);margin-bottom:14px;line-height:1.6">Any 10 Partners, or 1% of all active Partners (whichever is fewer), may initiate a Partners Poll. The initiation group is the legal threshold — no separate seconding step.</p>
+          <p style="font-size:.88rem;color:var(--text3);margin-bottom:14px;line-height:1.6">Any 10 Partners, or 1% of all active Partners (whichever is fewer), may initiate a Partners Poll. The initiation group is the legal threshold — no separate seconding step.</p>
           <div class="form-group"><label class="form-label">Poll title</label><input class="form-input" id="prop-title" placeholder="A clear, one-line question or resolution"></div>
           <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="prop-body" placeholder="Explain the purpose, context, and what a Yes / No vote means."></textarea></div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -1211,7 +1212,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       </div>
 
       <!-- Voting integrity notice -->
-      <div style="margin-top:20px;padding:14px 16px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);font-size:.76rem;color:var(--text3);line-height:1.6">
+      <div style="margin-top:20px;padding:14px 16px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);font-size:.88rem;color:var(--text3);line-height:1.6">
         <strong style="color:var(--text);display:block;margin-bottom:6px">⬡ Voting integrity</strong>
         Responses are cryptographically receipted. Tallies show counts only — your identity and choice are never exposed. One equal vote per Partner regardless of holdings, location, or wealth. While a poll is open you can update your response.
       </div>
@@ -1225,7 +1226,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap">
         <div>
           <div style="font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--text);margin-bottom:4px">COG$ News &amp; Notices <i class="info-ico" onclick="showInfo('news-tab')">?</i></div>
-          <p style="font-size:.76rem;color:var(--text3)" id="news-count"></p>
+          <p style="font-size:.88rem;color:var(--text3)" id="news-count"></p>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>
       </div>
@@ -1240,7 +1241,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="panel" id="tab-activity">
     <div class="pg">
       <div style="font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--text);margin-bottom:4px">Partner action log</div>
-      <p style="font-size:.76rem;color:var(--text3);margin-bottom:16px">Every action against your Partnership — read-only and unalterable.</p>
+      <p style="font-size:.88rem;color:var(--text3);margin-bottom:16px">Every action against your Partnership — read-only and unalterable.</p>
       <div class="card">
         <div class="card-bd" style="padding:0 18px" id="event-log">
           <div class="sk" style="height:14px;border-radius:4px;margin:16px 0 10px"></div>
@@ -1268,7 +1269,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
     <div class="profile-section">
       <div class="profile-section-title">Distribution election</div>
-      <p style="font-size:.76rem;color:var(--text3);margin-bottom:12px;line-height:1.6">When dividend distributions are active (post-Expansion Day), choose how you receive your share.</p>
+      <p style="font-size:.88rem;color:var(--text3);margin-bottom:12px;line-height:1.6">When dividend distributions are active (post-Expansion Day), choose how you receive your share.</p>
       <div style="display:flex;gap:8px">
         <button class="btn btn-ghost btn-sm" id="elect-aud" onclick="setElection('aud')">AUD bank transfer</button>
         <button class="btn btn-ghost btn-sm" id="elect-cog" onclick="setElection('cog')">New ASX COG$</button>
@@ -1285,7 +1286,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
     <div class="profile-section">
       <div class="profile-section-title">Request mobile or address change</div>
-      <p style="font-size:.76rem;color:var(--text3);margin-bottom:12px;line-height:1.6">Mobile and address changes are reviewed by the Foundation team — they are used for identity verification and cannot be self-served.</p>
+      <p style="font-size:.88rem;color:var(--text3);margin-bottom:12px;line-height:1.6">Mobile and address changes are reviewed by the Foundation team — they are used for identity verification and cannot be self-served.</p>
       <div class="form-group"><label class="form-label">Field to change</label>
         <select class="form-input" id="chg-field" style="cursor:pointer">
           <option value="mobile">Mobile number</option>
@@ -1308,7 +1309,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="pay-modal">
     <button class="pay-modal-close" onclick="document.getElementById('pay-modal').classList.remove('open')">✕</button>
     <h3>Complete your $4 contribution</h3>
-    <p style="font-size:.78rem;color:var(--text3);margin-bottom:20px;line-height:1.65">Your Class S Unit is reserved. The $4 contribution issues it and activates your equal national governance vote.</p>
+    <p style="font-size:.88rem;color:var(--text3);margin-bottom:20px;line-height:1.65">Your Class S Unit is reserved. The $4 contribution issues it and activates your equal national governance vote.</p>
 
     <!-- Pay by card -->
     <div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pay by card</div>
@@ -1471,7 +1472,7 @@ function openVault(d){
   renderWalletAddresses(d);
 
   // Auto-open sections that need attention
-  if((d.open_polls||0) > 0 || (d.open_proposals||0) > 0){
+  if((d.open_polls||0) > 0 || (d.open_poll_initiations||0) > 0){
     el('s-polls').classList.add('open');
   }
   if((d.announcement_unread||0) > 0){
@@ -2216,7 +2217,7 @@ async function saveReservations(){
     flash('reserve-fl',e.message||'Update failed.','err');
   }finally{
     el('reserve-save-btn').disabled = false;
-    el('reserve-save-btn').textContent = 'Save reservations';
+    el('reserve-save-btn').textContent = 'Update My Options';
   }
 }
 
@@ -3231,7 +3232,7 @@ async function saveResNew(){
   }catch(e){
     if(fl){ fl.textContent=(e&&e.message)||'Update failed.'; fl.className='flash show flash-err'; }
   }finally{
-    if(btn){ btn.disabled=false; btn.textContent='Save reservations'; }
+    if(btn){ btn.disabled=false; btn.textContent='Update My Options'; }
   }
 }
 
@@ -3463,7 +3464,7 @@ function updateTabBadges(d){
   var rnbadge = document.getElementById('rail-news-badge');
   if(rnbadge){ rnbadge.textContent = newsUnread; rnbadge.style.display = newsUnread>0?'':'none'; }
 
-  var pollCount = (d.open_polls||0)+(d.open_proposals||0);
+  var pollCount = (d.open_polls||0)+(d.open_poll_initiations||0);
   var pbadge = document.getElementById('polls-badge');
   if(pbadge){ pbadge.textContent = pollCount; pbadge.className = 'tnb-badge'+(pollCount>0?' show':''); }
   /* rail polls badge */
