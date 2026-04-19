@@ -120,7 +120,7 @@ foreach ($legacyBridgeDeps as $bridgeRow) {
 }
 
 $funnelReserved  = d_val($pdo, "SELECT COUNT(DISTINCT member_id) FROM member_reservation_lines WHERE requested_units > 0");
-$funnelPaid      = d_val($pdo, "SELECT COUNT(DISTINCT member_id) FROM member_reservation_lines WHERE paid_units >= requested_units AND requested_units > 0");
+$funnelPaid      = d_val($pdo, "SELECT COUNT(DISTINCT mrl.member_id) FROM member_reservation_lines mrl JOIN members m ON m.id = mrl.member_id WHERE mrl.paid_units >= mrl.requested_units AND mrl.requested_units > 0 AND m.signup_payment_status = 'paid'");
 $funnelApproved  = d_val($pdo, "SELECT COUNT(DISTINCT member_id) FROM member_reservation_lines WHERE approved_units >= requested_units AND requested_units > 0");
 $funnelActive    = d_val($pdo, "SELECT COUNT(*) FROM members WHERE wallet_status='active'");
 
