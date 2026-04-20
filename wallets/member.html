@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,max-age=0">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<title>Partner Vault — COG$ of Australia Foundation</title>
+<title>Member Vault — COG$ of Australia Foundation</title>
 <link rel="icon" type="image/png" href="../assets/logo_webcir.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
-   PARTNER VAULT — DESIGN SYSTEM
+   MEMBER VAULT — DESIGN SYSTEM
    Black / White / Gold. No compromise.
    Gold = action only.
    White = information.
@@ -452,7 +452,7 @@ img{max-width:100%;height:auto}
 .info-panel-body li{margin-bottom:8px;line-height:1.65}
 .info-panel-body li::marker{color:var(--gold)}
 
-/* ── ENT GRID (Partnership entitlements) ── */
+/* ── ENT GRID (Membership entitlements) ── */
 .ent-grid{display:grid;gap:0}
 .ent-item{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .14s}
 .ent-item:last-child{border-bottom:none}
@@ -858,11 +858,11 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 <!-- ══ SPLASH ══ -->
 <div id="splash">
   <img src="../assets/cogs_coin_web.png" alt="" class="splash-coin">
-  <div class="splash-line1">Partner Vault</div>
-  <div class="splash-line2">You are entering your Partner Vault</div>
+  <div class="splash-line1">Member Vault</div>
+  <div class="splash-line2">You are entering your Member Vault</div>
 </div>
 
-<!-- ══ AUTH GATE — removed: Partners Hub is the sole entry point ══ -->
+<!-- ══ AUTH GATE — removed: Members Hub is the sole entry point ══ -->
 <!-- All IDs preserved as hidden stubs for JS compatibility -->
 <div id="auth-gate" style="display:none" aria-hidden="true">
   <div id="ap-login"><form id="f-login"><button id="login-btn"></button><div id="login-fl"></div></form></div>
@@ -885,7 +885,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <div class="rail-brand">
       <img src="../assets/logo_webcir.png" alt="COG$">
       <div>
-        <div class="rail-brand-name">Partner Vault</div>
+        <div class="rail-brand-name">Member Vault</div>
         <div class="rail-brand-sub">COG$ Foundation</div>
       </div>
     </div>
@@ -934,7 +934,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <header class="topbar">
     <a class="tb-brand" href="../wallets/index.html">
       <img src="../assets/logo_webcir.png" alt="COG$">
-      <span class="tb-brand-name">Partner Vault</span>
+      <span class="tb-brand-name">Member Vault</span>
     </a>
     <span style="flex:1;min-width:0;font-size:1.02rem;color:var(--text3);padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
       <strong id="tb-name" style="color:var(--text)">—</strong>
@@ -944,8 +944,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <button class="tb-pill" onclick="openProfileDrawer()" title="Profile &amp; settings">
         <span>⚙</span><span class="tb-pill-lbl">Profile</span><button class="iq-btn" data-tip="Your profile and settings — update your email, change your password, manage your distribution election preference (AUD or new ASX COG$), and log out." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
       </button>
-      <a class="tb-pill" href="../partners/index.html" onclick="coinTransition('../partners/index.html');return false;" title="Partners Hub">
-        <span>🏠</span><span class="tb-pill-lbl">Partners Hub</span><button class="iq-btn" data-tip="Return to the Partners Hub — community stats, governance news, the document library, the Foundation asset overview, and your invitation code to bring new Partners in." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
+      <a class="tb-pill" href="../partners/index.html" onclick="coinTransition('../partners/index.html');return false;" title="Members Hub">
+        <span>🏠</span><span class="tb-pill-lbl">Members Hub</span><button class="iq-btn" data-tip="Return to the Members Hub — community stats, governance news, the document library, the Foundation asset overview, and your invitation code to bring new Members in." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
       </a>
       <button class="tb-logout" id="logout-btn"><span>↩</span><span class="lbl"> Log out</span></button>
     </div>
@@ -954,7 +954,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- Payment banner -->
   <div class="pay-banner" id="pay-banner" style="display:none">
     <div class="pay-banner-inner">
-      <span class="pay-banner-text">● $4 payment required to secure your Class S Unit — your Partnership is not yet active.</span>
+      <span class="pay-banner-text">● $4 payment required to secure your Class S Unit — your Membership is not yet active.</span>
       <button class="btn btn-sm" style="background:var(--red);color:#fff;border:none;flex-shrink:0" id="pay-btn">Pay $4 now</button>
     </div>
   </div>
@@ -1007,7 +1007,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div id="invite-wrap" style="margin-top:18px"></div>
 
       <!-- ══ HIDDEN STUBS ══
-           All identity/invite/kS-NFT management moved to Partners Hub.
+           All identity/invite/kS-NFT management moved to Members Hub.
            IDs preserved here for JS compatibility — nothing visible. -->
       <div id="ov-hidden-stubs" style="display:none">
         <div id="ent-list"></div>
@@ -1144,10 +1144,10 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="card">
         <div class="card-hd"><h3>Give to the community</h3><button class="info-btn" onclick="showInfo('donation-pif')">How this works</button><span style="font-size:1rem;color:var(--text3)">$4 per unit</span></div>
         <div class="card-bd">
-          <p style="font-size:1rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Donation COG$ funds Sub-Trust C — First Nations programs, environmental stewardship, and community initiatives. Pay It Forward sponsors another Partner's $4 entry who cannot afford it.</p>
+          <p style="font-size:1rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Donation COG$ funds Sub-Trust C — First Nations programs, environmental stewardship, and community initiatives. Pay It Forward sponsors another Member's $4 entry who cannot afford it.</p>
           <div class="give-stepper-row">
             <div>
-              <div class="give-stepper-lbl">Donation COG$ (Class D)<button class="iq-btn" data-tip="$4 each. $2.00 goes directly to Sub-Trust C (the community projects fund) at the time of issue. $2.00 is invested through Sub-Trust A into the Partners Asset Pool, generating a permanent Donation Dividend Stream. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
+              <div class="give-stepper-lbl">Donation COG$ (Class D)<button class="iq-btn" data-tip="$4 each. $2.00 goes directly to Sub-Trust C (the community projects fund) at the time of issue. $2.00 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
               <div class="give-stepper-ctrl">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-don',-1)">−</button>
                 <input class="stepper-input" id="char-don" type="number" min="0" value="0" oninput="updateCharityTotal()">
@@ -1156,13 +1156,13 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
               <div class="give-price-note" style="margin-top:5px">$2 direct to Sub-Trust C · $2 invested via Sub-Trust A</div>
             </div>
             <div>
-              <div class="give-stepper-lbl">Pay It Forward (Class PIF)<button class="iq-btn" data-tip="$4 each. Funds the $4 joining contribution for another person who cannot afford it. That person joins as a full Partner on exactly equal terms — same governance vote, same Sub-Trust B income unit. No personal financial benefit to you as donor. This is a community access mechanism, not a charitable deduction." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
+              <div class="give-stepper-lbl">Pay It Forward (Class PIF)<button class="iq-btn" data-tip="$4 each. Funds the $4 joining contribution for another person who cannot afford it. That person joins as a full Member on exactly equal terms — same governance vote, same Sub-Trust B income unit. No personal financial benefit to you as donor. This is a community access mechanism, not a charitable deduction." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
               <div class="give-stepper-ctrl">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-pif',-1)">−</button>
                 <input class="stepper-input" id="char-pif" type="number" min="0" value="0" oninput="updateCharityTotal()">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-pif',1)">+</button>
               </div>
-              <div class="give-price-note" style="margin-top:5px">Sponsors a Partner's $4 entry contribution</div>
+              <div class="give-price-note" style="margin-top:5px">Sponsors a Member's $4 entry contribution</div>
             </div>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border);gap:10px;flex-wrap:wrap">
@@ -1231,7 +1231,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <button class="xch-btn" id="xch-btn-send" onclick="xchMode('send')">
           <span class="xch-arrow">↑</span>
           Send
-          <span class="xch-btn-sub">Transfer to a Partner</span>
+          <span class="xch-btn-sub">Transfer to a Member</span>
         </button>
       </div>
 
@@ -1239,7 +1239,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="xch-panel on card" id="xch-panel-receive">
         <div class="card-hd"><h3>Your Community COG$ receive address</h3></div>
         <div class="card-bd">
-          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.6">Share this hash address with the sender. It is unique to your Partnership and cryptographically bound to your member number.</p>
+          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.6">Share this hash address with the sender. It is unique to your Membership and cryptographically bound to your member number.</p>
           <div id="my-wallet-addrs">
             <div id="wallet-addr-list">
               <div class="placeholder"><strong>Loading address…</strong><p>Your COG$ wallet address is being generated.</p></div>
@@ -1255,7 +1255,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button>
         </div>
         <div class="card-bd">
-          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Enter the recipient's Community COG$ hash address (COGS-CC-...) and the amount to transfer. Only Community COG$ can move Partner-to-Partner before Expansion Day.</p>
+          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Enter the recipient's Community COG$ hash address (COGS-CC-...) and the amount to transfer. Only Community COG$ can move Member-to-Member before Expansion Day.</p>
           <div id="transfer-available-board" style="display:none"></div>
           <div id="transfer-lock-board" style="display:none"></div>
 
@@ -1312,7 +1312,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <div class="pg" id="s-polls">
       <div style="margin-bottom:20px">
         <div style="font-family:var(--serif);font-size:3.2rem;font-weight:400;color:var(--text);margin-bottom:6px;line-height:1.1">COG$ Management — Proposals &amp; Polls <i class="info-ico" onclick="showInfo('governance-tab')" style="vertical-align:middle">?</i></div>
-        <p style="font-size:1.02rem;color:var(--text3);line-height:1.65">Initiate proposals, join existing initiations, and vote on open Partners Polls. One equal vote per Partner regardless of holdings, wealth, or location.</p>
+        <p style="font-size:1.02rem;color:var(--text3);line-height:1.65">Initiate proposals, join existing initiations, and vote on open Members Polls. One equal vote per Member regardless of holdings, wealth, or location.</p>
       </div>
 
       <!-- Active polls -->
@@ -1325,16 +1325,16 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="propose-wrap" style="margin-top:16px">
         <button class="propose-hd" onclick="togglePropose()">
           <span style="color:var(--gold)">＋</span>
-          <span style="flex:1">Initiate a Partners Poll</span>
+          <span style="flex:1">Initiate a Members Poll</span>
           <span id="propose-chevron" style="color:var(--text3);font-size:1rem">▼</span>
         </button>
         <div class="propose-body" id="propose-body">
-          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:14px;line-height:1.6">Any 10 Partners, or 1% of all active Partners (whichever is fewer), may initiate a Partners Poll. The initiation group is the legal threshold — no separate seconding step.</p>
+          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:14px;line-height:1.6">Any 10 Members, or 1% of all active Members (whichever is fewer), may initiate a Members Poll. The initiation group is the legal threshold — no separate seconding step.</p>
           <div class="form-group"><label class="form-label">Poll title</label><input class="form-input" id="prop-title" placeholder="A clear, one-line question or resolution"></div>
           <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="prop-body" placeholder="Explain the purpose, context, and what a Yes / No vote means."></textarea></div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <button class="btn btn-gold btn-sm" id="prop-btn" onclick="submitProposal()">Create initiation draft</button>
-            <span style="font-size:1rem;color:var(--text3)">Threshold: lesser of 10 Partners or 1% of active Partners</span>
+            <span style="font-size:1rem;color:var(--text3)">Threshold: lesser of 10 Members or 1% of active Members</span>
           </div>
           <div class="flash" id="prop-fl"></div>
         </div>
@@ -1343,7 +1343,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <!-- Past polls -->
       <div class="acc-section" id="past-polls-section" style="margin-top:14px;display:none">
         <div class="acc-hd" onclick="toggleAcc('past-polls-section')">
-          <h4>Past Partners Polls</h4>
+          <h4>Past Members Polls</h4>
           <span class="acc-chev">▼</span>
         </div>
         <div class="acc-body">
@@ -1354,7 +1354,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <!-- Voting integrity notice -->
       <div style="margin-top:20px;padding:14px 16px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);font-size:1.02rem;color:var(--text3);line-height:1.6">
         <strong style="color:var(--text);display:block;margin-bottom:6px">⬡ Voting integrity</strong>
-        Responses are cryptographically receipted. Tallies show counts only — your identity and choice are never exposed. One equal vote per Partner regardless of holdings, location, or wealth. While a poll is open you can update your response.
+        Responses are cryptographically receipted. Tallies show counts only — your identity and choice are never exposed. One equal vote per Member regardless of holdings, location, or wealth. While a poll is open you can update your response.
       </div>
 
     </div>
@@ -1380,8 +1380,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- ══ ACTIVITY TAB ══ -->
   <div class="panel" id="tab-activity">
     <div class="pg">
-      <div style="font-family:var(--serif);font-size:2.8rem;font-weight:400;color:var(--text);margin-bottom:4px">Partner action log</div>
-      <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px">Every action against your Partnership — read-only and unalterable.</p>
+      <div style="font-family:var(--serif);font-size:2.8rem;font-weight:400;color:var(--text);margin-bottom:4px">Member action log</div>
+      <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px">Every action against your Membership — read-only and unalterable.</p>
       <div class="card">
         <div class="card-bd" style="padding:0 18px" id="event-log">
           <div class="sk" style="height:14px;border-radius:4px;margin:16px 0 10px"></div>
@@ -1467,7 +1467,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <div id="stripe-container" style="margin-bottom:4px">
       <a href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener" class="btn btn-gold" style="display:block;text-align:center;text-decoration:none;padding:13px;font-size:1rem;letter-spacing:.02em">Pay $4 by card →</a>
     </div>
-    <p style="font-size:1rem;color:var(--text3);margin-bottom:0;line-height:1.5">Opens Stripe's secure checkout in a new tab. Enter your Partner number as the payment reference.</p>
+    <p style="font-size:1rem;color:var(--text3);margin-bottom:0;line-height:1.5">Opens Stripe's secure checkout in a new tab. Enter your Member number as the payment reference.</p>
 
     <!-- Divider -->
     <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
@@ -1479,7 +1479,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <!-- Bank transfer — PayID first -->
     <div style="padding:14px 16px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border)">
       <div class="bank-detail-row"><span class="bank-key">PayID</span><span class="bank-val">0494 578 706</span></div>
-      <div class="bank-detail-row"><span class="bank-key">Reference</span><span class="bank-val" id="pay-modal-ref">Your Partner number</span></div>
+      <div class="bank-detail-row"><span class="bank-key">Reference</span><span class="bank-val" id="pay-modal-ref">Your Member number</span></div>
       <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val">$4.00</span></div>
     </div>
     <details style="margin-top:8px">
@@ -1491,7 +1491,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       </div>
     </details>
 
-    <p style="font-size:1rem;color:var(--text3);line-height:1.55;margin-top:16px">After payment arrives your vault updates on the next refresh. The $4 is your once-only partnership contribution — entrenched at this amount forever under Declaration clause 35(a).</p>
+    <p style="font-size:1rem;color:var(--text3);line-height:1.55;margin-top:16px">After payment arrives your vault updates on the next refresh. The $4 is your once-only membership contribution — entrenched at this amount forever under Declaration clause 35(a).</p>
     <div id="pay-modal-body"></div>
   </div>
 </div>
@@ -1616,7 +1616,7 @@ function openVault(d){
   el('auth-gate').classList.remove('show');
 
   // Topbar
-  const first = (d.full_name||'').split(' ')[0] || 'Partner';
+  const first = (d.full_name||'').split(' ')[0] || 'Member';
   el('tb-name').textContent = first;
   el('tb-mn').textContent = fmtMN(d.member_number||'');
 
@@ -1675,20 +1675,20 @@ function renderIdentity(d){
       ? 'Class S Unit — <span style="color:var(--green)">SECURED</span>'
       : 'Class S Unit — <span style="color:var(--red)">$4 payment required</span>',
     desc: paid
-      ? 'Issued under Sub-Trust A. Personal S-NFT COG$ token — your permanent, inheritable, soulbound Partnership token.'
-      : 'Your Class S Unit is reserved. Complete the $4 partnership contribution to issue it. ' + (paid ? '' : '<button class="btn btn-gold btn-sm" style="margin-top:6px" onclick="el(\'pay-btn\').click()">Pay $4 now →</button>')
+      ? 'Issued under Sub-Trust A. Personal S-NFT COG$ token — your permanent, inheritable, soulbound Membership token.'
+      : 'Your Class S Unit is reserved. Complete the $4 membership contribution to issue it. ' + (paid ? '' : '<button class="btn btn-gold btn-sm" style="margin-top:6px" onclick="el(\'pay-btn\').click()">Pay $4 now →</button>')
   });
 
   rows.push({
     icon:'⅄',
     title:'1 Sub-Trust B income unit — <span style="color:var(--green)">Active</span>',
-    desc:'Proportional dividend entitlement. You receive your share of 50% of all Partners Asset Pool dividends on equal terms with every other Partner.'
+    desc:'Proportional dividend entitlement. You receive your share of 50% of all Members Asset Pool dividends on equal terms with every other Member.'
   });
 
   rows.push({
     icon:'⊗',
     title:'1 equal national governance vote',
-    desc:'Active from Governance Foundation Day (14 May 2026). Equal in weight to every other Partner\'s vote regardless of wealth, token holdings, or location.'
+    desc:'Active from Governance Foundation Day (14 May 2026). Equal in weight to every other Member\'s vote regardless of wealth, token holdings, or location.'
   });
 
   const kycMap = {
@@ -1729,15 +1729,15 @@ function renderJvpaAcceptance(a){
       ? chip('JVPA accepted','amber')
       : chip('JVPA missing','red');
   var title = verified
-    ? 'Joint Venture Partnership Agreement — <span style="color:var(--green)">Recorded</span>'
+    ? 'Joint Venture Agreement — <span style="color:var(--green)">Recorded</span>'
     : hasAcceptance
-      ? 'Joint Venture Partnership Agreement — <span style="color:var(--amber)">Accepted</span>'
-      : 'Joint Venture Partnership Agreement — <span style="color:var(--red)">Missing</span>';
+      ? 'Joint Venture Agreement — <span style="color:var(--amber)">Accepted</span>'
+      : 'Joint Venture Agreement — <span style="color:var(--red)">Missing</span>';
   var note = verified
-    ? 'Your acceptance is recorded in the partnership intake record and linked to a JVPA evidence-vault entry.'
+    ? 'Your acceptance is recorded in the membership intake record and linked to a JVPA evidence-vault entry.'
     : hasAcceptance
       ? 'Your checkbox acceptance is present, but the full evidence link is not yet complete.'
-      : 'No verified JVPA acceptance record is available for this Partner vault yet.';
+      : 'No verified JVPA acceptance record is available for this Member vault yet.';
   var evidence = verified
     ? 'Evidence entry linked and hash-matched'
     : (a && a.evidence_recorded)
@@ -1761,7 +1761,7 @@ function renderJvpaAcceptance(a){
     +     '<div class="id-row"><span class="id-label">Chain anchor</span><span class="id-value">'+((a&&a.chain_anchored)?'Anchored on chain':'Not yet anchored')+'</span></div>'
     +   '</div>'
     +   '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'
-    +     '<a class="btn btn-ghost btn-sm" href="../docs/COGS_CJVM_Partnership_Agreement.pdf" target="_blank">Download JVPA PDF</a>'
+    +     '<a class="btn btn-ghost btn-sm" href="../docs/COGS_JVPA.pdf" target="_blank">Download JVPA PDF</a>'
     +     (needsRepair ? '<button class="btn btn-gold btn-sm" id="jvpa-complete-btn" onclick="completeCurrentJvpaRecord()">Complete current JVPA record</button>' : '')
     +   '</div>'
     +   '<div class="flash" id="jvpa-fl"></div>'
@@ -1770,7 +1770,7 @@ function renderJvpaAcceptance(a){
 }
 
 
-/* ── INVITE A PARTNER ── */
+/* ── INVITE A MEMBER ── */
 function loadInviteCode(){
   api('invitations/my-code')
     .then(function(d){
@@ -1797,17 +1797,17 @@ function renderInviteCard(d){
   var recent = Array.isArray(d.recent) ? d.recent : [];
   var names = recent.slice(0,8).map(function(r){ return esc(r.first_name||(r.name||'').split(' ')[0]||''); }).filter(Boolean);
   var joinedLine = joined > 0
-    ? (names.length ? names.join(' &middot; ')+(recent.length>8?' &middot; +'+(recent.length-8)+' more':'') : joined+' Partner'+(joined===1?'':'s'))
-    : '<span style="color:var(--text3);font-style:italic;font-weight:400">No Partners joined yet</span>';
+    ? (names.length ? names.join(' &middot; ')+(recent.length>8?' &middot; +'+(recent.length-8)+' more':'') : joined+' Member'+(joined===1?'':'s'))
+    : '<span style="color:var(--text3);font-style:italic;font-weight:400">No Members joined yet</span>';
   wrap.style.display = '';
   // Store code/link on a container element so onclick handlers read via dataset — no quoting issues
   wrap.innerHTML =
     '<div class="ov-stag" id="ov-stag-card" data-code="' + esc(code) + '" data-link="' + esc(link) + '">'
-    + '<div class="ov-stag-hd">The Partnership gets its weight from its Partners.</div>'
-    + '<div class="ov-stag-sub">Your governance vote is equal to every other Partner\u2019s. Bring the next Partner.</div>'
+    + '<div class="ov-stag-hd">The Joint Venture gets its weight from its Members.</div>'
+    + '<div class="ov-stag-sub">Your governance vote is equal to every other Member\u2019s. Bring the next Member.</div>'
     + '<div class="ov-stag-meta">'
     +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Your invite code</div><div class="ov-stag-meta-val">'+esc(code)+'</div></div>'
-    +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Partners invited</div><div class="ov-stag-meta-val count" id="stag-share-count">'+shares+'</div></div>'
+    +   '<div class="ov-stag-meta-block"><div class="ov-stag-meta-lbl">Members invited</div><div class="ov-stag-meta-val count" id="stag-share-count">'+shares+'</div></div>'
     +   '<div class="ov-stag-meta-block" style="flex:1 1 auto;min-width:140px"><div class="ov-stag-meta-lbl">Joined so far</div><div class="ov-stag-meta-val names">'+joinedLine+'</div></div>'
     + '</div>'
     + '<div class="ov-stag-actions">'
@@ -1827,11 +1827,11 @@ function _ivOpenLink(href){
 }
 
 function ivShare(channel, code, link){
-  var text = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
+  var text = 'I\'ve joined the COG$ Joint Venture — join here with my invite code ' + code + ': ' + link;
   switch(channel){
     case 'whatsapp': _ivOpenLink('https://wa.me/?text='+encodeURIComponent(text)); break;
     case 'sms':      _ivOpenLink('sms:?body='+encodeURIComponent(text)); break;
-    case 'email':    _ivOpenLink('mailto:?subject='+encodeURIComponent('Join me in the COG$ Joint Venture Partnership')+'&body='+encodeURIComponent(text)); break;
+    case 'email':    _ivOpenLink('mailto:?subject='+encodeURIComponent('Join me in the COG$ Joint Venture')+'&body='+encodeURIComponent(text)); break;
     case 'copy':     copyText(link); break;
   }
 }
@@ -1865,7 +1865,7 @@ async function completeCurrentJvpaRecord(){
   }catch(e){
     var msg = e && e.message ? e.message : 'Could not complete the JVPA record.';
     if(/Duplicate entry/i.test(msg)){
-      msg = 'A JVPA partner-entry row already exists for this Partner. The backend must update that row in place instead of inserting a duplicate.';
+      msg = 'A JVPA partner-entry row already exists for this Member. The backend must update that row in place instead of inserting a duplicate.';
     }
     flash('jvpa-fl', msg, 'err');
   }finally{
@@ -1906,7 +1906,7 @@ function renderPolls(d){
   html += '<div class="gov-tier-hd">'+
     '<span class="gov-tier-ico">📋</span>'+
     '<span class="gov-tier-lbl">Poll Initiations</span>'+
-    '<span class="gov-tier-sub">Partner-submitted topics awaiting 10 seconders before the Trustee can consider them as a Proposal</span>'+
+    '<span class="gov-tier-sub">Member-submitted topics awaiting 10 seconders before the Trustee can consider them as a Proposal</span>'+
     '</div>';
   if(activeInitiations.length === 0){
     html += '<div class="placeholder gov-empty">No active initiations. Use "Submit a new initiation" below to start one.</div>';
@@ -1926,10 +1926,10 @@ function renderPolls(d){
     html += openProposals.map(p => renderProposalCard(p)).join('');
   }
 
-  /* ── TIER 3: PARTNERS POLLS ── */
+  /* ── TIER 3: MEMBERS POLLS ── */
   html += '<div class="gov-tier-hd" style="margin-top:22px">'+
     '<span class="gov-tier-ico">✦</span>'+
-    '<span class="gov-tier-lbl">Partners Polls</span>'+
+    '<span class="gov-tier-lbl">Members Polls</span>'+
     '<span class="gov-tier-sub">Binding resolutions — Yes or No only · Time-limited · Result binding on the Trustee</span>'+
     '</div>';
   if(openPolls.length === 0){
@@ -2062,7 +2062,7 @@ var _OP_AREA_LABELS = {
   operations_oversight:'Day-to-Day Operations',
   governance_polls:'Research & Acquisitions',
   esg_proxy_voting:'ESG & Proxy Voting',
-  first_nations:'First Nations Partnership',
+  first_nations:'First Nations Joint Venture',
   community_projects:'Community Projects',
   technology_blockchain:'Technology & Blockchain',
   financial_oversight:'Financial Oversight',
@@ -2107,7 +2107,7 @@ function renderOpDrawer(areaKey){
     threads.forEach(function(th){
       var replies=th.replies||[];
       var unread=!th.is_mine&&!th.read_at;
-      var authorLabel=th.is_mine?'You':'A Partner';
+      var authorLabel=th.is_mine?'You':'A Member';
       var authorColour=th.is_mine?'var(--gold)':'var(--text3)';
       h+='<div class="op-thread-item'+(unread?' unread':'')+'">';
       h+='<div class="op-thread-hd" onclick="toggleOpThread('+th.id+')">';
@@ -2124,7 +2124,7 @@ function renderOpDrawer(areaKey){
       /* Replies */
       replies.forEach(function(rep){
         var fromAdmin=rep.direction==='outbound';
-        var repLabel=fromAdmin?'Foundation team':(rep.is_mine?'You':'A Partner');
+        var repLabel=fromAdmin?'Foundation team':(rep.is_mine?'You':'A Member');
         var bubbleCls=fromAdmin?' admin':rep.is_mine?' out':' in';
         var repColour=fromAdmin?'var(--green)':(rep.is_mine?'var(--gold)':'var(--text3)');
         h+='<div class="op-bubble-wrap"><div class="op-bubble-meta" style="color:'+repColour+'">'+ repLabel+' &middot; '+dtShort(rep.created_at)+'</div>';
@@ -2173,9 +2173,9 @@ function renderOpDrawer(areaKey){
   h+='<div class="op-section" style="margin-top:8px">';
   h+='<div class="op-section-hd">Post to this area</div>';
   h+='<div class="op-compose">';
-  h+='<div class="op-compose-disclaimer">&#128100; Your post is visible to all Partners enrolled in this area and is reviewed by the Foundation team.</div>';
+  h+='<div class="op-compose-disclaimer">&#128100; Your post is visible to all Members enrolled in this area and is reviewed by the Foundation team.</div>';
   h+='<input class="form-input" id="op-compose-subj" placeholder="Subject..." style="margin-bottom:8px;border-radius:10px">';
-  h+='<textarea class="form-textarea" id="op-compose-body" placeholder="Share your research, findings, or question with enrolled Partners..." style="min-height:90px;margin-bottom:10px;border-radius:10px"></textarea>';
+  h+='<textarea class="form-textarea" id="op-compose-body" placeholder="Share your research, findings, or question with enrolled Members..." style="min-height:90px;margin-bottom:10px;border-radius:10px"></textarea>';
   h+='<button class="btn btn-gold" style="width:100%;border-radius:10px;justify-content:center" data-area="'+areaKey+'" onclick="submitOpThread(this.dataset.area)">Post to area &nbsp;&#8594;</button>';
   h+='<div class="flash" id="op-compose-fl" style="margin-top:8px"></div></div></div>';
 
@@ -2412,12 +2412,12 @@ function renderInitiationCard(p){
         : '<button class="btn btn-gold btn-sm" onclick="joinPollInitiation('+p.id+')">Join initiation group</button>')
       + '</div>';
   } else {
-    actions = '<div class="poll-voted-row" style="background:var(--amber-bg);border-color:var(--amber-bdr);color:var(--amber)">Threshold met. This Partners Poll is moving into the formal poll register.</div>';
+    actions = '<div class="poll-voted-row" style="background:var(--amber-bg);border-color:var(--amber-bdr);color:var(--amber)">Threshold met. This Members Poll is moving into the formal poll register.</div>';
   }
   return `<div class="poll-card ${joined?'voted':''}">
     <div class="poll-meta">
       ${chip(p.status_label || 'Initiation in progress', met ? 'green' : 'amber')}
-      <span style="font-size:1rem;color:var(--text3)">${fmt(p.initiator_count||0)} of ${fmt(p.initiation_threshold||0)} initiating Partners recorded</span>
+      <span style="font-size:1rem;color:var(--text3)">${fmt(p.initiator_count||0)} of ${fmt(p.initiation_threshold||0)} initiating Members recorded</span>
     </div>
     <div class="poll-title">${esc(p.title||'')}</div>
     ${p.summary||p.body ? '<div class="poll-body">'+esc((p.summary||p.body||'').slice(0,280))+(((p.summary||p.body||'').length>280)?'…':'')+'</div>' : ''}
@@ -2468,7 +2468,7 @@ async function submitProposal(){
   flash('prop-fl','');
   try{
     const response = await api('vault/propose-poll',{method:'POST',body:JSON.stringify({title,body})});
-    flash('prop-fl',response.message || 'Initiation draft recorded. Other Partners can now join the initiation group until the threshold is met.','ok');
+    flash('prop-fl',response.message || 'Initiation draft recorded. Other Members can now join the initiation group until the threshold is met.','ok');
     el('prop-title').value = '';
     el('prop-body').value  = '';
   }catch(e){
@@ -2507,7 +2507,7 @@ async function renderBasket(){
     ];
     el('basket-tokens').innerHTML = tokens.map(t => {
       const count = fmt(c[t.key]||0);
-      const iqT2 = infoQ(`Tier 2 token classes — ASX COG$, RWA COG$, and Landholder COG$ — activate on Expansion Day, when Partners bring the Foundation's own blockchain node live and any applicable regulatory requirements are satisfied. No payment is due now; reservations are intentions only.`);
+      const iqT2 = infoQ(`Tier 2 token classes — ASX COG$, RWA COG$, and Landholder COG$ — activate on Expansion Day, when Members bring the Foundation's own blockchain node live and any applicable regulatory requirements are satisfied. No payment is due now; reservations are intentions only.`);
       const iqT1 = infoQ(`Tier 1 tokens — Personal S-NFT, Kids S-NFT, Business B-NFT, Donation COG$, Pay It Forward, Resident COG$, and Community COG$ — are live and operational now under the current Transitional Operational Infrastructure.`);
       const status = t.tier===2
         ? '<span class="chip chip-amber" style="font-size:1.02rem;padding:2px 6px">Pending Expansion Day</span>' + iqT2
@@ -2547,10 +2547,10 @@ function renderHoldings(d){
 
   const statusChipFor = function(status){
     var iqS   = infoQ(`Your Class S Unit is issued and secured. Permanent, soulbound, carries your equal governance vote and Sub-Trust B income unit.`);
-    var iqPR  = infoQ(`The $4 once-only partnership contribution is required to issue your Class S Unit and activate your governance vote.`);
-    var iqLck = infoQ(`This token class is locked until Expansion Day. That is when Partners activate the Foundation's own blockchain node. No payment is due now — this is a no-obligation reservation you can change at any time.`);
+    var iqPR  = infoQ(`The $4 once-only membership contribution is required to issue your Class S Unit and activate your governance vote.`);
+    var iqLck = infoQ(`This token class is locked until Expansion Day. That is when Members activate the Foundation's own blockchain node. No payment is due now — this is a no-obligation reservation you can change at any time.`);
     var iqCC  = infoQ(`Donation COG$ and Pay It Forward are community and charity pathway tokens — separate from the no-obligation reservation classes. $4 per unit, with $2 going directly to Sub-Trust C.`);
-    var iqNow = infoQ(`Community COG$ is the only class transferable Partner-to-Partner right now, before Expansion Day. Instant transfer using the recipient's hash address.`);
+    var iqNow = infoQ(`Community COG$ is the only class transferable Member-to-Member right now, before Expansion Day. Instant transfer using the recipient's hash address.`);
     if(status === 'secured') return chip('Secured','green') + iqS;
     if(status === 'payment_required') return chip('$4 payment required','red') + iqPR;
     if(status === 'locked_until_expansion_day') return chip('Locked until Expansion Day','amber') + iqLck;
@@ -2584,13 +2584,13 @@ function renderHoldings(d){
       {title:'Family pathway', copy:'Add Kids S-NFT here. Personal S-NFT remains fixed and secured once payment is complete.', tone:'green', foot:'Legacy family flow'},
       {title:'Reservations pathway', copy:'ASX, RWA, and Landholder stay here as no-obligation intentions only. They do not transfer before Expansion Day.', tone:'amber', foot:'Reservation-only'},
       {title:'Community & Charity', copy:'Donation and Pay It Forward live here as separate community actions, not as reservation edits.', tone:'dim', foot:'Separate contribution flow'},
-      {title:'Community exchange', copy:'Only Community COG$ can move Partner-to-Partner before Expansion Day.', tone:'blue', foot:'Live exchange pathway'},
+      {title:'Community exchange', copy:'Only Community COG$ can move Member-to-Member before Expansion Day.', tone:'blue', foot:'Live exchange pathway'},
     ].map(card => pathwayCardHtml(card)).join('');
   }
 
   const groupOrder = ['Class S Unit & Family','No-Obligation Reservations','Community & Charity','Community COG$ Exchange','Auto / Location-Based'];
   const groupNotes = {
-    'Class S Unit & Family': (controls.class_s_family && controls.class_s_family.note) || 'Fixed Partnership position and the legacy family pathway.',
+    'Class S Unit & Family': (controls.class_s_family && controls.class_s_family.note) || 'Fixed Membership position and the legacy family pathway.',
     'No-Obligation Reservations': (controls.reservations_only && controls.reservations_only.note) || 'Intentions only. Locked until Expansion Day and not transferable.',
     'Community & Charity': (controls.community_charity && controls.community_charity.note) || 'Separate community pathway. Not part of no-obligation reservations.',
     'Community COG$ Exchange': (controls.community_exchange && controls.community_exchange.note) || 'The only live P2P transfer class in the wallet.',
@@ -2615,7 +2615,7 @@ function renderHoldings(d){
       } else if(r.key === 'donation_tokens' || r.key === 'pay_it_forward_tokens') {
         status = count > 0 ? chip('Community & charity order','green') : chip('Optional','dim');
       } else if(r.key === 'community_tokens') {
-        status = chip('Transferable within the partnership','blue');
+        status = chip('Transferable within the membership','blue');
       } else if(r.key === 'lr_tokens') {
         status = chip('Auto-allocated','green');
       }
@@ -2707,7 +2707,7 @@ function renderHoldings(d){
       ? '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--red-bg);border:1px solid var(--red-bdr);border-radius:8px;flex-wrap:wrap">'
       +   '<div style="flex:1;min-width:0">'
       +     '<div style="font-size:1rem;font-weight:600;color:var(--red);margin-bottom:2px">Payment outstanding &mdash; ' + unpaidKidsUnits + ' Kids S-NFT' + (unpaidKidsUnits!==1?'s':'') + '</div>'
-      +     '<div style="font-size:1.02rem;color:var(--text3)">$' + unpaidKidsTotal.toFixed(2) + ' due &middot; pay via PayID <span style="font-family:var(--mono);color:var(--text2)">0494 578 706</span> using your Partner number as reference</div>'
+      +     '<div style="font-size:1.02rem;color:var(--text3)">$' + unpaidKidsTotal.toFixed(2) + ' due &middot; pay via PayID <span style="font-family:var(--mono);color:var(--text2)">0494 578 706</span> using your Member number as reference</div>'
       +   '</div>'
       +   '<button class="btn btn-sm" style="background:var(--red);color:#fff;border:none;flex-shrink:0" onclick="payGiftPoolByCard(window._giftPoolCardItems||[])">Pay now &rarr;</button>'
       + '</div>'
@@ -2760,15 +2760,15 @@ function renderHoldings(d){
   if (el('charity-pathway-summary')) {
     el('charity-pathway-summary').innerHTML = [
       {title:'Donation COG$', stat: fmt(qty('donation_tokens')) + ' recorded', copy:'Direct community-project pathway.', tone:'dim', foot:'Community support'},
-      {title:'Pay It Forward', stat: fmt(qty('pay_it_forward_tokens')) + ' recorded', copy:'Sponsors another Partner entry.', tone:'dim', foot:'Partner-entry support'}
+      {title:'Pay It Forward', stat: fmt(qty('pay_it_forward_tokens')) + ' recorded', copy:'Sponsors another Member entry.', tone:'dim', foot:'Member-entry support'}
     ].map(item => pathwayCardHtml(item)).join('');
   }
 
   if (el('transfer-available-board')) {
     const available = parseInt(d.community_transfer_balance ?? d.community_tokens ?? 0, 10) || 0;
     el('transfer-available-board').innerHTML = [
-      pathwayCardHtml({title:'Available now', tone:'blue', stat: fmt(available) + ' transferable', copy:'Community COG$ is live and ready for Partner-to-Partner exchange.', foot:'Live exchange', tipText:'The number of Community COG$ available for immediate transfer. These move instantly to any Partner\'s hash address. Each transfer is SHA-256 receipted in the operational database.'}),
-      pathwayCardHtml({title:'Transfer rule', tone:'dim', stat:'Pre-Expansion Day', copy:'Only Community COG$ moves here. Reservation classes stay locked and visible below.', foot:'Rule enforced in the backend', tipText:'Before Expansion Day, only Community COG$ can move Partner-to-Partner. ASX, RWA, and Landholder reservations are locked and visible here for reference only. This rule is enforced in the backend — not just displayed.'})
+      pathwayCardHtml({title:'Available now', tone:'blue', stat: fmt(available) + ' transferable', copy:'Community COG$ is live and ready for Member-to-Member exchange.', foot:'Live exchange', tipText:'The number of Community COG$ available for immediate transfer. These move instantly to any Member\'s hash address. Each transfer is SHA-256 receipted in the operational database.'}),
+      pathwayCardHtml({title:'Transfer rule', tone:'dim', stat:'Pre-Expansion Day', copy:'Only Community COG$ moves here. Reservation classes stay locked and visible below.', foot:'Rule enforced in the backend', tipText:'Before Expansion Day, only Community COG$ can move Member-to-Member. ASX, RWA, and Landholder reservations are locked and visible here for reference only. This rule is enforced in the backend — not just displayed.'})
     ].join('');
   }
 
@@ -2935,7 +2935,7 @@ function renderPendingOrders(d){
     summary.innerHTML = order.filter(key => groups[key]).map(key => {
       const g = groups[key];
       return `<div style="padding:10px 12px;background:${bgMap[key]};border:1px solid ${borderMap[key]};border-radius:8px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div style="font-size:1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)">${esc(g.label)}</div><div style="font-family:var(--mono);font-size:1rem;color:var(--text)">${fmtA(g.total)}</div></div><div style="font-size:1.02rem;color:var(--text3);margin-top:6px;line-height:1.45">${esc(g.items.length)} pending pathway action${g.items.length!==1?'s':''}</div></div>`;
-    }).join('') + `<div style="padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div style="font-size:1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)">Outstanding total</div><div style="font-family:var(--mono);font-size:1rem;color:var(--text)">${fmtA(total)}</div></div><div style="font-size:1.02rem;color:var(--text3);margin-top:6px;line-height:1.45">Use your Partner number as the payment reference.</div></div>`;
+    }).join('') + `<div style="padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div style="font-size:1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)">Outstanding total</div><div style="font-family:var(--mono);font-size:1rem;color:var(--text)">${fmtA(total)}</div></div><div style="font-size:1.02rem;color:var(--text3);margin-top:6px;line-height:1.45">Use your Member number as the payment reference.</div></div>`;
   }
 
   body.innerHTML = order.filter(key => groups[key]).map(key => {
@@ -2957,7 +2957,7 @@ function renderPendingOrders(d){
       <div style="padding:12px 14px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
         <div style="display:grid;gap:6px;font-size:1rem;color:var(--text2)">
           <div><strong style="color:var(--text)">PayID:</strong> 0494 578 706</div>
-          <div><strong style="color:var(--text)">Reference:</strong> ${((window._vaultData||{}).member_number) ? esc((window._vaultData||{}).member_number) : 'Your Partner number'}</div>
+          <div><strong style="color:var(--text)">Reference:</strong> ${((window._vaultData||{}).member_number) ? esc((window._vaultData||{}).member_number) : 'Your Member number'}</div>
           <div><strong style="color:var(--text)">Outstanding:</strong> ${fmtA(total)}</div>
         </div>
         <details style="margin-top:8px">
@@ -3165,7 +3165,7 @@ function xfrSaveContactPrompt(){
   var addr = (el('xfr-mn')?.value||'').trim();
   if(!addr){ flash('xfr-fl','Enter a hash address first, then save it to contacts.','err'); return; }
   if(!addr.toUpperCase().startsWith('COGS-')){ flash('xfr-fl','Only valid COGS- hash addresses can be saved as contacts.','err'); return; }
-  var label = window.prompt('Enter a name for this contact (e.g. "Alice — Partner"):','');
+  var label = window.prompt('Enter a name for this contact (e.g. "Alice — Member"):','');
   if(label === null) return; // cancelled
   label = label.trim();
   if(!label){ flash('xfr-fl','Contact name cannot be empty.','err'); return; }
@@ -3191,7 +3191,7 @@ function renderNews(d){
   const items = d.announcements||[];
   if(!el('news-list')) return;
   if(items.length === 0){
-    el('news-list').innerHTML = '<div class="placeholder"><strong>No notices</strong>Partner communications will appear here.</div>';
+    el('news-list').innerHTML = '<div class="placeholder"><strong>No notices</strong>Member communications will appear here.</div>';
     return;
   }
   el('news-list').innerHTML = items.map((a,i) =>
@@ -3319,14 +3319,14 @@ el('f-login')?.addEventListener('submit', async function(e){
     const d = await api('auth/login',{method:'POST',body:JSON.stringify(fd)});
     if(d.otp_required){
       startOtp(d.challenge_token||'', d.delivery_hint||'', d.delivery_channel||'');
-      btn.disabled=false; btn.textContent='Enter Partner Vault';
+      btn.disabled=false; btn.textContent='Enter Member Vault';
       return;
     }
     const v = await api('vault/member');
     openVault(v);
   }catch(err){
     flash('login-fl', err.message||'Login failed.','err');
-    btn.disabled=false; btn.textContent='Enter Partner Vault';
+    btn.disabled=false; btn.textContent='Enter Member Vault';
   }
 });
 
@@ -3361,11 +3361,11 @@ el('f-recover')?.addEventListener('submit', async function(e){
   try{
     const fd = Object.fromEntries(new FormData(e.target));
     const d = await api('auth/recover-number',{method:'POST',body:JSON.stringify(fd)});
-    flash('recover-fl','Your Partner number: '+(d.member_number_display||d.member_number),'ok');
+    flash('recover-fl','Your Member number: '+(d.member_number_display||d.member_number),'ok');
   }catch(err){
     flash('recover-fl',err.message||'Could not find a matching record.','err');
   }finally{
-    btn.disabled=false; btn.textContent='Find my Partner number';
+    btn.disabled=false; btn.textContent='Find my Member number';
   }
 });
 
@@ -3520,7 +3520,7 @@ function coinTransition(href, label){
 
 el('logout-btn')?.addEventListener('click', async function(){
   try{ await api('auth/logout',{method:'POST',body:'{}'}); }catch(e){}
-  coinTransition(ROOT + 'partners/index.html', 'Returning to Partner Area');
+  coinTransition(ROOT + 'partners/index.html', 'Returning to Member Area');
 });
 
 /* ════════════════════════════
@@ -3529,7 +3529,7 @@ el('logout-btn')?.addEventListener('click', async function(){
 function renderProfile(d){
   const rows = [
     {label:'Full name',     value: d.full_name||'—'},
-    {label:'Partner number',value: fmtMN(d.member_number||''), mono:true},
+    {label:'Member number',value: fmtMN(d.member_number||''), mono:true},
     {label:'Email',         value: d.email||'—'},
     {label:'Mobile',        value: d.mobile||'—', mono:true},
     {label:'State',         value: d.state||'—'},
@@ -3563,7 +3563,7 @@ function renderWalletAddresses(d){
   const rows = classes.filter(c => addrs[c.key]).map(c => {
     const addr = esc(addrs[c.key]);
     return `<div style="margin-bottom:16px">
-      <div style="font-size:1rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:4px">${c.label}<button class="iq-btn" data-tip="This is your Community COG$ hash address — your unique wallet identifier on the Partners exchange. Share it with another Partner so they can send you Community COG$. It begins COGS-CC-. Transfers are immediate and SHA-256 receipted." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
+      <div style="font-size:1rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:4px">${c.label}<button class="iq-btn" data-tip="This is your Community COG$ hash address — your unique wallet identifier on the Members exchange. Share it with another Member so they can send you Community COG$. It begins COGS-CC-. Transfers are immediate and SHA-256 receipted." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <div class="hash-pill gold" style="font-family:var(--mono);font-size:1.02rem;color:${c.color};word-break:break-all;flex:1;padding:10px 14px;border-radius:10px">${addr}</div>
         <button class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="copyAddr('${addr}',this)">Copy</button>
@@ -3598,7 +3598,7 @@ function copyMN(mn, el){
       el.style.color = '';
     }, 1800);
   }).catch(function(){
-    prompt('Copy your Partner number:', raw);
+    prompt('Copy your Member number:', raw);
   });
 }
 
@@ -3705,7 +3705,7 @@ function copyText(text, btn){
 
 window.copyText         = copyText;
 function shareInviteLink(code, link){
-  var message = 'I\'ve joined the COG$ Joint Venture Partnership — join here with my invite code ' + code + ': ' + link;
+  var message = 'I\'ve joined the COG$ Joint Venture — join here with my invite code ' + code + ': ' + link;
   if(navigator.share){
     navigator.share({title:'Join me in the COG$ Joint Venture', text:message, url:link}).catch(function(){});
     return;
@@ -3744,7 +3744,7 @@ window.updateOpPathwayBadges = updateOpPathwayBadges;
    BOOT
 ════════════════════════════ */
 (async function(){
-  // Fetch vault data — auth failures redirect to Partners Hub
+  // Fetch vault data — auth failures redirect to Members Hub
   let _vaultData;
   try{
     _vaultData = await api('vault/member');
@@ -3778,9 +3778,9 @@ window.updateOpPathwayBadges = updateOpPathwayBadges;
 
 /* ══ INACTIVITY LOCKOUT — 5 minutes ══
    Resets on any user interaction while vault is open.
-   On timeout: server logout → redirect to Partners Hub with signed_out=inactivity.
+   On timeout: server logout → redirect to Members Hub with signed_out=inactivity.
    On window close (pagehide): sendBeacon fires logout silently.
-   Partners Hub has matching logic added separately. */
+   Members Hub has matching logic added separately. */
 (function(){
   var TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
   var _idleTimer  = null;
@@ -3849,18 +3849,18 @@ window.castVote = castVote;
 
 /* ══ Info popup system ══ */
 var _INFO = {
-  'partner-rights':{title:'What your Partnership gives you',body:'<p>As a CJVM Partner you hold real enforceable rights in the community joint venture. Here is what each entitlement means:</p><ul><li><strong>Class S Unit</strong> — your permanent beneficial interest in Sub-Trust A. Cannot be taken away, sold by the Foundation, or reduced. Yours for life and inheritable.</li><li><strong>Sub-Trust B income unit</strong> — when companies pay dividends, 50% flows through Sub-Trust B and is distributed proportionally to every income unit holder within 60 days. Mandatory under the Declaration.</li><li><strong>One equal governance vote</strong> — one Partner, one vote. No Partner has more votes based on wealth, location, or seniority. This is entrenched and cannot be changed.</li><li><strong>Identity verification</strong> — required to register Kids S-NFTs for children under 18.</li></ul><p>All of these are entrenched in the Declaration — no board decision or majority vote can remove them.</p>'},
-  'snft-token':{title:'Personal S-NFT — your soulbound Partner token',body:'<p>S-NFT stands for <strong>Soulbound Non-Fungible Token</strong>. Soulbound means it is permanently attached to you — it cannot be sold, transferred, or traded.</p><p>Your S-NFT is the on-chain record of your Partnership. It stores your acceptance of the Joint Venture Partnership Agreement, your Partner number, and your governance rights — all embedded in the token metadata at the moment it is minted.</p><p>It is your equal national governance vote. One Partner, one vote — regardless of how many COG$ you hold, where you live, or how long you have been a member.</p><p>The $4 you paid is your once-only contribution to the Foundation management infrastructure. It is entrenched at $4 forever.</p>'},
-  'subtrust-b':{title:'Sub-Trust B — your income unit',body:'<p>Sub-Trust B is a distribution vehicle. It holds no assets — it receives income from Sub-Trust A and passes it to Partners.</p><p>When ASX-listed companies pay dividends, the income flows:</p><ul><li>50% reinvested back into the Partners Asset Pool — the compounding engine</li><li>50% goes to Sub-Trust B and is distributed proportionally to all income unit holders within 60 days</li></ul><p>This distribution is <strong>non-discretionary and mandatory</strong>. The Trustee has no power to withhold or delay it. The formula is set in the Declaration and cannot be changed by any board decision.</p>'},
-  'governance-vote':{title:'Research & Acquisitions',body:'<p>Partners in this area research and identify new acquisition targets for the Partnership. This is the primary intelligence and origination function of the community.</p><p><strong>What Partners in this area do:</strong></p><ul><li>Research ASX-listed companies that align with the Foundation\'s resource governance mandate</li><li>Identify real world assets — land, infrastructure, mineral rights, and other tangible resources</li><li>Surface commodities and emerging resource opportunities for community consideration</li><li>Post findings and analysis to the area feed for peer review</li><li>Initiate Partners Polls to bring strong candidates to a formal community vote</li></ul><p>Any target identified here that reaches 10 supporting Partners becomes eligible for a formal Partners Poll on acquisition.</p>'},
+  'member-rights':{title:'What your Membership gives you',body:'<p>As a CJVM Member you hold real enforceable rights in the community joint venture. Here is what each entitlement means:</p><ul><li><strong>Class S Unit</strong> — your permanent beneficial interest in Sub-Trust A. Cannot be taken away, sold by the Foundation, or reduced. Yours for life and inheritable.</li><li><strong>Sub-Trust B income unit</strong> — when companies pay dividends, 50% flows through Sub-Trust B and is distributed proportionally to every income unit holder within 60 days. Mandatory under the Declaration.</li><li><strong>One equal governance vote</strong> — one Member, one vote. No Member has more votes based on wealth, location, or seniority. This is entrenched and cannot be changed.</li><li><strong>Identity verification</strong> — required to register Kids S-NFTs for children under 18.</li></ul><p>All of these are entrenched in the Declaration — no board decision or majority vote can remove them.</p>'},
+  'snft-token':{title:'Personal S-NFT — your soulbound Member token',body:'<p>S-NFT stands for <strong>Soulbound Non-Fungible Token</strong>. Soulbound means it is permanently attached to you — it cannot be sold, transferred, or traded.</p><p>Your S-NFT is the on-chain record of your Membership. It stores your acceptance of the Joint Venture Agreement, your Member number, and your governance rights — all embedded in the token metadata at the moment it is minted.</p><p>It is your equal national governance vote. One Member, one vote — regardless of how many COG$ you hold, where you live, or how long you have been a member.</p><p>The $4 you paid is your once-only contribution to the Foundation management infrastructure. It is entrenched at $4 forever.</p>'},
+  'subtrust-b':{title:'Sub-Trust B — your income unit',body:'<p>Sub-Trust B is a distribution vehicle. It holds no assets — it receives income from Sub-Trust A and passes it to Members.</p><p>When ASX-listed companies pay dividends, the income flows:</p><ul><li>50% reinvested back into the Members Asset Pool — the compounding engine</li><li>50% goes to Sub-Trust B and is distributed proportionally to all income unit holders within 60 days</li></ul><p>This distribution is <strong>non-discretionary and mandatory</strong>. The Trustee has no power to withhold or delay it. The formula is set in the Declaration and cannot be changed by any board decision.</p>'},
+  'governance-vote':{title:'Research & Acquisitions',body:'<p>Members in this area research and identify new acquisition targets for the Joint Venture. This is the primary intelligence and origination function of the community.</p><p><strong>What Members in this area do:</strong></p><ul><li>Research ASX-listed companies that align with the Foundation\'s resource governance mandate</li><li>Identify real world assets — land, infrastructure, mineral rights, and other tangible resources</li><li>Surface commodities and emerging resource opportunities for community consideration</li><li>Post findings and analysis to the area feed for peer review</li><li>Initiate Members Polls to bring strong candidates to a formal community vote</li></ul><p>Any target identified here that reaches 10 supporting Members becomes eligible for a formal Members Poll on acquisition.</p>'},
   'kyc-identity':{title:'Identity verification',body:'<p>KYC stands for Know Your Customer — verifying that you are who you say you are.</p><p>The Foundation uses Medicare card verification for Phase 1. Your details are encrypted under AES-256 and stored in compliance with the AML/CTF Act 2006.</p><p><strong>Why it matters:</strong></p><ul><li>Required before registering Kids S-NFTs for children under 18</li><li>Strengthens the Foundation compliance position under AML/CTF legislation</li><li>Ensures the governance record is linked to a verified real person</li></ul><p>Your Medicare details are used only for identity verification — never shared, never sold.</p>'},
-  'community-cogs':{title:'Community COG$ — the live exchange class',body:'<p>Community COG$ (Class C) is the only token class that can move Partner-to-Partner right now, before Expansion Day.</p><p>It is designed as a <strong>closed-loop community exchange currency</strong>. No cash-out mechanism exists. This removes speculative incentive and replaces it with velocity — how quickly value moves through the community.</p><p>Every new personal Partner receives a starting allocation of Community COG$ on Governance Foundation Day. You can send it to any other Partner using their 16-digit Partner number. Transfers are immediate and SHA-256 hashed.</p>'},
-  'reservations':{title:'COG$ Reservations — no obligation',body:'<p>ASX COG$, RWA COG$, and Landholder COG$ are <strong>reservation-only</strong> right now:</p><ul><li>No payment required</li><li>No financial commitment created</li><li>Change the numbers freely at any time</li><li>They are intentions only — your expressed interest in these classes</li></ul><p>These are Released after Expansion Day — when the Foundation AFSL and MIS registration are in place and the first Partners Consensus Network Node goes live.</p><p><strong>What they represent:</strong></p><ul><li><strong>ASX COG$</strong> — backed by CHESS-registered shares in ASX resource companies</li><li><strong>RWA COG$</strong> — backed by blockchain-verified in-ground mineral value</li><li><strong>Landholder COG$</strong> — issued to landholders at up to 1,000 COG$ per verified hectare</li></ul>'},
-  'donation-pif':{title:'Donation COG$ and Pay It Forward',body:'<p><strong>Donation COG$ (Class D) — $4 each:</strong></p><ul><li>$2.00 goes directly to Sub-Trust C at purchase</li><li>$2.00 is invested through Sub-Trust A into the Partners Asset Pool</li><li>Sub-Trust C funds First Nations programs, environmental stewardship, and community initiatives on Country</li><li>Sub-Trust C holds a D Class income unit for each Donation COG$ issued — a permanent share of future distributions</li></ul><p><strong>Pay It Forward (Class PIF) — $4 each:</strong></p><ul><li>Sponsors another person $4 entry contribution</li><li>Enables someone who cannot afford the $4 to become a Partner on equal terms</li></ul><p>Your all-time giving total is shown prominently in the Give tab.</p>'},
-  'asset-pool':{title:'The Partners Asset Pool — Sub-Trust A',body:'<p>Sub-Trust A holds every ASX share and Real World Asset the community owns — registered directly on the ASX CHESS Register in the Foundation name as Trustee.</p><p><strong>Key rules — all entrenched:</strong></p><ul><li><strong>No power of sale</strong> — the Partners Asset Pool can never be sold, wound up, or distributed. It only grows.</li><li><strong>Direct CHESS registration</strong> — no fund manager, no ETF, no intermediary. You can independently verify the Foundation shareholdings.</li><li><strong>Permanent</strong> — the only exceptions are compulsory government acquisition and mandatory corporate actions. All proceeds must be reinvested.</li><li><strong>Poor ESG mandate</strong> — the Foundation targets companies with poor ESG records, builds a minimum 5% CHESS position, and uses AGM voting rights to drive change from within.</li></ul>'},
-  'governance-tab':{title:'Governance — how Partners direct the joint venture',body:'<p>This tab is your primary operational control interface. The CJVM Joint Venture Partnership Agreement is explicit: Partners exercise day-to-day control. The Trustee holds the legal keys. You and every other Partner decide what happens inside.</p><p><strong>Partners Polls:</strong> Formal binding votes. Open polls show here with Yes/No voting. Your vote is cryptographically receipted — anonymous tally, verifiable receipt.</p><p><strong>Initiation:</strong> Any 10 Partners (or 1% of active Partners) can start a poll. Others join the initiation group until the threshold is met, then it becomes a formal poll.</p><p><strong>What gets decided here:</strong> ASX acquisitions, AGM proxy voting, ESG engagement strategy, operational rule amendments, Trustee appointment or removal (75% Special Resolution).</p>'},
-  'news-tab':{title:'News and Notices',body:'<p>This is your inbox for Foundation communications. The Foundation is required to publish certain notices to Partners under the Declaration.</p><p><strong>Types of notices:</strong></p><ul><li><strong>Announcements</strong> — Foundation news, milestones, acquisition updates</li><li><strong>Governance</strong> — poll results, resolutions, tally certifications</li><li><strong>Payment</strong> — distribution confirmations, fee updates</li><li><strong>System</strong> — security alerts, vault updates, status changes</li></ul><p>The Foundation will never ask for your password or financial details via inbox message.</p>'},
-  'ksnft-guardian':{title:'Kids S-NFT — for parents, grandparents and guardians',body:'<p>The Kids S-NFT (Class kS) is designed for any Partner who has responsibility for a child under 18 — parents, grandparents, step-parents, legal guardians, and carers alike.</p><p>Each kS-NFT gives the child:</p><ul><li>A permanent, unique Partner number in their own name</li><li>A soulbound kS-NFT token held by you as guardian until they turn 18</li><li>A proportional Sub-Trust B income unit — a share of future dividend distributions equal to every other Partner</li><li>A proxy governance vote exercised by you as guardian until they come of age</li></ul><p>On the child\'s 18th birthday, the kS-NFT automatically converts to a full Class S Personal S-NFT, activating their own independent governance vote and full adult Partnership rights.</p><p><strong>Cost:</strong> $1 per child — a once-only contribution. There is no ongoing fee.</p><p><strong>Who can register:</strong> Any verified Partner. Medicare card verification is required first to confirm your identity as guardian before children can be added.</p><p><strong>Grandparents and extended family:</strong> You do not need to be the legal parent. Any Partner who takes responsibility for a child\'s participation in the Foundation may register that child\'s kS-NFT.</p>'}
+  'community-cogs':{title:'Community COG$ — the live exchange class',body:'<p>Community COG$ (Class C) is the only token class that can move Member-to-Member right now, before Expansion Day.</p><p>It is designed as a <strong>closed-loop community exchange currency</strong>. No cash-out mechanism exists. This removes speculative incentive and replaces it with velocity — how quickly value moves through the community.</p><p>Every new personal Member receives a starting allocation of Community COG$ on Governance Foundation Day. You can send it to any other Member using their 16-digit Member number. Transfers are immediate and SHA-256 hashed.</p>'},
+  'reservations':{title:'COG$ Reservations — no obligation',body:'<p>ASX COG$, RWA COG$, and Landholder COG$ are <strong>reservation-only</strong> right now:</p><ul><li>No payment required</li><li>No financial commitment created</li><li>Change the numbers freely at any time</li><li>They are intentions only — your expressed interest in these classes</li></ul><p>These are Released after Expansion Day — when the Foundation AFSL and MIS registration are in place and the first Members Consensus Network Node goes live.</p><p><strong>What they represent:</strong></p><ul><li><strong>ASX COG$</strong> — backed by CHESS-registered shares in ASX resource companies</li><li><strong>RWA COG$</strong> — backed by blockchain-verified in-ground mineral value</li><li><strong>Landholder COG$</strong> — issued to landholders at up to 1,000 COG$ per verified hectare</li></ul>'},
+  'donation-pif':{title:'Donation COG$ and Pay It Forward',body:'<p><strong>Donation COG$ (Class D) — $4 each:</strong></p><ul><li>$2.00 goes directly to Sub-Trust C at purchase</li><li>$2.00 is invested through Sub-Trust A into the Members Asset Pool</li><li>Sub-Trust C funds First Nations programs, environmental stewardship, and community initiatives on Country</li><li>Sub-Trust C holds a D Class income unit for each Donation COG$ issued — a permanent share of future distributions</li></ul><p><strong>Pay It Forward (Class PIF) — $4 each:</strong></p><ul><li>Sponsors another person $4 entry contribution</li><li>Enables someone who cannot afford the $4 to become a Member on equal terms</li></ul><p>Your all-time giving total is shown prominently in the Give tab.</p>'},
+  'asset-pool':{title:'The Members Asset Pool — Sub-Trust A',body:'<p>Sub-Trust A holds every ASX share and Real World Asset the community owns — registered directly on the ASX CHESS Register in the Foundation name as Trustee.</p><p><strong>Key rules — all entrenched:</strong></p><ul><li><strong>No power of sale</strong> — the Members Asset Pool can never be sold, wound up, or distributed. It only grows.</li><li><strong>Direct CHESS registration</strong> — no fund manager, no ETF, no intermediary. You can independently verify the Foundation shareholdings.</li><li><strong>Permanent</strong> — the only exceptions are compulsory government acquisition and mandatory corporate actions. All proceeds must be reinvested.</li><li><strong>Poor ESG mandate</strong> — the Foundation targets companies with poor ESG records, builds a minimum 5% CHESS position, and uses AGM voting rights to drive change from within.</li></ul>'},
+  'governance-tab':{title:'Governance — how Members direct the joint venture',body:'<p>This tab is your primary operational control interface. The CJVM Joint Venture Agreement is explicit: Members exercise day-to-day control. The Trustee holds the legal keys. You and every other Member decide what happens inside.</p><p><strong>Members Polls:</strong> Formal binding votes. Open polls show here with Yes/No voting. Your vote is cryptographically receipted — anonymous tally, verifiable receipt.</p><p><strong>Initiation:</strong> Any 10 Members (or 1% of active Members) can start a poll. Others join the initiation group until the threshold is met, then it becomes a formal poll.</p><p><strong>What gets decided here:</strong> ASX acquisitions, AGM proxy voting, ESG engagement strategy, operational rule amendments, Trustee appointment or removal (75% Special Resolution).</p>'},
+  'news-tab':{title:'News and Notices',body:'<p>This is your inbox for Foundation communications. The Foundation is required to publish certain notices to Members under the Declaration.</p><p><strong>Types of notices:</strong></p><ul><li><strong>Announcements</strong> — Foundation news, milestones, acquisition updates</li><li><strong>Governance</strong> — poll results, resolutions, tally certifications</li><li><strong>Payment</strong> — distribution confirmations, fee updates</li><li><strong>System</strong> — security alerts, vault updates, status changes</li></ul><p>The Foundation will never ask for your password or financial details via inbox message.</p>'},
+  'ksnft-guardian':{title:'Kids S-NFT — for parents, grandparents and guardians',body:'<p>The Kids S-NFT (Class kS) is designed for any Member who has responsibility for a child under 18 — parents, grandparents, step-parents, legal guardians, and carers alike.</p><p>Each kS-NFT gives the child:</p><ul><li>A permanent, unique Member number in their own name</li><li>A soulbound kS-NFT token held by you as guardian until they turn 18</li><li>A proportional Sub-Trust B income unit — a share of future dividend distributions equal to every other Member</li><li>A proxy governance vote exercised by you as guardian until they come of age</li></ul><p>On the child\'s 18th birthday, the kS-NFT automatically converts to a full Class S Personal S-NFT, activating their own independent governance vote and full adult Membership rights.</p><p><strong>Cost:</strong> $1 per child — a once-only contribution. There is no ongoing fee.</p><p><strong>Who can register:</strong> Any verified Member. Medicare card verification is required first to confirm your identity as guardian before children can be added.</p><p><strong>Grandparents and extended family:</strong> You do not need to be the legal parent. Any Member who takes responsibility for a child\'s participation in the Foundation may register that child\'s kS-NFT.</p>'}
 };
 
 function showInfo(key){
@@ -3901,13 +3901,13 @@ window.addEventListener('load', function(){
     var items=[
       {ico:paid?'◈':'○',col:paid?'gold':'amber',key:'snft-token',
        title:paid?'Personal S-NFT &mdash; <span style="color:var(--green)">Secured</span>':'Personal S-NFT &mdash; <span style="color:var(--amber)">$4 payment required</span>',
-       desc:paid?'Your soulbound Partner token. Permanent, inheritable, one equal national governance vote.':'Reserved. Complete the $4 contribution to issue your Class S Unit and activate your governance vote.'},
+       desc:paid?'Your soulbound Member token. Permanent, inheritable, one equal national governance vote.':'Reserved. Complete the $4 contribution to issue your Class S Unit and activate your governance vote.'},
       {ico:'&#x2144;',col:'green',key:'subtrust-b',
        title:'1 Sub-Trust B income unit &mdash; <span style="color:var(--green)">Active</span>',
        desc:'When portfolio companies pay dividends, 50% flows proportionally to all income unit holders within 60 days. Mandatory, not discretionary.'},
       {ico:'&#x2736;',col:'gold',key:'governance-vote',
        title:'1 equal national governance vote',
-       desc:'Active from Governance Foundation Day (14 May 2026). Equal in weight to every other Partner regardless of wealth, holdings, or location.'},
+       desc:'Active from Governance Foundation Day (14 May 2026). Equal in weight to every other Member regardless of wealth, holdings, or location.'},
       {ico:kyc==='verified'?'&#x2713;':'!',col:kycCols[kyc]||'amber',key:'kyc-identity',
        title:'Identity verification &mdash; <span style="color:var(--'+(kycCols[kyc]||'amber')+')">'+( kycLabels[kyc]||'Not yet verified')+'</span>',
        desc:kyc==='verified'?'Verified. You can register Kids S-NFTs for children under 18.':'Medicare card verification required to register Kids S-NFTs and strengthen AML/CTF compliance.'}
@@ -4017,8 +4017,8 @@ function renderTabOverview(d){
   /* ── A: Status strip pill ── */
   var pill = document.getElementById('ov-status-pill');
   if(pill){
-    var iqSecured = infoQ(`Your Class S Unit is issued and secured. This is your permanent, soulbound Partner token — it cannot be transferred, sold, or taken away. It carries your equal national governance vote and your Sub-Trust B income unit.`);
-    var iqPayReq  = infoQ(`Your Class S Unit is reserved but not yet issued. Complete the $4 once-only partnership contribution to activate your Partnership, issue your token, and unlock your equal governance vote.`);
+    var iqSecured = infoQ(`Your Class S Unit is issued and secured. This is your permanent, soulbound Member token — it cannot be transferred, sold, or taken away. It carries your equal national governance vote and your Sub-Trust B income unit.`);
+    var iqPayReq  = infoQ(`Your Class S Unit is reserved but not yet issued. Complete the $4 once-only membership contribution to activate your Membership, issue your token, and unlock your equal governance vote.`);
     pill.innerHTML = paid
       ? '<span class="chip chip-green"><span class="chip-dot"></span>Class S Unit Secured</span>' + iqSecured
       : '<span class="chip chip-red"><span class="chip-dot"></span>$4 Payment Required</span>' + iqPayReq;
@@ -4033,7 +4033,7 @@ function renderTabOverview(d){
   if(ref && d.member_number) ref.textContent = (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
 
   /* ── B: Business pill + Tour pill ── */
-  var tourPill = '<button class="tour-pill-inline btn btn-ghost btn-sm" onclick="startWalletTour()" style="display:inline-flex;align-items:center;gap:6px">🧭 Partner Vault Tour</button>';
+  var tourPill = '<button class="tour-pill-inline btn btn-ghost btn-sm" onclick="startWalletTour()" style="display:inline-flex;align-items:center;gap:6px">🧭 Member Vault Tour</button>';
   // Always show the tour pill immediately — business pill added once API responds
   var bpill = document.getElementById('ov-business-pill');
   if(bpill){
@@ -4059,7 +4059,7 @@ function renderTabOverview(d){
   /* ── D: Participation pathways ── */
   try{ renderParticipationPathways(d); }catch(e){}
 
-  /* ── C: Open polls only — everything else moved to Partners Hub ── */
+  /* ── C: Open polls only — everything else moved to Members Hub ── */
   var prompts = document.getElementById('ov-action-prompts');
   if(!prompts) return;
   var html = '';
@@ -4078,7 +4078,7 @@ function renderTabOverview(d){
     }).join('');
     html += '<div class="ov-prompt ov-prompt-gold" onclick="tab(\'governance\')">'
       + '<div class="ov-prompt-ico">&#10022;</div>'
-      + '<div class="ov-prompt-body"><div class="ov-prompt-title">'+esc(p.title||'Partners Poll open')+'</div>'
+      + '<div class="ov-prompt-body"><div class="ov-prompt-title">'+esc(p.title||'Members Poll open')+'</div>'
       + '<div class="ov-poll-pills">'+pillHtml+'</div></div></div>';
   });
 
@@ -4500,32 +4500,32 @@ window.openPayModal = function(){
 };
 
 /* ══ Section E — Participation Pathways ══════════════════════════════
-   Renders up to 9 pathway cards on the Overview, one per area the Partner
-   selected in the Partners Hub. Each card is tappable; taps either route
+   Renders up to 9 pathway cards on the Overview, one per area the Member
+   selected in the Members Hub. Each card is tappable; taps either route
    to a tab, open an info popout, or scroll to the invite card.
-   Selection lives on the Hub — the "Manage on Partners Hub →" link takes
-   the Partner there, where the editor is already wired up. */
+   Selection lives on the Hub — the "Manage on Members Hub →" link takes
+   the Member there, where the editor is already wired up. */
 /* Pathway config — label + base status + action.
    Dynamic sub-line (live counts) is computed by pathwaySubLine(key, d). */
 var _PATHWAYS = {
   operations_oversight: {
     label:'Day-to-Day Operations', status:'live',
-    tip:'Monitor Trustee activity, raise issues, and ensure the Partnership runs according to the JVPA. Partners are the operators — not the Trustee.\n\nTap to open: COG$ Management tab — proposals, polls, and operational threads.',
+    tip:'Monitor Trustee activity, raise issues, and ensure the Joint Venture runs according to the JVPA. Members are the operators — not the Trustee.\n\nTap to open: COG$ Management tab — proposals, polls, and operational threads.',
     action:function(){ try{ tab('governance'); }catch(e){} }
   },
   governance_polls: {
     label:'Research & Acquisitions', status:'live',
-    tip:'Research and identify new ASX companies, real world assets, and resources as potential acquisition targets for the Partners Asset Pool.\n\nTap to open: COG$ Management tab — initiate a Partners Poll on any acquisition target.',
+    tip:'Research and identify new ASX companies, real world assets, and resources as potential acquisition targets for the Members Asset Pool.\n\nTap to open: COG$ Management tab — initiate a Members Poll on any acquisition target.',
     action:function(){ try{ tab('governance'); }catch(e){} }
   },
   esg_proxy_voting: {
     label:'ESG & Proxy Voting', status:'soon',
-    tip:'Direct how CHESS-registered shares are voted at portfolio company AGMs. Partners collectively set the ESG engagement strategy via the Aggregate Unitholder Direction mechanism.\n\nTap to open: ESG & Proxy Voting info panel. Activates at Expansion Day.',
+    tip:'Direct how CHESS-registered shares are voted at portfolio company AGMs. Members collectively set the ESG engagement strategy via the Aggregate Unitholder Direction mechanism.\n\nTap to open: ESG & Proxy Voting info panel. Activates at Expansion Day.',
     action:function(){ try{ showInfo('esg-proxy'); }catch(e){} }
   },
   first_nations: {
-    label:'First Nations Partnership', status:'live',
-    tip:'Engage with the FNAC, uphold FPIC obligations, and support Indigenous Cultural and Intellectual Property (ICIP) protections. First Nations custodians are founding governance partners.\n\nTap to open: First Nations Partnership info panel.',
+    label:'First Nations Joint Venture', status:'live',
+    tip:'Engage with the FNAC, uphold FPIC obligations, and support Indigenous Cultural and Intellectual Property (ICIP) protections. First Nations custodians are founding governance members.\n\nTap to open: First Nations Joint Venture info panel.',
     action:function(){ try{ showInfo('first-nations'); }catch(e){} }
   },
   community_projects: {
@@ -4535,12 +4535,12 @@ var _PATHWAYS = {
   },
   technology_blockchain: {
     label:'Technology & Blockchain', status:'soon',
-    tip:'Smart contract governance, system audits, and infrastructure decisions. Partners own and operate the proprietary cryptographic governance system — no third party controls it.\n\nTap to open: Technology & Blockchain info panel.',
+    tip:'Smart contract governance, system audits, and infrastructure decisions. Members own and operate the proprietary cryptographic governance system — no third party controls it.\n\nTap to open: Technology & Blockchain info panel.',
     action:function(){ try{ showInfo('technology-blockchain'); }catch(e){} }
   },
   financial_oversight: {
     label:'Financial Oversight', status:'live',
-    tip:'Monitor trust accounts, distribution accuracy, and dividend strategy. The Trustee must publish quarterly reports and annual audited accounts — Partners hold them to it.\n\nTap to open: Financial Oversight info panel.',
+    tip:'Monitor trust accounts, distribution accuracy, and dividend strategy. The Trustee must publish quarterly reports and annual audited accounts — Members hold them to it.\n\nTap to open: Financial Oversight info panel.',
     action:function(){ try{ showInfo('financial-oversight'); }catch(e){} }
   },
   place_based_decisions: {
@@ -4550,7 +4550,7 @@ var _PATHWAYS = {
   },
   education_outreach: {
     label:'Education & Outreach', status:'live',
-    tip:'Help new Partners understand their role, explain the structure plainly, and grow the collective governance base. Every Partner you bring in strengthens the community\'s voice.\n\nTap to open: your invite card — copy your code or share your invite link.',
+    tip:'Help new Members understand their role, explain the structure plainly, and grow the collective governance base. Every Member you bring in strengthens the community\'s voice.\n\nTap to open: your invite card — copy your code or share your invite link.',
     action:function(){ scrollToInvite(); }
   }
 };
@@ -4559,10 +4559,10 @@ var _PATHWAYS = {
 (function(){
   if(typeof _INFO==='undefined') window._INFO = window._INFO || {};
   var _I = window._INFO || {};
-  if(!_I['esg-proxy']) _I['esg-proxy'] = {title:'ESG & Proxy Voting',body:'<p>How CHESS-registered shares are voted at portfolio company AGMs. Partners set the ESG engagement strategy collectively through the Aggregate Unitholder Direction mechanism under Declaration clause 13A.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>Activates at Expansion Day, once the first ASX holdings settle into CHESS.</em></p>'};
-  if(!_I['first-nations']) _I['first-nations'] = {title:'First Nations Partnership',body:'<p>First Nations custodians are founding governance partners &mdash; not stakeholders consulted after the fact. Partnership engagement covers the First Nations Advisory Council (FNAC), Free Prior and Informed Consent (FPIC) obligations, Indigenous Cultural and Intellectual Property (ICIP) protections, and the automatic zero-cost Landholder COG$ entitlement for Local Aboriginal Land Councils and Prescribed Bodies Corporate (Declaration clause 35(aa)).</p>'};
-  if(!_I['technology-blockchain']) _I['technology-blockchain'] = {title:'Technology & Blockchain',body:'<p>The Partners own, build, and operate the proprietary cryptographic governance system. Initial implementation is a secure online database with SHA-256 hash records; the Approved Ledger Infrastructure migrates to a permissioned Hyperledger Besu blockchain as rollout progresses.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>Audit schedule and infrastructure decisions are made by Partners Poll.</em></p>'};
-  if(!_I['financial-oversight']) _I['financial-oversight'] = {title:'Financial Oversight',body:'<p>Partners monitor trust accounts, distribution accuracy, and dividend strategy through the quarterly operational activity log and annual audited accounts published by the Trustee. The Godley-style ledger on this platform shows trust income, expenses, and distribution calculations in real time.</p>'};
+  if(!_I['esg-proxy']) _I['esg-proxy'] = {title:'ESG & Proxy Voting',body:'<p>How CHESS-registered shares are voted at portfolio company AGMs. Members set the ESG engagement strategy collectively through the Aggregate Unitholder Direction mechanism under Declaration clause 13A.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>Activates at Expansion Day, once the first ASX holdings settle into CHESS.</em></p>'};
+  if(!_I['first-nations']) _I['first-nations'] = {title:'First Nations Joint Venture',body:'<p>First Nations custodians are founding governance members &mdash; not stakeholders consulted after the fact. Joint Venture engagement covers the First Nations Advisory Council (FNAC), Free Prior and Informed Consent (FPIC) obligations, Indigenous Cultural and Intellectual Property (ICIP) protections, and the automatic zero-cost Landholder COG$ entitlement for Local Aboriginal Land Councils and Prescribed Bodies Corporate (Declaration clause 35(aa)).</p>'};
+  if(!_I['technology-blockchain']) _I['technology-blockchain'] = {title:'Technology & Blockchain',body:'<p>The Members own, build, and operate the proprietary cryptographic governance system. Initial implementation is a secure online database with SHA-256 hash records; the Approved Ledger Infrastructure migrates to a permissioned Hyperledger Besu blockchain as rollout progresses.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>Audit schedule and infrastructure decisions are made by Members Poll.</em></p>'};
+  if(!_I['financial-oversight']) _I['financial-oversight'] = {title:'Financial Oversight',body:'<p>Members monitor trust accounts, distribution accuracy, and dividend strategy through the quarterly operational activity log and annual audited accounts published by the Trustee. The Godley-style ledger on this platform shows trust income, expenses, and distribution calculations in real time.</p>'};
   if(!_I['place-based']) _I['place-based'] = {title:'Place-Based Decisions',body:'<p>Affected Zone declarations and land-impact assessments for specific regions. Residents of a declared Affected Zone receive Resident COG$ (Class Lr) automatically, allocated by the Foundation based on verified GNAF address within the zone boundary.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>First Affected Zone &mdash; Drake Village (AZ-DRAKE-001) &mdash; is seeded as a draft polygon awaiting community endorsement.</em></p>'};
   window._INFO = _I;
 })();
@@ -4624,8 +4624,8 @@ function pathwaySubLine(key, d){
 
     case 'education_outreach':
       return inviteUses > 0
-        ? {text: fmtInt(inviteUses)+' Partner'+(inviteUses===1?'':'s')+' brought in', dotClass:'live'}
-        : {text:'Invite the next Partner', dotClass:null};
+        ? {text: fmtInt(inviteUses)+' Member'+(inviteUses===1?'':'s')+' brought in', dotClass:'live'}
+        : {text:'Invite the next Member', dotClass:null};
   }
   return {text:'', dotClass:null};
 }
@@ -4783,23 +4783,23 @@ window.openKycPanel = function(){
 <div class="participation-gate" id="participation-gate" style="display:none">
   <div class="pg-card">
     <div class="pg-step active" data-pg="1">
-      <h2>You are a Partner&nbsp;&mdash; not a passenger.</h2>
-      <div class="pg-sub">The CJVM Joint Venture Partnership Agreement is explicit: Partners exercise day-to-day control over the joint venture. The Trustee holds the legal keys to the safe. You and every other Partner decide what happens inside it. This is your operational acknowledgement.</div>
-      <button class="pg-ack-btn" onclick="pgConfirm()">I understand my role as a Partner &mdash; continue</button>
+      <h2>You are a Member&nbsp;&mdash; not a passenger.</h2>
+      <div class="pg-sub">The CJVM Joint Venture Agreement is explicit: Members exercise day-to-day control over the joint venture. The Trustee holds the legal keys to the safe. You and every other Member decide what happens inside it. This is your operational acknowledgement.</div>
+      <button class="pg-ack-btn" onclick="pgConfirm()">I understand my role as a Member &mdash; continue</button>
     </div>
     <div class="pg-step" data-pg="2">
       <h2>Where will you take an active role?</h2>
-      <div class="pg-sub">Select at least one area of the joint venture where you will be particularly engaged. This is not a binding commitment &mdash; it helps the partnership understand where its active capacity sits.</div>
+      <div class="pg-sub">Select at least one area of the joint venture where you will be particularly engaged. This is not a binding commitment &mdash; it helps the joint venture understand where its active capacity sits.</div>
       <div class="pg-area-grid" id="pg-area-grid">
-        <button class="pg-area-btn" data-key="operations_oversight" onclick="pgToggleArea(this)"><span class="pg-area-label">Day-to-Day Operations</span><span class="pg-area-desc">Review trust operations and Trustee activity, raise issues through Partners Polls, ensure the partnership runs according to the JVPA.</span></button>
-        <button class="pg-area-btn" data-key="governance_polls" onclick="pgToggleArea(this)"><span class="pg-area-label">Research &amp; Acquisitions</span><span class="pg-area-desc">Research and identify new ASX companies, real world assets, resources, and commodities as potential acquisition targets for the Partnership.</span></button>
+        <button class="pg-area-btn" data-key="operations_oversight" onclick="pgToggleArea(this)"><span class="pg-area-label">Day-to-Day Operations</span><span class="pg-area-desc">Review trust operations and Trustee activity, raise issues through Members Polls, ensure the joint venture runs according to the JVPA.</span></button>
+        <button class="pg-area-btn" data-key="governance_polls" onclick="pgToggleArea(this)"><span class="pg-area-label">Research &amp; Acquisitions</span><span class="pg-area-desc">Research and identify new ASX companies, real world assets, resources, and commodities as potential acquisition targets for the Joint Venture.</span></button>
         <button class="pg-area-btn" data-key="esg_proxy_voting" onclick="pgToggleArea(this)"><span class="pg-area-label">ESG &amp; Proxy Voting</span><span class="pg-area-desc">Direct how CHESS-registered shares are voted at portfolio company AGMs. Set the ESG engagement strategy.</span></button>
-        <button class="pg-area-btn" data-key="first_nations" onclick="pgToggleArea(this)"><span class="pg-area-label">First Nations Partnership</span><span class="pg-area-desc">Engage with the FNAC, support FPIC processes and Cultural Heritage protections.</span></button>
+        <button class="pg-area-btn" data-key="first_nations" onclick="pgToggleArea(this)"><span class="pg-area-label">First Nations Joint Venture</span><span class="pg-area-desc">Engage with the FNAC, support FPIC processes and Cultural Heritage protections.</span></button>
         <button class="pg-area-btn" data-key="community_projects" onclick="pgToggleArea(this)"><span class="pg-area-label">Community Projects</span><span class="pg-area-desc">Direct grants and community benefit priorities under Sub-Trust C.</span></button>
         <button class="pg-area-btn" data-key="technology_blockchain" onclick="pgToggleArea(this)"><span class="pg-area-label">Technology &amp; Blockchain</span><span class="pg-area-desc">Smart contract governance, system audits, infrastructure decisions.</span></button>
         <button class="pg-area-btn" data-key="financial_oversight" onclick="pgToggleArea(this)"><span class="pg-area-label">Financial Oversight</span><span class="pg-area-desc">Monitor trust accounts, distribution accuracy, dividend strategy.</span></button>
         <button class="pg-area-btn" data-key="place_based_decisions" onclick="pgToggleArea(this)"><span class="pg-area-label">Place-Based Decisions</span><span class="pg-area-desc">Affected Zone declarations and land-impact assessments for your region.</span></button>
-        <button class="pg-area-btn" data-key="education_outreach" onclick="pgToggleArea(this)"><span class="pg-area-label">Education &amp; Outreach</span><span class="pg-area-desc">Help new Partners understand their role and grow the governance base.</span></button>
+        <button class="pg-area-btn" data-key="education_outreach" onclick="pgToggleArea(this)"><span class="pg-area-label">Education &amp; Outreach</span><span class="pg-area-desc">Help new Members understand their role and grow the governance base.</span></button>
       </div>
       <button class="pg-submit" id="pg-submit" disabled onclick="pgSubmit()">Record my participation areas</button>
       <div class="pg-hint">You can update these later through your vault profile.</div>
@@ -4812,28 +4812,28 @@ window.openKycPanel = function(){
   <div class="tour-card">
     <button class="tour-close" onclick="closeTour()" title="Close tour">&times;</button>
     <div class="tour-step" data-s="1">
-      <h3>Your vault &mdash; your partnership.</h3>
-      <p>This is your Independence Vault &mdash; your operational interface to the CJVM Joint Venture. Your S-NFT Partner token is your key. Everything here belongs to you and your Partners collectively. The Trustee holds the legal safe. You and every other Partner run what is inside it.</p>
+      <h3>Your vault &mdash; your membership.</h3>
+      <p>This is your Independence Vault &mdash; your operational interface to the CJVM Joint Venture. Your S-NFT Member token is your key. Everything here belongs to you and your Members collectively. The Trustee holds the legal safe. You and every other Member run what is inside it.</p>
     </div>
     <div class="tour-step" data-s="2">
-      <h3>Your Partner token.</h3>
-      <p>Your Personal S-NFT COG$ gives you one equal vote on all Partnership-wide decisions. No Partner has more votes than you &mdash; not based on wealth, location, or seniority. Your token is soulbound &mdash; permanently yours, it cannot be sold or transferred.</p>
+      <h3>Your Member token.</h3>
+      <p>Your Personal S-NFT COG$ gives you one equal vote on all Membership-wide decisions. No Member has more votes than you &mdash; not based on wealth, location, or seniority. Your token is soulbound &mdash; permanently yours, it cannot be sold or transferred.</p>
     </div>
     <div class="tour-step" data-s="3">
-      <h3>The Partners Asset Pool.</h3>
-      <p>Sub-Trust A holds CHESS-registered ASX shares directly in the Foundation's name &mdash; no intermediaries, no fund manager. You and your Partners direct how those shares are voted at company AGMs. The pool is permanent and non-disposable.</p>
+      <h3>The Members Asset Pool.</h3>
+      <p>Sub-Trust A holds CHESS-registered ASX shares directly in the Foundation's name &mdash; no intermediaries, no fund manager. You and your Members direct how those shares are voted at company AGMs. The pool is permanent and non-disposable.</p>
     </div>
     <div class="tour-step" data-s="4">
-      <h3>Partners Polls &mdash; how decisions are made.</h3>
-      <p>Any 10 Partners, or 1% of all active Partners (whichever is fewer), may initiate a Partners Poll. Every Partner deliberates and votes. Ordinary decisions need a simple majority. Major decisions &mdash; Trustee appointment, JVPA amendments &mdash; require 75% agreement. The Trustee must implement what Partners vote for.</p>
+      <h3>Members Polls &mdash; how decisions are made.</h3>
+      <p>Any 10 Members, or 1% of all active Members (whichever is fewer), may initiate a Members Poll. Every Member deliberates and votes. Ordinary decisions need a simple majority. Major decisions &mdash; Trustee appointment, JVPA amendments &mdash; require 75% agreement. The Trustee must implement what Members vote for.</p>
     </div>
     <div class="tour-step" data-s="5">
       <h3>Dividends &amp; Sub-Trust B.</h3>
-      <p>50% of all Partners Asset Pool dividends flow to Sub-Trust B and are distributed proportionally to every Partner within 60 days of receipt. Sub-Trust C receives $2 from every Donation COG$ plus a share of its own dividend stream, directed toward community and Country projects.</p>
+      <p>50% of all Members Asset Pool dividends flow to Sub-Trust B and are distributed proportionally to every Member within 60 days of receipt. Sub-Trust C receives $2 from every Donation COG$ plus a share of its own dividend stream, directed toward community and Country projects.</p>
     </div>
     <div class="tour-step" data-s="6">
-      <h3>Invite a Partner.</h3>
-      <p>Your unique COGS-XXXXXX code is in your vault below. Every Partner you bring in strengthens the partnership's collective governance authority. A larger, more active partnership makes every vote more representative and every decision more legitimate.</p>
+      <h3>Invite a Member.</h3>
+      <p>Your unique COGS-XXXXXX code is in your vault below. Every Member you bring in strengthens the partnership's collective governance authority. A larger, more active partnership makes every vote more representative and every decision more legitimate.</p>
     </div>
     <div class="tour-nav">
       <button class="btn btn-ghost btn-sm" onclick="tPrev()" id="tour-prev">&#8592; Back</button>
@@ -4910,7 +4910,7 @@ async function pgSubmit(){
     // Re-render vault sections that depend on vault data
     if(window._vaultData){
       var d = window._vaultData;
-      var first = (d.full_name||'').split(' ')[0] || 'Partner';
+      var first = (d.full_name||'').split(' ')[0] || 'Member';
       var tbName = document.getElementById('tb-name');
       var tbMn = document.getElementById('tb-mn');
       if(tbName) tbName.textContent = first;
