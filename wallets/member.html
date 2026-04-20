@@ -552,40 +552,32 @@ img{max-width:100%;height:auto}
 .ov-path-name{font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.2}
 .ov-path-sub{font-size:.85rem;color:var(--text3);line-height:1.35;margin-left:14px}
 /* Participation area hover popout */
-.ov-path-tip{
-  position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
-  width:230px;padding:11px 13px;border-radius:12px;
-  background:linear-gradient(160deg,rgba(22,22,22,.98),rgba(14,14,14,.98));
+/* ov-path-tip replaced by shared .iq-pop system (click-triggered) */
+@media(max-width:720px){.ov-path-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.ov-path-grid{grid-template-columns:1fr}}
+/* ── Info-Q shared popout system (click-triggered) ─────────────────── */
+.iq-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:15px;height:15px;border-radius:50%;
+  background:rgba(255,255,255,.07);border:1px solid var(--border2);
+  color:var(--text3);font-size:.68rem;font-style:normal;font-weight:700;
+  cursor:pointer;vertical-align:middle;margin-left:4px;flex-shrink:0;
+  transition:background .15s,border-color .15s,color .15s;
+  line-height:1;font-family:var(--sans);
+  user-select:none;-webkit-tap-highlight-color:transparent
+}
+.iq-btn:hover,.iq-btn:focus{background:var(--gold-bg);border-color:var(--gold-bdr);color:var(--gold);outline:none}
+#iq-pop{
+  position:fixed;z-index:9000;
+  max-width:260px;min-width:180px;
+  padding:12px 14px;border-radius:13px;
+  background:linear-gradient(160deg,rgba(24,22,16,.99),rgba(14,12,8,.99));
   border:1px solid var(--gold-bdr);
-  color:var(--text2);font-size:.82rem;line-height:1.58;font-weight:400;
-  box-shadow:0 8px 32px rgba(0,0,0,.7),0 0 0 1px rgba(232,184,75,.06) inset;
-  pointer-events:none;opacity:0;
-  transition:opacity .18s ease,transform .18s ease;
-  transform:translateX(-50%) translateY(4px);
-  z-index:80;white-space:normal;text-align:left
+  color:var(--text2);font-size:.83rem;line-height:1.62;font-weight:400;
+  box-shadow:0 10px 36px rgba(0,0,0,.75),0 0 0 1px rgba(232,184,75,.06) inset;
+  display:none;white-space:normal;text-align:left;word-break:break-word
 }
-.ov-path-tip::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:6px solid transparent;border-top-color:var(--gold-bdr)
-}
-.ov-path:hover .ov-path-tip{opacity:1;transform:translateX(-50%) translateY(0)}
-/* Keep tip on screen for edge cards */
-.ov-path:nth-child(3n) .ov-path-tip{left:auto;right:0;transform:translateX(0) translateY(4px)}
-.ov-path:nth-child(3n) .ov-path-tip::after{left:auto;right:20px;transform:none}
-.ov-path:nth-child(3n):hover .ov-path-tip{transform:translateX(0) translateY(0)}
-.ov-path:nth-child(3n+1) .ov-path-tip{left:0;transform:translateX(0) translateY(4px)}
-.ov-path:nth-child(3n+1) .ov-path-tip::after{left:20px;transform:none}
-.ov-path:nth-child(3n+1):hover .ov-path-tip{transform:translateX(0) translateY(0)}
-@media(max-width:720px){
-  .ov-path-grid{grid-template-columns:repeat(2,1fr)}
-  .ov-path:nth-child(3n) .ov-path-tip,.ov-path:nth-child(3n+1) .ov-path-tip{left:50%;right:auto;transform:translateX(-50%) translateY(4px)}
-  .ov-path:nth-child(3n):hover .ov-path-tip,.ov-path:nth-child(3n+1):hover .ov-path-tip{transform:translateX(-50%) translateY(0)}
-  .ov-path:nth-child(3n) .ov-path-tip::after,.ov-path:nth-child(3n+1) .ov-path-tip::after{left:50%;right:auto;transform:translateX(-50%)}
-  .ov-path:nth-child(2n) .ov-path-tip{left:auto;right:0;transform:translateX(0) translateY(4px)}
-  .ov-path:nth-child(2n) .ov-path-tip::after{left:auto;right:20px;transform:none}
-  .ov-path:nth-child(2n):hover .ov-path-tip{transform:translateX(0) translateY(0)}
-}
-@media(max-width:420px){.ov-path-grid{grid-template-columns:1fr}.ov-path-tip{width:calc(100vw - 48px)}}
+#iq-pop.open{display:block}
 /* ── Section F: Stag Hunt invite ────────────────────────────────────── */
 .ov-stag{margin-top:22px;padding:18px 20px;border-radius:var(--r);background:linear-gradient(180deg,var(--gold-bg) 0%,var(--s1) 100%);border:1px solid var(--gold-bdr);position:relative;overflow:hidden}
 .ov-stag::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 0%,rgba(201,162,39,.12) 0%,transparent 50%);pointer-events:none}
@@ -1069,7 +1061,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="card" style="margin-bottom:4px">
         <div class="card-hd">
           <h3>COG$ Reservations</h3><button class="info-btn" onclick="showInfo('reservations')">How this works</button>
-          <span class="chip chip-amber"><span class="chip-dot"></span>Released after Expansion Day</span>
+          <span class="chip chip-amber"><span class="chip-dot"></span>Released after Expansion Day</span><button class="iq-btn" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this,'ASX COG$, RWA COG$, and Landholder COG$ are Tier 2 classes. They activate on Expansion Day — when the Foundation's blockchain infrastructure goes live and any applicable regulatory requirements under ASIC are satisfied. Your reservations here are no-obligation intentions only.')" tabindex="0">?</button>
         </div>
         <div id="hd-res-rows">
           <!-- populated by renderTabHoldings -->
@@ -1545,9 +1537,15 @@ function flash(id, msg, kind){
 }
 
 function chip(text, type){ return '<span class="chip chip-'+type+'"><span class="chip-dot"></span>'+text+'</span>'; }
+/* infoQ — renders a small ? button that triggers the shared iq-pop popout on click */
+function infoQ(tipText){
+  var safe = String(tipText||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  return '<button class="iq-btn" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this,\''+safe+'\')" tabindex="0">?</button>';
+}
 function pathwayCardHtml(card){
+  var titleHtml = esc(card.title||'Pathway') + (card.tipText ? infoQ(card.tipText) : '');
   return `<div class="pathway-card ${esc(card.tone||'dim')}">
-    <div class="eyebrow">${esc(card.title||'Pathway')}</div>
+    <div class="eyebrow">${titleHtml}</div>
     ${card.status ? `<div class="chip-wrap">${card.status}</div>` : ''}
     ${card.stat ? `<div class="stat">${card.stat}</div>` : ''}
     ${card.copy ? `<div class="copy">${esc(card.copy)}</div>` : ''}
@@ -2489,9 +2487,11 @@ async function renderBasket(){
     ];
     el('basket-tokens').innerHTML = tokens.map(t => {
       const count = fmt(c[t.key]||0);
+      const iqT2 = infoQ('Tier 2 token classes — ASX COG$, RWA COG$, and Landholder COG$ — activate on Expansion Day, when Partners bring the Foundation's own blockchain node live and any applicable regulatory requirements are satisfied. No payment is due now; reservations are intentions only.');
+      const iqT1 = infoQ('Tier 1 tokens — Personal S-NFT, Kids S-NFT, Business B-NFT, Donation COG$, Pay It Forward, Resident COG$, and Community COG$ — are live and operational now under the current Transitional Operational Infrastructure.');
       const status = t.tier===2
-        ? '<span class="chip chip-amber" style="font-size:1.02rem;padding:2px 6px">Pending Expansion Day</span>'
-        : '<span class="chip chip-green" style="font-size:1.02rem;padding:2px 6px">Tier 1 — Active</span>';
+        ? '<span class="chip chip-amber" style="font-size:1.02rem;padding:2px 6px">Pending Expansion Day</span>' + iqT2
+        : '<span class="chip chip-green" style="font-size:1.02rem;padding:2px 6px">Tier 1 — Active</span>' + iqT1;
       return `<tr><td class="primary">${esc(t.label)}</td><td class="mono" style="font-size:1.02rem;color:var(--text3)">${t.code}</td><td class="mono" style="text-align:right">${count}</td><td>${status}</td></tr>`;
     }).join('');
   }catch(e){
@@ -2526,11 +2526,16 @@ function renderHoldings(d){
   };
 
   const statusChipFor = function(status){
-    if(status === 'secured') return chip('Secured','green');
-    if(status === 'payment_required') return chip('$4 payment required','red');
-    if(status === 'locked_until_expansion_day') return chip('Locked until Expansion Day','amber');
-    if(status === 'community_charity_pathway') return chip('Separate community pathway','dim');
-    if(status === 'transferable_now') return chip('Transferable now','blue');
+    var iqS   = infoQ('Your Class S Unit is issued and secured. Permanent, soulbound, carries your equal governance vote and Sub-Trust B income unit.');
+    var iqPR  = infoQ('The $4 once-only partnership contribution is required to issue your Class S Unit and activate your governance vote.');
+    var iqLck = infoQ('This token class is locked until Expansion Day. That is when Partners activate the Foundation\'s own blockchain node. No payment is due now — this is a no-obligation reservation you can change at any time.');
+    var iqCC  = infoQ('Donation COG$ and Pay It Forward are community and charity pathway tokens — separate from the no-obligation reservation classes. $4 per unit, with $2 going directly to Sub-Trust C.');
+    var iqNow = infoQ('Community COG$ is the only class transferable Partner-to-Partner right now, before Expansion Day. Instant transfer using the recipient\'s hash address.');
+    if(status === 'secured') return chip('Secured','green') + iqS;
+    if(status === 'payment_required') return chip('$4 payment required','red') + iqPR;
+    if(status === 'locked_until_expansion_day') return chip('Locked until Expansion Day','amber') + iqLck;
+    if(status === 'community_charity_pathway') return chip('Separate community pathway','dim') + iqCC;
+    if(status === 'transferable_now') return chip('Transferable now','blue') + iqNow;
     return chip('Recorded','dim');
   };
 
@@ -2668,7 +2673,7 @@ function renderHoldings(d){
     +   '<div style="flex:1;min-width:0">'
     +     '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">'
     +       '<span style="font-size:1rem;font-weight:600;color:var(--text)">Identity verification</span>'
-    +       chip(kycInfo.label, kycInfo.chipType)
+    +       chip(kycInfo.label, kycInfo.chipType) + infoQ(kycInfo.detail + ' (JVPA cl.8.1A — identity verification supports the Foundation\'s AML/CTF obligations and is required before Kids S-NFTs can be registered for children under 18.)')
     +     '</div>'
     +     '<div style="font-size:1.02rem;color:var(--text3);line-height:1.5">' + esc(kycInfo.detail) + '</div>'
     +   '</div>'
@@ -2742,8 +2747,8 @@ function renderHoldings(d){
   if (el('transfer-available-board')) {
     const available = parseInt(d.community_transfer_balance ?? d.community_tokens ?? 0, 10) || 0;
     el('transfer-available-board').innerHTML = [
-      pathwayCardHtml({title:'Available now', tone:'blue', stat: fmt(available) + ' transferable', copy:'Community COG$ is live and ready for Partner-to-Partner exchange.', foot:'Live exchange'}),
-      pathwayCardHtml({title:'Transfer rule', tone:'dim', stat:'Pre-Expansion Day', copy:'Only Community COG$ moves here. Reservation classes stay locked and visible below.', foot:'Rule enforced in the backend'})
+      pathwayCardHtml({title:'Available now', tone:'blue', stat: fmt(available) + ' transferable', copy:'Community COG$ is live and ready for Partner-to-Partner exchange.', foot:'Live exchange', tipText:'The number of Community COG$ available for immediate transfer. These move instantly to any Partner\'s hash address. Each transfer is SHA-256 receipted in the operational database.'}),
+      pathwayCardHtml({title:'Transfer rule', tone:'dim', stat:'Pre-Expansion Day', copy:'Only Community COG$ moves here. Reservation classes stay locked and visible below.', foot:'Rule enforced in the backend', tipText:'Before Expansion Day, only Community COG$ can move Partner-to-Partner. ASX, RWA, and Landholder reservations are locked and visible here for reference only. This rule is enforced in the backend — not just displayed.'})
     ].join('');
   }
 
@@ -3537,7 +3542,7 @@ function renderWalletAddresses(d){
   const rows = classes.filter(c => addrs[c.key]).map(c => {
     const addr = esc(addrs[c.key]);
     return `<div style="margin-bottom:16px">
-      <div style="font-size:1rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">${c.label}</div>
+      <div style="font-size:1rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:4px">${c.label}<button class="iq-btn" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this,'This is your Community COG$ hash address — your unique wallet identifier on the Partners exchange. Share it with another Partner so they can send you Community COG$. It begins COGS-CC-. Transfers are immediate and SHA-256 receipted.')" tabindex="0">?</button></div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <div class="hash-pill gold" style="font-family:var(--mono);font-size:1.02rem;color:${c.color};word-break:break-all;flex:1;padding:10px 14px;border-radius:10px">${addr}</div>
         <button class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="copyAddr('${addr}',this)">Copy</button>
@@ -3991,9 +3996,11 @@ function renderTabOverview(d){
   /* ── A: Status strip pill ── */
   var pill = document.getElementById('ov-status-pill');
   if(pill){
+    var iqSecured = infoQ('Your Class S Unit is issued and secured. This is your permanent, soulbound Partner token — it cannot be transferred, sold, or taken away. It carries your equal national governance vote and your Sub-Trust B income unit.');
+    var iqPayReq  = infoQ('Your Class S Unit is reserved but not yet issued. Complete the $4 once-only partnership contribution to activate your Partnership, issue your token, and unlock your equal governance vote.');
     pill.innerHTML = paid
-      ? '<span class="chip chip-green"><span class="chip-dot"></span>Class S Unit Secured</span>'
-      : '<span class="chip chip-red"><span class="chip-dot"></span>$4 Payment Required</span>';
+      ? '<span class="chip chip-green"><span class="chip-dot"></span>Class S Unit Secured</span>' + iqSecured
+      : '<span class="chip chip-red"><span class="chip-dot"></span>$4 Payment Required</span>' + iqPayReq;
   }
 
   /* Hidden KPI stubs — keep in sync so other render paths don't throw */
@@ -4648,12 +4655,13 @@ function renderParticipationPathways(d){
     var msgBtn = active
       ? '<button class="btn btn-ghost" style="font-size:.75rem;padding:2px 7px;margin-left:4px;margin-top:4px" data-area="'+k+'" onclick="event.stopPropagation();openOpDrawer(this.dataset.area)" title="Messages">&#128204;</button>'
       : '';
+    var tipBtn = cfg.tip ? infoQ(cfg.tip) : '';
     return '<div class="ov-path" data-info="'+infoKey+'" onclick="showInfo(this.dataset.info)" title="'+esc(cfg.label)+'">' 
       + badgeHtml
-      + (cfg.tip ? '<div class="ov-path-tip">'+esc(cfg.tip)+'</div>' : '')
       + '<div class="ov-path-top">'
       +   '<span class="ov-path-dot '+dotCls+'"></span>'
       +   '<span class="ov-path-name">'+esc(cfg.label)+'</span>'
+      +   tipBtn
       + '</div>'
       + (active
           ? '<div class="ov-path-sub">Active'+msgBtn+'</div>'
@@ -4963,5 +4971,74 @@ function updateTourPill(){
     <div class="info-panel-body" id="info-panel-body"></div>
   </div>
 </div>
+<!-- Info-Q shared popout DOM + engine -->
+<div id="iq-pop" role="tooltip" aria-live="polite"></div>
+<script>
+(function(){
+  var _pop = document.getElementById('iq-pop');
+  var _open = false;
+  var _lastBtn = null;
+
+  function iqClose(){
+    _pop.classList.remove('open');
+    _open = false;
+    if(_lastBtn){ _lastBtn.setAttribute('aria-expanded','false'); }
+    _lastBtn = null;
+  }
+
+  window.iqToggle = function(btn, text){
+    // Same button clicked again — close
+    if(_open && _lastBtn === btn){ iqClose(); return; }
+    // Close any previous
+    iqClose();
+
+    // Set content
+    _pop.textContent = text;
+
+    // Show before measuring so we get correct dimensions
+    _pop.classList.add('open');
+    _open = true;
+    _lastBtn = btn;
+    btn.setAttribute('aria-expanded','true');
+
+    // Position: try above btn first, fall back to below if no space
+    var bRect = btn.getBoundingClientRect();
+    var popW = _pop.offsetWidth;
+    var popH = _pop.offsetHeight;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var margin = 8;
+
+    // Horizontal: centre on button, clamp to viewport
+    var left = bRect.left + (bRect.width / 2) - (popW / 2);
+    left = Math.max(margin, Math.min(left, vw - popW - margin));
+
+    // Vertical: prefer above
+    var top;
+    if(bRect.top - popH - margin > margin){
+      top = bRect.top - popH - margin;
+    } else {
+      top = bRect.bottom + margin;
+    }
+    top = Math.max(margin, Math.min(top, vh - popH - margin));
+
+    _pop.style.left = left + 'px';
+    _pop.style.top  = top  + 'px';
+  };
+
+  // Close on outside click
+  document.addEventListener('click', function(e){
+    if(!_open) return;
+    if(_pop.contains(e.target)) return;
+    if(e.target.classList.contains('iq-btn')) return;
+    iqClose();
+  }, true);
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e){
+    if(_open && (e.key === 'Escape' || e.keyCode === 27)) iqClose();
+  });
+})();
+</script>
 </body>
 </html>
