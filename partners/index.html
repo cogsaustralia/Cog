@@ -782,27 +782,41 @@
           <div class="member-welcome-row ha" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
             <h1 class="member-welcome-hd" style="margin-bottom:0">Welcome, <span id="member-first-name">Partner</span>.</h1>
             <a href="../wallets/member.html" id="hero-vault-btn" onclick="handleVaultEntry(event);return false;"
-               style="display:none;align-items:center;gap:10px;padding:10px 18px 10px 12px;
-                      background:linear-gradient(135deg,rgba(240,209,138,.18),rgba(200,151,62,.1));
-                      border:2px solid var(--gold-rim2);border-radius:14px;color:var(--gold-1);
-                      font-size:.88rem;font-weight:700;text-decoration:none;
+               style="display:none;align-items:center;gap:14px;padding:14px 24px 14px 16px;
+                      background:linear-gradient(135deg,rgba(240,209,138,.22),rgba(200,151,62,.14));
+                      border:2.5px solid rgba(240,209,138,.65);border-radius:16px;color:var(--gold-1);
+                      font-size:1rem;font-weight:700;text-decoration:none;
                       transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;
-                      box-shadow:0 4px 20px rgba(200,151,62,.2);white-space:nowrap"
-               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(200,151,62,.35)'"
-               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(200,151,62,.2)'">
-              <img src="../assets/cogs_coin_web.png" alt="" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(240,209,138,.4);flex-shrink:0">
-              <span>Open Independence Vault
-                <span style="display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:1px">Enter here &#8594;</span>
+                      box-shadow:0 4px 28px rgba(200,151,62,.32),0 0 0 1px rgba(240,209,138,.12);
+                      white-space:nowrap;position:relative"
+               onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 40px rgba(200,151,62,.5),0 0 0 1px rgba(240,209,138,.2)';this.style.borderColor='rgba(240,209,138,.9)'"
+               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 28px rgba(200,151,62,.32),0 0 0 1px rgba(240,209,138,.12)';this.style.borderColor='rgba(240,209,138,.65)'">
+              <img src="../assets/cogs_coin_web.png" alt="" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(240,209,138,.5);flex-shrink:0;box-shadow:0 0 16px rgba(240,209,138,.25)">
+              <span>
+                <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em">Enter Independence Vault</span>
+                <span style="display:block;font-size:.75rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.02em">Holdings &middot; Governance &middot; Profile &rarr;</span>
               </span>
             </a>
           </div>
           <p class="lead ha" style="max-width:62ch;margin-top:0">Your home base — identity, governance, community growth, and everything that matters.</p>
 
           <!-- Founding Partners stats -->
-          <div class="comm-strip ha" id="comm-strip" style="display:none;margin-top:20px">
-            <div class="comm-pill"><span class="comm-pill-val" id="cs-members">—</span><span class="comm-pill-lbl">Founding Partners</span></div>
-            <div class="comm-pill"><span class="comm-pill-val" id="cs-cogs">—</span><span class="comm-pill-lbl">COG$ Reserved</span></div>
-            <div class="comm-pill"><span class="comm-pill-val is-money" id="cs-value">—</span><span class="comm-pill-lbl">Reservation Value</span></div>
+          <div id="comm-strip" class="ha" style="display:none;margin-top:24px">
+            <div style="font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Founding Partners Registry — Live</div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px">
+              <div style="padding:16px 22px;border-radius:14px;background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,62,.06));border:1.5px solid rgba(240,209,138,.30);min-width:130px">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-1);line-height:1;letter-spacing:-.02em" id="cs-members">—</div>
+                <div style="font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-2);margin-top:6px">Founding Partners</div>
+              </div>
+              <div style="padding:16px 22px;border-radius:14px;background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,62,.06));border:1.5px solid rgba(240,209,138,.30);min-width:130px">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-1);line-height:1;letter-spacing:-.02em" id="cs-cogs">—</div>
+                <div style="font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-2);margin-top:6px">COG$ Reserved</div>
+              </div>
+              <div style="padding:16px 22px;border-radius:14px;background:linear-gradient(135deg,rgba(126,232,162,.08),rgba(82,184,122,.04));border:1.5px solid rgba(82,184,122,.28);min-width:130px">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-value">—</div>
+                <div style="font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(126,232,162,.7);margin-top:6px">Reservation Value</div>
+              </div>
+            </div>
           </div>
 
           <!-- ══ Hub sections — Identity · Governance · Communications · Invite ══ -->
