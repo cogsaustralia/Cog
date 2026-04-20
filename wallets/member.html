@@ -551,8 +551,41 @@ img{max-width:100%;height:auto}
 .op-compose-disclaimer{font-size:.78rem;color:var(--text3);line-height:1.5;margin-bottom:10px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid var(--border)}
 .ov-path-name{font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.2}
 .ov-path-sub{font-size:.85rem;color:var(--text3);line-height:1.35;margin-left:14px}
-@media(max-width:720px){.ov-path-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:420px){.ov-path-grid{grid-template-columns:1fr}}
+/* Participation area hover popout */
+.ov-path-tip{
+  position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
+  width:230px;padding:11px 13px;border-radius:12px;
+  background:linear-gradient(160deg,rgba(22,22,22,.98),rgba(14,14,14,.98));
+  border:1px solid var(--gold-bdr);
+  color:var(--text2);font-size:.82rem;line-height:1.58;font-weight:400;
+  box-shadow:0 8px 32px rgba(0,0,0,.7),0 0 0 1px rgba(232,184,75,.06) inset;
+  pointer-events:none;opacity:0;
+  transition:opacity .18s ease,transform .18s ease;
+  transform:translateX(-50%) translateY(4px);
+  z-index:80;white-space:normal;text-align:left
+}
+.ov-path-tip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--gold-bdr)
+}
+.ov-path:hover .ov-path-tip{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Keep tip on screen for edge cards */
+.ov-path:nth-child(3n) .ov-path-tip{left:auto;right:0;transform:translateX(0) translateY(4px)}
+.ov-path:nth-child(3n) .ov-path-tip::after{left:auto;right:20px;transform:none}
+.ov-path:nth-child(3n):hover .ov-path-tip{transform:translateX(0) translateY(0)}
+.ov-path:nth-child(3n+1) .ov-path-tip{left:0;transform:translateX(0) translateY(4px)}
+.ov-path:nth-child(3n+1) .ov-path-tip::after{left:20px;transform:none}
+.ov-path:nth-child(3n+1):hover .ov-path-tip{transform:translateX(0) translateY(0)}
+@media(max-width:720px){
+  .ov-path-grid{grid-template-columns:repeat(2,1fr)}
+  .ov-path:nth-child(3n) .ov-path-tip,.ov-path:nth-child(3n+1) .ov-path-tip{left:50%;right:auto;transform:translateX(-50%) translateY(4px)}
+  .ov-path:nth-child(3n):hover .ov-path-tip,.ov-path:nth-child(3n+1):hover .ov-path-tip{transform:translateX(-50%) translateY(0)}
+  .ov-path:nth-child(3n) .ov-path-tip::after,.ov-path:nth-child(3n+1) .ov-path-tip::after{left:50%;right:auto;transform:translateX(-50%)}
+  .ov-path:nth-child(2n) .ov-path-tip{left:auto;right:0;transform:translateX(0) translateY(4px)}
+  .ov-path:nth-child(2n) .ov-path-tip::after{left:auto;right:20px;transform:none}
+  .ov-path:nth-child(2n):hover .ov-path-tip{transform:translateX(0) translateY(0)}
+}
+@media(max-width:420px){.ov-path-grid{grid-template-columns:1fr}.ov-path-tip{width:calc(100vw - 48px)}}
 /* ── Section F: Stag Hunt invite ────────────────────────────────────── */
 .ov-stag{margin-top:22px;padding:18px 20px;border-radius:var(--r);background:linear-gradient(180deg,var(--gold-bg) 0%,var(--s1) 100%);border:1px solid var(--gold-bdr);position:relative;overflow:hidden}
 .ov-stag::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 0%,rgba(201,162,39,.12) 0%,transparent 50%);pointer-events:none}
@@ -4449,38 +4482,47 @@ window.openPayModal = function(){
 var _PATHWAYS = {
   operations_oversight: {
     label:'Day-to-Day Operations', status:'live',
+    tip:'Monitor Trustee activity, raise issues, and ensure the Partnership runs according to the JVPA. Partners are the operators — not the Trustee.',
     action:function(){ try{ tab('governance'); }catch(e){} }
   },
   governance_polls: {
     label:'Research & Acquisitions', status:'live',
+    tip:'Research and identify new ASX companies, real world assets, and resources as potential acquisition targets for the Partners Asset Pool.',
     action:function(){ try{ tab('governance'); }catch(e){} }
   },
   esg_proxy_voting: {
     label:'ESG & Proxy Voting', status:'soon',
+    tip:'Direct how CHESS-registered shares are voted at portfolio company AGMs. Partners collectively set the ESG engagement strategy via the Aggregate Unitholder Direction mechanism.',
     action:function(){ try{ showInfo('esg-proxy'); }catch(e){} }
   },
   first_nations: {
     label:'First Nations Partnership', status:'live',
+    tip:'Engage with the FNAC, uphold FPIC obligations, and support Indigenous Cultural and Intellectual Property (ICIP) protections. First Nations custodians are founding governance partners.',
     action:function(){ try{ showInfo('first-nations'); }catch(e){} }
   },
   community_projects: {
     label:'Community Projects', status:'live',
+    tip:'Direct grants and community benefit priorities funded through Sub-Trust C — environmental stewardship, First Nations programs, social welfare, and community flourishing.',
     action:function(){ try{ tab('give'); }catch(e){} }
   },
   technology_blockchain: {
     label:'Technology & Blockchain', status:'soon',
+    tip:'Smart contract governance, system audits, and infrastructure decisions. Partners own and operate the proprietary cryptographic governance system — no third party controls it.',
     action:function(){ try{ showInfo('technology-blockchain'); }catch(e){} }
   },
   financial_oversight: {
     label:'Financial Oversight', status:'live',
+    tip:'Monitor trust accounts, distribution accuracy, and dividend strategy. The Trustee must publish quarterly reports and annual audited accounts — Partners hold them to it.',
     action:function(){ try{ showInfo('financial-oversight'); }catch(e){} }
   },
   place_based_decisions: {
     label:'Place-Based Decisions', status:'live',
+    tip:'Affected Zone declarations and land-impact assessments. If your address falls within a declared Affected Zone, you receive weighted local governance rights on decisions affecting your region.',
     action:function(){ try{ showInfo('place-based'); }catch(e){} }
   },
   education_outreach: {
     label:'Education & Outreach', status:'live',
+    tip:'Help new Partners understand their role, explain the structure plainly, and grow the collective governance base. Every Partner you bring in strengthens the community\'s voice.',
     action:function(){ scrollToInvite(); }
   }
 };
@@ -4608,6 +4650,7 @@ function renderParticipationPathways(d){
       : '';
     return '<div class="ov-path" data-info="'+infoKey+'" onclick="showInfo(this.dataset.info)" title="'+esc(cfg.label)+'">' 
       + badgeHtml
+      + (cfg.tip ? '<div class="ov-path-tip">'+esc(cfg.tip)+'</div>' : '')
       + '<div class="ov-path-top">'
       +   '<span class="ov-path-dot '+dotCls+'"></span>'
       +   '<span class="ov-path-name">'+esc(cfg.label)+'</span>'
