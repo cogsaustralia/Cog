@@ -11,8 +11,8 @@ require_once __DIR__ . '/../_app/api/integrations/mailer.php';
 ops_require_admin();
 $pdo = ops_db();
 $labels = function_exists('ops_label_settings') ? ops_label_settings($pdo) : [];
-$publicPartnerLabel = (string)($labels['public_label_partner'] ?? 'Partner');
-$publicContributionLabel = (string)($labels['public_label_contribution'] ?? 'partnership contribution');
+$publicPartnerLabel = (string)($labels['public_label_partner'] ?? 'Member');
+$publicContributionLabel = (string)($labels['public_label_contribution'] ?? 'membership contribution');
 $internalMemberLabel = (string)($labels['internal_label_member'] ?? 'Member');
 
 if (!function_exists('h')) {
@@ -37,10 +37,10 @@ if (!function_exists('admin_template')) {
 function admin_template(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'bnft_admin_alert' : 'snft_admin_alert'; }
 }
 if (!function_exists('user_subject')) {
-function user_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'Welcome, Partner — your business partnership record is active' : 'Welcome, Partner — your partnership record is active'; }
+function user_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'Welcome, Member — your business membership record is active' : 'Welcome, Member — your membership record is active'; }
 }
 if (!function_exists('admin_subject')) {
-function admin_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'New business Partner recorded — BNFT pathway' : 'New Partner recorded — SNFT pathway'; }
+function admin_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'New business Member recorded — BNFT pathway' : 'New Member recorded — SNFT pathway'; }
 }
 if (!function_exists('payload_for')) {
 function payload_for(array $m): array {
@@ -136,12 +136,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare("UPDATE members SET is_active=0, updated_at=NOW() WHERE id=?")->execute([$memberId]);
             if (function_exists('ops_log_wallet_activity')) ops_log_wallet_activity($pdo, $memberId, null, 'member_deactivated', 'admin', $adminId, null);
             log_partner_support_event($pdo, $memberId, 'partner_deactivated', $adminUserId, ['source'=>'partner_registry']);
-            $flash = 'Partner record deactivated.';
+            $flash = 'Member record deactivated.';
         } elseif ($action === 'activate') {
             $pdo->prepare("UPDATE members SET is_active=1, updated_at=NOW() WHERE id=?")->execute([$memberId]);
             if (function_exists('ops_log_wallet_activity')) ops_log_wallet_activity($pdo, $memberId, null, 'member_activated', 'admin', $adminId, null);
             log_partner_support_event($pdo, $memberId, 'partner_activated', $adminUserId, ['source'=>'partner_registry']);
-            $flash = 'Partner record activated.';
+            $flash = 'Member record activated.';
         } elseif ($action === 'mark_paid') {
             $pdo->prepare("UPDATE members SET signup_payment_status='paid', updated_at=NOW() WHERE id=?")->execute([$memberId]);
             try {
@@ -152,14 +152,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } catch (Throwable $e) {}
             if (function_exists('ops_log_wallet_activity')) ops_log_wallet_activity($pdo, $memberId, null, 'payment_marked_paid', 'admin', $adminId, null);
             log_partner_support_event($pdo, $memberId, 'signup_payment_marked_paid', $adminUserId, ['source'=>'partner_registry']);
-            $flash = 'Entry contribution marked as received for partner #' . $memberId . '.';
+            $flash = 'Entry contribution marked as received for member #' . $memberId . '.';
         } elseif ($action === 'resend_thankyou') {
             if (trim((string)($m['email'] ?? '')) === '') throw new RuntimeException('Member email missing.');
             $qid = send_template($pdo, $m, (string)$m['email'], user_template($m), user_subject($m));
             $pdo->prepare("UPDATE members SET last_access_email_sent_at=NOW(), updated_at=NOW() WHERE id=?")->execute([$memberId]);
             $lastActionSummary = qrow($pdo, $qid);
             log_partner_support_event($pdo, $memberId, 'partner_thankyou_resent', $adminUserId, ['queue_id'=>$qid]);
-            $flash = 'Partner welcome email sent.';
+            $flash = 'Member welcome email sent.';
         } elseif ($action === 'resend_admin_notice') {
             if ($adminRecipient === '') throw new RuntimeException('MAIL_ADMIN_EMAIL is empty.');
             $qid = send_template($pdo, $m, $adminRecipient, admin_template($m), admin_subject($m));
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare("UPDATE members SET last_access_email_sent_at=NOW(), updated_at=NOW() WHERE id=?")->execute([$memberId]);
             $lastActionSummary = qrow($pdo, $qid);
             log_partner_support_event($pdo, $memberId, 'partner_both_notices_resent', $adminUserId, ['queue_id'=>$qid]);
-            $flash = 'Partner welcome email and admin notice sent.';
+            $flash = 'Member welcome email and admin notice sent.';
         } elseif ($action === 'update_address') {
             $street  = trim((string)($_POST['street_address'] ?? ''));
             $suburb  = trim((string)($_POST['suburb'] ?? ''));
@@ -261,7 +261,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Partner Registry</title>
+<title>Member Registry</title>
 <style>
 /* ── Members page specific ── */
 .table-wrap{overflow:auto;max-width:100%}
@@ -304,9 +304,9 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 <main class="main">
   <div class="card">
     <div class="card-body">
-    <h1 style="margin:0 0 8px">Partner Registry <?= ops_admin_help_button('Partner Registry', 'Use this page to understand where a person or entity sits in the registry journey. It shows identity, wallet readiness, JVPA acceptance, reservation mix, and whether the record is ready to move into later operational pages such as Payments, Approvals, and Execution.') ?></h1>
+    <h1 style="margin:0 0 8px">Member Registry <?= ops_admin_help_button('Member Registry', 'Use this page to understand where a person or entity sits in the registry journey. It shows identity, wallet readiness, JVPA acceptance, reservation mix, and whether the record is ready to move into later operational pages such as Payments, Approvals, and Execution.') ?></h1>
     <?php if($showSummary): ?>
-    <p style="color:#9fb0c1;margin:0 0 14px">Overview of the authoritative partner registry across personal and business pathways.</p>
+    <p style="color:#9fb0c1;margin:0 0 14px">Overview of the authoritative member registry across personal and business pathways.</p>
     <?php else: ?>
     <p style="color:#9fb0c1;margin:0 0 14px">Registry progress: <strong>reserved</strong> → <strong>contribution received</strong> → <strong>approved</strong> → <strong>execution-ready</strong>.</p>
     <?php endif; ?>
@@ -322,10 +322,10 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
     <summary>Page guide &amp; workflow</summary>
     <div class="help-section-body">
       <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('Stage 4 · Registry management', 'What this page does', 'The registry pages are the operator view of who is in the system, what evidence exists for them, what their current state is, and what should happen next.', ['Summary view is for orientation and health checks.', 'Personal registry shows Partner records, JVPA state, and readiness signals.', 'Business records are on the Business Registry page; children on the Kids page.']),
+  ops_admin_info_panel('Stage 4 · Registry management', 'What this page does', 'The registry pages are the operator view of who is in the system, what evidence exists for them, what their current state is, and what should happen next.', ['Summary view is for orientation and health checks.', 'Personal registry shows Member records, JVPA state, and readiness signals.', 'Business records are on the Use this page to understand each business member record page; children on the Kids page.']),
 ]) ?>
 <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_workflow_panel('Typical workflow', '', [['title'=>'Locate the record','body'=>'Open summary for a health check, or open the personal registry for a specific Partner.'], ['title'=>'Read the evidence trail','body'=>'Check JVPA, wallet status, contribution, G-NAF, and KYC before acting.'], ['title'=>'Use the correct next page','body'=>'Payments for money, Approvals for sign-off, KYC for identity, Execution after approval.']]),
+  ops_admin_workflow_panel('Typical workflow', '', [['title'=>'Locate the record','body'=>'Open summary for a health check, or open the personal registry for a specific Member.'], ['title'=>'Read the evidence trail','body'=>'Check JVPA, wallet status, contribution, G-NAF, and KYC before acting.'], ['title'=>'Use the correct next page','body'=>'Payments for money, Approvals for sign-off, KYC for identity, Execution after approval.']]),
 ]) ?>
 </div>
   </details>
@@ -335,7 +335,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
   <div class="summary-grid">
     <div class="card summary-card">
       <div class="summary-card-header">
-        <div><div class="summary-card-title">Personal Partners (S-NFT)</div><div class="summary-card-count"><?=$snftTotal?></div></div>
+        <div><div class="summary-card-title">Personal Members (S-NFT)</div><div class="summary-card-count"><?=$snftTotal?></div></div>
         <a href="./members.php?type=personal" class="btn btn-sm">View all →</a>
       </div>
       <div class="mini-stats">
@@ -347,7 +347,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
     </div>
     <div class="card summary-card" style="border-color:rgba(96,212,184,.2)">
       <div class="summary-card-header">
-        <div><div class="summary-card-title" style="color:#60d4b8">Business Partners (B-NFT)</div><div class="summary-card-count"><?=$bnftTotal?></div></div>
+        <div><div class="summary-card-title" style="color:#60d4b8">Business Members (B-NFT)</div><div class="summary-card-count"><?=$bnftTotal?></div></div>
         <a href="./businesses.php" class="btn btn-sm">View all →</a>
       </div>
       <div class="mini-stats">
@@ -360,7 +360,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
   </div>
   <div class="card">
     <div class="card-head"><h2>Recent Personal Members</h2><a href="./members.php?type=personal">View all →</a></div>
-    <div class="card-body table-wrap"><table><thead><tr><th>Name</th><th>Partner / Member # <?= ops_admin_help_button('Partner / Member number', 'This is the primary record reference. Use the Partner number where available for operator-facing support, while the legacy member number remains the underlying technical identifier.') ?></th><th>Payment</th><th>G-NAF</th><th>ID</th><th>Status <?= ops_admin_help_button('Status', 'Status combines wallet and registry readiness signals. Read it with JVPA, contribution, and approval context before taking any action.') ?></th><th>Joined</th></tr></thead><tbody>
+    <div class="card-body table-wrap"><table><thead><tr><th>Name</th><th>Member # <?= ops_admin_help_button('Member number', 'This is the primary record reference. Use the Member number where available for operator-facing support, while the legacy member number remains the underlying technical identifier.') ?></th><th>Payment</th><th>G-NAF</th><th>ID</th><th>Status <?= ops_admin_help_button('Status', 'Status combines wallet and registry readiness signals. Read it with JVPA, contribution, and approval context before taking any action.') ?></th><th>Joined</th></tr></thead><tbody>
     <?php foreach($recentSnft as $s): $sPaid=($s['signup_payment_status']??'')=='paid'; $sGnaf=!empty($s['gnaf_pid']); $sIdV=((int)($s['id_verified']??0)===1)||in_array($s['kyc_status']??'',['verified','address_verified'],true); $sAcc=$recentSnftAcceptance[(int)($s['id']??0)]??null; $sAccLabel=function_exists('ops_acceptance_status_label')?ops_acceptance_status_label($sAcc):'—'; $sAccTone=function_exists('ops_acceptance_status_tone')?ops_acceptance_status_tone($sAcc):'warn'; ?>
       <tr><td><strong><?=h($s['full_name']??'')?></strong><div class="muted small"><?=h($s['email']??'')?></div></td><td class="mono muted"><?=h($s['member_number']??'')?></td><td><?=$sPaid?'<span class="st st-ok">✓ Paid</span>':'<span class="st st-warn">Pending</span>'?></td><td><span class="st <?= $sAccTone==='ok'?'st-ok':($sAccTone==='warn'?'st-warn':'st-bad') ?>"><?=h($sAccLabel)?></span></td><td><?=$sGnaf?'<span class="st st-ok">✓</span>':'<span class="muted">—</span>'?></td><td><?=$sIdV?'<span class="st st-ok">✓</span>':'<span class="muted">—</span>'?></td><td><span class="st st-dim"><?=h($s['wallet_status']??'')?></span></td><td class="muted small"><?=h(substr($s['created_at']??'',0,10))?></td></tr>
     <?php endforeach; if(!$recentSnft):?><tr><td colspan="8" class="empty">No personal members yet.</td></tr><?php endif;?>
@@ -408,16 +408,16 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 
   <div class="card">
     <div class="card-head">
-      <h2><?= $type === 'business' ? 'Business Registry' : 'Personal Registry' ?></h2>
+      <h2><?= $type === 'business' ? 'Use this page to understand each business member record' : 'Personal Registry' ?></h2>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th><?= $type === 'business' ? 'Business' : 'Name' ?></th>
-            <th>Partner / Member #</th>
+            <th>Member #</th>
             <th>Status</th>
-            <th>JVPA <?= ops_admin_help_button('JVPA', 'This column shows whether the partnership acceptance record is complete enough to support the registry record.') ?></th>
+            <th>JVPA <?= ops_admin_help_button('JVPA', 'This column shows whether the membership acceptance record is complete enough to support the registry record.') ?></th>
             <th>Reserved <?= ops_admin_help_button('Reserved units', 'Reserved shows recorded units in the reservation mix. It does not mean approved, issued, or published.') ?></th>
             <th>G-NAF</th>
             <th style="width:28px"></th>

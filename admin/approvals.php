@@ -477,7 +477,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
   <div class="card">
     <div class="card-body">
     <h1 style="margin:0 0 6px">COG$ Approvals <?= ops_admin_help_button('Approvals', 'Use Approvals to review and sign off reservation lines once intake and payment requirements are satisfied. This page does not record money received and it does not publish ledger outcomes. After approval, the next live operator page is Execution.') ?></h1>
-    <p class="muted">This is the authoritative approvals surface for reservation sign-off before execution. Switch between Partner view (one card per partner, COG$ listed inside) and COG$ view (one card per token class, partners listed inside).</p>
+    <p class="muted">This is the authoritative approvals surface for reservation sign-off before execution. Switch between Member view (one card per member, COG$ listed inside) and COG$ view (one card per token class, members listed inside).</p>
     </div>
   </div>
 
@@ -489,18 +489,18 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
     ]),
     ops_admin_workflow_panel('Typical workflow', 'Approvals is the sign-off lane between intake and execution.', [
       ['title' => 'Check intake status', 'body' => 'Confirm payment, JVPA, KYC, and other evidence is in a usable state.'],
-      ['title' => 'Review the line', 'body' => 'Assess the COG$ line in either Partner view or COG$ view.'],
+      ['title' => 'Review the line', 'body' => 'Assess the COG$ line in either Member view or COG$ view.'],
       ['title' => 'Approve, hold, or reject', 'body' => 'Record the decision with notes so later operators know why the line moved or stopped.'],
       ['title' => 'Move to execution', 'body' => 'Approved lines can then be turned into execution requests and batched.'],
     ]),
     ops_admin_guide_panel('How to use the two views', 'Both views act on the same underlying approval records.', [
-      ['title' => 'By Partner', 'body' => 'Best when you want to review one Partner\'s full intake picture and all lines together.'],
-      ['title' => 'By COG$', 'body' => 'Best when you want to review one token class across many Partners in one pass.'],
+      ['title' => 'By Member', 'body' => 'Best when you want to review one Member\'s full intake picture and all lines together.'],
+      ['title' => 'By COG$', 'body' => 'Best when you want to review one token class across many Members in one pass.'],
     ]),
     ops_admin_status_panel('Status guide', 'These indicators tell you whether the line is operationally ready.', [
       ['label' => 'Wallet / Stewardship', 'body' => 'Shows the broader member record state around the approval lane.'],
       ['label' => 'Payment', 'body' => 'Shows whether any paid-now requirement has been satisfied before approval.'],
-      ['label' => 'JVPA', 'body' => 'Shows whether the backend partnership acceptance trail is complete enough to support the approval.'],
+      ['label' => 'JVPA', 'body' => 'Shows whether the backend membership acceptance trail is complete enough to support the approval.'],
       ['label' => 'Approve / Hold / Reject', 'body' => 'Approve moves the line forward, Hold pauses it for more review, Reject closes it out in its current form.'],
     ]),
   ]) ?>
@@ -555,7 +555,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
   $filterQs = $filterQs ? '&' . $filterQs : '';
   ?>
   <div class="view-tabs">
-    <a class="view-tab <?=$view==='member'?'active':''?>" href="?view=member<?=$filterQs?>">By Partner</a>
+    <a class="view-tab <?=$view==='member'?'active':''?>" href="?view=member<?=$filterQs?>">By Member</a>
     <a class="view-tab <?=$view==='token'?'active':''?>"  href="?view=token<?=$filterQs?>">By COG$</a>
   </div>
 
@@ -564,7 +564,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
 
   <div class="section-hd">
     <h2>Pending</h2>
-    <span class="count-badge pending"><?=count(array_filter($memberGroups, fn($m) => !empty($m['pending'])))?> partners</span>
+    <span class="count-badge pending"><?=count(array_filter($memberGroups, fn($m) => !empty($m['pending'])))?> members</span>
   </div>
 
   <?php
@@ -588,13 +588,13 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
       <div class="member-chips">
         <?=sbadge('Wallet: '.$m['wallet_status'])?>
         <?=sbadge('Payment: '.$m['signup_payment_status'])?>
-        <span class="chip" style="border-color:<?= $acceptanceTone==='ok' ? 'rgba(82,184,122,.35)' : ($acceptanceTone==='warn' ? 'rgba(200,144,26,.35)' : 'rgba(196,96,96,.35)') ?>;color:<?= $acceptanceTone==='ok' ? 'var(--ok)' : ($acceptanceTone==='warn' ? 'var(--warn)' : 'var(--bad)') ?>">JVPA <?= ops_admin_help_button('JVPA in approvals', 'Approvals should not outrun the intake evidence trail. This indicator shows whether the backend partnership acceptance record is complete, legacy, or missing.') ?>: <?=h($acceptanceLabel)?></span>
+        <span class="chip" style="border-color:<?= $acceptanceTone==='ok' ? 'rgba(82,184,122,.35)' : ($acceptanceTone==='warn' ? 'rgba(200,144,26,.35)' : 'rgba(196,96,96,.35)') ?>;color:<?= $acceptanceTone==='ok' ? 'var(--ok)' : ($acceptanceTone==='warn' ? 'var(--warn)' : 'var(--bad)') ?>">JVPA <?= ops_admin_help_button('JVPA in approvals', 'Approvals should not outrun the intake evidence trail. This indicator shows whether the backend membership acceptance record is complete, legacy, or missing.') ?>: <?=h($acceptanceLabel)?></span>
       </div>
       <span class="count-badge pending"><?=$pendingCount?> COG$</span>
       <span class="acc-chevron">▼</span>
     </div>
     <div class="acc-body" id="<?=$uid?>">
-      <?php if ($acceptanceTone !== 'ok'): ?><div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.82rem;color:var(--text);background:<?= $acceptanceTone==='bad' ? 'rgba(196,96,96,.10)' : 'rgba(200,144,26,.10)' ?>">This approval lane is ahead of the JVPA acceptance trail. Finish the intake evidence record before treating the Partner as fully compliant.</div><?php endif; ?>
+      <?php if ($acceptanceTone !== 'ok'): ?><div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.82rem;color:var(--text);background:<?= $acceptanceTone==='bad' ? 'rgba(196,96,96,.10)' : 'rgba(200,144,26,.10)' ?>">This approval lane is ahead of the JVPA acceptance trail. Finish the intake evidence record before treating the Member as fully compliant.</div><?php endif; ?>
       <div class="table-wrap">
         <?php cog_rows($m['pending'], true, 'member'); ?>
       </div>
@@ -605,7 +605,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
 
   <div class="section-hd" style="margin-top:28px">
     <h2>Processed</h2>
-    <span class="count-badge"><?=count(array_filter($memberGroups, fn($m) => !empty($m['processed'])))?> partners</span>
+    <span class="count-badge"><?=count(array_filter($memberGroups, fn($m) => !empty($m['processed'])))?> members</span>
   </div>
 
   <?php
@@ -634,7 +634,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
       <span class="acc-chevron">▼</span>
     </div>
     <div class="acc-body" id="<?=$uid?>">
-      <?php if ($acceptanceTone !== 'ok'): ?><div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.82rem;color:var(--text);background:<?= $acceptanceTone==='bad' ? 'rgba(196,96,96,.10)' : 'rgba(200,144,26,.10)' ?>">This approval lane is ahead of the JVPA acceptance trail. Finish the intake evidence record before treating the Partner as fully compliant.</div><?php endif; ?>
+      <?php if ($acceptanceTone !== 'ok'): ?><div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.82rem;color:var(--text);background:<?= $acceptanceTone==='bad' ? 'rgba(196,96,96,.10)' : 'rgba(200,144,26,.10)' ?>">This approval lane is ahead of the JVPA acceptance trail. Finish the intake evidence record before treating the Member as fully compliant.</div><?php endif; ?>
       <div class="table-wrap">
         <?php cog_rows($m['processed'], false, 'member'); ?>
       </div>
@@ -642,7 +642,7 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
   </div>
   <?php endforeach; ?>
   <?php if (!$hasProcessed): ?><p class="empty-row">No processed approvals yet.</p><?php endif; ?>
-  <?= render_pager($memberPagerBase, $memberPage, $totalMemberPages, $totalMemberGroups, 'partner') ?>
+  <?= render_pager($memberPagerBase, $memberPage, $totalMemberPages, $totalMemberGroups, 'member') ?>
 
 <?php else: ?>
 <!-- ═══════════════════════ TOKEN / COG$ VIEW ══════════════════════════════ -->

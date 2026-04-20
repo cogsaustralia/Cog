@@ -290,21 +290,21 @@ function activity_label(string $type): string {
       'Each section below explains what it measures, why it matters, and where the operator should go next.'
     ]),
     ops_admin_workflow_panel('Typical operator workflow', 'The most common admin path moves from intake to decision to publication. Use the control-plane pages in this order unless a diagnostic or exception tells you to investigate elsewhere.', [
-      ['title' => 'Payments', 'body' => 'Record or verify money received, then confirm which partner or business it belongs to.'],
+      ['title' => 'Payments', 'body' => 'Record or verify money received, then confirm which member or business it belongs to.'],
       ['title' => 'Approvals', 'body' => 'Review what is ready for operational sign-off after payment and compliance requirements are met.'],
       ['title' => 'Token Execution', 'body' => 'Create requests, batch them, pass quorum, submit, finalise, and publish the batch lifecycle.'],
       ['title' => 'Governance / Audit', 'body' => 'Check the published result, evidence trail, and any governance or infrastructure dependency that affects the record.']
     ]),
     ops_admin_status_panel('How to read this page', 'These dashboard sections are meant to reduce operator guesswork before you open a deeper admin page.', [
       ['label' => 'Action needed', 'body' => 'Immediate items that require operational attention now.'],
-      ['label' => 'Pipeline cards', 'body' => 'High-level counts that show where partners are in the live intake flow.'],
+      ['label' => 'Pipeline cards', 'body' => 'High-level counts that show where members are in the live intake flow.'],
       ['label' => 'Diagnostics cards', 'body' => 'Bridge, auth, and readiness checks that should inform troubleshooting, not daily processing.']
     ]),
     ops_admin_guide_panel('Admin section guide', 'Each admin section has a distinct job. Use this guide to decide where to go next and what each section is responsible for.', [
-      ['title' => 'Payments', 'body' => 'Record or verify incoming money and confirm the intake side of the partner or business journey.'],
+      ['title' => 'Payments', 'body' => 'Record or verify incoming money and confirm the intake side of the member or business journey.'],
       ['title' => 'Approvals', 'body' => 'Apply operational sign-off after payment and compliance steps have been satisfied.'],
       ['title' => 'Token Execution', 'body' => 'Advance approved items through batching, quorum, submission, finalisation, and publication.'],
-      ['title' => 'Partner Registry', 'body' => 'Review the current state of personal partner records, wallet status, and linked compliance details.'],
+      ['title' => 'Member Registry', 'body' => 'Review the current state of personal member records, wallet status, and linked compliance details.'],
       ['title' => 'Governance & Compliance', 'body' => 'Inspect directions, governance records, auditability, and related supporting evidence.'],
       ['title' => 'Bridge / Diagnostics', 'body' => 'Check transitional bridge state, session mapping, and retirement readiness without using those pages as the primary workflow.']
     ]),
@@ -388,8 +388,8 @@ function activity_label(string $type): string {
       <!-- Compliance intake -->
       <div class="card">
         <div class="card-head">
-          <h2>Compliance intake<?= ops_admin_help_button('Compliance intake', 'This section highlights JVPA and KYC status for recent partner intake so the operator can see which records still need compliance attention.') ?></h2>
-          <a href="./members.php">Partner Registry →</a>
+          <h2>Compliance intake<?= ops_admin_help_button('Compliance intake', 'This section highlights JVPA and KYC status for recent member intake so the operator can see which records still need compliance attention.') ?></h2>
+          <a href="./members.php">Member Registry →</a>
         </div>
         <div class="card-body">
           <div class="compliance-grid" style="margin-bottom:14px">
@@ -405,7 +405,7 @@ function activity_label(string $type): string {
               <?php foreach ($complianceQueue as $cq): ?>
                 <div class="comp-row">
                   <div>
-                    <div class="comp-main"><strong><?= dh($cq['full_name'] ?: 'Partner') ?></strong></div>
+                    <div class="comp-main"><strong><?= dh($cq['full_name'] ?: 'Member') ?></strong></div>
                     <div class="comp-sub"><?= dh($cq['member_number']) ?></div>
                     <div class="comp-tags">
                       <span class="comp-tag <?= stripos((string)$cq['jvpa_status'], 'Recorded') !== false ? 'ok' : 'warn' ?>">JVPA: <?= dh($cq['jvpa_status']) ?></span>
@@ -479,8 +479,8 @@ function activity_label(string $type): string {
             <a class="ql" href="./payments.php"><span class="ql-ico">💳</span><div class="ql-text"><strong>Payments</strong><span>Authoritative intake</span></div></a>
             <a class="ql" href="./approvals.php"><span class="ql-ico">✅</span><div class="ql-text"><strong>Approvals</strong><span>Operational sign-off</span></div></a>
             <a class="ql" href="./execution.php"><span class="ql-ico">⛓️</span><div class="ql-text"><strong>Execution</strong><span>Primary batch workflow</span></div></a>
-            <a class="ql" href="./members.php"><span class="ql-ico">👥</span><div class="ql-text"><strong>Partner Registry</strong><span>View & manage</span></div></a>
-            <a class="ql" href="./businesses.php"><span class="ql-ico">🏢</span><div class="ql-text"><strong>Business Registry</strong><span>B-NFT records</span></div></a>
+            <a class="ql" href="./members.php"><span class="ql-ico">👥</span><div class="ql-text"><strong>Member Registry</strong><span>View & manage</span></div></a>
+            <a class="ql" href="./businesses.php"><span class="ql-ico">🏢</span><div class="ql-text"><strong>Use this page to understand each business member record</strong><span>B-NFT records</span></div></a>
             <a class="ql" href="./governance.php"><span class="ql-ico">🗳️</span><div class="ql-text"><strong>Governance</strong><span>Directions & evidence</span></div></a>
             <a class="ql" href="./messages.php"><span class="ql-ico">📣</span><div class="ql-text"><strong>Communications</strong><span>Notices & votes</span></div></a>
             <a class="ql" href="./zones.php"><span class="ql-ico">📍</span><div class="ql-text"><strong>Zones</strong><span>Eligibility & overlays</span></div></a>

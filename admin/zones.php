@@ -147,7 +147,7 @@ ob_start(); ?>
     ['title' => 'Record FNAC review', 'body' => 'Capture the relevant cultural review outcome and whether endorsement has been granted.'],
     ['title' => 'Open Board signoff', 'body' => 'Once the evidence and FNAC stage are ready, open the formal board signoff request for the zone.'],
     ['title' => 'Create eligibility snapshot', 'body' => 'Freeze the in-scope member set so the zone can later support governance, audit, or dispute resolution.'],
-    ['title' => 'Handle challenges', 'body' => 'Use the challenge workflow when a Partner disputes inclusion, exclusion, or the basis of the zone itself.'],
+    ['title' => 'Handle challenges', 'body' => 'Use the challenge workflow when a Member disputes inclusion, exclusion, or the basis of the zone itself.'],
   ]),
   ops_admin_guide_panel('How to use this page', 'Read the page in three passes: the live queue, the control actions, then the trace tables.', [
     ['title' => 'Zone governance queue', 'body' => 'Quickest live view of current zone state.'],
@@ -160,7 +160,7 @@ ob_start(); ?>
     ['label' => 'FNAC pending / endorsed / rejected', 'body' => 'Whether cultural review has not started, is positive, or has been refused.'],
     ['label' => 'Board pending / executed', 'body' => 'Whether the formal governance signoff is still open or has been completed.'],
     ['label' => 'Evidence packet draft / ready / approved', 'body' => 'Whether the evidentiary basis is still being assembled or is settled.'],
-    ['label' => 'Open challenge', 'body' => 'A Partner or operator has raised a dispute that still requires review.'],
+    ['label' => 'Open challenge', 'body' => 'A Member or operator has raised a dispute that still requires review.'],
   ]),
 ]) ?>
 

@@ -297,12 +297,12 @@ ob_start();
   ),
   ops_admin_workflow_panel(
     'Typical workflow',
-    'Record income promptly so the Partners Pool balance stays accurate.',
+    'Record income promptly so the Members Pool balance stays accurate.',
     [
         ['title' => 'Select the income type', 'body' => 'Choose Interest, RWA Yield, or Other to determine which Godley emission path fires.'],
         ['title' => 'Enter gross amount and any withholding', 'body' => 'Net amount is calculated automatically. Most bank interest will have zero withholding.'],
         ['title' => 'Set the income date', 'body' => 'Use the actual date the income was received or credited, not today\'s date.'],
-        ['title' => 'Check the Accounting page', 'body' => 'After recording, visit Accounting to confirm the Godley matrix reflects the new Partners Pool balance.'],
+        ['title' => 'Check the Accounting page', 'body' => 'After recording, visit Accounting to confirm the Godley matrix reflects the new Members Pool balance.'],
     ]
   ),
   ops_admin_guide_panel(

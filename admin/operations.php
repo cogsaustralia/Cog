@@ -9,14 +9,14 @@ $canManage = ops_admin_can($pdo, 'operations.manage') || ops_admin_can($pdo, 'ad
 // ── Area definitions ────────────────────────────────────────────────────────
 $areas = [
     'operations_oversight'   => ['label' => 'Operations Oversight',     'ico' => '⚙',  'desc' => 'General JV operations monitoring, direction, and oversight.'],
-    'governance_polls'       => ['label' => 'Research & Acquisitions',  'ico' => '🔭', 'desc' => 'Partners research and identify new acquisition targets — ASX companies, real world assets, resources, and commodities.'],
+    'governance_polls'       => ['label' => 'Research & Acquisitions',  'ico' => '🔭', 'desc' => 'Members research and identify new acquisition targets — ASX companies, real world assets, resources, and commodities.'],
     'esg_proxy_voting'       => ['label' => 'ESG & Proxy Voting',       'ico' => '🌱',  'desc' => 'Portfolio company engagement, ESG strategy, and AGM proxy voting.'],
-    'first_nations'          => ['label' => 'First Nations Partnership', 'ico' => '🤝',  'desc' => 'FNAC, FPIC, ICIP, and Cultural Heritage matters.'],
+    'first_nations'          => ['label' => 'First Nations Joint Venture', 'ico' => '🤝',  'desc' => 'FNAC, FPIC, ICIP, and Cultural Heritage matters.'],
     'community_projects'     => ['label' => 'Community Projects',        'ico' => '🏘',  'desc' => 'Sub-Trust C grants and community benefit activity.'],
     'technology_blockchain'  => ['label' => 'Technology & Blockchain',   'ico' => '🔗',  'desc' => 'Infrastructure, System development, and blockchain operations.'],
     'financial_oversight'    => ['label' => 'Financial Oversight',       'ico' => '📊',  'desc' => 'Distribution verification, accounting, and reporting.'],
     'place_based_decisions'  => ['label' => 'Place-Based Decisions',     'ico' => '📍',  'desc' => 'Local Decision Votes and Affected Zone matters.'],
-    'education_outreach'     => ['label' => 'Education & Outreach',      'ico' => '📚',  'desc' => 'Partner education, public communications, and onboarding.'],
+    'education_outreach'     => ['label' => 'Education & Outreach',      'ico' => '📚',  'desc' => 'Member education, public communications, and onboarding.'],
 ];
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -62,12 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     VALUES (?, 'broadcast', ?, ?, 'open', ?, NOW(), NOW())")
                     ->execute([$postArea, $subject, $body, $adminUserId]);
                 $threadId = (int)$pdo->lastInsertId();
-                // Seed broadcast_reads for all enrolled Partners
+                // Seed broadcast_reads for all enrolled Members
                 $enrolled = op_enrolled($pdo, $postArea);
                 $ins = $pdo->prepare("INSERT IGNORE INTO partner_op_broadcast_reads (thread_id, member_id, delivered_at) VALUES (?, ?, NOW())");
                 foreach ($enrolled as $m) { $ins->execute([$threadId, (int)$m['id']]); }
                 $area = $postArea;
-                $flash = 'Broadcast sent to ' . count($enrolled) . ' Partner' . (count($enrolled) !== 1 ? 's' : '') . '.';
+                $flash = 'Broadcast sent to ' . count($enrolled) . ' Member' . (count(\$enrolled) !== 1 ? 's' : '') . '.';
             } elseif ($action === 'reply_thread') {
                 $threadId = (int)($_POST['thread_id'] ?? 0);
                 $replyBody = trim((string)($_POST['reply_body'] ?? ''));
@@ -183,10 +183,10 @@ ob_start();
   <div class="card">
     <div class="card-head">
       <div>
-        <div class="muted small" style="margin-bottom:4px"><a href="./operations.php" class="muted">← Partner Operations</a></div>
+        <div class="muted small" style="margin-bottom:4px"><a href="./operations.php" class="muted">← Member Operations</a></div>
         <h1 style="margin:0"><?= ops_h($aDef['ico']) ?> <?= ops_h($aDef['label']) ?></h1>
       </div>
-      <div class="stat-label"><?= count($areaEnrolled) ?> Partner<?= count($areaEnrolled) !== 1 ? 's' : '' ?> enrolled</div>
+      <div class="stat-label"><?= count($areaEnrolled) ?> Member<?= count(\$areaEnrolled) !== 1 ? 's' : '' ?> enrolled</div>
     </div>
     <div class="card-body" style="padding-top:6px">
       <p class="muted small" style="margin:0"><?= ops_h($aDef['desc']) ?></p>
@@ -257,21 +257,21 @@ ob_start();
 
     <?= ops_admin_collapsible_help('Area guide', [
       ops_admin_info_panel(ops_h($aDef['label']), 'What this area does', ops_h($aDef['desc']), [
-        'Inbound threads are messages sent by Partners enrolled in this area from their Hub.',
-        'Broadcasts are admin-initiated messages sent to all enrolled Partners.',
-        'Enrolled Partners are those who selected this area during their participation setup.',
+        'Inbound threads are messages sent by Members enrolled in this area from their Hub.',
+        'Broadcasts are admin-initiated messages sent to all enrolled Members.',
+        'Enrolled Members are those who selected this area during their participation setup.',
       ]),
     ]) ?>
 
-    <?php /* Enrolled Partners */ ?>
+    <?php /* Enrolled Members */ ?>
     <div class="card">
       <div class="card-head">
-        <h2>Enrolled Partners</h2>
-        <span class="muted small"><?= count($areaEnrolled) ?> Partner<?= count($areaEnrolled) !== 1 ? 's' : '' ?></span>
+        <h2>Enrolled Members</h2>
+        <span class="muted small"><?= count($areaEnrolled) ?> Member<?= count(\$areaEnrolled) !== 1 ? 's' : '' ?></span>
       </div>
       <div class="card-body">
       <?php if (!$areaEnrolled): ?>
-        <p class="empty">No Partners have selected this area yet.</p>
+        <p class="empty">No Members have selected this area yet.</p>
       <?php else: ?>
         <div class="enrolled-grid">
           <?php foreach ($areaEnrolled as $m): ?>
@@ -305,9 +305,9 @@ ob_start();
             <input type="hidden" name="action" value="new_broadcast">
             <input type="hidden" name="area_key" value="<?= ops_h($area) ?>">
             <div class="field"><label>Subject</label><input name="subject" placeholder="Broadcast subject…"></div>
-            <div class="field"><label>Body</label><textarea name="body" rows="5" placeholder="Message to all <?= count($areaEnrolled) ?> enrolled Partners in this area…"></textarea></div>
+            <div class="field"><label>Body</label><textarea name="body" rows="5" placeholder="Message to all <?= count($areaEnrolled) ?> enrolled Members in this area…"></textarea></div>
             <div class="actions">
-              <button class="btn btn-gold" type="submit">Send broadcast to <?= count($areaEnrolled) ?> Partner<?= count($areaEnrolled) !== 1 ? 's' : '' ?></button>
+              <button class="btn btn-gold" type="submit">Send broadcast to <?= count($areaEnrolled) ?> Member<?= count($areaEnrolled) !== 1 ? 's' : '' ?></button>
             </div>
           </form>
         </div>
@@ -347,17 +347,17 @@ ob_start();
 
   <div class="card">
     <div class="card-head">
-      <h1 style="margin:0">🤝 Partner Operations</h1>
+      <h1 style="margin:0">🤝 Member Operations</h1>
     </div>
     <div class="card-body" style="padding-top:6px">
-      <p class="muted small" style="margin:0">Day-to-day management coordination across the 9 Partner participation areas. Select an area to view enrolled Partners, manage threads, and send broadcasts.</p>
+      <p class="muted small" style="margin:0">Day-to-day management coordination across the 9 Member participation areas. Select an area to view enrolled Members, manage threads, and send broadcasts.</p>
     </div>
   </div>
 
   <?= ops_admin_collapsible_help('Page guide', [
-    ops_admin_info_panel('Partner Operations Hub', 'What this page does', 'This section coordinates the Foundation\'s day-to-day management across the 9 participation areas that Partners select in their Hub. Each area has its own thread inbox and broadcast channel.', [
-      'Inbound threads (green) are messages Partners have sent from their Hub into that area.',
-      'Broadcasts (gold) are admin-initiated messages sent to all Partners enrolled in an area.',
+    ops_admin_info_panel('Member Operations Hub', 'What this page does', 'This section coordinates the Foundation\'s day-to-day management across the 9 participation areas that Members select in their Hub. Each area has its own thread inbox and broadcast channel.', [
+      'Inbound threads (green) are messages Members have sent from their Hub into that area.',
+      'Broadcasts (gold) are admin-initiated messages sent to all Members enrolled in an area.',
       'A gold border on an area card means there are unread inbound threads waiting.',
     ]),
     ops_admin_status_panel('Thread statuses', 'Use these to track the lifecycle of each thread.', [
@@ -376,7 +376,7 @@ ob_start();
       <div class="area-name"><?= ops_h($def['label']) ?></div>
       <div class="area-desc"><?= ops_h($def['desc']) ?></div>
       <div class="area-stats">
-        <span class="area-stat"><?= $s['enrolled'] ?> Partner<?= $s['enrolled'] !== 1 ? 's' : '' ?></span>
+        <span class="area-stat"><?= $s['enrolled'] ?> Member<?= \$s['enrolled'] !== 1 ? 's' : '' ?></span>
         <?php if ($s['inbound'] > 0): ?>
           <span class="area-stat alert"><?= $s['inbound'] ?> inbound</span>
         <?php endif; ?>
@@ -391,4 +391,4 @@ ob_start();
 <?php endif; /* end selector vs area */ ?>
 <?php
 $body = ob_get_clean();
-ops_render_page('Partner Operations', 'operations', $body, $flash, $flashType);
+ops_render_page('Member Operations', 'operations', $body, $flash, $flashType);

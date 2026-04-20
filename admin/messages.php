@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/ops_workflow.php';
 ops_require_admin();
 $pdo = ops_db();
 $labels = ops_label_settings($pdo);
-$partnerLabel = $labels['public_label_partner'] ?? 'Partner';
-$contributionLabel = $labels['public_label_contribution'] ?? 'partnership contribution';
+$partnerLabel = $labels['public_label_partner'] ?? 'Member';
+$contributionLabel = $labels['public_label_contribution'] ?? 'membership contribution';
 $internalMemberLabel = $labels['internal_label_member'] ?? 'Member';
 
 if (!function_exists('h')) {
@@ -213,11 +213,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messageKey = (string)($existing['message_key'] ?? $messageKey);
                 $pdo->prepare("UPDATE wallet_messages SET audience=?, title=?, message_key=?, audience_scope=?, subject=?, summary=?, body=?, message_type='notice', priority='normal', status=?, sent_at=?, expires_at=?, updated_by=?, updated_at=NOW() WHERE id=?")
                     ->execute([$legacyAudience, $title, $messageKey, $scope, $title, $summary, $body, $dbStatus, $sentAt, $closeAt, $legacyAdminId, $id]);
-                $flash = 'Partner notice updated.';
+                $flash = 'Member notice updated.';
             } else {
                 $pdo->prepare("INSERT INTO wallet_messages (audience, title, message_key, audience_scope, subject, summary, body, message_type, priority, status, sent_at, expires_at, created_by, updated_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'notice', 'normal', ?, ?, ?, ?, ?, NOW(), NOW())")
                     ->execute([$legacyAudience, $title, $messageKey, $scope, $title, $summary, $body, $dbStatus, $sentAt, $closeAt, $legacyAdminId, $legacyAdminId]);
-                $flash = 'Partner notice created.';
+                $flash = 'Member notice created.';
             }
             $warning = msg_warning_html($terms);
             $section = 'wallet_messages';
@@ -377,7 +377,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($target === 'wallet_messages') {
                 $pdo->prepare("UPDATE wallet_messages SET status='archived', expires_at=?, updated_by=?, updated_at=NOW() WHERE id=?")
                     ->execute([$now, $legacyAdminId, $id]);
-                $flash = 'Partner notice closed early.';
+                $flash = 'Member notice closed early.';
                 $section = 'wallet_messages';
             } elseif ($target === 'announcements') {
                 if ($annHasStatus && $annHasCloses) {
@@ -421,13 +421,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $cards = [
-    'wallet_messages' => ['label' => 'Partner Notices', 'desc' => 'Targeted operational notices for Partners and wallets.', 'ico' => '✉'],
+    'wallet_messages' => ['label' => 'Member Notices', 'desc' => 'Targeted operational notices for Members and wallets.', 'ico' => '✉'],
     'announcements' => ['label' => 'News', 'desc' => 'General community news and updates — no individual read tracking required.', 'ico' => '📰'],
-    'proposals' => ['label' => 'Partner Proposals', 'desc' => 'Consultation and governance proposal threads.', 'ico' => '🗳'],
-    'community_polls' => ['label' => 'Partner Polls', 'desc' => 'Formal Partner poll administration and scheduling.', 'ico' => '⚖'],
+    'proposals' => ['label' => 'Member Proposals', 'desc' => 'Consultation and governance proposal threads.', 'ico' => '🗳'],
+    'community_polls' => ['label' => 'Member Polls', 'desc' => 'Formal Member poll administration and scheduling.', 'ico' => '⚖'],
     'stewardship_responses' => ['label' => 'Stewardship Responses', 'desc' => 'Review stewardship responses for targeted outreach and follow-up.', 'ico' => '◈'],
     'email_templates' => ['label' => 'Email Templates', 'desc' => 'Reusable email templates with language review.', 'ico' => '📋'],
-    'language_audit' => ['label' => 'Language Audit', 'desc' => 'Find stale member / scheme / AFSL language before it reaches Partners.', 'ico' => '🔎'],
+    'language_audit' => ['label' => 'Language Audit', 'desc' => 'Find stale member / scheme / AFSL language before it reaches Members.', 'ico' => '🔎'],
     'email_access' => ['label' => 'Email Access', 'desc' => 'Queue operations and outbound email tools.', 'ico' => '📧'],
 ];
 
@@ -538,30 +538,30 @@ ob_start();
     <h1 style="margin:0;font-size:1.3rem">Communications <?= ops_admin_help_button('Communications', 'The authoritative communications and governance surface for notices, proposals, and polls.') ?></h1>
   </div>
   <div class="card-body" style="padding-top:8px">
-    <p class="muted small" style="margin:0">Manage Partner-facing notices, announcements, templates, proposal threads, and formal poll publishing.</p>
+    <p class="muted small" style="margin:0">Manage Member-facing notices, announcements, templates, proposal threads, and formal poll publishing.</p>
   </div>
 </div>
 <?php if ($flash): ?><div class="alert alert-ok"><?=h($flash)?></div><?php endif; ?>
 <?php if ($error): ?><div class="alert alert-err"><?=h($error)?></div><?php endif; ?>
 <?php if ($warning): ?><div class="alert alert-warn"><?=h($warning)?></div><?php endif; ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('Communications surface', 'What this page does', 'Use this page to manage Partner-facing notices, announcements, templates, proposal threads, and formal poll publishing surfaces. It is the main operator page for drafting, reviewing, and updating communications before they reach Partners.', [
-    'Use Partner Notices for targeted wallet-facing updates.',
+  ops_admin_info_panel('Communications surface', 'What this page does', 'Use this page to manage Member-facing notices, announcements, templates, proposal threads, and formal poll publishing surfaces. It is the main operator page for drafting, reviewing, and updating communications before they reach Members.', [
+    'Use Member Notices for targeted wallet-facing updates.',
     'Use Announcements for broader community-wide notices.',
-    'Use Partner Proposals and Partner Polls for governance-facing publishing.',
+    'Use Member Proposals and Member Polls for governance-facing publishing.',
     'Use Language Audit before publishing if you want to catch stale member, scheme, or AFSL phrasing.',
   ]),
   ops_admin_workflow_panel('Typical workflow', 'Work from message type to publication path so operators do not mix drafting, review, and live publishing.', [
-    ['title' => 'Choose the communication lane', 'body' => 'Select Partner Notices, News, Partner Proposals, Partner Polls, Templates, or Language Audit.'],
+    ['title' => 'Choose the communication lane', 'body' => 'Select Member Notices, News, Member Proposals, Member Polls, Templates, or Language Audit.'],
     ['title' => 'Draft and review the content', 'body' => 'Complete the title, body, timing, and scope fields.'],
     ['title' => 'Open, schedule, or close the item', 'body' => 'Use the status and timing fields to control visibility.'],
     ['title' => 'Check downstream delivery', 'body' => 'Use Email Access for queue-backed outbound email actions.'],
   ]),
   ops_admin_guide_panel('Admin section guide', 'Each communications area has a different audience and operational purpose.', [
-    ['title' => 'Partner Notices', 'body' => 'Short, targeted wallet notices for active Partners.'],
+    ['title' => 'Member Notices', 'body' => 'Short, targeted wallet notices for active Members.'],
     ['title' => 'Announcements', 'body' => 'Broader updates and community notices visible over a date range.'],
-    ['title' => 'Partner Proposals', 'body' => 'Consultation and governance proposal threads.'],
-    ['title' => 'Partner Polls', 'body' => 'Formal Partner poll administration and scheduling.'],
+    ['title' => 'Member Proposals', 'body' => 'Consultation and governance proposal threads.'],
+    ['title' => 'Member Polls', 'body' => 'Formal Member poll administration and scheduling.'],
     ['title' => 'Email Templates and Email Access', 'body' => 'Reusable outbound email content plus the queue-backed delivery tools.'],
     ['title' => 'Language Audit', 'body' => 'Catches stale legal, regulatory, or membership-era phrasing before publication.'],
   ]),
@@ -574,10 +574,10 @@ ob_start();
 </div>
 <?php if ($section === ''): ?>
 <div class="stat-grid" style="margin-bottom:18px">
-  <div class="card"><div class="card-body"><div class="stat-label">Partner notices</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM wallet_messages') ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">Member notices</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM wallet_messages') ?></div></div></div>
   <div class="card"><div class="card-body"><div class="stat-label">News items</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM announcements') ?></div></div></div>
   <div class="card"><div class="card-body"><div class="stat-label">Proposal bridge rows</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM proposal_register') ?></div></div></div>
-  <div class="card"><div class="card-body"><div class="stat-label">Partner Polls</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM community_polls') ?></div></div></div>
+  <div class="card"><div class="card-body"><div class="stat-label">Member Polls</div><div class="stat-value"><?= msg_val($pdo, 'SELECT COUNT(*) FROM community_polls') ?></div></div></div>
 </div>
 <div class="row-grid">
   <?php foreach ($cards as $key => $card): if ($key === 'email_access') continue; ?>
@@ -638,11 +638,11 @@ ob_start();
 </div>
 <?php endif; ?>
 <?php if ($section === 'wallet_messages'): ?>
-<?= ops_admin_collapsible_help('Partner Notices guide', [
-  ops_admin_info_panel('Partner notices', 'What this section does', 'Partner Notices are targeted wallet-facing messages visible inside the live vault experience rather than by email.', ['Audience controls who sees the notice.', 'Open and close timing control visibility.', 'Draft, open, and closed states change how the notice appears in the wallet.']),
-  ops_admin_workflow_panel('Typical workflow', 'Use Partner Notices for operational updates that should appear inside the Partner wallet.', [
+<?= ops_admin_collapsible_help('Member Notices guide', [
+  ops_admin_info_panel('Member notices', 'What this section does', 'Member Notices are targeted wallet-facing messages visible inside the live vault experience rather than by email.', ['Audience controls who sees the notice.', 'Open and close timing control visibility.', 'Draft, open, and closed states change how the notice appears in the wallet.']),
+  ops_admin_workflow_panel('Typical workflow', 'Use Member Notices for operational updates that should appear inside the Member wallet.', [
     ['title' => 'Draft the notice', 'body' => 'Set the audience, title, body, and timing.'],
-    ['title' => 'Review scope and language', 'body' => 'Check that the correct Partner audience is selected and that the text matches current JV language.'],
+    ['title' => 'Review scope and language', 'body' => 'Check that the correct Member audience is selected and that the text matches current JV language.'],
     ['title' => 'Open or schedule', 'body' => 'Use the status and open time to control whether the notice is visible immediately or later.'],
   ]),
 ]) ?>
@@ -654,7 +654,7 @@ ob_start();
 ?>
 <div class="row-grid">
   <div class="card">
-    <div class="card-head"><h2>Partner notices</h2></div>
+    <div class="card-head"><h2>Member notices</h2></div>
     <div class="card-body table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Status</th><th>Read</th><th>Sent / expires</th><th>Terms</th><th></th></tr></thead><tbody>
       <?php if (!$rows): ?><tr><td colspan="7" class="empty">No notices found.</td></tr><?php endif; ?>
       <?php foreach ($rows as $row):
@@ -680,7 +680,7 @@ ob_start();
     </div>
   </div>
   <div class="card">
-    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit partner notice' : 'New partner notice' ?></h2></div>
+    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit member notice' : 'New member notice' ?></h2></div>
     <div class="card-body">
     <?php if ($noticeTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($noticeTerms)) ?></div><?php endif; ?>
     <form method="post">
@@ -728,18 +728,18 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
   <div class="card-body">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div>
-        <div class="eyebrow">Read — <?= count($readRows) ?> Partner<?= count($readRows)!==1?'s':'' ?></div>
-        <?php if (!$readRows): ?><p class="muted small">No Partners have read this notice yet.</p>
-        <?php else: ?><div class="table-wrap"><table><thead><tr><th>Partner</th><th>Email / mobile</th><th>Read at</th></tr></thead><tbody>
+        <div class="eyebrow">Read — <?= count($readRows) ?> Member<?= count($readRows)!==1?'s':'' ?></div>
+        <?php if (!$readRows): ?><p class="muted small">No Members have read this notice yet.</p>
+        <?php else: ?><div class="table-wrap"><table><thead><tr><th>Member</th><th>Email / mobile</th><th>Read at</th></tr></thead><tbody>
           <?php foreach ($readRows as $rr): ?>
           <tr><td><?= h($rr['full_name'] ?? '—') ?></td><td class="small"><?= h($rr['email'] ?? '—') ?><br><?= h($rr['mobile'] ?? '') ?></td><td class="small"><?= h((string)($rr['read_at'] ?? '—')) ?></td></tr>
           <?php endforeach; ?>
         </tbody></table></div><?php endif; ?>
       </div>
       <div>
-        <div class="eyebrow">Not read — <?= count($unreadRows) ?> Partner<?= count($unreadRows)!==1?'s':'' ?></div>
-        <?php if (!$unreadRows): ?><p class="muted small">All eligible Partners have read this notice.</p>
-        <?php else: ?><div class="table-wrap" style="max-height:400px;overflow-y:auto"><table><thead><tr><th>Partner</th><th>Email / mobile</th></tr></thead><tbody>
+        <div class="eyebrow">Not read — <?= count($unreadRows) ?> Member<?= count($unreadRows)!==1?'s':'' ?></div>
+        <?php if (!$unreadRows): ?><p class="muted small">All eligible Members have read this notice.</p>
+        <?php else: ?><div class="table-wrap" style="max-height:400px;overflow-y:auto"><table><thead><tr><th>Member</th><th>Email / mobile</th></tr></thead><tbody>
           <?php foreach ($unreadRows as $ur): ?>
           <tr><td><?= h($ur['full_name'] ?? '—') ?></td><td class="small"><?= h($ur['email'] ?? '—') ?><br><?= h($ur['mobile'] ?? '') ?></td></tr>
           <?php endforeach; ?>
@@ -753,9 +753,9 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 <?php endif; ?>
 <?php if ($section === 'announcements'): ?>
 <?= ops_admin_collapsible_help('News guide', [
-  ops_admin_info_panel('News', 'What this section does', 'News items are general community-wide notices. Unlike Partner Notices, News items do not require a Partner-linked read record — they are broadcast updates visible to all without individual read tracking.', [
+  ops_admin_info_panel('News', 'What this section does', 'News items are general community-wide notices. Unlike Member Notices, News items do not require a Member-linked read record — they are broadcast updates visible to all without individual read tracking.', [
     'Use News for general community updates, announcements, and information.',
-    'Use Partner Notices when you need individual read verification and Partner-linked records.',
+    'Use Member Notices when you need individual read verification and Member-linked records.',
     'Open and close dates define the visibility window.',
   ]),
 ]) ?>
@@ -786,7 +786,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
     <?php if ($annTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($annTerms)) ?></div><?php endif; ?>
     <form method="post">
       <input type="hidden" name="_csrf" value="<?= h(admin_csrf_token()) ?>"><input type="hidden" name="action" value="save_announcement"><input type="hidden" name="id" value="<?= h((string)$r['id']) ?>">
-      <div class="field"><label>Audience</label><select name="audience"><option value="all" <?= (($r['audience'] ?? 'all') === 'all') ? 'selected' : '' ?>>All Partners</option><option value="personal" <?= (($r['audience'] ?? '') === 'personal') ? 'selected' : '' ?>>Personal only</option><option value="business" <?= (($r['audience'] ?? '') === 'business') ? 'selected' : '' ?>>Business only</option></select></div>
+      <div class="field"><label>Audience</label><select name="audience"><option value="all" <?= (($r['audience'] ?? 'all') === 'all') ? 'selected' : '' ?>>All Members</option><option value="personal" <?= (($r['audience'] ?? '') === 'personal') ? 'selected' : '' ?>>Personal only</option><option value="business" <?= (($r['audience'] ?? '') === 'business') ? 'selected' : '' ?>>Business only</option></select></div>
       <div class="field"><label>Title</label><input name="title" value="<?= h((string)($r['title'] ?? '')) ?>"></div>
       <div class="field"><label>Body</label><textarea name="body"><?= h((string)($r['body'] ?? '')) ?></textarea></div>
       <div class="field"><label>Status</label><select name="status"><option value="draft" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'draft' ? 'selected' : '' ?>>Draft</option><option value="open" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'open' ? 'selected' : '' ?>>Open</option><option value="closed" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'closed' ? 'selected' : '' ?>>Closed</option></select></div>
@@ -799,8 +799,8 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 </div>
 <?php endif; ?>
 <?php if ($section === 'proposals'): ?>
-<?= ops_admin_collapsible_help('Partner Proposals guide', [
-  ops_admin_info_panel('Partner Proposals', 'What this section does', 'Partner Proposals are the consultation and discussion side of governance publishing. Use this section for proposal-style content and bridge-linked proposal records.', ['Proposal status affects whether Partners can see or engage with the thread.', 'Audience scope controls which Partner group the thread targets.']),
+<?= ops_admin_collapsible_help('Member Proposals guide', [
+  ops_admin_info_panel('Member Proposals', 'What this section does', 'Member Proposals are the consultation and discussion side of governance publishing. Use this section for proposal-style content and bridge-linked proposal records.', ['Proposal status affects whether Members can see or engage with the thread.', 'Audience scope controls which Member group the thread targets.']),
 ]) ?>
 <?php
     $vpPaged = msg_paginate($pdo, 'vote_proposals', 'SELECT vp.*, pr.status AS bridge_status, pr.id AS bridge_id FROM vote_proposals vp LEFT JOIN proposal_register pr ON pr.proposal_key = vp.proposal_key ORDER BY vp.id DESC', [], $msgPage, $msgPerPage, ops_has_table($pdo, 'vote_proposals'));
@@ -810,7 +810,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 ?>
 <div class="row-grid">
   <div class="card">
-  <div class="card-head"><h2>Partner Proposals</h2></div>
+  <div class="card-head"><h2>Member Proposals</h2></div>
   <div class="card-body">
     <p class="muted small">Legacy <span class="code">vote_proposals</span> remain available for wallet/admin compatibility. Bridge rows are maintained in <span class="code">proposal_register</span> while the control plane remains in parallel mode.</p>
     <div class="table-wrap"><table><thead><tr><th>Title</th><th>Audience</th><th>Legacy</th><th>Bridge</th><th>Opens / closes</th><th></th></tr></thead><tbody>
@@ -843,10 +843,10 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 </div>
 <?php endif; ?>
 <?php if ($section === 'community_polls'): ?>
-<?= ops_admin_collapsible_help('Partner Polls guide', [
-  ops_admin_info_panel('Partner Polls', 'What this section does', 'Partner Polls is the poll publishing and administration surface for formal poll records, choices, and schedule windows.', ['Question is the Partner-facing poll title.', 'Choices become the ballot options.', 'Open and close times define the active voting window.']),
+<?= ops_admin_collapsible_help('Member Polls guide', [
+  ops_admin_info_panel('Member Polls', 'What this section does', 'Member Polls is the poll publishing and administration surface for formal poll records, choices, and schedule windows.', ['Question is the Member-facing poll title.', 'Choices become the ballot options.', 'Open and close times define the active voting window.']),
   ops_admin_status_panel('Status guide', 'Use statuses to understand whether a poll is still being prepared or is already live.', [
-    ['label' => 'Draft', 'body' => 'The poll is not yet open to Partners.'],
+    ['label' => 'Draft', 'body' => 'The poll is not yet open to Members.'],
     ['label' => 'Open', 'body' => 'The poll is live now or scheduled to open based on the timing fields.'],
     ['label' => 'Closed', 'body' => 'The poll is no longer active and should be treated as historical.'],
   ]),
@@ -859,11 +859,11 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
 ?>
 <div class="row-grid">
   <div class="card">
-  <div class="card-head"><h2>Partner Polls</h2></div>
+  <div class="card-head"><h2>Member Polls</h2></div>
   <div class="card-body">
     <p class="muted small">Legacy <span class="code">wallet_polls</span> remain available for live wallet compatibility. Bridge rows are maintained in <span class="code">community_polls</span> and <span class="code">poll_options</span> while the control plane remains in parallel mode.</p>
     <div class="table-wrap"><table><thead><tr><th>Question</th><th>Audience</th><th>Legacy</th><th>Bridge</th><th>Opens / closes</th><th></th></tr></thead><tbody>
-      <?php if (!$rows): ?><tr><td colspan="6" class="empty">No Partner Polls found.</td></tr><?php endif; ?>
+      <?php if (!$rows): ?><tr><td colspan="6" class="empty">No Member Polls found.</td></tr><?php endif; ?>
       <?php foreach ($rows as $row): ?>
       <tr>
         <td><?= h((string)($row['question'] ?: $row['title'])) ?></td><td><?= h((string)($row['audience_scope'] ?: msg_scope_from_legacy_audience($row['audience'] ?? 'all'))) ?></td><td><?= msg_status_badge(msg_schedule_status_to_ui((string)$row['status'])) ?></td><td><?= h((string)($row['bridge_status'] ?? '—')) ?></td><td class="small"><?= h((string)($row['opens_at'] ?? '—')) ?><br><?= h((string)($row['closes_at'] ?? '—')) ?></td>
@@ -874,7 +874,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
     <?= render_pager(msg_section_pager_base('community_polls'), $wpPaged['page'], $wpPaged['totalPages'], $wpPaged['total'], 'poll') ?>
   </div>
   <div class="card">
-    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit Partner Poll' : 'New Partner Poll' ?></h2></div>
+    <div class="card-head"><h2><?= !empty($r['id']) ? 'Edit Member Poll' : 'New Member Poll' ?></h2></div>
     <div class="card-body">
     <?php if ($pollTerms): ?><div class="alert alert-warn"><?= h(msg_warning_html($pollTerms)) ?></div><?php endif; ?>
     <form method="post">
@@ -886,7 +886,7 @@ if ($trackId > 0 && ops_has_table($pdo, 'wallet_message_reads') && ops_has_table
       <div class="field"><label>Status</label><select name="status"><option value="draft" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'draft' ? 'selected' : '' ?>>Draft</option><option value="open" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'open' ? 'selected' : '' ?>>Open</option><option value="closed" <?= msg_schedule_status_to_ui((string)($r['status'] ?? 'draft')) === 'closed' ? 'selected' : '' ?>>Closed</option></select></div>
       <div class="field"><label>Open at (Sydney)</label><input type="datetime-local" name="open_at" value="<?= !empty($r['opens_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['opens_at']))) : '' ?>"></div>
       <div class="field"><label>Close at (Sydney)</label><input type="datetime-local" name="close_at" value="<?= !empty($r['closes_at']) ? h(date('Y-m-d\TH:i', strtotime((string)$r['closes_at']))) : '' ?>"></div>
-      <button class="btn btn-gold" type="submit">Save Partner Poll</button>
+      <button class="btn btn-gold" type="submit">Save Member Poll</button>
     </form>
     </div>
   </div>

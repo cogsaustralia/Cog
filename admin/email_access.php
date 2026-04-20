@@ -33,10 +33,10 @@ if (!function_exists('admin_template')) {
 function admin_template(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'bnft_admin_alert' : 'snft_admin_alert'; }
 }
 if (!function_exists('user_subject')) {
-function user_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'Welcome to the partnership — your business Partner record is confirmed' : 'Welcome to the partnership — your Partner record is confirmed'; }
+function user_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'Welcome to the Joint Venture — your business Member record is confirmed' : 'Welcome to the Joint Venture — your Member record is confirmed'; }
 }
 if (!function_exists('admin_subject')) {
-function admin_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'New COG$ business Partner — BNFT registration recorded' : 'New COG$ Partner — SNFT registration recorded'; }
+function admin_subject(array $m): string { return (($m['member_type'] ?? '') === 'business') ? 'New COG$ business Member — BNFT registration recorded' : 'New COG$ Member — SNFT registration recorded'; }
 }
 if (!function_exists('payload_for')) {
 function payload_for(array $m): array {

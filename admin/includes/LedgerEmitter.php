@@ -240,7 +240,7 @@ class LedgerEmitter
     }
 
     /**
-     * kS-Class $1.00 Kids S-NFT issue — 100% to Partners Pool.
+     * kS-Class $1.00 Kids S-NFT issue — 100% to Members Pool.
      */
     public static function buildKSClassEntries(int $memberId): array
     {
@@ -298,7 +298,7 @@ class LedgerEmitter
 
     /**
      * P-Class Stage 1 — donor payment $4.00.
-     * Spec §4.1 AMENDED: $1 goes to P-CLASS-SUSPENSE (not Partners Pool)
+     * Spec §4.1 AMENDED: $1 goes to P-CLASS-SUSPENSE (not Members Pool)
      * until recipient is allocated (invariant I11 compliance).
      */
     public static function buildPClassStage1Entries(int $donorMemberId): array
@@ -340,7 +340,7 @@ class LedgerEmitter
     }
 
     /**
-     * Tier 2 unit issues (A, Lh, BP, R) — full proceeds to Partners Pool.
+     * Tier 2 unit issues (A, Lh, BP, R) — full proceeds to Members Pool.
      * $amountCents = 400 for S-pathway, 4000 for B-pathway.
      */
     public static function buildTier2Entries(int $memberId, int $amountCents, string $classCategory): array
@@ -419,7 +419,7 @@ class LedgerEmitter
 
     /**
      * General / other income received into STA-OPERATING.
-     * Same double-entry pattern as interest — net debit to Operating, credit to Partners Pool.
+     * Same double-entry pattern as interest — net debit to Operating, credit to Members Pool.
      */
     public static function buildGeneralIncomeEntries(int $netCents, int $withholdingCents = 0): array
     {
@@ -465,7 +465,7 @@ class LedgerEmitter
     public static function buildBDSDividendEntries(int $dividendCents): array
     {
         $stbShare = intdiv($dividendCents, 2);
-        $stapShare = $dividendCents - $stbShare;  // residual cent → Partners Pool
+        $stapShare = $dividendCents - $stbShare;  // residual cent → Members Pool
 
         return [
             ['account_key' => 'EXTERNAL-ASX',        'type' => 'credit', 'amount_cents' => $dividendCents,
@@ -545,7 +545,7 @@ class LedgerEmitter
     }
 
     /**
-     * ASX share acquisition from Partners Pool cash.
+     * ASX share acquisition from Members Pool cash.
      * Modelled within STA-PARTNERS-POOL as a classification change (asset composition).
      * For now, represented as a single-pool movement; if brokerage is paid, include
      * the brokerage pair separately (via buildOperatingExpenseEntries).
@@ -557,7 +557,7 @@ class LedgerEmitter
              'classification' => 'asset',   'flow_category' => 'asx_acquisition'],
             ['account_key' => 'EXTERNAL-ASX',     'type' => 'debit',  'amount_cents' => $costCents,
              'classification' => 'asset',   'flow_category' => 'asx_acquisition'],
-            // Partners Pool receives the share asset equal in value to the cash spent
+            // Members Pool receives the share asset equal in value to the cash spent
             ['account_key' => 'EXTERNAL-ASX',     'type' => 'credit', 'amount_cents' => $costCents,
              'classification' => 'asset',   'flow_category' => 'asx_acquisition'],
             ['account_key' => 'STA-PARTNERS-POOL', 'type' => 'debit', 'amount_cents' => $costCents,
@@ -580,7 +580,7 @@ class LedgerEmitter
 
     /**
      * Members Bonus Election — Schedule S4.2A.
-     * Partner elects to reinvest their STB distribution back into Class A Units.
+     * Member elects to reinvest their STB distribution back into Class A Units.
      * STB-OPERATING → STA-OPERATING (new unit consideration) → STA-PARTNERS-POOL.
      * The new A-Class unit carry a fresh 12-month Stewardship Season lock (I12).
      */
@@ -593,7 +593,7 @@ class LedgerEmitter
             // STA-OPERATING receives as new unit consideration
             ['account_key' => 'STA-OPERATING',     'type' => 'debit',  'amount_cents' => $electionCents,
              'classification' => 'asset',   'flow_category' => 'bonus_election_netting'],
-            // Transit to Partners Pool (100% to investment — Tier 2 A-class no admin cut)
+            // Transit to Members Pool (100% to investment — Tier 2 A-class no admin cut)
             ['account_key' => 'STA-OPERATING',     'type' => 'credit', 'amount_cents' => $electionCents,
              'classification' => 'asset',   'flow_category' => 'sta_transit'],
             ['account_key' => 'STA-PARTNERS-POOL', 'type' => 'debit',  'amount_cents' => $electionCents,
@@ -619,7 +619,7 @@ class LedgerEmitter
     }
 
     /**
-     * Asset swap — Holding X → Holding Y within Partners Pool (amended I6).
+     * Asset swap — Holding X → Holding Y within Members Pool (amended I6).
      * Disposal proceeds and acquisition costs remain inside STA-PARTNERS-POOL.
      * Brokerage is recorded separately via buildOperatingExpenseEntries.
      *
@@ -629,12 +629,12 @@ class LedgerEmitter
     public static function buildAssetSwapEntries(int $disposalCents, int $acquisitionCents): array
     {
         return [
-            // Disposal leg: Partners Pool → EXTERNAL-ASX (market counterparty)
+            // Disposal leg: Members Pool → EXTERNAL-ASX (market counterparty)
             ['account_key' => 'STA-PARTNERS-POOL', 'type' => 'credit', 'amount_cents' => $disposalCents,
              'classification' => 'asset',   'flow_category' => 'asset_swap'],
             ['account_key' => 'EXTERNAL-ASX',       'type' => 'debit',  'amount_cents' => $disposalCents,
              'classification' => 'asset',   'flow_category' => 'asset_swap'],
-            // Acquisition leg: EXTERNAL-ASX → Partners Pool
+            // Acquisition leg: EXTERNAL-ASX → Members Pool
             ['account_key' => 'EXTERNAL-ASX',       'type' => 'credit', 'amount_cents' => $acquisitionCents,
              'classification' => 'asset',   'flow_category' => 'asset_swap'],
             ['account_key' => 'STA-PARTNERS-POOL', 'type' => 'debit',  'amount_cents' => $acquisitionCents,
@@ -701,7 +701,7 @@ class LedgerEmitter
         $m = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$m) return null;
 
-        $display = 'Partner — ' . ($m['name'] ?: $m['member_number']);
+        $display = 'Member — ' . ($m['name'] ?: $m['member_number']);
         $ins = $pdo->prepare("
             INSERT INTO stewardship_accounts (partner_id, account_key, account_type, display_name, status)
             VALUES (?, ?, 'partner', ?, 'active')

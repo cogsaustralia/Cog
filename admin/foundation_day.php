@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canManage) {
     $action = trim((string)($_POST['action'] ?? ''));
     try {
 
-        // ── Bulk allocate Community COG$ to all Partners (1,000 per S-class) ─
+        // ── Bulk allocate Community COG$ to all Members (1,000 per S-class) ─
         if ($action === 'allocate_community_tokens') {
             $tcRow = fd_val($pdo, "SELECT id FROM token_classes WHERE class_code = 'COM_COG' AND is_active = 1 LIMIT 1");
             if (!$tcRow) throw new RuntimeException('COM_COG token class not found or inactive.');
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canManage) {
                    AND sm.wallet_status = 'active'
                  ORDER BY m.id ASC"
             );
-            if (empty($partners)) throw new RuntimeException('No active paid Partners found.');
+            if (empty($partners)) throw new RuntimeException('No active paid Members found.');
 
             $allocated = 0;
             $skipped   = 0;
@@ -101,10 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canManage) {
 
             // Record in admin_settings
             ops_setting_set($pdo, 'community_tokens_allocated', 'yes', 'flag',
-                "Community COG$ initial allocation run: {$allocated} Partners allocated {$units} tokens each. Skipped: {$skipped}.");
+                "Community COG$ initial allocation run: {$allocated} Members allocated {$units} tokens each. Skipped: {$skipped}.");
             ops_setting_set($pdo, 'community_tokens_allocated_at', date('Y-m-d H:i:s'), 'datetime');
 
-            $flash = "Community COG$ allocated: {$allocated} Partners received {$units} tokens. {$skipped} already had allocation.";
+            $flash = "Community COG$ allocated: {$allocated} Members received {$units} tokens. {$skipped} already had allocation.";
             $flashType = 'ok';
         }
 
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canManage) {
             $voteOpen     = $deliberClose;
             $voteClose    = date('Y-m-d H:i:s', strtotime($voteOpen . " +{$voteHours} hours"));
 
-            // Quorum: 20 Partners or 1% whichever is greater (Declaration cl.36.2)
+            // Quorum: 20 Members or 1% whichever is greater (Declaration cl.36.2)
             $partnerCount = (int)(fd_val($pdo,
                 "SELECT COUNT(*) FROM snft_memberships WHERE signup_payment_status = 'paid' AND wallet_status = 'active'"
             ) ?: 0);
@@ -254,7 +254,7 @@ $invariantsOk = $totalViolations === 0 && count($invariants) === 12;
 // Check 2: Baseline reconciliation snapshot exists
 $hasBaseline = (bool)fd_val($pdo, "SELECT COUNT(*) FROM reconciliation_snapshots WHERE snapshot_ref LIKE 'BASELINE%'");
 
-// Check 3: At least 1 paid active S-class Partner
+// Check 3: At least 1 paid active S-class Member
 $partnerCount = (int)(fd_val($pdo,
     "SELECT COUNT(*) FROM snft_memberships WHERE signup_payment_status = 'paid' AND wallet_status = 'active'"
 ) ?: 0);
@@ -296,7 +296,7 @@ $donationFlowOk = class_exists('AccountingHooks') || file_exists(__DIR__ . '/inc
 // Check 9: Key Management Policy adopted (setting flag)
 $kmpAdopted = ops_setting_get($pdo, 'key_management_policy_adopted', '') === 'yes';
 
-// Check 10: JVPA Partnership Agreement executed (founding Partner signature)
+// Check 10: JVPA Membership Agreement executed (founding Member signature)
 $jvpaExecuted = ops_setting_get($pdo, 'jvpa_founding_signature_recorded', '') === 'yes';
 
 // All polls for management
@@ -322,8 +322,8 @@ $checks = [
     ['label' => 'All 12 Godley invariants clear',         'ok' => $invariantsOk,       'detail' => $invariantsOk ? '12/12 — zero violations' : $totalViolations . ' violation(s) across ' . count($invariants) . ' invariants'],
     ['label' => 'Ledger balanced (grand total = zero)',    'ok' => $ledgerBalanced,     'detail' => $ledgerBalanced ? $ledgerEntryCount . ' entries — balanced ✓' : 'Grand balance: ' . fd_dollars(abs($grandBalance)) . ' imbalance'],
     ['label' => 'Baseline reconciliation snapshot',       'ok' => $hasBaseline,        'detail' => $hasBaseline ? 'BASELINE snapshot recorded' : 'No baseline snapshot found — run Stage 3 close-out'],
-    ['label' => 'Active paid Partners on platform',       'ok' => $partnersOk,         'detail' => $partnerCount . ' active paid Partner(s)'],
-    ['label' => 'Community COG$ initial allocation',      'ok' => $communityAllocated, 'detail' => $communityAllocated ? $communityCount . ' Partners allocated 1,000 tokens each (' . $communityAllocatedAt . ')' : $communityCount . ' Partners allocated — run allocation below'],
+    ['label' => 'Active paid Members on platform',       'ok' => $partnersOk,         'detail' => $partnerCount . ' active paid Member(s)'],
+    ['label' => 'Community COG$ initial allocation',      'ok' => $communityAllocated, 'detail' => $communityAllocated ? $communityCount . ' Members allocated 1,000 tokens each (' . $communityAllocatedAt . ')' : $communityCount . ' Members allocated — run allocation below'],
     ['label' => 'JVPA founding signature recorded',       'ok' => $jvpaExecuted,       'detail' => $jvpaExecuted ? 'Recorded in admin_settings' : 'Set flag after wet-ink signature page is executed'],
     ['label' => 'Key Management Policy adopted',          'ok' => $kmpAdopted,         'detail' => $kmpAdopted ? 'Adopted — recorded in admin_settings' : 'Set flag after Board adopts KMP'],
     ['label' => 'Foundation Day inaugural poll created',  'ok' => $pollCreated,        'detail' => $pollCreated ? ($foundationPoll[0]['title'] ?? '') . ' — status: ' . ($foundationPoll[0]['status'] ?? '') : 'Create poll below'],
@@ -498,28 +498,28 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
   <!-- Community COG$ allocation -->
   <div class="card">
     <div class="card-head">
-      <h2>Community COG$ initial allocation<?php echo ops_admin_help_button('Community COG$ allocation', 'Declaration cl.23D.3 — initial allocation of 1,000 Community COG$ per Individual Partner from Governance Foundation Day by standing Partners Poll direction. Must be run before Foundation Day is declared.'); ?></h2>
+      <h2>Community COG$ initial allocation<?php echo ops_admin_help_button('Community COG$ allocation', 'Declaration cl.23D.3 — initial allocation of 1,000 Community COG$ per Individual Member from Governance Foundation Day by standing Members Poll direction. Must be run before Foundation Day is declared.'); ?></h2>
       <span class="st <?php echo $communityAllocated ? 'st-ok' : 'st-warn'; ?>"><?php echo $communityAllocated ? 'Done' : 'Pending'; ?></span>
     </div>
     <div class="card-body">
       <div style="display:flex;gap:20px;margin-bottom:14px">
         <div>
           <div style="font-size:1.4rem;font-weight:800;color:<?php echo $communityAllocated ? 'var(--ok)' : 'var(--gold)'; ?>"><?php echo $communityCount; ?></div>
-          <div style="font-size:.72rem;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Partners allocated</div>
+          <div style="font-size:.72rem;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Members allocated</div>
         </div>
         <div>
           <div style="font-size:1.4rem;font-weight:800;color:var(--blue)"><?php echo $partnerCount; ?></div>
-          <div style="font-size:.72rem;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Total active Partners</div>
+          <div style="font-size:.72rem;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Total active Members</div>
         </div>
       </div>
       <?php if ($communityAllocated && $communityCount >= $partnerCount): ?>
-        <p style="font-size:12px;color:var(--ok)">✓ All Partners have received 1,000 Community COG$ tokens.</p>
+        <p style="font-size:12px;color:var(--ok)">✓ All Members have received 1,000 Community COG$ tokens.</p>
       <?php elseif ($canManage): ?>
-        <p style="font-size:12px;color:var(--sub);margin-bottom:12px">Allocates 1,000 Community COG$ to every active paid Partner. Idempotent — safe to re-run. Partners already at 1,000 are skipped.</p>
+        <p style="font-size:12px;color:var(--sub);margin-bottom:12px">Allocates 1,000 Community COG$ to every active paid Member. Idempotent — safe to re-run. Members already at 1,000 are skipped.</p>
         <form method="post">
           <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
           <input type="hidden" name="action" value="allocate_community_tokens">
-          <button type="submit" class="btn btn-gold">Allocate 1,000 Community COG$ to all Partners</button>
+          <button type="submit" class="btn btn-gold">Allocate 1,000 Community COG$ to all Members</button>
         </form>
       <?php endif; ?>
     </div>
@@ -531,7 +531,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
     <div class="card-body">
       <?php
       $flags = [
-          ['key' => 'jvpa_founding_signature_recorded', 'label' => 'JVPA founding Partner wet-ink signature executed', 'note' => 'Set after the Partnership Agreement founding paper copy is signed.'],
+          ['key' => 'jvpa_founding_signature_recorded', 'label' => 'JVPA founding Member wet-ink signature executed', 'note' => 'Set after the Membership Agreement founding paper copy is signed.'],
           ['key' => 'key_management_policy_adopted',    'label' => 'Key Management Policy adopted by Board',         'note' => 'Required before Foundation Day per Declaration cl.35.'],
       ];
       foreach ($flags as $flag):
@@ -579,7 +579,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
           </div>
           <div style="font-size:11.5px;color:var(--sub)">
             Voting: <?php echo fd_h($fp['voting_opens_at'] ?? '—'); ?> → <?php echo fd_h($fp['voting_closes_at'] ?? '—'); ?><br>
-            Quorum required: <?php echo (int)$fp['quorum_required_count']; ?> Partners
+            Quorum required: <?php echo (int)$fp['quorum_required_count']; ?> Members
           </div>
           <?php $fpVotes = $pollVotes[(int)$fp['id']] ?? []; ?>
           <?php if (!empty($fpVotes)): ?>
@@ -609,13 +609,13 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
           <?php endif; ?>
         </div>
       <?php elseif ($canManage): ?>
-        <p style="font-size:12px;color:var(--sub);margin-bottom:14px">Create the inaugural Partners Poll. This is the first online cryptographic member poll — the act that defines Governance Foundation Day. Each vote will be recorded with a SHA-256 receipt hash.</p>
+        <p style="font-size:12px;color:var(--sub);margin-bottom:14px">Create the inaugural Members Poll. This is the first online cryptographic member poll — the act that defines Governance Foundation Day. Each vote will be recorded with a SHA-256 receipt hash.</p>
         <form method="post">
           <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
           <input type="hidden" name="action" value="create_foundation_poll">
           <div class="form-group"><label>Poll title</label><input type="text" name="poll_title" required value="COGs of Australia Foundation — Inaugural Governance Poll — Governance Foundation Day" autocomplete="off"></div>
           <div class="form-group"><label>Summary</label><input type="text" name="poll_summary" value="The Foundation's first online cryptographic member poll. A vote on this poll constitutes the Governance Foundation Day event under the Declaration." autocomplete="off"></div>
-          <div class="form-group"><label>Poll body (optional)</label><textarea name="poll_body" rows="3" placeholder="Describe the matter being put to Partners…"></textarea></div>
+          <div class="form-group"><label>Poll body (optional)</label><textarea name="poll_body" rows="3" placeholder="Describe the matter being put to Members…"></textarea></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
             <div class="form-group" style="margin:0"><label>Deliberation (hours)</label><input type="number" name="deliberation_hours" value="0" min="0" max="168"></div>
             <div class="form-group" style="margin:0"><label>Voting period (hours)</label><input type="number" name="vote_hours" value="72" min="1" max="336"></div>

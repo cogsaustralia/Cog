@@ -85,7 +85,7 @@ ob_start(); ?>
 ]) ?>
 <div class="card">
   <div class="card-head"><h2>Phase 1 labels &amp; control-plane settings <?= ops_admin_help_button('Phase 1 settings', 'These settings drive admin labels, bridge posture, execution mode, rollout posture, and sender identity.') ?></h2></div>
-  <div class="card-body"><p class="muted small">Current labels: <strong><?= ops_h($labels['public_label_partner'] ?? 'Partner') ?></strong> / <strong><?= ops_h($labels['public_label_contribution'] ?? 'partnership contribution') ?></strong></p></div>
+  <div class="card-body"><p class="muted small">Current labels: <strong><?= ops_h($labels['public_label_partner'] ?? 'Member') ?></strong> / <strong><?= ops_h($labels['public_label_contribution'] ?? 'membership contribution') ?></strong></p></div>
 </div>
 <form method="post" class="group-stack">
   <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">

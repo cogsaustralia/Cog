@@ -565,8 +565,8 @@ function ops_evidence_review_types(): array {
 
 function ops_label_settings(PDO $pdo): array {
     $defaults = [
-        'public_label_partner' => 'Partner',
-        'public_label_contribution' => 'partnership contribution',
+        'public_label_partner' => 'Member',
+        'public_label_contribution' => 'membership contribution',
         'internal_label_member' => 'Member',
         'internal_label_membership_fee' => '$4 membership fee',
     ];

@@ -57,7 +57,7 @@ $liveRows = ops_table_exists($pdo, 'v_foundation_rwa_assets_live') ? ops_fetch_a
 ob_start();
 ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('RWA Valuation Ledger', 'What this page does', 'Use this page to record the verified value of each registered RWA asset. These valuation records drive the live RWA book value shown to Partners and form the economic basis for RWA-token capacity.', [
+  ops_admin_info_panel('RWA Valuation Ledger', 'What this page does', 'Use this page to record the verified value of each registered RWA asset. These valuation records drive the live RWA book value shown to Members and form the economic basis for RWA-token capacity.', [
     'Each submission creates one dated valuation record for the selected asset.',
     'Valuation method and evidence reference should be recorded for auditability.',
     'The latest valuation per asset is used for live capacity calculations.',

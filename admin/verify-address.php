@@ -30,7 +30,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     ob_start();
     ?>
     <?php ops_admin_help_assets_once(); ?>
-    <?= ops_admin_info_panel('Address · Verification service', 'What this endpoint does', 'This route triggers a G-NAF address verification run for a personal Partner record. It is primarily called by admin pages such as the registry screens rather than used as a manual page on its own.', [
+    <?= ops_admin_info_panel('Address · Verification service', 'What this endpoint does', 'This route triggers a G-NAF address verification run for a personal Member record. It is primarily called by admin pages such as the registry screens rather than used as a manual page on its own.', [
       'Use it to refresh address, parcel, and affected-zone information from the member record.',
       'It expects a member_id and runs as a POST service endpoint.',
       'It does not itself approve, pay, or execute anything.'

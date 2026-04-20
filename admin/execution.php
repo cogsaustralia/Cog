@@ -4,7 +4,7 @@ require_once __DIR__ . '/includes/ops_workflow.php';
 ops_require_admin();
 $pdo = ops_db();
 $labels = ops_label_settings($pdo);
-$partnerLabel = $labels['public_label_partner'] ?? 'Partner';
+$partnerLabel = $labels['public_label_partner'] ?? 'Member';
 $adminUserId = ops_current_admin_user_id($pdo);
 $legacyAdminId = ops_admin_id();
 $canManage = ops_admin_can($pdo, 'execution.manage') || ops_admin_can($pdo, 'operations.manage') || ops_admin_can($pdo, 'admin.full');

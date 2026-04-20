@@ -85,7 +85,7 @@ ob_end_clean(); // Discard outer buffer — eliminates any pre-doctype output
 ob_start();     // Inner buffer — captures page body for ops_render_page
 ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('ASX Holdings Register', 'What this page does', 'Use this page to create and maintain the live registry of ASX-listed shareholdings held by the partnership. Each line represents one listed company and becomes the roll-up source for share count, weighted average purchase price, total book value, and token-capacity.', [
+  ops_admin_info_panel('ASX Holdings Register', 'What this page does', 'Use this page to create and maintain the live registry of ASX-listed shareholdings held by the joint venture. Each line represents one listed company and becomes the roll-up source for share count, weighted average purchase price, total book value, and token-capacity.', [
     'Create one registry line per ASX company — for example ASX:LGM.',
     'Maintain company identity, HIN/CHESS reference, stewardship stream, and notes.',
     'Review live share count, book value, and capacity once purchase lots have been entered.',
@@ -115,7 +115,7 @@ ob_start();     // Inner buffer — captures page body for ops_render_page
 
 
 <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
-    <div class="card"><div class="card-head"><h2>Holding lines <?= ops_admin_help_button('Holding lines', 'The number of separate listed equity lines currently registered for the partnership.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_num($summary['lines']) ?></div></div></div>
+    <div class="card"><div class="card-head"><h2>Holding lines <?= ops_admin_help_button('Holding lines', 'The number of separate listed equity lines currently registered for the joint venture.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_num($summary['lines']) ?></div></div></div>
     <div class="card"><div class="card-head"><h2>Shares held <?= ops_admin_help_button('Shares held', 'Settled shares currently recorded across all ASX purchase lots.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_num($summary['shares'], 0) ?></div></div></div>
     <div class="card"><div class="card-head"><h2>Book value <?= ops_admin_help_button('Book value', 'Total recorded cost basis of settled ASX share purchases.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_money($summary['book']) ?></div></div></div>
     <div class="card"><div class="card-head"><h2>COG$ available <?= ops_admin_help_button('COG$ available', 'Unallocated ASX token capacity calculated at 1 ASX COG$ = $4 of settled ASX shares.') ?></h2></div><div class="card-body"><div class="stat-value"><?= asx_num($summary['available'], 0) ?></div></div></div>

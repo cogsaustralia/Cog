@@ -30,7 +30,7 @@ ob_start(); ?>
     ['title' => 'Update evidence / notes', 'body' => 'Record evidence references or operator notes that explain why the queue row is in its current state.'],
     ['title' => 'Open batches or handoff', 'body' => 'Use the linked batch and handoff pages when the queue item needs to move into those bridge stages.']
   ]),
-  ops_admin_status_panel('Status guide', 'Queue statuses here describe the legacy bridge item, not the formal Partners-facing published state.', [
+  ops_admin_status_panel('Status guide', 'Queue statuses here describe the legacy bridge item, not the formal Members-facing published state.', [
     ['label' => 'Ready for batch / blockchain', 'body' => 'The item is eligible to move further through the bridge path.'],
     ['label' => 'Locked / held manual', 'body' => 'The row still needs operator judgment or additional evidence before it should move.'],
     ['label' => 'Batch linked', 'body' => 'The queue row has already been attached to a mint batch and should be read with that batch record.']

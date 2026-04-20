@@ -135,7 +135,7 @@ if (!$editRow) { $editRow = ['id'=>'','asset_code'=>'','asset_key'=>'','asset_na
 ob_start();
 ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('RWA Asset Register', 'What this page does', 'Use this page to register each real-world asset held or stewarded by the partnership. Each line becomes the identity anchor for valuation records, live display, and RWA-token capacity.', [
+  ops_admin_info_panel('RWA Asset Register', 'What this page does', 'Use this page to register each real-world asset held or stewarded by the joint venture. Each line becomes the identity anchor for valuation records, live display, and RWA-token capacity.', [
     'Create one registry line per distinct real-world asset.',
     'Asset type, location, and First Nations approval status are recorded here.',
     'Valuation records are entered separately on the RWA Valuations page.',

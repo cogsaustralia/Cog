@@ -480,7 +480,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
   </div>
 
   <?= ops_admin_collapsible_help('Page guide & workflow', [
-    ops_admin_info_panel('Intake · Step 1', 'What this page does', 'Record payment that has actually been received for paid-now lines. Use it when money has cleared and you need the Partner record to move into the approval lane.', [
+    ops_admin_info_panel('Intake · Step 1', 'What this page does', 'Record payment that has actually been received for paid-now lines. Use it when money has cleared and you need the Member record to move into the approval lane.', [
       'Use this page for S-NFT, Kids S-NFT, B-NFT, Donation COG$, and Pay It Forward COG$.',
       'Do not use this page to approve reservation-only classes such as ASX, RWA, or Landholder COG$.',
       'After payment is recorded, the next operator page is Approvals.',
@@ -492,7 +492,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
       ['title' => 'Send to execution later', 'body' => 'Execution happens only after approvals are complete.'],
     ]),
     ops_admin_status_panel('Field and status guide', 'Use these notes to interpret the most important fields on this page.', [
-      ['label' => 'Signup payment', 'body' => 'Shows whether the entry payment required to open the Partner record is complete.'],
+      ['label' => 'Signup payment', 'body' => 'Shows whether the entry payment required to open the Member record is complete.'],
       ['label' => 'JVPA acceptance', 'body' => 'Shows whether the backend acceptance trail is complete enough to support taking payment.'],
       ['label' => 'Outstanding', 'body' => 'The remaining units still waiting for payment on this line.'],
       ['label' => 'Mark paid', 'body' => 'Use only after funds are actually received. This records payment; it does not approve or publish anything.'],
@@ -532,7 +532,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
     <?php endif; ?>
   <?php else: ?>
     <p style="font-size:.82rem;color:var(--muted);margin:0 0 14px">
-      <?= count($byMember) ?> partner<?= count($byMember) !== 1 ? 's' : '' ?> with outstanding paid-today lines.
+      <?= count($byMember) ?> member<?= count($byMember) !== 1 ? 's' : '' ?> with outstanding paid-today lines.
       Enter the payment method, bank reference, amount paid, and units received, then click <strong>Mark paid</strong>.
     </p>
 
@@ -556,7 +556,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
             Signup payment: <strong style="color:<?=$mem['signup_payment_status']==='paid'?'var(--ok)':'var(--bad)'?>"><?=h($mem['signup_payment_status'] ?: 'unpaid')?></strong>
           </div>
           <div class="meta" style="margin-top:3px">
-            JVPA acceptance <?= ops_admin_help_button('JVPA acceptance', 'This indicator shows whether the partnership acceptance trail is complete in the backend. A missing or legacy JVPA record is a warning that intake evidence still needs attention before the Partner is treated as fully compliant.') ?>: <strong style="color:<?= $acceptanceTone==='ok' ? 'var(--ok)' : ($acceptanceTone==='warn' ? 'var(--warn)' : 'var(--bad)') ?>"><?=h($acceptanceLabel)?></strong>
+            JVPA acceptance <?= ops_admin_help_button('JVPA acceptance', 'This indicator shows whether the membership acceptance trail is complete in the backend. A missing or legacy JVPA record is a warning that intake evidence still needs attention before the Member is treated as fully compliant.') ?>: <strong style="color:<?= $acceptanceTone==='ok' ? 'var(--ok)' : ($acceptanceTone==='warn' ? 'var(--warn)' : 'var(--bad)') ?>"><?=h($acceptanceLabel)?></strong>
             <?php if(!empty($acceptance['accepted_version'])): ?> · <?=h($acceptance['accepted_version'])?><?php endif; ?>
           </div>
         </div>
@@ -567,7 +567,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'mark_
       </div>
       <?php if ($acceptanceTone !== 'ok'): ?>
       <div style="padding:10px 14px;background:<?= $acceptanceTone==='bad' ? 'rgba(196,96,96,.10)' : 'rgba(200,144,26,.10)' ?>;border-top:1px solid rgba(255,255,255,.06);font-size:.8rem;color:var(--text)">
-        <?= $acceptanceTone==='bad' ? 'Payment should not be taken until the JVPA acceptance record is completed.' : 'This Partner entry still needs the JVPA acceptance trail finished in the backend.' ?>
+        <?= $acceptanceTone==='bad' ? 'Payment should not be taken until the JVPA acceptance record is completed.' : 'This Member entry still needs the JVPA acceptance trail finished in the backend.' ?>
       </div>
       <?php endif; ?>
 

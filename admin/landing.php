@@ -54,7 +54,7 @@ $pdo = ops_db();
   </div>
 
   <div class="grid two" style="margin-bottom:18px">
-    <?= ops_admin_info_panel('Start here', 'Admin section purpose', 'The Admin area exists to move partner and business records through intake, compliance, approval, execution, publication, governance visibility, and supporting diagnostics. Each page should answer a specific operator question, not require memorised system knowledge.', [
+    <?= ops_admin_info_panel('Start here', 'Admin section purpose', 'The Admin area exists to move member and business records through intake, compliance, approval, execution, publication, governance visibility, and supporting diagnostics. Each page should answer a specific operator question, not require memorised system knowledge.', [
       'Payments is where money intake is recorded and checked.',
       'Approvals is where operational sign-off happens after prerequisites are satisfied.',
       'Execution is where approved items move through batching, quorum, submission, finalisation, and publication.',
@@ -70,10 +70,10 @@ $pdo = ops_db();
 
   <?= ops_admin_guide_panel('What each Admin section does', 'Use these descriptions to decide where to go next.', [
     ['title' => 'Dashboard', 'body' => 'Operator landing page for orientation, current workload, and quick routing into live admin sections.'],
-    ['title' => 'Payments', 'body' => 'Records or verifies money received and links that intake to the correct partner or business record.'],
+    ['title' => 'Payments', 'body' => 'Records or verifies money received and links that intake to the correct member or business record.'],
     ['title' => 'Approvals', 'body' => 'Holds the operational decision point after payment and compliance checks are in place.'],
     ['title' => 'Execution', 'body' => 'Processes approved items through create request, batch, quorum, submit, finalise, and publish.'],
-    ['title' => 'Partner and Business Registry', 'body' => 'Shows the live state of participant records, wallet status, and linked compliance context.'],
+    ['title' => 'Member and Business Registry', 'body' => 'Shows the live state of participant records, wallet status, and linked compliance context.'],
     ['title' => 'Governance & Evidence', 'body' => 'Displays governance records, directions, zones, and the evidence surface around those actions.'],
     ['title' => 'Diagnostics', 'body' => 'Checks legacy bridge, session state, lockouts, reconciliation, and retirement readiness without becoming the primary operator workflow.'],
   ]) ?>
@@ -88,9 +88,9 @@ $pdo = ops_db();
       </div>
     </div>
     <div class="card">
-      <h2>Supporting review pages<?= ops_admin_help_button('Supporting review pages', 'These pages help operators inspect the wider state around the live workflow, including partner records, governance, and evidence, without duplicating the intake and execution path.') ?></h2>
+      <h2>Supporting review pages<?= ops_admin_help_button('Supporting review pages', 'These pages help operators inspect the wider state around the live workflow, including member records, governance, and evidence, without duplicating the intake and execution path.') ?></h2>
       <div class="guide-links">
-        <a class="guide-link" href="./members.php"><strong>Partner Registry</strong><span>Current participant state, wallet status, and linked intake records.</span></a>
+        <a class="guide-link" href="./members.php"><strong>Member Registry</strong><span>Current participant state, wallet status, and linked intake records.</span></a>
         <a class="guide-link" href="./governance.php"><strong>Governance</strong><span>Governance objects, bridge visibility, and decision/evidence context.</span></a>
         <a class="guide-link" href="./audit.php"><strong>Audit</strong><span>Operational traceability, review, and remediation visibility.</span></a>
       </div>

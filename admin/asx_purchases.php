@@ -186,7 +186,7 @@ ob_end_clean(); // Discard outer buffer — eliminates any pre-doctype output (n
 ob_start();     // Inner buffer — captures page body for ops_render_page
 ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('ASX Purchase Ledger', 'What this page does', 'Use this page to record actual blocks of ASX shares purchased by the partnership. These purchase lots drive the live totals for shares held, weighted average price, total book value, and ASX-token capacity.', [
+  ops_admin_info_panel('ASX Purchase Ledger', 'What this page does', 'Use this page to record actual blocks of ASX shares purchased by the joint venture. These purchase lots drive the live totals for shares held, weighted average price, total book value, and ASX-token capacity.', [
     'Each submission creates one ledgered purchase lot for a registered ASX holding.',
     'Use pending until the trade is settled — pending lots do not inflate live capacity.',
     'Upload the broker confirmation PDF to create a full evidence trail per lot.',

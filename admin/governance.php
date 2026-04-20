@@ -4,7 +4,7 @@ require_once __DIR__ . '/includes/ops_workflow.php';
 ops_require_admin();
 $pdo = ops_db();
 $labels = ops_label_settings($pdo);
-$partnerLabel = $labels['public_label_partner'] ?? 'Partner';
+$partnerLabel = $labels['public_label_partner'] ?? 'Member';
 
 function gv_rows(PDO $pdo, string $sql, array $params = []): array { try { return ops_fetch_all($pdo, $sql, $params); } catch (Throwable $e) { return []; } }
 function gv_val(PDO $pdo, string $sql, array $params = []): int { try { return (int)ops_fetch_val($pdo, $sql, $params); } catch (Throwable $e) { return 0; } }
@@ -133,7 +133,7 @@ if (ops_has_table($pdo, 'wallet_polls')) {
 
 $stats = [
     'Control rows'      => count($controls),
-    'Partners polls'    => count($polls),
+    'Members polls'    => count($polls),
     'Proposal register' => count($proposals),
     'Directions'        => count($directions),
     'Execution records' => count($executions),
@@ -193,21 +193,21 @@ ob_start(); ?>
 
 <?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_info_panel('Stage 6 · Governance', 'What this page does', 'Governance is the authoritative operator page for formal poll records, the proposal register, governance directions, proxy-vote instructions, board execution records, and certified vote snapshots.', [
-    'Partners Polls are the formal governance instrument — rely on these when checking live governance state.',
+    'These are the formal governance instruments. When someone asks what the joint venture has voted on are the formal governance instrument — rely on these when checking live governance state.',
     'The proposal register shows initiation and pre-poll objects. It is not the final voting record by itself.',
     'Governance directions show what operational instruction should be carried out after governance has spoken.',
     'Proxy instructions and vote snapshots are evidence objects that support the live governance trail.',
   ]),
   ops_admin_workflow_panel('Typical workflow', 'Governance moves through a clear sequence from initiation to evidence.', [
     ['title' => 'Proposal / initiation', 'body' => 'A governance topic is opened and tracked in the proposal register.'],
-    ['title' => 'Formal poll', 'body' => 'The matter becomes a Partners Poll and the eligible voting group is opened.'],
+    ['title' => 'Formal poll', 'body' => 'The matter becomes a Members Poll and the eligible voting group is opened.'],
     ['title' => 'Result / direction', 'body' => 'Once the result is declared, a governance direction may be created for operational follow-through.'],
     ['title' => 'Execution / proxy / publication', 'body' => 'The board execution record, proxy instruction, or downstream control action shows how the decision was carried out.'],
     ['title' => 'Snapshot / evidence', 'body' => 'Vote snapshots and governance-control evidence preserve the auditable record of what happened.'],
   ]),
   ops_admin_guide_panel('How to use this page', 'Each section answers a different operator question.', [
     ['title' => 'Vote proposals — live tally', 'body' => 'This is the real-time community consultation surface. Bars update every 30 seconds. Comments are anonymous and shown in full. Open proposals show live response counts.'],
-    ['title' => 'Partners Polls — binding vote results', 'body' => 'These are formal binding votes. Each poll shows a full breakdown of how Partners voted on each option.'],
+    ['title' => 'These are the formal governance instruments. When someone asks what the joint venture has voted on — binding vote results', 'body' => 'These are formal binding votes. Each poll shows a full breakdown of how Members voted on each option.'],
     ['title' => 'Governance control status', 'body' => 'Use this to see whether any governance controls are missing evidence or carrying open exceptions.'],
     ['title' => 'Directions and execution', 'body' => 'Use these two sections together to confirm whether a governance outcome has been carried into an operational action.'],
     ['title' => 'Proxy instructions and vote snapshots', 'body' => 'Use these when checking investment stewardship, vote evidence, or certification history.'],
@@ -296,17 +296,17 @@ ob_start(); ?>
   </div>
 </div>
 
-<!-- ══ SECTION 2: PARTNERS POLLS — BINDING VOTE RESULTS ══ -->
+<!-- ══ SECTION 2: MEMBERS POLLS — BINDING VOTE RESULTS ══ -->
 <div class="card" style="margin-top:18px">
   <div class="card-head">
     <h2 class="section-title">
-      Partners Polls — binding vote results
-      <?= ops_admin_help_button('Partners Polls binding', 'Formal binding votes cast by Partners through their Independence Vault Wallet. Each option shows vote count and percentage. Closed and certified polls show result summary.') ?>
+      These are the formal governance instruments. When someone asks what the joint venture has voted on — binding vote results
+      <?= ops_admin_help_button('These are the formal governance instruments. When someone asks what the joint venture has voted on binding', 'Formal binding votes cast by Members through their Independence Vault Wallet. Each option shows vote count and percentage. Closed and certified polls show result summary.') ?>
     </h2>
   </div>
   <div class="card-body">
     <?php if (!$walletPolls): ?>
-      <p class="muted small">No Partners Polls found.</p>
+      <p class="muted small">No These are the formal governance instruments. When someone asks what the joint venture has voted on found.</p>
     <?php endif; ?>
     <?php foreach ($walletPolls as $wp):
       $wpid  = (int)$wp['id'];
@@ -387,13 +387,13 @@ ob_start(); ?>
   </div>
   </div>
   <div class="card">
-  <div class="card-head"><h2 class="section-title">Partners Polls<?= ops_admin_help_button('Partners Polls', 'These are the formal governance instruments. When someone asks what the partnership has voted on, this is the section to use first. Focus on title, eligibility scope, status, and voting close time.') ?></h2></div>
+  <div class="card-head"><h2 class="section-title">These are the formal governance instruments. When someone asks what the joint venture has voted on<?= ops_admin_help_button('These are the formal governance instruments. When someone asks what the joint venture has voted on', 'These are the formal governance instruments. When someone asks what the joint venture has voted on, this is the section to use first. Focus on title, eligibility scope, status, and voting close time.') ?></h2></div>
   <div class="card-body">
     <p class="muted small">Formal poll records only. These are the authoritative governance objects, not general discussion or consultation threads.</p>
     <div class="table-wrap"><table>
-      <thead><tr><th>Poll<?= ops_admin_help_button('Poll title', 'The formal title or poll key for the matter being put to the partnership.') ?></th><th>Eligibility<?= ops_admin_help_button('Eligibility scope', 'The group that is allowed to vote on this poll. Use this to confirm whether the poll is all-partner or a narrower scope.') ?></th><th>Status<?= ops_admin_help_button('Poll status', 'Open and active require attention; closed and declared are historical; archived is reference-only.') ?></th><th>Voting closes<?= ops_admin_help_button('Voting closes', 'The time after which the open voting window ends.') ?></th></tr></thead>
+      <thead><tr><th>Poll<?= ops_admin_help_button('Poll title', 'The formal title or poll key for the matter being put to the joint venture.') ?></th><th>Eligibility<?= ops_admin_help_button('Eligibility scope', 'The group that is allowed to vote on this poll. Use this to confirm whether the poll is all-member or a narrower scope.') ?></th><th>Status<?= ops_admin_help_button('Poll status', 'Open and active require attention; closed and declared are historical; archived is reference-only.') ?></th><th>Voting closes<?= ops_admin_help_button('Voting closes', 'The time after which the open voting window ends.') ?></th></tr></thead>
       <tbody>
-      <?php if (!$polls): ?><tr><td colspan="4" class="empty-note">No formal Partners Polls found.</td></tr><?php endif; ?>
+      <?php if (!$polls): ?><tr><td colspan="4" class="empty-note">No formal These are the formal governance instruments. When someone asks what the joint venture has voted on found.</td></tr><?php endif; ?>
       <?php foreach ($polls as $row): ?><tr>
         <td><?= ops_h($row['title'] ?? ($row['poll_key'] ?? '')) ?></td>
         <td><?= ops_h($row['eligibility_scope'] ?? 'all') ?></td>
@@ -412,7 +412,7 @@ ob_start(); ?>
   <div class="card-body">
     <p class="muted small">Useful when tracing how a governance matter started or why a poll exists.</p>
     <div class="table-wrap"><table>
-      <thead><tr><th>Proposal<?= ops_admin_help_button('Proposal key / title', 'The initiating or register record for the governance matter.') ?></th><th>Type<?= ops_admin_help_button('Proposal type', 'The class of matter being proposed, such as governance, stewardship, or another controlled action.') ?></th><th>Status<?= ops_admin_help_button('Proposal status', 'Use this to see whether the matter is still being formed, has moved into a formal poll, or is already closed.') ?></th><th>Linked poll<?= ops_admin_help_button('Linked poll', 'If present, this connects the register entry to the formal Partners Poll that carried the governance decision.') ?></th></tr></thead>
+      <thead><tr><th>Proposal<?= ops_admin_help_button('Proposal key / title', 'The initiating or register record for the governance matter.') ?></th><th>Type<?= ops_admin_help_button('Proposal type', 'The class of matter being proposed, such as governance, stewardship, or another controlled action.') ?></th><th>Status<?= ops_admin_help_button('Proposal status', 'Use this to see whether the matter is still being formed, has moved into a formal poll, or is already closed.') ?></th><th>Linked poll<?= ops_admin_help_button('Linked poll', 'If present, this connects the register entry to the formal Members Poll that carried the governance decision.') ?></th></tr></thead>
       <tbody>
       <?php if (!$proposals): ?><tr><td colspan="4" class="empty-note">No proposal register rows yet.</td></tr><?php endif; ?>
       <?php foreach ($proposals as $row): ?><tr>
@@ -489,7 +489,7 @@ ob_start(); ?>
   <div class="card-body">
   <p class="muted small">These are the certifiable result records that support the live governance evidence path. Legacy wallet-poll references remain visible only as bridge trace data until retirement is complete.</p>
   <div class="table-wrap"><table>
-    <thead><tr><th>Snapshot key<?= ops_admin_help_button('Snapshot key', 'The unique identifier for the certified vote snapshot record.') ?></th><th>Partners Poll<?= ops_admin_help_button('Partners Poll', 'The formal poll that this snapshot belongs to, if any.') ?></th><th>Legacy wallet poll<?= ops_admin_help_button('Legacy wallet poll', 'Only a bridge trace field. Do not rely on this as the primary live governance object.') ?></th><th>Certified at<?= ops_admin_help_button('Certified at', 'The time the snapshot was certified into the governance evidence trail.') ?></th></tr></thead>
+    <thead><tr><th>Snapshot key<?= ops_admin_help_button('Snapshot key', 'The unique identifier for the certified vote snapshot record.') ?></th><th>Members Poll<?= ops_admin_help_button('Members Poll', 'The formal poll that this snapshot belongs to, if any.') ?></th><th>Legacy wallet poll<?= ops_admin_help_button('Legacy wallet poll', 'Only a bridge trace field. Do not rely on this as the primary live governance object.') ?></th><th>Certified at<?= ops_admin_help_button('Certified at', 'The time the snapshot was certified into the governance evidence trail.') ?></th></tr></thead>
     <tbody>
     <?php if (!$snapshots): ?><tr><td colspan="4" class="empty-note">No vote snapshots found.</td></tr><?php endif; ?>
     <?php foreach ($snapshots as $row): ?><tr>

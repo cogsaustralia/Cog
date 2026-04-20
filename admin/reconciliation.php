@@ -77,7 +77,7 @@ ops_admin_help_assets_once();
   <p class="muted">Review these rows first when the reconciliation counts are not clean. A paid record should not stay partially allocated for long.</p>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>ID</th><th>Partner<?= ops_admin_help_button('Partner', 'The person linked to the payment record. Use the Partner number to trace the payment on the source page if needed.') ?></th><th>Amount</th><th>Allocated<?= ops_admin_help_button('Allocated', 'This is the total currently matched into payment allocations. If it is less than the amount received, there is still unallocated money.') ?></th><th>Received</th></tr></thead>
+      <thead><tr><th>ID</th><th>Member<?= ops_admin_help_button('Member', 'The person linked to the payment record. Use the Member number to trace the payment on the source page if needed.') ?></th><th>Amount</th><th>Allocated<?= ops_admin_help_button('Allocated', 'This is the total currently matched into payment allocations. If it is less than the amount received, there is still unallocated money.') ?></th><th>Received</th></tr></thead>
       <tbody>
       <?php if(!$unallocated): ?><tr><td colspan="5">No unallocated payments.</td></tr><?php endif; ?>
       <?php foreach($unallocated as $p): ?>

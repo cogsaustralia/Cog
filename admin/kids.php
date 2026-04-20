@@ -652,7 +652,7 @@ function searchGuardian(){
 </div>
 
 <?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('Stage 4 · Children and guardians', 'What this page does', 'This page manages children linked to a guardian Partner record. It is where you register the child, verify the guardian relationship, issue the child-linked token, and monitor future conversion to the adult pathway.', [
+  ops_admin_info_panel('Stage 4 · Children and guardians', 'What this page does', 'This page manages children linked to a guardian Member record. It is where you register the child, verify the guardian relationship, issue the child-linked token, and monitor future conversion to the adult pathway.', [
     'Use this page when a guardian submits child details through the vault or when an operator needs to create the record directly.',
     'Verification here is about guardian relationship and child record integrity, not about later execution or governance publishing.',
     'The age-18 conversion check is a lifecycle task for child records that are approaching adulthood.',

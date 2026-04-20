@@ -162,7 +162,7 @@ if (!function_exists('admin_sidebar_render')) {
         $groups = [
             'Operations' => [
                 ['key' => 'dashboard',         'label' => '◈  Dashboard',                 'href' => './dashboard.php'],
-                ['key' => 'partner_registry',  'label' => '👥  Partners',                 'href' => './members.php'],
+                ['key' => 'partner_registry',  'label' => '👥  Members',                 'href' => './members.php'],
                 ['key' => 'businesses',        'label' => '🏢  Businesses',               'href' => './businesses.php'],
                 ['key' => 'payments',          'label' => '💳  Payments',                  'href' => './payments.php'],
                 ['key' => 'approvals',         'label' => '✅  Approvals',                 'href' => './approvals.php'],
@@ -181,7 +181,7 @@ if (!function_exists('admin_sidebar_render')) {
             ],
             'Governance & Compliance' => [
                 ['key' => 'governance',        'label' => '🗳  Governance',                'href' => './governance.php'],
-                ['key' => 'operations',        'label' => '🤝  Partner Operations',        'href' => './operations.php'],
+                ['key' => 'operations',        'label' => '🤝  Member Operations',        'href' => './operations.php'],
                 ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',            'href' => './foundation_day.php'],
                 ['key' => 'zones',             'label' => '📍  Geographic Zones',          'href' => './zones.php'],
                 ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',          'href' => './evidence_reviews.php'],

@@ -201,7 +201,7 @@ ob_start(); ?>
     <div class="card-head"><h2>Approved requests awaiting collateral <?= ops_admin_help_button('Approved requests awaiting collateral', 'Allocate collateral here before you create execution requests for ASX or RWA token approvals.') ?></h2></div>
     <div class="card-body table-wrap">
       <table>
-        <thead><tr><th>Partner</th><th>Class</th><th>Approved</th><th>Backing status</th><th>Allocate</th></tr></thead>
+        <thead><tr><th>Member</th><th>Class</th><th>Approved</th><th>Backing status</th><th>Allocate</th></tr></thead>
         <tbody>
         <?php if (!$requests): ?><tr><td colspan="5" class="muted">No approved ASX/RWA requests found.</td></tr><?php else: foreach ($requests as $r): $st = ops_asset_backing_status_for_approval($pdo, (int)$r['id']); $srcs = $st['mode'] === 'asx_trade' ? $asxSources : $rwaSources; ?>
           <tr id="approval-<?= (int)$r['id'] ?>">
@@ -237,7 +237,7 @@ ob_start(); ?>
     <div class="card-head"><h2>Recent collateral allocations</h2></div>
     <div class="card-body table-wrap">
       <table>
-        <thead><tr><th>Source</th><th>Partner</th><th>Class</th><th>Units</th><th>Value</th><th>Status</th><th>Action</th></tr></thead>
+        <thead><tr><th>Source</th><th>Member</th><th>Class</th><th>Units</th><th>Value</th><th>Status</th><th>Action</th></tr></thead>
         <tbody>
           <?php if (!$recentAllocations): ?><tr><td colspan="7" class="muted">No backing allocations recorded yet.</td></tr><?php else: foreach ($recentAllocations as $a): $src = (($a['backing_source_type'] ?? '') === 'asx_trade') ? ((($a['asx_code'] ?? 'ASX') . ' · ' . ($a['trade_ref'] ?? 'lot'))) : ((($a['rwa_code'] ?? 'RWA') . ' · ' . ($a['rwa_asset_name'] ?? 'valuation'))); ?>
             <tr>

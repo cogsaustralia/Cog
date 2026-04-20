@@ -97,16 +97,16 @@ $stewardCount = count(array_filter($rows, fn($r) => !empty($r['stewardship_hash'
 <main class="main">
   <div class="card">
     <div class="card-body">
-    <h1 style="margin:0 0 8px">Business Registry (B-NFT) <?= ops_admin_help_button('Business Registry', 'Use this page to understand each business partner record, its responsible person, payment state, address verification, stewardship evidence, and whether the business wallet can be activated. This page explains the record; later pages still handle approvals and execution.') ?></h1>
+    <h1 style="margin:0 0 8px">Use this page to understand each business member record (B-NFT) <?= ops_admin_help_button('Use this page to understand each business member record', 'Use this page to understand each business member record, its responsible person, payment state, address verification, stewardship evidence, and whether the business wallet can be activated. This page explains the record; later pages still handle approvals and execution.') ?></h1>
     <p class="muted" style="margin:0 0 14px">All registered B-NFT business memberships from <code>bnft_memberships</code>. Linked to their responsible person's S-NFT membership.</p>
     </div>
   </div>
 
   <?= ops_admin_collapsible_help('Page guide & workflow', [
-    ops_admin_info_panel('Stage 4 · Business entities', 'What this page does', 'The Business Registry is the operator view of BNFT-linked business records. It shows business identity, responsible-person linkage, entry contribution state, address verification, stewardship evidence, and whether the business wallet is active.', [
+    ops_admin_info_panel('Stage 4 · Business entities', 'What this page does', 'The Use this page to understand each business member record is the operator view of BNFT-linked business records. It shows business identity, responsible-person linkage, entry contribution state, address verification, stewardship evidence, and whether the business wallet is active.', [
       'Use this page to understand the record before taking support actions such as marking the entry contribution as received or activating the wallet.',
       'Do not use this page to perform later approval or execution tasks; those remain on the Approvals and Execution pages.',
-      'Responsible-person linkage matters because a business record depends on a valid personal Partner pathway behind it.',
+      'Responsible-person linkage matters because a business record depends on a valid personal Member pathway behind it.',
     ]),
     ops_admin_workflow_panel('Typical workflow', 'Use this page as the explanatory and support surface for business records.', [
       ['title' => 'Review identity', 'body' => 'Check ABN, legal name, trading name, entity type, and the responsible person linkage.'],
@@ -116,7 +116,7 @@ $stewardCount = count(array_filter($rows, fn($r) => !empty($r['stewardship_hash'
     ]),
     ops_admin_guide_panel('How to read the business registry', 'Each visible field answers a different operator question about the business record.', [
       ['title' => 'Business identity', 'body' => 'Tells you what entity the record actually belongs to and how it presents publicly.'],
-      ['title' => 'Responsible person', 'body' => 'Shows which personal Partner is linked to the business record.'],
+      ['title' => 'Responsible person', 'body' => 'Shows which personal Member is linked to the business record.'],
       ['title' => 'Payment', 'body' => 'Shows whether the entry contribution has been received.'],
       ['title' => 'Stewardship', 'body' => 'Shows whether the stewardship questionnaire/attestation trail is present for this business.'],
     ]),
@@ -149,7 +149,7 @@ $stewardCount = count(array_filter($rows, fn($r) => !empty($r['stewardship_hash'
         <tr>
           <th>Business <?= ops_admin_help_button('Business', 'The legal entity record being reviewed. Open the row to see the full identity, trading, and use-case details.') ?></th>
           <th>ABN</th>
-          <th>Responsible Person <?= ops_admin_help_button('Responsible person', 'The personal Partner linked to this business record. This is the human pathway behind the BNFT record.') ?></th>
+          <th>Responsible Person <?= ops_admin_help_button('Responsible person', 'The personal Member linked to this business record. This is the human pathway behind the BNFT record.') ?></th>
           <th>Payment <?= ops_admin_help_button('Payment', 'Shows whether the business entry contribution has been recorded. Use Mark Paid only after money is actually received.') ?></th>
           <th>G-NAF</th>
           <th>Stewardship <?= ops_admin_help_button('Stewardship', 'Shows whether stewardship attestation data exists for this business and how complete it is.') ?></th>
