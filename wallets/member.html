@@ -1542,6 +1542,7 @@ function infoQ(tipText){
   var safe = String(tipText||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
   return '<button class="iq-btn" data-tip="'+safe+'" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>';
 }
+window.infoQ = infoQ;
 function pathwayCardHtml(card){
   var titleHtml = esc(card.title||'Pathway') + (card.tipText ? infoQ(card.tipText) : '');
   return `<div class="pathway-card ${esc(card.tone||'dim')}">
