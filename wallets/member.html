@@ -925,10 +925,10 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     </span>
     <div class="tb-right">
       <button class="tb-pill" onclick="openProfileDrawer()" title="Profile &amp; settings">
-        <span>⚙</span><span class="tb-pill-lbl">Profile</span>
+        <span>⚙</span><span class="tb-pill-lbl">Profile</span><button class="iq-btn" data-tip="Your profile and settings — update your email, change your password, manage your distribution election preference (AUD or new ASX COG$), and log out." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
       </button>
       <a class="tb-pill" href="../partners/index.html" onclick="coinTransition('../partners/index.html');return false;" title="Partners Hub">
-        <span>🏠</span><span class="tb-pill-lbl">Partners Hub</span>
+        <span>🏠</span><span class="tb-pill-lbl">Partners Hub</span><button class="iq-btn" data-tip="Return to the Partners Hub — community stats, governance news, the document library, the Foundation asset overview, and your invitation code to bring new Partners in." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
       </a>
       <button class="tb-logout" id="logout-btn"><span>↩</span><span class="lbl"> Log out</span></button>
     </div>
@@ -1130,7 +1130,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <p style="font-size:1rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Donation COG$ funds Sub-Trust C — First Nations programs, environmental stewardship, and community initiatives. Pay It Forward sponsors another Partner's $4 entry who cannot afford it.</p>
           <div class="give-stepper-row">
             <div>
-              <div class="give-stepper-lbl">Donation COG$ (Class D)</div>
+              <div class="give-stepper-lbl">Donation COG$ (Class D)<button class="iq-btn" data-tip="$4 each. $2.00 goes directly to Sub-Trust C (the community projects fund) at the time of issue. $2.00 is invested through Sub-Trust A into the Partners Asset Pool, generating a permanent Donation Dividend Stream. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
               <div class="give-stepper-ctrl">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-don',-1)">−</button>
                 <input class="stepper-input" id="char-don" type="number" min="0" value="0" oninput="updateCharityTotal()">
@@ -1139,7 +1139,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
               <div class="give-price-note" style="margin-top:5px">$2 direct to Sub-Trust C · $2 invested via Sub-Trust A</div>
             </div>
             <div>
-              <div class="give-stepper-lbl">Pay It Forward (Class PIF)</div>
+              <div class="give-stepper-lbl">Pay It Forward (Class PIF)<button class="iq-btn" data-tip="$4 each. Funds the $4 joining contribution for another person who cannot afford it. That person joins as a full Partner on exactly equal terms — same governance vote, same Sub-Trust B income unit. No personal financial benefit to you as donor. This is a community access mechanism, not a charitable deduction." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
               <div class="give-stepper-ctrl">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-pif',-1)">−</button>
                 <input class="stepper-input" id="char-pif" type="number" min="0" value="0" oninput="updateCharityTotal()">
