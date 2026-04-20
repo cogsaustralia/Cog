@@ -1539,7 +1539,9 @@ function flash(id, msg, kind){
 function chip(text, type){ return '<span class="chip chip-'+type+'"><span class="chip-dot"></span>'+text+'</span>'; }
 /* infoQ — renders a small ? button that triggers the shared iq-pop popout on click */
 function infoQ(tipText){
-  var safe = String(tipText||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  // \n\n separates body from destination line; stored as || in data-tip
+  var encoded = String(tipText||'').replace(/\\n\\n/g,'||');
+  var safe = encoded.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
   return '<button class="iq-btn" data-tip="'+safe+'" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>';
 }
 window.infoQ = infoQ;
@@ -4491,47 +4493,47 @@ window.openPayModal = function(){
 var _PATHWAYS = {
   operations_oversight: {
     label:'Day-to-Day Operations', status:'live',
-    tip:'Monitor Trustee activity, raise issues, and ensure the Partnership runs according to the JVPA. Partners are the operators — not the Trustee.',
+    tip:'Monitor Trustee activity, raise issues, and ensure the Partnership runs according to the JVPA. Partners are the operators — not the Trustee.\n\nTap to open: COG$ Management tab — proposals, polls, and operational threads.',
     action:function(){ try{ tab('governance'); }catch(e){} }
   },
   governance_polls: {
     label:'Research & Acquisitions', status:'live',
-    tip:'Research and identify new ASX companies, real world assets, and resources as potential acquisition targets for the Partners Asset Pool.',
+    tip:'Research and identify new ASX companies, real world assets, and resources as potential acquisition targets for the Partners Asset Pool.\n\nTap to open: COG$ Management tab — initiate a Partners Poll on any acquisition target.',
     action:function(){ try{ tab('governance'); }catch(e){} }
   },
   esg_proxy_voting: {
     label:'ESG & Proxy Voting', status:'soon',
-    tip:'Direct how CHESS-registered shares are voted at portfolio company AGMs. Partners collectively set the ESG engagement strategy via the Aggregate Unitholder Direction mechanism.',
+    tip:'Direct how CHESS-registered shares are voted at portfolio company AGMs. Partners collectively set the ESG engagement strategy via the Aggregate Unitholder Direction mechanism.\n\nTap to open: ESG & Proxy Voting info panel. Activates at Expansion Day.',
     action:function(){ try{ showInfo('esg-proxy'); }catch(e){} }
   },
   first_nations: {
     label:'First Nations Partnership', status:'live',
-    tip:'Engage with the FNAC, uphold FPIC obligations, and support Indigenous Cultural and Intellectual Property (ICIP) protections. First Nations custodians are founding governance partners.',
+    tip:'Engage with the FNAC, uphold FPIC obligations, and support Indigenous Cultural and Intellectual Property (ICIP) protections. First Nations custodians are founding governance partners.\n\nTap to open: First Nations Partnership info panel.',
     action:function(){ try{ showInfo('first-nations'); }catch(e){} }
   },
   community_projects: {
     label:'Community Projects', status:'live',
-    tip:'Direct grants and community benefit priorities funded through Sub-Trust C — environmental stewardship, First Nations programs, social welfare, and community flourishing.',
+    tip:'Direct grants and community benefit priorities funded through Sub-Trust C — environmental stewardship, First Nations programs, social welfare, and community flourishing.\n\nTap to open: Give tab — Donation COG$ and Pay It Forward.',
     action:function(){ try{ tab('give'); }catch(e){} }
   },
   technology_blockchain: {
     label:'Technology & Blockchain', status:'soon',
-    tip:'Smart contract governance, system audits, and infrastructure decisions. Partners own and operate the proprietary cryptographic governance system — no third party controls it.',
+    tip:'Smart contract governance, system audits, and infrastructure decisions. Partners own and operate the proprietary cryptographic governance system — no third party controls it.\n\nTap to open: Technology & Blockchain info panel.',
     action:function(){ try{ showInfo('technology-blockchain'); }catch(e){} }
   },
   financial_oversight: {
     label:'Financial Oversight', status:'live',
-    tip:'Monitor trust accounts, distribution accuracy, and dividend strategy. The Trustee must publish quarterly reports and annual audited accounts — Partners hold them to it.',
+    tip:'Monitor trust accounts, distribution accuracy, and dividend strategy. The Trustee must publish quarterly reports and annual audited accounts — Partners hold them to it.\n\nTap to open: Financial Oversight info panel.',
     action:function(){ try{ showInfo('financial-oversight'); }catch(e){} }
   },
   place_based_decisions: {
     label:'Place-Based Decisions', status:'live',
-    tip:'Affected Zone declarations and land-impact assessments. If your address falls within a declared Affected Zone, you receive weighted local governance rights on decisions affecting your region.',
+    tip:'Affected Zone declarations and land-impact assessments. If your address falls within a declared Affected Zone, you receive weighted local governance rights on decisions affecting your region.\n\nTap to open: Place-Based Decisions info panel.',
     action:function(){ try{ showInfo('place-based'); }catch(e){} }
   },
   education_outreach: {
     label:'Education & Outreach', status:'live',
-    tip:'Help new Partners understand their role, explain the structure plainly, and grow the collective governance base. Every Partner you bring in strengthens the community\'s voice.',
+    tip:'Help new Partners understand their role, explain the structure plainly, and grow the collective governance base. Every Partner you bring in strengthens the community\'s voice.\n\nTap to open: your invite card — copy your code or share your invite link.',
     action:function(){ scrollToInvite(); }
   }
 };
@@ -4995,8 +4997,20 @@ function updateTourPill(){
     // Close any previous
     iqClose();
 
-    // Set content
-    _pop.textContent = text;
+    // Set content — || separates description from destination line
+    var parts = text.split('||');
+    if(parts.length > 1){
+      _pop.innerHTML = '';
+      var body = document.createElement('div');
+      body.textContent = parts[0].trim();
+      _pop.appendChild(body);
+      var dest = document.createElement('div');
+      dest.textContent = parts[1].trim();
+      dest.style.cssText = 'margin-top:8px;padding-top:8px;border-top:1px solid rgba(232,184,75,.2);font-size:.78rem;color:rgba(232,184,75,.8);font-style:italic';
+      _pop.appendChild(dest);
+    } else {
+      _pop.textContent = text;
+    }
 
     // Show before measuring so we get correct dimensions
     _pop.classList.add('open');
