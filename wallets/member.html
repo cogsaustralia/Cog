@@ -2487,8 +2487,8 @@ async function renderBasket(){
     ];
     el('basket-tokens').innerHTML = tokens.map(t => {
       const count = fmt(c[t.key]||0);
-      const iqT2 = infoQ('Tier 2 token classes — ASX COG$, RWA COG$, and Landholder COG$ — activate on Expansion Day, when Partners bring the Foundation's own blockchain node live and any applicable regulatory requirements are satisfied. No payment is due now; reservations are intentions only.');
-      const iqT1 = infoQ('Tier 1 tokens — Personal S-NFT, Kids S-NFT, Business B-NFT, Donation COG$, Pay It Forward, Resident COG$, and Community COG$ — are live and operational now under the current Transitional Operational Infrastructure.');
+      const iqT2 = infoQ(`Tier 2 token classes — ASX COG$, RWA COG$, and Landholder COG$ — activate on Expansion Day, when Partners bring the Foundation's own blockchain node live and any applicable regulatory requirements are satisfied. No payment is due now; reservations are intentions only.`);
+      const iqT1 = infoQ(`Tier 1 tokens — Personal S-NFT, Kids S-NFT, Business B-NFT, Donation COG$, Pay It Forward, Resident COG$, and Community COG$ — are live and operational now under the current Transitional Operational Infrastructure.`);
       const status = t.tier===2
         ? '<span class="chip chip-amber" style="font-size:1.02rem;padding:2px 6px">Pending Expansion Day</span>' + iqT2
         : '<span class="chip chip-green" style="font-size:1.02rem;padding:2px 6px">Tier 1 — Active</span>' + iqT1;
@@ -2526,11 +2526,11 @@ function renderHoldings(d){
   };
 
   const statusChipFor = function(status){
-    var iqS   = infoQ('Your Class S Unit is issued and secured. Permanent, soulbound, carries your equal governance vote and Sub-Trust B income unit.');
-    var iqPR  = infoQ('The $4 once-only partnership contribution is required to issue your Class S Unit and activate your governance vote.');
-    var iqLck = infoQ('This token class is locked until Expansion Day. That is when Partners activate the Foundation\'s own blockchain node. No payment is due now — this is a no-obligation reservation you can change at any time.');
-    var iqCC  = infoQ('Donation COG$ and Pay It Forward are community and charity pathway tokens — separate from the no-obligation reservation classes. $4 per unit, with $2 going directly to Sub-Trust C.');
-    var iqNow = infoQ('Community COG$ is the only class transferable Partner-to-Partner right now, before Expansion Day. Instant transfer using the recipient\'s hash address.');
+    var iqS   = infoQ(`Your Class S Unit is issued and secured. Permanent, soulbound, carries your equal governance vote and Sub-Trust B income unit.`);
+    var iqPR  = infoQ(`The $4 once-only partnership contribution is required to issue your Class S Unit and activate your governance vote.`);
+    var iqLck = infoQ(`This token class is locked until Expansion Day. That is when Partners activate the Foundation's own blockchain node. No payment is due now — this is a no-obligation reservation you can change at any time.`);
+    var iqCC  = infoQ(`Donation COG$ and Pay It Forward are community and charity pathway tokens — separate from the no-obligation reservation classes. $4 per unit, with $2 going directly to Sub-Trust C.`);
+    var iqNow = infoQ(`Community COG$ is the only class transferable Partner-to-Partner right now, before Expansion Day. Instant transfer using the recipient's hash address.`);
     if(status === 'secured') return chip('Secured','green') + iqS;
     if(status === 'payment_required') return chip('$4 payment required','red') + iqPR;
     if(status === 'locked_until_expansion_day') return chip('Locked until Expansion Day','amber') + iqLck;
@@ -3996,8 +3996,8 @@ function renderTabOverview(d){
   /* ── A: Status strip pill ── */
   var pill = document.getElementById('ov-status-pill');
   if(pill){
-    var iqSecured = infoQ('Your Class S Unit is issued and secured. This is your permanent, soulbound Partner token — it cannot be transferred, sold, or taken away. It carries your equal national governance vote and your Sub-Trust B income unit.');
-    var iqPayReq  = infoQ('Your Class S Unit is reserved but not yet issued. Complete the $4 once-only partnership contribution to activate your Partnership, issue your token, and unlock your equal governance vote.');
+    var iqSecured = infoQ(`Your Class S Unit is issued and secured. This is your permanent, soulbound Partner token — it cannot be transferred, sold, or taken away. It carries your equal national governance vote and your Sub-Trust B income unit.`);
+    var iqPayReq  = infoQ(`Your Class S Unit is reserved but not yet issued. Complete the $4 once-only partnership contribution to activate your Partnership, issue your token, and unlock your equal governance vote.`);
     pill.innerHTML = paid
       ? '<span class="chip chip-green"><span class="chip-dot"></span>Class S Unit Secured</span>' + iqSecured
       : '<span class="chip chip-red"><span class="chip-dot"></span>$4 Payment Required</span>' + iqPayReq;
