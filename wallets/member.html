@@ -1061,7 +1061,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="card" style="margin-bottom:4px">
         <div class="card-hd">
           <h3>COG$ Reservations</h3><button class="info-btn" onclick="showInfo('reservations')">How this works</button>
-          <span class="chip chip-amber"><span class="chip-dot"></span>Released after Expansion Day</span><button class="iq-btn" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this,'ASX COG$, RWA COG$, and Landholder COG$ are Tier 2 classes. They activate on Expansion Day — when the Foundation's blockchain infrastructure goes live and any applicable regulatory requirements under ASIC are satisfied. Your reservations here are no-obligation intentions only.')" tabindex="0">?</button>
+          <span class="chip chip-amber"><span class="chip-dot"></span>Released after Expansion Day</span><button class="iq-btn" data-tip="ASX COG$, RWA COG$, and Landholder COG$ are Tier 2 classes. They activate on Expansion Day — when the Foundation's blockchain infrastructure goes live and any applicable regulatory requirements under ASIC are satisfied. Your reservations here are no-obligation intentions only." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
         </div>
         <div id="hd-res-rows">
           <!-- populated by renderTabHoldings -->
@@ -1539,8 +1539,8 @@ function flash(id, msg, kind){
 function chip(text, type){ return '<span class="chip chip-'+type+'"><span class="chip-dot"></span>'+text+'</span>'; }
 /* infoQ — renders a small ? button that triggers the shared iq-pop popout on click */
 function infoQ(tipText){
-  var safe = String(tipText||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-  return '<button class="iq-btn" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this,\''+safe+'\')" tabindex="0">?</button>';
+  var safe = String(tipText||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  return '<button class="iq-btn" data-tip="'+safe+'" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>';
 }
 function pathwayCardHtml(card){
   var titleHtml = esc(card.title||'Pathway') + (card.tipText ? infoQ(card.tipText) : '');
@@ -3542,7 +3542,7 @@ function renderWalletAddresses(d){
   const rows = classes.filter(c => addrs[c.key]).map(c => {
     const addr = esc(addrs[c.key]);
     return `<div style="margin-bottom:16px">
-      <div style="font-size:1rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:4px">${c.label}<button class="iq-btn" aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this,'This is your Community COG$ hash address — your unique wallet identifier on the Partners exchange. Share it with another Partner so they can send you Community COG$. It begins COGS-CC-. Transfers are immediate and SHA-256 receipted.')" tabindex="0">?</button></div>
+      <div style="font-size:1rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:4px">${c.label}<button class="iq-btn" data-tip="This is your Community COG$ hash address — your unique wallet identifier on the Partners exchange. Share it with another Partner so they can send you Community COG$. It begins COGS-CC-. Transfers are immediate and SHA-256 receipted." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <div class="hash-pill gold" style="font-family:var(--mono);font-size:1.02rem;color:${c.color};word-break:break-all;flex:1;padding:10px 14px;border-radius:10px">${addr}</div>
         <button class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="copyAddr('${addr}',this)">Copy</button>
@@ -4987,6 +4987,7 @@ function updateTourPill(){
   }
 
   window.iqToggle = function(btn, text){
+    if(text === undefined) text = btn.getAttribute('data-tip') || '';
     // Same button clicked again — close
     if(_open && _lastBtn === btn){ iqClose(); return; }
     // Close any previous
