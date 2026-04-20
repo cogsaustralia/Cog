@@ -567,6 +567,23 @@ img{max-width:100%;height:auto}
   user-select:none;-webkit-tap-highlight-color:transparent
 }
 .iq-btn:hover,.iq-btn:focus{background:var(--gold-bg);border-color:var(--gold-bdr);color:var(--gold);outline:none}
+.pin-tip{position:relative}
+.pin-tip-pop{
+  display:none;
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  width:220px;padding:10px 12px;border-radius:11px;
+  background:linear-gradient(160deg,rgba(24,22,16,.99),rgba(14,12,8,.99));
+  border:1px solid var(--gold-bdr);
+  color:var(--text2);font-size:.8rem;line-height:1.58;font-weight:400;
+  box-shadow:0 8px 28px rgba(0,0,0,.7);
+  pointer-events:none;z-index:8500;white-space:normal;text-align:left
+}
+.pin-tip-pop::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--gold-bdr)
+}
+.pin-tip:hover .pin-tip-pop,
+.pin-tip:focus-within .pin-tip-pop{display:block}
 #iq-pop{
   position:fixed;z-index:9000;
   max-width:260px;min-width:180px;
@@ -4657,7 +4674,7 @@ function renderParticipationPathways(d){
       ? '<span class="ov-path-badge" id="op-badge-'+k+'" style="'+(unread>0?'':'display:none')+'">'+unread+'</span>'
       : '';
     var msgBtn = active
-      ? '<button class="btn btn-ghost" style="font-size:.75rem;padding:2px 7px;margin-left:4px;margin-top:4px" data-area="'+k+'" onclick="event.stopPropagation();openOpDrawer(this.dataset.area)" title="Messages">&#128204;</button>'
+      ? '<button class="btn btn-ghost pin-tip" style="font-size:.75rem;padding:2px 7px;margin-left:4px;margin-top:4px;position:relative" data-area="'+k+'" onclick="event.stopPropagation();openOpDrawer(this.dataset.area)" title="Open area messages">&#128204;<span class="pin-tip-pop">Area messages &amp; broadcasts — read updates from the Foundation and post your own contributions to this governance area. Unread count shown on the badge.</span></button>'
       : '';
     var tipBtn = cfg.tip ? infoQ(cfg.tip) : '';
     return '<div class="ov-path" data-info="'+infoKey+'" onclick="showInfo(this.dataset.info)" title="'+esc(cfg.label)+'">' 
