@@ -730,8 +730,8 @@ function currentJvpaVersionRecord(PDO $db): ?array {
             $row = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
             if ($row && !empty($row['agreement_hash']) && $row['agreement_hash'] !== 'REPLACE_WITH_SHA256_BEFORE_DEPLOY') {
                 return [
-                    'version_label' => (string)($row['version_label'] ?? 'v5.0'),
-                    'version_title' => (string)($row['version_title'] ?? 'Joint Venture Partnership Agreement v5.0'),
+                    'version_label' => (string)($row['version_label'] ?? 'v1.0'),
+                    'version_title' => (string)($row['version_title'] ?? 'Joint Venture Partnership Agreement Version 1.0'),
                     'agreement_hash' => (string)$row['agreement_hash'],
                 ];
             }
