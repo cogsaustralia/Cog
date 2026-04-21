@@ -3,6 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // ── First-visit redirect to intro ────────────────────────────────
+    // Runs before any paint. Returning visitors (cogs_intro_seen=1) pass through.
+    (function(){
+      try {
+        if (localStorage.getItem('cogs_intro_seen') !== '1') {
+          var qs = window.location.search; // preserve ?code= if present
+          window.location.replace('/intro/' + qs);
+        }
+      } catch(e) {}
+    })();
+    // ── END first-visit redirect ─────────────────────────────────────
+  </script>
   <title>COG$ of Australia Foundation | Community Joint Venture Membership</title>
   <meta name="description" content="COG$ of Australia Foundation — a community joint venture business where Members collectively direct governance, stewardship, and real-asset participation.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
