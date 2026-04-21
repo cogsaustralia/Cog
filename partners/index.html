@@ -713,24 +713,19 @@
           <div class="auth-links"><button class="auth-link" onclick="showPanel('ap-login')">← Back to login</button></div>
         </div>
 
-        <!-- OTP verification -->
+        <!-- Email magic-link waiting screen -->
         <div id="ap-otp" class="hidden">
-          <h2>Verify your identity</h2>
-          <p class="sub otp-hint" id="otp-hint-text">A 6-digit code has been sent to your registered contact.</p>
-          <div class="otp-inputs" id="otp-inputs">
-            <input class="otp-digit" id="otp-d1" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
-            <input class="otp-digit" id="otp-d2" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-digit" id="otp-d3" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-digit" id="otp-d4" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-digit" id="otp-d5" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-digit" id="otp-d6" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          </div>
-          <button class="btn-gold" id="otp-submit-btn" onclick="submitOtp()">Verify code</button>
-          <div class="otp-timer" id="otp-timer"></div>
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:16px" aria-hidden="true">📧</div>
+          <h2 style="text-align:center;margin-bottom:10px">Check your email</h2>
+          <p class="sub" id="otp-hint-text" style="text-align:center;font-size:1.05rem;line-height:1.7;margin-bottom:6px">
+            A sign-in link has been sent to your email address.
+          </p>
+          <p class="sub" style="text-align:center;font-size:.92rem;color:var(--muted);margin-bottom:24px">
+            Click the link in the email to open your vault. Check your spam folder if it doesn't arrive within a minute.
+          </p>
           <div class="flash" id="otp-fl"></div>
-          <div class="auth-links">
-            <button class="auth-link" id="otp-resend-btn" onclick="resendOtp()">Resend code</button>
-            <button class="auth-link" id="otp-switch-btn" onclick="switchOtpChannel()" style="display:none">Send to my email instead</button>
+          <div class="auth-links" style="margin-top:16px">
+            <button class="auth-link" id="otp-resend-btn" onclick="resendOtp()">Resend link</button>
             <button class="auth-link" onclick="showPanel('ap-login')">← Back to login</button>
           </div>
         </div>
@@ -1910,6 +1905,34 @@ function dismissSplash(){
 // Safety: dismiss splash after 4s max if API hangs
 setTimeout(dismissSplash, 4000);
 
+/* ── Magic link login token handler ── */
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var token  = params.get('login_token');
+  if(!token) return;
+
+  // Remove token from URL immediately — prevent re-use on refresh
+  try {
+    var cleanUrl = window.location.pathname;
+    window.history.replaceState({}, '', cleanUrl);
+  } catch(e) {}
+
+  // Show a brief "signing you in…" message on the login panel
+  showPanel('ap-login');
+  flash('login-fl', 'Signing you in…', 'ok');
+
+  api('auth/verify-login-token', {method:'POST', body:JSON.stringify({login_token: token})})
+    .then(function(){
+      return api('vault/member');
+    })
+    .then(function(vault){
+      afterLoginSuccess(vault);
+    })
+    .catch(function(err){
+      flash('login-fl', err.message || 'This sign-in link has expired or already been used. Please sign in again.', 'err');
+    });
+})();
+
 /* ── Auto-login check ── */
 (async function(){
   try{
@@ -2029,67 +2052,22 @@ document.getElementById('f-login')?.addEventListener('submit', async function(e)
   }
 });
 
-/* ── OTP session ── */
-var _otpCurrentChannel = 'sms';
+/* ── Email magic-link OTP session ── */
 function startOtpSession(challengeToken, hint, channel) {
-  _challengeToken = challengeToken;
-  _otpCurrentChannel = channel || 'sms';
   showPanel('ap-otp');
-
-  // Set hint text based on delivery channel
   var hintEl = document.getElementById('otp-hint-text');
-  if(_otpCurrentChannel === 'sms') {
-    hintEl.textContent = 'A 6-digit code has been sent via SMS to ' + hint;
-  } else if(_otpCurrentChannel === 'email') {
-    hintEl.textContent = 'A 6-digit code has been sent to your email ' + hint;
-  } else {
-    hintEl.textContent = 'A 6-digit code has been sent to ' + hint;
+  if(hintEl && hint){
+    hintEl.textContent = 'A sign-in link has been sent to ' + hint + '. Click the link in the email to open your vault.';
   }
-  // Show/update channel switch button
-  var sw = document.getElementById('otp-switch-btn');
-  if(sw) {
-    sw.style.display = '';
-    sw.textContent = _otpCurrentChannel === 'sms' ? 'Send to my email instead' : 'Send via SMS instead';
-  }
-
-  // Clear digits and focus first
-  for(var i=1;i<=6;i++){
-    var d = document.getElementById('otp-d'+i);
-    if(d) d.value='';
-  }
-  document.getElementById('otp-d1')?.focus();
   flash('otp-fl','');
-
-  // Start 10-minute countdown
-  startOtpTimer(600);
 }
 
-function startOtpTimer(seconds) {
-  if(_otpTimerInterval) clearInterval(_otpTimerInterval);
-  var remaining = seconds;
-  var timerEl = document.getElementById('otp-timer');
-  function tick(){
-    if(remaining <= 0){
-      clearInterval(_otpTimerInterval);
-      timerEl.textContent = 'Code expired. Please log in again.';
-      timerEl.classList.add('urgent');
-      return;
-    }
-    var m = Math.floor(remaining/60), s = remaining%60;
-    timerEl.textContent = 'Code expires in '+m+':'+(s<10?'0':'')+s;
-    timerEl.classList.toggle('urgent', remaining <= 60);
-    remaining--;
-  }
-  tick();
-  _otpTimerInterval = setInterval(tick, 1000);
-}
-
-/* ── OTP resend — replays the original login request to generate a fresh code ── */
+/* ── Resend — issues a fresh magic link ── */
 async function resendOtp(){
   var btn = document.getElementById('otp-resend-btn');
   if(!btn || btn.disabled) return;
   if(!_loginCreds.mobile && !_loginCreds.email){
-    flash('otp-fl','Please go back and sign in again to resend.','err');
+    flash('otp-fl','Please go back and sign in again.','err');
     return;
   }
   btn.disabled = true;
@@ -2098,126 +2076,19 @@ async function resendOtp(){
   try{
     var d = await api('auth/login',{method:'POST',body:JSON.stringify(_loginCreds)});
     if(d.otp_required){
-      if(_otpTimerInterval) clearInterval(_otpTimerInterval);
-      _challengeToken = d.challenge_token||'';
-      // Update hint text with new channel info
       var hintEl = document.getElementById('otp-hint-text');
-      if(hintEl){
-        var hint = d.delivery_hint||d.email_hint||'';
-        _otpCurrentChannel = d.delivery_channel || _otpCurrentChannel;
-        if(_otpCurrentChannel === 'sms'){
-          hintEl.textContent = 'A new code has been sent via SMS to ' + hint;
-        } else {
-          hintEl.textContent = 'A new code has been sent to your email ' + hint;
-        }
-      }
-      var sw = document.getElementById('otp-switch-btn');
-      if(sw) sw.textContent = _otpCurrentChannel === 'sms' ? 'Send to my email instead' : 'Send via SMS instead';
-      // Clear old digits and restart timer
-      for(var i=1;i<=6;i++){var el=document.getElementById('otp-d'+i);if(el)el.value='';}
-      document.getElementById('otp-d1')?.focus();
-      startOtpTimer(600);
-      flash('otp-fl','New code sent.','ok');
+      var hint = d.delivery_hint||d.email_hint||'';
+      if(hintEl && hint) hintEl.textContent = 'A new sign-in link has been sent to ' + hint + '.';
+      flash('otp-fl','New sign-in link sent. Check your email.','ok');
     }
   }catch(err){
     flash('otp-fl',err.message||'Could not resend. Please go back and sign in again.','err');
   }finally{
     btn.disabled = false;
-    btn.textContent = 'Resend code';
+    btn.textContent = 'Resend link';
   }
 }
 window.resendOtp = resendOtp;
-window.submitOtp = submitOtp;
-
-async function switchOtpChannel(){
-  var newChannel = _otpCurrentChannel === 'sms' ? 'email' : 'sms';
-  if(!_loginCreds.mobile && !_loginCreds.email){
-    flash('otp-fl','Please go back and sign in again.','err'); return;
-  }
-  var sw = document.getElementById('otp-switch-btn');
-  if(sw){ sw.disabled = true; sw.textContent = 'Sending…'; }
-  flash('otp-fl','');
-  try{
-    var creds = Object.assign({}, _loginCreds, {auth_channel: newChannel});
-    var d = await api('auth/login',{method:'POST',body:JSON.stringify(creds)});
-    if(d.otp_required){
-      if(_otpTimerInterval) clearInterval(_otpTimerInterval);
-      _challengeToken = d.challenge_token||'';
-      _otpCurrentChannel = d.delivery_channel || newChannel;
-      for(var i=1;i<=6;i++){var el=document.getElementById('otp-d'+i);if(el)el.value='';}
-      document.getElementById('otp-d1')?.focus();
-      startOtpTimer(600);
-      var hintEl = document.getElementById('otp-hint-text');
-      if(hintEl){
-        var hint = d.delivery_hint||d.email_hint||'';
-        if(_otpCurrentChannel === 'sms'){
-          hintEl.textContent = 'A 6-digit code has been sent via SMS to ' + hint;
-        } else {
-          hintEl.textContent = 'A 6-digit code has been sent to your email ' + hint;
-        }
-      }
-      if(sw) sw.textContent = _otpCurrentChannel === 'sms' ? 'Send to my email instead' : 'Send via SMS instead';
-      flash('otp-fl','New code sent via ' + (_otpCurrentChannel === 'sms' ? 'SMS' : 'email') + '.','ok');
-    }
-  }catch(err){
-    flash('otp-fl',err.message||'Could not switch delivery channel.','err');
-  }finally{
-    if(sw) sw.disabled = false;
-  }
-}
-window.switchOtpChannel = switchOtpChannel;
-
-/* ── OTP digit auto-advance ── */
-document.querySelectorAll('.otp-digit').forEach(function(el,i,all){
-  el.addEventListener('input', function(){
-    this.value = this.value.replace(/\D/g,'').slice(0,1);
-    if(this.value && i<all.length-1) all[i+1].focus();
-    // Auto-submit when all 6 filled
-    if(i===all.length-1 && this.value){
-      var code='';
-      for(var j=0;j<all.length;j++) code+=all[j].value;
-      if(code.length===6) submitOtp();
-    }
-  });
-  el.addEventListener('keydown', function(e){
-    if(e.key==='Backspace' && !this.value && i>0){
-      all[i-1].focus();
-      all[i-1].value='';
-    }
-  });
-  // Paste support
-  el.addEventListener('paste', function(e){
-    e.preventDefault();
-    var text = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
-    for(var j=0;j<Math.min(text.length,all.length);j++) all[j].value=text[j];
-    if(text.length>=6) submitOtp();
-  });
-});
-
-async function submitOtp(){
-  var code='';
-  for(var i=1;i<=6;i++) code+=(document.getElementById('otp-d'+i)?.value||'');
-  if(code.length!==6){flash('otp-fl','Please enter all 6 digits.','err');return;}
-
-  var btn=document.getElementById('otp-submit-btn');
-  btn.disabled=true; btn.textContent='Verifying…';
-  flash('otp-fl','');
-  try{
-    await api('auth/verify-otp',{method:'POST',body:JSON.stringify({
-      challenge_token: _challengeToken, otp: code
-    })});
-    if(_otpTimerInterval) clearInterval(_otpTimerInterval);
-    // Authenticated — load community
-    var vault = await api('vault/member');
-    afterLoginSuccess(vault);
-  }catch(err){
-    flash('otp-fl', err.message||'Invalid code. Please try again.','err');
-    btn.disabled=false; btn.textContent='Verify code';
-    // Clear digits
-    for(var i=1;i<=6;i++){var d=document.getElementById('otp-d'+i);if(d)d.value='';}
-    document.getElementById('otp-d1')?.focus();
-  }
-}
 
 /* ── Setup form ── */
 document.getElementById('f-setup')?.addEventListener('submit', async function(e){

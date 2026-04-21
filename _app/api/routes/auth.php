@@ -19,6 +19,7 @@ if ($action === 'login') {
 match ($action) {
     'login' => handleLogin(),
     'verify-otp' => handleVerifyOtp(),
+    'verify-login-token' => handleVerifyLoginToken(),
     'setup' => handleSetupPassword(),          // alias for older/front-end pages
     'setup-password' => handleSetupPassword(),
     'reset-password' => handleResetPassword(),
@@ -137,132 +138,103 @@ function handleLogin(): void {
             error_log('[2FA] 12h window check failed: ' . $windowErr->getMessage());
         }
 
-        // 2FA: generate 6-digit OTP
-        $otp         = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $otpHash     = password_hash($otp, PASSWORD_DEFAULT);
-        $challengeId = bin2hex(random_bytes(32));
-        $otpExpires  = gmdate('Y-m-d H:i:s', time() + 600); // 10 min
-
-        $otpTableOk = false;
-        try {
-            $db->prepare('DELETE FROM member_otp_challenges WHERE member_number = ? AND expires_at < UTC_TIMESTAMP()')
-               ->execute([(string)$row['member_number']]);
-            $db->prepare('INSERT INTO member_otp_challenges (id, member_id, member_number, otp_hash, purpose, expires_at) VALUES (?,?,?,?,\'login\',?)')
-               ->execute([$challengeId, (int)$row['id'], (string)$row['member_number'], $otpHash, $otpExpires]);
-            $otpTableOk = true;
-        } catch (Throwable $e) {
-            // Table not yet created — skip 2FA, create session directly
-            error_log('[2FA] WARN member_otp_challenges unavailable — skipping 2FA: ' . $e->getMessage());
-        }
-
-        if (!$otpTableOk) {
-            createSession($db, 'snft', (int)$row['id'], (string)$row['member_number'], true);
-            apiSuccess(['authenticated' => true]);
-        }
-
+        // ── 2FA: magic link via email (no SMS, no 6-digit code) ────────────────
         $memberEmail  = strtolower(trim((string)($row['email'] ?? '')));
-        $memberMobile = (string)($row['mobile'] ?? '');
         $memberName   = (string)($row['full_name'] ?? 'Member');
+        $memberNumber = (string)$row['member_number'];
 
-        // ── Deliver OTP: respect auth_channel preference, SMS default, email on request or fallback ──
-        $otpSent    = false;
-        $otpChannel = 'none';
-        $preferredChannel = strtolower(sanitize($body['auth_channel'] ?? ''));
-        if (!in_array($preferredChannel, ['sms', 'email'], true)) {
-            $preferredChannel = 'sms'; // default: try SMS first
-        }
-
-        // 1a. SMS — if preferred (default) and available
-        if ($preferredChannel === 'sms' && $memberMobile !== '' && function_exists('smsEnabled') && smsEnabled()) {
-            if (smsSendOtp($memberMobile, $otp, $memberName)) {
-                $otpSent    = true;
-                $otpChannel = 'sms';
-            }
-        }
-
-        // 1b. Email — if explicitly preferred by the Partner
-        if (!$otpSent && $preferredChannel === 'email' && $memberEmail !== '' && mailerEnabled()) {
-            $otpHtml = '<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto">'
-                . '<h2 style="color:#c8973e;margin-bottom:4px">COG$ Independence Vault</h2>'
-                . '<p style="color:#555">Hello ' . htmlspecialchars($memberName, ENT_QUOTES) . ',</p>'
-                . '<p style="color:#333">Your vault sign-in code:</p>'
-                . '<div style="font-size:42px;font-weight:700;letter-spacing:14px;text-align:center;'
-                . 'background:#0f1720;color:#f0d98a;padding:24px;border-radius:12px;margin:20px 0">'
-                . htmlspecialchars($otp, ENT_QUOTES) . '</div>'
-                . '<p style="color:#888;font-size:13px">Expires in <strong>10 minutes</strong>. One use only.</p>'
-                . '<p style="color:#c00;font-size:12px">If you did not attempt this sign-in, change your password immediately.</p>'
-                . '</div>';
-            $otpText = "COG\$ Vault sign-in code: {$otp}\nExpires in 10 minutes. Do not share.";
-            try {
-                smtpSendEmail($memberEmail, 'COG$ Vault — your sign-in code', $otpHtml, $otpText);
-                $otpSent    = true;
-                $otpChannel = 'email';
-            } catch (Throwable $mailErr) {
-                error_log('[2FA] preferred-email send failed: ' . $mailErr->getMessage());
-            }
-        }
-
-        // 2. Email — automatic fallback if SMS was preferred but failed
-        if (!$otpSent && $memberEmail !== '' && mailerEnabled()) {
-            $otpHtml = '<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto">'
-                . '<h2 style="color:#c8973e;margin-bottom:4px">COG$ Independence Vault</h2>'
-                . '<p style="color:#555">Hello ' . htmlspecialchars($memberName, ENT_QUOTES) . ',</p>'
-                . '<p style="color:#333">Your vault sign-in code:</p>'
-                . '<div style="font-size:42px;font-weight:700;letter-spacing:14px;text-align:center;'
-                . 'background:#0f1720;color:#f0d98a;padding:24px;border-radius:12px;margin:20px 0">'
-                . htmlspecialchars($otp, ENT_QUOTES) . '</div>'
-                . '<p style="color:#888;font-size:13px">Expires in <strong>10 minutes</strong>. One use only.</p>'
-                . '<p style="color:#c00;font-size:12px">If you did not attempt this sign-in, change your password immediately.</p>'
-                . '</div>';
-            $otpText = "COG\$ Vault sign-in code: {$otp}\nExpires in 10 minutes. Do not share.";
-            try {
-                smtpSendEmail($memberEmail, 'COG$ Vault — your sign-in code', $otpHtml, $otpText);
-                $otpSent    = true;
-                $otpChannel = 'email';
-            } catch (Throwable $mailErr) {
-                error_log('[2FA] email send failed: ' . $mailErr->getMessage());
-                try {
-                    queueEmail($db, 'snft_member', (int)$row['id'], $memberEmail, 'otp_login',
-                        'COG$ Vault sign-in code', ['otp' => $otp, 'name' => $memberName]);
-                    $otpSent    = true;
-                    $otpChannel = 'email_queued';
-                } catch (Throwable $qe) {
-                    error_log('[2FA] queue also failed: ' . $qe->getMessage());
-                }
-            }
-        }
-
-        // 3. Neither channel delivered — skip 2FA, log in directly
-        if (!$otpSent) {
-            try { $db->prepare('DELETE FROM member_otp_challenges WHERE id = ?')->execute([$challengeId]); }
-            catch (Throwable $ignored) {}
-            createSession($db, 'snft', (int)$row['id'], (string)$row['member_number'], true);
+        // No email on file — cannot send link, log in directly as fallback
+        if ($memberEmail === '') {
+            createSession($db, 'snft', (int)$row['id'], $memberNumber, true);
             apiSuccess(['authenticated' => true]);
         }
 
-        // Build masked hint for the UI — show which channel was used        // Build masked hint for the UI — show which channel was used
-        $deliveryHint = '';
-        if ($otpChannel === 'sms') {
-            // Mask mobile: show first 4 + last 2 digits
-            $digitsOnly = preg_replace('/\D/', '', $memberMobile);
-            $deliveryHint = substr($digitsOnly, 0, 4) . str_repeat('*', max(2, strlen($digitsOnly) - 6)) . substr($digitsOnly, -2);
-            $deliveryChannel = 'sms';
-        } elseif ($memberEmail !== '') {
-            [$local, $domain] = explode('@', $memberEmail, 2) + ['', ''];
-            $deliveryHint = (strlen($local) > 2 ? substr($local, 0, 2) . str_repeat('*', max(2, strlen($local) - 2)) : '**')
-                          . '@' . $domain;
-            $deliveryChannel = 'email';
-        } else {
-            $deliveryChannel = 'unknown';
+        // Generate a secure 32-byte raw token; store only its SHA-256 hash
+        $rawToken   = bin2hex(random_bytes(32));          // 64-char hex
+        $tokenHash  = hash('sha256', $rawToken);
+        $purpose    = 'member_login:' . $memberNumber;   // encodes member identity without extra column
+        $expires    = gmdate('Y-m-d H:i:s', time() + 600); // 10 minutes
+
+        $tokenStored = false;
+        try {
+            // Clear any unused previous login tokens for this member
+            $db->prepare("DELETE FROM one_time_tokens WHERE purpose = ? AND used_at IS NULL")
+               ->execute([$purpose]);
+            $db->prepare("INSERT INTO one_time_tokens (token_hash, purpose, expires_at, created_at) VALUES (?,?,?,UTC_TIMESTAMP())")
+               ->execute([$tokenHash, $purpose, $expires]);
+            $tokenStored = true;
+        } catch (Throwable $e) {
+            error_log('[magic-link] one_time_tokens unavailable: ' . $e->getMessage());
+        }
+
+        if (!$tokenStored) {
+            // Table unavailable — skip 2FA, create session directly
+            createSession($db, 'snft', (int)$row['id'], $memberNumber, true);
+            apiSuccess(['authenticated' => true]);
+        }
+
+        // Build the clickable magic link
+        $baseUrl  = 'https://cogsaustralia.org';
+        $magicUrl = $baseUrl . '/partners/?login_token=' . urlencode($rawToken);
+
+        // Build masked email hint for the UI
+        [$local, $domain] = array_pad(explode('@', $memberEmail, 2), 2, '');
+        $maskedEmail = (strlen($local) > 2
+            ? substr($local, 0, 2) . str_repeat('*', max(2, strlen($local) - 2))
+            : '**') . '@' . $domain;
+
+        // Email HTML — large, clear, single CTA button
+        $firstName = explode(' ', trim($memberName))[0] ?: 'Member';
+        $htmlBody =
+            '<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;background:#0d0f14;border-radius:16px;padding:40px 36px;color:#fff8e8">'
+          . '<div style="text-align:center;margin-bottom:32px">'
+          . '<span style="font-size:28px;font-weight:700;color:#f0d18a;letter-spacing:-.5px">COG$ Independence Vault</span>'
+          . '</div>'
+          . '<p style="font-size:18px;line-height:1.6;margin:0 0 16px">Hello ' . htmlspecialchars($firstName, ENT_QUOTES) . ',</p>'
+          . '<p style="font-size:16px;line-height:1.7;color:rgba(255,248,232,.85);margin:0 0 32px">Tap the button below to open your Independence Vault. This link expires in <strong style="color:#f0d18a">10 minutes</strong> and can only be used once.</p>'
+          . '<div style="text-align:center;margin:0 0 32px">'
+          . '<a href="' . htmlspecialchars($magicUrl, ENT_QUOTES) . '" '
+          . 'style="display:inline-block;background:#f0d18a;color:#0a0804;font-size:18px;font-weight:700;'
+          . 'padding:18px 44px;border-radius:12px;text-decoration:none;letter-spacing:.01em">'
+          . 'Open my Independence Vault →'
+          . '</a>'
+          . '</div>'
+          . '<p style="font-size:13px;color:rgba(255,248,232,.45);text-align:center;margin:0 0 8px">Or copy this link into your browser:</p>'
+          . '<p style="font-size:12px;color:rgba(255,248,232,.35);text-align:center;word-break:break-all;margin:0 0 32px">' . htmlspecialchars($magicUrl, ENT_QUOTES) . '</p>'
+          . '<hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:0 0 24px">'
+          . '<p style="font-size:12px;color:rgba(255,248,232,.35);margin:0">If you did not request this sign-in link, you can safely ignore this email. Your vault remains secure. Check your spam folder if the link does not arrive within a minute.</p>'
+          . '</div>';
+
+        $textBody = "COG\$ Independence Vault — sign-in link\n\nHello {$firstName},\n\nClick the link below to open your Independence Vault. Expires in 10 minutes, one use only.\n\n{$magicUrl}\n\nIf you did not request this, ignore this email. Check your spam folder if it doesn't arrive within a minute.\n\n— COG\$ of Australia Foundation";
+
+        $linkSent = false;
+        try {
+            smtpSendEmail($memberEmail, 'Sign in to your COG$ Independence Vault', $htmlBody, $textBody);
+            $linkSent = true;
+        } catch (Throwable $mailErr) {
+            error_log('[magic-link] smtpSendEmail failed: ' . $mailErr->getMessage());
+            // Queue fallback
+            try {
+                queueEmail($db, 'snft_member', (int)$row['id'], $memberEmail, 'login_magic_link',
+                    'Sign in to your COG$ Independence Vault',
+                    ['magic_url' => $magicUrl, 'name' => $memberName, 'first_name' => $firstName]);
+                $linkSent = true;
+            } catch (Throwable $qe) {
+                error_log('[magic-link] queue also failed: ' . $qe->getMessage());
+            }
+        }
+
+        if (!$linkSent) {
+            // Both email paths failed — log in directly rather than leave member stuck
+            createSession($db, 'snft', (int)$row['id'], $memberNumber, true);
+            apiSuccess(['authenticated' => true]);
         }
 
         apiSuccess([
             'otp_required'     => true,
-            'challenge_token'  => $challengeId,
-            'delivery_channel' => $deliveryChannel,  // 'sms' or 'email'
-            'delivery_hint'    => $deliveryHint,      // masked mobile or email
-            // Legacy field — wallet uses this to show hint text
-            'email_hint'       => $deliveryHint,
+            'delivery_channel' => 'email_link',
+            'delivery_hint'    => $maskedEmail,
+            'email_hint'       => $maskedEmail,
         ]);
     }
 
@@ -861,4 +833,76 @@ function createSession(PDO $db, string $userType, int $principalId, string $subj
     }
 
     setcookie(SESSION_COOKIE_NAME, $sessionId, cookieOptions());
+}
+
+// ── Magic link login token verification ────────────────────────────────────
+// Called by the frontend when ?login_token= is found in the URL.
+// Validates the token against one_time_tokens, creates a full session.
+function handleVerifyLoginToken(): void {
+    requireMethod('POST');
+    $db   = getDB();
+    $body = jsonBody();
+    enforceRateLimit($db, 'login');
+
+    $rawToken = trim(sanitize((string)($body['login_token'] ?? '')));
+    if (strlen($rawToken) < 32) {
+        apiError('Invalid or missing login token.');
+    }
+
+    $tokenHash = hash('sha256', $rawToken);
+
+    try {
+        $stmt = $db->prepare(
+            "SELECT id, purpose FROM one_time_tokens
+              WHERE token_hash = ?
+                AND used_at   IS NULL
+                AND expires_at > UTC_TIMESTAMP()
+              LIMIT 1"
+        );
+        $stmt->execute([$tokenHash]);
+        $token = $stmt->fetch();
+    } catch (Throwable $e) {
+        error_log('[magic-link] verify query failed: ' . $e->getMessage());
+        apiError('Verification service unavailable.', 503);
+    }
+
+    if (!$token) {
+        recordAuthFailure($db, 'login');
+        apiError('This sign-in link has expired or already been used. Please sign in again.');
+    }
+
+    // Purpose encodes member_number: 'member_login:{member_number}'
+    $purposeParts  = explode(':', (string)$token['purpose'], 2);
+    if (($purposeParts[0] ?? '') !== 'member_login' || empty($purposeParts[1])) {
+        apiError('Invalid token purpose.');
+    }
+    $memberNumber = $purposeParts[1];
+
+    // Fetch member
+    try {
+        $mStmt = $db->prepare(
+            "SELECT id, member_number FROM snft_memberships
+              WHERE member_number = ? LIMIT 1"
+        );
+        $mStmt->execute([$memberNumber]);
+        $member = $mStmt->fetch();
+    } catch (Throwable $e) {
+        apiError('Member lookup failed.', 503);
+    }
+
+    if (!$member) {
+        apiError('Member not found.', 404);
+    }
+
+    // Mark token used
+    try {
+        $db->prepare("UPDATE one_time_tokens SET used_at = UTC_TIMESTAMP() WHERE id = ?")
+           ->execute([(int)$token['id']]);
+    } catch (Throwable $e) {
+        error_log('[magic-link] could not mark token used: ' . $e->getMessage());
+    }
+
+    clearAuthRateLimit($db, 'login');
+    createSession($db, 'snft', (int)$member['id'], (string)$member['member_number'], true);
+    apiSuccess(['authenticated' => true]);
 }
