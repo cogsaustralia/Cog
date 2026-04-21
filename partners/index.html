@@ -2243,7 +2243,8 @@ function setJvpaAcceptEnabled(enabled) {
 }
 
 // Enable accept button only when checkbox is ticked
-document.addEventListener('DOMContentLoaded', function() {
+// Script runs after DOM is fully parsed — no DOMContentLoaded needed
+(function() {
   var cb = document.getElementById('jvpa-checkbox');
   if (cb) {
     cb.addEventListener('change', function() {
@@ -2253,7 +2254,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-});
+})();
 
 async function submitJvpaAcceptance() {
   var cb = document.getElementById('jvpa-checkbox');

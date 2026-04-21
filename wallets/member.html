@@ -3834,9 +3834,9 @@ window.submitJvpaAcceptance = async function submitJvpaAcceptance() {
       window._vaultData.jvpa_acceptance.needs_signing = false;
       window._vaultData.jvpa_acceptance.verified = true;
     }
-    // Re-render the identity section to update chip
-    if (typeof renderIdentity === 'function' && window._vaultData) {
-      renderIdentity(window._vaultData);
+    // Re-render the identity section to update chip — use window.renderIdentity to pick up patch
+    if (typeof window.renderIdentity === 'function' && window._vaultData) {
+      window.renderIdentity(window._vaultData);
     }
     setTimeout(window.closeJvpaModal, 1200);
   } catch(err) {

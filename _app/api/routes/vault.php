@@ -571,9 +571,25 @@ function memberVault(): void {
             // Enrich with current version info so the UI can detect version mismatches
             $current = currentJvpaVersionRecord($db);
             $currentLabel = $current ? (string)$current['version_label'] : null;
-            // Title from DB — display-safe mixed case, no version suffix
-            $rawTitle = $current ? (string)$current['version_title'] : 'COGS of Australia Foundation Joint Venture Participation Agreement';
-            $displayTitle = mb_convert_case(mb_strtolower($rawTitle), MB_CASE_TITLE, 'UTF-8');
+            // Display title: use DB value but fix acronym — never auto-lowercase COGS
+            $rawTitle = $current ? (string)$current['version_title'] : '';
+            if ($rawTitle !== '') {
+                // Convert ALL-CAPS DB title to mixed case, preserving COGS acronym
+                $words = explode(' ', $rawTitle);
+                $minor = ['of', 'the', 'and', 'in', 'on', 'at', 'to', 'a', 'an', 'for', 'nor', 'but', 'or', 'yet', 'so'];
+                $displayTitle = implode(' ', array_map(function($word, $idx) use ($minor) {
+                    $lower = strtolower($word);
+                    // Always capitalise first and last word; keep minor words lowercase mid-title
+                    if ($idx === 0 || !in_array($lower, $minor, true)) {
+                        return ucfirst($lower);
+                    }
+                    return $lower;
+                }, $words, array_keys($words)));
+                // Restore COGS acronym (ucfirst gives 'Cogs' — fix back)
+                $displayTitle = preg_replace('/\bCogs\b/', 'COG$', $displayTitle);
+            } else {
+                $displayTitle = 'COG$ of Australia Foundation Joint Venture Participation Agreement';
+            }
             $acceptedVersion = $jvpaAcceptance['accepted_version'] ?? null;
             $isVerified = !empty($jvpaAcceptance['verified']);
             $needsSigning = !$isVerified
@@ -611,7 +627,7 @@ function acceptJvpa(): void {
     $db = getDB();
 
     // Require confirmation that the member has viewed the document
-    $body = json_decode(file_get_contents('php://input') ?: '{}', true) ?: [];
+    $body = jsonBody();
     if (empty($body['viewed_document'])) {
         apiError('You must open and review the agreement before recording your acceptance.');
     }
