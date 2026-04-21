@@ -1722,28 +1722,49 @@ function renderJvpaAcceptance(a){
   var wrap = el('jvpa-wrap');
   if(!wrap) return;
   var hasAcceptance = !!(a && (a.accepted_at || a.checkbox_confirmed));
-  var verified = !!(a && a.verified);
-  var chipHtml = verified
+  var verified      = !!(a && a.verified);
+  var needsSigning  = !!(a && a.needs_signing);
+  var versionMismatch = !!(a && a.current_version && a.accepted_version && a.accepted_version !== a.current_version);
+  var displayTitle  = (a && a.current_version_title) || 'COG$ of Australia Foundation Joint Venture Participation Agreement';
+
+  // Chip: green = fully recorded current version; amber = signed but old version or incomplete; red = missing
+  var chipHtml = (verified && !needsSigning)
     ? chip('JVPA recorded','green')
-    : hasAcceptance
-      ? chip('JVPA accepted','amber')
+    : (hasAcceptance || versionMismatch)
+      ? chip('JVPA — update required','amber')
       : chip('JVPA missing','red');
-  var title = verified
+
+  var title = (verified && !needsSigning)
     ? 'Joint Venture Agreement — <span style="color:var(--green)">Recorded</span>'
-    : hasAcceptance
-      ? 'Joint Venture Agreement — <span style="color:var(--amber)">Accepted</span>'
-      : 'Joint Venture Agreement — <span style="color:var(--red)">Missing</span>';
-  var note = verified
+    : (versionMismatch)
+      ? 'Joint Venture Agreement — <span style="color:var(--amber)">New version — acceptance required</span>'
+      : hasAcceptance
+        ? 'Joint Venture Agreement — <span style="color:var(--amber)">Accepted</span>'
+        : 'Joint Venture Agreement — <span style="color:var(--red)">Missing</span>';
+
+  var note = (verified && !needsSigning)
     ? 'Your acceptance is recorded in the membership intake record and linked to a JVPA evidence-vault entry.'
-    : hasAcceptance
-      ? 'Your checkbox acceptance is present, but the full evidence link is not yet complete.'
-      : 'No verified JVPA acceptance record is available for this Member vault yet.';
-  var evidence = verified
+    : versionMismatch
+      ? 'A new version of the agreement (' + esc(a.current_version) + ') has been issued. Your previous acceptance (' + esc(a.accepted_version) + ') is on file. Please read and accept the current version.'
+      : hasAcceptance
+        ? 'Your checkbox acceptance is present, but the full evidence link is not yet complete.'
+        : 'No verified JVPA acceptance record is available for this Member vault yet.';
+
+  var evidence = (verified && !needsSigning)
     ? 'Evidence entry linked and hash-matched'
     : (a && a.evidence_recorded)
       ? 'Evidence entry linked — awaiting final verification'
       : 'Evidence entry not yet confirmed';
-  var needsRepair = !!(!verified);
+
+  // Show sign/re-sign button if needed
+  var signBtn = needsSigning
+    ? '<button class="btn btn-gold btn-sm" onclick="openJvpaModal()">Read &amp; sign the agreement →</button>'
+    : '';
+  // Keep repair button for admin-initiated repair (not shown when needsSigning covers it)
+  var repairBtn = (!needsSigning && !verified)
+    ? '<button class="btn btn-gold btn-sm" id="jvpa-complete-btn" onclick="completeCurrentJvpaRecord()">Complete current JVPA record</button>'
+    : '';
+
   wrap.innerHTML = '<div class="ent-row" style="margin-top:10px;align-items:flex-start">'
     + '<span class="ent-icon">§</span>'
     + '<div class="ent-text">'
@@ -1753,8 +1774,9 @@ function renderJvpaAcceptance(a){
     +   '</div>'
     +   '<div class="ent-desc">'+note+'</div>'
     +   '<div class="id-grid" style="margin-top:12px">'
-    +     '<div class="id-row"><span class="id-label">Version</span><span class="id-value">'+esc((a&&a.accepted_version)||'—')+'</span></div>'
-    +     '<div class="id-row"><span class="id-label">Title</span><span class="id-value">'+esc((a&&a.jvpa_title)||'—')+'</span></div>'
+    +     '<div class="id-row"><span class="id-label">Accepted version</span><span class="id-value">'+esc((a&&a.accepted_version)||'—')+'</span></div>'
+    +     '<div class="id-row"><span class="id-label">Current version</span><span class="id-value">'+esc((a&&a.current_version)||'—')+'</span></div>'
+    +     '<div class="id-row"><span class="id-label">Title</span><span class="id-value">'+esc((a&&a.jvpa_title)||displayTitle)+'</span></div>'
     +     '<div class="id-row"><span class="id-label">Accepted</span><span class="id-value">'+dts((a&&a.accepted_at)||'')+'</span></div>'
     +     '<div class="id-row"><span class="id-label">Acceptance hash</span><span class="id-value mono">'+esc((a&&a.hash_display)||'—')+'</span></div>'
     +     '<div class="id-row"><span class="id-label">Evidence</span><span class="id-value">'+esc(evidence)+'</span></div>'
@@ -1762,7 +1784,8 @@ function renderJvpaAcceptance(a){
     +   '</div>'
     +   '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'
     +     '<a class="btn btn-ghost btn-sm" href="../docs/COGS_JVPA.pdf" target="_blank">Download JVPA PDF</a>'
-    +     (needsRepair ? '<button class="btn btn-gold btn-sm" id="jvpa-complete-btn" onclick="completeCurrentJvpaRecord()">Complete current JVPA record</button>' : '')
+    +     signBtn
+    +     repairBtn
     +   '</div>'
     +   '<div class="flash" id="jvpa-fl"></div>'
     + '</div>'
@@ -3717,6 +3740,110 @@ window.shareInviteLink  = shareInviteLink;
 window.ivShare          = ivShare;
 window.stagShare        = stagShare;
 window.completeCurrentJvpaRecord = completeCurrentJvpaRecord;
+
+/* ── JVPA signing modal (IV wallet) ── */
+var _jvpaViewed = false;
+
+window.openJvpaModal = function openJvpaModal() {
+  var vaultData = window._vaultData || {};
+  var jvpa = vaultData.jvpa_acceptance || {};
+  var modal = document.getElementById('jvpa-modal');
+  if (!modal) return;
+
+  var titleEl    = document.getElementById('jvpa-modal-title');
+  var versionEl  = document.getElementById('jvpa-modal-version');
+  var acceptEl   = document.getElementById('jvpa-accept-title');
+  if (titleEl && jvpa.current_version_title)  titleEl.textContent   = jvpa.current_version_title;
+  if (versionEl && jvpa.current_version)      versionEl.textContent = jvpa.current_version;
+  if (acceptEl && jvpa.current_version_title) acceptEl.textContent  = jvpa.current_version_title;
+
+  _jvpaViewed = false;
+  var cb = document.getElementById('jvpa-checkbox');
+  if (cb) cb.checked = false;
+  _setJvpaEnabled(false);
+  var fl = document.getElementById('jvpa-modal-fl');
+  if (fl) { fl.textContent = ''; fl.className = 'flash'; }
+
+  modal.style.display = 'flex';
+
+  // Auto-enable after 8s (PDF iframe is cross-origin; scroll detection unavailable)
+  setTimeout(function() {
+    if (!_jvpaViewed) {
+      _jvpaViewed = true;
+      _setJvpaEnabled(true);
+      var hint = document.getElementById('jvpa-scroll-hint');
+      if (hint) hint.style.opacity = '0';
+    }
+  }, 8000);
+};
+
+window.closeJvpaModal = function closeJvpaModal() {
+  var modal = document.getElementById('jvpa-modal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.onJvpaFrameLoad = function onJvpaFrameLoad() {
+  // Enable after 4s once PDF has had time to render
+  setTimeout(function() {
+    _jvpaViewed = true;
+    _setJvpaEnabled(true);
+    var hint = document.getElementById('jvpa-scroll-hint');
+    if (hint) hint.style.opacity = '0';
+  }, 4000);
+};
+
+function _setJvpaEnabled(enabled) {
+  var cbWrap = document.getElementById('jvpa-checkbox-wrap');
+  var btn    = document.getElementById('jvpa-accept-btn');
+  if (cbWrap) {
+    cbWrap.style.opacity = enabled ? '1' : '.4';
+    cbWrap.style.pointerEvents = enabled ? '' : 'none';
+  }
+  if (btn) {
+    btn.style.opacity = enabled ? '1' : '.4';
+    btn.style.pointerEvents = enabled ? '' : 'none';
+    btn.disabled = !enabled;
+  }
+}
+
+// Checkbox change
+(function() {
+  var cb = document.getElementById('jvpa-checkbox');
+  if (cb) {
+    cb.addEventListener('change', function() {
+      var btn = document.getElementById('jvpa-accept-btn');
+      if (btn && _jvpaViewed) btn.style.opacity = cb.checked ? '1' : '.6';
+    });
+  }
+})();
+
+window.submitJvpaAcceptance = async function submitJvpaAcceptance() {
+  var cb = document.getElementById('jvpa-checkbox');
+  if (!cb || !cb.checked) {
+    flash('jvpa-modal-fl', 'Please tick the checkbox to confirm you have read the agreement.', 'err');
+    return;
+  }
+  var btn = document.getElementById('jvpa-accept-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Recording…'; }
+  flash('jvpa-modal-fl', '', '');
+  try {
+    await api('vault/accept-jvpa', { method: 'POST', body: JSON.stringify({ viewed_document: true }) });
+    flash('jvpa-modal-fl', 'Acceptance recorded. Thank you.', 'ok');
+    // Update local vault data so chip reflects new state
+    if (window._vaultData && window._vaultData.jvpa_acceptance) {
+      window._vaultData.jvpa_acceptance.needs_signing = false;
+      window._vaultData.jvpa_acceptance.verified = true;
+    }
+    // Re-render the identity section to update chip
+    if (typeof renderIdentity === 'function' && window._vaultData) {
+      renderIdentity(window._vaultData);
+    }
+    setTimeout(window.closeJvpaModal, 1200);
+  } catch(err) {
+    flash('jvpa-modal-fl', err.message || 'Could not record acceptance. Please try again.', 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Record my acceptance →'; }
+  }
+};
 window.adjustGiftQty = adjustGiftQty;
 window.submitKidsOrder = submitKidsOrder;
 window.submitCharityOrders = submitCharityOrders;
@@ -4992,6 +5119,47 @@ function updateTourPill(){
     <div class="info-panel-body" id="info-panel-body"></div>
   </div>
 </div>
+<!-- JVPA signing modal -->
+<div id="jvpa-modal" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.82);align-items:center;justify-content:center;padding:16px">
+  <div style="width:100%;max-width:640px;background:linear-gradient(160deg,rgba(22,16,6,.98),rgba(12,9,3,.99));border:1.5px solid rgba(240,209,138,.28);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;max-height:90dvh">
+    <div style="padding:22px 24px 16px;border-bottom:1px solid rgba(240,209,138,.12);flex-shrink:0;display:flex;align-items:flex-start;gap:12px">
+      <div style="flex:1">
+        <div style="font-family:var(--serif);font-size:1.2rem;font-weight:600;color:var(--gold-1);line-height:1.3" id="jvpa-modal-title">Joint Venture Participation Agreement</div>
+        <div style="font-size:.82rem;color:var(--text3);margin-top:4px" id="jvpa-modal-version"></div>
+      </div>
+      <button onclick="closeJvpaModal()" style="background:none;border:none;color:var(--text3);font-size:1.4rem;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0" aria-label="Close">×</button>
+    </div>
+    <div style="padding:16px 24px 0;flex-shrink:0">
+      <p style="font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:12px">Read the full agreement below. Your acceptance will be cryptographically recorded.</p>
+    </div>
+    <div style="flex:1;min-height:0;padding:0 24px;overflow:hidden">
+      <iframe id="jvpa-doc-frame"
+        src="../docs/COGS_JVPA.pdf"
+        style="width:100%;height:320px;border:1px solid rgba(240,209,138,.15);border-radius:10px;background:#fff"
+        title="Joint Venture Participation Agreement"
+        onload="onJvpaFrameLoad()">
+      </iframe>
+      <div id="jvpa-scroll-hint" style="font-size:.8rem;color:var(--text3);text-align:center;margin-top:8px;transition:opacity .3s">
+        Scroll to the bottom of the document to enable acceptance ↓
+      </div>
+    </div>
+    <div style="padding:18px 24px 22px;flex-shrink:0;border-top:1px solid rgba(240,209,138,.10);margin-top:14px">
+      <label id="jvpa-checkbox-wrap" style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;opacity:.4;pointer-events:none;transition:opacity .3s">
+        <input type="checkbox" id="jvpa-checkbox" style="width:20px;height:20px;flex-shrink:0;margin-top:2px;accent-color:#f0d18a;cursor:pointer">
+        <span style="font-size:.92rem;color:var(--text2);line-height:1.6">
+          I have read and accept the <strong style="color:var(--gold-1)" id="jvpa-accept-title">COG$ of Australia Foundation Joint Venture Participation Agreement</strong> on equal terms with all existing Members.
+        </span>
+      </label>
+      <div class="flash" id="jvpa-modal-fl" style="margin-top:12px"></div>
+      <button id="jvpa-accept-btn" onclick="submitJvpaAcceptance()"
+        style="width:100%;margin-top:14px;font-size:1rem;padding:14px;border-radius:12px;background:var(--gold-1);color:#0a0804;font-weight:700;border:none;cursor:pointer;opacity:.4;pointer-events:none;transition:opacity .3s;font-family:var(--sans)"
+        disabled>
+        Record my acceptance →
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Info-Q shared popout DOM + engine -->
 <div id="iq-pop" role="tooltip" aria-live="polite"></div>
 <script>

@@ -567,7 +567,24 @@ function memberVault(): void {
         'stewardship_status' => (string)($member['stewardship_status'] ?? ''),
         'zone_id' => isset($member['zone_id']) ? (int)$member['zone_id'] : null,
         'address_verified_at' => $member['address_verified_at'] ?? null,
-        'jvpa_acceptance'           => $jvpaAcceptance,
+        'jvpa_acceptance'           => (function() use ($jvpaAcceptance, $db): array {
+            // Enrich with current version info so the UI can detect version mismatches
+            $current = currentJvpaVersionRecord($db);
+            $currentLabel = $current ? (string)$current['version_label'] : null;
+            // Title from DB — display-safe mixed case, no version suffix
+            $rawTitle = $current ? (string)$current['version_title'] : 'COGS of Australia Foundation Joint Venture Participation Agreement';
+            $displayTitle = mb_convert_case(mb_strtolower($rawTitle), MB_CASE_TITLE, 'UTF-8');
+            $acceptedVersion = $jvpaAcceptance['accepted_version'] ?? null;
+            $isVerified = !empty($jvpaAcceptance['verified']);
+            $needsSigning = !$isVerified
+                || $acceptedVersion === null
+                || ($currentLabel !== null && $acceptedVersion !== $currentLabel);
+            return array_merge($jvpaAcceptance, [
+                'current_version'       => $currentLabel,
+                'current_version_title' => $displayTitle,
+                'needs_signing'         => $needsSigning,
+            ]);
+        })(),
         'tcr_jvpa_sha256'           => $tcrJvpaSha256,
         'tcr_record_sha256'         => $tcrRecordSha256,
         'invite_code'               => $inviteCode,
@@ -592,6 +609,12 @@ function acceptJvpa(): void {
     requireMethod('POST');
     $principal = requireAuth('snft');
     $db = getDB();
+
+    // Require confirmation that the member has viewed the document
+    $body = json_decode(file_get_contents('php://input') ?: '{}', true) ?: [];
+    if (empty($body['viewed_document'])) {
+        apiError('You must open and review the agreement before recording your acceptance.');
+    }
 
     if (!api_table_exists($db, 'partners') || !api_table_exists($db, 'partner_entry_records')) {
         apiError('JVPA intake tables are not available on this environment.', 500);

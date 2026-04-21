@@ -814,6 +814,18 @@
             </div>
           </div>
 
+          <!-- ══ JVPA signing banner — shown when needs_signing is true ══ -->
+          <div id="jvpa-banner" style="display:none;background:rgba(240,209,138,.08);border:1.5px solid rgba(240,209,138,.35);border-radius:14px;padding:18px 20px;margin-bottom:4px">
+            <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+              <div style="font-size:1.6rem;line-height:1">📄</div>
+              <div style="flex:1;min-width:220px">
+                <div style="font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--gold-1);margin-bottom:5px">Joint Venture Agreement — action required</div>
+                <div id="jvpa-banner-desc" style="font-size:.92rem;color:var(--text2);line-height:1.6;margin-bottom:12px">The current Joint Venture Participation Agreement requires your electronic acceptance.</div>
+                <button class="btn-gold" style="font-size:.92rem;padding:10px 20px;border-radius:10px" onclick="openJvpaModal()">Read &amp; sign the agreement →</button>
+              </div>
+            </div>
+          </div>
+
           <!-- ══ Hub sections — Identity · Governance · Communications · Invite ══ -->
           <div class="hub-sections" id="hub-sections" style="display:none">
 
@@ -1534,6 +1546,55 @@
     </div>
   </div>
 
+  <!-- ══ JVPA signing modal ══ -->
+  <div id="jvpa-modal" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.82);align-items:center;justify-content:center;padding:16px">
+    <div style="width:100%;max-width:640px;background:linear-gradient(160deg,rgba(22,16,6,.98),rgba(12,9,3,.99));border:1.5px solid rgba(240,209,138,.28);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;max-height:90dvh">
+
+      <!-- Header -->
+      <div style="padding:22px 24px 16px;border-bottom:1px solid rgba(240,209,138,.12);flex-shrink:0;display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="font-family:var(--serif);font-size:1.2rem;font-weight:600;color:var(--gold-1);line-height:1.3" id="jvpa-modal-title">Joint Venture Participation Agreement</div>
+          <div style="font-size:.82rem;color:var(--muted);margin-top:4px" id="jvpa-modal-version"></div>
+        </div>
+        <button onclick="closeJvpaModal()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0" aria-label="Close">×</button>
+      </div>
+
+      <!-- Document frame -->
+      <div style="padding:16px 24px 0;flex-shrink:0">
+        <p style="font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:12px">
+          Read the full agreement below. Scroll to the bottom to enable your acceptance.
+        </p>
+      </div>
+      <div id="jvpa-doc-wrap" style="flex:1;min-height:0;padding:0 24px;overflow:hidden">
+        <iframe id="jvpa-doc-frame"
+          src="../docs/COGS_JVPA.pdf"
+          style="width:100%;height:340px;border:1px solid rgba(240,209,138,.15);border-radius:10px;background:#fff"
+          title="Joint Venture Participation Agreement"
+          onload="onJvpaFrameLoad()">
+        </iframe>
+        <div id="jvpa-scroll-hint" style="font-size:.8rem;color:var(--muted);text-align:center;margin-top:8px;transition:opacity .3s">
+          Scroll to the bottom of the document to enable acceptance ↓
+        </div>
+      </div>
+
+      <!-- Acceptance area -->
+      <div style="padding:18px 24px 22px;flex-shrink:0;border-top:1px solid rgba(240,209,138,.10);margin-top:14px">
+        <label id="jvpa-checkbox-wrap" style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;opacity:.4;pointer-events:none;transition:opacity .3s">
+          <input type="checkbox" id="jvpa-checkbox" style="width:20px;height:20px;flex-shrink:0;margin-top:2px;accent-color:#f0d18a;cursor:pointer">
+          <span style="font-size:.92rem;color:var(--text2);line-height:1.6" id="jvpa-checkbox-label">
+            I have read and accept the <strong style="color:var(--gold-1)" id="jvpa-accept-title">COG$ of Australia Foundation Joint Venture Participation Agreement</strong> on equal terms with all existing Members.
+          </span>
+        </label>
+        <div class="flash" id="jvpa-modal-fl" style="margin-top:12px"></div>
+        <button id="jvpa-accept-btn" class="btn-gold" onclick="submitJvpaAcceptance()"
+          style="width:100%;margin-top:14px;font-size:1rem;padding:14px;border-radius:12px;opacity:.4;pointer-events:none;transition:opacity .3s"
+          disabled>
+          Record my acceptance →
+        </button>
+      </div>
+    </div>
+  </div>
+
 </main>
   </div>
 
@@ -1685,6 +1746,8 @@ function enterCommunity(data){
   renderHubGovernance(data);
   renderHubComms(data);
   renderHubInvite(data);
+  // Show JVPA signing banner if acceptance required
+  showJvpaBanner(data.jvpa_acceptance || null);
   var hubSections = document.getElementById('hub-sections');
   if(hubSections) hubSections.style.display = '';
   // Auto-open participation editor if linked from IV
@@ -2089,6 +2152,147 @@ async function resendOtp(){
   }
 }
 window.resendOtp = resendOtp;
+
+/* ── JVPA banner + signing modal ── */
+var _jvpaViewed = false;
+
+function showJvpaBanner(jvpa) {
+  if (!jvpa || !jvpa.needs_signing) return;
+  var banner = document.getElementById('jvpa-banner');
+  if (!banner) return;
+  // Update description with agreement title
+  var desc = document.getElementById('jvpa-banner-desc');
+  if (desc && jvpa.current_version_title) {
+    desc.textContent = 'The current ' + jvpa.current_version_title + ' requires your electronic acceptance.';
+  }
+  banner.style.display = 'block';
+}
+
+function openJvpaModal() {
+  var jvpa = (window._communityData || {}).jvpa_acceptance || {};
+  var modal = document.getElementById('jvpa-modal');
+  if (!modal) return;
+
+  // Set title and version
+  var titleEl = document.getElementById('jvpa-modal-title');
+  var versionEl = document.getElementById('jvpa-modal-version');
+  var acceptTitleEl = document.getElementById('jvpa-accept-title');
+  if (titleEl && jvpa.current_version_title) {
+    titleEl.textContent = jvpa.current_version_title;
+  }
+  if (versionEl && jvpa.current_version) {
+    versionEl.textContent = jvpa.current_version;
+  }
+  if (acceptTitleEl && jvpa.current_version_title) {
+    acceptTitleEl.textContent = jvpa.current_version_title;
+  }
+
+  // Reset state
+  _jvpaViewed = false;
+  var cb = document.getElementById('jvpa-checkbox');
+  if (cb) cb.checked = false;
+  setJvpaAcceptEnabled(false);
+  var fl = document.getElementById('jvpa-modal-fl');
+  if (fl) { fl.textContent = ''; fl.className = 'flash'; }
+
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // On mobile, iframe scroll detection is unreliable — auto-enable after 8s
+  setTimeout(function() {
+    if (!_jvpaViewed) {
+      _jvpaViewed = true;
+      setJvpaAcceptEnabled(true);
+      var hint = document.getElementById('jvpa-scroll-hint');
+      if (hint) hint.style.opacity = '0';
+    }
+  }, 8000);
+}
+
+function closeJvpaModal() {
+  var modal = document.getElementById('jvpa-modal');
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function onJvpaFrameLoad() {
+  // Try to detect scroll in iframe — works on same-origin only
+  // PDF iframes are cross-origin so scroll detection is not possible
+  // Instead watch time-on-modal as the proxy (handled by setTimeout above)
+  // Mark viewed after a short delay to allow PDF to render
+  setTimeout(function() {
+    _jvpaViewed = true;
+    setJvpaAcceptEnabled(true);
+    var hint = document.getElementById('jvpa-scroll-hint');
+    if (hint) hint.style.opacity = '0';
+  }, 4000);
+}
+
+function setJvpaAcceptEnabled(enabled) {
+  var cbWrap = document.getElementById('jvpa-checkbox-wrap');
+  var btn    = document.getElementById('jvpa-accept-btn');
+  if (cbWrap) {
+    cbWrap.style.opacity = enabled ? '1' : '.4';
+    cbWrap.style.pointerEvents = enabled ? '' : 'none';
+  }
+  if (btn) {
+    btn.style.opacity = enabled ? '1' : '.4';
+    btn.style.pointerEvents = enabled ? '' : 'none';
+    btn.disabled = !enabled;
+  }
+}
+
+// Enable accept button only when checkbox is ticked
+document.addEventListener('DOMContentLoaded', function() {
+  var cb = document.getElementById('jvpa-checkbox');
+  if (cb) {
+    cb.addEventListener('change', function() {
+      var btn = document.getElementById('jvpa-accept-btn');
+      if (btn && _jvpaViewed) {
+        btn.style.opacity = cb.checked ? '1' : '.6';
+      }
+    });
+  }
+});
+
+async function submitJvpaAcceptance() {
+  var cb = document.getElementById('jvpa-checkbox');
+  if (!cb || !cb.checked) {
+    flash('jvpa-modal-fl', 'Please tick the checkbox to confirm you have read the agreement.', 'err');
+    return;
+  }
+  if (!_jvpaViewed) {
+    flash('jvpa-modal-fl', 'Please open and read the agreement before accepting.', 'err');
+    return;
+  }
+  var btn = document.getElementById('jvpa-accept-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Recording…'; }
+  flash('jvpa-modal-fl', '', '');
+  try {
+    await api('vault/accept-jvpa', {
+      method: 'POST',
+      body: JSON.stringify({ viewed_document: true })
+    });
+    flash('jvpa-modal-fl', 'Acceptance recorded. Thank you.', 'ok');
+    // Hide banner
+    var banner = document.getElementById('jvpa-banner');
+    if (banner) banner.style.display = 'none';
+    // Update local data so chip reflects new state
+    if (window._communityData && window._communityData.jvpa_acceptance) {
+      window._communityData.jvpa_acceptance.needs_signing = false;
+      window._communityData.jvpa_acceptance.verified = true;
+    }
+    setTimeout(closeJvpaModal, 1200);
+  } catch(err) {
+    flash('jvpa-modal-fl', err.message || 'Could not record acceptance. Please try again.', 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Record my acceptance →'; }
+  }
+}
+
+window.openJvpaModal   = openJvpaModal;
+window.closeJvpaModal  = closeJvpaModal;
+window.onJvpaFrameLoad = onJvpaFrameLoad;
+window.submitJvpaAcceptance = submitJvpaAcceptance;
 
 /* ── Setup form ── */
 document.getElementById('f-setup')?.addEventListener('submit', async function(e){
