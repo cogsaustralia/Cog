@@ -73,16 +73,9 @@ $trusteeDone   = in_array('caretaker_trustee', $doneCaps, true);
 $bothDone      = $declarantDone && $trusteeDone;
 
 // ── Deed SHA-256 (computed once, stored in deed_version_anchors after first capacity)
-$deedSha256 = DeclarationExecutionService::getDeedSha256($db);
-// If not yet in DB, use the known hash of the uploaded PDF
-// This is set on first recordExecution() call
-if (!$deedSha256) {
-    // SHA-256 must match the PDF on the server — fetched live from deed_version_anchors
-    // after first execution. For display before first execution, show placeholder.
-    $deedSha256Display = '(computed on first execution)';
-} else {
-    $deedSha256Display = $deedSha256;
-}
+$deedSha256 = DeclarationExecutionService::getDeedSha256($db)
+    ?? DeclarationExecutionService::DEED_SHA256;
+$deedSha256Display = $deedSha256;
 
 // ── POST handler ──────────────────────────────────────────────────────────────
 $postError = null;
@@ -133,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $trusteeDone   = in_array('caretaker_trustee', $doneCaps, true);
             $bothDone      = $declarantDone && $trusteeDone;
             // Update deedSha256 display
-            $deedSha256 = DeclarationExecutionService::getDeedSha256($db) ?? $postedHash;
+            $deedSha256 = DeclarationExecutionService::getDeedSha256($db) ?? DeclarationExecutionService::DEED_SHA256;
             $deedSha256Display = $deedSha256;
         } catch (\Throwable $e) {
             $postError = 'Execution failed: ' . $e->getMessage();

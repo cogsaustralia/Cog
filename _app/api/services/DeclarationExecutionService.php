@@ -22,6 +22,7 @@ class DeclarationExecutionService
     public const DEED_TITLE     = 'COGS OF AUSTRALIA FOUNDATION HYBRID TRUST DECLARATION';
     public const DEED_VERSION   = 'v15.1';
     public const DEED_PDF       = 'CJVM_Hybrid_Trust_Declaration.pdf';
+    public const DEED_SHA256    = '7c34e319798285c1e9d78643fc2431936e7f8fa7a8a264aa17e1f922b0ffc570';
     public const EXECUTION_DATE = '2026-04-21';
 
     public const EXECUTOR_NAME    = 'Thomas Boyd Cunliffe';
