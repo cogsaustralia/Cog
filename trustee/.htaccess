@@ -1,0 +1,10 @@
+DirectoryIndex accept.php
+
+# Block directory listing
+Options -Indexes
+
+# Block access to dotfiles
+<FilesMatch "^\\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

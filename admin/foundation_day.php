@@ -7,6 +7,9 @@ require_once __DIR__ . '/includes/admin_sidebar.php';
 ops_require_admin();
 $pdo = ops_db();
 
+require_once dirname(__DIR__) . '/_app/api/services/TrusteeCounterpartService.php';
+$tcrRecord = TrusteeCounterpartService::getFoundingRecord($pdo);
+
 $canManage = ops_admin_can($pdo, 'admin.full') || ops_admin_can($pdo, 'governance_admin');
 
 function fd_h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
@@ -435,6 +438,52 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
 <?php if ($flash !== null): ?>
   <div class="alert alert-<?php echo $flashType === 'ok' ? 'ok' : 'err'; ?>"><?php echo fd_h($flash); ?></div>
 <?php endif; ?>
+
+<?php if (!$tcrRecord): ?>
+<!-- ── Trustee Counterpart Record — NOT YET GENERATED ─────────────────── -->
+<div style="background:rgba(192,85,58,.1);border:2px solid rgba(192,85,58,.4);border-radius:10px;padding:18px 24px;margin-bottom:22px;">
+  <strong style="color:var(--err);font-size:.95rem;">
+    ⚠ FOUNDING TRUSTEE COUNTERPART RECORD NOT YET GENERATED — JVPA NOT YET IN FORCE
+  </strong>
+  <p style="color:var(--sub);font-size:.82rem;margin:8px 0 0;">
+    The Joint Venture Participation Agreement enters into force only upon generation of both
+    the founding Member's cryptographic acceptance record (clause 8.1A) and the Trustee
+    Counterpart Record (clause 10.10A). Neither has yet been generated.
+    <a href="<?php echo fd_h(admin_url('generate_trustee_token.php')); ?>" style="color:var(--gold);margin-left:8px;">
+      → Generate Trustee acceptance token
+    </a>
+  </p>
+</div>
+<?php else: ?>
+<!-- ── Trustee Counterpart Record — GENERATED ─────────────────────────── -->
+<div class="card" style="border-color:rgba(82,184,122,.3);margin-bottom:22px;">
+  <div class="card-head">
+    <h2>✓ Founding Trustee Counterpart Record</h2>
+    <span style="font-size:.78rem;color:var(--ok);font-weight:700;">JVPA IN FORCE ON FIRST MEMBER ACCEPTANCE</span>
+  </div>
+  <div class="card-body" style="display:grid;grid-template-columns:180px 1fr;gap:8px 16px;font-size:.82rem;padding:16px 20px;">
+    <span style="color:var(--dim)">Record ID</span>
+    <span style="font-family:monospace;word-break:break-all;color:var(--text)"><?php echo fd_h($tcrRecord['record_id']); ?></span>
+    <span style="color:var(--dim)">UTC Timestamp</span>
+    <span style="font-family:monospace;color:var(--text)"><?php echo fd_h($tcrRecord['acceptance_timestamp_utc']); ?></span>
+    <span style="color:var(--dim)">JVPA Version</span>
+    <span style="color:var(--text)"><?php echo fd_h($tcrRecord['jvpa_version']); ?> — <?php echo fd_h($tcrRecord['jvpa_title']); ?></span>
+    <span style="color:var(--dim)">JVPA Execution Date</span>
+    <span style="color:var(--text)"><?php echo fd_h($tcrRecord['jvpa_execution_date']); ?></span>
+    <span style="color:var(--dim)">JVPA SHA-256</span>
+    <span style="font-family:monospace;word-break:break-all;color:var(--gold)"><?php echo fd_h($tcrRecord['jvpa_sha256']); ?></span>
+    <span style="color:var(--dim)">Record SHA-256</span>
+    <span style="font-family:monospace;word-break:break-all;color:var(--gold)"><?php echo fd_h($tcrRecord['record_sha256']); ?></span>
+    <span style="color:var(--dim)">On-Chain Ref</span>
+    <span style="font-family:monospace;color:var(--text)"><?php echo fd_h((string)$tcrRecord['onchain_commitment_txid']); ?> (transitional — evidence vault)</span>
+    <span style="color:var(--dim)">Capacity Type</span>
+    <span style="color:var(--text)">Founding Caretaker Trustee</span>
+    <span style="color:var(--dim)">Status</span>
+    <span style="color:var(--ok)">Active — cannot be altered or deleted per JVPA cl.10.10A(f)</span>
+  </div>
+</div>
+<?php endif; ?>
+
 
 <?php if ($fdDeclared): ?>
 <!-- ── Foundation Day declared banner ─────────────────────────────────── -->

@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../services/TrusteeCounterpartService.php';
+
 $_vaultId = trim((string)($id ?? ''), '/');
 // Split action from optional sub-path: 'proposal-comments/4' → action='proposal-comments', subId='4'
 $_vaultParts = explode('/', $_vaultId, 2);
@@ -479,6 +481,20 @@ function memberVault(): void {
         ? api_fetch_foundation_live_assets($db)
         : ['asx_holdings' => [], 'rwa_holdings' => [], 'community_cogs_minted' => 0, 'community_cogs_circulation' => 0];
 
+    // ── Trustee Counterpart Record — per JVPA cl.8.1A(b)(i) ──────────────────
+    // Members are shown the founding TCR hashes alongside the JVPA so they can
+    // verify the document has not been altered (cl.8.1A(b)(i)).
+    // No personal fields from the TCR are exposed here — only the two hashes.
+    $tcrJvpaSha256   = null;
+    $tcrRecordSha256 = null;
+    try {
+        $tcrRow = TrusteeCounterpartService::getFoundingRecord($db);
+        if ($tcrRow) {
+            $tcrJvpaSha256   = $tcrRow['jvpa_sha256'];
+            $tcrRecordSha256 = $tcrRow['record_sha256'];
+        }
+    } catch (Throwable $ignored) {}
+
     apiSuccess([
         'member_number' => $memberNumber,
         'support_code' => generateWalletSupportCode('snft', $memberNumber, $email),
@@ -552,6 +568,8 @@ function memberVault(): void {
         'zone_id' => isset($member['zone_id']) ? (int)$member['zone_id'] : null,
         'address_verified_at' => $member['address_verified_at'] ?? null,
         'jvpa_acceptance'           => $jvpaAcceptance,
+        'tcr_jvpa_sha256'           => $tcrJvpaSha256,
+        'tcr_record_sha256'         => $tcrRecordSha256,
         'invite_code'               => $inviteCode,
         'participation_completed'   => !empty($member['participation_completed']) ? (bool)$member['participation_completed'] : false,
         'participation_areas'       => !empty($member['participation_answers'])
