@@ -1559,21 +1559,23 @@
         <button onclick="closeJvpaModal()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0" aria-label="Close">×</button>
       </div>
 
-      <!-- Document frame -->
-      <div style="padding:16px 24px 0;flex-shrink:0">
-        <p style="font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:12px">
-          Read the full agreement below. Scroll to the bottom to enable your acceptance.
+      <!-- Document panel — link-based, works on all browsers/devices -->
+      <div style="padding:0 24px;flex-shrink:0">
+        <p style="font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:14px">
+          Open the agreement to read it. The acceptance checkbox enables automatically once you have had time to review it.
         </p>
-      </div>
-      <div id="jvpa-doc-wrap" style="flex:1;min-height:0;padding:0 24px;overflow:hidden">
-        <iframe id="jvpa-doc-frame"
-          src="../docs/COGS_JVPA.pdf"
-          style="width:100%;height:340px;border:1px solid rgba(240,209,138,.15);border-radius:10px;background:#fff"
-          title="Joint Venture Participation Agreement"
-          onload="onJvpaFrameLoad()">
-        </iframe>
-        <div id="jvpa-scroll-hint" style="font-size:.8rem;color:var(--muted);text-align:center;margin-top:8px;transition:opacity .3s">
-          Scroll to the bottom of the document to enable acceptance ↓
+        <a id="jvpa-open-link" href="../docs/COGS_JVPA.pdf" target="_blank" rel="noopener"
+          onclick="onJvpaDocOpened()"
+          style="display:flex;align-items:center;gap:14px;background:rgba(240,209,138,.07);border:1.5px solid rgba(240,209,138,.28);border-radius:12px;padding:16px 18px;text-decoration:none;transition:background .2s">
+          <span style="font-size:2rem;line-height:1;flex-shrink:0">📄</span>
+          <span style="flex:1">
+            <span style="display:block;font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-1);margin-bottom:3px" id="jvpa-doc-link-title">COG$ of Australia Foundation Joint Venture Participation Agreement</span>
+            <span style="display:block;font-size:.8rem;color:var(--muted)">Opens in a new tab · PDF</span>
+          </span>
+          <span style="color:var(--gold-2);font-size:1.1rem;flex-shrink:0">↗</span>
+        </a>
+        <div id="jvpa-scroll-hint" style="font-size:.82rem;color:var(--muted);text-align:center;margin-top:10px;transition:opacity .3s">
+          Open the agreement above to enable your acceptance ↑
         </div>
       </div>
 
@@ -2186,6 +2188,11 @@ function openJvpaModal() {
   if (acceptTitleEl && jvpa.current_version_title) {
     acceptTitleEl.textContent = jvpa.current_version_title;
   }
+  // Also update the doc link title
+  var docLinkTitle = document.getElementById('jvpa-doc-link-title');
+  if (docLinkTitle && jvpa.current_version_title) {
+    docLinkTitle.textContent = jvpa.current_version_title;
+  }
 
   // Reset state
   _jvpaViewed = false;
@@ -2194,19 +2201,16 @@ function openJvpaModal() {
   setJvpaAcceptEnabled(false);
   var fl = document.getElementById('jvpa-modal-fl');
   if (fl) { fl.textContent = ''; fl.className = 'flash'; }
+  // Reset hint text
+  var hint = document.getElementById('jvpa-scroll-hint');
+  if (hint) {
+    hint.textContent = 'Open the agreement above to enable your acceptance ↑';
+    hint.style.color = '';
+    hint.style.opacity = '1';
+  }
 
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
-
-  // On mobile, iframe scroll detection is unreliable — auto-enable after 8s
-  setTimeout(function() {
-    if (!_jvpaViewed) {
-      _jvpaViewed = true;
-      setJvpaAcceptEnabled(true);
-      var hint = document.getElementById('jvpa-scroll-hint');
-      if (hint) hint.style.opacity = '0';
-    }
-  }, 8000);
 }
 
 function closeJvpaModal() {
@@ -2215,18 +2219,21 @@ function closeJvpaModal() {
   document.body.style.overflow = '';
 }
 
-function onJvpaFrameLoad() {
-  // Try to detect scroll in iframe — works on same-origin only
-  // PDF iframes are cross-origin so scroll detection is not possible
-  // Instead watch time-on-modal as the proxy (handled by setTimeout above)
-  // Mark viewed after a short delay to allow PDF to render
+function onJvpaDocOpened() {
+  // Member clicked the PDF link — enable acceptance after brief delay
+  // to give the document time to open in a new tab
   setTimeout(function() {
     _jvpaViewed = true;
     setJvpaAcceptEnabled(true);
     var hint = document.getElementById('jvpa-scroll-hint');
-    if (hint) hint.style.opacity = '0';
-  }, 4000);
+    if (hint) {
+      hint.textContent = '✓ Agreement opened — please read it fully before accepting.';
+      hint.style.color = 'rgba(82,184,122,.85)';
+    }
+  }, 800);
 }
+// Keep onJvpaFrameLoad as a no-op for safety (not used but referenced in wallet)
+function onJvpaFrameLoad() {}
 
 function setJvpaAcceptEnabled(enabled) {
   var cbWrap = document.getElementById('jvpa-checkbox-wrap');
@@ -2292,6 +2299,7 @@ async function submitJvpaAcceptance() {
 
 window.openJvpaModal   = openJvpaModal;
 window.closeJvpaModal  = closeJvpaModal;
+window.onJvpaDocOpened = onJvpaDocOpened;
 window.onJvpaFrameLoad = onJvpaFrameLoad;
 window.submitJvpaAcceptance = submitJvpaAcceptance;
 

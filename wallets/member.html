@@ -3763,18 +3763,20 @@ window.openJvpaModal = function openJvpaModal() {
   _setJvpaEnabled(false);
   var fl = document.getElementById('jvpa-modal-fl');
   if (fl) { fl.textContent = ''; fl.className = 'flash'; }
+  // Reset hint
+  var hint = document.getElementById('jvpa-scroll-hint');
+  if (hint) {
+    hint.textContent = 'Open the agreement above to enable your acceptance ↑';
+    hint.style.color = '';
+    hint.style.opacity = '1';
+  }
+  // Update doc link title if version available
+  var docLinkTitle = document.getElementById('jvpa-doc-link-title');
+  if (docLinkTitle && jvpa.current_version_title) {
+    docLinkTitle.textContent = jvpa.current_version_title;
+  }
 
   modal.style.display = 'flex';
-
-  // Auto-enable after 8s (PDF iframe is cross-origin; scroll detection unavailable)
-  setTimeout(function() {
-    if (!_jvpaViewed) {
-      _jvpaViewed = true;
-      _setJvpaEnabled(true);
-      var hint = document.getElementById('jvpa-scroll-hint');
-      if (hint) hint.style.opacity = '0';
-    }
-  }, 8000);
 };
 
 window.closeJvpaModal = function closeJvpaModal() {
@@ -3782,15 +3784,21 @@ window.closeJvpaModal = function closeJvpaModal() {
   if (modal) modal.style.display = 'none';
 };
 
-window.onJvpaFrameLoad = function onJvpaFrameLoad() {
-  // Enable after 4s once PDF has had time to render
+window.onJvpaDocOpened = function onJvpaDocOpened() {
+  // Member clicked the PDF link — enable acceptance after brief delay
   setTimeout(function() {
     _jvpaViewed = true;
     _setJvpaEnabled(true);
     var hint = document.getElementById('jvpa-scroll-hint');
-    if (hint) hint.style.opacity = '0';
-  }, 4000);
+    if (hint) {
+      hint.textContent = '✓ Agreement opened — please read it fully before accepting.';
+      hint.style.color = 'rgba(82,184,122,.85)';
+    }
+  }, 800);
 };
+
+// Keep onJvpaFrameLoad as no-op — no longer used but exported for safety
+window.onJvpaFrameLoad = function onJvpaFrameLoad() {};
 
 function _setJvpaEnabled(enabled) {
   var cbWrap = document.getElementById('jvpa-checkbox-wrap');
@@ -5129,18 +5137,20 @@ function updateTourPill(){
       </div>
       <button onclick="closeJvpaModal()" style="background:none;border:none;color:var(--text3);font-size:1.4rem;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0" aria-label="Close">×</button>
     </div>
-    <div style="padding:16px 24px 0;flex-shrink:0">
-      <p style="font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:12px">Read the full agreement below. Your acceptance will be cryptographically recorded.</p>
-    </div>
-    <div style="flex:1;min-height:0;padding:0 24px;overflow:hidden">
-      <iframe id="jvpa-doc-frame"
-        src="../docs/COGS_JVPA.pdf"
-        style="width:100%;height:320px;border:1px solid rgba(240,209,138,.15);border-radius:10px;background:#fff"
-        title="Joint Venture Participation Agreement"
-        onload="onJvpaFrameLoad()">
-      </iframe>
-      <div id="jvpa-scroll-hint" style="font-size:.8rem;color:var(--text3);text-align:center;margin-top:8px;transition:opacity .3s">
-        Scroll to the bottom of the document to enable acceptance ↓
+    <div style="padding:16px 24px 14px;flex-shrink:0">
+      <p style="font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:14px">Open the agreement to read it. The acceptance checkbox enables once you have opened the document.</p>
+      <a id="jvpa-open-link" href="../docs/COGS_JVPA.pdf" target="_blank" rel="noopener"
+        onclick="onJvpaDocOpened()"
+        style="display:flex;align-items:center;gap:14px;background:rgba(240,209,138,.07);border:1.5px solid rgba(240,209,138,.28);border-radius:12px;padding:16px 18px;text-decoration:none;transition:background .2s">
+        <span style="font-size:2rem;line-height:1;flex-shrink:0">📄</span>
+        <span style="flex:1">
+          <span style="display:block;font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-1);margin-bottom:3px" id="jvpa-doc-link-title">COG$ of Australia Foundation Joint Venture Participation Agreement</span>
+          <span style="display:block;font-size:.8rem;color:var(--text3)">Opens in a new tab · PDF</span>
+        </span>
+        <span style="color:var(--gold-2);font-size:1.1rem;flex-shrink:0">↗</span>
+      </a>
+      <div id="jvpa-scroll-hint" style="font-size:.82rem;color:var(--text3);text-align:center;margin-top:10px;transition:opacity .3s">
+        Open the agreement above to enable your acceptance ↑
       </div>
     </div>
     <div style="padding:18px 24px 22px;flex-shrink:0;border-top:1px solid rgba(240,209,138,.10);margin-top:14px">
