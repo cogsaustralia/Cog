@@ -67,6 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canGenerate) {
 }
 
 ?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trustee Token | COG$ Admin</title>
+<?php if (function_exists('ops_admin_help_assets_once')) ops_admin_help_assets_once(); ?>
+</head>
+<body>
+<div class="admin-shell">
 <?php admin_sidebar_render('generate_trustee_token'); ?>
 <style>
 .main { padding: 24px 28px; }
@@ -196,4 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canGenerate) {
 
   <?php endif; ?>
 
-</div>
+</div><!-- .main -->
+</div><!-- .admin-shell -->
+</body>
+</html>
