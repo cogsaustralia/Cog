@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canGenerate) {
         </div>
         <form method="POST">
           <input type="hidden" name="action" value="invalidate_token">
-          <?php if (function_exists('admin_csrf_field')) admin_csrf_field(); ?>
+          <?php if (function_exists('admin_csrf_token')): ?><input type="hidden" name="_csrf" value="<?= htmlspecialchars(admin_csrf_token(), ENT_QUOTES, 'UTF-8') ?>"><?php endif; ?>
           <button type="submit" class="btn btn-danger"
             onclick="return confirm('Invalidate the existing token? This cannot be undone.')">
             Invalidate Existing Token
@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canGenerate) {
         </p>
         <form method="POST">
           <input type="hidden" name="action" value="generate_token">
-          <?php if (function_exists('admin_csrf_field')) admin_csrf_field(); ?>
+          <?php if (function_exists('admin_csrf_token')): ?><input type="hidden" name="_csrf" value="<?= htmlspecialchars(admin_csrf_token(), ENT_QUOTES, 'UTF-8') ?>"><?php endif; ?>
           <button type="submit" class="btn btn-gold">Generate Token</button>
         </form>
       </div>
