@@ -23,6 +23,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'operations.php') return 'operations';
         if ($script === 'foundation_day.php') return 'foundation_day';
         if ($script === 'generate_trustee_token.php') return 'generate_trustee_token';
+        if ($script === 'generate_declaration_token.php') return 'generate_declaration_token';
         if ($script === 'infrastructure.php') return 'infrastructure';
         if ($script === 'zones.php') return 'zones';
         if ($script === 'classes.php') return 'classes';
@@ -185,6 +186,7 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'operations',        'label' => '🤝  Member Operations',        'href' => './operations.php'],
                 ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',            'href' => './foundation_day.php'],
                 ['key' => 'generate_trustee_token', 'label' => '🔑  Trustee Token',         'href' => './generate_trustee_token.php'],
+                ['key' => 'generate_declaration_token', 'label' => '📜  Declaration Exec',      'href' => './generate_declaration_token.php'],
                 ['key' => 'zones',             'label' => '📍  Geographic Zones',          'href' => './zones.php'],
                 ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',          'href' => './evidence_reviews.php'],
                 ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',               'href' => './admin_kyc.php'],
