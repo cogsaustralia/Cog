@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * trustee/sub_trust_a_declare.php
+ * trustee/sub_trust_c_declare.php
  * Declaration Execution Flow — Thomas Boyd Cunliffe
  * Two-capacity deed execution: Declarant then Caretaker Trustee
  * Electronic Transactions Act 1999 (Cth) + s.14G ETA 2000 (NSW)
@@ -16,7 +16,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../_app/api/config/bootstrap.php';
 require_once __DIR__ . '/../_app/api/config/database.php';
 require_once __DIR__ . '/../_app/api/helpers.php';
-require_once __DIR__ . '/../_app/api/services/SubTrustAExecutionService.php';
+require_once __DIR__ . '/../_app/api/services/SubTrustCExecutionService.php';
 
 function de_h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 
@@ -46,7 +46,7 @@ try { $db = getDB(); } catch (\Throwable $e) { de_abort(500, 'Database unavailab
 $tokenHash = hash('sha256', $rawToken);
 $stmtToken = $db->prepare(
     'SELECT id, used_at FROM one_time_tokens
-     WHERE token_hash = ? AND purpose = \'sub_trust_a_execution\'
+     WHERE token_hash = ? AND purpose = \'sub_trust_c_execution\'
        AND expires_at > UTC_TIMESTAMP()
      LIMIT 1'
 );
@@ -61,11 +61,11 @@ $sessionId = trim((string)($_GET['session'] ?? ''));
 // ── Active session from DB
 $activeSession = null;
 if ($sessionId !== '') {
-    $activeSession = SubTrustAExecutionService::getSession($db, $sessionId);
+    $activeSession = SubTrustCExecutionService::getSession($db, $sessionId);
 }
 // If token already used but no session in URL, recover via deed_key (Step B path)
 if ($tokenIsUsed && !$activeSession) {
-    $activeSession = SubTrustAExecutionService::getActiveSession($db);
+    $activeSession = SubTrustCExecutionService::getActiveSession($db);
     if ($activeSession) {
         $sessionId = $activeSession['session_id'];
     } else {
@@ -85,8 +85,8 @@ $trusteeDone   = in_array('caretaker_trustee', $doneCaps, true);
 $bothDone      = $declarantDone && $trusteeDone;
 
 // ── Deed SHA-256 (computed once, stored in deed_version_anchors after first capacity)
-$deedSha256 = SubTrustAExecutionService::getDeedSha256($db)
-    ?? SubTrustAExecutionService::DEED_SHA256;
+$deedSha256 = SubTrustCExecutionService::getDeedSha256($db)
+    ?? SubTrustCExecutionService::DEED_SHA256;
 $deedSha256Display = $deedSha256;
 
 // ── POST handler ──────────────────────────────────────────────────────────────
@@ -121,25 +121,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Consume token on first capacity only (if not already consumed)
         if (!$tokenIsUsed) {
-            if (!SubTrustAExecutionService::validateOneTimeToken($db, $rawToken, 'sub_trust_a_execution')) {
+            if (!SubTrustCExecutionService::validateOneTimeToken($db, $rawToken, 'sub_trust_c_execution')) {
                 de_abort(403, 'Token is no longer valid.');
             }
             $tokenIsUsed = true;
         }
 
         try {
-            $postResult = SubTrustAExecutionService::recordExecution(
+            $postResult = SubTrustCExecutionService::recordExecution(
                 $db, $capacity, $postedSid, $postedHash,
                 getClientIp(), (string)($_SERVER['HTTP_USER_AGENT'] ?? '')
             );
             $sessionId = $postedSid;
-            $activeSession = SubTrustAExecutionService::getSession($db, $sessionId);
+            $activeSession = SubTrustCExecutionService::getSession($db, $sessionId);
             $doneCaps = array_column($activeSession['records'], 'capacity');
             $declarantDone = in_array('declarant', $doneCaps, true);
             $trusteeDone   = in_array('caretaker_trustee', $doneCaps, true);
             $bothDone      = $declarantDone && $trusteeDone;
             // Update deedSha256 display
-            $deedSha256 = SubTrustAExecutionService::getDeedSha256($db) ?? SubTrustAExecutionService::DEED_SHA256;
+            $deedSha256 = SubTrustCExecutionService::getDeedSha256($db) ?? SubTrustCExecutionService::DEED_SHA256;
             $deedSha256Display = $deedSha256;
         } catch (\Throwable $e) {
             $postError = 'Execution failed: ' . $e->getMessage();
@@ -218,7 +218,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-
 <div class="shell">
 <div class="crest">
   <div class="org">COG$ of Australia Foundation</div>
-  <h1>Sub-Trust A Execution — Deed</h1>
+  <h1>Sub-Trust C Execution — Deed</h1>
   <div class="sub">Electronic execution under ETA 1999 (Cth) and s.14G ETA 2000 (NSW)</div>
 </div>
 
@@ -246,7 +246,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-
     Both execution capacities are complete. The witness attestation step is now required
     to finalise the deed under section 14G of the Electronic Transactions Act 2000 (NSW).
     The administrator must generate the witness token and deliver it to
-    <strong style="color:var(--gold)"><?= de_h(SubTrustAExecutionService::WITNESS_NAME) ?></strong>
+    <strong style="color:var(--gold)"><?= de_h(SubTrustCExecutionService::WITNESS_NAME) ?></strong>
     out-of-band. The witness must complete their attestation before this deed is fully executed.
   </div>
 </div>
@@ -269,12 +269,12 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-
 
 <!-- Deed presentation (shown for both capacities) -->
 <div class="card">
-  <div class="card-title">Declaration — <?= de_h(SubTrustAExecutionService::DEED_VERSION) ?></div>
+  <div class="card-title">Declaration — <?= de_h(SubTrustCExecutionService::DEED_VERSION) ?></div>
   <div class="hash-box">
-    <span class="lbl">Deed PDF SHA-256 (<?= de_h(SubTrustAExecutionService::DEED_VERSION) ?>)</span>
+    <span class="lbl">Deed PDF SHA-256 (<?= de_h(SubTrustCExecutionService::DEED_VERSION) ?>)</span>
     <?= de_h($deedSha256Display) ?>
   </div>
-  <a class="dl" href="../docs/<?= de_h(SubTrustAExecutionService::DEED_PDF) ?>" target="_blank" rel="noopener">
+  <a class="dl" href="../docs/<?= de_h(SubTrustCExecutionService::DEED_PDF) ?>" target="_blank" rel="noopener">
     ↓ Download full Declaration PDF
   </a>
 </div>
@@ -296,8 +296,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-
 $currentCap = $declarantDone ? 'caretaker_trustee' : 'declarant';
 $stepLabel   = $declarantDone ? 'Step B — Caretaker Trustee Capacity' : 'Step A — Declarant Capacity';
 $ackText     = $currentCap === 'declarant'
-    ? SubTrustAExecutionService::DECLARANT_ACKNOWLEDGEMENT
-    : SubTrustAExecutionService::TRUSTEE_ACKNOWLEDGEMENT;
+    ? SubTrustCExecutionService::DECLARANT_ACKNOWLEDGEMENT
+    : SubTrustCExecutionService::TRUSTEE_ACKNOWLEDGEMENT;
 $capLabel = $currentCap === 'declarant' ? 'Declarant' : 'Caretaker Trustee';
 ?>
 <form method="POST" action="<?= de_h($pageUrl) ?>" id="execForm">
@@ -314,8 +314,8 @@ $capLabel = $currentCap === 'declarant' ? 'Declarant' : 'Caretaker Trustee';
     <div class="cb-row">
       <input type="checkbox" id="cb_read" name="cb_read" value="1">
       <label for="cb_read">
-        I have read the full <strong><?= de_h(SubTrustAExecutionService::DEED_TITLE) ?></strong>
-        (<?= de_h(SubTrustAExecutionService::DEED_VERSION) ?>) and understand its terms.
+        I have read the full <strong><?= de_h(SubTrustCExecutionService::DEED_TITLE) ?></strong>
+        (<?= de_h(SubTrustCExecutionService::DEED_VERSION) ?>) and understand its terms.
       </label>
     </div>
 
