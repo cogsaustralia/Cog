@@ -135,7 +135,7 @@ async function boot(){
   }
 
   try{
-    _hubData = await api('vault/hub?area='+areaKey);
+    _hubData = await api('vault/hub&area='+areaKey);
   }catch(e){
     hideSplash();
     var status = e && e.status;
@@ -231,7 +231,7 @@ async function renderRoster(page){
 
   try{
     var areaKey = window.HUB_AREA_KEY;
-    var d = await api('vault/hub-roster?area='+areaKey+'&page='+page+'&per='+_rosterPer);
+    var d = await api('vault/hub-roster&area='+areaKey+'&page='+page+'&per='+_rosterPer);
     _rosterTotal = d.total || 0;
     var members = d.members || [];
     if(!members.length){
@@ -346,7 +346,7 @@ async function postReply(threadId){
     ta.value='';
     flash(fl,'Reply posted.','ok');
     // Refresh hub data thread list
-    var d = await api('vault/hub?area='+window.HUB_AREA_KEY);
+    var d = await api('vault/hub&area='+window.HUB_AREA_KEY);
     _hubData.threads = d.threads || _hubData.threads;
     renderForumTab(_forumTab);
   }catch(e){
@@ -387,7 +387,7 @@ async function postThread(){
     if(el('compose-subject')) el('compose-subject').value='';
     if(el('compose-body')) el('compose-body').value='';
     // Refresh
-    var d = await api('vault/hub?area='+window.HUB_AREA_KEY);
+    var d = await api('vault/hub&area='+window.HUB_AREA_KEY);
     _hubData.threads = d.threads || _hubData.threads;
     _hubData.summary = d.summary || _hubData.summary;
     renderSummaryStats();
@@ -480,7 +480,7 @@ async function submitCreateProject(){
     })});
     cancelCreateProject();
     // Refresh projects
-    var d2 = await api('vault/hub?area='+window.HUB_AREA_KEY);
+    var d2 = await api('vault/hub&area='+window.HUB_AREA_KEY);
     _hubData.projects = d2.projects || _hubData.projects;
     _hubData.summary  = d2.summary  || _hubData.summary;
     renderSummaryStats();
@@ -502,7 +502,7 @@ async function openProject(id){
   var detailWrap = el('hub-project-detail');
   if(detailWrap){ detailWrap.style.display=''; detailWrap.innerHTML='<div class="hub-loading">Loading project…</div>'; }
   try{
-    _projectData = await api('vault/hub-project?id='+id);
+    _projectData = await api('vault/hub-project&id='+id);
     renderProjectDetail();
   }catch(e){
     if(detailWrap) detailWrap.innerHTML='<div class="hub-empty">Could not load project: '+esc(e.message)+'</div>';
@@ -587,7 +587,7 @@ async function joinProject(id){
   if(btn){ btn.disabled=true; btn.textContent='Joining…'; }
   try{
     await api('vault/hub-project-join',{method:'POST',body:JSON.stringify({project_id:id})});
-    _projectData = await api('vault/hub-project?id='+id);
+    _projectData = await api('vault/hub-project&id='+id);
     renderProjectDetail();
   }catch(e){
     flash('pj-fl',e.message||'Could not join project.','err');
@@ -598,7 +598,7 @@ async function joinProject(id){
 async function leaveProject(id){
   try{
     await api('vault/hub-project-leave',{method:'POST',body:JSON.stringify({project_id:id})});
-    _projectData = await api('vault/hub-project?id='+id);
+    _projectData = await api('vault/hub-project&id='+id);
     renderProjectDetail();
   }catch(e){
     flash('pj-fl',e.message||'Could not leave project.','err');
@@ -613,7 +613,7 @@ async function postComment(projId){
   if(btn){ btn.disabled=true; btn.textContent='Posting…'; }
   try{
     await api('vault/hub-project-comment',{method:'POST',body:JSON.stringify({project_id:projId,body:body})});
-    _projectData = await api('vault/hub-project?id='+projId);
+    _projectData = await api('vault/hub-project&id='+projId);
     renderProjectDetail();
   }catch(e){
     flash('pc-fl',e.message||'Could not post comment.','err');
@@ -628,7 +628,7 @@ async function hubJoin(){
   try{
     await api('vault/hub-join',{method:'POST',body:JSON.stringify({area_key:window.HUB_AREA_KEY})});
     _enrolled = true;
-    var d = await api('vault/hub?area='+window.HUB_AREA_KEY);
+    var d = await api('vault/hub&area='+window.HUB_AREA_KEY);
     _hubData = d;
     renderAll();
   }catch(e){
@@ -642,7 +642,7 @@ async function hubLeave(){
   try{
     await api('vault/hub-leave',{method:'POST',body:JSON.stringify({area_key:window.HUB_AREA_KEY})});
     _enrolled = false;
-    var d = await api('vault/hub?area='+window.HUB_AREA_KEY);
+    var d = await api('vault/hub&area='+window.HUB_AREA_KEY);
     _hubData = d;
     renderAll();
   }catch(e){
