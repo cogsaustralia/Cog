@@ -114,10 +114,9 @@ $printMode = trim((string)($_GET['print'] ?? ''));
 }
 /* Hide the admin shell when a cert is active — normal doc flow for print */
 body.cert-open .admin-shell { display: none; }
-body.cert-open .no-print { display: none; }
 
 @media print {
-  .admin-shell, .main > .topbar, .inst-card, .no-print { display: none !important; }
+  .admin-shell, .main > .topbar, .inst-card, .no-print, .cert-actions { display: none !important; }
   .cert-wrap { display: block !important; padding: 0; }
   body { background: white; color: black; }
 }
@@ -319,7 +318,7 @@ if ($tcrDone): ?>
     This Trustee Counterpart Record constitutes the counterpart acknowledgement under clause 10.10A of the Joint Venture Participation Agreement. No wet-ink signature or paper counterpart is required. The Record is stored in the Foundation's secure systems and cryptographically anchored.
   </div>
   <div class="cert-footer">COG$ of Australia Foundation · cogsaustralia.org · Generated <?= er_h(gmdate('Y-m-d H:i:s')) ?> UTC</div>
-  <div class="no-print" style="margin-top:20px">
+  <div class="cert-actions" style="margin-top:20px">
     <button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
     <button class="print-btn" onclick="hideCert()" style="margin-left:8px">✕ Close</button>
   </div>
@@ -401,7 +400,7 @@ foreach ($deedCertData as $certId => $cd):
     This Declaration Execution Record constitutes the cryptographically verified record of the electronic execution of the <?= er_h($cd['instrument_title']) ?> by Thomas Boyd Cunliffe as Declarant and as Caretaker Trustee, witnessed electronically by <?= er_h($att['witness_full_name']) ?> via audio-visual link under section 14G of the Electronic Transactions Act 2000 (NSW). No wet-ink signature or paper counterpart is required. The Record is stored in the Foundation's secure systems and cryptographically anchored.
   </div>
   <div class="cert-footer">COG$ of Australia Foundation · cogsaustralia.org · Generated <?= er_h(gmdate('Y-m-d H:i:s')) ?> UTC</div>
-  <div class="no-print" style="margin-top:20px">
+  <div class="cert-actions" style="margin-top:20px">
     <button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
     <button class="print-btn" onclick="hideCert()" style="margin-left:8px">✕ Close</button>
   </div>
