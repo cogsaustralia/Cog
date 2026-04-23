@@ -28,6 +28,7 @@ $instruments = [
         'sha256'         => '7a4ffe9731ac837678b033aeb25bf7bcc2d178efdec09ac63ad957152047afe4',
         'size'           => 751624,
         'type'           => 'jvpa',
+        'cert_id'        => 'jvpa_tcr',
     ],
     'declaration' => [
         'title'          => 'COGS OF AUSTRALIA FOUNDATION HYBRID TRUST DECLARATION',
@@ -38,6 +39,7 @@ $instruments = [
         'sha256'         => '7c34e319798285c1e9d78643fc2431936e7f8fa7a8a264aa17e1f922b0ffc570',
         'size'           => 1562816,
         'type'           => 'deed',
+        'cert_id'        => 'declaration',
     ],
     'sub_trust_a' => [
         'title'          => 'COGS OF AUSTRALIA FOUNDATION MEMBERS ASSET POOL UNIT TRUST DEED',
@@ -48,6 +50,7 @@ $instruments = [
         'sha256'         => '2c4157a9483bbf9f5368b3b8ae074f8e61f6383e830637ca6645e089cfe7cddf',
         'size'           => 544369,
         'type'           => 'deed',
+        'cert_id'        => 'sub_trust_a',
     ],
     'sub_trust_b' => [
         'title'          => 'COGS OF AUSTRALIA FOUNDATION DIVIDEND DISTRIBUTION UNIT TRUST DEED',
@@ -58,6 +61,7 @@ $instruments = [
         'sha256'         => 'fd3e9e184fcd19242184a15b4196d255b048e8ffb894c3d8a70158df9c447a5c',
         'size'           => 356929,
         'type'           => 'deed',
+        'cert_id'        => 'sub_trust_b',
     ],
     'sub_trust_c' => [
         'title'          => 'COGS OF AUSTRALIA FOUNDATION DISCRETIONARY CHARITABLE TRUST DEED',
@@ -68,6 +72,7 @@ $instruments = [
         'sha256'         => '63eb7ef704001a8819a178b857efc3ef15f04e1a41e7fda7007392373672fdfa',
         'size'           => 480934,
         'type'           => 'deed',
+        'cert_id'        => 'sub_trust_c',
     ],
 ];
 
@@ -452,6 +457,10 @@ details summary:hover { color: var(--gold); }
             <a class="btn btn-gold btn-sm"
                href="?download=<?= (int)$currentVersion['id'] ?>">
               ↓ Download PDF
+            </a>
+            <a class="btn btn-sm"
+               href="<?= fd2_h(admin_url('execution_records.php')) ?>?cert=<?= fd2_h($inst['cert_id']) ?>">
+              📋 Execution Certificate
             </a>
           <?php endif; ?>
         <?php else: ?>

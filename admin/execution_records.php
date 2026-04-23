@@ -435,6 +435,12 @@ function showCert(id) {
     window.scrollTo({top:0,behavior:'instant'});
   }
 }
+// Auto-open cert from URL param ?cert=
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var certId = params.get('cert');
+  if (certId) { showCert(certId); }
+}());
 function hideCert() {
   document.querySelectorAll('.cert-wrap').forEach(function(el){ el.classList.remove('active'); });
   document.body.classList.remove('cert-open');
