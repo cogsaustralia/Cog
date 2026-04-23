@@ -24,6 +24,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'foundation_day.php') return 'foundation_day';
         if ($script === 'generate_trustee_token.php') return 'generate_trustee_token';
         if ($script === 'execution_records.php') return 'execution_records';
+        if ($script === 'founding_documents.php') return 'founding_documents';
         if ($script === 'generate_declaration_token.php') return 'generate_declaration_token';
         if ($script === 'generate_sub_trust_a_token.php') return 'generate_sub_trust_a_token';
         if ($script === 'generate_sub_trust_b_token.php') return 'generate_sub_trust_b_token';
@@ -190,6 +191,7 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'operations',        'label' => '🤝  Member Operations',        'href' => './operations.php'],
                 ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',            'href' => './foundation_day.php'],
                 ['key' => 'execution_records', 'label' => '📋  Execution Records',      'href' => './execution_records.php'],
+                ['key' => 'founding_documents', 'label' => '📄  Founding Documents',    'href' => './founding_documents.php'],
                 ['key' => 'generate_trustee_token', 'label' => '🔑  Trustee Token',         'href' => './generate_trustee_token.php'],
                 ['key' => 'generate_declaration_token', 'label' => '📜  Declaration Exec',      'href' => './generate_declaration_token.php'],
                 ['key' => 'generate_sub_trust_a_token', 'label' => '🅐  Sub-Trust A Exec',     'href' => './generate_sub_trust_a_token.php'],
