@@ -172,6 +172,8 @@ ob_start();
 .stat-val { font-size:1.6rem; font-weight:800; margin-bottom:4px; }
 .grid2 { display:grid; grid-template-columns:1.1fr .9fr; gap:18px; }
 @media(max-width:980px) { .grid2 { grid-template-columns:1fr; } }
+.lazy-card{opacity:0;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease}
+.lazy-card.revealed{opacity:1;transform:none}
 .acct-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; background:rgba(255,255,255,.04); border:1px solid var(--line); }
 .acct-dot { width:8px; height:8px; border-radius:50%; }
 .acct-dot.a { background:var(--blue); }
@@ -430,7 +432,7 @@ $bsTrusts = [
 $consMap = [];
 foreach($consolidated as $cr) { $consMap[$cr['sub_trust']] = $cr; }
 ?>
-<div class="card" style="margin-bottom:18px">
+<div class="card lazy-card" style="margin-bottom:18px">
   <div class="card-head">
     <h2>Balance sheet<?php echo ops_admin_help_button('Balance sheet', 'Current net balances for each stewardship account, grouped by sub-trust. A positive (Dr) balance means more debits than credits — for asset accounts this is the expected direction. Grand totals must net to zero across the full system.'); ?></h2>
     <span style="font-size:12px;color:var(--dim)">Live from ledger_entries</span>
@@ -507,7 +509,7 @@ foreach($compTabs as $tid => $tab) {
 }
 if($firstActiveTab === null) $firstActiveTab = 'i3';
 ?>
-<div class="card" style="margin-bottom:18px">
+<div class="card lazy-card" style="margin-bottom:18px">
   <div class="card-head">
     <h2>Compliance deadline tracker<?php echo ops_admin_help_button('Compliance deadline tracker', 'Shows overdue items per constitutional invariant: I3 (dividend splits within 5 business days), I4 (Sub-Trust B distributions within 60 days), I5 (Sub-Trust C direct transfers within 2 business days), I12 (ASX Stewardship Season locks). Each tab shows the violating records. Green tab = no violations.'); ?></h2>
     <?php
@@ -602,7 +604,7 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
 
 <?php if (!empty($sectorBalances) && !empty($flowCols)): ?>
 <!-- ── Godley sector-by-flow matrix ──────────────────────────────────── -->
-<div class="card" style="margin-bottom:18px">
+<div class="card lazy-card" style="margin-bottom:18px">
   <div class="card-head">
     <h2>Godley ledger matrix<?php echo ops_admin_help_button('Godley ledger matrix', 'Rows are stewardship accounts grouped by sub-trust sector. Columns are flow categories. Each cell shows the net balance for that account-flow combination. Dr = debit total, Cr = credit total. The grand total row must sum to zero (double-entry integrity).'); ?></h2>
     <span style="font-size:12px;color:var(--dim)"><?php echo count($sectorBalances); ?> accounts &middot; <?php echo count($flowCols); ?> flow types</span>
@@ -717,7 +719,7 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
 </div>
 <?php endif; ?>
 
-<div class="grid2">
+<div class="grid2 lazy-card">
 <div>
 
   <div class="card">
@@ -965,6 +967,23 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
   close.addEventListener('click', function(){ bg.classList.remove('open'); });
   bg.addEventListener('click', function(e){ if(e.target===bg) bg.classList.remove('open'); });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') bg.classList.remove('open'); });
+})();
+
+// Lazy reveal — IntersectionObserver on .lazy-card elements
+(function() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.lazy-card').forEach(function(el) { el.classList.add('revealed'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.lazy-card').forEach(function(el) { io.observe(el); });
 })();
 </script>
 

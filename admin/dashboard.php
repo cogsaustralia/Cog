@@ -258,6 +258,10 @@ function activity_label(string $type): string {
 @media(max-width:1200px){.dashboard-intro-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}.main-grid{grid-template-columns:1fr}}
 @media(max-width:820px){.stat-grid{grid-template-columns:1fr 1fr}.funnel{flex-wrap:wrap}.main{padding:16px 14px}.topbar{flex-direction:column}}
 @media(max-width:520px){.stat-grid{grid-template-columns:1fr}.topbar-right{width:100%}}
+
+/* ── Lazy reveal ── */
+.lazy-card{opacity:0;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease}
+.lazy-card.revealed{opacity:1;transform:none}
 </style>
 <?php ops_admin_help_assets_once(); ?>
 </head>
@@ -386,7 +390,7 @@ function activity_label(string $type): string {
       </div>
 
       <!-- Compliance intake -->
-      <div class="card">
+      <div class="card lazy-card">
         <div class="card-head">
           <h2>Compliance intake<?= ops_admin_help_button('Compliance intake', 'This section highlights JVPA and KYC status for recent member intake so the operator can see which records still need compliance attention.') ?></h2>
           <a href="./members.php">Member Registry →</a>
@@ -426,7 +430,7 @@ function activity_label(string $type): string {
       </div>
 
       <!-- Activity feed -->
-      <div class="card">
+      <div class="card lazy-card">
         <div class="card-head">
           <h2>Recent activity<?= ops_admin_help_button('Recent activity', 'This feed provides a quick operator-readable trace of what the admin system has recorded recently. Use Audit for the deeper evidence trail.') ?></h2>
           <a href="./audit.php">Full audit log →</a>
@@ -472,7 +476,7 @@ function activity_label(string $type): string {
     <div style="display:flex;flex-direction:column;gap:18px">
 
       <!-- Quick links -->
-      <div class="card">
+      <div class="card lazy-card">
         <div class="card-head"><h2>Quick links<?= ops_admin_help_button('Quick links', 'These links take you into the main authoritative admin sections. They are intended to shorten the time between reading the dashboard and opening the correct control-plane page.') ?></h2></div>
         <div class="card-body">
           <div class="quick-links">
@@ -493,7 +497,7 @@ function activity_label(string $type): string {
       </div>
 
 
-      <div class="card">
+      <div class="card lazy-card">
         <div class="card-head"><h2>Legacy bridge diagnostics<?= ops_admin_help_button('Legacy bridge diagnostics', 'Use these pages to inspect transitional bridge writes, session mapping, or retirement readiness. They are diagnostic support surfaces, not the primary live workflow.') ?></h2><a href="./legacy-dependencies.php">Open bridge status →</a></div>
         <div class="card-body">
           <p style="font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:12px">These pages remain available to verify bridge writes, session mapping, and retirement readiness. Use them for diagnostics, not as the primary operator path.</p>
@@ -510,7 +514,7 @@ function activity_label(string $type): string {
         </div>
       </div>
 
-      <div class="card">
+      <div class="card lazy-card">
         <div class="card-head"><h2>Admin auth<?= ops_admin_help_button('Admin auth', 'This card shows the current operator security posture: who is signed in, whether 2FA is enabled, and whether any auth lockouts need clearing.') ?></h2><a href="./operator_security.php">Open security →</a></div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
@@ -524,7 +528,7 @@ function activity_label(string $type): string {
       </div>
 
       <!-- System checks (collapsible) -->
-      <div class="info-card">
+      <div class="info-card lazy-card">
         <div class="sys-summary" onclick="toggleSys()">
           <span class="sys-dot <?= $systemAllOk ? 'ok' : 'bad' ?>"></span>
           <span class="sys-text"><?= $systemAllOk ? 'All systems ready' : 'System issues detected' ?></span>
@@ -554,6 +558,24 @@ function toggleSys() {
 }
 // Auto-open system checks if there are issues
 <?php if (!$systemAllOk): ?>toggleSys();<?php endif; ?>
+
+// Lazy reveal — IntersectionObserver on .lazy-card elements
+(function() {
+  if (!('IntersectionObserver' in window)) {
+    // Fallback: reveal all immediately for older browsers
+    document.querySelectorAll('.lazy-card').forEach(function(el) { el.classList.add('revealed'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.lazy-card').forEach(function(el) { io.observe(el); });
+})();
 </script>
 </body>
 </html>
