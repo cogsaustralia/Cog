@@ -476,13 +476,16 @@
                   <span id="cs-dob" style="display:block;font-size:.88rem;opacity:.7">—</span>
                 </div>
               </div>
-              <!-- Inviter confirm row -->
+              <!-- Inviter confirm row — only shown when invite validated -->
               <div class="invite-confirm-row" id="cs-invite-row" style="display:none">
                 <div class="confirm-ico" style="color:#52b87a">✓</div>
                 <div>
                   <strong style="color:#52b87a">Invited by Member</strong>
                   <span id="cs-invite-name" style="display:block;font-size:.88rem;color:var(--text2)">—</span>
                 </div>
+              </div>
+              <!-- Address row — always visible -->
+              <div class="confirm-row">
                 <div class="confirm-ico">📍</div>
                 <div>
                   <strong>Address</strong>
@@ -796,14 +799,29 @@ function escText(str) {
 var currentStep = 1;
 function goStep(n) {
   if (n === 2 && !validateStep1()) return;
+  // Deactivate current step panel
   document.getElementById('step-' + currentStep).classList.remove('active');
-  var prev = document.querySelector('[data-step="'+currentStep+'"]');
-  if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
-  if (currentStep < n) document.getElementById('conn-' + currentStep) && document.getElementById('conn-1').classList.add('done');
+  var prevPip = document.querySelector('[data-step="'+currentStep+'"]');
+  if (prevPip) {
+    prevPip.classList.remove('active');
+    if (n > currentStep) {
+      // Moving forward: mark previous pip done
+      prevPip.classList.add('done');
+    } else {
+      // Moving backward: un-done the current pip
+      prevPip.classList.remove('done');
+    }
+  }
+  // Connector: add .done going forward, remove going backward
+  var conn = document.getElementById('conn-1');
+  if (conn) {
+    if (n > currentStep) { conn.classList.add('done'); }
+    else { conn.classList.remove('done'); }
+  }
   currentStep = n;
   document.getElementById('step-' + n).classList.add('active');
-  document.querySelector('[data-step="'+n+'"]').classList.add('active');
-  document.querySelector('[data-step="'+n+'"]').classList.remove('done');
+  var nextPip = document.querySelector('[data-step="'+n+'"]');
+  if (nextPip) { nextPip.classList.add('active'); nextPip.classList.remove('done'); }
   if (n === 2) populateConfirm();
   document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -834,8 +852,12 @@ function validateStep1() {
     ['street','suburb','state','postcode'].forEach(function(id){
       var el = document.getElementById(id);
       if (el && !el.value.trim()) {
-        el.style.borderColor='#f0857a'; ok=false;
-        el.addEventListener('input',function(){el.style.borderColor='';},{once:true});
+        ok = false;
+        // For <select> elements borderColor is unreliable cross-browser — highlight the wrapper
+        var target = (el.tagName === 'SELECT') ? (el.closest('.field') || el) : el;
+        target.style.borderColor = '#f0857a';
+        el.addEventListener('change', function(){ target.style.borderColor = ''; }, {once:true});
+        el.addEventListener('input',  function(){ target.style.borderColor = ''; }, {once:true});
       }
     });
   }
