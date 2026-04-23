@@ -4790,7 +4790,7 @@ function renderParticipationPathways(d){
 
   // Mainspring tile — always first
   var mainspringTile =
-    '<div class="ov-path ov-path-mainspring" onclick="coinTransition(\'../hubs/mainspring/\',\'Opening Mainspring Hub\')" title="Mainspring Hub — all 9 management hubs at a glance">' +
+    '<div class="ov-path ov-path-mainspring" data-pathway-key="__mainspring__" onclick="openPathway(this.dataset.pathwayKey)" title="Mainspring Hub — all 9 management hubs at a glance">' +
     '<div class="ov-path-top">' +
     '<span style="font-size:.85rem;line-height:1;flex-shrink:0">⬡</span>' +
     '<span class="ov-path-name" style="color:var(--gold)">Mainspring</span>' +
@@ -4810,7 +4810,7 @@ function renderParticipationPathways(d){
       : '';
     // ? tip button uses stopPropagation so it doesn\'t trigger hub navigation
     var tipBtn = cfg.tip ? infoQ(cfg.tip) : '';
-    return '<div class="ov-path" data-hub="'+k+'" onclick="openPathway(\''+k+'\')\" title="'+esc(cfg.label)+' Hub">'
+    return '<div class="ov-path" data-pathway-key="'+k+'" onclick="openPathway(this.dataset.pathwayKey)" title="'+esc(cfg.label)+' Hub">'
       + badgeHtml
       + '<div class="ov-path-top">'
       +   '<span class="ov-path-dot '+dotCls+'"></span>'
@@ -4827,6 +4827,11 @@ function renderParticipationPathways(d){
 }
 
 function openPathway(key){
+  // Mainspring special key
+  if(key === '__mainspring__'){
+    coinTransition('../hubs/mainspring/', 'Opening Mainspring Hub');
+    return;
+  }
   // Navigate to the management hub page for this area key
   var hubUrl = '../hubs/'+key+'/';
   coinTransition(hubUrl, (_PATHWAYS[key] ? _PATHWAYS[key].label+' Hub' : 'Management Hub'));

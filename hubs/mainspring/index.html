@@ -130,6 +130,12 @@ async function boot(){
   }
 }
 
+function msTileClick(el){
+  var path  = el.dataset.hubPath;
+  var label = el.dataset.hubLabel || 'Opening hub';
+  if(path) coinTransition(path, label);
+}
+
 function renderGrid(tiles, myAreas){
   var wrap = document.getElementById('ms-grid-wrap');
   if(!tiles.length){ wrap.innerHTML='<div class="hub-empty">No hub data available.</div>'; return; }
@@ -137,7 +143,7 @@ function renderGrid(tiles, myAreas){
   var html = '<div class="ms-grid">' + tiles.map(function(t){
     var enrolled = myAreas.indexOf(t.area_key) >= 0;
     var path = HUB_PATHS[t.area_key] || ('../'+t.area_key+'/');
-    return '<div class="ms-tile'+(enrolled?' enrolled':'')+'" onclick="coinTransition(\''+path+'\',\'Opening '+esc(t.area_label||t.area_key)+'\')">' +
+    return '<div class="ms-tile'+(enrolled?' enrolled':'')+'" data-hub-path="'+path+'" data-hub-label="Opening '+esc(t.area_label||t.area_key)+'" onclick="msTileClick(this)">' +
       (enrolled?'<span class="ms-enrolled-badge">Active</span>':'') +
       '<div class="ms-tile-name">'+esc(t.area_label||t.area_key)+'</div>' +
       '<div class="ms-tile-stats">' +
