@@ -212,7 +212,7 @@ $host = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['HTTP_
         <span class="tlbl">Execution Token (raw — copy now, shown once)</span>
         <?= gdt_h($rawToken) ?>
       </div>
-      <div class="url-box">URL: <?= gdt_h($host) ?>/trustee/declare.php?token=<?= gdt_h($rawToken) ?></div>
+      <div class="url-box"><a href="<?= gdt_h($host) ?>/trustee/declare.php?token=<?= gdt_h($rawToken) ?>" target="_blank" rel="noopener" style="color:var(--gold);word-break:break-all"><?= gdt_h($host) ?>/trustee/declare.php?token=<?= gdt_h($rawToken) ?></a></div>
     <?php endif; ?>
   </div>
 
@@ -241,7 +241,7 @@ $host = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['HTTP_
         <span class="tlbl">Witness Token (raw — copy now, shown once)</span>
         <?= gdt_h($rawWitnessToken) ?>
       </div>
-      <div class="url-box">URL: <?= gdt_h($host) ?>/trustee/witness.php?token=<?= gdt_h($rawWitnessToken) ?>&session=<?= gdt_h($sessionId) ?></div>
+      <div class="url-box"><a href="<?= gdt_h($host) ?>/trustee/witness.php?token=<?= gdt_h($rawWitnessToken) ?>&session=<?= gdt_h($sessionId) ?>" target="_blank" rel="noopener" style="color:var(--gold);word-break:break-all"><?= gdt_h($host) ?>/trustee/witness.php?token=<?= gdt_h($rawWitnessToken) ?>&session=<?= gdt_h($sessionId) ?></a></div>
     <?php endif; ?>
   </div>
 
