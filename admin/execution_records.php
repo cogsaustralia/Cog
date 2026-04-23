@@ -15,8 +15,8 @@ $pdo = ops_db();
 
 function er_h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 function er_hash(string $h): string {
-    // Split long hashes for readability
-    return er_h(substr($h, 0, 32)) . '<wbr>' . er_h(substr($h, 32));
+    // Return full hash — CSS handles word-break
+    return er_h($h);
 }
 
 // ── Fetch all five instrument records ──────────────────────────────────────────
@@ -108,11 +108,13 @@ $printMode = trim((string)($_GET['print'] ?? ''));
 }
 .cert-wrap.active {
   display: block;
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  overflow-y: auto; z-index: 1000;
   background: #ffffff; color: #1a1a1a;
   padding: 40px 32px 60px;
+  max-width: 780px; margin: 0 auto;
 }
+/* Hide the admin shell when a cert is active — normal doc flow for print */
+body.cert-open .admin-shell { display: none; }
+body.cert-open .no-print { display: none; }
 
 @media print {
   .admin-shell, .main > .topbar, .inst-card, .no-print { display: none !important; }
@@ -137,7 +139,7 @@ $printMode = trim((string)($_GET['print'] ?? ''));
 }
 .cert-row { display: flex; gap: 16px; margin-bottom: 8px; }
 .cert-lbl { font-size: .75rem; color: #666; min-width: 200px; padding-top: 2px; }
-.cert-val { font-size: .82rem; color: #1a1a1a; font-family: 'Courier New', monospace; word-break: break-all; }
+.cert-val { font-size: .82rem; color: #1a1a1a; font-family: 'Courier New', monospace; word-break: break-all; overflow-wrap: anywhere; }
 .cert-val.highlight { color: #1a1a2e; font-weight: 600; }
 
 .cert-notice {
@@ -410,10 +412,15 @@ foreach ($deedCertData as $certId => $cd):
 function showCert(id) {
   document.querySelectorAll('.cert-wrap').forEach(function(el){ el.classList.remove('active'); });
   var el = document.getElementById('cert-' + id);
-  if (el) { el.classList.add('active'); el.scrollIntoView({behavior:'smooth'}); }
+  if (el) {
+    el.classList.add('active');
+    document.body.classList.add('cert-open');
+    window.scrollTo({top:0,behavior:'instant'});
+  }
 }
 function hideCert() {
   document.querySelectorAll('.cert-wrap').forEach(function(el){ el.classList.remove('active'); });
+  document.body.classList.remove('cert-open');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
