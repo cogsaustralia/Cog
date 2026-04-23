@@ -29,7 +29,7 @@
   @media(max-width:580px){.footer-inner{grid-template-columns:1fr}.footer-inner>div:first-child{grid-column:1}.footer-bottom{flex-direction:column;align-items:flex-start}}
   </style>
   <div class="site-disclosure" style="background:linear-gradient(180deg,rgba(42,29,11,.55),rgba(23,17,9,.3));border-top:1px solid rgba(240,209,138,.13);padding:9px 24px;text-align:center">
-    <p style="font-size:.73rem;color:rgba(255,244,221,.62);line-height:1.5;margin:0">Not for public broadcast · Invited Partner use only · Available by referral link only<br>Community Joint Venture Cryptographic Resource Management and Distribution System
+    <p style="font-size:.73rem;color:rgba(255,244,221,.62);line-height:1.5;margin:0">Not for public broadcast · Invited Joint Venturer use only · Available by referral link only<br>Community Joint Venture Cryptographic Resource Management and Distribution System
 .</p>
   </div>
   <footer class="site-footer">
@@ -53,8 +53,8 @@
           <a class="footer-link-locked" href="/partners/index.html" style="display:inline-flex;align-items:center;gap:10px;margin-top:6px;padding:9px 14px 9px 10px;border:1px solid rgba(201,151,61,.45);border-radius:12px;background:rgba(6,4,2,.85);text-decoration:none;transition:border-color .2s,background .2s;max-width:100%;" onmouseover="this.style.borderColor='rgba(240,209,138,.75)';this.style.background='rgba(12,9,3,.95)'" onmouseout="this.style.borderColor='rgba(201,151,61,.45)';this.style.background='rgba(6,4,2,.85)'">
             <span style="font-size:1.1rem;line-height:1;filter:sepia(.4) saturate(1.6) brightness(1.1)">&#x1F6E1;&#xFE0E;</span>
             <span style="display:flex;flex-direction:column;gap:2px">
-              <span style="font-family:'Playfair Display',Georgia,serif;font-size:.82rem;font-weight:600;color:#f0d18a;line-height:1.15;white-space:nowrap;letter-spacing:.01em">Partner's Vault</span>
-              <span style="font-size:.6rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,151,61,.72);line-height:1.2;white-space:nowrap">Secure Partner access</span>
+              <span style="font-family:'Playfair Display',Georgia,serif;font-size:.82rem;font-weight:600;color:#f0d18a;line-height:1.15;white-space:nowrap;letter-spacing:.01em">Joint Venturer's Vault</span>
+              <span style="font-size:.6rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,151,61,.72);line-height:1.2;white-space:nowrap">Secure Venturer access</span>
             </span>
           </a>
         </div>

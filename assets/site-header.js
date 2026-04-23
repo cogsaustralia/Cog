@@ -250,14 +250,14 @@
           </nav>
 
           <div class="sh-cta">
-            <a class="sh-portal" href="/partners/index.html" aria-label="Partner's Vault &mdash; secure Partner access">
+            <a class="sh-portal" href="/partners/index.html" aria-label="Member's Vault &mdash; secure Mmember access">
               <span class="sh-portal-shield">&#x1F6E1;&#xFE0E;</span>
               <span class="sh-portal-copy">
-                <span class="sh-portal-label">Partner's Vault</span>
+                <span class="sh-portal-label">Member's Vault</span>
                 <span class="sh-portal-sub">Secure access</span>
               </span>
             </a>
-            <a class="sh-join" href="/join/">Become a Partner &mdash; $4</a>
+            <a class="sh-join" href="/join/">Become a Member &mdash; $4</a>
             <button class="sh-toggle" id="shToggle" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
           </div>
         </div>
@@ -268,8 +268,8 @@
           <a href="/tell-me-more/">How it works</a>
           <a href="/faq/">FAQ</a>
           <a href="/skeptic/">Skeptic&rsquo;s Guide</a>
-          <a href="/join/">Become a Partner &mdash; $4</a>
-          <a class="sh-drawer-portal" href="/partners/index.html">&#x1F6E1;&#xFE0E; Partner's Vault &mdash; secure access</a>
+          <a href="/join/">Become a Member &mdash; $4</a>
+          <a class="sh-drawer-portal" href="/partners/index.html">&#x1F6E1;&#xFE0E; Member's Vault &mdash; secure access</a>
         </nav>
 
       </div>

@@ -36,7 +36,7 @@ $execToken = null; $witnessToken = null;
 try {
     $s = $pdo->prepare(
         'SELECT purpose, expires_at, created_at FROM one_time_tokens
-         WHERE purpose IN (\'declaration_execution\',\'witness_attestation\')
+         WHERE purpose IN (\'sub_trust_b_execution\',\'sub_trust_b_witness\')
            AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()
          ORDER BY created_at DESC'
     );
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canGenerate) {
         try {
             $rawToken = SubTrustBExecutionService::generateOneTimeToken($pdo, 'sub_trust_b_execution');
             // Re-fetch
-            $s = $pdo->prepare('SELECT purpose,expires_at,created_at FROM one_time_tokens WHERE purpose=\'declaration_execution\' AND used_at IS NULL AND expires_at>UTC_TIMESTAMP() LIMIT 1');
+            $s = $pdo->prepare('SELECT purpose,expires_at,created_at FROM one_time_tokens WHERE purpose=\'sub_trust_b_execution\' AND used_at IS NULL AND expires_at>UTC_TIMESTAMP() LIMIT 1');
             $s->execute(); $execToken = $s->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) { $tokenError = $e->getMessage(); }
 
@@ -68,17 +68,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canGenerate) {
         } else {
             try {
                 $rawWitnessToken = SubTrustBExecutionService::generateOneTimeToken($pdo, 'sub_trust_b_witness');
-                $s = $pdo->prepare('SELECT purpose,expires_at,created_at FROM one_time_tokens WHERE purpose=\'witness_attestation\' AND used_at IS NULL AND expires_at>UTC_TIMESTAMP() LIMIT 1');
+                $s = $pdo->prepare('SELECT purpose,expires_at,created_at FROM one_time_tokens WHERE purpose=\'sub_trust_b_witness\' AND used_at IS NULL AND expires_at>UTC_TIMESTAMP() LIMIT 1');
                 $s->execute(); $witnessToken = $s->fetch(\PDO::FETCH_ASSOC) ?: null;
             } catch (\Throwable $e) { $tokenError = $e->getMessage(); }
         }
 
     } elseif ($action === 'invalidate_exec_token') {
-        $pdo->prepare('UPDATE one_time_tokens SET used_at=UTC_TIMESTAMP() WHERE purpose=\'declaration_execution\' AND used_at IS NULL')->execute();
+        $pdo->prepare('UPDATE one_time_tokens SET used_at=UTC_TIMESTAMP() WHERE purpose=\'sub_trust_b_execution\' AND used_at IS NULL')->execute();
         header('Location: ./generate_sub_trust_b_token.php?flash=Token+invalidated&type=ok'); exit;
 
     } elseif ($action === 'invalidate_witness_token') {
-        $pdo->prepare('UPDATE one_time_tokens SET used_at=UTC_TIMESTAMP() WHERE purpose=\'witness_attestation\' AND used_at IS NULL')->execute();
+        $pdo->prepare('UPDATE one_time_tokens SET used_at=UTC_TIMESTAMP() WHERE purpose=\'sub_trust_b_witness\' AND used_at IS NULL')->execute();
         header('Location: ./generate_sub_trust_b_token.php?flash=Witness+token+invalidated&type=ok'); exit;
     }
 }
@@ -137,13 +137,13 @@ $host = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['HTTP_
 
   <!-- Execution status -->
   <?php if ($fullyExecuted): ?>
-    <div class="banner-ok">✓ Declaration fully executed — both capacities complete and witness attestation recorded.</div>
+    <div class="banner-ok">✓ Sub-Trust B Deed fully executed — both capacities complete and witness attestation recorded.</div>
   <?php elseif ($bothDone): ?>
     <div class="alert alert-warn">Both executor capacities complete. Witness attestation still required.</div>
   <?php elseif ($activeSession): ?>
     <div class="alert alert-warn">Execution in progress — awaiting second capacity or witness.</div>
   <?php else: ?>
-    <div class="banner-err">⚠ Declaration not yet executed.</div>
+    <div class="banner-err">⚠ Sub-Trust B Deed not yet executed.</div>
   <?php endif; ?>
 
   <!-- Session status -->
@@ -179,7 +179,7 @@ $host = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['HTTP_
         <button class="btn btn-danger" onclick="return confirm('Invalidate execution token?')">Invalidate Token</button>
       </form>
     <?php elseif (!$execToken && !$rawToken && !$activeSession): ?>
-      <p style="font-size:.85rem;color:var(--sub);margin:0 0 14px">Generate a one-time token for Thomas to access the Declaration execution flow.</p>
+      <p style="font-size:.85rem;color:var(--sub);margin:0 0 14px">Generate a one-time token for Thomas to access the Sub-Trust B Deed execution flow.</p>
       <form method="POST">
         <input type="hidden" name="action" value="generate_exec_token">
         <?php if (function_exists('admin_csrf_token')): ?><input type="hidden" name="_csrf" value="<?= gdt_h(admin_csrf_token()) ?>"><?php endif; ?>

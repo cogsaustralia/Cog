@@ -109,25 +109,73 @@
     <script>
         async function loadDashboard() {
             try {
-                const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=all&per_page=100');
-                const issues = await response.json();
+                let alerts = [];
+                let currentAlert = null;
                 
-                // Filter by [ALERT] and [TRENDS] labels
-                const alerts = issues.filter(issue => issue.title.includes('[ALERT]'));
-                const trends = issues.find(issue => issue.title.includes('[TRENDS]'));
+                // Try to load from local cogs-alert.json (written by cron job)
+                try {
+                    const response = await fetch('../cogs-alert.json', { cache: 'no-store' });
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Loaded current alert from cogs-alert.json');
+                        currentAlert = data;
+                        // Add to alerts list
+                        alerts.push({
+                            timestamp: data.timestamp,
+                            reason_text: data.reason_text,
+                            metrics: data.metrics
+                        });
+                    }
+                } catch (e) {
+                    console.log('cogs-alert.json not available (expected if no current alert)');
+                }
                 
-                // Only show alerts from last 7 days
+                // Try to load alert history (if cron job stores it)
+                try {
+                    const histResponse = await fetch('../cogs-alert-history.json', { cache: 'no-store' });
+                    if (histResponse.ok) {
+                        const histData = await histResponse.json();
+                        if (histData.alerts && Array.isArray(histData.alerts)) {
+                            alerts = alerts.concat(histData.alerts);
+                            console.log(`Loaded ${histData.alerts.length} alerts from history`);
+                        }
+                    }
+                } catch (e) {
+                    console.log('cogs-alert-history.json not available');
+                }
+                
+                // Fall back to GitHub API if no local data
+                if (alerts.length === 0) {
+                    console.log('No local alerts, trying GitHub API...');
+                    try {
+                        const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=all&per_page=100');
+                        if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
+                        const issues = await response.json();
+                        
+                        alerts = issues.filter(issue => issue.title.includes('[ALERT]')).map(issue => ({
+                            timestamp: issue.created_at,
+                            reason_text: issue.title.replace(/\[ALERT\]\s*/i, '').trim(),
+                            metrics: {}
+                        }));
+                        console.log(`Loaded ${alerts.length} alerts from GitHub`);
+                    } catch (githubError) {
+                        console.error('GitHub API unavailable:', githubError);
+                        alerts = [];
+                    }
+                }
+                
+                // Filter to last 7 days
                 const now = new Date();
                 const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                const recentAlerts = alerts.filter(a => new Date(a.created_at) > sevenDaysAgo);
+                const recentAlerts = alerts.filter(a => new Date(a.timestamp) > sevenDaysAgo);
                 
-                // Deduplicate by title (keep first/earliest occurrence)
+                // Deduplicate by reason_text
                 const seen = new Set();
                 const deduped = [];
-                const counts = {}; // Track repeat count per error
+                const counts = {};
                 
                 for (const alert of recentAlerts) {
-                    const titleKey = alert.title.replace(/\[ALERT\]\s*/i, '').trim();
+                    const titleKey = alert.reason_text || 'Unknown Error';
                     if (!seen.has(titleKey)) {
                         seen.add(titleKey);
                         deduped.push(alert);
@@ -137,30 +185,29 @@
                     }
                 }
                 
-                // Sort by creation date, newest first
-                deduped.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                // Sort by timestamp, newest first
+                deduped.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 
-                updateStatus(deduped, counts);
-                updateMetrics(deduped);
+                updateStatus(deduped, counts, currentAlert);
+                updateMetrics(deduped, currentAlert);
                 updateAlerts(deduped, counts);
-                updateRecommendation(trends);
                 
                 document.getElementById('updateTime').textContent = new Date().toLocaleTimeString();
             } catch (error) {
-                console.error('Error loading dashboard:', error);
-                document.getElementById('statusText').textContent = '❌ Data source unavailable';
+                console.error('Fatal error loading dashboard:', error);
+                document.getElementById('statusText').textContent = '❌ Error loading data';
             }
         }
         
-        function updateStatus(alerts, counts) {
+        function updateStatus(alerts, counts, currentAlert) {
             const now = new Date();
             const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
             
-            const hasRecentAlert = alerts.some(a => new Date(a.created_at) > oneHourAgo);
+            const hasRecentAlert = alerts.some(a => new Date(a.timestamp) > oneHourAgo);
             const indicator = document.getElementById('statusIndicator');
             const text = document.getElementById('statusText');
             
-            if (hasRecentAlert) {
+            if (currentAlert && hasRecentAlert) {
                 indicator.className = 'status-indicator status-alert';
                 text.textContent = '🚨 ALERT ACTIVE (Last Hour)';
             } else if (alerts.length > 0) {
@@ -171,24 +218,28 @@
                 text.textContent = '✅ HEALTHY';
             }
             
-            document.getElementById('lastCheck').textContent = `Last check: ${now.toLocaleTimeString()} | Deduped from ${alerts.length} unique issues`;
+            document.getElementById('lastCheck').textContent = `Last check: ${now.toLocaleTimeString()} | ${alerts.length} unique issues`;
         }
         
-        function updateMetrics(alerts) {
-            // Count error types
-            let httpErrors = 0, phpErrors = 0, dbErrors = 0;
-            
-            for (const alert of alerts) {
-                const title = alert.title.toLowerCase();
-                if (title.includes('http') || title.includes('502') || title.includes('500')) httpErrors++;
-                if (title.includes('php') || title.includes('fatal') || title.includes('exception')) phpErrors++;
-                if (title.includes('database') || title.includes('sql') || title.includes('collation')) dbErrors++;
+        function updateMetrics(alerts, currentAlert) {
+            if (currentAlert && currentAlert.metrics) {
+                document.getElementById('reqPerSec').textContent = currentAlert.metrics.requests_per_sec || '—';
+                document.getElementById('errorRate').textContent = (currentAlert.metrics.error_rate_percent || 0) + '%';
+                document.getElementById('httpErrors').textContent = currentAlert.metrics.http_errors_in_window || 0;
+                document.getElementById('phpErrors').textContent = currentAlert.metrics.php_errors_recent || 0;
+            } else {
+                // Count error types from alert titles
+                let httpErrors = 0, phpErrors = 0;
+                for (const alert of alerts) {
+                    const title = (alert.reason_text || '').toLowerCase();
+                    if (title.includes('http') || title.includes('502') || title.includes('500')) httpErrors++;
+                    if (title.includes('php') || title.includes('fatal') || title.includes('exception')) phpErrors++;
+                }
+                document.getElementById('reqPerSec').textContent = '—';
+                document.getElementById('errorRate').textContent = alerts.length + ' issues (7d)';
+                document.getElementById('httpErrors').textContent = httpErrors;
+                document.getElementById('phpErrors').textContent = phpErrors;
             }
-            
-            document.getElementById('reqPerSec').textContent = '—';
-            document.getElementById('errorRate').textContent = alerts.length + ' issues (7d)';
-            document.getElementById('httpErrors').textContent = httpErrors;
-            document.getElementById('phpErrors').textContent = phpErrors;
         }
         
         function updateAlerts(alerts, counts) {
@@ -200,13 +251,13 @@
             }
             
             list.innerHTML = alerts.slice(0, 15).map(alert => {
-                const titleKey = alert.title.replace(/\[ALERT\]\s*/i, '').trim();
-                const repeatCount = counts[titleKey];
-                const daysOld = Math.floor((new Date() - new Date(alert.created_at)) / (24 * 60 * 60 * 1000));
+                const titleKey = alert.reason_text || 'Unknown Error';
+                const repeatCount = counts[titleKey] || 1;
+                const daysOld = Math.floor((new Date() - new Date(alert.timestamp)) / (24 * 60 * 60 * 1000));
                 
                 return `
                     <div class="alert-item">
-                        <div class="alert-time">${new Date(alert.created_at).toLocaleString()} (${daysOld}d ago)${repeatCount > 1 ? ` — Repeat: ${repeatCount} instances` : ''}</div>
+                        <div class="alert-time">${new Date(alert.timestamp).toLocaleString()} (${daysOld}d ago)${repeatCount > 1 ? ` — Repeat: ${repeatCount} instances` : ''}</div>
                         <div class="alert-title">${titleKey}</div>
                     </div>
                 `;
@@ -215,15 +266,12 @@
         
         function updateRecommendation(trends) {
             const box = document.getElementById('recommendationBox');
-            
             if (!trends) {
-                box.innerHTML = '<h3>🔄 Rebuild Recommendation</h3><p>No trend data yet. Monitor will auto-update every 5 minutes.</p>';
+                box.innerHTML = '<h3>🔄 Rebuild Recommendation</h3><p>Monitoring system will provide recommendations after cogs-monitor.sh is deployed.</p>';
                 return;
             }
-            
             const rebuild = trends.body.includes('Rebuild Recommendation:** YES') ? 'yes' : 'no';
             box.className = 'recommendation ' + (rebuild === 'yes' ? 'recommendation-yes' : 'recommendation-no');
-            
             box.innerHTML = `
                 <h3>🔄 Rebuild Recommendation</h3>
                 <p><strong>${rebuild === 'yes' ? '✅ YES - Rebuild Now' : '⏸️ NO - Monitor'}</strong></p>

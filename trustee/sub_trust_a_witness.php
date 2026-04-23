@@ -87,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db, $sessionId, $deedSha256,
                 getClientIp(), (string)($_SERVER['HTTP_USER_AGENT'] ?? '')
             );
+            SubTrustAExecutionService::consumeOneTimeToken($db, $rawToken, 'sub_trust_a_witness');
         } catch (\Throwable $e) {
             $postError = 'Attestation failed: ' . $e->getMessage();
         }

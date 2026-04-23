@@ -119,12 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($d), 4));
         })();
 
-        // Consume token on first capacity only (if not already consumed)
-        if (!$tokenIsUsed) {
-            if (!SubTrustCExecutionService::validateOneTimeToken($db, $rawToken, 'sub_trust_c_execution')) {
-                de_abort(403, 'Token is no longer valid.');
-            }
-            $tokenIsUsed = true;
+        // Validate token before first capacity, but do not consume it until persistence succeeds.
+        if (!$tokenIsUsed && !SubTrustCExecutionService::validateOneTimeToken($db, $rawToken, 'sub_trust_c_execution')) {
+            de_abort(403, 'Token is no longer valid.');
         }
 
         try {
@@ -132,6 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db, $capacity, $postedSid, $postedHash,
                 getClientIp(), (string)($_SERVER['HTTP_USER_AGENT'] ?? '')
             );
+            if (!$tokenIsUsed) {
+                SubTrustCExecutionService::consumeOneTimeToken($db, $rawToken, 'sub_trust_c_execution');
+                $tokenIsUsed = true;
+            }
             $sessionId = $postedSid;
             $activeSession = SubTrustCExecutionService::getSession($db, $sessionId);
             $doneCaps = array_column($activeSession['records'], 'capacity');
