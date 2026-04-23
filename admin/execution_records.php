@@ -306,8 +306,7 @@ if ($tcrDone): ?>
   </div>
   <div class="cert-section">
     <div class="cert-section-title">Agreement Details</div>
-    <div class="cert-row"><div class="cert-lbl">JVPA Version</div><div class="cert-val"><?= er_h($tcr['jvpa_version']) ?></div></div>
-    <div class="cert-row"><div class="cert-lbl">JVPA Title</div><div class="cert-val"><?= er_h($tcr['jvpa_title']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Instrument</div><div class="cert-val highlight"><?= er_h($tcr['jvpa_title']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Execution Date</div><div class="cert-val"><?= er_h($tcr['jvpa_execution_date']) ?></div></div>
   </div>
   <div class="cert-section">
@@ -356,7 +355,6 @@ foreach ($deedCertData as $certId => $cd):
   <div class="cert-section">
     <div class="cert-section-title">Instrument</div>
     <div class="cert-row"><div class="cert-lbl">Title</div><div class="cert-val highlight"><?= er_h($cd['svc_title']) ?></div></div>
-    <div class="cert-row"><div class="cert-lbl">Version / Identifier</div><div class="cert-val"><?= er_h($cd['deed_version']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Execution Date</div><div class="cert-val">21 April 2026</div></div>
     <div class="cert-row"><div class="cert-lbl">Execution Method</div><div class="cert-val">Electronic — Electronic Transactions Act 1999 (Cth) and section 14G Electronic Transactions Act 2000 (NSW)</div></div>
     <div class="cert-row"><div class="cert-lbl">Deed SHA-256</div><div class="cert-val highlight"><?= er_h($declRec['deed_sha256'] ?? '') ?></div></div>
