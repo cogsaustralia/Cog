@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ins = $pdo->prepare("INSERT IGNORE INTO partner_op_broadcast_reads (thread_id, member_id, delivered_at) VALUES (?, ?, NOW())");
                 foreach ($enrolled as $m) { $ins->execute([$threadId, (int)$m['id']]); }
                 $area = $postArea;
-                $flash = 'Broadcast sent to ' . count($enrolled) . ' Member' . (count(\$enrolled) !== 1 ? 's' : '') . '.';
+                $flash = 'Broadcast sent to ' . count($enrolled) . ' Member' . (count($enrolled) !== 1 ? 's' : '') . '.';
             } elseif ($action === 'reply_thread') {
                 $threadId = (int)($_POST['thread_id'] ?? 0);
                 $replyBody = trim((string)($_POST['reply_body'] ?? ''));
