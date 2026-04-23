@@ -336,6 +336,17 @@ if (trust_table_exists($db, 'snft_memberships')) {
     }
 }
 
+// ── Partner Invitation Pathway ───────────────────────────────────────────────
+$inviteMode  = trust_invite_mode($db);
+$inviteState = trust_validate_partner_invite($db, $inviteCodeRaw, $inviteEntryType);
+
+if ($inviteMode === 'required' && empty($inviteState['ok'])) {
+    apiError('A valid Member invitation code is required to join the membership. Please return to the Member who introduced you or contact administration.');
+}
+if ($inviteCodeRaw !== '' && empty($inviteState['ok'])) {
+    apiError('The Member invitation code could not be verified. Please check the code and try again.');
+}
+
 $stateCode = stateCode($state);
 $generatedMember = function_exists('generateSnftMemberNumber') ? generateSnftMemberNumber($db, $stateCode) : ['member_number' => trust_generate_personal_member_number($db), 'sequence_no' => null, 'state_code' => $stateCode];
 $memberNumber = (string)$generatedMember['member_number'];
@@ -353,11 +364,8 @@ $meta = [
     'invite_code_used' => $inviteState['invite_code_used'],
     'invite_validation_status' => $inviteState['status'],
     'invited_by_partner_id' => $inviteState['inviter_partner_id'],
-    'referral_code' => $referralCode !== '' ? $referralCode : null,
-    'invite_code_used' => $inviteState['invite_code_used'],
-    'invite_validation_status' => $inviteState['status'],
-    'invited_by_partner_id' => $inviteState['inviter_partner_id'],
     'invite_verified_at' => $inviteState['verified_at'],
+    'referral_code' => $referralCode !== '' ? $referralCode : null,
     'additional_info' => $additionalInfo,
     'reservation_notice_version' => $noticeVersion,
     'reservation_notice_accepted_at' => $acceptedAt,
