@@ -224,6 +224,7 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'doc_downloads',     'label' => '📥  Document Downloads',        'href' => './doc-downloads.php'],
                 ['key' => 'email_access',      'label' => '📮  Email Access',              'href' => './email_access.php'],
                 ['key' => 'operator_security', 'label' => '🔐  Admin Security',            'href' => './operator_security.php'],
+                ['key' => 'monitor',           'label' => '📡  Site Monitor',              'href' => './monitor.php'],
             ],
             'Bridge / Diagnostics' => [
                 ['key' => 'reconciliation',     'label' => '🔍  Legacy Reconciliation',    'href' => './reconciliation.php'],
