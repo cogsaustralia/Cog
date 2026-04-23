@@ -19,5 +19,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home4/cogsaust/public_html
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             echo "Deployed at $(date)"

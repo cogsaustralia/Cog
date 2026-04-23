@@ -103,8 +103,16 @@ $printMode = trim((string)($_GET['print'] ?? ''));
   display: none;
   max-width: 780px; margin: 0 auto; padding: 40px 32px 60px;
   font-family: system-ui, sans-serif; color: #1a1a1a;
+  background: #ffffff;
+  position: relative; z-index: 10;
 }
-.cert-wrap.active { display: block; }
+.cert-wrap.active {
+  display: block;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y: auto; z-index: 1000;
+  background: #ffffff; color: #1a1a1a;
+  padding: 40px 32px 60px;
+}
 
 @media print {
   .admin-shell, .main > .topbar, .inst-card, .no-print { display: none !important; }
