@@ -250,6 +250,21 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-
     <strong style="color:var(--gold)"><?= de_h(SubTrustCExecutionService::WITNESS_NAME) ?></strong>
     out-of-band. The witness must complete their attestation before this deed is fully executed.
   </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
+    <a href="../docs/<?= de_h(SubTrustCExecutionService::DEED_PDF) ?>"
+       target="_blank" rel="noopener"
+       style="display:inline-block;padding:10px 18px;border-radius:8px;
+              background:var(--goldb);border:1px solid var(--goldbr);
+              color:var(--gold);font-size:.88rem;font-weight:700;text-decoration:none">
+      ↓ Download Deed PDF
+    </a>
+    <a href="../admin/execution_records.php?cert=sub_trust_c"
+       style="display:inline-block;padding:10px 18px;border-radius:8px;
+              background:var(--panel2);border:1px solid var(--line2);
+              color:var(--text);font-size:.88rem;font-weight:700;text-decoration:none">
+      📋 View Execution Certificate
+    </a>
+  </div>
 </div>
 
 <?php else: ?>
