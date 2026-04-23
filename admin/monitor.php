@@ -1,3 +1,10 @@
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/includes/admin_paths.php';
+require_once __DIR__ . '/includes/ops_workflow.php';
+
+ops_require_admin();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -223,7 +230,7 @@
                 
                 // Try to load from local cogs-alert.json (written by cron job)
                 try {
-                    const response = await fetch('../cogs-alert.json', { cache: 'no-store' });
+                    const response = await fetch('../../cogs-alert.json', { cache: 'no-store' });
                     if (response.ok) {
                         const data = await response.json();
                         // Staleness check: ignore if alert data is older than 30 minutes
@@ -252,7 +259,7 @@
                 
                 // Try to load alert history (if cron job stores it)
                 try {
-                    const histResponse = await fetch('../cogs-alert-history.json', { cache: 'no-store' });
+                    const histResponse = await fetch('../../cogs-alert-history.json', { cache: 'no-store' });
                     if (histResponse.ok) {
                         const histData = await histResponse.json();
                         if (histData.alerts && Array.isArray(histData.alerts)) {
