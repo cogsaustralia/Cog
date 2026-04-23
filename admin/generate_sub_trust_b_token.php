@@ -146,6 +146,23 @@ $host = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['HTTP_
     <div class="banner-err">⚠ Sub-Trust B Deed not yet executed.</div>
   <?php endif; ?>
 
+
+  <?php if ($fullyExecuted && $activeSession): ?>
+  <div class="card" style="border-color:rgba(82,184,122,.35)">
+    <div class="card-title">📄 Instrument Documents</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;padding:4px 0">
+      <a href="<?= gdt_h(admin_url('../docs/' . SubTrustBExecutionService::DEED_PDF)) ?>"
+         target="_blank" rel="noopener" class="btn btn-gold">
+        ↓ Download Deed PDF
+      </a>
+      <a href="<?= gdt_h(admin_url('execution_records.php')) ?>?cert=sub_trust_b"
+         class="btn">
+        📋 View Execution Certificate
+      </a>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <!-- Session status -->
   <?php if ($activeSession): ?>
   <div class="card">
