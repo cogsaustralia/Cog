@@ -117,14 +117,25 @@
                     const response = await fetch('../cogs-alert.json', { cache: 'no-store' });
                     if (response.ok) {
                         const data = await response.json();
-                        console.log('Loaded current alert from cogs-alert.json');
-                        currentAlert = data;
-                        // Add to alerts list
-                        alerts.push({
-                            timestamp: data.timestamp,
-                            reason_text: data.reason_text,
-                            metrics: data.metrics
-                        });
+                        // Staleness check: ignore if alert data is older than 30 minutes
+                        const alertAge = (new Date() - new Date(data.timestamp)) / 1000 / 60;
+                        if (alertAge <= 30) {
+                            console.log('Loaded current alert from cogs-alert.json (age: ' + Math.round(alertAge) + ' min)');
+                            currentAlert = data;
+                            alerts.push({
+                                timestamp: data.timestamp,
+                                reason_text: data.reason_text,
+                                metrics: data.metrics
+                            });
+                        } else {
+                            console.log('cogs-alert.json is stale (' + Math.round(alertAge) + ' min old) — ignoring as current alert');
+                            // Still add to alerts list for history, but not as "current"
+                            alerts.push({
+                                timestamp: data.timestamp,
+                                reason_text: data.reason_text,
+                                metrics: data.metrics
+                            });
+                        }
                     }
                 } catch (e) {
                     console.log('cogs-alert.json not available (expected if no current alert)');
@@ -148,7 +159,7 @@
                 if (alerts.length === 0) {
                     console.log('No local alerts, trying GitHub API...');
                     try {
-                        const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=all&per_page=100');
+                        const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=open&per_page=100');
                         if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
                         const issues = await response.json();
                         
