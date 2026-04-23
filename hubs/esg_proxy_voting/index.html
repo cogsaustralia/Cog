@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,max-age=0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>ESG and Proxy Voting Hub — COG$ of Australia Foundation</title>
+<link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/hub.css">
+</head>
+<body data-root="../../">
+<script>
+window.HUB_AREA_KEY = 'esg_proxy_voting';
+window.HUB_LABEL    = 'ESG and Proxy Voting';
+window.HUB_STATUS   = 'soon';
+window.HUB_TIP      = 'Direct how CHESS-registered shares are voted at portfolio company AGMs. Members collectively set the ESG engagement strategy via the Aggregate Unitholder Direction mechanism.\n\nThis hub activates at Expansion Day, once the first ASX holdings settle into CHESS.';
+</script>
+<div id="splash">
+  <img src="../../assets/cogs_coin_web.png" alt="" class="splash-coin">
+  <div class="splash-line">Management Hub</div>
+</div>
+<header class="hub-topbar">
+  <div class="hub-topbar-left">
+    <div class="hub-breadcrumb">
+      <button onclick="coinTransition('../../wallets/member.html','Returning to Vault')">← Vault</button>
+      <span class="sep">/</span>
+      <span id="hub-title">ESG and Proxy Voting Hub</span>
+    </div>
+  </div>
+  <div class="hub-topbar-right">
+    <span id="hub-status-pill" class="hub-status-pill soon">Activates at Expansion Day</span>
+    <a class="hub-mainspring-link" href="../mainspring/" onclick="coinTransition('../mainspring/','Opening Mainspring');return false;">⬡ Mainspring</a>
+  </div>
+</header>
+<div id="hub-enrol-banner" class="hub-enrol-banner">
+  <span class="hub-enrol-text"><span class="hub-enrol-dot"></span>Loading…</span>
+</div>
+<main class="hub-page">
+  <div class="hub-section">
+    <div class="hub-stat-row">
+      <div class="hub-stat" id="stat-members"><div class="hub-stat-n">—</div><div class="hub-stat-l">Members</div></div>
+      <div class="hub-stat" id="stat-threads"><div class="hub-stat-n">—</div><div class="hub-stat-l">Forum threads</div></div>
+      <div class="hub-stat" id="stat-projects"><div class="hub-stat-n">—</div><div class="hub-stat-l">Active projects</div></div>
+    </div>
+  </div>
+  <div id="hub-main-content">
+    <div class="hub-section">
+      <div class="hub-section-hd"><span class="hub-section-title">About this Hub</span></div>
+      <div class="hub-overview"><div id="hub-overview-text"></div></div>
+    </div>
+    <div class="hub-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">Enrolled Members</span>
+        <div id="hub-roster-vis-wrap"></div>
+      </div>
+      <div id="hub-roster-wrap"><div class="hub-loading">Loading roster…</div></div>
+    </div>
+    <div class="hub-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">
+          Discussion Forum
+          <span id="hub-unread-badge" style="display:none;background:var(--gold);color:#000;border-radius:99px;font-size:.65rem;font-weight:800;padding:1px 6px;margin-left:4px"></span>
+        </span>
+      </div>
+      <div class="hub-tabs">
+        <button class="hub-tab on" data-tab="threads" onclick="switchForumTab('threads')">Threads</button>
+        <button class="hub-tab" data-tab="broadcasts" onclick="switchForumTab('broadcasts')">Broadcasts</button>
+      </div>
+      <div id="hub-forum-list"></div>
+      <div id="hub-compose-wrap"></div>
+    </div>
+    <div class="hub-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">Management Projects</span>
+        <span id="hub-projects-hd-action"></span>
+      </div>
+      <div id="hub-projects-wrap"><div class="hub-loading">Loading projects…</div></div>
+    </div>
+  </div>
+  <div id="hub-project-detail" style="display:none"></div>
+</main>
+<script src="../_shared/hub.js"></script>
+</body>
+</html>

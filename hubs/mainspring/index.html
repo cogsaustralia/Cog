@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,max-age=0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Mainspring Hub — COG$ of Australia Foundation</title>
+<link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/hub.css">
+<style>
+.ms-header{padding:28px 20px 20px;text-align:center;border-bottom:1px solid var(--border)}
+.ms-header-title{font-family:var(--serif);font-size:2.2rem;font-weight:500;color:var(--text);letter-spacing:.01em}
+.ms-header-sub{font-size:.95rem;color:var(--text3);margin-top:6px;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto}
+</style>
+</head>
+<body data-root="../../">
+
+<!-- Splash -->
+<div id="splash">
+  <img src="../../assets/cogs_coin_web.png" alt="" class="splash-coin">
+  <div class="splash-line">Mainspring Hub</div>
+</div>
+
+<!-- Top bar -->
+<header class="hub-topbar">
+  <div class="hub-topbar-left">
+    <div class="hub-breadcrumb">
+      <button id="back-btn">← Vault</button>
+      <span class="sep">/</span>
+      <span>Mainspring Hub</span>
+    </div>
+  </div>
+  <div class="hub-topbar-right">
+    <span class="hub-status-pill live">Overview</span>
+  </div>
+</header>
+
+<!-- Header -->
+<div class="ms-header">
+  <div class="ms-header-title">⬡ Mainspring Hub</div>
+  <div class="ms-header-sub">The nine management hubs of the COG$ Joint Venture — at a glance. Click any tile to open that hub.</div>
+</div>
+
+<!-- Main -->
+<main class="hub-page">
+
+  <!-- 9-tile grid -->
+  <div class="hub-section">
+    <div class="hub-section-hd"><span class="hub-section-title">Management Hubs</span></div>
+    <div id="ms-grid-wrap"><div class="hub-loading">Loading hubs…</div></div>
+  </div>
+
+  <!-- Activity feed -->
+  <div class="hub-section">
+    <div class="hub-section-hd"><span class="hub-section-title">Recent Activity</span></div>
+    <div id="ms-feed-wrap"><div class="hub-loading">Loading activity…</div></div>
+  </div>
+
+</main>
+
+<script>
+(function(){
+'use strict';
+
+var ROOT = document.body.dataset.root || '../../';
+var API  = ROOT + '_app/api/index.php?route=';
+
+var HUB_PATHS = {
+  operations_oversight:  '../operations_oversight/',
+  governance_polls:      '../governance_polls/',
+  esg_proxy_voting:      '../esg_proxy_voting/',
+  first_nations:         '../first_nations/',
+  community_projects:    '../community_projects/',
+  technology_blockchain: '../technology_blockchain/',
+  financial_oversight:   '../financial_oversight/',
+  place_based_decisions: '../place_based_decisions/',
+  education_outreach:    '../education_outreach/',
+};
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function dts(s){
+  if(!s) return '—';
+  try{ return new Date(s).toLocaleDateString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return s; }
+}
+
+function coinTransition(href, label){
+  label = label || 'Opening…';
+  var ov = document.createElement('div');
+  ov.className = 'coin-transition';
+  ov.innerHTML = '<img src="'+ROOT+'assets/cogs_coin_web.png" alt=""><div class="ct-label">'+esc(label)+'</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function(){ ov.classList.add('active'); });
+  setTimeout(function(){ window.location.href = href; }, 1700);
+}
+
+function hideSplash(){
+  var s = document.getElementById('splash');
+  if(s){ s.classList.add('hidden'); setTimeout(function(){ s.style.display='none'; }, 450); }
+}
+
+async function api(route){
+  var r = await fetch(API+route,{credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'}});
+  var txt = await r.text();
+  var j; try{ j=JSON.parse(txt); }catch(e){ j={success:false,error:txt}; }
+  if(!r.ok||j.success===false) throw new Error(j.error||'Request failed ('+r.status+')');
+  return j.data!==undefined?j.data:j;
+}
+
+document.getElementById('back-btn').addEventListener('click', function(){
+  coinTransition(ROOT+'wallets/member.html','Returning to Vault');
+});
+
+async function boot(){
+  try{
+    var d = await api('vault/hub-mainspring');
+    hideSplash();
+    renderGrid(d.tiles||[], d.my_areas||[]);
+    renderFeed(d.activity||[]);
+  }catch(e){
+    hideSplash();
+    var msg = e.message||'';
+    if(/timed out|Failed to fetch|NetworkError|50\d/i.test(msg)){
+      window.location.replace(ROOT+'partners/index.html?next=vault&reason=server');
+    }else{
+      window.location.replace(ROOT+'partners/index.html?next=vault');
+    }
+  }
+}
+
+function renderGrid(tiles, myAreas){
+  var wrap = document.getElementById('ms-grid-wrap');
+  if(!tiles.length){ wrap.innerHTML='<div class="hub-empty">No hub data available.</div>'; return; }
+
+  var html = '<div class="ms-grid">' + tiles.map(function(t){
+    var enrolled = myAreas.indexOf(t.area_key) >= 0;
+    var path = HUB_PATHS[t.area_key] || ('../'+t.area_key+'/');
+    return '<div class="ms-tile'+(enrolled?' enrolled':'')+'" onclick="coinTransition(\''+path+'\',\'Opening '+esc(t.area_label||t.area_key)+'\')">' +
+      (enrolled?'<span class="ms-enrolled-badge">Active</span>':'') +
+      '<div class="ms-tile-name">'+esc(t.area_label||t.area_key)+'</div>' +
+      '<div class="ms-tile-stats">' +
+        '<div class="ms-tile-stat"><strong>'+Number(t.member_count||0).toLocaleString('en-AU')+'</strong>Members</div>' +
+        '<div class="ms-tile-stat"><strong>'+Number(t.thread_count||0).toLocaleString('en-AU')+'</strong>Threads</div>' +
+        '<div class="ms-tile-stat"><strong>'+Number(t.active_project_count||0).toLocaleString('en-AU')+'</strong>Projects</div>' +
+      '</div>' +
+    '</div>';
+  }).join('') + '</div>';
+  wrap.innerHTML = html;
+}
+
+function renderFeed(activity){
+  var wrap = document.getElementById('ms-feed-wrap');
+  if(!activity.length){ wrap.innerHTML='<div class="hub-empty">No recent activity yet.</div>'; return; }
+
+  var html = '<div class="ms-activity-feed">' + activity.slice(0,30).map(function(a){
+    var typeLabel = a.event_type==='thread' ? 'Forum thread' : 'Project';
+    var areaLabel = (a.area_key||'').replace(/_/g,' ');
+    return '<div class="ms-feed-item">' +
+      '<span class="ms-feed-dot '+esc(a.event_type||'')+'"></span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div class="ms-feed-title">'+esc(a.title||'Untitled')+'</div>' +
+        '<div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap">' +
+          '<span class="ms-feed-area">'+esc(areaLabel)+'</span>' +
+          '<span style="font-size:.76rem;color:var(--text4)">'+esc(typeLabel)+'</span>' +
+        '</div>' +
+      '</div>' +
+      '<span class="ms-feed-time">'+dts(a.occurred_at)+'</span>' +
+    '</div>';
+  }).join('') + '</div>';
+  wrap.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+
+})();
+</script>
+</body>
+</html>

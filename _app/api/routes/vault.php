@@ -95,6 +95,11 @@ if ($action === 'partner-op-reply') {
 if ($action === 'partner-op-read') {
     handlePartnerOpRead();
 }
+
+// Management Hubs (v1) — one route module, ten+ endpoints.
+// Include here so $action is in scope and hub handlers fire before the 404.
+require_once __DIR__ . '/vault-hubs.php';
+
 apiError('Unknown vault endpoint', 404);
 
 function memberVault(): void {

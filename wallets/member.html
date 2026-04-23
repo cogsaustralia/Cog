@@ -502,8 +502,8 @@ img{max-width:100%;height:auto}
 .ov-path-hd h3{font-size:1.02rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin:0}
 .ov-path-hd a{font-size:1.02rem;color:var(--gold);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--gold-bdr);border-radius:99px;background:var(--gold-bg);transition:background .2s,box-shadow .2s,transform .15s}
 .ov-path-hd a:hover{background:rgba(232,184,75,.16);border-color:rgba(232,184,75,.6);box-shadow:0 6px 24px rgba(200,151,62,.25);transform:translateY(-2px)}
-.ov-path-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.ov-path{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:11px 12px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;gap:4px;min-height:62px}
+.ov-path-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ov-path{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:8px 10px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;gap:3px;min-height:52px}
 .ov-path:hover{border-color:var(--border2)}
 .ov-path-top{display:flex;align-items:center;gap:7px}
 .ov-path-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -512,8 +512,8 @@ img{max-width:100%;height:auto}
 .ov-path-dot.future{background:var(--text3);opacity:.5}
 .biz-register-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:99px;border:1px solid var(--gold-bdr);background:var(--gold-bg);color:var(--gold);font-size:1rem;font-weight:600;text-decoration:none;transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;letter-spacing:.01em}
 .biz-register-pill:hover{background:rgba(232,184,75,.16);border-color:rgba(232,184,75,.6);box-shadow:0 6px 32px rgba(200,151,62,.28);transform:translateY(-2px)}
-.ov-path{position:relative;background:linear-gradient(160deg,var(--s2),var(--s1));border:1px solid var(--border);border-radius:14px;padding:13px 14px;cursor:pointer;transition:border-color .18s,box-shadow .18s,transform .12s;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;gap:5px;min-height:68px}
-.ov-path:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(0,0,0,.35);transform:translateY(-1px)}
+.ov-path{position:relative;background:linear-gradient(160deg,var(--s2),var(--s1));border:1px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer;transition:border-color .18s,box-shadow .18s,transform .12s;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;gap:4px;min-height:52px}
+.ov-path:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,.3);transform:translateY(-1px)}
 .ov-path-badge{position:absolute;top:-5px;right:-5px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;border-radius:99px;font-size:.7rem;font-weight:800;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 5px;box-shadow:0 2px 8px rgba(232,184,75,.4)}
 .op-drawer-bg{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:flex-end}
 .op-drawer-bg.open{display:flex}
@@ -549,12 +549,16 @@ img{max-width:100%;height:auto}
 .op-reply-form{padding:12px 16px 14px;border-top:1px solid var(--border);background:rgba(255,255,255,.01)}
 .op-compose{background:linear-gradient(180deg,rgba(232,184,75,.04),rgba(232,184,75,.02));border:1px solid var(--gold-bdr);border-radius:16px;padding:16px 18px;margin-top:4px}
 .op-compose-disclaimer{font-size:.78rem;color:var(--text3);line-height:1.5;margin-bottom:10px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid var(--border)}
-.ov-path-name{font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.2}
-.ov-path-sub{font-size:.85rem;color:var(--text3);line-height:1.35;margin-left:14px}
+.ov-path-name{font-size:.95rem;font-weight:700;color:var(--text);line-height:1.2}
+.ov-path-sub{font-size:.78rem;color:var(--text3);line-height:1.3;margin-left:14px}
+/* ── Mainspring tile — gold accent ─────────────────────────────────── */
+.ov-path-mainspring{border-color:var(--gold-bdr)!important;background:linear-gradient(160deg,rgba(232,184,75,.08),rgba(232,184,75,.03))!important}
+.ov-path-mainspring:hover{border-color:rgba(232,184,75,.6)!important;box-shadow:0 4px 20px rgba(200,151,62,.25)!important}
 /* Participation area hover popout */
 /* ov-path-tip replaced by shared .iq-pop system (click-triggered) */
-@media(max-width:720px){.ov-path-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:420px){.ov-path-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.ov-path-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.ov-path-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:340px){.ov-path-grid{grid-template-columns:1fr}}
 /* ── Info-Q shared popout system (click-triggered) ─────────────────── */
 .iq-btn{
   display:inline-flex;align-items:center;justify-content:center;
@@ -4773,46 +4777,40 @@ function renderParticipationPathways(d){
 
   var areas = Array.isArray(d.participation_areas) ? d.participation_areas : [];
 
-  // Always show all 9 pathways — section is permanently visible
+  // Always show all pathways — section is permanently visible
   wrap.style.display = '';
-  if(title) title.textContent = 'Where you are active';
-
-  // Map each pathway key to its info popout key
-  var infoKeys = {
-    operations_oversight:  'governance-tab',
-    governance_polls:      'governance-vote',
-    esg_proxy_voting:      'esg-proxy',
-    first_nations:         'first-nations',
-    community_projects:    'donation-pif',
-    technology_blockchain: 'technology-blockchain',
-    financial_oversight:   'financial-oversight',
-    place_based_decisions: 'place-based',
-    education_outreach:    'snft-token',
-  };
+  if(title) title.textContent = 'Management Hubs';
 
   var esc = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
 
-  // Show all 9 in _PATHWAYS order; selected areas get 'live' dot, others dim
   // Build unread map from op_thread_summary if available
   var unreadMap = {};
   var opSummary = Array.isArray(d.op_thread_summary) ? d.op_thread_summary : [];
   opSummary.forEach(function(s){ unreadMap[s.area_key] = (s.unread_bc||0) + (s.unread_replies||0) + (s.unread_posts||0); });
 
+  // Mainspring tile — always first
+  var mainspringTile =
+    '<div class="ov-path ov-path-mainspring" onclick="coinTransition(\'../hubs/mainspring/\',\'Opening Mainspring Hub\')" title="Mainspring Hub — all 9 management hubs at a glance">' +
+    '<div class="ov-path-top">' +
+    '<span style="font-size:.85rem;line-height:1;flex-shrink:0">⬡</span>' +
+    '<span class="ov-path-name" style="color:var(--gold)">Mainspring</span>' +
+    '</div>' +
+    '<div class="ov-path-sub" style="color:var(--text3)">All hubs</div>' +
+    '</div>';
+
+  // 9 pathway hub tiles
   var allKeys = Object.keys(_PATHWAYS);
-  grid.innerHTML = allKeys.map(function(k){
+  var pathwayTiles = allKeys.map(function(k){
     var cfg    = _PATHWAYS[k] || {label:k.replace(/_/g,' '),status:'future'};
     var active = areas.indexOf(k) >= 0;
     var dotCls = active ? 'live' : 'future';
-    var infoKey = infoKeys[k] || 'governance-tab';
     var unread  = unreadMap[k] || 0;
     var badgeHtml = active
       ? '<span class="ov-path-badge" id="op-badge-'+k+'" style="'+(unread>0?'':'display:none')+'">'+unread+'</span>'
       : '';
-    var msgBtn = active
-      ? '<button class="btn btn-ghost pin-tip" style="font-size:.75rem;padding:2px 7px;margin-left:4px;margin-top:4px;position:relative" data-area="'+k+'" onclick="event.stopPropagation();openOpDrawer(this.dataset.area)" title="Open area messages">&#128204;<span class="pin-tip-pop">Area messages &amp; broadcasts — read updates from the Foundation and post your own contributions to this governance area. Unread count shown on the badge.</span></button>'
-      : '';
+    // ? tip button uses stopPropagation so it doesn\'t trigger hub navigation
     var tipBtn = cfg.tip ? infoQ(cfg.tip) : '';
-    return '<div class="ov-path" data-info="'+infoKey+'" onclick="showInfo(this.dataset.info)" title="'+esc(cfg.label)+'">' 
+    return '<div class="ov-path" data-hub="'+k+'" onclick="openPathway(\''+k+'\')\" title="'+esc(cfg.label)+' Hub">'
       + badgeHtml
       + '<div class="ov-path-top">'
       +   '<span class="ov-path-dot '+dotCls+'"></span>'
@@ -4820,17 +4818,18 @@ function renderParticipationPathways(d){
       +   tipBtn
       + '</div>'
       + (active
-          ? '<div class="ov-path-sub">Active'+msgBtn+'</div>'
-          : '<div class="ov-path-sub" style="color:var(--text4)">Tap to learn more</div>')
+          ? '<div class="ov-path-sub">Active</div>'
+          : '<div class="ov-path-sub" style="color:var(--text4)">View hub</div>')
       + '</div>';
   }).join('');
+
+  grid.innerHTML = mainspringTile + pathwayTiles;
 }
 
 function openPathway(key){
-  var cfg = _PATHWAYS[key];
-  if(cfg && typeof cfg.action === 'function'){ cfg.action(); return; }
-  // Unknown key — link to Hub so Partner can adjust on the editor
-  goToParticipation();
+  // Navigate to the management hub page for this area key
+  var hubUrl = '../hubs/'+key+'/';
+  coinTransition(hubUrl, (_PATHWAYS[key] ? _PATHWAYS[key].label+' Hub' : 'Management Hub'));
 }
 
 function goToParticipation(){

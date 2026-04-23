@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,max-age=0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Day-to-Day Operations Hub — COG$ of Australia Foundation</title>
+<link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/hub.css">
+</head>
+<body data-root="../../">
+
+<!-- Hub constants — set BEFORE hub.js loads -->
+<script>
+window.HUB_AREA_KEY = 'operations_oversight';
+window.HUB_LABEL    = 'Day-to-Day Operations';
+window.HUB_STATUS   = 'live';
+window.HUB_TIP      = 'Monitor Trustee activity, raise issues, and ensure the Joint Venture runs according to the JVPA. Members are the operators — not the Trustee.\n\nUse this hub to table proposals, track open issues, and hold the Trustee accountable to the governance standards set in the Partnership Agreement.';
+</script>
+
+<!-- Splash -->
+<div id="splash">
+  <img src="../../assets/cogs_coin_web.png" alt="" class="splash-coin">
+  <div class="splash-line">Management Hub</div>
+</div>
+
+<!-- Coin transition overlay (injected by hub.js) -->
+
+<!-- Top bar -->
+<header class="hub-topbar">
+  <div class="hub-topbar-left">
+    <div class="hub-breadcrumb">
+      <button onclick="coinTransition('../../wallets/member.html','Returning to Vault')">← Vault</button>
+      <span class="sep">/</span>
+      <span id="hub-title">Day-to-Day Operations Hub</span>
+    </div>
+  </div>
+  <div class="hub-topbar-right">
+    <span id="hub-status-pill" class="hub-status-pill live">Live</span>
+    <a class="hub-mainspring-link" href="../mainspring/" onclick="coinTransition('../mainspring/','Opening Mainspring');return false;">⬡ Mainspring</a>
+  </div>
+</header>
+
+<!-- Enrolment banner -->
+<div id="hub-enrol-banner" class="hub-enrol-banner">
+  <span class="hub-enrol-text"><span class="hub-enrol-dot"></span>Loading…</span>
+</div>
+
+<!-- Main page -->
+<main class="hub-page">
+
+  <!-- Summary stats -->
+  <div class="hub-section">
+    <div class="hub-stat-row">
+      <div class="hub-stat" id="stat-members"><div class="hub-stat-n">—</div><div class="hub-stat-l">Members</div></div>
+      <div class="hub-stat" id="stat-threads"><div class="hub-stat-n">—</div><div class="hub-stat-l">Forum threads</div></div>
+      <div class="hub-stat" id="stat-projects"><div class="hub-stat-n">—</div><div class="hub-stat-l">Active projects</div></div>
+    </div>
+  </div>
+
+  <!-- Everything below is conditionally visible -->
+  <div id="hub-main-content">
+
+    <!-- Overview -->
+    <div class="hub-section">
+      <div class="hub-section-hd"><span class="hub-section-title">About this Hub</span></div>
+      <div class="hub-overview">
+        <div id="hub-overview-text"></div>
+      </div>
+    </div>
+
+    <!-- Roster -->
+    <div class="hub-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">Enrolled Members</span>
+        <div id="hub-roster-vis-wrap"></div>
+      </div>
+      <div id="hub-roster-wrap"><div class="hub-loading">Loading roster…</div></div>
+    </div>
+
+    <!-- Forum -->
+    <div class="hub-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">
+          Discussion Forum
+          <span id="hub-unread-badge" style="display:none;background:var(--gold);color:#000;border-radius:99px;font-size:.65rem;font-weight:800;padding:1px 6px;margin-left:4px"></span>
+        </span>
+      </div>
+      <div class="hub-tabs">
+        <button class="hub-tab on" data-tab="threads" onclick="switchForumTab('threads')">Threads</button>
+        <button class="hub-tab" data-tab="broadcasts" onclick="switchForumTab('broadcasts')">Broadcasts</button>
+      </div>
+      <div id="hub-forum-list"></div>
+      <div id="hub-compose-wrap"></div>
+    </div>
+
+    <!-- Projects -->
+    <div class="hub-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">Management Projects</span>
+        <span id="hub-projects-hd-action"></span>
+      </div>
+      <div id="hub-projects-wrap"><div class="hub-loading">Loading projects…</div></div>
+    </div>
+
+  </div><!-- /#hub-main-content -->
+
+  <!-- Project detail (hidden until openProject) -->
+  <div id="hub-project-detail" style="display:none"></div>
+
+</main>
+
+<script src="../_shared/hub.js"></script>
+</body>
+</html>
