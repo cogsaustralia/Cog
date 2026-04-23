@@ -117,7 +117,8 @@ body.cert-open .admin-shell { display: none; }
 
 @media print {
   .admin-shell, .main > .topbar, .inst-card, .no-print, .cert-actions { display: none !important; }
-  .cert-wrap { display: block !important; padding: 0; }
+  .cert-wrap { display: none !important; }
+  .cert-wrap.active { display: block !important; padding: 0; }
   body { background: white; color: black; }
 }
 
