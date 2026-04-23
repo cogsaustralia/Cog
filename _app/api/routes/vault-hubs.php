@@ -67,14 +67,26 @@ function hubRequireArea(string $key): string {
 
 /** Load member row + enrolled area list. Errors if no member. */
 function hubResolveMember(PDO $db, array $principal): array {
-    $stmt = $db->prepare(
-        'SELECT id, member_number, first_name, state_code, suburb,
-                participation_answers, hub_roster_visible
-           FROM members
-          WHERE member_type = ? AND (member_number = ? OR id = ?)
-          LIMIT 1'
-    );
-    $stmt->execute(['personal', (string)$principal['subject_ref'], (int)$principal['principal_id']]);
+    // Try with hub_roster_visible (added by migration); fall back if column missing
+    try {
+        $stmt = $db->prepare(
+            'SELECT id, member_number, first_name, state_code, suburb,
+                    participation_answers, hub_roster_visible
+               FROM members
+              WHERE member_type = ? AND (member_number = ? OR id = ?)
+              LIMIT 1'
+        );
+        $stmt->execute(['personal', (string)$principal['subject_ref'], (int)$principal['principal_id']]);
+    } catch (Throwable) {
+        $stmt = $db->prepare(
+            'SELECT id, member_number, first_name, state_code, suburb,
+                    participation_answers
+               FROM members
+              WHERE member_type = ? AND (member_number = ? OR id = ?)
+              LIMIT 1'
+        );
+        $stmt->execute(['personal', (string)$principal['subject_ref'], (int)$principal['principal_id']]);
+    }
     $m = $stmt->fetch();
     if (!$m) apiError('Member not found.', 404);
 
@@ -210,19 +222,22 @@ function handleHub(): void {
     } catch (Throwable) { /* table may not exist on older envs */ }
 
     // Projects — top 20 active + proposed first
-    $pjStmt = $db->prepare(
-        "SELECT id, area_key, title, summary, status, lead_type,
-                lead_member_id, lead_first_name, lead_state_code,
-                target_close_at, linked_poll_id, participant_count,
-                created_at, updated_at
-           FROM v_hub_projects_live
-          WHERE area_key = ?
-          ORDER BY FIELD(status,'active','proposed','paused','completed') ASC,
-                   updated_at DESC
-          LIMIT 20"
-    );
-    $pjStmt->execute([$area]);
-    $projects = $pjStmt->fetchAll();
+    $projects = [];
+    try {
+        $pjStmt = $db->prepare(
+            "SELECT id, area_key, title, summary, status, lead_type,
+                    lead_member_id, lead_first_name, lead_state_code,
+                    target_close_at, linked_poll_id, participant_count,
+                    created_at, updated_at
+               FROM v_hub_projects_live
+              WHERE area_key = ?
+              ORDER BY FIELD(status,'active','proposed','paused','completed') ASC,
+                       updated_at DESC
+              LIMIT 20"
+        );
+        $pjStmt->execute([$area]);
+        $projects = $pjStmt->fetchAll();
+    } catch (Throwable) { /* hub_projects table not yet migrated */ }
 
     // Which projects has this member joined?
     $joined = [];
@@ -238,15 +253,16 @@ function handleHub(): void {
     }
 
     // Summary counts
-    $sumStmt = $db->prepare(
-        "SELECT member_count, thread_count, active_project_count, last_activity_at
-           FROM v_hub_mainspring_summary WHERE area_key = ?"
-    );
-    $sumStmt->execute([$area]);
-    $summary = $sumStmt->fetch() ?: [
-        'member_count' => 0, 'thread_count' => 0,
-        'active_project_count' => 0, 'last_activity_at' => null,
-    ];
+    $summary = ['member_count' => 0, 'thread_count' => 0,
+                'active_project_count' => 0, 'last_activity_at' => null];
+    try {
+        $sumStmt = $db->prepare(
+            "SELECT member_count, thread_count, active_project_count, last_activity_at
+               FROM v_hub_mainspring_summary WHERE area_key = ?"
+        );
+        $sumStmt->execute([$area]);
+        $summary = $sumStmt->fetch() ?: $summary;
+    } catch (Throwable) { /* views not yet migrated */ }
 
     apiSuccess([
         'area_key'       => $area,

@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../_shared/hub.css">
+<link rel="stylesheet" href="../_shared/hub.css?v=2">
 <style>
 .ms-header{padding:28px 20px 20px;text-align:center;border-bottom:1px solid var(--border)}
 .ms-header-title{font-family:var(--serif);font-size:2.2rem;font-weight:500;color:var(--text);letter-spacing:.01em}
@@ -62,8 +62,7 @@
 </main>
 
 <script>
-(function(){
-'use strict';
+/* No IIFE — msTileClick must be accessible from inline onclick handlers */
 
 var ROOT = document.body.dataset.root || '../../';
 var API  = ROOT + '_app/api/index.php?route=';
@@ -178,9 +177,11 @@ function renderFeed(activity){
   wrap.innerHTML = html;
 }
 
-document.addEventListener('DOMContentLoaded', boot);
+// Expose msTileClick to global scope for inline onclick handlers
+window.msTileClick = msTileClick;
+window.coinTransition = coinTransition;
 
-})();
+document.addEventListener('DOMContentLoaded', boot);
 </script>
 </body>
 </html>
