@@ -89,10 +89,14 @@ async function api(route, opts){
     }, opts));
     var txt = await r.text();
     var j; try{ j=JSON.parse(txt); }catch(e){ j={success:false,error:txt}; }
-    if(!r.ok || j.success===false) throw new Error(j.error||'Request failed ('+r.status+')');
+    if(!r.ok || j.success===false){
+      var err = new Error(j.error||'Request failed ('+r.status+')');
+      err.status = r.status;
+      throw err;
+    }
     return j.data !== undefined ? j.data : j;
   }catch(e){
-    if(e&&e.name==='AbortError') throw new Error('Request timed out.');
+    if(e&&e.name==='AbortError'){ var te=new Error('Request timed out.'); te.status=0; throw te; }
     throw e;
   }finally{
     clearTimeout(tid);
@@ -134,12 +138,21 @@ async function boot(){
     _hubData = await api('vault/hub?area='+areaKey);
   }catch(e){
     hideSplash();
-    var msg = (e&&e.message)||'';
-    window._hubNavigating = true;
-    if(/timed out|Failed to fetch|NetworkError|50\d/i.test(msg)){
-      window.location.replace(ROOT+'partners/index.html?next=vault&reason=server');
-    }else{
+    var status = e && e.status;
+    var msg    = (e&&e.message)||'';
+    // Only redirect to partners on genuine auth failure (401/403)
+    // For server errors, show an inline message so the user knows what happened
+    if(status === 401 || status === 403 || /not.*auth|log.*in|session/i.test(msg)){
+      window._hubNavigating = true;
       window.location.replace(ROOT+'partners/index.html?next=vault');
+    }else{
+      renderError(
+        'Could not load hub data.' +
+        (status ? ' (Error '+status+')' : '') +
+        '<br><br><small style="color:var(--text3)">' + esc(msg) + '</small>' +
+        '<br><br><a href="' + ROOT + 'wallets/member.html" style="color:var(--gold)">' +
+        '← Return to Vault</a>'
+      );
     }
     return;
   }
@@ -651,7 +664,7 @@ async function toggleRosterVis(){
 
 function renderError(msg){
   var page = document.querySelector('.hub-page');
-  if(page) page.innerHTML='<div class="hub-empty" style="padding:60px 20px">'+esc(msg)+'</div>';
+  if(page) page.innerHTML='<div class="hub-empty" style="padding:60px 20px;line-height:1.8">'+msg+'</div>';
 }
 
 /* ── Expose to inline onclick handlers ──────────────────────────────────────── */
