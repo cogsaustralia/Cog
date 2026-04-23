@@ -996,7 +996,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     if (!res.ok) throw new Error(d.message || d.error || json.error || 'Registration failed.');
 
     status.className = 'form-status success';
-    status.textContent = 'Registration complete. Taking you to the Member area\u2026';
+    status.textContent = 'Registration complete. Welcome to COG$\u2026';
 
     var mn  = d.member_number || '';
     var mob = d.mobile        || '';
@@ -1009,8 +1009,8 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     try { localStorage.removeItem('cogs_partner_invite_v1'); } catch(ex) {}
 
     var origin = window.location.origin;
-    var dest   = origin + '/partners/index.html?welcome=1';
-    if (mn)  dest += '&member=' + encodeURIComponent(mn);
+    var dest   = origin + '/thank-you/index.html';
+    if (mn)  dest += (dest.includes('?') ? '&' : '?') + 'member=' + encodeURIComponent(mn);
     if (mob) dest += '&mobile=' + encodeURIComponent(mob);
     if (fn)  dest += '&name='   + encodeURIComponent(fn);
     setTimeout(function(){ window.location.href = dest; }, 800);
