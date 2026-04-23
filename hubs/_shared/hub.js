@@ -191,7 +191,12 @@ function renderEnrolBanner(){
   var rv = el('hub-roster-vis-wrap');
   if(rv){
     var vis = !!_hubData.roster_visible;
-    rv.innerHTML = '<button class="hub-roster-toggle" onclick="toggleRosterVis()" id="rv-btn">'+(vis?'✓ Visible on roster':'○ Hidden from roster')+'</button>';
+    var showNameBtn = vis
+      ? ' <button class="hub-roster-toggle" onclick="toggleShowName()" id="sn-btn" style="margin-left:8px">'+(_hubData.show_name?'✓ Name shown':'○ Show my name')+'</button>'
+      : '';
+    rv.innerHTML =
+      '<button class="hub-roster-toggle" onclick="toggleRosterVis()" id="rv-btn">'+(vis?'✓ Visible on roster':'○ Hidden from roster')+'</button>' +
+      showNameBtn;
   }
 }
 
@@ -240,7 +245,7 @@ async function renderRoster(page){
     }
     var cards = members.map(function(m){
       return '<div class="hub-roster-card">' +
-        '<div class="hub-roster-name">'+esc(m.first_name||'Member')+'</div>' +
+        '<div class="hub-roster-name">'+(m.first_name ? esc(m.first_name) : '<span style="color:var(--text3);font-style:italic">Anonymous member</span>')+'</div>' +
         '<div class="hub-roster-meta">'+esc(m.state_code||'')+(m.state_code&&m.suburb?' · ':'')+esc(m.suburb||'')+'</div>' +
         '<div class="hub-roster-meta" style="margin-top:4px;font-size:.75rem">'+esc(m.member_number_masked||'')+'</div>' +
         '<div class="hub-roster-meta" style="margin-top:4px">Joined '+dt(m.joined_area_at)+'</div>' +
@@ -662,6 +667,18 @@ async function toggleRosterVis(){
   }
 }
 
+async function toggleShowName(){
+  var show = !_hubData.show_name;
+  try{
+    await api('vault/hub-roster-name-visibility',{method:'POST',body:JSON.stringify({show_name:show?1:0})});
+    _hubData.show_name = show;
+    var btn = el('sn-btn');
+    if(btn) btn.textContent = show ? '✓ Name shown' : '○ Show my name';
+  }catch(e){
+    alert(e.message||'Could not update name visibility.');
+  }
+}
+
 function renderError(msg){
   var page = document.querySelector('.hub-page');
   if(page) page.innerHTML='<div class="hub-empty" style="padding:60px 20px;line-height:1.8">'+msg+'</div>';
@@ -683,6 +700,7 @@ window.postComment         = postComment;
 window.hubJoin             = hubJoin;
 window.hubLeave            = hubLeave;
 window.toggleRosterVis     = toggleRosterVis;
+window.toggleShowName      = toggleShowName;
 window.renderRoster        = renderRoster;
 window.coinTransition      = coinTransition;
 

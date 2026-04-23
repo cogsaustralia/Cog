@@ -71,13 +71,14 @@ function hubResolveMember(PDO $db, array $principal): array {
     try {
         $stmt = $db->prepare(
             'SELECT id, member_number, first_name, state_code, suburb,
-                    participation_answers, hub_roster_visible
+                    participation_answers, hub_roster_visible, hub_roster_show_name
                FROM members
               WHERE member_type = ? AND (member_number = ? OR id = ?)
               LIMIT 1'
         );
         $stmt->execute(['personal', (string)$principal['subject_ref'], (int)$principal['principal_id']]);
     } catch (Throwable) {
+        // Fallback without new columns (partial migration)
         $stmt = $db->prepare(
             'SELECT id, member_number, first_name, state_code, suburb,
                     participation_answers
@@ -103,6 +104,7 @@ function hubResolveMember(PDO $db, array $principal): array {
         'suburb'          => (string)($m['suburb'] ?? ''),
         'areas'           => $areas,
         'roster_visible'  => (int)($m['hub_roster_visible'] ?? 1) === 1,
+        'show_name'       => (int)($m['hub_roster_show_name'] ?? 0) === 1,
     ];
 }
 
@@ -144,6 +146,9 @@ if ($action === 'hub-roster') {
 }
 if ($action === 'hub-roster-visibility') {
     handleHubRosterVisibility();
+}
+if ($action === 'hub-roster-name-visibility') {
+    handleHubRosterNameVisibility();
 }
 if ($action === 'hub-projects') {
     handleHubProjects();
@@ -269,6 +274,7 @@ function handleHub(): void {
         'area_label'     => hubAreaLabel($area),
         'enrolled'       => $enrolled,
         'roster_visible' => $me['roster_visible'],
+        'show_name'      => $me['show_name'] ?? false,
         'summary'        => $summary,
         'unread_broadcasts' => $unreadBc,
         'unread_threads'    => $unreadPosts,
@@ -377,6 +383,31 @@ function handleHubRosterVisibility(): void {
        ->execute([$vis, $me['id']]);
 
     apiSuccess(['roster_visible' => $vis === 1]);
+}
+
+/**
+ * POST /vault/hub-roster-name-visibility { show_name: 0|1 }
+ * Toggle whether the member's first name appears on hub rosters.
+ * Default is 0 (anonymous) — member must explicitly opt in.
+ */
+function handleHubRosterNameVisibility(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+
+    $show = isset($body['show_name']) ? (int)(!!$body['show_name']) : 0;
+    $me   = hubResolveMember($db, $principal);
+
+    try {
+        $db->prepare('UPDATE members SET hub_roster_show_name = ?, updated_at = NOW() WHERE id = ?')
+           ->execute([$show, $me['id']]);
+    } catch (Throwable) {
+        // Column may not exist yet if migration not run — fail gracefully
+        apiError('Name visibility setting not available yet.', 503);
+    }
+
+    apiSuccess(['show_name' => $show === 1]);
 }
 
 /**
