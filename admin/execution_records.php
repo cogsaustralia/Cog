@@ -387,6 +387,8 @@ foreach ($deedCertData as $certId => $cd):
   <div class="cert-section">
     <div class="cert-section-title">Electronic Witness Attestation — s.14G ETA 2000 (NSW)</div>
     <div class="cert-row"><div class="cert-lbl">Witness</div><div class="cert-val highlight"><?= er_h($att['witness_full_name']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Address</div><div class="cert-val"><?= er_h($att['witness_address'] ?? '') ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Occupation</div><div class="cert-val"><?= er_h($att['witness_occupation'] ?? '') ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Attestation ID</div><div class="cert-val"><?= er_h($att['attestation_id']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">UTC Timestamp</div><div class="cert-val"><?= er_h($att['attestation_timestamp_utc']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Attestation SHA-256</div><div class="cert-val highlight"><?= er_h($att['record_sha256']) ?></div></div>

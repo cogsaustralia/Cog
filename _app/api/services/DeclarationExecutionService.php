@@ -235,7 +235,7 @@ class DeclarationExecutionService
 
         // Guard: no duplicate attestation for this session
         $dup = $db->prepare(
-            'SELECT attestation_id FROM declaration_witness_attestations WHERE session_id = ? LIMIT 1'
+            'SELECT attestation_id, witness_full_name, witness_address, witness_occupation, attestation_timestamp_utc, record_sha256, onchain_commitment_txid FROM declaration_witness_attestations WHERE session_id = ? LIMIT 1'
         );
         $dup->execute([$sessionId]);
         if ($dup->fetch()) {

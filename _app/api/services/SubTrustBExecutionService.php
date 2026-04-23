@@ -227,7 +227,7 @@ $storageSessionId = self::resolveStoredSessionId($db, $sessionId) ?? self::stora
                 return null;
             }
 
-            $a = $db->prepare('SELECT attestation_id,witness_full_name,attestation_timestamp_utc,record_sha256,onchain_commitment_txid FROM declaration_witness_attestations WHERE session_id=? AND deed_key=? LIMIT 1');
+            $a = $db->prepare('SELECT attestation_id,witness_full_name,witness_address,witness_occupation,attestation_timestamp_utc,record_sha256,onchain_commitment_txid FROM declaration_witness_attestations WHERE session_id=? AND deed_key=? LIMIT 1');
             $a->execute([$storageSessionId, self::DEED_KEY]);
 
             return [
