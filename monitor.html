@@ -32,6 +32,20 @@
         .recommendation-yes { background: #065f46; border-color: #10b981; color: #d1fae5; }
         .recommendation-no { background: #1e293b; border-color: #64748b; }
         .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 0.9em; }
+
+        /* ── JVPA Funnel panel ─────────────────────────────── */
+        .funnel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+        .funnel-stat { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 14px; text-align: center; }
+        .funnel-stat .fs-val { font-size: 1.8em; font-weight: 700; }
+        .funnel-stat .fs-lbl { font-size: 0.78em; color: #94a3b8; margin-top: 4px; }
+        .funnel-warn { color: #f59e0b; }
+        .funnel-ok   { color: #10b981; }
+        .funnel-dim  { color: #64748b; }
+        .click-table { width: 100%; border-collapse: collapse; font-size: 0.82em; }
+        .click-table th { text-align: left; color: #64748b; padding: 6px 8px; border-bottom: 1px solid #334155; }
+        .click-table td { padding: 6px 8px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+        .click-table tr:last-child td { border-bottom: none; }
+        .not-ready-note { color: #64748b; font-size: 0.85em; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
@@ -96,6 +110,46 @@
             </div>
         </div>
 
+
+        <div class="card" style="margin-bottom:20px;">
+            <h2>📋 JVPA Download Funnel <span style="font-size:0.7em;color:#64748b;font-weight:400;">(last 7 days)</span></h2>
+            <div id="funnelLoading" style="color:#64748b;font-size:0.85em;padding:16px 0;">Loading funnel data…</div>
+            <div id="funnelContent" style="display:none;">
+                <div class="funnel-grid">
+                    <div class="funnel-stat">
+                        <div class="fs-val" id="fClicks7d">—</div>
+                        <div class="fs-lbl">JVPA clicks (7d)</div>
+                    </div>
+                    <div class="funnel-stat">
+                        <div class="fs-val" id="fSubmissions7d">—</div>
+                        <div class="fs-lbl">Submissions (7d)</div>
+                    </div>
+                    <div class="funnel-stat">
+                        <div class="fs-val funnel-warn" id="fDropOff7d">—</div>
+                        <div class="fs-lbl">Drop-off (approx.)</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:16px;margin-bottom:16px;font-size:0.83em;color:#94a3b8;">
+                    <span>All-time clicks: <strong id="fClicksTotal" style="color:#e2e8f0;">—</strong></span>
+                    <span>·</span>
+                    <span>Unique sessions (7d): <strong id="fUnique7d" style="color:#e2e8f0;">—</strong></span>
+                    <span>·</span>
+                    <span>Clicks (30d): <strong id="fClicks30d" style="color:#e2e8f0;">—</strong></span>
+                </div>
+                <div id="funnelTableWrap">
+                    <table class="click-table">
+                        <thead><tr>
+                            <th>#</th><th>Session</th><th>Context</th><th>Referrer Code</th><th>Clicked At</th>
+                        </tr></thead>
+                        <tbody id="funnelTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="funnelNotReady" style="display:none;" class="not-ready-note">
+                ⚠️ DB table not ready — run <code>jvpa_clicks_migration.sql</code> in phpMyAdmin first.
+            </div>
+        </div>
+
         <div class="recommendation" id="recommendationBox">
             <h3>🔄 Rebuild Recommendation</h3>
             <p id="recommendationText">Analyzing trends...</p>
@@ -107,6 +161,61 @@
     </div>
 
     <script>
+
+        async function loadFunnel() {
+            try {
+                // Admin credentials: reuse whatever auth the monitor page uses
+                // The jvpa-funnel endpoint requires admin role — call via API
+                const res = await fetch('/_app/api/index.php?route=admin/jvpa-funnel', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                if (!res.ok) {
+                    document.getElementById('funnelLoading').textContent = 'Funnel data unavailable (not logged in as admin).';
+                    return;
+                }
+                const json = await res.json();
+                const d = json.data || json;
+
+                document.getElementById('funnelLoading').style.display = 'none';
+
+                if (!d.table_ready) {
+                    document.getElementById('funnelNotReady').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('funnelContent').style.display = 'block';
+                document.getElementById('fClicks7d').textContent       = d.clicks_7d ?? '—';
+                document.getElementById('fSubmissions7d').textContent   = d.submissions_7d ?? '—';
+                document.getElementById('fClicksTotal').textContent     = d.clicks_total ?? '—';
+                document.getElementById('fUnique7d').textContent        = d.unique_sessions_7d ?? '—';
+                document.getElementById('fClicks30d').textContent       = d.clicks_30d ?? '—';
+
+                const dropOff = d.drop_off_7d ?? 0;
+                const dropEl  = document.getElementById('fDropOff7d');
+                dropEl.textContent = dropOff;
+                dropEl.className   = 'fs-val ' + (dropOff > 0 ? 'funnel-warn' : 'funnel-ok');
+
+                const tbody  = document.getElementById('funnelTableBody');
+                const clicks = d.recent_clicks || [];
+                if (clicks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="color:#64748b;text-align:center;">No clicks recorded yet</td></tr>';
+                } else {
+                    tbody.innerHTML = clicks.map((c, i) => `
+                        <tr>
+                            <td style="color:#64748b;">${i + 1}</td>
+                            <td style="font-family:monospace;">${c.session_token || '—'}</td>
+                            <td>${c.page_context || 'join'}</td>
+                            <td>${c.referrer_code || '<span style="color:#475569">—</span>'}</td>
+                            <td style="color:#94a3b8;">${new Date(c.clicked_at + 'Z').toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                document.getElementById('funnelLoading').textContent = 'Funnel data unavailable.';
+            }
+        }
+
         async function loadDashboard() {
             try {
                 let alerts = [];
@@ -204,6 +313,7 @@
                 updateAlerts(deduped, counts);
                 
                 document.getElementById('updateTime').textContent = new Date().toLocaleTimeString();
+                loadFunnel();
             } catch (error) {
                 console.error('Fatal error loading dashboard:', error);
                 document.getElementById('statusText').textContent = '❌ Error loading data';

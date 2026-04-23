@@ -593,7 +593,7 @@
                   </span>
                 </label>
               </div>
-              <div class="accept-cb-note">Tick the box above to enable the Submit button. By confirming, you accept the Joint Venture Membership Agreement and the entrenched founding principles of the CJVM Hybrid Trust. <a href="../terms/index.html" style="color:var(--gold-2)">Terms of participation</a> · <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)">Download JVPA (PDF)</a></div>
+              <div class="accept-cb-note">Tick the box above to enable the Submit button. By confirming, you accept the Joint Venture Membership Agreement and the entrenched founding principles of the CJVM Hybrid Trust. <a href="../terms/index.html" style="color:var(--gold-2)">Terms of participation</a> · <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)" id="jvpa-download-link">Download JVPA (PDF)</a></div>
             </div>
 
             <div class="step-nav">
@@ -1008,6 +1008,64 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
   }, {threshold:.07});
   document.querySelectorAll('.side-panel, .reveal').forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+<script>
+/* ── JVPA download beacon (block 3 — no IIFE modification) ── */
+(function () {
+  'use strict';
+
+  // Generate or retrieve an anonymous session token for this browser
+  function getSessionToken() {
+    var key = 'cogs_anon_session';
+    try {
+      var t = sessionStorage.getItem(key);
+      if (!t) {
+        t = (typeof crypto !== 'undefined' && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : Math.random().toString(36).slice(2) + Date.now().toString(36);
+        sessionStorage.setItem(key, t);
+      }
+      return t;
+    } catch (e) {
+      return 'no-storage-' + Math.random().toString(36).slice(2);
+    }
+  }
+
+  // Read partner/invite code from URL (same param the join page uses)
+  function getReferrerCode() {
+    try {
+      return new URLSearchParams(window.location.search).get('partner_code') || null;
+    } catch (e) { return null; }
+  }
+
+  function fireJvpaBeacon() {
+    var root = (typeof apiRoot !== 'undefined') ? apiRoot : '/_app/api/';
+    var url  = root + 'index.php?route=jvpa-click';
+    var body = JSON.stringify({
+      session_token:  getSessionToken(),
+      referrer_code:  getReferrerCode(),
+      page_context:   'join'
+    });
+    // Use sendBeacon if available (fire-and-forget, survives tab close)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([body], { type: 'application/json' });
+      navigator.sendBeacon(url, blob);
+    } else {
+      fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true })
+        .catch(function () {}); // silent fail — never block the download
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var link = document.getElementById('jvpa-download-link');
+    if (link) {
+      link.addEventListener('click', function () {
+        try { fireJvpaBeacon(); } catch (e) {}
+      });
+    }
+  });
 })();
 </script>
 <script src="/assets/ask-widget.js"></script>

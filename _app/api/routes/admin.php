@@ -29,6 +29,9 @@ if ($action === 'disputes') {
 if (preg_match('#^dispute-status/(\d+)$#', $action, $matches)) {
     adminDisputeStatus((int)$matches[1]);
 }
+if ($action === 'jvpa-funnel') {
+    adminJvpaFunnel();
+}
 apiError('Unknown admin route', 404);
 
 function adminSummary(): void {
@@ -388,4 +391,68 @@ function recordAudienceWalletEvent(PDO $db, string $audience, string $eventType,
             recordWalletEvent($db, 'bnft_business', (string)$row['abn'], $eventType, $description);
         }
     }
+}
+
+// ── JVPA Click Funnel ─────────────────────────────────────────────────────────
+function adminJvpaFunnel(): void {
+    requireMethod('GET');
+    requireAdminRole();
+    $db = getDB();
+
+    // Guard: table may not exist yet
+    $tableExists = (bool)$db->query(
+        "SELECT COUNT(*) FROM information_schema.tables
+         WHERE table_schema = DATABASE() AND table_name = 'jvpa_pdf_clicks'"
+    )->fetchColumn();
+
+    if (!$tableExists) {
+        apiSuccess([
+            'table_ready'       => false,
+            'clicks_total'      => 0,
+            'clicks_7d'         => 0,
+            'clicks_30d'        => 0,
+            'unique_sessions_7d'=> 0,
+            'submissions_7d'    => 0,
+            'drop_off_7d'       => 0,
+            'recent_clicks'     => [],
+        ]);
+        return;
+    }
+
+    $clicksTotal       = (int)$db->query('SELECT COUNT(*) FROM jvpa_pdf_clicks')->fetchColumn();
+    $clicks7d          = (int)$db->query("SELECT COUNT(*) FROM jvpa_pdf_clicks WHERE clicked_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY")->fetchColumn();
+    $clicks30d         = (int)$db->query("SELECT COUNT(*) FROM jvpa_pdf_clicks WHERE clicked_at >= UTC_TIMESTAMP() - INTERVAL 30 DAY")->fetchColumn();
+    $uniqueSessions7d  = (int)$db->query("SELECT COUNT(DISTINCT session_token) FROM jvpa_pdf_clicks WHERE clicked_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY")->fetchColumn();
+
+    // Submissions = snft_memberships rows created in last 7 days
+    $submissions7d = (int)$db->query("SELECT COUNT(*) FROM snft_memberships WHERE created_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY")->fetchColumn();
+
+    // Drop-off = unique clickers who did NOT result in a submission
+    // (approximation — we can't link anonymous clicks to member rows directly)
+    $dropOff7d = max(0, $uniqueSessions7d - $submissions7d);
+
+    // Last 20 clicks for the detail table
+    $recentClicks = $db->query(
+        "SELECT id, session_token, page_context, referrer_code, clicked_at
+         FROM jvpa_pdf_clicks
+         ORDER BY clicked_at DESC
+         LIMIT 20"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    // Mask session token to first 8 chars for display
+    foreach ($recentClicks as &$row) {
+        $row['session_token'] = substr((string)$row['session_token'], 0, 8) . '…';
+    }
+    unset($row);
+
+    apiSuccess([
+        'table_ready'        => true,
+        'clicks_total'       => $clicksTotal,
+        'clicks_7d'          => $clicks7d,
+        'clicks_30d'         => $clicks30d,
+        'unique_sessions_7d' => $uniqueSessions7d,
+        'submissions_7d'     => $submissions7d,
+        'drop_off_7d'        => $dropOff7d,
+        'recent_clicks'      => $recentClicks,
+    ]);
 }

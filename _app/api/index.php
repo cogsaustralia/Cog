@@ -105,6 +105,9 @@ try {
         case 'doc-download':
             require __DIR__ . '/routes/doc-download.php';
             break;
+        case 'jvpa-click':
+            require __DIR__ . '/routes/jvpa-click.php';
+            break;
         case 'health':
         case 'status':
             apiSuccess([
