@@ -27,6 +27,23 @@ $subASession  = SubTrustAExecutionService::getActiveSession($pdo);
 $subBSession  = SubTrustBExecutionService::getActiveSession($pdo);
 $subCSession  = SubTrustCExecutionService::getActiveSession($pdo);
 
+// ── Look up document registry version labels by SHA-256 ──────────────────────
+// Fails gracefully if founding_instrument_documents table not yet created.
+function er_doc_version(PDO $pdo, string $sha256): string {
+    if ($sha256 === '') return '—';
+    try {
+        $stmt = $pdo->prepare(
+            'SELECT version_label FROM founding_instrument_documents
+             WHERE sha256_hash = ? ORDER BY id DESC LIMIT 1'
+        );
+        $stmt->execute([$sha256]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (string)$row['version_label'] : '—';
+    } catch (Throwable $e) {
+        return '—';
+    }
+}
+
 // Helper: extract record by capacity from a session
 function er_cap(array $session, string $cap): ?array {
     foreach ($session['records'] as $r) {
@@ -307,6 +324,7 @@ if ($tcrDone): ?>
   <div class="cert-section">
     <div class="cert-section-title">Agreement Details</div>
     <div class="cert-row"><div class="cert-lbl">Instrument</div><div class="cert-val highlight"><?= er_h($tcr['jvpa_title']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Document Version</div><div class="cert-val highlight"><?= er_h(er_doc_version($pdo, $tcr['jvpa_sha256'])) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Execution Date</div><div class="cert-val"><?= er_h($tcr['jvpa_execution_date']) ?></div></div>
   </div>
   <div class="cert-section">
@@ -355,6 +373,7 @@ foreach ($deedCertData as $certId => $cd):
   <div class="cert-section">
     <div class="cert-section-title">Instrument</div>
     <div class="cert-row"><div class="cert-lbl">Title</div><div class="cert-val highlight"><?= er_h($cd['svc_title']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Document Version</div><div class="cert-val highlight"><?= er_h(er_doc_version($pdo, $declRec['deed_sha256'] ?? '')) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Execution Date</div><div class="cert-val">21 April 2026</div></div>
     <div class="cert-row"><div class="cert-lbl">Execution Method</div><div class="cert-val">Electronic — Electronic Transactions Act 1999 (Cth) and section 14G Electronic Transactions Act 2000 (NSW)</div></div>
     <div class="cert-row"><div class="cert-lbl">Deed SHA-256</div><div class="cert-val highlight"><?= er_h($declRec['deed_sha256'] ?? '') ?></div></div>
