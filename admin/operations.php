@@ -186,7 +186,7 @@ ob_start();
         <div class="muted small" style="margin-bottom:4px"><a href="./operations.php" class="muted">← Member Operations</a></div>
         <h1 style="margin:0"><?= ops_h($aDef['ico']) ?> <?= ops_h($aDef['label']) ?></h1>
       </div>
-      <div class="stat-label"><?= count($areaEnrolled) ?> Member<?= count(\$areaEnrolled) !== 1 ? 's' : '' ?> enrolled</div>
+      <div class="stat-label"><?= count($areaEnrolled) ?> Member<?= count($areaEnrolled) !== 1 ? 's' : '' ?> enrolled</div>
     </div>
     <div class="card-body" style="padding-top:6px">
       <p class="muted small" style="margin:0"><?= ops_h($aDef['desc']) ?></p>
@@ -267,7 +267,7 @@ ob_start();
     <div class="card">
       <div class="card-head">
         <h2>Enrolled Members</h2>
-        <span class="muted small"><?= count($areaEnrolled) ?> Member<?= count(\$areaEnrolled) !== 1 ? 's' : '' ?></span>
+        <span class="muted small"><?= count($areaEnrolled) ?> Member<?= count($areaEnrolled) !== 1 ? 's' : '' ?></span>
       </div>
       <div class="card-body">
       <?php if (!$areaEnrolled): ?>
@@ -376,7 +376,7 @@ ob_start();
       <div class="area-name"><?= ops_h($def['label']) ?></div>
       <div class="area-desc"><?= ops_h($def['desc']) ?></div>
       <div class="area-stats">
-        <span class="area-stat"><?= $s['enrolled'] ?> Member<?= \$s['enrolled'] !== 1 ? 's' : '' ?></span>
+        <span class="area-stat"><?= $s['enrolled'] ?> Member<?= $s['enrolled'] !== 1 ? 's' : '' ?></span>
         <?php if ($s['inbound'] > 0): ?>
           <span class="area-stat alert"><?= $s['inbound'] ?> inbound</span>
         <?php endif; ?>
