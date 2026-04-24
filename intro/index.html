@@ -456,6 +456,7 @@
     <span class="wordmark">COG$</span>
     <span id="step-label">1 of 5</span>
     <button id="skip-btn" aria-label="Skip introduction">Skip →</button>
+    <span id="trust-anchor" style="position:absolute;left:50%;transform:translateX(-50%);font-size:.65rem;letter-spacing:.06em;color:rgba(240,225,196,.38);white-space:nowrap;pointer-events:none">COG$ of Australia Foundation · ABN 61 734 327 831 · Drake Village NSW</span>
     <div id="progress-track"><div id="progress-fill"></div></div>
 
     <!-- Aria-only dots -->
@@ -487,6 +488,7 @@
           <span class="fact-pill"><span class="pip"></span>Once-only <strong>$4 membership</strong></span>
           <span class="fact-pill"><span class="pip"></span>Open to <strong>every Australian</strong></span>
           <span class="fact-pill"><span class="pip"></span>No ongoing fees</span>
+          <span class="fact-pill"><span class="pip"></span>Not a fund · Not a subscription · Not financial advice</span>
         </div>
         <div class="card-callout">
           <span class="callout-mark">🌏</span>
@@ -541,20 +543,20 @@
           <span class="card-num-pip">4</span>
           <span class="card-num-text">What Your $4 Means</span>
         </div>
-        <h2 class="card-heading">This is not a <em>passive investment.</em></h2>
+        <h2 class="card-heading">You join as an operator — with real <em>protections built in.</em></h2>
         <div class="means-list">
           <div class="means-item">
             <span class="means-icon">🔐</span>
             <div>
-              <strong>Your token is soulbound</strong>
-              <span>It cannot be sold or transferred to anyone else. It is yours as a member — not a tradeable asset.</span>
+              <strong>Your membership cannot be taken from you</strong>
+              <span>It is soulbound — it cannot be sold, transferred, or seized by anyone else. It is permanently yours as a member.</span>
             </div>
           </div>
           <div class="means-item">
-            <span class="means-icon">🚫</span>
+            <span class="means-icon">⚖️</span>
             <div>
-              <strong>COG$ tokens cannot be exchanged for cash</strong>
-              <span>This is an architectural and technological rule, not a policy. It is built into the system itself.</span>
+              <strong>The system cannot be financialised</strong>
+              <span>Tokens cannot be traded or redeemed for cash — by design. This protects the one-member-one-vote principle from being purchased away.</span>
             </div>
           </div>
           <div class="means-item">
@@ -604,6 +606,9 @@
               <div class="tl-desc">The Foundation's own blockchain hardware and infrastructure node goes live. Tier 2 token classes activate — Real World Asset tokens and additional community governance tools. Members vote on when this happens.</div>
             </div>
           </div>
+        </div>
+        <div style="margin-bottom:18px;padding:14px 16px;border-radius:12px;border:1px solid rgba(240,209,138,.18);background:rgba(240,209,138,.04)">
+          <p style="font-size:.84rem;color:rgba(240,225,196,.70);line-height:1.6">🔒 Your name, email, mobile, and address are held by the Foundation under the Australian Privacy Act. We do not sell, share, or monetise your information. Your mobile is used only for vault login.</p>
         </div>
         <div class="card-callout">
           <span class="callout-mark">✅</span>
@@ -720,7 +725,7 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
 
     // Next button label
     if (idx === TOTAL - 1) {
-      nextBtn.innerHTML = "I'm ready to join ›";
+      nextBtn.innerHTML = "Secure my place — $4 once only ›";
       nextBtn.setAttribute('aria-label', 'Complete and proceed to join');
     } else {
       nextBtn.innerHTML = 'Next ›';
