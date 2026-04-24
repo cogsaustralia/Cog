@@ -1043,6 +1043,89 @@ window.hubChipClick = function(btn, targetId){
   btn.classList.add('active');
   scrollToSection(targetId);
 };
+/* ── Hub nav dropdown ───────────────────────────────────────────────────────── */
+var _HUB_NAV_ITEMS = [
+  {key:'operations_oversight',  label:'Day-to-Day Operations',  path:'../operations_oversight/'},
+  {key:'governance_polls',      label:'Research & Acquisitions', path:'../governance_polls/'},
+  {key:'esg_proxy_voting',      label:'ESG & Proxy Voting',      path:'../esg_proxy_voting/'},
+  {key:'first_nations',         label:'First Nations JV',        path:'../first_nations/'},
+  {key:'community_projects',    label:'Community Projects',      path:'../community_projects/'},
+  {key:'technology_blockchain', label:'Technology & Blockchain', path:'../technology_blockchain/'},
+  {key:'financial_oversight',   label:'Financial Oversight',     path:'../financial_oversight/'},
+  {key:'place_based_decisions', label:'Place-Based Decisions',   path:'../place_based_decisions/'},
+  {key:'education_outreach',    label:'Education & Outreach',    path:'../education_outreach/'},
+];
+
+function renderHubNavDropdown(){
+  var btn = document.getElementById('hub-nav-dropdown-btn');
+  var panel = document.getElementById('hub-nav-panel');
+  if(!btn || !panel) return;
+
+  var currentKey = window.HUB_AREA_KEY || '';
+  panel.innerHTML =
+    '<div class="hub-nav-panel-hd">Management Hubs</div>' +
+    _HUB_NAV_ITEMS.map(function(h){
+      var isCurrent = h.key === currentKey;
+      return '<button class="hub-nav-item'+(isCurrent?' current':'')+'"'+
+        ' onclick="hubNavGo(''+h.path+'',''+esc(h.label)+'')">' +
+        '<span class="hub-nav-item-dot"></span>' +
+        '<span class="hub-nav-item-label">'+esc(h.label)+'</span>' +
+        '</button>';
+    }).join('') +
+    '<div class="hub-nav-panel-foot">' +
+      '<button class="hub-nav-mainspring-btn" onclick="hubNavGo('../mainspring/','Mainspring')">'+
+        '⬡ View all hubs — Mainspring' +
+      '</button>' +
+    '</div>';
+}
+
+function hubNavToggle(){
+  var btn = document.getElementById('hub-nav-dropdown-btn');
+  var panel = document.getElementById('hub-nav-panel');
+  if(!btn || !panel) return;
+  var isOpen = panel.classList.contains('open');
+  if(isOpen){
+    panel.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    renderHubNavDropdown();
+    panel.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+function hubNavGo(path, label){
+  var panel = document.getElementById('hub-nav-panel');
+  var btn   = document.getElementById('hub-nav-dropdown-btn');
+  if(panel) panel.classList.remove('open');
+  if(btn)   btn.classList.remove('open');
+  coinTransition(path, 'Opening '+label);
+}
+
+// Close on outside click
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('hub-nav-dropdown-wrap');
+  if(wrap && !wrap.contains(e.target)){
+    var panel = document.getElementById('hub-nav-panel');
+    var btn   = document.getElementById('hub-nav-dropdown-btn');
+    if(panel) panel.classList.remove('open');
+    if(btn)   btn.classList.remove('open');
+  }
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    var panel = document.getElementById('hub-nav-panel');
+    var btn   = document.getElementById('hub-nav-dropdown-btn');
+    if(panel) panel.classList.remove('open');
+    if(btn)   btn.classList.remove('open');
+  }
+});
+
+window.hubNavToggle = hubNavToggle;
+window.hubNavGo     = hubNavGo;
+
 window.switchForumTab      = switchForumTab;
 window.toggleThread        = toggleThread;
 window.postReply           = postReply;

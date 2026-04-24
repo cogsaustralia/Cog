@@ -33,7 +33,12 @@ window.HUB_TIP      = 'Direct how CHESS-registered shares are voted at portfolio
   </div>
   <div class="hub-topbar-right">
     <span id="hub-status-pill" class="hub-status-pill soon">Activates at Expansion Day</span>
-    <a class="hub-mainspring-link" href="../mainspring/" onclick="coinTransition('../mainspring/','Opening Mainspring');return false;">⬡ Mainspring</a>
+    <div class="hub-nav-dropdown" id="hub-nav-dropdown-wrap">
+      <button class="hub-nav-dropdown-btn" id="hub-nav-dropdown-btn" onclick="hubNavToggle()" aria-haspopup="true" aria-expanded="false">
+        ⬡ Hubs <span class="hub-nav-caret">&#9660;</span>
+      </button>
+      <div class="hub-nav-panel" id="hub-nav-panel" role="menu"></div>
+    </div>
     <a class="hub-guide-link" href="../guide/" target="_blank">? Member Guide</a>
     <button class="hub-mainspring-link" id="ai-panel-btn" onclick="toggleAIPanel()" style="border:none;cursor:pointer">⬡ AI Assistant</button>
   </div>
