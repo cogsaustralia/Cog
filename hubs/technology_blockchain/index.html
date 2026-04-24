@@ -54,19 +54,19 @@ window.HUB_TIP      = 'Smart contract governance, system audits, and infrastruct
 </div>
 
 <main class="hub-page">
-  </div>
+
+  <!-- Everything below is conditionally visible -->
   <div id="hub-main-content">
-    <div class="hub-section">
-      <div class="hub-section-hd"><span class="hub-section-title">About this Hub</span></div>
-      <div class="hub-overview"><div id="hub-overview-text"></div></div>
-    </div>
-    <div class="hub-section">
+
+    <!-- Operational Activity — top, under hero -->
+    <div class="hub-section" id="hub-admin-activity-section">
       <div class="hub-section-hd">
-        <span class="hub-section-title">Enrolled Members</span>
-        <div id="hub-roster-vis-wrap"></div>
+        <span class="hub-section-title">Operational Activity</span>
       </div>
-      <div id="hub-roster-wrap"><div class="hub-loading">Loading roster…</div></div>
+      <div id="hub-admin-activity"><div class="hub-loading" style="font-size:.82rem">Loading…</div></div>
     </div>
+
+    <!-- Forum -->
     <div class="hub-section">
       <div class="hub-section-hd">
         <span class="hub-section-title">
@@ -81,6 +81,8 @@ window.HUB_TIP      = 'Smart contract governance, system audits, and infrastruct
       <div id="hub-forum-list"></div>
       <div id="hub-compose-wrap"></div>
     </div>
+
+    <!-- Projects -->
     <div class="hub-section">
       <div class="hub-section-hd">
         <span class="hub-section-title">Management Projects</span>
@@ -88,26 +90,30 @@ window.HUB_TIP      = 'Smart contract governance, system audits, and infrastruct
       </div>
       <div id="hub-projects-wrap"><div class="hub-loading">Loading projects…</div></div>
     </div>
-  </div>
 
-  <!-- Operational Activity (hub-admin-activity) -->
-  <div class="hub-section" id="hub-admin-activity-section">
-    <div class="hub-section-hd">
-      <span class="hub-section-title">Operational Activity</span>
+    <!-- Query section -->
+    <div class="hub-section" id="hub-query-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">Raise a Query</span>
+        <button class="hub-section-action" onclick="showQueryForm()">+ New Query</button>
+      </div>
+      <div class="flash" id="hub-query-flash" style="margin-bottom:10px"></div>
+      <div id="hub-my-queries"><div class="hub-loading" style="font-size:.82rem">Loading your queries…</div></div>
+      <div id="hub-query-form-wrap"></div>
     </div>
-    <div id="hub-admin-activity"><div class="hub-loading" style="font-size:.82rem">Loading…</div></div>
-  </div>
 
-  <!-- Query section -->
-  <div class="hub-section" id="hub-query-section">
-    <div class="hub-section-hd">
-      <span class="hub-section-title">Raise a Query</span>
-      <button class="hub-section-action" onclick="showQueryForm()">+ New Query</button>
+    <!-- Enrolled Members — bottom -->
+    <div class="hub-section">
+      <div class="hub-section-hd">
+        <span class="hub-section-title">Enrolled Members</span>
+        <div id="hub-roster-vis-wrap"></div>
+      </div>
+      <div id="hub-roster-wrap"><div class="hub-loading">Loading roster…</div></div>
     </div>
-    <div class="flash" id="hub-query-flash" style="margin-bottom:10px"></div>
-    <div id="hub-my-queries"><div class="hub-loading" style="font-size:.82rem">Loading your queries…</div></div>
-    <div id="hub-query-form-wrap"></div>
-  </div>
+
+  </div><!-- /#hub-main-content -->
+
+  <!-- Project detail (hidden until openProject) -->
 
   <!-- AI assistant panel -->
   <div id="ai-assistant-panel" style="display:none;flex-direction:column;border:1px solid var(--gold-bdr);border-radius:var(--r);overflow:hidden;margin-bottom:28px">
