@@ -62,6 +62,7 @@ $acctOk = $hasTable && ops_has_table($pdo, 'trust_accounts');
 
 // Fund totals
 $received = 0; $adminExp = 0; $investRet = 0; $directC = 0; $pendingC = 0; $toB = 0;
+$adminFundIn = 0; $adminFundOut = 0; $adminFundBal = 0; $asxBookValue = 0;
 if ($acctOk) {
     $received  = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM payments WHERE payment_status='paid'")
                  + ac_val($pdo, "SELECT COALESCE(SUM(net_amount_cents),0) FROM trust_income");
@@ -70,9 +71,12 @@ if ($acctOk) {
     $directC   = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type='a_to_c_direct' AND status='completed'");
     $pendingC  = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type='a_to_c_direct' AND status='pending'");
     $toB       = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type IN ('a_to_b_bds','a_to_b_dds') AND status='completed'");
-    $adminFundIn  = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type IN ('payment_to_admin','a_to_admin_dds') AND status='completed'");
-    $adminFundOut = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_expenses te JOIN trust_accounts ta ON ta.id = te.trust_account_id WHERE ta.account_code = 'TRUST_A_ADMIN_FUND' AND te.status IN ('approved','paid')");
+    // Admin fund: read net debit balance from ledger_entries so reversals are automatically excluded
+    $adminFundIn  = ac_val($pdo, "SELECT COALESCE(SUM(CASE WHEN le.entry_type='debit' THEN le.amount_cents ELSE 0 END),0) FROM ledger_entries le JOIN stewardship_accounts sa ON sa.id = le.stewardship_account_id WHERE sa.account_key='STA-ADMIN-FUND' AND le.flow_category='payment_to_admin'");
+    $adminFundOut = ac_val($pdo, "SELECT COALESCE(SUM(CASE WHEN le.entry_type='credit' THEN le.amount_cents ELSE 0 END),0) FROM ledger_entries le JOIN stewardship_accounts sa ON sa.id = le.stewardship_account_id WHERE sa.account_key='STA-ADMIN-FUND' AND le.flow_category IN ('stripe_fee','operating_expense')");
     $adminFundBal = $adminFundIn - $adminFundOut;
+    // ASX holdings book value (total_cost_cents is DECIMAL storing cents, e.g. 23947.5 = $239.475)
+    $asxBookValue = (float) ac_val($pdo, "SELECT COALESCE(SUM(total_cost_cents),0) FROM asx_holdings") / 100;
 }
 
 // Overdue transfers
@@ -428,6 +432,10 @@ ob_start();
   <div class="stat">
     <div class="stat-val" style="color:var(--blue)"><?php echo ac_dollars($investRet); ?></div>
     <div class="stat-label">Members Asset Pool <?php echo ops_admin_help_button('Sub-Trust A Members Asset Pool', 'STA-PARTNERS-POOL balance: member allocations ($1.00 per Personal S-NFT, $10.00 per Business NFT, $1.00 per Kids S-NFT) plus trust income credited to the pool (bank interest, ASX dividends, RWA yield). Held for ASX share acquisition per Declaration cl.35 and Sub-Trust A Deed cl.6.2.'); ?></div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" style="color:var(--gold)"><?php printf('$%s', number_format($asxBookValue, 2)); ?></div>
+    <div class="stat-label">ASX holdings — book value <?php echo ops_admin_help_button('ASX Holdings — Book Value at Cost', 'Total cost basis of ASX shares held in the Members Asset Pool (STA-PARTNERS-POOL), from asx_holdings. This is the weighted average acquisition cost — not current market value. Market value moves with the ASX price; book value is fixed at cost until shares are sold or revalued.'); ?></div>
   </div>
   <div class="stat">
     <div class="stat-val" style="color:var(--gold)"><?php echo ac_dollars($adminFundIn); ?></div>
