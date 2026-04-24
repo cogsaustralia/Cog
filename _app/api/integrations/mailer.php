@@ -155,8 +155,7 @@ function renderEmailTemplate(string $templateKey, array $p): array {
     $site = SITE_URL !== '' ? SITE_URL : 'https://cogsaustralia.org';
     $summary = implode("\n", reservationSummaryLines($p));
     $summaryHtml = nl2br(htmlspecialchars($summary !== '' ? $summary : 'No additional interests recorded.'));
-    $walletPath = !empty($p['wallet_path']) ? trim((string)$p['wallet_path'], '/') : '';
-    $walletUrl = $walletPath !== '' ? $site . '/' . $walletPath : $site;
+    $partnersUrl = $site . '/partners/';
     $activationToken = '';
     if ($templateKey === 'snft_user_confirmation' && !empty($p['member_number']) && !empty($p['email'])) {
         $activationToken = buildActivationToken('snft', (string)$p['member_number'], (string)$p['email']);
@@ -164,10 +163,9 @@ function renderEmailTemplate(string $templateKey, array $p): array {
     if ($templateKey === 'bnft_user_confirmation' && !empty($p['abn']) && !empty($p['email'])) {
         $activationToken = buildActivationToken('bnft', (string)$p['abn'], (string)$p['email']);
     }
-    $setupUrl = $walletUrl;
+    $setupUrl = $partnersUrl;
     if ($activationToken !== '') {
-        $separator = str_contains($walletUrl, '?') ? '&' : '?';
-        $setupUrl .= $separator . 'mode=setup&activation_token=' . rawurlencode($activationToken);
+        $setupUrl = $partnersUrl . '?mode=setup&activation_token=' . rawurlencode($activationToken);
     }
     $foundingNotice = 'This is a founding phase confirmation only. Nothing has been offered or issued. All recorded interests activate on Expansion Day, subject to any regulatory requirements determined by applicable law.';
 
@@ -241,7 +239,6 @@ $resValue  = number_format((float)($p['reservation_value'] ?? 0), 2);
 $kidsTokens = (int)($p['kids_tokens'] ?? 0);
 $dueToday = 4 + $kidsTokens;
 $dueTodayDisplay = number_format((float)$dueToday, 2);
-$dueTodayNote = $kidsTokens > 0 ? ' and $1 for each Kids SNFT selected.' : '.';
 
 // Colour palette
 $gold   = '#b07d1a';
@@ -336,7 +333,7 @@ $html = '<!DOCTYPE html>
           <td width="48%" style="background:#fff8ed;border:1px solid #e8c97a;border-radius:10px;padding:16px 18px">
             <div style="font-size:11px;font-weight:bold;color:' . $goldLt . ';text-transform:uppercase;letter-spacing:.08em;font-family:Arial,sans-serif">Due today</div>
             <div style="font-size:32px;font-weight:bold;color:' . $goldLt . ';margin:6px 0 4px;font-family:Georgia,serif">$' . $dueTodayDisplay . '</div>
-            <div style="font-size:12px;color:' . $muted . ';line-height:1.5;font-family:Arial,sans-serif">Partnership contribution plus $1 for each Kids SNFT selected in this join flow. Bank transfer details below.</div>
+            <div style="font-size:12px;color:' . $muted . ';line-height:1.5;font-family:Arial,sans-serif">' . ($kidsTokens > 0 ? 'Partnership contribution plus $1 per Kids S-NFT selected.' : 'Partnership contribution.') . ' Bank transfer details below.</div>
           </td>
           <td width="4%"></td>
           <!-- Interests -->
@@ -356,21 +353,15 @@ $html = '<!DOCTYPE html>
     </td></tr>
 
 
-    <!-- Payment: Stripe primary -->
+    <!-- Payment -->
     <tr><td style="padding:20px 32px 0">
       <div style="font-size:16px;font-weight:bold;color:' . $dark . ';margin-bottom:4px;font-family:Georgia,serif">Complete your joining payment</div>
-      <p style="font-size:13px;color:' . $muted . ';margin:0 0 14px;font-family:Arial,sans-serif">The fastest way to activate your vault is to pay securely online. Click below to set up your vault and pay via Stripe — your partnership is confirmed within seconds.</p>
-      <table width="100%" cellpadding="0" cellspacing="0">
-        <tr><td align="center" style="padding:8px 0 16px">
-          <a href="' . htmlspecialchars($setupUrl) . '" style="display:inline-block;background:#635bff;color:#ffffff;font-weight:bold;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.01em">Pay $' . $dueTodayDisplay . ' via Stripe &#8594;</a>
-        </td></tr>
-      </table>
-      <p style="font-size:12px;color:' . $muted . ';text-align:center;margin:0 0 16px;font-family:Arial,sans-serif">You&#8217;ll set your vault password first, then pay securely inside your vault.</p>
+      <p style="font-size:13px;color:' . $muted . ';margin:0 0 14px;font-family:Arial,sans-serif">Transfer your joining amount using the bank details below. Use your Partner number as the payment reference.</p>
 
-      <!-- Bank transfer fallback -->
+      <!-- Bank transfer -->
       <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f6f2;border-radius:8px;overflow:hidden;border:1px solid #e8e0d0">
-        <tr style="background:#f7f3ec"><td colspan="2" style="padding:10px 16px;font-size:12px;font-weight:bold;color:' . $goldLt . ';text-transform:uppercase;letter-spacing:.06em;font-family:Arial,sans-serif">Already paid or prefer bank transfer?</td></tr>
-        <tr><td colspan="2" style="padding:6px 16px 10px;font-size:12px;color:' . $muted . ';font-family:Arial,sans-serif;line-height:1.5">If you&#8217;ve already completed payment via Stripe, you can skip this section. Otherwise, use the details below to pay by direct bank transfer.</td></tr>
+        <tr style="background:#f7f3ec"><td colspan="2" style="padding:10px 16px;font-size:12px;font-weight:bold;color:' . $goldLt . ';text-transform:uppercase;letter-spacing:.06em;font-family:Arial,sans-serif">Bank transfer details</td></tr>
+        <tr><td colspan="2" style="padding:6px 16px 10px;font-size:12px;color:' . $muted . ';font-family:Arial,sans-serif;line-height:1.5">Use the details below to transfer your joining contribution by direct bank transfer.</td></tr>
         <tr><td style="padding:6px 16px;font-size:13px;font-weight:600;color:' . $muted . ';font-family:Arial,sans-serif;width:40%">PayID</td><td style="padding:6px 16px;font-size:13px;font-weight:bold;color:' . $body . ';font-family:Arial,sans-serif">0494 578 706</td></tr>
         <tr style="background:#f7f3ec"><td style="padding:6px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Bank</td><td style="padding:6px 16px;font-size:13px;color:' . $body . ';font-family:Arial,sans-serif">Macquarie Bank</td></tr>
         <tr><td style="padding:6px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Account name</td><td style="padding:6px 16px;font-size:12px;color:' . $body . ';font-family:Arial,sans-serif">The Trustee for COGS of Australia Foundation Hybrid Trust</td></tr>
@@ -393,11 +384,11 @@ $html = '<!DOCTYPE html>
         </tr>
         <tr>
           <td align="center" style="padding:0 0 8px">
-            <a href="' . htmlspecialchars($site . '/wallets/member.html') . '" style="display:inline-block;background:#f8f6f2;color:' . $dark . ';font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;border:1px solid #ddd5c5">Already set up? Member Login &#8594;</a>
+            <a href="' . htmlspecialchars($partnersUrl) . '" style="display:inline-block;background:#f8f6f2;color:' . $dark . ';font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;border:1px solid #ddd5c5">Already set up? Member Login &#8594;</a>
           </td>
         </tr>
       </table>
-      <p style="font-size:11px;color:#aaa;line-height:1.5;margin:4px 0 0;font-family:Arial,sans-serif">Setup link works for 7 days. If the buttons above do not work, visit <strong>cogsaustralia.org</strong> and click <em>Member Login</em>.</p>
+      <p style="font-size:11px;color:#aaa;line-height:1.5;margin:4px 0 0;font-family:Arial,sans-serif">Setup link works for 7 days. If the buttons above do not work, visit <strong>cogsaustralia.org/partners/</strong> to sign in.</p>
     </td></tr>
 
     <!-- Explore links -->
@@ -409,23 +400,23 @@ $html = '<!DOCTYPE html>
             <a href="' . htmlspecialchars($site) . '/partners/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Community</a>
           </td>
           <td width="50%" style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px">
-            <a href="' . htmlspecialchars($site) . '/faq/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; FAQ</a>
+            <a href="' . htmlspecialchars($partnersUrl) . '" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; FAQ</a>
           </td>
         </tr>
         <tr>
           <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px">
-            <a href="' . htmlspecialchars($site) . '/vision/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Our Vision</a>
+            <a href="' . htmlspecialchars($partnersUrl) . '" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Our Vision</a>
           </td>
           <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px">
-            <a href="' . htmlspecialchars($site) . '/how-it-works/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; How It Works</a>
+            <a href="' . htmlspecialchars($partnersUrl) . '" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; How It Works</a>
           </td>
         </tr>
         <tr>
           <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px">
-            <a href="' . htmlspecialchars($site) . '/bw_paper/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Black &amp; White Paper</a>
+            <a href="' . htmlspecialchars($partnersUrl) . '" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Black &amp; White Paper</a>
           </td>
           <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px">
-            <a href="' . htmlspecialchars($site) . '/tell-me-more/" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Tell Me More</a>
+            <a href="' . htmlspecialchars($partnersUrl) . '" style="color:' . $goldLt . ';text-decoration:none;font-weight:600">&#9679; Tell Me More</a>
           </td>
         </tr>
       </table>
@@ -483,19 +474,12 @@ $html = '<!DOCTYPE html>
 // Plain text version
 $plain = "You're in, {$firstName}.\n\n"
     . "Your COG\$ partnership registration has been recorded. You are now a Partner in the COGS of Australia Foundation community joint venture built to give ordinary Australians a real, legal voice in how Australia's natural resources are managed.\n\n"
-    . "YOUR MEMBER NUMBER\n"
+    . "YOUR PARTNER NUMBER\n"
     . str_repeat("-", 40) . "\n"
     . $memberNumDisplay . "\n"
     . "Keep this safe -- your permanent identity in the COG\$ community.\n\n"
-    . "PAY NOW VIA STRIPE (FASTEST)\n"
+    . "COMPLETE YOUR JOINING PAYMENT\n"
     . str_repeat("-", 40) . "\n"
-    . "Set up your vault and pay securely online:\n"
-    . $site . "/wallets/member.html\n"
-    . "Your partnership is confirmed within seconds.\n\n"
-    . "ALREADY PAID? PREFER BANK TRANSFER?\n"
-    . str_repeat("-", 40) . "\n"
-    . "If you have already paid via Stripe, skip this section.\n"
-    . "Otherwise, use the details below for bank transfer:\n"
     . "PayID: 0494 578 706 (fastest)\n"
     . "Bank: Macquarie Bank\n"
     . "Account name: The Trustee for COGS of Australia Foundation Hybrid Trust\n"
@@ -505,25 +489,11 @@ $plain = "You're in, {$firstName}.\n\n"
     . "Reference: " . (string)($p['member_number'] ?? '') . "\n\n"
     . "YOUR INDEPENDENCE VAULT\n"
     . str_repeat("-", 40) . "\n"
-    . "Set up or sign in:\n"
-    . $site . "/wallets/member.html\n\n"
-    . "EXPLORE COG$\n"
-    . str_repeat("-", 40) . "\n"
-    . "Community:         " . $site . "/partners/\n"
-    . "FAQ:               " . $site . "/faq/\n"
-    . "Our Vision:        " . $site . "/vision/\n"
-    . "How It Works:      " . $site . "/how-it-works/\n"
-    . "Black & White Paper: " . $site . "/bw_paper/\n"
-    . "Tell Me More:      " . $site . "/tell-me-more/\n\n"
-    . "GET INVOLVED\n"
-    . str_repeat("-", 40) . "\n"
-    . "COG\$ is a community joint venture business partnership founded in equity law. The trust deed,\n"
-    . "source code, financials and governance proposals are open to every Partner.\n"
-    . "Read, critique, propose improvements, or contribute your skills.\n"
-    . "Everything is in the Partner library -- nothing is hidden.\n\n"
+    . "Set up your vault or sign in:\n"
+    . $partnersUrl . "\n\n"
     . "FOUNDING PHASE NOTICE\n"
     . str_repeat("-", 40) . "\n"
-    . "This is a founding phase confirmation only. Your \$4 partnership contribution and Partner number\n"
+    . "This is a founding phase confirmation only. Your partnership contribution and Partner number\n"
     . "are real. All other interests recorded are no-obligation and will not activate\n"
     . "subject to any regulatory requirements determined by applicable law.\n\n"
     . "COGS of Australia Foundation Hybrid Trust | ABN: 61 734 327 831\n"
@@ -701,7 +671,7 @@ $html = '<!DOCTYPE html>
           <a href="' . htmlspecialchars($setupUrl) . '" style="display:inline-block;background:' . $goldLt . ';color:#ffffff;font-weight:bold;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.01em">Set your Business Vault password &#8594;</a>
         </td></tr>
       </table>
-      <p style="font-size:11px;color:#aaa;line-height:1.5;margin:0;font-family:Arial,sans-serif">Setup link works for 7 days. If the button does not work, visit <strong>cogsaustralia.org</strong> and click <em>Member Login</em>.</p>
+      <p style="font-size:11px;color:#aaa;line-height:1.5;margin:0;font-family:Arial,sans-serif">Setup link works for 7 days. If the button does not work, visit <strong>cogsaustralia.org/partners/</strong> to sign in.</p>
     </td></tr>
 
     <tr><td style="padding:24px 32px 0">
@@ -849,7 +819,7 @@ return [$html, $plain];
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Bank</td><td style="color:#f0e8d6;">Macquarie Bank</td></tr>'
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">BSB</td><td style="color:#f0e8d6;">182-182</td></tr>'
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Account</td><td style="color:#f0e8d6;">035 249 275</td></tr>'
-            . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Payment reference</td><td style="color:#f0e8d6;font-family:monospace;">' . htmlspecialchars((string)($p['member_number'] ?? '')) . '</td></tr>'
+            . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Payment reference</td><td style="color:#f0e8d6;font-family:monospace;">' . htmlspecialchars((string)($p['abn'] ?? '')) . '</td></tr>'
             . '</table>'
             . ($summary !== '' ? '<div style="' . $labelStyle . 'margin-top:.75rem;">Token breakdown</div><div style="font-size:13px;color:#d4c9b8;line-height:1.8;">' . $summaryHtml . '</div>' : '')
             . '</div>'
@@ -878,7 +848,7 @@ return [$html, $plain];
             . "Bank: Macquarie Bank\n"
             . "BSB: 182-182\n"
             . "Account: 035 249 275\n"
-            . "Payment reference: " . (($p['member_number'] ?? '')) . "\n\n"
+            . "Payment reference: " . (($p['abn'] ?? '')) . "\n\n"
             . (($p['trace_line'] ?? '')),
         ],
         'business_interest_confirmation' => (function() use ($p) {
@@ -1028,7 +998,7 @@ return [$html, $plain];
   </table>
 </td></tr>
 <tr><td style="padding:16px 32px" align="center">
-  <a href="' . $siteUrl . '/wallets/member.html" style="display:inline-block;background:#635bff;color:#fff;font-weight:bold;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-family:Arial,sans-serif">Pay now in your vault &#8594;</a>
+  <a href="' . $partnersUrl . '" style="display:inline-block;background:#c8901a;color:#ffffff;font-weight:bold;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-family:Arial,sans-serif">Pay now in your vault &#8594;</a>
 </td></tr>
 <tr><td style="padding:0 32px">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f6f2;border-radius:8px;overflow:hidden;margin:12px 0;border:1px solid #e8e0d0">
@@ -1047,7 +1017,7 @@ return [$html, $plain];
 
             $plain = "COG\$ Payment Instructions\n\nHi {$firstName},\n\nYour gift pool purchase has been recorded.\n\n"
                 . "Token class: {$cls}\nUnits: {$units}\nAmount: \${$amount} AUD\nReference: {$ref}\n\n"
-                . "Pay now: {$siteUrl}/wallets/member.html\n\n"
+                . "Pay now: {$partnersUrl}\n\n"
                 . "Or bank transfer:\nPayID: {$payId}\nBank: {$bankName}\nBSB: {$bankBsb}\nAccount: {$bankAcct}\nReference: {$memberNum}\n";
             return [$html, $plain];
         })(),
@@ -1155,7 +1125,7 @@ return [$html, $plain];
         'hub_weekly_digest' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $h3Style, $pStyle, $boxStyle, $btnStyle, $urlStyle, $noticeStyle, $site): array {
             $firstName    = htmlspecialchars((string)($p['member_first_name'] ?? 'Member'));
             $weekEnding   = htmlspecialchars((string)($p['week_ending']       ?? date('Y-m-d')));
-            $mainspringUrl = htmlspecialchars((string)($p['mainspring_url']   ?? $site . '/hubs/mainspring/'));
+            $mainspringUrl = $partnersUrl;
             $hubs          = is_array($p['hubs'] ?? null) ? $p['hubs'] : [];
 
             // Build per-hub rows
@@ -1209,7 +1179,7 @@ return [$html, $plain];
                 . "Week ending: {$weekEnding}\n\n"
                 . "G'day {$firstName},\n\n"
                 . $plainHubs
-                . "Open Mainspring: {$mainspringUrl}\n\n"
+                . "Visit your community hub: {$partnersUrl}\n\n"
                 . "To unsubscribe, visit your Vault settings.\n";
 
             return [$html, $plain];
