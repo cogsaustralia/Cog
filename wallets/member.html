@@ -382,6 +382,20 @@ img{max-width:100%;height:auto}
 .placeholder p{font-size:1rem;margin-top:4px}
 
 /* ── PAY MODAL ── */
+.payment-banner{position:relative;margin:0 0 12px;border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px;animation:bannerIn .3s ease;overflow:hidden}
+.payment-banner.success{background:rgba(62,207,110,.10);border:1px solid rgba(62,207,110,.35);color:var(--green)}
+.payment-banner.cancelled{background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.28);color:var(--gold)}
+.payment-banner-icon{font-size:1.3rem;flex-shrink:0;line-height:1}
+.payment-banner-body{flex:1;min-width:0}
+.payment-banner-title{font-weight:700;font-size:.95rem;margin-bottom:2px}
+.payment-banner-sub{font-size:.82rem;opacity:.85;line-height:1.45}
+.payment-banner-close{background:none;border:none;color:inherit;opacity:.6;cursor:pointer;font-size:1rem;flex-shrink:0;padding:2px 4px;transition:opacity .15s}
+.payment-banner-close:hover{opacity:1}
+.payment-banner-action{background:none;border:1px solid currentColor;color:inherit;border-radius:6px;padding:5px 12px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:var(--sans);flex-shrink:0;transition:all .15s}
+.payment-banner-action:hover{opacity:.8}
+.payment-banner.hiding{animation:bannerOut .3s ease forwards}
+@keyframes bannerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bannerOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-8px)}}
 .pay-modal-bg{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
 .pay-modal-bg.open{display:flex}
 .pay-modal{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:26px;max-width:460px;width:100%;box-shadow:var(--sh);max-height:90vh;overflow-y:auto}
@@ -987,6 +1001,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
   <!-- Header spacer (topbar 54 + beta ~30 + tabs 46 + pay banner hidden) -->
   <div class="hdr-space"></div>
+
+  <!-- ── Payment status banner — shown after Stripe redirect ── -->
+  <div id="payment-status-banner" style="display:none;padding:0 14px"></div>
 
   <!-- ══ OVERVIEW TAB ══ -->
   <div class="panel on" id="tab-overview">
@@ -1797,6 +1814,48 @@ function openVault(d){
         }
       }
     }, 800);
+  })();
+
+  // ── ?payment=success / ?payment=cancelled — Stripe redirect handling ──────
+  (function(){
+    var _pm = new URLSearchParams(window.location.search).get('payment');
+    if(!_pm) return;
+    // Clean param immediately so refresh doesn't re-trigger
+    try{
+      var _u2 = new URL(window.location.href);
+      _u2.searchParams.delete('payment');
+      window.history.replaceState({}, '', _u2.toString());
+    }catch(e){}
+
+    if(_pm === 'success'){
+      // Show success banner immediately, then poll for updated vault data
+      // (Stripe webhooks fire asynchronously — give it 3s)
+      _showPaymentBanner('success', d);
+      setTimeout(function(){
+        window.api('vault/member').then(function(fresh){
+          window._vaultData = fresh;
+          if(typeof window.updateOutstandingUI === 'function') window.updateOutstandingUI(fresh);
+          if(typeof renderTabOverview === 'function') renderTabOverview(fresh);
+          // Refresh success banner message now we have authoritative data
+          _showPaymentBanner('success', fresh);
+        }).catch(function(){});
+      }, 3000);
+
+    } else if(_pm === 'cancelled'){
+      // Show cancellation banner and re-open the appropriate payment modal
+      _showPaymentBanner('cancelled', d);
+      var _isPaid = (d.payment_status||'pending').toLowerCase() === 'paid';
+      setTimeout(function(){
+        if(!_isPaid && typeof window.openPayModal === 'function'){
+          window.openPayModal();
+        } else if(_isPaid){
+          var _gl = Array.isArray(d.gift_pool_unpaid_lines) ? d.gift_pool_unpaid_lines : [];
+          var _ko = Array.isArray(d.kids_pending_orders)    ? d.kids_pending_orders    : [];
+          var _hasSec2 = _gl.length > 0 || _ko.some(function(r){ return (parseInt(r.units||0,10)||0)>0; });
+          if(_hasSec2 && typeof window.openOutstandingModal === 'function') window.openOutstandingModal();
+        }
+      }, 1200);
+    }
   })();
 
   // Auto-open sections that need attention
@@ -5672,6 +5731,70 @@ function closePayModal() {
   modal.style.display = '';
   resetModalAccordions(modal);
   resetNotifyBtns(modal);
+}
+
+// ── Payment status banner (shown after Stripe redirect) ─────────────────────
+function _showPaymentBanner(type, d) {
+  var wrap = document.getElementById('payment-status-banner');
+  if (!wrap) return;
+
+  d = d || window._vaultData || {};
+  var paid     = (d.payment_status || 'pending').toLowerCase() === 'paid';
+  var hasItems = (d.gift_pool_unpaid_lines || []).length > 0 ||
+                 (d.kids_pending_orders    || []).length > 0;
+
+  var icon, title, sub, action = '';
+
+  if (type === 'success') {
+    icon = '✓';
+    if (paid && !hasItems) {
+      // Primary payment confirmed AND no secondary outstanding
+      title = 'Payment confirmed — your membership is active';
+      sub   = 'Your Class S Unit is issued and secured. Your governance vote is live.';
+    } else if (paid && hasItems) {
+      // Stripe payment processed but secondary items still outstanding
+      title = 'Card payment received';
+      sub   = 'Your primary membership is active. Some additional contributions are still outstanding.';
+      action = '<button class="payment-banner-action" onclick="openOutstandingModal();_dismissBanner()">View outstanding ›</button>';
+    } else {
+      // Payment processed but webhook hasn't reflected yet
+      title = 'Payment received — confirming with your bank';
+      sub   = 'Your vault will update in a moment. Refresh if your status hasn't changed in 60 seconds.';
+    }
+  } else {
+    // cancelled
+    icon  = '○';
+    title = 'Payment not completed';
+    sub   = 'No charge was made. Your payment options are ready whenever you are.';
+  }
+
+  wrap.style.display = '';
+  wrap.innerHTML =
+    '<div class="payment-banner ' + type + '" id="payment-banner-inner">' +
+      '<span class="payment-banner-icon">' + icon + '</span>' +
+      '<div class="payment-banner-body">' +
+        '<div class="payment-banner-title">' + title + '</div>' +
+        '<div class="payment-banner-sub">' + sub + '</div>' +
+      '</div>' +
+      (action ? action : '') +
+      '<button class="payment-banner-close" onclick="_dismissBanner()" aria-label="Dismiss">✕</button>' +
+    '</div>';
+
+  // Auto-dismiss success banners after 8s
+  if (type === 'success') {
+    setTimeout(_dismissBanner, 8000);
+  }
+}
+
+function _dismissBanner() {
+  var inner = document.getElementById('payment-banner-inner');
+  var wrap  = document.getElementById('payment-status-banner');
+  if (inner) {
+    inner.classList.add('hiding');
+    setTimeout(function() { if (wrap) wrap.style.display = 'none'; }, 320);
+  } else if (wrap) {
+    wrap.style.display = 'none';
+  }
 }
 
 // Escape key closes whichever payment modal is currently open
