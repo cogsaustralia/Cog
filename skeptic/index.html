@@ -774,8 +774,10 @@
           <p>The $4 is not asking you to trust us. It is asking you to join the room where the decisions get made. Permanent membership. One equal vote. A position in any future governance action — including any 75% resolution on supply. If everything on this page holds up to your scrutiny, the only remaining question is whether you want a seat at that table.</p>
           <div class="cta-buttons">
             <a class="btn-primary-lg" href="/join/">Join for $4 — Once, Forever</a>
-            <a class="btn-secondary-lg" href="/terms/">Read the Terms →</a>
+            <a class="btn-secondary-lg" href="/tell-me-more/">How it works →</a>
+            <a class="btn-secondary-lg" href="/vision/">The Vision →</a>
           </div>
+          <p style="margin-top:12px;font-size:.84rem;color:var(--muted)"><a href="/terms/" style="color:var(--gold-2);text-decoration:underline">Read the full terms →</a></p>
           <p class="cta-footnote">
             Permanent membership &middot; Non-transferable &middot; One equal vote for life<br>
             Governance Foundation Day &mdash; 14 May 2026
@@ -839,5 +841,30 @@
   });
 </script>
 
+
+<script>
+/* ── Invite code propagation — carry stored code to all join links ── */
+(function(){
+  var STORAGE_KEY = 'cogs_partner_invite_v1';
+  var MAX_AGE_MS  = 7 * 24 * 60 * 60 * 1000;
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    var parsed = JSON.parse(raw);
+    if (!parsed || !parsed.code || !parsed.stored_at) return;
+    var age = Date.now() - new Date(parsed.stored_at).getTime();
+    if (!isFinite(age) || age < 0 || age > MAX_AGE_MS) return;
+    var code = String(parsed.code).trim().toUpperCase();
+    if (!code) return;
+    document.querySelectorAll('a[href]').forEach(function(link){
+      var href = link.getAttribute('href') || '';
+      var isJoin = href.indexOf('join/index.html') !== -1 || href === '/join/' || href.indexOf('/join/?') !== -1;
+      if (!isJoin) return;
+      var sep = href.indexOf('?') === -1 ? '?' : '&';
+      link.setAttribute('href', href + sep + 'partner_code=' + encodeURIComponent(code));
+    });
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
