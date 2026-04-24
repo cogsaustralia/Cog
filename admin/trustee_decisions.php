@@ -126,22 +126,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'issu
         $email = TrusteeDecisionService::getTrusteeEmail($pdo, $decision['sub_trust_context']);
         $link  = 'https://cogsaustralia.org/execute_tdr.php?token=' . urlencode($raw);
 
-        // Send email via platform mailer
-        $subj = '[COG$] Execute Trustee Decision Record — ' . $decision['decision_ref'];
-        $body = "Trustee Decision Record Execution\n\n"
-              . "Reference: {$decision['decision_ref']}\n"
-              . "Title: {$decision['title']}\n"
-              . "Sub-Trust: " . strtoupper(str_replace('_','-',$decision['sub_trust_context'])) . "\n\n"
-              . "Your one-time execution link (valid 15 minutes):\n{$link}\n\n"
-              . "This link is single-use. Do not forward it.";
+        $subj     = '[COG$] Execute Trustee Decision Record — ' . $decision['decision_ref'];
+        $htmlBody = '<p>Trustee Decision Record Execution</p>'
+            . '<p><strong>Reference:</strong> ' . htmlspecialchars($decision['decision_ref'], ENT_QUOTES) . '<br>'
+            . '<strong>Title:</strong> ' . htmlspecialchars($decision['title'], ENT_QUOTES) . '<br>'
+            . '<strong>Sub-Trust:</strong> ' . strtoupper(str_replace('_', '-', $decision['sub_trust_context'])) . '</p>'
+            . '<p>Your one-time execution link (valid 15 minutes):</p>'
+            . '<p><a href="' . htmlspecialchars($link, ENT_QUOTES) . '">' . htmlspecialchars($link, ENT_QUOTES) . '</a></p>'
+            . '<p>This link is single-use. Do not forward it.</p>';
+        $textBody = "Trustee Decision Record Execution\n\n"
+            . "Reference: {$decision['decision_ref']}\n"
+            . "Title: {$decision['title']}\n"
+            . "Sub-Trust: " . strtoupper(str_replace('_', '-', $decision['sub_trust_context'])) . "\n\n"
+            . "Your one-time execution link (valid 15 minutes):\n{$link}\n\n"
+            . "This link is single-use. Do not forward it.";
 
-        if (function_exists('ops_send_email')) {
-            ops_send_email($email, $subj, $body);
-            $message = "Execution token issued and emailed to {$email}.";
+        require_once __DIR__ . '/../_app/api/integrations/mailer.php';
+        if (mailerEnabled()) {
+            smtpSendEmail($email, $subj, $htmlBody, $textBody);
+            $redirectMsg = 'Execution token issued and emailed to ' . $email;
         } else {
-            $message = "Token issued. Email sending not available — link: " . td_h($link);
+            // SMTP not configured — log and surface link to admin via redirect message
+            error_log('TDR token mailer disabled — link for ' . $decision['decision_ref'] . ': ' . $link);
+            $redirectMsg = 'SMTP_FALLBACK:' . $link;
         }
-        header('Location: ./trustee_decisions.php?id=' . urlencode($uuid) . '&msg=' . urlencode($message));
+        header('Location: ./trustee_decisions.php?id=' . urlencode($uuid) . '&msg=' . urlencode($redirectMsg));
         exit;
     } catch (\Throwable $e) {
         $error = $e->getMessage();
@@ -150,8 +159,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'issu
 }
 
 // GET: incoming message
+$smtpFallbackLink = '';
 if (isset($_GET['msg'])) {
-    $message = td_h(urldecode((string)$_GET['msg']));
+    $rawMsg = urldecode((string)$_GET['msg']);
+    if (str_starts_with($rawMsg, 'SMTP_FALLBACK:')) {
+        $smtpFallbackLink = substr($rawMsg, strlen('SMTP_FALLBACK:'));
+        $message = 'Token issued. SMTP is not configured — copy the execution link below and send it directly to the trustee.';
+    } else {
+        $message = td_h($rawMsg);
+    }
 }
 
 // ── Data load ─────────────────────────────────────────────────────────────────
@@ -328,6 +344,23 @@ $statusBadge = [
 
 <?php if ($message): ?>
   <div class="msg-ok"><?= $message ?></div>
+<?php endif; ?>
+<?php if ($smtpFallbackLink): ?>
+  <div style="background:var(--warnb);border:1px solid rgba(212,148,74,.4);border-radius:8px;padding:14px 18px;margin-bottom:14px">
+    <div style="font-size:.75rem;color:var(--warn);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">
+      ⚠ Execution Link — Send to Trustee
+    </div>
+    <div style="font-size:.78rem;color:var(--sub);margin-bottom:8px">
+      Copy this link and send it to the trustee email address manually. The link is single-use and expires in 15 minutes.
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-family:monospace;font-size:.78rem;color:var(--gold);word-break:break-all;user-select:all">
+      <?= td_h($smtpFallbackLink) ?>
+    </div>
+    <button onclick="navigator.clipboard.writeText(<?= json_encode($smtpFallbackLink) ?>).then(()=>{this.textContent='Copied ✓';setTimeout(()=>{this.textContent='Copy Link'},2000)})"
+            style="margin-top:10px;padding:5px 14px;background:rgba(212,178,92,.2);border:1px solid rgba(212,178,92,.4);color:var(--gold);border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer">
+      Copy Link
+    </button>
+  </div>
 <?php endif; ?>
 <?php if ($error): ?>
   <div class="msg-err"><?= td_h($error) ?></div>
