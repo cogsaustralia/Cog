@@ -1705,12 +1705,12 @@ function openVault(d){
     setTimeout(function(){
       if(!_paid){
         // SNFT outstanding — open SNFT pay modal
-        if(typeof openPayModal === 'function') openPayModal();
+        if(typeof window.openPayModal === 'function') window.openPayModal();
       } else if(_hasSec){
         // Secondary payments outstanding — open outstanding modal
-        if(typeof openOutstandingModal === 'function') openOutstandingModal();
+        if(typeof window.openOutstandingModal === 'function') window.openOutstandingModal();
       }
-    }, 600);
+    }, 800);
   })();
 
   // Auto-open sections that need attention

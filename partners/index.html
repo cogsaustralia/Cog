@@ -2523,26 +2523,23 @@ function getOutstandingPayments(d) {
 
 /* ── navigateToVault: single routing function for all vault navigation ──
    SNFT unpaid  → openPayIntercept() (Stripe buy button inline)
-   Secondary due → navigate to vault with ?pay=1 (auto-opens modal on arrival)
-   All paid      → navigate directly
+   Any other    → navigate to vault with ?pay=1 always appended.
+                  The vault checks authoritative _vaultData on arrival
+                  and opens the correct modal only if something is due.
+                  If nothing is due the param is cleaned and ignored.
 ──────────────────────────────────────────────────────────────────────── */
 function navigateToVault(){
   var snftStatus = (window._partnerPaymentStatus || '');
   var snftUnpaid = snftStatus && snftStatus.toLowerCase() !== 'paid';
-  var secOp = (typeof getOutstandingPayments === 'function')
-    ? getOutstandingPayments(window._communityData || {})
-    : { allItems: [] };
-  var secDue = secOp.allItems.length > 0;
 
   if(snftUnpaid){
     // SNFT outstanding — show the Stripe intercept modal (existing flow)
     openPayIntercept();
     return;
   }
-  // Navigate to vault — pass ?pay=1 if secondary payments are outstanding
-  // so the vault auto-opens the outstanding modal immediately on load
-  var url = '../wallets/member.html' + (secDue ? '?pay=1' : '');
-  window.location.href = url;
+  // Navigate to vault with ?pay=1 so vault auto-opens any outstanding modal.
+  // Vault will ignore the param if nothing is due.
+  window.location.href = '../wallets/member.html?pay=1';
 }
 
 function handleVaultEntry(e){
