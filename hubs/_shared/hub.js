@@ -404,6 +404,30 @@ async function postThread(){
 }
 
 /* ── Projects ───────────────────────────────────────────────────────────────── */
+
+var _PHASE_LABELS = {
+  draft:           'Draft',
+  open_for_input:  'Open for Input',
+  deliberation:    'Deliberation',
+  vote:            'Vote Open',
+  accountability:  'Accountability',
+  // legacy
+  proposed:        'Proposed',
+  active:          'Active',
+  paused:          'Paused',
+  completed:       'Completed',
+  archived:        'Archived',
+};
+
+var _PHASE_NEXT_LABELS = {
+  draft:          'Open for Input',
+  open_for_input: 'Move to Deliberation',
+  deliberation:   'Open Voting',
+  vote:           'Adopt — Begin Accountability',
+};
+
+function phaseLabel(status){ return _PHASE_LABELS[status] || status; }
+
 function renderProjects(){
   if(_view==='project'){ renderProjectDetail(); return; }
   var wrap = el('hub-projects-wrap');
@@ -424,17 +448,20 @@ function renderProjects(){
   }
 
   var cards = projects.map(function(p){
-    var statusCls = p.status||'proposed';
+    var statusCls = p.status||'draft';
     var joinedMark = p.joined_by_me ? ' <span style="color:var(--green);font-size:.78rem">✓ Joined</span>' : '';
+    var phaseEnd = p.phase_target_end_at
+      ? '<span>Phase ends: '+dt(p.phase_target_end_at)+'</span>'
+      : (p.target_close_at ? '<span>Target: '+dt(p.target_close_at)+'</span>' : '');
     return '<div class="hub-project-card" onclick="openProject('+p.id+')">' +
       '<div class="hub-project-row">' +
         '<div class="hub-project-title">'+esc(p.title)+'</div>' +
-        '<span class="hub-status-chip '+statusCls+'">'+statusCls+'</span>' +
+        '<span class="hub-status-chip '+statusCls+'">'+esc(phaseLabel(statusCls))+'</span>' +
       '</div>' +
       (p.summary?'<div class="hub-project-summary">'+esc(p.summary.substring(0,120))+(p.summary.length>120?'…':'')+'</div>':'') +
       '<div class="hub-project-footer">' +
         '<span>'+p.participant_count+' participant'+(p.participant_count===1?'':'s')+'</span>' +
-        (p.target_close_at?'<span>Target: '+dt(p.target_close_at)+'</span>':'') +
+        phaseEnd +
         joinedMark +
       '</div>' +
     '</div>';
@@ -537,6 +564,30 @@ function renderProjectDetail(){
     joinBtn = '<span class="hub-status-chip active">You are a participant</span> <button class="btn btn-ghost btn-sm" onclick="leaveProject('+p.id+')" style="margin-left:6px">Leave</button>';
   }
 
+  // Phase banner — shown for lifecycle-phase projects (not legacy statuses)
+  var LIFECYCLE_PHASES = ['draft','open_for_input','deliberation','vote','accountability'];
+  var isLifecycle = LIFECYCLE_PHASES.indexOf(p.status) !== -1;
+  var phaseBanner = '';
+  if(isLifecycle){
+    var phaseEndStr = p.phase_target_end_at
+      ? '<span style="color:var(--text3);font-size:.82rem"> · Phase target end: '+dt(p.phase_target_end_at)+'</span>'
+      : '';
+    var advanceBtn = '';
+    if(myRole==='coordinator' && p.status !== 'accountability'){
+      var nextLbl = _PHASE_NEXT_LABELS[p.status] || 'Advance Phase';
+      advanceBtn = '<button class="btn btn-gold btn-sm" style="margin-top:10px" '
+        + 'data-project-id="'+p.id+'" onclick="advancePhase(this.dataset.projectId)">'
+        + esc(nextLbl)+'</button>';
+    }
+    phaseBanner = '<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:14px">'
+      + '<div style="font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Phase</div>'
+      + '<span class="hub-status-chip '+p.status+'">'+esc(phaseLabel(p.status))+'</span>'
+      + phaseEndStr
+      + advanceBtn
+      + '<div class="flash" id="advance-fl" style="margin-top:6px"></div>'
+      + '</div>';
+  }
+
   var commentsHtml = comments.length
     ? comments.map(function(c){
         return '<div class="hub-comment"><div class="hub-comment-meta">'+esc(c.member_first_name||'Member')+' · '+dts(c.created_at)+'</div><div class="hub-comment-body">'+esc(c.body)+'</div></div>';
@@ -555,13 +606,14 @@ function renderProjectDetail(){
   wrap.innerHTML =
     '<button class="hub-detail-back" onclick="closeProject()">← Back to '+esc(window.HUB_LABEL||'Hub')+'</button>' +
     '<div class="hub-detail-card">' +
+      phaseBanner +
       '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px">' +
         '<div class="hub-detail-title">'+esc(p.title)+'</div>' +
-        '<span class="hub-status-chip '+(p.status||'proposed')+'">'+esc(p.status)+'</span>' +
+        '<span class="hub-status-chip '+(p.status||'draft')+'">'+esc(phaseLabel(p.status||'draft'))+'</span>' +
       '</div>' +
       (p.summary?'<div class="hub-detail-body" style="margin-bottom:12px">'+esc(p.summary)+'</div>':'') +
       (p.body?'<div class="hub-detail-body">'+esc(p.body)+'</div>':'') +
-      '<div style="margin-top:14px;font-size:.82rem;color:var(--text3)">'+
+      '<div style="margin-top:14px;font-size:.82rem;color:var(--text3)">' +
         (p.target_close_at?'Target close: '+dt(p.target_close_at)+' · ':'') +
         p.participant_count+' participant'+(p.participant_count===1?'':'s') +
         ' · Created '+dt(p.created_at) +
@@ -623,6 +675,22 @@ async function postComment(projId){
   }catch(e){
     flash('pc-fl',e.message||'Could not post comment.','err');
     if(btn){ btn.disabled=false; btn.textContent='Post Comment'; }
+  }
+}
+
+async function advancePhase(projectId){
+  projectId = parseInt(projectId, 10);
+  var advBtn = document.querySelector('[data-project-id="'+projectId+'"]');
+  var origLabel = advBtn ? advBtn.textContent : '';
+  if(advBtn){ advBtn.disabled=true; advBtn.textContent='Advancing…'; }
+  try{
+    await api('vault/hub-project-advance',{method:'POST',body:JSON.stringify({project_id:projectId})});
+    // Reload full project so banner + chip update
+    _projectData = await api('vault/hub-project&id='+projectId);
+    renderProjectDetail();
+  }catch(e){
+    flash('advance-fl', e.message||'Could not advance phase.', 'err');
+    if(advBtn){ advBtn.disabled=false; advBtn.textContent=origLabel; }
   }
 }
 
@@ -696,6 +764,7 @@ window.openProject         = openProject;
 window.closeProject        = closeProject;
 window.joinProject         = joinProject;
 window.leaveProject        = leaveProject;
+window.advancePhase        = advancePhase;
 window.postComment         = postComment;
 window.hubJoin             = hubJoin;
 window.hubLeave            = hubLeave;

@@ -136,6 +136,12 @@ button{font-family:inherit;cursor:pointer}
 .hub-status-chip.active{background:var(--green-bg);border:1px solid var(--green-bdr);color:var(--green)}
 .hub-status-chip.paused{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text3)}
 .hub-status-chip.completed{background:rgba(62,207,110,.06);border:1px solid var(--green-bdr);color:var(--green)}
+/* Lifecycle phase chips */
+.hub-status-chip.draft{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text3)}
+.hub-status-chip.open_for_input{background:rgba(56,132,255,.12);border:1px solid rgba(56,132,255,.35);color:#5ea8ff}
+.hub-status-chip.deliberation{background:rgba(163,94,255,.12);border:1px solid rgba(163,94,255,.35);color:#c47dff}
+.hub-status-chip.vote{background:var(--amber-bg);border:1px solid var(--amber-bdr);color:var(--amber)}
+.hub-status-chip.accountability{background:rgba(62,207,110,.10);border:1px solid var(--green-bdr);color:var(--green)}
 
 /* ── Project detail view ───────────────────────────────────────────────────── */
 .hub-detail-back{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;color:var(--text3);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;margin-bottom:16px;transition:color .15s}

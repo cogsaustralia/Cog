@@ -165,6 +165,10 @@ if ($action === 'hub-project-leave') {
 if ($action === 'hub-project-comment') {
     handleHubProjectComment();
 }
+if ($action === 'hub-project-advance') {
+    require_once __DIR__ . '/hub_lifecycle.php';
+    handleHubProjectAdvance();
+}
 if ($action === 'hub-mainspring') {
     handleHubMainspring();
 }
@@ -434,10 +438,13 @@ function handleHubProjects(): void {
             "SELECT id, area_key, title, summary, status, lead_type,
                     lead_member_id, lead_first_name, lead_state_code,
                     target_close_at, linked_poll_id, participant_count,
+                    phase_opened_at, phase_target_end_at, urgency_flagged,
                     created_at, updated_at
                FROM v_hub_projects_live
               WHERE area_key = ?
-              ORDER BY FIELD(status,'active','proposed','paused','completed') ASC,
+              ORDER BY FIELD(status,
+                'open_for_input','vote','deliberation','accountability',
+                'draft','active','proposed','paused','completed') ASC,
                        updated_at DESC"
         );
         $stmt->execute([$area]);
@@ -476,8 +483,8 @@ function handleHubProjects(): void {
             "INSERT INTO hub_projects
                 (area_key, title, summary, body, status, lead_type,
                  lead_member_id, target_close_at, created_by_member_id,
-                 participant_count, created_at, updated_at)
-             VALUES (?, ?, ?, ?, 'proposed', 'member', ?, ?, ?, 1, NOW(), NOW())"
+                 phase_opened_at, participant_count, created_at, updated_at)
+             VALUES (?, ?, ?, ?, 'draft', 'member', ?, ?, ?, NOW(), 1, NOW(), NOW())"
         )->execute([$area, $title, $summary ?: null, $bodyTxt ?: null,
                     $me['id'], $tcDate, $me['id']]);
         $pid = (int)$db->lastInsertId();
@@ -700,6 +707,37 @@ function handleHubProjectComment(): void {
        ->execute([$pid]);
 
     apiSuccess(['created' => true, 'comment_id' => (int)$db->lastInsertId()]);
+}
+
+/**
+ * POST /vault/hub-project-advance { project_id }
+ * Advances a project to the next lifecycle phase.
+ * Only the project coordinator (lead_member_id) may call this.
+ * Phases: draft → open_for_input → deliberation → vote → accountability
+ */
+function handleHubProjectAdvance(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+
+    $projectId = (int)($body['project_id'] ?? 0);
+    if ($projectId < 1) apiError('project_id required.');
+
+    $me = hubResolveMember($db, $principal);
+
+    $db->beginTransaction();
+    try {
+        $result = hubAdvancePhase($db, $projectId, (int)$me['id']);
+        $db->commit();
+        apiSuccess($result);
+    } catch (RuntimeException $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        apiError($e->getMessage(), 400);
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        apiError('Could not advance phase: ' . $e->getMessage(), 500);
+    }
 }
 
 /**
