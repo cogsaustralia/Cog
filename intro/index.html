@@ -7,367 +7,443 @@
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-  /* ── Reset ─────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── Design tokens — match site palette ─────────── */
   :root {
     --bg:        #0a0804;
-    --panel:     rgba(20,14,6,.92);
+    --panel:     rgba(18,13,5,.96);
     --gold-1:    #f0d18a;
     --gold-2:    #c9973d;
-    --gold-rim:  rgba(240,209,138,.22);
-    --gold-rim2: rgba(240,209,138,.50);
+    --gold-3:    #7a5518;
+    --gold-rim:  rgba(240,209,138,.18);
+    --gold-rim2: rgba(240,209,138,.42);
+    --gold-pale: rgba(240,209,138,.07);
     --text:      #fff8e8;
-    --text2:     rgba(255,248,232,.90);
-    --muted:     rgba(240,225,196,.70);
+    --text2:     rgba(255,248,232,.88);
+    --muted:     rgba(240,225,196,.60);
+    --ok:        #52b87a;
     --serif:     'Playfair Display', Georgia, serif;
     --sans:      'DM Sans', system-ui, sans-serif;
-    --card-w:    680px;
     --ease:      cubic-bezier(.4,0,.2,1);
+    --ease-out:  cubic-bezier(0,.55,.45,1);
+    --card-w:    700px;
   }
 
   html, body {
-    height: 100%;
-    width: 100%;
+    height: 100%; width: 100%;
     overflow: hidden;
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  body {
-    overscroll-behavior: none;
-  }
-
-  /* ── Ambient background texture ────────────────── */
+  /* ── Ambient glow ── */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(240,209,138,.07) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 50% at 10% 100%,  rgba(201,151,61,.05)  0%, transparent 60%),
-      radial-gradient(ellipse 50% 40% at 90% 80%,   rgba(240,209,138,.04) 0%, transparent 55%);
-    pointer-events: none;
-    z-index: 0;
+      radial-gradient(ellipse 90% 55% at 50% -5%,  rgba(240,209,138,.09) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 45% at 8%  95%,  rgba(201,151,61,.06)  0%, transparent 60%),
+      radial-gradient(ellipse 45% 35% at 92% 78%,  rgba(240,209,138,.05) 0%, transparent 55%);
+    pointer-events: none; z-index: 0;
   }
 
-  /* ── Viewport wrapper ──────────────────────────── */
+  /* ── Grain overlay ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1; opacity: .4;
+  }
+
+  /* ── Shell ── */
   #intro-wrap {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
     z-index: 10;
   }
 
-  /* ── Top bar ────────────────────────────────────── */
+  /* ── Top bar ── */
   #top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 28px 0;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 32px 0;
+    flex-shrink: 0; position: relative; z-index: 20;
   }
 
-  /* Progress dots */
-  #progress-dots {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  /* Wordmark */
+  .wordmark {
+    font-family: var(--serif);
+    font-size: .95rem; font-weight: 600;
+    color: var(--gold-2);
+    letter-spacing: .04em;
+    opacity: .8;
   }
 
-  .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.15);
-    transition: background .3s var(--ease), transform .3s var(--ease);
-    cursor: default;
-    /* 44px hit area via padding */
-    padding: 17px;
-    margin: -17px;
+  /* Progress bar — thin line, not dots */
+  #progress-track {
+    position: absolute;
+    bottom: 0; left: 32px; right: 32px;
+    height: 2px;
+    background: rgba(255,255,255,.08);
+    border-radius: 2px;
+    overflow: hidden;
   }
-  .dot.done {
-    background: rgba(240,209,138,.45);
-    cursor: pointer;
-  }
-  .dot.done:hover { background: rgba(240,209,138,.70); transform: scale(1.2); }
-  .dot.active {
-    background: var(--gold-1);
-    transform: scale(1.15);
-    box-shadow: 0 0 10px rgba(240,209,138,.45);
+  #progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-2), var(--gold-1));
+    border-radius: 2px;
+    transition: width .5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 20%; /* card 1 of 5 */
   }
 
-  /* Skip link */
+  /* Progress dots (still used for aria, hidden visually) */
+  #progress-dots { display: none; }
+
+  /* Step label */
+  #step-label {
+    font-size: .78rem; font-weight: 500;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Skip */
   #skip-btn {
     font-family: var(--sans);
-    font-size: 0.9rem;
-    font-weight: 400;
-    color: rgba(255,248,232,.40);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px 0 8px 16px;
-    transition: color .25s;
-    white-space: nowrap;
-    min-height: 44px;
+    font-size: .82rem; font-weight: 400;
+    color: var(--muted);
+    background: none; border: none; cursor: pointer;
+    padding: 6px 0 6px 12px;
+    transition: color .2s;
+    white-space: nowrap; min-height: 44px;
   }
-  #skip-btn:hover { color: rgba(255,248,232,.70); }
+  #skip-btn:hover { color: var(--text2); }
 
-  .dot:focus-visible,
-  #skip-btn:focus-visible,
-  .nav-btn:focus-visible {
-    outline: 2px solid var(--gold-1);
-    outline-offset: 3px;
-    box-shadow: 0 0 0 4px rgba(240,209,138,.16);
-    border-radius: 12px;
-  }
-
-  /* ── Card stage ─────────────────────────────────── */
+  /* ── Card stage ── */
   #card-stage {
-    flex: 1;
-    position: relative;
+    flex: 1; position: relative;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
   }
 
-  /* ── Individual card ────────────────────────────── */
+  /* ── Individual card ── */
   .intro-card {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 24px;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px 32px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    /* slide states */
     transform: translateX(100%);
     opacity: 0;
-    transition: transform .28s var(--ease), opacity .22s var(--ease);
+    transition: transform .32s var(--ease), opacity .25s var(--ease);
     pointer-events: none;
   }
   .intro-card.active {
-    transform: translateX(0);
-    opacity: 1;
-    pointer-events: auto;
+    transform: translateX(0); opacity: 1; pointer-events: auto;
   }
-  .intro-card.exit-left {
-    transform: translateX(-100%);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .intro-card.exit-right {
-    transform: translateX(100%);
-    opacity: 0;
-    pointer-events: none;
-  }
+  .intro-card.exit-left  { transform: translateX(-60%); opacity: 0; pointer-events: none; }
+  .intro-card.exit-right { transform: translateX(100%);  opacity: 0; pointer-events: none; }
 
   @media (prefers-reduced-motion: reduce) {
-    .intro-card, .intro-card.active, .intro-card.exit-left, .intro-card.exit-right {
-      transition: none;
-      transform: none;
+    .intro-card, .intro-card.active,
+    .intro-card.exit-left, .intro-card.exit-right {
+      transition: none; transform: none;
     }
     .intro-card { display: none; }
     .intro-card.active { display: flex; opacity: 1; }
   }
 
-  /* ── Card inner content ─────────────────────────── */
+  /* ── Card entrance animation ── */
+  @keyframes cardEnter {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .intro-card.active .card-inner {
+    animation: cardEnter .38s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Card inner ── */
   .card-inner {
-    width: 100%;
-    max-width: var(--card-w);
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    width: 100%; max-width: var(--card-w);
+    display: flex; flex-direction: column; gap: 0;
   }
 
-  /* Icon */
-  .card-icon {
-    font-size: 3rem;
-    line-height: 1;
-    margin-bottom: 24px;
-    text-align: center;
-    filter: drop-shadow(0 0 18px rgba(240,209,138,.35));
+  /* ── Card number badge ── */
+  .card-num {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-bottom: 28px;
+  }
+  .card-num-pip {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-2), var(--gold-3));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: .8rem; font-weight: 600;
+    color: #1a0a00;
+  }
+  .card-num-text {
+    font-size: .75rem; font-weight: 500;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--gold-2); opacity: .85;
   }
 
-  /* Heading */
+  /* ── Heading ── */
   .card-heading {
     font-family: var(--serif);
-    font-size: clamp(1.9rem, 5vw, 2.6rem);
-    font-weight: 700;
-    color: var(--gold-1);
-    line-height: 1.2;
-    text-align: center;
-    margin-bottom: 28px;
-    letter-spacing: -.01em;
-  }
-
-  /* Body text */
-  .card-body {
-    font-family: var(--sans);
-    font-size: clamp(1.05rem, 2.5vw, 1.22rem);
-    font-weight: 300;
+    font-size: clamp(1.9rem, 5.5vw, 3rem);
+    font-weight: 600;
     color: var(--text);
-    line-height: 1.85;
-    margin-bottom: 28px;
+    line-height: 1.12;
+    letter-spacing: -.025em;
+    margin-bottom: 10px;
+    text-wrap: balance;
   }
-
-  .card-body p + p { margin-top: 18px; }
-
-  /* Callout block */
-  .card-callout {
-    border-left: 3px solid var(--gold-2);
-    padding: 14px 20px;
-    background: rgba(240,209,138,.06);
-    border-radius: 0 10px 10px 0;
-    margin-bottom: 0;
-  }
-
-  .card-callout p {
-    font-family: var(--sans);
-    font-size: clamp(1rem, 2.2vw, 1.1rem);
+  .card-heading em {
     font-style: italic;
-    font-weight: 500;
+    color: var(--gold-1);
+  }
+
+  /* ── Deck (subheading) ── */
+  .card-deck {
+    font-size: clamp(1rem, 2.2vw, 1.15rem);
+    font-weight: 300;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 28px;
+    border-top: 1px solid var(--gold-rim);
+    padding-top: 18px;
+    margin-top: 14px;
+  }
+  .card-deck p + p { margin-top: 14px; }
+
+  /* ── Fact pills ── */
+  .fact-row {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 24px;
+  }
+  .fact-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px;
+    border: 1px solid var(--gold-rim2);
+    border-radius: 99px;
+    background: var(--gold-pale);
+    font-size: .88rem; font-weight: 500;
+    color: var(--text2);
+    line-height: 1;
+  }
+  .fact-pill .pip {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold-2); flex-shrink: 0;
+  }
+  .fact-pill strong { color: var(--gold-1); }
+
+  /* ── Callout ── */
+  .card-callout {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 18px 22px;
+    background: rgba(240,209,138,.06);
+    border: 1px solid var(--gold-rim2);
+    border-radius: 14px;
+    margin-top: 4px;
+  }
+  .callout-mark {
+    font-size: 1.1rem; line-height: 1; flex-shrink: 0; margin-top: 2px;
+  }
+  .card-callout p {
+    font-size: .97rem; font-weight: 400;
+    font-style: italic;
     color: var(--gold-1);
     line-height: 1.65;
     opacity: .92;
   }
 
-  /* ── Bottom navigation bar ──────────────────────── */
+  /* ── What this means strip (card 4) ── */
+  .means-list {
+    display: flex; flex-direction: column; gap: 0;
+    border: 1px solid var(--gold-rim);
+    border-radius: 14px; overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .means-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--gold-rim);
+    background: rgba(255,255,255,.015);
+    transition: background .15s;
+  }
+  .means-item:last-child { border-bottom: none; }
+  .means-item:nth-child(odd) { background: rgba(240,209,138,.025); }
+  .means-icon {
+    font-size: 1rem; flex-shrink: 0; margin-top: 2px; line-height: 1;
+    width: 20px; text-align: center;
+  }
+  .means-item strong {
+    display: block; font-size: .92rem; font-weight: 600;
+    color: var(--text); margin-bottom: 2px;
+  }
+  .means-item span {
+    font-size: .84rem; color: var(--text2); line-height: 1.55;
+  }
+
+  /* ── Milestone timeline (card 5) ── */
+  .timeline {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative; margin-bottom: 24px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 19px; top: 24px; bottom: 24px;
+    width: 1px; background: var(--gold-rim2);
+  }
+  .tl-item {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 16px 0;
+  }
+  .tl-dot {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1.5px solid var(--gold-rim2);
+    background: var(--panel);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0; z-index: 1;
+  }
+  .tl-dot.gold {
+    background: linear-gradient(135deg, rgba(240,209,138,.2), rgba(201,151,61,.12));
+    border-color: var(--gold-2);
+  }
+  .tl-content {}
+  .tl-date {
+    font-size: .75rem; font-weight: 500; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--gold-2); margin-bottom: 3px;
+  }
+  .tl-title {
+    font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
+    color: var(--text); margin-bottom: 4px; line-height: 1.2;
+  }
+  .tl-desc {
+    font-size: .88rem; color: var(--text2); line-height: 1.6;
+  }
+
+  /* ── Bottom navigation ── */
   #bottom-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 28px 28px;
-    flex-shrink: 0;
-    gap: 16px;
-    position: relative;
-    z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px 28px;
+    flex-shrink: 0; gap: 16px; position: relative; z-index: 20;
+    border-top: 1px solid var(--gold-rim);
+  }
+
+  /* Swipe hint — only visible on touch devices, card 1 only */
+  #swipe-hint {
+    position: absolute;
+    bottom: 96px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 6px;
+    font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); opacity: 0;
+    pointer-events: none;
+    animation: hintFade 3s ease 1.2s forwards;
+  }
+  .hint-arrows { display: flex; gap: 3px; }
+  .hint-arr {
+    width: 5px; height: 5px; border-right: 1.5px solid var(--muted);
+    border-top: 1.5px solid var(--muted);
+    transform: rotate(45deg); opacity: 0;
+  }
+  .hint-arr:nth-child(1) { animation: arrSlide .9s ease 1.4s infinite; }
+  .hint-arr:nth-child(2) { animation: arrSlide .9s ease 1.6s infinite; }
+  .hint-arr:nth-child(3) { animation: arrSlide .9s ease 1.8s infinite; }
+
+  @keyframes hintFade {
+    0%   { opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes arrSlide {
+    0%   { opacity: 0; transform: translateX(-4px) rotate(45deg); }
+    50%  { opacity: 1; transform: translateX(0)  rotate(45deg); }
+    100% { opacity: 0; transform: translateX(4px)  rotate(45deg); }
+  }
+
+  /* Only show swipe hint on touch devices */
+  @media (hover: hover) and (pointer: fine) {
+    #swipe-hint { display: none; }
   }
 
   .nav-btn {
     font-family: var(--sans);
-    font-size: 1.05rem;
-    font-weight: 500;
+    font-size: .97rem; font-weight: 500;
     border-radius: 12px;
-    min-height: 52px;
-    min-width: 130px;
-    padding: 0 28px;
-    cursor: pointer;
-    border: none;
-    transition: background .2s, color .2s, opacity .2s, transform .15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    letter-spacing: .01em;
+    min-height: 50px; min-width: 120px;
+    padding: 0 24px;
+    cursor: pointer; border: none;
+    transition: background .2s, color .2s, opacity .2s, box-shadow .2s, transform .15s;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; letter-spacing: .01em;
   }
 
   #back-btn {
-    background: transparent;
-    color: var(--muted);
+    background: transparent; color: var(--muted);
     border: 1.5px solid var(--gold-rim);
   }
   #back-btn:hover:not(:disabled) {
-    background: var(--gold-rim);
-    color: var(--text);
+    background: var(--gold-pale); color: var(--text2);
     border-color: var(--gold-rim2);
   }
-  #back-btn:disabled {
-    opacity: 0;
-    pointer-events: none;
-  }
+  #back-btn:disabled { opacity: 0; pointer-events: none; }
 
   #next-btn {
-    background: var(--gold-1);
-    color: #0a0804;
-    font-weight: 600;
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    color: #140900; font-weight: 600;
+    box-shadow: 0 4px 20px rgba(201,151,61,.28);
   }
   #next-btn:hover {
-    background: #f8dfa0;
+    box-shadow: 0 6px 28px rgba(201,151,61,.42);
     transform: translateY(-1px);
-    box-shadow: 0 6px 24px rgba(240,209,138,.30);
   }
-  #next-btn:active { transform: translateY(0); }
+  #next-btn:active { transform: translateY(0); box-shadow: 0 2px 10px rgba(201,151,61,.2); }
 
-  /* Step counter */
-  #step-counter {
-    font-family: var(--sans);
-    font-size: 0.88rem;
-    font-weight: 400;
-    color: var(--muted);
-    white-space: nowrap;
-    min-width: 70px;
-    text-align: center;
-    letter-spacing: .04em;
+  /* ── Focus styles ── */
+  .nav-btn:focus-visible,
+  #skip-btn:focus-visible {
+    outline: 2px solid var(--gold-1);
+    outline-offset: 3px;
+    border-radius: 12px;
   }
 
-  /* ── Thin gold rule above bottom bar ────────────── */
-  #bottom-rule {
-    height: 1px;
-    background: var(--gold-rim);
-    margin: 0 28px;
-    flex-shrink: 0;
-  }
-
-  /* ── Mobile adjustments ─────────────────────────── */
+  /* ── Mobile ── */
   @media (max-width: 480px) {
     #top-bar    { padding: 16px 20px 0; }
-    #bottom-bar { padding: 0 16px 22px; }
-    #bottom-rule { margin: 0 16px; }
-    .intro-card { padding: 12px 18px; }
-    .nav-btn    { min-width: 110px; padding: 0 20px; font-size: 0.98rem; }
-    .card-icon  { font-size: 2.4rem; margin-bottom: 18px; }
-    .card-heading { margin-bottom: 20px; }
-    .card-body  { margin-bottom: 22px; }
+    #progress-track { left: 20px; right: 20px; }
+    #bottom-bar { padding: 16px 20px 24px; }
+    .intro-card { padding: 14px 20px; }
+    .nav-btn    { min-width: 110px; padding: 0 20px; font-size: .95rem; }
+    .card-heading { font-size: clamp(1.75rem, 8vw, 2.4rem); }
+    .card-num   { margin-bottom: 20px; }
   }
 
-  /* ── Very small screens ─────────────────────────── */
-  @media (max-width: 360px) {
-    .card-body  { font-size: 1rem; line-height: 1.75; }
-    .card-heading { font-size: 1.7rem; }
-  }
-
-  /* ── Mobile reading flow ────────────────────────── */
   @media (max-width: 640px), (max-height: 760px) {
     #card-stage { align-items: stretch; }
     .intro-card {
-      align-items: flex-start;
-      justify-content: flex-start;
-      scroll-padding-top: 10px;
-      scroll-padding-bottom: 20px;
+      align-items: flex-start; justify-content: flex-start;
       touch-action: pan-y;
     }
-    .card-inner {
-      max-width: 100%;
-      padding-top: 8px;
-      padding-bottom: 18px;
-      margin: 0 auto;
-    }
-    .card-heading {
-      font-size: clamp(1.65rem, 7.6vw, 2.15rem);
-      line-height: 1.16;
-    }
+    .card-inner { max-width: 100%; padding-top: 8px; padding-bottom: 18px; }
   }
 
-  /* ── Landscape / short viewports ───────────────── */
-  @media (max-height: 600px) {
-    .card-icon  { font-size: 2rem; margin-bottom: 12px; }
-    .card-heading { font-size: 1.5rem; margin-bottom: 14px; }
-    .card-body  { font-size: 1rem; line-height: 1.7; margin-bottom: 16px; }
-    .card-callout { padding: 10px 16px; }
-    #top-bar    { padding-top: 12px; }
-    #bottom-bar { padding-bottom: 14px; }
+  @media (max-height: 620px) {
+    .card-heading  { font-size: 1.6rem; margin-bottom: 8px; }
+    .card-deck     { font-size: .95rem; margin-bottom: 18px; padding-top: 12px; margin-top: 10px; }
+    .card-num      { margin-bottom: 16px; }
+    .card-callout  { padding: 14px 16px; }
+    #bottom-bar    { padding-bottom: 16px; padding-top: 14px; }
+  }
+
+  @media (max-width: 360px) {
+    .card-heading { font-size: 1.65rem; }
+    .card-deck    { font-size: .92rem; }
+    .fact-pill    { font-size: .82rem; }
   }
 </style>
 </head>
@@ -375,101 +451,183 @@
 
 <div id="intro-wrap" role="main">
 
-  <!-- Top bar: progress dots + skip -->
+  <!-- Top bar -->
   <div id="top-bar">
-    <div id="progress-dots" role="tablist" aria-label="Card progress">
+    <span class="wordmark">COG$</span>
+    <span id="step-label">1 of 5</span>
+    <button id="skip-btn" aria-label="Skip introduction">Skip →</button>
+    <div id="progress-track"><div id="progress-fill"></div></div>
+
+    <!-- Aria-only dots -->
+    <div id="progress-dots" role="tablist" aria-label="Card progress" style="display:none">
       <span class="dot active" role="tab" aria-label="Card 1 of 5" aria-selected="true" tabindex="0" data-index="0"></span>
       <span class="dot"        role="tab" aria-label="Card 2 of 5" aria-selected="false" tabindex="-1" data-index="1"></span>
       <span class="dot"        role="tab" aria-label="Card 3 of 5" aria-selected="false" tabindex="-1" data-index="2"></span>
       <span class="dot"        role="tab" aria-label="Card 4 of 5" aria-selected="false" tabindex="-1" data-index="3"></span>
       <span class="dot"        role="tab" aria-label="Card 5 of 5" aria-selected="false" tabindex="-1" data-index="4"></span>
     </div>
-    <button id="skip-btn" aria-label="Skip introduction and proceed">Skip intro →</button>
   </div>
 
   <!-- Card stage -->
   <div id="card-stage" aria-live="polite" aria-atomic="true">
 
-    <!-- Card 1 -->
+    <!-- ══ Card 1 — What is this, and what does it cost ══ -->
     <div class="intro-card active" id="card-0" role="tabpanel" aria-label="Card 1 of 5">
       <div class="card-inner">
-        <div class="card-icon" aria-hidden="true">🪙</div>
-        <h1 class="card-heading">One decision.<br>A Permanent place.</h1>
-        <div class="card-body">
-          <p>The first cogs started turning in Drake Village, NSW.  A gold mining town for over 150 years, a village full of green and gold.<br>The vision starts with a different assumption: value should not be owned at a distance and extracted by default. It should be recognised, governed, circulated and stewarded in relationship with place.<br>The COG$ Mainspring Trust began to turn when locals decided - there is another way.<br>The more cogs that turn together - the more say we all have over the value of what lies on Country and inside Country.</p>
+        <div class="card-num">
+          <span class="card-num-pip">1</span>
+          <span class="card-num-text">What is COG$</span>
+        </div>
+        <h1 class="card-heading">A community that <em>owns its say</em> on Country.</h1>
+        <div class="card-deck">
+          <p>COG$ started in Drake Village, NSW — a gold country town where locals decided there was another way. Instead of value being extracted from the land and flowing elsewhere, what if the community held a registered stake and a legal voice in what happens?</p>
+          <p>That's what COG$ is. A community joint venture. Not a fund, not an app, not a promise. A real shareholding in an ASX-listed resource company — owned collectively by members, governed by members, one equal vote each.</p>
+        </div>
+        <div class="fact-row">
+          <span class="fact-pill"><span class="pip"></span>Once-only <strong>$4 membership</strong></span>
+          <span class="fact-pill"><span class="pip"></span>Open to <strong>every Australian</strong></span>
+          <span class="fact-pill"><span class="pip"></span>No ongoing fees</span>
         </div>
         <div class="card-callout">
-          <p>COG$ is for every Australian who believes that what carries the life of the community, should carry the voice of the community.<br>No exceptions. No tiers.</p>
+          <span class="callout-mark">🌏</span>
+          <p>For every Australian who believes that what carries the life of the community should carry the voice of the community. No exceptions. No tiers.</p>
         </div>
       </div>
     </div>
 
-    <!-- Card 2 -->
+    <!-- ══ Card 2 — One member, one vote ══ -->
     <div class="intro-card" id="card-1" role="tabpanel" aria-label="Card 2 of 5">
       <div class="card-inner">
-        <div class="card-icon" aria-hidden="true">📊</div>
-        <h2 class="card-heading">Real Say.<br>Real Value.<br>Real Share.</h2>
-        <div class="card-body">
-          <p>Real World Asset (RWA) COG$ are the emerging financial asset class — tokens/units only minted against independently verified in-ground mineral value. The founding principle is that minerals beneath the ground may carry greater long-term value left where they are than extracted.</p>
-          <p>To have a legally recognised seat at the table we own CHESS-registered shares in ASX-listed resource companies. Members collectively direct how those votes are cast at company AGMs.<br>Currently we are building toward a  1% holding in Legacy Minerals Holdings Limited (ASX:LGM) -<br> the first milestone in establishing real shareholder standing.</p>
+        <div class="card-num">
+          <span class="card-num-pip">2</span>
+          <span class="card-num-text">Your Voice</span>
+        </div>
+        <h2 class="card-heading">One member. <em>One vote.</em> No exceptions.</h2>
+        <div class="card-deck">
+          <p>Every personal member holds one equal national governance vote — regardless of wealth, location, or how long they've been a member. More people, not more money.</p>
+          <p>Members' Polls are the formal decision instrument, done online through your Independence Vault. The Trustee holds legal title but does not make the decisions — we do, together, as members.</p>
+          <p>Wealth does not buy additional voice. People are the voice. More people — more cogs — more inertia — more leverage over the decisions that affect Country.</p>
         </div>
         <div class="card-callout">
-          <p>Not a fund. Not a promise. A registered shareholding and a community member legal voice regarding extraction and valuation -</p>
+          <span class="callout-mark">🗳️</span>
+          <p>Your vote carries the same legal weight as every other member's — whether you joined on day one or day one thousand.</p>
         </div>
       </div>
     </div>
 
-    <!-- Card 3 -->
+    <!-- ══ Card 3 — Real ownership, real asset ══ -->
     <div class="intro-card" id="card-2" role="tabpanel" aria-label="Card 3 of 5">
       <div class="card-inner">
-        <div class="card-icon" aria-hidden="true">🗳️</div>
-        <h2 class="card-heading">One Member.<br>One vote.<br>No exceptions.</h2>
-        <div class="card-body">
-          <p>More people not more money!<br>Every personal Member holds one equal national governance vote — regardless of wealth, location, or how long they've been a member.<br> Members' Polls are the formal decision instrument - done online.<br>The Trustee holds legal title but does not make operational decisions -<br>we as Members do.</p>
+        <div class="card-num">
+          <span class="card-num-pip">3</span>
+          <span class="card-num-text">What We Own</span>
+        </div>
+        <h2 class="card-heading">Real shares. <em>Real say</em> at the company table.</h2>
+        <div class="card-deck">
+          <p>Members collectively hold CHESS-registered shares in ASX-listed resource companies. CHESS is the national securities register — the same one every stockbroker in Australia uses. These are real shares, not tokens or certificates.</p>
+          <p>We are building toward a 1% holding in Legacy Minerals Holdings Limited (ASX:LGM). At 1%, we can formally attend AGMs, lodge resolutions, and vote on company decisions affecting Country. Our founding principle: minerals beneath the ground may carry greater long-term value left where they are than extracted.</p>
         </div>
         <div class="card-callout">
-          <p>Wealth does not buy additional voice.<br>People are the voice - more people - more cogs - more intertia - more leverage.</p>
+          <span class="callout-mark">📊</span>
+          <p>Not a fund. Not a promise. A registered shareholding and a community member legal voice on extraction and valuation.</p>
         </div>
       </div>
     </div>
 
-    <!-- Card 4 -->
+    <!-- ══ Card 4 — What your $4 means ══ -->
     <div class="intro-card" id="card-3" role="tabpanel" aria-label="Card 4 of 5">
       <div class="card-inner">
-        <div class="card-icon" aria-hidden="true">📋</div>
-        <h2 class="card-heading">This is not a<br>passive investment.</h2>
-        <div class="card-body">
-          <p>The $4 once only membership cost is not refundable. Your $4 token is soulbound — it cannot be sold or transferred.<br>COG$ tokens cannot be exchanged for cash under any circumstances — this is an architectural and technological rule, not a policy.<br>Our money is buying our own cyryptographic hardware infrastructure and more shares in Legacy for a heavier say.</p>
+        <div class="card-num">
+          <span class="card-num-pip">4</span>
+          <span class="card-num-text">What Your $4 Means</span>
+        </div>
+        <h2 class="card-heading">This is not a <em>passive investment.</em></h2>
+        <div class="means-list">
+          <div class="means-item">
+            <span class="means-icon">🔐</span>
+            <div>
+              <strong>Your token is soulbound</strong>
+              <span>It cannot be sold or transferred to anyone else. It is yours as a member — not a tradeable asset.</span>
+            </div>
+          </div>
+          <div class="means-item">
+            <span class="means-icon">🚫</span>
+            <div>
+              <strong>COG$ tokens cannot be exchanged for cash</strong>
+              <span>This is an architectural and technological rule, not a policy. It is built into the system itself.</span>
+            </div>
+          </div>
+          <div class="means-item">
+            <span class="means-icon">⚙️</span>
+            <div>
+              <strong>Members are operators of the joint venture</strong>
+              <span>Your $4 is not refundable — it is your entry into a community governance structure, not a purchase.</span>
+            </div>
+          </div>
+          <div class="means-item">
+            <span class="means-icon">🏗️</span>
+            <div>
+              <strong>Your contribution builds real infrastructure</strong>
+              <span>Funds go toward cryptographic governance hardware and more shares in Legacy Minerals for greater community standing.</span>
+            </div>
+          </div>
         </div>
         <div class="card-callout">
-          <p>Members are operators of the joint venture.<br>The Trustee executes.<br>Members decide and manage.</p>
+          <span class="callout-mark">📋</span>
+          <p>The Trustee executes. Members decide and manage. You are an operator — not a passenger.</p>
         </div>
       </div>
     </div>
 
-    <!-- Card 5 -->
+    <!-- ══ Card 5 — Two milestones, join before both ══ -->
     <div class="intro-card" id="card-4" role="tabpanel" aria-label="Card 5 of 5">
       <div class="card-inner">
-        <div class="card-icon" aria-hidden="true">📅</div>
-        <h2 class="card-heading">Two milestones.<br>Your joint venture application secures<br>before both.</h2>
-        <div class="card-body">
-          <p>Governance Foundation Day — 14 May 2026 — is the first online cryptographic Members' Poll.<br>Expansion Day (the date will be set by Members) is when the Foundation's own blockchain hardware and infrastructure node goes live and Tier 2 token classes activate.<br>Joining now records your position before both milestones.</p>
+        <div class="card-num">
+          <span class="card-num-pip">5</span>
+          <span class="card-num-text">Your Timing</span>
+        </div>
+        <h2 class="card-heading">Two milestones. Your place secures <em>before both.</em></h2>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot gold">📅</div>
+            <div class="tl-content">
+              <div class="tl-date">14 May 2026</div>
+              <div class="tl-title">Governance Foundation Day</div>
+              <div class="tl-desc">The first online cryptographic Members' Poll. Every member who joins before this date votes on the first governance decision. One member, one vote — your first act as a joint venture operator.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">⛓️</div>
+            <div class="tl-content">
+              <div class="tl-date">Date set by Members</div>
+              <div class="tl-title">Expansion Day</div>
+              <div class="tl-desc">The Foundation's own blockchain hardware and infrastructure node goes live. Tier 2 token classes activate — Real World Asset tokens and additional community governance tools. Members vote on when this happens.</div>
+            </div>
+          </div>
         </div>
         <div class="card-callout">
-          <p>Every Member who joins before Foundation Day votes on the first governance decision.</p>
+          <span class="callout-mark">✅</span>
+          <p>Joining now records your position before both milestones. Every member who joins before Foundation Day votes on the first governance decision.</p>
         </div>
       </div>
     </div>
 
   </div><!-- /card-stage -->
 
-  <div id="bottom-rule"></div>
+  <!-- Swipe hint — touch only, fades after card 1 -->
+  <div id="swipe-hint" aria-hidden="true">
+    <div class="hint-arrows">
+      <span class="hint-arr"></span>
+      <span class="hint-arr"></span>
+      <span class="hint-arr"></span>
+    </div>
+    <span>Swipe to continue</span>
+  </div>
 
-  <!-- Bottom navigation bar -->
+  <!-- Bottom navigation -->
   <div id="bottom-bar">
-    <button id="back-btn" class="nav-btn" aria-label="Go to previous card" disabled>← Back</button>
-    <span   id="step-counter" aria-label="Step 1 of 5">1 / 5</span>
-    <button id="next-btn" class="nav-btn" aria-label="Go to next card">Next →</button>
+    <button id="back-btn" class="nav-btn" aria-label="Go to previous card" disabled>‹ Back</button>
+    <button id="next-btn" class="nav-btn" aria-label="Go to next card">Next ›</button>
   </div>
 
 </div><!-- /intro-wrap -->
@@ -486,7 +644,7 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
 (function () {
   'use strict';
 
-  // ── 1. Read URL invite code ──────────────────────
+  // ── 1. Read URL invite code ──
   var urlCode = null;
   try {
     var params = new URLSearchParams(window.location.search);
@@ -501,16 +659,13 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
     try { sessionStorage.setItem('cogs_intro_code', activeCode); } catch (e) {}
   }
 
-  // ── 2. Build destination URL ─────────────────────
+  // ── 2. Destination URL ──
   function destination() {
-    var code = activeCode;
-    if (code) {
-      return '../join/index.html?partner_code=' + encodeURIComponent(code);
-    }
+    if (activeCode) return '../join/index.html?partner_code=' + encodeURIComponent(activeCode);
     return '../index.html';
   }
 
-  // ── 3. Returning visitor — skip immediately ──────
+  // ── 3. Returning visitor — skip ──
   try {
     if (localStorage.getItem('cogs_intro_seen') === '1') {
       window.location.replace(destination());
@@ -518,9 +673,9 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
     }
   } catch (e) {}
 
-  // ── 4. State ─────────────────────────────────────
-  var TOTAL  = 5;
-  var current = 0;
+  // ── 4. State ──
+  var TOTAL    = 5;
+  var current  = 0;
   var animating = false;
 
   var cards    = document.querySelectorAll('.intro-card');
@@ -528,42 +683,52 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
   var backBtn  = document.getElementById('back-btn');
   var nextBtn  = document.getElementById('next-btn');
   var skipBtn  = document.getElementById('skip-btn');
-  var counter  = document.getElementById('step-counter');
+  var fill     = document.getElementById('progress-fill');
+  var stepLbl  = document.getElementById('step-label');
+  var swipeHint = document.getElementById('swipe-hint');
 
-  // ── 5. Render state ──────────────────────────────
+  var cardLabels = [
+    'What is COG$',
+    'Your Voice',
+    'What We Own',
+    'What Your $4 Means',
+    'Your Timing'
+  ];
+
+  // ── 5. Render ──
   function render(idx) {
-    // Update dots
+    // Progress bar
+    fill.style.width = ((idx + 1) / TOTAL * 100) + '%';
+
+    // Step label
+    stepLbl.textContent = (idx + 1) + ' of ' + TOTAL;
+
+    // Dots (aria)
     dots.forEach(function (d, i) {
       d.classList.remove('active', 'done');
-      if (i === idx)      d.classList.add('active');
-      else if (i < idx)   d.classList.add('done');
+      if (i === idx)    d.classList.add('active');
+      else if (i < idx) d.classList.add('done');
       d.setAttribute('aria-selected', i === idx ? 'true' : 'false');
       d.setAttribute('tabindex', i <= idx ? '0' : '-1');
-      d.setAttribute('aria-disabled', i < idx ? 'false' : 'true');
     });
 
-    // Update counter
-    counter.textContent = (idx + 1) + ' / ' + TOTAL;
-    counter.setAttribute('aria-label', 'Step ' + (idx + 1) + ' of ' + TOTAL);
+    // Back button
+    backBtn.disabled = (idx === 0);
 
-    // Update back button
-    if (idx === 0) {
-      backBtn.disabled = true;
-    } else {
-      backBtn.disabled = false;
-    }
+    // Hide swipe hint once user navigates
+    if (swipeHint && idx > 0) swipeHint.style.display = 'none';
 
-    // Update next button label
+    // Next button label
     if (idx === TOTAL - 1) {
-      nextBtn.textContent = "Let's go →";
-      nextBtn.setAttribute('aria-label', "Complete and proceed");
+      nextBtn.innerHTML = "I'm ready to join ›";
+      nextBtn.setAttribute('aria-label', 'Complete and proceed to join');
     } else {
-      nextBtn.textContent = 'Next →';
+      nextBtn.innerHTML = 'Next ›';
       nextBtn.setAttribute('aria-label', 'Go to next card');
     }
   }
 
-  // ── 6. Navigate ──────────────────────────────────
+  // ── 6. Navigate ──
   function goTo(next, direction) {
     if (animating || next < 0 || next >= TOTAL) return;
     animating = true;
@@ -574,113 +739,82 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
     var leaving  = cards[prev];
     var entering = cards[next];
 
-    leaving.scrollTop = 0;
+    leaving.scrollTop  = 0;
     entering.scrollTop = 0;
 
-    // Remove active from leaving, add exit class
     leaving.classList.remove('active');
     leaving.classList.add(direction === 'forward' ? 'exit-left' : 'exit-right');
-    entering.style.transform = direction === 'forward' ? 'translateX(100%)' : 'translateX(-100%)';
-    entering.style.opacity   = '0';
+
+    entering.style.transform  = direction === 'forward' ? 'translateX(100%)' : 'translateX(-60%)';
+    entering.style.opacity    = '0';
     entering.style.transition = 'none';
     entering.classList.remove('exit-left', 'exit-right');
 
-    // Force reflow
-    entering.getBoundingClientRect();
+    entering.getBoundingClientRect(); // force reflow
 
-    // Animate in
     entering.style.transition = '';
     entering.classList.add('active');
-    entering.style.transform = '';
-    entering.style.opacity   = '';
+    entering.style.transform  = '';
+    entering.style.opacity    = '';
 
     render(current);
 
-    var DURATION = 320;
     setTimeout(function () {
       leaving.classList.remove('exit-left', 'exit-right');
       leaving.style.transform = '';
       leaving.style.opacity   = '';
       animating = false;
-    }, DURATION);
+    }, 380);
   }
 
-  // ── 7. Complete — set cookie and redirect ────────
+  // ── 7. Complete ──
   function complete() {
     try { localStorage.setItem('cogs_intro_seen', '1'); } catch (e) {}
     window.location.href = destination();
   }
 
-  // ── 8. Skip ──────────────────────────────────────
+  // ── 8. Skip ──
   function skip() {
     try { localStorage.setItem('cogs_intro_seen', '1'); } catch (e) {}
     window.location.href = destination();
   }
 
-  // ── 9. Event listeners ───────────────────────────
+  // ── 9. Listeners ──
   nextBtn.addEventListener('click', function () {
-    if (current === TOTAL - 1) {
-      complete();
-    } else {
-      goTo(current + 1, 'forward');
-    }
+    if (current === TOTAL - 1) complete();
+    else goTo(current + 1, 'forward');
   });
-
   backBtn.addEventListener('click', function () {
     goTo(current - 1, 'back');
   });
-
   skipBtn.addEventListener('click', skip);
 
-  // Dot navigation (completed dots only)
-  dots.forEach(function (dot, i) {
-    dot.addEventListener('click', function () {
-      if (i < current) goTo(i, 'back');
-    });
-    dot.addEventListener('keydown', function (e) {
-      if ((e.key === 'Enter' || e.key === ' ') && i < current) {
-        e.preventDefault();
-        goTo(i, 'back');
-      }
-    });
-  });
-
-  // Keyboard: left/right arrows
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      if (current === TOTAL - 1) complete();
-      else goTo(current + 1, 'forward');
+      if (current === TOTAL - 1) complete(); else goTo(current + 1, 'forward');
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       goTo(current - 1, 'back');
     }
   });
 
-  // Touch / swipe support
-  var touchStartX = null;
-  var touchStartY = null;
-
+  // Touch / swipe
+  var touchStartX = null, touchStartY = null;
   document.addEventListener('touchstart', function (e) {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
   }, { passive: true });
-
   document.addEventListener('touchend', function (e) {
     if (touchStartX === null) return;
     var dx = e.changedTouches[0].clientX - touchStartX;
     var dy = e.changedTouches[0].clientY - touchStartY;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 48) {
-      if (dx < 0) {
-        if (current === TOTAL - 1) complete();
-        else goTo(current + 1, 'forward');
-      } else {
-        goTo(current - 1, 'back');
-      }
+      if (dx < 0) { if (current === TOTAL - 1) complete(); else goTo(current + 1, 'forward'); }
+      else goTo(current - 1, 'back');
     }
-    touchStartX = null;
-    touchStartY = null;
+    touchStartX = null; touchStartY = null;
   }, { passive: true });
 
-  // ── 10. Initial render ───────────────────────────
+  // ── 10. Initial render ──
   render(0);
   if (cards[0]) cards[0].scrollTop = 0;
 
