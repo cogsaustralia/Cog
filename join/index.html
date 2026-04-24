@@ -480,12 +480,12 @@
             <div class="step-hd">
               <div class="step-num-badge">2</div>
               <div>
-                <h2>Confirm &amp; submit</h2>
-                <p>Check your details, read the membership notice below, and confirm your registration.</p>
+                <h2>Almost done — check your details</h2>
+                <p>Everything looks right? Tick the box at the bottom and submit.</p>
               </div>
             </div>
 
-            <!-- Confirm summary — populated by JS -->
+            <!-- Confirm summary — populated by JS — LEADS THE PAGE -->
             <div class="confirm-summary" id="confirm-summary">
               <div class="confirm-row">
                 <div class="confirm-ico">◈</div>
@@ -503,7 +503,7 @@
                   <span id="cs-invite-name" style="display:block;font-size:.88rem;color:var(--text2)">—</span>
                 </div>
               </div>
-              <!-- Address row — always visible -->
+              <!-- Address row -->
               <div class="confirm-row">
                 <div class="confirm-ico">📍</div>
                 <div>
@@ -515,20 +515,46 @@
                 <div class="confirm-ico">$</div>
                 <div>
                   <strong>Amount due today</strong>
-                  <span id="cs-cost">$4.00 — CJVM Joint Venture Membership Contribution — COG$ Member Token Reservation</span>
+                  <span>$4.00 — paid via Stripe inside your vault after registration</span>
                 </div>
               </div>
               <div class="confirm-row" style="border-bottom:none">
                 <div class="confirm-ico">⬡</div>
                 <div>
-                  <strong>After you submit</strong>
-                  <span>You'll go straight to the Member area, then set up your vault password and 2FA. Payment via Stripe will be available inside your vault.</span>
+                  <strong>What happens next</strong>
+                  <span>You go straight to your Member area. Set up your vault password, then complete your $4 payment via Stripe from inside the vault.</span>
                 </div>
               </div>
             </div>
 
-            <!-- Inline legal notice -->
-            <div class="legal-note">
+            <!-- Acceptance checkbox — IMMEDIATELY AFTER SUMMARY -->
+            <div class="terms-box" style="margin-top:18px">
+              <div class="terms-prompt">Tick to confirm and submit</div>
+              <div class="accept-cb-wrap">
+                <input class="accept-cb-input" type="checkbox" id="terms-cb" name="terms_accepted" required onchange="checkSubmit()">
+                <label class="accept-cb-label" for="terms-cb">
+                  <span class="accept-cb-box">
+                    <span class="accept-cb-check">✓</span>
+                  </span>
+                  <span class="accept-cb-copy">
+                    <span class="accept-cb-title">I have read and accept the <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2);text-decoration:underline">Joint Venture Membership Agreement</a>.</span>
+                    <span class="accept-cb-text">I understand I am becoming a Member in a community joint venture, not an investor in a managed fund.</span>
+                  </span>
+                </label>
+              </div>
+              <div class="accept-cb-note" id="submit-nudge" style="margin-top:10px;font-size:.84rem;color:var(--muted)">Tick the box above to enable the Submit button. <a href="../terms/index.html" style="color:var(--gold-2)">Terms</a> · <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)" id="jvpa-download-link">Download JVPA (PDF)</a></div>
+            </div>
+
+            <div class="step-nav" style="margin-top:16px">
+              <button type="button" class="btn-secondary" onclick="goStep(1)">‹ Back</button>
+              <button class="btn-primary" type="submit" id="submit-btn" disabled style="opacity:.45;cursor:not-allowed;margin-left:auto">
+                Register as a Member ›
+              </button>
+            </div>
+            <div class="form-status" id="formStatus"></div>
+
+            <!-- Legal notice — available for reading below the action -->
+            <div class="legal-note" style="margin-top:24px">
               <strong>Membership notice</strong>
               <p>Your $4 membership contribution establishes your Member record, your Foundation S-NFT blockchain reservation record, and your Independence Vault. <strong style="font-size:inherit;letter-spacing:normal;text-transform:none;color:var(--text2)">It is not a payment for a financial product.</strong></p>
               <p>The CJVM Hybrid Trust operates as a community joint venture. The Foundation's self-assessed position is that the CJVM does not constitute a managed investment scheme under section 9 of the Corporations Act 2001 (Cth), because Members exercise day-to-day control over the trust's operations through their proprietary governance system. If applicable law later requires a specific authorisation or disclosure for a particular activity, the Trustee will obtain or provide what is required.</p>
@@ -593,38 +619,6 @@
               <p style="color:var(--muted);font-size:.78rem;margin-top:14px">Governed by the laws of South Australia, Australia. &nbsp;<a href="../privacy/index.html" style="color:var(--gold-2)">Privacy policy</a> · <a href="../terms/index.html" style="color:var(--gold-2)">Terms</a>.</p>
             </div>
 
-            <!-- Invite gate — shown when code is missing or invalid -->
-            <div class="invite-block" id="invite-block">
-              <p><strong>A valid Member invitation code is required to join the membership.</strong></p>
-              <p>Please return to the Member who introduced you and use their invitation link, or <a href="mailto:hello@cogsaustralia.org?subject=Partner%20Invitation%20Request" style="color:var(--gold-2)">contact administration</a> for further information.</p>
-              <p style="font-size:.82rem;color:var(--muted)">Administration-approved entries may proceed without a Member code where a manual invitation exception has been recorded.</p>
-            </div>
-
-            <!-- Acceptance checkbox -->
-            <div class="terms-box">
-              <div class="terms-prompt">Tick to confirm before submitting</div>
-              <div class="accept-cb-wrap">
-                <input class="accept-cb-input" type="checkbox" id="terms-cb" name="terms_accepted" required onchange="checkSubmit()">
-                <label class="accept-cb-label" for="terms-cb">
-                  <span class="accept-cb-box">
-                    <span class="accept-cb-check">✓</span>
-                  </span>
-                  <span class="accept-cb-copy">
-                    <span class="accept-cb-title">I have read and accept the <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2);text-decoration:underline">Joint Venture Membership Agreement Version 1.0</a>.</span>
-                    <span class="accept-cb-text">I understand that I am becoming a Member in a community joint venture, not an investor in a managed fund. I understand that Members exercise day-to-day control over the trust's operations through the Members' proprietary governance system, and that the Trustee's role is limited to legal custody, compliance, and fiat processing.</span>
-                  </span>
-                </label>
-              </div>
-              <div class="accept-cb-note">Tick the box above to enable the Submit button. By confirming, you accept the Joint Venture Membership Agreement and the entrenched founding principles of the CJVM Hybrid Trust. <a href="../terms/index.html" style="color:var(--gold-2)">Terms of participation</a> · <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)" id="jvpa-download-link">Download JVPA (PDF)</a></div>
-            </div>
-
-            <div class="step-nav">
-              <button type="button" class="btn-secondary" onclick="goStep(1)">← Back</button>
-              <button class="btn-primary" type="submit" id="submit-btn" disabled style="opacity:.45;cursor:not-allowed;margin-left:auto">
-                Register as a Member →
-              </button>
-            </div>
-            <div class="form-status" id="formStatus"></div>
           </div>
 
         </form>
@@ -957,25 +951,10 @@ function populateConfirm() {
   if (_inviteValid && inviteRow && inviteName) {
     inviteRow.style.display = ''; inviteName.textContent = _inviterName;
   } else if (inviteRow) { inviteRow.style.display = 'none'; }
-  updateInviteBlock();
 }
 
-/* ── Invite block gate ── */
-function updateInviteBlock() {
-  var block = document.getElementById('invite-block');
-  var btn   = document.getElementById('submit-btn');
-  if (!block || !btn) return;
-  if (_inviteValid) {
-    block.classList.remove('active');
-  } else {
-    block.classList.add('active');
-    btn.disabled = true;
-    btn.style.opacity = '.45';
-    btn.style.cursor  = 'not-allowed';
-  }
-}
 
-/* ── Terms checkbox enables submit (only if invite also valid) ── */
+/* ── Terms checkbox enables submit ── */
 function checkSubmit() {
   var cb  = document.getElementById('terms-cb');
   var btn = document.getElementById('submit-btn');
@@ -983,7 +962,10 @@ function checkSubmit() {
   btn.disabled      = !canSubmit;
   btn.style.opacity = canSubmit ? '1' : '.45';
   btn.style.cursor  = canSubmit ? 'pointer' : 'not-allowed';
-  updateInviteBlock();
+  var nudge = document.getElementById('submit-nudge');
+  if (nudge) {
+    nudge.style.display = canSubmit ? 'none' : '';
+  }
 }
 
 /* ── Form submit ── */
@@ -995,8 +977,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
   /* Hard gate — must have valid invite or admin override */
   var inviteStatus = document.getElementById('invite_validation_status').value;
   if (inviteStatus !== 'valid' && inviteStatus !== 'override_approved') {
-    updateInviteBlock();
-    document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
+      document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
 
