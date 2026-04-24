@@ -1278,7 +1278,7 @@ var _INFO = {
   },
   'hub-roster-vis': {
     title: 'Roster visibility',
-    body: '<p>Controls whether your name appears in this hub's member list. Hiding yourself is a global setting — it applies to all hubs you belong to.</p>'
+    body: "<p>Controls whether your name appears in this hub's member list. Hiding yourself is a global setting — it applies to all hubs you belong to.</p>"
   },
   'hub-show-name': {
     title: 'Show your name',
@@ -1295,7 +1295,7 @@ var _INFO = {
   // Phase
   'phase-draft': {
     title: 'Phase: Draft',
-    body: '<p>The coordinator is still preparing the proposal. It's visible to participants but not open for community input yet.</p><p>Only the coordinator can advance to the next phase.</p>'
+    body: "<p>The coordinator is still preparing the proposal. It's visible to participants but not open for community input yet.</p><p>Only the coordinator can advance to the next phase.</p>"
   },
   'phase-open_for_input': {
     title: 'Phase: Open for Input',
@@ -1315,7 +1315,7 @@ var _INFO = {
   },
   'phase-advance': {
     title: 'Advance the phase',
-    body: '<p>Moves this project to the next governance phase. Only the project coordinator can do this. Each phase has a minimum period — the button's label shows the next phase name.</p><p><a href="../../guide/" target="_blank">See the full lifecycle guide ›</a></p>'
+    body: "<p>Moves this project to the next governance phase. Only the project coordinator can do this. Each phase has a minimum period — the button's label shows the next phase name.</p><p><a href='../../guide/' target='_blank'>See the full lifecycle guide ›</a></p>"
   },
   // Voting
   'vote-agree': {
@@ -1328,7 +1328,7 @@ var _INFO = {
   },
   'vote-block': {
     title: '⛔ Block',
-    body: '<p>I have a <strong>paramount objection</strong> based on the Foundation's purpose or governing principles. Requires written reasoning. <strong>A single block re-opens deliberation.</strong></p><p>This is not a personal veto — it must relate to the Foundation's purpose or rules.</p>'
+    body: "<p>I have a <strong>paramount objection</strong> based on the Foundation's purpose or governing principles. Requires written reasoning. <strong>A single block re-opens deliberation.</strong></p><p>This is not a personal veto — it must relate to the Foundation's purpose or rules.</p>"
   },
   'vote-abstain': {
     title: '○ Abstain',
@@ -1341,7 +1341,7 @@ var _INFO = {
   // Milestones
   'milestone-list': {
     title: 'Delivery Milestones',
-    body: '<p>Specific deliverables the coordinator has committed to. All members can see progress. Only the coordinator can add or toggle milestones.</p><p>Milestones feed the Foundation's quarterly evidence compilation under the JVPA Schedule.</p>'
+    body: "<p>Specific deliverables the coordinator has committed to. All members can see progress. Only the coordinator can add or toggle milestones.</p><p>Milestones feed the Foundation's quarterly evidence compilation under the JVPA Schedule.</p>"
   },
   'milestone-add': {
     title: 'Add a milestone',
@@ -1359,7 +1359,7 @@ var _INFO = {
   // AI
   'ai-assistant': {
     title: '⬡ Governance Assistant',
-    body: '<p>Answers governance questions about this hub — how the rules work, what phases mean, and how to interpret the Foundation's governing instruments.</p><p>Powered by Claude. Governance context only — it does not have access to your wallet or personal data.</p>'
+    body: "<p>Answers governance questions about this hub — how the rules work, what phases mean, and how to interpret the Foundation's governing instruments.</p><p>Powered by Claude. Governance context only — it does not have access to your wallet or personal data.</p>"
   },
   // Mainspring
   'mainspring': {
@@ -1426,8 +1426,8 @@ document.addEventListener('keydown', function(e){
 });
 
 function infoBtn(key){
-  return '<button class="hub-info-btn" aria-label="More information" aria-expanded="false" '
-    + 'onclick="showPopout(''+key+'',this)">ⓘ</button>';
+  return '<button class="hub-info-btn" aria-label="More information" aria-expanded="false"'
+    + ' data-info-key="'+key+'" onclick="showPopout(this.dataset.infoKey,this)">ⓘ</button>';
 }
 
 window.showPopout = showPopout;
