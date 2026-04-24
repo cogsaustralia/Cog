@@ -106,12 +106,17 @@ if ($isWitnessStep) {
 
 // ── POST: Trustee acceptance (Step A) ────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_step'] ?? '') === 'A') {
-    $accepted = !empty($_POST['acceptance_flag']);
-    if (!$accepted) {
+    $mobileEntered = trim($_POST['mobile_number'] ?? '');
+    $accepted      = !empty($_POST['acceptance_flag']);
+
+    if ($mobileEntered === '') {
+        $errors[] = 'Mobile number is required to verify your identity before execution.';
+    } elseif (!$accepted) {
         $errors[] = 'You must engage the acceptance flag to execute this Record.';
     } else {
         try {
-            $result = TrusteeDecisionService::recordExecution($db, $decisionUuid, $ipAddress, $userAgent, $rawToken);
+            $mobileData = TrusteeDecisionService::lookupMobile($db, $mobileEntered);
+            $result = TrusteeDecisionService::recordExecution($db, $decisionUuid, $ipAddress, $userAgent, $rawToken, $mobileData);
             // Issue witness token and store for page use
             $witnessRaw   = TrusteeDecisionService::generateExecutionToken($db, $decisionUuid, TrusteeDecisionService::TOKEN_PURPOSE_WITNESS);
             $witnessLink  = 'https://cogsaustralia.org/execute_tdr.php?token=' . urlencode($witnessRaw);
@@ -398,6 +403,23 @@ body { background: var(--bg); color: var(--text); font-family: system-ui, sans-s
     <div class="card-body">
       <form method="POST">
         <input type="hidden" name="_step" value="A">
+
+        <div style="margin-bottom:18px">
+          <label style="display:block;font-size:.78rem;color:var(--sub);margin-bottom:6px">
+            Mobile Number <span style="color:var(--err)">*</span>
+          </label>
+          <input type="tel" name="mobile_number" required
+                 value="<?= tdr_h($_POST['mobile_number'] ?? '') ?>"
+                 placeholder="04xx xxx xxx"
+                 autocomplete="tel"
+                 style="width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);
+                        border-radius:6px;color:var(--text);font-size:.9rem;padding:9px 12px">
+          <div style="font-size:.73rem;color:var(--dim);margin-top:5px">
+            Enter the mobile number associated with your member record.
+            This is used to verify your identity and is recorded in the cryptographic audit trail.
+          </div>
+        </div>
+
         <div class="accept-block">
           <label>
             <input type="checkbox" name="acceptance_flag" required>

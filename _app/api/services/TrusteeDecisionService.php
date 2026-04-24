@@ -317,7 +317,8 @@ class TrusteeDecisionService
         string $decisionUuid,
         string $ipAddress,
         string $userAgent,
-        string $rawToken
+        string $rawToken,
+        array  $mobile = []  // ['entered'=>'', 'normalised'=>'', 'member_id'=>null, 'member_number'=>null, 'member_name'=>null, 'match_status'=>'skipped']
     ): array {
         $decision = self::getDecision($db, $decisionUuid);
         if (!$decision) {
@@ -390,6 +391,11 @@ class TrusteeDecisionService
             'execution_timestamp_utc'  => $nowUtc,
             'ip_device_hash'           => $ipHash,
             'execution_method'         => self::EXECUTION_METHOD,
+            'mobile_match_status'      => $mobile['match_status'] ?? 'skipped',
+            'mobile_normalised'        => $mobile['normalised']   ?? null,
+            'member_id_matched'        => $mobile['member_id']    ?? null,
+            'member_number_matched'    => $mobile['member_number'] ?? null,
+            'member_name_matched'      => $mobile['member_name']  ?? null,
         ];
         $recHash = hash('sha256', json_encode($canonical, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
@@ -402,9 +408,13 @@ class TrusteeDecisionService
                     acceptance_flag_engaged, acknowledgement_text,
                     execution_timestamp_utc, execution_date,
                     ip_address, user_agent, ip_device_hash, ip_device_data,
+                    mobile_entered, mobile_normalised,
+                    member_id_matched, member_number_matched, member_name_matched, member_match_status,
                     record_sha256, status, created_at)
                  VALUES (?, ?, ?, ?,
                          1, ?,
+                         ?, ?,
+                         ?, ?, ?, ?,
                          ?, ?,
                          ?, ?, ?, ?,
                          ?, 'executor_complete', ?)"
@@ -413,6 +423,12 @@ class TrusteeDecisionService
                 $ackText,
                 $nowUtc, $execDate,
                 $ipAddress, $userAgent, $ipHash, $ipData,
+                $mobile['entered']        ?? null,
+                $mobile['normalised']     ?? null,
+                $mobile['member_id']      ?? null,
+                $mobile['member_number']  ?? null,
+                $mobile['member_name']    ?? null,
+                $mobile['match_status']   ?? 'skipped',
                 $recHash, $nowDb,
             ]);
 
@@ -662,6 +678,63 @@ class TrusteeDecisionService
         );
         $stmt->execute([$decisionUuid]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Normalise a mobile number to 04xxxxxxxx (10 digits, leading 0).
+     * Accepts: 04xx xxx xxx, +614xxxxxxxx, 614xxxxxxxx, 04xxxxxxxx.
+     * Returns normalised string or empty string if unrecognisable.
+     */
+    public static function normaliseMobile(string $raw): string
+    {
+        $digits = preg_replace('/\D/', '', $raw);
+        if ($digits === null) return '';
+        // +61 prefix → strip country code, prepend 0
+        if (strlen($digits) === 11 && str_starts_with($digits, '61')) {
+            $digits = '0' . substr($digits, 2);
+        }
+        // Must be 10 digits starting with 04
+        if (strlen($digits) === 10 && str_starts_with($digits, '04')) {
+            return $digits;
+        }
+        return '';
+    }
+
+    /**
+     * Look up a normalised mobile in members table.
+     * Returns array with match_status, member_id, member_number, member_name.
+     */
+    public static function lookupMobile(PDO $db, string $entered): array
+    {
+        $normalised = self::normaliseMobile($entered);
+        $result = [
+            'entered'       => $entered,
+            'normalised'    => $normalised,
+            'match_status'  => 'not_found',
+            'member_id'     => null,
+            'member_number' => null,
+            'member_name'   => null,
+        ];
+        if ($normalised === '') {
+            return $result;
+        }
+        try {
+            $stmt = $db->prepare(
+                "SELECT id, member_number, full_name FROM members
+                 WHERE mobile = ? AND is_active = 1 LIMIT 1"
+            );
+            $stmt->execute([$normalised]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $result['match_status']  = 'matched';
+                $result['member_id']     = (int)$row['id'];
+                $result['member_number'] = (string)$row['member_number'];
+                $result['member_name']   = (string)$row['full_name'];
+            }
+        } catch (\Throwable $e) {
+            // DB error — treat as not_found, don't block execution
+        }
+        return $result;
     }
 
     private static function uuid4(): string

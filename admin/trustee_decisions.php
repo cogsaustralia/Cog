@@ -4,6 +4,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/admin_paths.php';
 require_once __DIR__ . '/includes/ops_workflow.php';
 require_once __DIR__ . '/includes/admin_sidebar.php';
+require_once __DIR__ . '/../_app/api/config/bootstrap.php';
+require_once __DIR__ . '/../_app/api/integrations/mailer.php';
 require_once __DIR__ . '/../_app/api/services/TrusteeDecisionService.php';
 
 ops_require_admin();
@@ -141,7 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'issu
             . "Your one-time execution link (valid 15 minutes):\n{$link}\n\n"
             . "This link is single-use. Do not forward it.";
 
-        require_once __DIR__ . '/../_app/api/integrations/mailer.php';
         if (mailerEnabled()) {
             smtpSendEmail($email, $subj, $htmlBody, $textBody);
             $redirectMsg = 'Execution token issued and emailed to ' . $email;
