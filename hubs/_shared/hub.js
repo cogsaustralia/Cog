@@ -1267,104 +1267,97 @@ window.aiKeydown        = aiKeydown;
 /* ── Info popout system ─────────────────────────────────────────────────────── */
 // All popout definitions. key → {title, body (HTML string)}
 var _INFO = {
-  // Hub-level
   'hub-enrol': {
     title: 'Activate Participation',
-    body: '<p>Joining a hub gives you write access — you can create projects, post in the forum, vote, and raise queries.</p><p>You remain in read-only mode until you activate.</p>'
+    body: `<p>Joining a hub gives you write access — you can create projects, post in the forum, vote, and raise queries.</p><p>You remain in read-only mode until you activate.</p>`
   },
   'hub-leave': {
     title: 'Leave this hub',
-    body: '<p>Leaving removes your write access. You can re-join at any time. Your past contributions remain in the record.</p>'
+    body: `<p>Leaving removes your write access. You can re-join at any time. Your past contributions remain in the record.</p>`
   },
   'hub-roster-vis': {
     title: 'Roster visibility',
-    body: "<p>Controls whether your name appears in this hub's member list. Hiding yourself is a global setting — it applies to all hubs you belong to.</p>"
+    body: `<p>Controls whether your name appears in this hub's member list. Hiding yourself is a global setting — it applies to all hubs you belong to.</p>`
   },
   'hub-show-name': {
     title: 'Show your name',
-    body: '<p>When you opt in, your first name is shown next to your membership number on the roster. When opted out, you appear as Anonymous.</p>'
+    body: `<p>When you opt in, your first name is shown next to your membership number on the roster. When opted out, you appear as Anonymous.</p>`
   },
   'hub-status-live': {
     title: 'Hub status: Live',
-    body: '<p>This hub is fully active. You can read, comment, create projects, and vote.</p>'
+    body: `<p>This hub is fully active. You can read, comment, create projects, and vote.</p>`
   },
   'hub-status-soon': {
     title: 'Hub status: Expansion Day',
-    body: '<p>This hub activates at Expansion Day. You can read content now but write actions are not yet available.</p>'
+    body: `<p>This hub activates at Expansion Day. You can read content now but write actions are not yet available.</p>`
   },
-  // Phase
   'phase-draft': {
     title: 'Phase: Draft',
-    body: "<p>The coordinator is still preparing the proposal. It's visible to participants but not open for community input yet.</p><p>Only the coordinator can advance to the next phase.</p>"
+    body: `<p>The coordinator is still preparing the proposal. It's visible to participants but not open for community input yet.</p><p>Only the coordinator can advance to the next phase.</p>`
   },
   'phase-open_for_input': {
     title: 'Phase: Open for Input',
-    body: '<p>The proposal is open for at least <strong>7 days</strong>. Read, comment, and join the project. This is where you ask questions and propose refinements.</p>'
+    body: `<p>The proposal is open for at least <strong>7 days</strong>. Read, comment, and join the project. This is where you ask questions and propose refinements.</p>`
   },
   'phase-deliberation': {
     title: 'Phase: Deliberation',
-    body: '<p>At least <strong>7 days</strong> of structured debate on the refined proposal. Weigh arguments and prepare your position before voting opens.</p>'
+    body: `<p>At least <strong>7 days</strong> of structured debate on the refined proposal. Weigh arguments and prepare your position before voting opens.</p>`
   },
   'phase-vote': {
     title: 'Phase: Vote Open',
-    body: '<p>Cast your consent vote — agree, disagree, block, or abstain. Minimum <strong>7 days</strong> (48 hours in certified urgency). A single block re-opens deliberation.</p>'
+    body: `<p>Cast your consent vote — agree, disagree, block, or abstain. Minimum <strong>7 days</strong> (48 hours in certified urgency). A single block re-opens deliberation.</p>`
   },
   'phase-accountability': {
     title: 'Phase: Accountability',
-    body: '<p>The proposal is adopted. The coordinator tracks delivery via milestones. All members can see progress and comment on execution.</p>'
+    body: `<p>The proposal is adopted. The coordinator tracks delivery via milestones. All members can see progress and comment on execution.</p>`
   },
   'phase-advance': {
     title: 'Advance the phase',
-    body: "<p>Moves this project to the next governance phase. Only the project coordinator can do this. Each phase has a minimum period — the button's label shows the next phase name.</p><p><a href='../../guide/' target='_blank'>See the full lifecycle guide ›</a></p>"
+    body: `<p>Moves this project to the next governance phase. Only the project coordinator can do this. Each phase has a minimum period — the button's label shows the next phase name.</p><p><a href="../../guide/" target="_blank">See the full lifecycle guide ›</a></p>`
   },
-  // Voting
   'vote-agree': {
     title: '✔ Agree',
-    body: '<p>I support this proposal and consent to its adoption. The outcome can proceed.</p>'
+    body: `<p>I support this proposal and consent to its adoption. The outcome can proceed.</p>`
   },
   'vote-disagree': {
     title: '✗ Disagree',
-    body: '<p>I do not support this proposal but accept the outcome if the majority agrees. Your disagreement is recorded but does not block adoption.</p>'
+    body: `<p>I do not support this proposal but accept the outcome if the majority agrees. Your disagreement is recorded but does not block adoption.</p>`
   },
   'vote-block': {
     title: '⛔ Block',
-    body: "<p>I have a <strong>paramount objection</strong> based on the Foundation's purpose or governing principles. Requires written reasoning. <strong>A single block re-opens deliberation.</strong></p><p>This is not a personal veto — it must relate to the Foundation's purpose or rules.</p>"
+    body: `<p>I have a <strong>paramount objection</strong> based on the Foundation's purpose or governing principles. Requires written reasoning. <strong>A single block re-opens deliberation.</strong></p><p>This is not a personal veto — it must relate to the Foundation's purpose or rules.</p>`
   },
   'vote-abstain': {
     title: '○ Abstain',
-    body: '<p>I am not expressing a position. I acknowledge the vote is proceeding and accept the outcome.</p>'
+    body: `<p>I am not expressing a position. I acknowledge the vote is proceeding and accept the outcome.</p>`
   },
   'vote-tally': {
     title: 'Live vote tally',
-    body: '<p>Updates immediately when any enrolled member votes. You may change your position at any time while the Vote phase is open.</p>'
+    body: `<p>Updates immediately when any enrolled member votes. You may change your position at any time while the Vote phase is open.</p>`
   },
-  // Milestones
   'milestone-list': {
     title: 'Delivery Milestones',
-    body: "<p>Specific deliverables the coordinator has committed to. All members can see progress. Only the coordinator can add or toggle milestones.</p><p>Milestones feed the Foundation's quarterly evidence compilation under the JVPA Schedule.</p>"
+    body: `<p>Specific deliverables the coordinator has committed to. All members can see progress. Only the coordinator can add or toggle milestones.</p><p>Milestones feed the Foundation's quarterly evidence compilation under the JVPA Schedule.</p>`
   },
   'milestone-add': {
     title: 'Add a milestone',
-    body: '<p>Describe a specific deliverable and set a target date. Members will see whether it has been completed.</p><p>Only available to the project coordinator in the Accountability phase.</p>'
+    body: `<p>Describe a specific deliverable and set a target date. Members will see whether it has been completed.</p><p>Only available to the project coordinator in the Accountability phase.</p>`
   },
-  // Queries
   'query-transparency': {
     title: 'Transparency level',
-    body: '<p><strong>🔒 Private</strong> — only you and admins see this.<br><strong>👥 Hub Members</strong> — enrolled members in this hub see the resolution summary.<br><strong>📢 Public Record</strong> — the reply is broadcast to the entire hub.</p><p>Choose based on whether others would benefit from the answer.</p>'
+    body: `<p><strong>🔒 Private</strong> — only you and admins see this.<br><strong>👥 Hub Members</strong> — enrolled members in this hub see the resolution summary.<br><strong>📢 Public Record</strong> — the reply is broadcast to the entire hub.</p><p>Choose based on whether others would benefit from the answer.</p>`
   },
   'query-resolved': {
     title: 'Resolved this month',
-    body: '<p>Questions raised by members that have been answered in the past 30 days. Only queries where the member chose Hub Members or Public Record transparency are shown here.</p><p>Private queries are never surfaced.</p>'
+    body: `<p>Questions raised by members that have been answered in the past 30 days. Only queries where the member chose Hub Members or Public Record transparency are shown here.</p><p>Private queries are never surfaced.</p>`
   },
-  // AI
   'ai-assistant': {
     title: '⬡ Governance Assistant',
-    body: "<p>Answers governance questions about this hub — how the rules work, what phases mean, and how to interpret the Foundation's governing instruments.</p><p>Powered by Claude. Governance context only — it does not have access to your wallet or personal data.</p>"
+    body: `<p>Answers governance questions about this hub — how the rules work, what phases mean, and how to interpret the Foundation's governing instruments.</p><p>Powered by Claude. Governance context only — it does not have access to your wallet or personal data.</p>`
   },
-  // Mainspring
   'mainspring': {
     title: '⬡ Mainspring',
-    body: '<p>An at-a-glance overview across all nine Management Hubs — project counts by phase, recent activity, and quick links to each hub area.</p>'
+    body: `<p>An at-a-glance overview across all nine Management Hubs — project counts by phase, recent activity, and quick links to each hub area.</p>`
   },
 };
 
