@@ -4086,11 +4086,9 @@ window.updateNextStep = function(payDue, jvpaDue) {
   if (!strip) return;
 
   if (jvpaDue) {
-    icon.textContent   = '✍';
-    label.textContent  = 'Sign the Joint Venture Agreement';
-    action.textContent = 'Your formal acceptance activates governance rights and confirms your entry into the partnership.';
-    btn.textContent    = 'Sign now →';
-    btn.onclick        = function(){ openJvpaModal(); };
+    // JVPA banner already visible and prominent — hide next-step strip to avoid duplication
+    strip.style.display = 'none';
+    return;
   } else if (payDue) {
     icon.textContent   = '💳';
     label.textContent  = 'Complete your joining payment';
