@@ -95,6 +95,58 @@ if ($action === 'partner-op-reply') {
 if ($action === 'partner-op-read') {
     handlePartnerOpRead();
 }
+if ($action === 'notify-bank-payment') {
+    notifyBankPayment();
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   POST vault/notify-bank-payment
+   Member signals they have sent a bank transfer or PayID payment.
+   Appends a timestamped note to all pending adjustment payments for
+   this member. Record stays pending — admin confirms receipt.
+   Returns: { notified: N }  (number of records updated)
+════════════════════════════════════════════════════════════════ */
+function notifyBankPayment(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+
+    $mStmt = $db->prepare('SELECT id FROM snft_memberships WHERE id = ? LIMIT 1');
+    $mStmt->execute([(int)$principal['principal_id']]);
+    if (!$mStmt->fetch()) apiError('Member not found.', 404);
+
+    $memberId = (int)$principal['principal_id'];
+    $ts       = gmdate('Y-m-d H:i') . ' UTC';
+
+    // Find all pending adjustment payments (donation + PIF) for this member
+    $rows = $db->prepare(
+        "SELECT id, notes FROM payments
+          WHERE member_id = ?
+            AND payment_type = 'adjustment'
+            AND payment_status = 'pending'
+            AND received_at IS NULL
+          ORDER BY id ASC"
+    );
+    $rows->execute([$memberId]);
+    $pending = $rows->fetchAll();
+
+    $updated = 0;
+    foreach ($pending as $row) {
+        $note = trim((string)($row['notes'] ?? ''));
+        // Avoid duplicate notifications
+        if (strpos($note, '[Member: payment sent') !== false) continue;
+        $newNote = $note . ' [Member: payment sent ' . $ts . ']';
+        $db->prepare(
+            "UPDATE payments SET notes = ?, updated_at = UTC_TIMESTAMP()
+              WHERE id = ? AND payment_status = 'pending'"
+        )->execute([trim($newNote), (int)$row['id']]);
+        $updated++;
+    }
+
+    // If nothing was pending (primary $4 only), still succeed — UI handles it
+    apiSuccess(['notified' => $updated]);
+}
 
 // Management Hubs (v1) — one route module, ten+ endpoints.
 // Include here so $action is in scope and hub handlers fire before the 404.

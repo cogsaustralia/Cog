@@ -357,6 +357,10 @@ img{max-width:100%;height:auto}
 .copy-btn{background:none;border:1px solid var(--border);color:var(--text3);border-radius:5px;padding:1px 8px;font-size:.7rem;cursor:pointer;font-family:var(--sans);flex-shrink:0;transition:all .15s}
 .copy-btn:hover{border-color:var(--gold-bdr);color:var(--gold)}
 .copy-btn.copied{border-color:var(--green-bdr);color:var(--green)}
+.pay-notify-btn{width:100%;margin-top:10px;padding:10px;border-radius:8px;border:1px solid rgba(62,207,110,.3);background:rgba(62,207,110,.06);color:var(--green);font-family:var(--sans);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
+.pay-notify-btn:hover{background:rgba(62,207,110,.12);border-color:rgba(62,207,110,.5)}
+.pay-notify-btn.sent{border-color:rgba(62,207,110,.5);background:rgba(62,207,110,.12);color:var(--green);cursor:default}
+.pay-notify-btn:disabled{opacity:.6;cursor:not-allowed}
 .pay-acc{margin-bottom:7px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
 .pay-acc-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:rgba(255,255,255,.02);transition:background .15s}
 .pay-acc-hd:hover{background:rgba(255,255,255,.04);border-color:rgba(232,184,75,.3);box-shadow:0 0 0 2px rgba(232,184,75,.1)}
@@ -1500,6 +1504,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val">$4.00</span></div>
         </div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Your payment goes directly from your bank to the trust account at Macquarie Bank. No third party sees your transaction. Same-day clearance via OSKO.</p>
+        <button class="pay-notify-btn" id="pm-bsb-notify-btn" onclick="notifyPaymentSent(this,'primary')">I've sent this payment →</button>
       </div>
     </div>
 
@@ -1517,6 +1522,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val">$4.00</span></div>
         </div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Open your banking app, choose PayID, and enter the number above. Arrives instantly, no fees.</p>
+        <button class="pay-notify-btn" id="pm-payid-notify-btn" onclick="notifyPaymentSent(this,'primary')">I've sent this payment →</button>
       </div>
     </div>
 
@@ -1565,6 +1571,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div class="bank-detail-row"><span class="bank-key">Amount</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-total">—</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-total',this)">copy</button></div></div>
         </div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Payment goes directly to the trust account at Macquarie Bank. Same-day clearance via OSKO.</p>
+        <button class="pay-notify-btn" id="om-bsb-notify-btn" onclick="notifyPaymentSent(this,'outstanding')">I've sent this payment →</button>
       </div>
     </div>
 
@@ -1582,6 +1589,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div class="bank-detail-row"><span class="bank-key">Amount</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-payid-total">—</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-payid-total',this)">copy</button></div></div>
         </div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Open your banking app, choose PayID, enter the number above. Arrives instantly, no fees.</p>
+        <button class="pay-notify-btn" id="om-payid-notify-btn" onclick="notifyPaymentSent(this,'outstanding')">I've sent this payment →</button>
       </div>
     </div>
 
@@ -5681,7 +5689,14 @@ async function cancelOutstandingOrder() {
     closeOutstandingModal();
     // In-place refresh — no page reload, session stays intact
     var fresh = await window.api('vault/member');
-    if (typeof openVault === 'function') openVault(fresh);
+    // Update cached vault data first
+    window._vaultData = fresh;
+    // Clear the deferred flag — context has changed after cancel
+    try { sessionStorage.removeItem('cogs_pay_deferred'); } catch(e) {}
+    // Hide outstanding card and clear cached op immediately
+    if (typeof window.updateOutstandingUI === 'function') window.updateOutstandingUI(fresh);
+    // Re-render all tabs with fresh data
+    if (typeof window.openVault === 'function') window.openVault(fresh);
   } catch(e) {
     alert((e && e.message) || 'Could not cancel the order. Please try again.');
     if (btn) { btn.disabled = false; btn.textContent = 'Cancel order'; }
@@ -5708,6 +5723,39 @@ function copyVal(text, btn) {
 function copyElVal(elId, btn) {
   var el = document.getElementById(elId);
   if (el) copyVal(el.textContent.trim(), btn);
+}
+
+async function notifyPaymentSent(btn, context) {
+  btn.disabled = true;
+  btn.textContent = 'Notifying…';
+  // Sync both notify buttons in the same modal so double-clicks don't confuse
+  var sibId = btn.id.includes('bsb') ? btn.id.replace('bsb','payid') : btn.id.replace('payid','bsb');
+  var sib = document.getElementById(sibId);
+  if (sib) { sib.disabled = true; }
+  try {
+    // Only call API for outstanding (secondary) payments — those have DB records
+    if (context === 'outstanding') {
+      await window.api('vault/notify-bank-payment', { method: 'POST', body: JSON.stringify({}) });
+    }
+    // Success state
+    var sentMsg = '✓ Noted — we’ll confirm on receipt and update your vault';
+    btn.textContent = sentMsg;
+    btn.classList.add('sent');
+    if (sib) { sib.textContent = sentMsg; sib.classList.add('sent'); }
+    // Close modal after short pause
+    setTimeout(function() {
+      if (context === 'outstanding') closeOutstandingModal();
+      else {
+        var pm = document.getElementById('pay-modal');
+        if (pm) pm.classList.remove('open');
+      }
+    }, 2200);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'I’ve sent this payment →';
+    if (sib) { sib.disabled = false; }
+    alert((e && e.message) || 'Could not record notification. Please try again.');
+  }
 }
 </script>
 </body>
