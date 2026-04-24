@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../_shared/hub.css?v=4">
+<link rel="stylesheet" href="../_shared/hub.css?v=5">
 </head>
 <body data-root="../../">
 
@@ -41,6 +41,7 @@ window.HUB_TIP      = 'Monitor Trustee activity, raise issues, and ensure the Jo
   <div class="hub-topbar-right">
     <span id="hub-status-pill" class="hub-status-pill live">Live</span>
     <a class="hub-mainspring-link" href="../mainspring/" onclick="coinTransition('../mainspring/','Opening Mainspring');return false;">⬡ Mainspring</a>
+    <button class="hub-mainspring-link" id="ai-panel-btn" onclick="toggleAIPanel()" style="border:none;cursor:pointer">⬡ AI Assistant</button>
   </div>
 </header>
 
@@ -109,10 +110,35 @@ window.HUB_TIP      = 'Monitor Trustee activity, raise issues, and ensure the Jo
   </div><!-- /#hub-main-content -->
 
   <!-- Project detail (hidden until openProject) -->
-  <div id="hub-project-detail" style="display:none"></div>
+
+  <!-- Query section -->
+  <div class="hub-section" id="hub-query-section">
+    <div class="hub-section-hd">
+      <span class="hub-section-title">Raise a Query</span>
+      <button class="hub-section-action" onclick="showQueryForm()">+ New Query</button>
+    </div>
+    <div class="flash" id="hub-query-flash" style="margin-bottom:10px"></div>
+    <div id="hub-my-queries"><div class="hub-loading" style="font-size:.82rem">Loading your queries…</div></div>
+    <div id="hub-query-form-wrap"></div>
+  </div>
+
+  <!-- AI assistant panel -->
+  <div id="ai-assistant-panel" style="display:none;flex-direction:column;border:1px solid var(--gold-bdr);border-radius:var(--r);overflow:hidden;margin-bottom:28px">
+    <div style="background:linear-gradient(135deg,rgba(232,184,75,.1),rgba(232,184,75,.04));padding:12px 16px;border-bottom:1px solid var(--gold-bdr);display:flex;align-items:center;justify-content:space-between">
+      <span style="font-weight:700;color:var(--gold);font-size:.95rem">⬡ Governance Assistant</span>
+      <span style="font-size:.75rem;color:var(--text3)">Powered by Claude — governance context only</span>
+    </div>
+    <div id="ai-msgs" style="padding:16px;min-height:160px;max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:0"></div>
+    <div style="border-top:1px solid var(--border);padding:12px 14px;display:flex;gap:8px">
+      <textarea id="ai-input" class="hub-textarea" rows="2" placeholder="Ask a governance question about this hub…" onkeydown="aiKeydown(event)" style="min-height:44px;margin:0;flex:1;resize:none"></textarea>
+      <button id="ai-send-btn" class="btn btn-gold btn-sm" onclick="sendAIMessage()" style="align-self:flex-end;white-space:nowrap">Send</button>
+    </div>
+  </div>
+
+    <div id="hub-project-detail" style="display:none"></div>
 
 </main>
 
-<script src="../_shared/hub.js?v=4"></script>
+<script src="../_shared/hub.js?v=5"></script>
 </body>
 </html>

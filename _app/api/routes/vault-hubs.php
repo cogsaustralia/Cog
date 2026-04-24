@@ -168,6 +168,15 @@ if ($action === 'hub-project-comment') {
 if ($action === 'hub-mainspring') {
     handleHubMainspring();
 }
+if ($action === 'hub-query') {
+    handleHubQuery();
+}
+if ($action === 'hub-my-queries') {
+    handleHubMyQueries();
+}
+if ($action === 'hub-ai') {
+    handleHubAI();
+}
 
 // =============================================================================
 // Handlers
@@ -697,6 +706,167 @@ function handleHubProjectComment(): void {
  * GET /vault/hub-mainspring
  * All 9 areas at a glance + combined recent activity (last 30).
  */
+/**
+ * POST /vault/hub-ai { message, history, system, area_key }
+ * Proxies member messages to the Anthropic API with hub-specific context.
+ * API key is kept server-side — not exposed to the browser.
+ */
+function handleHubAI(): void {
+    requireMethod('POST');
+    requireAuth('snft');           // Must be authenticated — no anon AI access
+
+    $body       = jsonBody();
+    $userMsg    = trim((string)($body['message'] ?? ''));
+    $history    = is_array($body['history'] ?? null) ? $body['history'] : [];
+    $systemTxt  = trim((string)($body['system']  ?? ''));
+    $areaKey    = trim((string)($body['area_key']?? ''));
+
+    if ($userMsg === '') apiError('Empty message.');
+    if (mb_strlen($userMsg) > 4000) apiError('Message too long.');
+    if (mb_strlen($systemTxt) > 12000) $systemTxt = mb_substr($systemTxt, 0, 12000); // safety cap
+
+    // Sanitise history — only allow role/content pairs, cap at 10 turns
+    $messages = [];
+    foreach (array_slice($history, -10) as $h) {
+        $role    = in_array((string)($h['role'] ?? ''), ['user','assistant'], true) ? $h['role'] : null;
+        $content = trim((string)($h['content'] ?? ''));
+        if ($role && $content) {
+            $messages[] = ['role' => $role, 'content' => mb_substr($content, 0, 3000)];
+        }
+    }
+    $messages[] = ['role' => 'user', 'content' => $userMsg];
+
+    $apiKey = ''; // read from .env via helpers
+    if (function_exists('ops_env')) {
+        $apiKey = ops_env('ANTHROPIC_API_KEY');
+    } else {
+        // Fallback: read directly from .env file
+        $envFile = dirname(__DIR__, 3) . '/.env';
+        if (is_file($envFile)) {
+            foreach (file($envFile) ?: [] as $line) {
+                if (str_starts_with(trim($line), 'ANTHROPIC_API_KEY=')) {
+                    $apiKey = trim(explode('=', $line, 2)[1] ?? '');
+                    break;
+                }
+            }
+        }
+    }
+
+    if ($apiKey === '') {
+        apiError('AI assistant not configured — ANTHROPIC_API_KEY not set.', 503);
+    }
+
+    $payload = json_encode([
+        'model'      => 'claude-sonnet-4-20250514',
+        'max_tokens' => 800,
+        'system'     => $systemTxt ?: 'You are a helpful governance assistant for the COG$ of Australia Foundation.',
+        'messages'   => $messages,
+    ]);
+
+    $ch = curl_init('https://api.anthropic.com/v1/messages');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_TIMEOUT        => 45,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'x-api-key: ' . $apiKey,
+            'anthropic-version: 2023-06-01',
+        ],
+    ]);
+
+    $raw      = curl_exec($ch);
+    $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr  = curl_error($ch);
+    curl_close($ch);
+
+    if ($curlErr) apiError('Network error contacting AI service: ' . $curlErr, 502);
+
+    $resp = json_decode($raw ?: '{}', true) ?: [];
+    if ($httpCode !== 200) {
+        $msg = (string)($resp['error']['message'] ?? ('HTTP ' . $httpCode));
+        apiError('AI service error: ' . $msg, 502);
+    }
+
+    $reply = '';
+    foreach ($resp['content'] ?? [] as $block) {
+        if (($block['type'] ?? '') === 'text') $reply .= $block['text'];
+    }
+
+    apiSuccess(['reply' => $reply]);
+}
+
+/**
+ * POST /vault/hub-query { area_key, subject, body, transparency }
+ * Member raises a governance query from a hub page.
+ * transparency: 'private' | 'hub_members' | 'public_record'
+ */
+function handleHubQuery(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+
+    $area     = hubRequireArea((string)($body['area_key']     ?? ''));
+    $subject  = trim((string)($body['subject']               ?? ''));
+    $bodyText = trim((string)($body['body']                  ?? ''));
+    $trans    = trim((string)($body['transparency']          ?? 'private'));
+
+    if (!$subject)                   apiError('Subject is required.');
+    if (mb_strlen($subject) > 255)   apiError('Subject too long (max 255 characters).');
+    if (!$bodyText)                  apiError('Query body is required.');
+    if (mb_strlen($bodyText) > 6000) apiError('Query body too long (max 6000 characters).');
+    if (!in_array($trans, ['private','hub_members','public_record'], true)) {
+        apiError('Invalid transparency value.');
+    }
+
+    $me = hubResolveMember($db, $principal);
+
+    try {
+        $db->prepare(
+            "INSERT INTO member_hub_queries
+               (member_id, area_key, subject, body, transparency, status, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, 'open', NOW(), NOW())"
+        )->execute([$me['id'], $area, $subject, $bodyText, $trans]);
+        $queryId = (int)$db->lastInsertId();
+    } catch (Throwable $e) {
+        apiError('Could not save query. Please try again.', 500);
+    }
+
+    apiSuccess(['created' => true, 'query_id' => $queryId]);
+}
+
+/**
+ * GET /vault/hub-my-queries&area=<key>
+ * Returns this member's own queries for a hub area.
+ */
+function handleHubMyQueries(): void {
+    requireMethod('GET');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+
+    $area = hubRequireArea((string)($_GET['area'] ?? ''));
+    $me   = hubResolveMember($db, $principal);
+
+    try {
+        $stmt = $db->prepare(
+            "SELECT id, area_key, subject, LEFT(body,200) AS body_preview,
+                    transparency, status, created_at, updated_at
+               FROM member_hub_queries
+              WHERE member_id = ? AND area_key = ?
+              ORDER BY created_at DESC
+              LIMIT 20"
+        );
+        $stmt->execute([$me['id'], $area]);
+        $queries = $stmt->fetchAll();
+    } catch (Throwable) {
+        $queries = []; // table not yet migrated
+    }
+
+    apiSuccess(['queries' => $queries]);
+}
+
 function handleHubMainspring(): void {
     requireMethod('GET');
     $principal = requireAuth('snft');

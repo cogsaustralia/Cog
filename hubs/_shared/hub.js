@@ -704,7 +704,264 @@ window.toggleShowName      = toggleShowName;
 window.renderRoster        = renderRoster;
 window.coinTransition      = coinTransition;
 
+/* ── Hub Query Form ─────────────────────────────────────────────────────────── */
+
+function renderQuerySection(){
+  var wrap = el('hub-query-section');
+  if(!wrap) return;
+
+  // My existing queries
+  api('vault/hub-my-queries&area='+window.HUB_AREA_KEY)
+    .then(function(d){
+      var qs = d.queries || [];
+      var myWrap = el('hub-my-queries');
+      if(!myWrap) return;
+      if(!qs.length){
+        myWrap.innerHTML = '<div style="font-size:.85rem;color:var(--text3)">No queries raised yet.</div>';
+        return;
+      }
+      myWrap.innerHTML = qs.map(function(q){
+        var statusColor = {open:'var(--amber)',in_review:'#60a5fa',resolved:'var(--green)',closed:'var(--text3)'}[q.status]||'var(--text3)';
+        var tIcon = {private:'🔒',hub_members:'👥',public_record:'📢'}[q.transparency]||'🔒';
+        return '<div style="border:1px solid var(--border);border-radius:var(--r2);padding:10px 12px;margin-bottom:8px">' +
+          '<div style="font-size:.9rem;font-weight:600;color:var(--text)">' + esc(q.subject) + '</div>' +
+          '<div style="font-size:.78rem;color:var(--text3);margin-top:4px;display:flex;gap:10px">' +
+            '<span>' + tIcon + ' ' + (q.transparency||'').replace(/_/g,' ') + '</span>' +
+            '<span style="color:'+statusColor+'">● ' + (q.status||'').replace(/_/g,' ') + '</span>' +
+            '<span>' + dt(q.created_at) + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }).catch(function(){});
+}
+
+function showQueryForm(){
+  var fw = el('hub-query-form-wrap');
+  if(!fw) return;
+  if(fw.innerHTML){ fw.innerHTML=''; return; }
+
+  fw.innerHTML =
+    '<div class="hub-compose" style="margin-top:14px">' +
+      '<div class="hub-compose-title">Raise a governance query</div>' +
+      '<div class="hub-compose-disclaimer">Your query is directed to the Foundation. Select the transparency level — this determines who can see the query and reply.</div>' +
+      '<input class="hub-input" id="qf-subject" placeholder="Subject — briefly describe your query" maxlength="255">' +
+      '<textarea class="hub-textarea" id="qf-body" placeholder="Describe your query in detail…" rows="5" style="margin-top:0"></textarea>' +
+      '<div style="margin-bottom:10px">' +
+        '<label style="font-size:.82rem;color:var(--text3);display:block;margin-bottom:5px">Transparency level</label>' +
+        '<select class="hub-input" id="qf-trans" style="width:auto;cursor:pointer">' +
+          '<option value="private">🔒 Private — admin and I only</option>' +
+          '<option value="hub_members">👥 Hub members — enrolled members in this hub can see the reply</option>' +
+          '<option value="public_record">📢 Public record — reply broadcast to the entire hub</option>' +
+        '</select>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="btn btn-gold" onclick="submitQuery()">Submit Query</button>' +
+        '<button class="btn btn-ghost" onclick="cancelQuery()">Cancel</button>' +
+      '</div>' +
+      '<div class="flash" id="qf-fl"></div>' +
+    '</div>';
+}
+
+function cancelQuery(){
+  var fw = el('hub-query-form-wrap');
+  if(fw) fw.innerHTML='';
+}
+
+async function submitQuery(){
+  var subj  = (el('qf-subject')||{}).value||'';
+  var body  = (el('qf-body')||{}).value||'';
+  var trans = (el('qf-trans')||{}).value||'private';
+  subj = subj.trim(); body = body.trim();
+  if(!subj){ flash('qf-fl','Subject is required.','err'); return; }
+  if(!body){ flash('qf-fl','Please describe your query.','err'); return; }
+  var btn = document.querySelector('#hub-query-form-wrap .btn-gold');
+  if(btn){ btn.disabled=true; btn.textContent='Submitting…'; }
+  try{
+    await api('vault/hub-query',{method:'POST',body:JSON.stringify({
+      area_key:window.HUB_AREA_KEY, subject:subj, body:body, transparency:trans
+    })});
+    cancelQuery();
+    flash('hub-query-flash','Query submitted. The Foundation will respond.','ok');
+    renderQuerySection();
+  }catch(e){
+    flash('qf-fl',e.message||'Could not submit query.','err');
+    if(btn){ btn.disabled=false; btn.textContent='Submit Query'; }
+  }
+}
+
+/* ── AI Governance Assistant ─────────────────────────────────────────────────── */
+
+var _aiHistory = [];
+var _aiOpen    = false;
+
+// Per-area system prompt context — governance purpose + what the AI should/shouldn't do
+var _AI_AREA_CONTEXT = {
+  operations_oversight:  'You are assisting with the Day-to-Day Operations hub. This hub covers monitoring Trustee activity, raising proposals, tracking JVPA compliance, and ensuring the Joint Venture runs according to the Partnership Agreement. Members — not the Trustee — are the operators. You can suggest how to table proposals, what constitutes a governance issue, and how operational threads work.',
+  governance_polls:      'You are assisting with the Research & Acquisitions hub. This hub covers identifying new ASX companies, real world assets, and resources as potential acquisition targets for the Members Asset Pool. You can help members formulate research questions, understand what makes a good acquisition candidate under the JV framework, and how to initiate a Members Poll.',
+  esg_proxy_voting:      'You are assisting with the ESG & Proxy Voting hub. This hub activates at Expansion Day when CHESS-registered shares are held. It covers how Members set the ESG engagement strategy collectively via the Aggregate Unitholder Direction mechanism and direct proxy votes at portfolio company AGMs. You can explain the proxy voting framework and what ESG criteria the community might consider.',
+  first_nations:         'You are assisting with the First Nations Joint Venture hub. This hub covers engagement with the FNAC, Free Prior and Informed Consent (FPIC) obligations, Indigenous Cultural and Intellectual Property (ICIP) protections, and the automatic zero-cost Landholder entitlement for Local Aboriginal Land Councils. First Nations custodians are founding governance members. Approach all matters with respect for Country and cultural protocols.',
+  community_projects:    'You are assisting with the Community Projects hub. This hub covers directing grants and community benefit priorities funded through Sub-Trust C — environmental stewardship, First Nations programs, social welfare, and community flourishing. You can help members propose projects, understand the Sub-Trust C funding mechanism, and build community impact initiatives.',
+  technology_blockchain: 'You are assisting with the Technology & Blockchain hub. This hub covers smart contract governance, system audits, and infrastructure decisions. Members own and operate the proprietary cryptographic governance system. The planned migration is to a permissioned Hyperledger Besu blockchain. You can discuss governance of technical infrastructure, audit scheduling, and open-source principles.',
+  financial_oversight:   'You are assisting with the Financial Oversight hub. This hub covers monitoring trust accounts, distribution accuracy, and dividend strategy. The Trustee publishes quarterly reports and annual audited accounts. The Godley-style double-entry ledger tracks all trust flows. You can explain financial oversight responsibilities, what to look for in trust accounts, and how distribution calculations work.',
+  place_based_decisions: 'You are assisting with the Place-Based Decisions hub. This hub covers Affected Zone declarations and land-impact assessments. Residents of a declared Affected Zone receive weighted local governance rights. The first Affected Zone is Drake Village (AZ-DRAKE-001). You can help members understand zone governance, what triggers a declaration, and how affected residents participate.',
+  education_outreach:    'You are assisting with the Education & Outreach hub. This hub covers helping new Members understand their role, explaining the JV structure plainly, and growing the governance base. Every Member brought in strengthens the community voice. You can suggest onboarding resources, member guides, outreach approaches, and community education strategies.',
+};
+
+function buildAISystemPrompt(hubData){
+  var areaKey  = window.HUB_AREA_KEY || '';
+  var label    = window.HUB_LABEL    || 'this hub';
+  var areaCtx  = _AI_AREA_CONTEXT[areaKey] || 'You are assisting with a COG$ management hub.';
+  var summary  = hubData ? hubData.summary || {} : {};
+  var enrolled = hubData ? (hubData.enrolled ? 'Yes' : 'No') : 'Unknown';
+  var threads  = hubData ? (hubData.threads||[]).slice(0,5) : [];
+
+  var threadTitles = threads.length
+    ? threads.map(function(t){ return '  - "'+t.subject+'" ('+t.direction+', '+t.status+')'; }).join('\n')
+    : '  (no recent threads)';
+
+  return [
+    'You are the COG$ of Australia Foundation Governance Assistant — a proactive, knowledgeable AI assistant helping members participate effectively in the Joint Venture.',
+    '',
+    'AREA CONTEXT:',
+    areaCtx,
+    '',
+    'LIVE HUB DATA (as of this session):',
+    '  Hub: ' + label,
+    '  Enrolled members: ' + (summary.member_count||0),
+    '  Active projects: '  + (summary.active_project_count||0),
+    '  Forum threads: '    + (summary.thread_count||0),
+    '  Last activity: '    + (summary.last_activity_at||'none recorded'),
+    '  Current member enrolled: ' + enrolled,
+    '',
+    'RECENT FORUM THREAD SUBJECTS (titles only — not content):',
+    threadTitles,
+    '',
+    'AUTHORITY BOUNDARIES — STRICTLY ENFORCED:',
+    '- You may analyse, explain, suggest, and guide members on governance participation.',
+    '- You may NOT provide legal advice or make binding determinations on legal questions.',
+    '- You may NOT provide financial advice or recommend specific investments.',
+    '- You may NOT access, reveal, or speculate about specific member PII, balances, or private data.',
+    '- You may NOT initiate, approve, or simulate any governance action — only explain and suggest.',
+    '- For binding matters always direct members to the JVPA, the Declaration, or the Foundation directly.',
+    '- If asked about something outside this hub\'s governance area, redirect to the appropriate hub.',
+    '',
+    'FOUNDATION BACKGROUND:',
+    'COG$ of Australia Foundation is a Community Joint Venture Partnership under South Australian law. Governing documents: JVPA (supreme), CJVM Hybrid Trust Declaration, Sub-Trust Deeds A/B/C. Members are the operators. The Trustee acts under Member direction. First Nations communities are founding governance partners. Primary ASX holding: Legacy Minerals (LGM). Foundation Day: 14 May 2026.',
+    '',
+    'APPROACH:',
+    'Be specific, proactive, and practical. Reference actual hub data when making suggestions.',
+    'Offer concrete next steps. Ask clarifying questions when needed. Celebrate community participation.',
+  ].join('\n');
+}
+
+function toggleAIPanel(){
+  var panel = el('ai-assistant-panel');
+  if(!panel) return;
+  _aiOpen = !_aiOpen;
+  panel.style.display = _aiOpen ? 'flex' : 'none';
+  var btn = el('ai-panel-btn');
+  if(btn) btn.textContent = _aiOpen ? '✕ Close Assistant' : '⬡ AI Assistant';
+  if(_aiOpen && !el('ai-msgs').children.length){
+    appendAIMsg('assistant','Hello! I\'m the COG$ Governance Assistant for the <strong>'+esc(window.HUB_LABEL||'this hub')+'</strong> hub. I have access to the current hub activity and am here to help you participate effectively.\n\nWhat would you like to explore or discuss?');
+  }
+  if(_aiOpen){
+    var inp = el('ai-input');
+    if(inp) setTimeout(function(){ inp.focus(); }, 150);
+  }
+}
+
+function appendAIMsg(role, html){
+  var msgs = el('ai-msgs');
+  if(!msgs) return;
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'margin-bottom:12px;display:flex;flex-direction:column;align-items:'+(role==='user'?'flex-end':'flex-start');
+  var bubble = document.createElement('div');
+  bubble.style.cssText = [
+    'max-width:88%;padding:10px 14px;border-radius:14px;font-size:.88rem;line-height:1.65;word-break:break-word;',
+    role==='user'
+      ? 'background:linear-gradient(135deg,rgba(232,184,75,.18),rgba(232,184,75,.08));border:1px solid var(--gold-bdr);color:var(--text);border-bottom-right-radius:4px'
+      : 'background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);border-bottom-left-radius:4px'
+  ].join('');
+  bubble.innerHTML = html.replace(/\n/g,'<br>');
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendAIMessage(){
+  var inp = el('ai-input');
+  var msg = inp ? inp.value.trim() : '';
+  if(!msg) return;
+  inp.value='';
+
+  appendAIMsg('user', esc(msg));
+  _aiHistory.push({role:'user',content:msg});
+
+  var thinking = document.createElement('div');
+  thinking.id='ai-thinking';
+  thinking.style.cssText='margin-bottom:12px;font-size:.82rem;color:var(--text3);font-family:var(--mono);animation:hubPulse 1.2s infinite';
+  thinking.textContent='Thinking…';
+  el('ai-msgs').appendChild(thinking);
+  el('ai-msgs').scrollTop=el('ai-msgs').scrollHeight;
+
+  var sendBtn = el('ai-send-btn');
+  if(sendBtn) sendBtn.disabled=true;
+
+  try{
+    var systemPrompt = buildAISystemPrompt(window._hubData||null);
+    // Call via admin API proxy (avoids CORS + keeps API key server-side)
+    var ROOT = document.body.dataset.root || '../../';
+    var r = await fetch(ROOT+'_app/api/index.php?route=vault/hub-ai', {
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        message:msg,
+        history:_aiHistory.slice(-10),   // last 10 turns only
+        system:systemPrompt,
+        area_key:window.HUB_AREA_KEY||''
+      })
+    });
+    var txt = await r.text();
+    var j; try{ j=JSON.parse(txt); }catch(e){ j={error:txt}; }
+
+    var th = el('ai-thinking');
+    if(th) th.remove();
+
+    if(j.reply){
+      appendAIMsg('assistant', esc(j.reply).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>'));
+      _aiHistory.push({role:'assistant',content:j.reply});
+    }else{
+      appendAIMsg('assistant','<span style="color:var(--amber)">⚠ '+(j.error||'Could not get a response. Please try again.')+'</span>');
+    }
+  }catch(e){
+    var th2=el('ai-thinking'); if(th2) th2.remove();
+    appendAIMsg('assistant','<span style="color:var(--amber)">⚠ Connection error: '+esc(e.message||'Unknown error')+'</span>');
+  }finally{
+    if(sendBtn) sendBtn.disabled=false;
+  }
+}
+
+function aiKeydown(e){
+  if((e.key==='Enter'||e.keyCode===13) && !e.shiftKey){
+    e.preventDefault();
+    sendAIMessage();
+  }
+}
+
+window.showQueryForm    = showQueryForm;
+window.cancelQuery      = cancelQuery;
+window.submitQuery      = submitQuery;
+window.renderQuerySection = renderQuerySection;
+window.toggleAIPanel    = toggleAIPanel;
+window.sendAIMessage    = sendAIMessage;
+window.aiKeydown        = aiKeydown;
+
+
 /* ── Start ───────────────────────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', boot);
+document.addEventListener('DOMContentLoaded', function(){
+  boot();
+  renderQuerySection();
+});
 
 })();

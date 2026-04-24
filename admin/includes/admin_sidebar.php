@@ -225,6 +225,8 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'email_access',      'label' => '📮  Email Access',              'href' => './email_access.php'],
                 ['key' => 'operator_security', 'label' => '🔐  Admin Security',            'href' => './operator_security.php'],
                 ['key' => 'monitor',           'label' => '📡  Site Monitor',              'href' => './monitor.php'],
+                ['key' => 'errors',            'label' => '🚨  Error Log',                 'href' => './errors.php'],
+                ['key' => 'hub_queries',       'label' => '💬  Hub Queries',               'href' => './hub_queries.php'],
             ],
             'Bridge / Diagnostics' => [
                 ['key' => 'reconciliation',     'label' => '🔍  Legacy Reconciliation',    'href' => './reconciliation.php'],

@@ -141,5 +141,37 @@ try {
     }
 } catch (Throwable $e) {
     ob_end_clean();
+    // Log to app_error_log — silent-fail so logging never breaks the error response
+    try {
+        if (function_exists('getDB')) {
+            $__db  = getDB();
+            $__rt  = $route ?? '';
+            $__ip  = hash('sha256', (string)($_SERVER['REMOTE_ADDR']       ?? ''));
+            $__ua  = hash('sha256', (string)($_SERVER['HTTP_USER_AGENT']   ?? ''));
+            $__mem = null;
+            $__area = substr(trim((string)($_GET['area'] ?? '')), 0, 60);
+            // Best-effort member_id from auth principal (no exception if unauthenticated)
+            try {
+                if (!empty($_COOKIE) && function_exists('requireAuth')) {
+                    $__pr  = requireAuth('snft');
+                    $__mem = (int)($__pr['principal_id'] ?? 0) ?: null;
+                }
+            } catch (Throwable) {}
+            $__db->prepare(
+                "INSERT INTO app_error_log
+                   (route, http_status, error_message, area_key, member_id,
+                    request_method, ip_hash, ua_hash, created_at)
+                 VALUES (?, 500, ?, ?, ?, ?, ?, ?, NOW())"
+            )->execute([
+                substr((string)$__rt, 0, 120),
+                substr($e->getMessage(), 0, 4000),
+                $__area ?: null,
+                $__mem,
+                substr((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'), 0, 10),
+                $__ip,
+                $__ua,
+            ]);
+        }
+    } catch (Throwable) {}
     apiError('Server error: ' . $e->getMessage(), 500);
 }
