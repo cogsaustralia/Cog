@@ -546,7 +546,7 @@ foreach($consolidated as $cr) { $consMap[$cr['sub_trust']] = $cr; }
 
 <?php
 // ── Compliance deadline tracker ────────────────────────────────────────────
-<?php endif;if($needsBS){$_cb=ob_get_clean();ob_end_clean();header("Content-Type: text/html; charset=utf-8");echo $_cb;exit;}?>
+endif;if($needsBS){$_cb=ob_get_clean();ob_end_clean();header("Content-Type: text/html; charset=utf-8");echo $_cb;exit;}?>
 $compTabs = [
     'i3'  => ['label'=>'I3 · Div splits',  'rows'=>$i3Rows,  'empty'=>'No overdue dividend split transfers (5-biz-day rule).'],
     'i4'  => ['label'=>'I4 · B distribute','rows'=>$i4Rows,  'empty'=>'No overdue Sub-Trust B distributions (60-day rule).'],
