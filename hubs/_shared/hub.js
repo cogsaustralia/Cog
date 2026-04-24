@@ -1062,21 +1062,27 @@ function renderHubNavDropdown(){
   if(!btn || !panel) return;
 
   var currentKey = window.HUB_AREA_KEY || '';
-  panel.innerHTML =
-    '<div class="hub-nav-panel-hd">Management Hubs</div>' +
-    _HUB_NAV_ITEMS.map(function(h){
-      var isCurrent = h.key === currentKey;
-      return '<button class="hub-nav-item'+(isCurrent?' current':'')+'"'+
-        ' onclick="hubNavGo(''+h.path+'',''+esc(h.label)+'')">' +
-        '<span class="hub-nav-item-dot"></span>' +
-        '<span class="hub-nav-item-label">'+esc(h.label)+'</span>' +
-        '</button>';
-    }).join('') +
-    '<div class="hub-nav-panel-foot">' +
-      '<button class="hub-nav-mainspring-btn" onclick="hubNavGo('../mainspring/','Mainspring')">'+
-        '⬡ View all hubs — Mainspring' +
-      '</button>' +
-    '</div>';
+  var html = '<div class="hub-nav-panel-hd">Management Hubs</div>';
+  _HUB_NAV_ITEMS.forEach(function(h){
+    var isCurrent = h.key === currentKey;
+    html += '<button class="hub-nav-item'+(isCurrent?' current':'')+'"';
+    html += ' data-hub-path="'+esc(h.path)+'" data-hub-label="'+esc(h.label)+'"';
+    html += ' onclick="hubNavItemClick(this)">';
+    html += '<span class="hub-nav-item-dot"></span>';
+    html += '<span class="hub-nav-item-label">'+esc(h.label)+'</span>';
+    html += '</button>';
+  });
+  html += '<div class="hub-nav-panel-foot">';
+  html += '<button class="hub-nav-mainspring-btn" data-hub-path="../mainspring/" data-hub-label="Mainspring" onclick="hubNavItemClick(this)">';
+  html += '⬡ View all hubs — Mainspring';
+  html += '</button></div>';
+  panel.innerHTML = html;
+}
+
+function hubNavItemClick(el){
+  var path  = el.dataset.hubPath;
+  var label = el.dataset.hubLabel || 'Hub';
+  hubNavGo(path, label);
 }
 
 function hubNavToggle(){
@@ -1123,8 +1129,9 @@ document.addEventListener('keydown', function(e){
   }
 });
 
-window.hubNavToggle = hubNavToggle;
-window.hubNavGo     = hubNavGo;
+window.hubNavToggle    = hubNavToggle;
+window.hubNavGo        = hubNavGo;
+window.hubNavItemClick = hubNavItemClick;
 
 window.switchForumTab      = switchForumTab;
 window.toggleThread        = toggleThread;
