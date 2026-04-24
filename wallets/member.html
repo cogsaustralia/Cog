@@ -5019,7 +5019,6 @@ function updateOutstandingUI(d) {
   var op = getOutstandingPayments(d);
   window._lastOutstandingOp = op;  // cache for openOutstandingModal
   var hasSecondary = op.allItems.length > 0;
-  var snftPaid = (d.payment_status || 'pending').toLowerCase() === 'paid';
 
   // ── Overview outstanding card ──
   var card  = document.getElementById('ov-outstanding-card');
@@ -5675,6 +5674,15 @@ function closePayModal() {
   resetNotifyBtns(modal);
 }
 
+// Escape key closes whichever payment modal is currently open
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  var pm = document.getElementById('pay-modal');
+  if (pm && pm.classList.contains('open')) { closePayModal(); return; }
+  var om = document.getElementById('outstanding-modal');
+  if (om && om.classList.contains('open')) { closeOutstandingModal(); }
+});
+
 function togglePayAcc(hd) {
   var isOpen = hd.getAttribute('aria-expanded') === 'true';
   var body = hd.nextElementSibling;
@@ -5778,10 +5786,7 @@ async function notifyPaymentSent(btn, context) {
     // Close modal after short pause
     setTimeout(function() {
       if (context === 'outstanding') closeOutstandingModal();
-      else {
-        var pm = document.getElementById('pay-modal');
-        if (pm) pm.classList.remove('open');
-      }
+      else closePayModal();
     }, 2200);
   } catch(e) {
     btn.disabled = false;
