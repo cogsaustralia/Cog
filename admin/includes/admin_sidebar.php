@@ -312,6 +312,96 @@ if (!function_exists('admin_sidebar_render')) {
             </div>
           <?php endforeach; ?>
 
+          <?php
+          // ── Pending TDR section ──────────────────────────────────────────
+          // Query outstanding (non-fully-executed) TDRs, ordered by priority.
+          // Rendered as a dedicated collapsible section below the main groups.
+          try {
+              $__tdrPdo = ops_db();
+              $__tdrStmt = $__tdrPdo->query(
+                  "SELECT decision_uuid, decision_ref, sub_trust_context, title, status
+                   FROM trustee_decisions
+                   WHERE status IN ('draft','pending_execution')
+                   ORDER BY sub_trust_context, decision_ref ASC"
+              );
+              $__pendingTdrs = $__tdrStmt->fetchAll(PDO::FETCH_ASSOC);
+          } catch (\Throwable $__e) {
+              $__pendingTdrs = [];
+          }
+
+          // Priority order for sorting
+          $__tdrPri = [
+              'TDR-20260422-001'=>1,'TDR-20260425-002'=>2,'TDR-20260425-003'=>3,
+              'TDR-20260425-004'=>4,'TDR-20260425-006'=>5,'TDR-20260425-009'=>6,
+              'TDR-20260425-013'=>7,'TDR-20260425-005'=>8,'TDR-20260425-007'=>9,
+              'TDR-20260425-008'=>10,'TDR-20260425-010'=>11,'TDR-20260425-011'=>12,
+              'TDR-20260425-012'=>13,'TDR-20260425-014'=>14,'TDR-20260425-015'=>15,
+              'TDR-20260425-016'=>16,'TDR-20260425-017'=>17,
+          ];
+          usort($__pendingTdrs, function($a, $b) use ($__tdrPri) {
+              $pa = $__tdrPri[$a['decision_ref']] ?? 99;
+              $pb = $__tdrPri[$b['decision_ref']] ?? 99;
+              return $pa !== $pb ? $pa - $pb : strcmp($a['decision_ref'], $b['decision_ref']);
+          });
+
+          $__ctxLabels = [
+              'sub_trust_a'=>'Sub-Trust A','sub_trust_b'=>'Sub-Trust B',
+              'sub_trust_c'=>'Sub-Trust C','all'=>'All Sub-Trusts',
+          ];
+          $__statusDot = ['draft'=>'○','pending_execution'=>'◉'];
+
+          if (!empty($__pendingTdrs)):
+              $__tdrCount  = count($__pendingTdrs);
+              $__isActive  = in_array($active, ['trustee_decisions','trustees_register'], true);
+          ?>
+            <div class="side-section<?= $__isActive ? ' open' : '' ?>" data-sec="pending_tdrs">
+              <div class="side-toggle">
+                <p class="side-label">
+                  📋&nbsp; Pending TDRs
+                  <span style="display:inline-block;background:rgba(192,85,58,.85);color:#fff;
+                               font-size:.62rem;font-weight:800;border-radius:10px;
+                               padding:1px 6px;margin-left:6px;vertical-align:middle;
+                               letter-spacing:.03em"><?= $__tdrCount ?></span>
+                </p>
+                <span class="side-chev">▼</span>
+              </div>
+              <div class="nav">
+                <?php
+                $__lastCtx = null;
+                foreach ($__pendingTdrs as $__t):
+                    $__ctx = $__t['sub_trust_context'];
+                    if ($__ctx !== $__lastCtx):
+                        $__lastCtx = $__ctx;
+                        $__ctxLbl  = $__ctxLabels[$__ctx] ?? $__ctx;
+                ?>
+                  <div style="font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+                               color:var(--gold);font-weight:700;padding:8px 14px 3px;
+                               opacity:.75"><?= htmlspecialchars($__ctxLbl, ENT_QUOTES, 'UTF-8') ?></div>
+                <?php endif; ?>
+                  <a href="./trustee_decisions.php?id=<?= urlencode($__t['decision_uuid']) ?>"
+                     class="nav-link<?= $active === 'trustee_decisions' ? '' : '' ?>"
+                     style="font-size:.76rem;padding:4px 14px;display:block;
+                            color:<?= $__t['status']==='pending_execution' ? 'var(--warn)' : 'var(--sub)' ?>;
+                            text-decoration:none;line-height:1.4;
+                            white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+                     title="<?= htmlspecialchars($__t['decision_ref'] . ' — ' . $__t['title'], ENT_QUOTES, 'UTF-8') ?>">
+                    <span style="font-family:monospace;font-size:.7rem;
+                                 color:<?= $__t['status']==='pending_execution' ? 'var(--warn)' : 'var(--dim)' ?>">
+                      <?= $__statusDot[$__t['status']] ?? '○' ?>
+                    </span>
+                    &nbsp;<?= htmlspecialchars($__t['decision_ref'], ENT_QUOTES, 'UTF-8') ?>
+                    <span style="display:block;font-size:.7rem;color:var(--dim);
+                                 padding-left:14px;white-space:nowrap;overflow:hidden;
+                                 text-overflow:ellipsis">
+                      <?= htmlspecialchars(mb_strimwidth($__t['title'], 0, 42, '…'), ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+                  </a>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php endif; ?>
+          <?php // ── end pending TDR section ───────────────────────────── ?>
+
           <div class="card" style="padding:12px;margin-top:12px">
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
               <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c1">Using Admin</div>
