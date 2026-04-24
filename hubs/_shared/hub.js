@@ -38,6 +38,7 @@ var _view          = 'hub';    // 'hub' | 'project'
 var _projectId     = null;
 var _projectData   = null;
 var _openThreads   = {};       // threadId → true
+var _resolvedQueries = null;  // cached resolved-query list for this hub
 
 /* ── Utility ────────────────────────────────────────────────────────────────── */
 function el(id){ return document.getElementById(id); }
@@ -135,7 +136,11 @@ async function boot(){
   }
 
   try{
-    _hubData = await api('vault/hub&area='+areaKey);
+    var [_d] = await Promise.all([
+      api('vault/hub&area='+areaKey),
+      fetchResolvedQueries(),
+    ]);
+    _hubData = _d;
   }catch(e){
     hideSplash();
     var status = e && e.status;
@@ -403,6 +408,17 @@ async function postThread(){
   }
 }
 
+/* ── Resolved queries ──────────────────────────────────────────────────────── */
+async function fetchResolvedQueries(){
+  if(!window.HUB_AREA_KEY) return;
+  try{
+    var res = await api('vault/hub-resolved-queries&area_key='+window.HUB_AREA_KEY);
+    _resolvedQueries = res.queries || [];
+  }catch(e){
+    _resolvedQueries = []; // silent fail — table may not be migrated yet
+  }
+}
+
 /* ── Projects ───────────────────────────────────────────────────────────────── */
 
 var _PHASE_LABELS = {
@@ -442,8 +458,14 @@ function renderProjects(){
   if(hd) hd.innerHTML = createBtn;
 
   if(!projects.length){
-    wrap.innerHTML = '<div class="hub-empty">No projects in this hub yet.</div>' +
-      (_enrolled ? '<div id="create-project-form-wrap"></div>' : '<div class="hub-gate-msg">Activate participation to create the first project.</div>');
+    var rqEmptyHtml = (_resolvedQueries && _resolvedQueries.length)
+      ? '<div style="background:rgba(62,207,110,.04);border:1px solid rgba(62,207,110,.15);border-radius:8px;padding:8px 14px;margin-bottom:12px">'
+        + '<span style="font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green)">'
+        + '✓ Resolved this month ('+_resolvedQueries.length+')</span></div>'
+      : '';
+    wrap.innerHTML = rqEmptyHtml
+      + '<div class="hub-empty">No projects in this hub yet.</div>'
+      + (_enrolled ? '<div id="create-project-form-wrap"></div>' : '<div class="hub-gate-msg">Activate participation to create the first project.</div>');
     return;
   }
 
@@ -467,7 +489,30 @@ function renderProjects(){
     '</div>';
   }).join('');
 
-  wrap.innerHTML = '<div class="hub-project-list">'+cards+'</div><div id="create-project-form-wrap"></div>';
+  // Resolved-queries block — fetched on boot, shown above project list
+  var rqHtml = '';
+  if(_resolvedQueries && _resolvedQueries.length){
+    var rqItems = _resolvedQueries.slice(0,5).map(function(q){
+      var excerpt = q.resolution_excerpt
+        ? '<div style="font-size:.78rem;color:var(--text3);margin-top:2px;padding-left:20px">'+esc(q.resolution_excerpt)+(q.resolution_excerpt.length===280?'…':'')+'</div>'
+        : '';
+      return '<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+        + '<span style="color:var(--green);margin-right:6px;font-size:.85rem">✓</span>'
+        + '<span style="font-size:.85rem">'+esc(q.subject)+'</span>'
+        + ' <span style="font-size:.75rem;color:var(--text3)">· '+dts(q.resolved_at)+'</span>'
+        + excerpt
+        + '</div>';
+    }).join('');
+    rqHtml = '<div style="background:rgba(62,207,110,.04);border:1px solid rgba(62,207,110,.15);border-radius:8px;padding:10px 14px;margin-bottom:14px">'
+      + '<div style="font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:6px">'
+      + '✓ Resolved this month ('+_resolvedQueries.length+')</div>'
+      + rqItems
+      + '</div>';
+  }
+
+  wrap.innerHTML = '<div id="rq-block">'+rqHtml+'</div>'
+    + '<div class="hub-project-list">'+cards+'</div>'
+    + '<div id="create-project-form-wrap"></div>';
 }
 
 function showCreateProject(){
@@ -930,6 +975,7 @@ window.addMilestone        = addMilestone;
 window.toggleMilestone     = toggleMilestone;
 window.postComment         = postComment;
 window.hubJoin             = hubJoin;
+window.fetchResolvedQueries = fetchResolvedQueries;
 window.hubLeave            = hubLeave;
 window.toggleRosterVis     = toggleRosterVis;
 window.toggleShowName      = toggleShowName;

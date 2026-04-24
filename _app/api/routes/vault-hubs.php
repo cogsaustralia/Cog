@@ -187,6 +187,9 @@ if ($action === 'hub-query') {
 if ($action === 'hub-my-queries') {
     handleHubMyQueries();
 }
+if ($action === 'hub-resolved-queries') {
+    handleHubResolvedQueries();
+}
 if ($action === 'hub-ai') {
     handleHubAI();
 }
@@ -1095,6 +1098,52 @@ function handleHubMyQueries(): void {
         $queries = $stmt->fetchAll();
     } catch (Throwable) {
         $queries = []; // table not yet migrated
+    }
+
+    apiSuccess(['queries' => $queries]);
+}
+
+/**
+ * GET /vault/hub-resolved-queries?area_key=<key>
+ * Returns resolved/closed queries for a hub in the past 30 days.
+ * Only hub_members and public_record transparency rows are returned —
+ * private queries are never surfaced regardless of caller.
+ */
+function handleHubResolvedQueries(): void {
+    requireMethod('GET');
+    requireAuth('snft');   // must be logged in; enrolment not required to read
+    $db   = getDB();
+    $area = hubRequireArea((string)($_GET['area_key'] ?? ''));
+
+    try {
+        $stmt = $db->prepare(
+            "SELECT id, subject, transparency, status, admin_notes,
+                    updated_at AS resolved_at
+               FROM member_hub_queries
+              WHERE area_key    = ?
+                AND status      IN ('resolved','closed')
+                AND transparency IN ('hub_members','public_record')
+                AND updated_at  >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+              ORDER BY updated_at DESC
+              LIMIT 10"
+        );
+        $stmt->execute([$area]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Trim admin_notes to a 280-char excerpt for display
+        $queries = array_map(function(array $r): array {
+            $note = (string)($r['admin_notes'] ?? '');
+            return [
+                'id'               => (int)$r['id'],
+                'subject'          => (string)$r['subject'],
+                'transparency'     => (string)$r['transparency'],
+                'status'           => (string)$r['status'],
+                'resolution_excerpt' => $note !== '' ? mb_substr($note, 0, 280) : null,
+                'resolved_at'      => (string)$r['resolved_at'],
+            ];
+        }, $rows);
+    } catch (Throwable) {
+        $queries = []; // member_hub_queries table not yet migrated
     }
 
     apiSuccess(['queries' => $queries]);
