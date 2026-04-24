@@ -2522,7 +2522,13 @@ function createStripeCheckout(): void {
 
     $secretKey = defined('STRIPE_SECRET_KEY') ? STRIPE_SECRET_KEY : '';
     if ($secretKey === '') {
-        apiError('Stripe secret key not configured. Please contact support.', 500);
+        error_log('[vault/create-checkout] STRIPE_SECRET_KEY is not set in .env — card payment cannot proceed.');
+        apiError('Card payment is currently unavailable. Please use bank transfer or PayID.', 503);
+    }
+    // Validate key format — Stripe live keys start sk_live_, test keys sk_test_
+    if (!str_starts_with($secretKey, 'sk_')) {
+        error_log('[vault/create-checkout] STRIPE_SECRET_KEY does not appear to be a valid Stripe key (missing sk_ prefix).');
+        apiError('Card payment is currently unavailable. Please use bank transfer or PayID.', 503);
     }
 
     $items = is_array($body['items'] ?? null) ? $body['items'] : [];
@@ -2703,14 +2709,18 @@ function createStripeCheckout(): void {
 
     if ($curlErr !== '') {
         error_log('[vault/create-checkout] cURL error: ' . $curlErr);
-        apiError('Could not connect to payment processor.', 502);
+        apiError('Could not connect to payment processor. Please use bank transfer or PayID.', 502);
     }
 
     $result = json_decode((string)$response, true);
     if ($httpCode !== 200 || empty($result['url'])) {
-        $stripeErr = (string)($result['error']['message'] ?? 'Unknown Stripe error');
-        error_log('[vault/create-checkout] Stripe error [' . $httpCode . ']: ' . $stripeErr);
-        apiError('Payment processor error: ' . $stripeErr, 502);
+        $stripeErr  = (string)($result['error']['message'] ?? 'Unknown Stripe error');
+        $stripeCode = (string)($result['error']['code']    ?? '');
+        $stripeType = (string)($result['error']['type']    ?? '');
+        error_log('[vault/create-checkout] Stripe error [HTTP ' . $httpCode . '] type=' . $stripeType . ' code=' . $stripeCode . ' msg=' . $stripeErr);
+        error_log('[vault/create-checkout] Full Stripe response: ' . substr((string)$response, 0, 500));
+        // Don't expose raw Stripe error to client — use friendly message
+        apiError('Card payment is temporarily unavailable. Please use bank transfer or PayID — both are fee-free.', 503);
     }
 
     apiSuccess([

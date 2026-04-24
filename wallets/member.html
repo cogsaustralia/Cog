@@ -2036,8 +2036,6 @@ function renderPolls(d){
   const initiations = (d.poll_initiations||[]);
   const polls       = (d.polls||[]);
 
-  console.log('[COG$ Management] proposals:', proposals.length, 'initiations:', initiations.length, 'polls:', polls.length);
-
   const openProposals     = proposals.filter(p => p.status === 'open');
   const closedProposals   = proposals.filter(p => p.status === 'closed' || p.status === 'archived');
   const activeInitiations = initiations.filter(p => ['submitted','sponsored'].includes(p.status));
@@ -4956,8 +4954,13 @@ async function payOutstandingByCard(items) {
       if (btn) { btn.disabled = false; btn.textContent = 'Pay by card ›'; }
     }
   } catch(e) {
-    alert((e && e.message) || 'Card payment unavailable. Please use bank transfer.');
-    if (btn) { btn.disabled = false; btn.textContent = 'Pay by card ›'; }
+    var msg = (e && e.message) || 'Card payment unavailable.';
+    // Surface specific Stripe error if present, otherwise generic fallback
+    if (msg.toLowerCase().includes('processor') || msg.toLowerCase().includes('stripe') || msg.toLowerCase().includes('502')) {
+      msg = 'Card payment is temporarily unavailable. Please use bank transfer or PayID — both are instant and fee-free.';
+    }
+    alert(msg);
+    if (btn) { btn.disabled = false; btn.textContent = 'Pay by card via Stripe ›'; }
   }
 }
 
