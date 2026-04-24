@@ -76,8 +76,8 @@ if ($acctOk) {
     $directC   = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type='a_to_c_direct' AND status='completed'");
     $pendingC  = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type='a_to_c_direct' AND status='pending'");
     $toB       = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type IN ('a_to_b_bds','a_to_b_dds') AND status='completed'");
-    // Admin fund: read net debit balance from ledger_entries so reversals are automatically excluded
-    $adminFundIn  = ac_val($pdo, "SELECT COALESCE(SUM(CASE WHEN le.entry_type='debit' THEN le.amount_cents ELSE 0 END),0) FROM ledger_entries le JOIN stewardship_accounts sa ON sa.id = le.stewardship_account_id WHERE sa.account_key='STA-ADMIN-FUND' AND le.flow_category='payment_to_admin'");
+    // Admin fund: net debits minus reversals from ledger so M4 reversal is excluded
+    $adminFundIn  = ac_val($pdo, "SELECT COALESCE(SUM(CASE WHEN le.entry_type='debit' THEN le.amount_cents WHEN le.entry_type='credit' THEN -le.amount_cents END),0) FROM ledger_entries le JOIN stewardship_accounts sa ON sa.id = le.stewardship_account_id WHERE sa.account_key='STA-ADMIN-FUND' AND le.flow_category IN ('payment_to_admin','correction_reversal')");
     $adminFundOut = ac_val($pdo, "SELECT COALESCE(SUM(CASE WHEN le.entry_type='credit' THEN le.amount_cents ELSE 0 END),0) FROM ledger_entries le JOIN stewardship_accounts sa ON sa.id = le.stewardship_account_id WHERE sa.account_key='STA-ADMIN-FUND' AND le.flow_category IN ('stripe_fee','operating_expense')");
     $adminFundBal = $adminFundIn - $adminFundOut;
     // ASX holdings book value (total_cost_cents is DECIMAL storing cents, e.g. 23947.5 = $239.475)
