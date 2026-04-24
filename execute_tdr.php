@@ -43,15 +43,15 @@ try { $db = getDB(); } catch (\Throwable $e) { tdr_abort(500, 'Database unavaila
 // Determine token type: execution or witness
 $tokenHash    = hash('sha256', $rawToken);
 $stmtExec     = $db->prepare(
-    "SELECT id, used_at, meta_json FROM one_time_tokens
-     WHERE token_hash = ? AND purpose = 'tdr_execution' AND expires_at > UTC_TIMESTAMP() LIMIT 1"
+    "SELECT id, used_at, purpose FROM one_time_tokens
+     WHERE token_hash = ? AND purpose LIKE 'tdr_execution:%' AND expires_at > UTC_TIMESTAMP() LIMIT 1"
 );
 $stmtExec->execute([$tokenHash]);
 $execTokenRow = $stmtExec->fetch(PDO::FETCH_ASSOC);
 
 $stmtWit     = $db->prepare(
-    "SELECT id, used_at, meta_json FROM one_time_tokens
-     WHERE token_hash = ? AND purpose = 'tdr_witness' AND expires_at > UTC_TIMESTAMP() LIMIT 1"
+    "SELECT id, used_at, purpose FROM one_time_tokens
+     WHERE token_hash = ? AND purpose LIKE 'tdr_witness:%' AND expires_at > UTC_TIMESTAMP() LIMIT 1"
 );
 $stmtWit->execute([$tokenHash]);
 $witTokenRow = $stmtWit->fetch(PDO::FETCH_ASSOC);
@@ -64,9 +64,9 @@ $isWitnessStep = ($witTokenRow && !$execTokenRow);
 $tokenIsUsed   = $execTokenRow && $execTokenRow['used_at'] !== null;
 $activeToken   = $isWitnessStep ? $witTokenRow : $execTokenRow;
 
-// Decode decision_uuid from token meta
-$tokenMeta    = json_decode((string)($activeToken['meta_json'] ?? '{}'), true);
-$decisionUuid = $tokenMeta['decision_uuid'] ?? '';
+// Decode decision_uuid from token purpose string e.g. "tdr_execution:uuid-here"
+$parts        = explode(':', (string)($activeToken['purpose'] ?? ''), 2);
+$decisionUuid = $parts[1] ?? '';
 if ($decisionUuid === '') {
     tdr_abort(403, 'Token does not reference a valid Trustee Decision Record.');
 }

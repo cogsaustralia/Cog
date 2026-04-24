@@ -45,24 +45,24 @@ class TrusteeDecisionService
      * Generate a one-time execution token for a TDR.
      * Returns the raw 64-char hex token (to be emailed, never stored in plain form).
      */
-    public static function generateExecutionToken(PDO $db, string $decisionUuid, string $purpose = self::TOKEN_PURPOSE_EXECUTION): string
+    public static function generateExecutionToken(PDO $db, string $decisionUuid, string $purposeBase = self::TOKEN_PURPOSE_EXECUTION): string
     {
-        // Invalidate any prior unused token for this decision
+        $purpose = $purposeBase . ':' . $decisionUuid;
+
+        // Invalidate any prior unused token for this decision+purpose
         $db->prepare(
             "UPDATE one_time_tokens SET used_at = UTC_TIMESTAMP()
-             WHERE purpose = ? AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()
-               AND JSON_UNQUOTE(JSON_EXTRACT(meta_json, '$.decision_uuid')) = ?"
-        )->execute([$purpose, $decisionUuid]);
+             WHERE purpose = ? AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()"
+        )->execute([$purpose]);
 
         $raw     = bin2hex(random_bytes(32));
         $hash    = hash('sha256', $raw);
         $expires = gmdate('Y-m-d H:i:s', time() + self::TOKEN_TTL_EXECUTION);
-        $meta    = json_encode(['decision_uuid' => $decisionUuid], JSON_UNESCAPED_UNICODE);
 
         $db->prepare(
-            "INSERT INTO one_time_tokens (token_hash, purpose, expires_at, created_at, meta_json)
-             VALUES (?, ?, ?, UTC_TIMESTAMP(), ?)"
-        )->execute([$hash, $purpose, $expires, $meta]);
+            "INSERT INTO one_time_tokens (token_hash, purpose, expires_at, created_at)
+             VALUES (?, ?, ?, UTC_TIMESTAMP())"
+        )->execute([$hash, $purpose, $expires]);
 
         return $raw;
     }
@@ -70,34 +70,35 @@ class TrusteeDecisionService
     /**
      * Validate a raw token without consuming it. Returns decision_uuid or null.
      */
-    public static function validateToken(PDO $db, string $raw, string $purpose = self::TOKEN_PURPOSE_EXECUTION): ?string
+    public static function validateToken(PDO $db, string $raw, string $purposeBase = self::TOKEN_PURPOSE_EXECUTION): ?string
     {
         $hash = hash('sha256', $raw);
         $stmt = $db->prepare(
-            "SELECT id, meta_json FROM one_time_tokens
-             WHERE token_hash = ? AND purpose = ? AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()
+            "SELECT id, purpose FROM one_time_tokens
+             WHERE token_hash = ? AND purpose LIKE ? AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()
              LIMIT 1"
         );
-        $stmt->execute([$hash, $purpose]);
+        $stmt->execute([$hash, $purposeBase . ':%']);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) {
             return null;
         }
-        $meta = json_decode((string)($row['meta_json'] ?? '{}'), true);
-        return $meta['decision_uuid'] ?? null;
+        // Extract decision_uuid from purpose string e.g. "tdr_execution:uuid-here"
+        $parts = explode(':', (string)$row['purpose'], 2);
+        return $parts[1] ?? null;
     }
 
     /**
      * Consume a raw token. Returns true if consumed, false if already used/expired.
      */
-    public static function consumeToken(PDO $db, string $raw, string $purpose = self::TOKEN_PURPOSE_EXECUTION): bool
+    public static function consumeToken(PDO $db, string $raw, string $purposeBase = self::TOKEN_PURPOSE_EXECUTION): bool
     {
         $hash = hash('sha256', $raw);
         $stmt = $db->prepare(
             "UPDATE one_time_tokens SET used_at = UTC_TIMESTAMP()
-             WHERE token_hash = ? AND purpose = ? AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()"
+             WHERE token_hash = ? AND purpose LIKE ? AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()"
         );
-        $stmt->execute([$hash, $purpose]);
+        $stmt->execute([$hash, $purposeBase . ':%']);
         return $stmt->rowCount() > 0;
     }
 

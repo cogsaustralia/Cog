@@ -77,8 +77,8 @@ $statusBadge = [
 </style>
 </head>
 <body>
-<?php echo admin_sidebar('trustees_register'); ?>
-<div class="content-area">
+<div class="admin-shell">
+<?php admin_sidebar_render('trustees_register'); ?>
 <div class="main">
 
 <?php if ($message): ?><div class="msg-ok"><?= $message ?></div><?php endif; ?>

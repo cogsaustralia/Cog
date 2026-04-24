@@ -271,8 +271,8 @@ $statusBadge = [
 </style>
 </head>
 <body>
-<?php echo admin_sidebar('trustee_decisions'); ?>
-<div class="content-area">
+<div class="admin-shell">
+<?php admin_sidebar_render('trustee_decisions'); ?>
 <div class="main">
 
 <?php if ($message): ?>
@@ -624,7 +624,7 @@ $statusBadge = [
 <?php endif; ?>
 
 </div><!-- .main -->
-</div><!-- .content-area -->
+</div><!-- .admin-shell -->
 
 <script>
 function addPower() {
