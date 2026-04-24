@@ -430,27 +430,56 @@
       color:#fff;font-size:.65rem;font-weight:800;letter-spacing:.09em;
       text-transform:uppercase;padding:3px 11px;border-radius:99px;
       box-shadow:0 2px 10px rgba(220,100,20,.5);
-      animation:payPulse 2s ease-in-out infinite;
+      animation:payPulse 1.6s ease-in-out infinite;
       pointer-events:none;z-index:10
     }
     @keyframes payPulse{
-      0%,100%{box-shadow:0 2px 10px rgba(220,100,20,.5),0 0 0 0 rgba(220,100,20,.4)}
-      50%{box-shadow:0 2px 14px rgba(220,100,20,.7),0 0 0 6px rgba(220,100,20,0)}
+      0%,100%{box-shadow:0 2px 10px rgba(220,100,20,.5),0 0 0 0 rgba(220,100,20,.5)}
+      50%{box-shadow:0 2px 18px rgba(220,100,20,.8),0 0 0 8px rgba(220,100,20,0)}
     }
     .vault-pay-strip{
       margin-top:6px;padding:9px 14px;border-radius:10px;
-      background:linear-gradient(135deg,rgba(240,130,20,.12),rgba(220,90,20,.08));
-      border:1px solid rgba(240,130,20,.35);
-      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap
+      background:linear-gradient(135deg,rgba(240,130,20,.15),rgba(220,90,20,.1));
+      border:1px solid rgba(240,130,20,.5);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      animation:stripGlow 2s ease-in-out infinite
+    }
+    @keyframes stripGlow{
+      0%,100%{box-shadow:0 0 0 0 rgba(240,130,20,0),0 0 12px rgba(240,130,20,.1)}
+      50%{box-shadow:0 0 0 3px rgba(240,130,20,.15),0 0 20px rgba(240,130,20,.25)}
     }
     .vault-pay-strip span{font-size:.78rem;color:#f0c070;line-height:1.4;flex:1}
     .vault-pay-strip a{
       flex-shrink:0;padding:7px 16px;border-radius:8px;
       background:linear-gradient(135deg,#f0a030,#c97020);
       color:#fff;font-size:.76rem;font-weight:700;text-decoration:none;
-      white-space:nowrap;transition:opacity .2s
+      white-space:nowrap;transition:opacity .2s;
+      animation:payBtnPulse 1.6s ease-in-out infinite
     }
     .vault-pay-strip a:hover{opacity:.88}
+    @keyframes payBtnPulse{
+      0%,100%{box-shadow:0 2px 8px rgba(200,100,20,.3)}
+      50%{box-shadow:0 2px 18px rgba(200,100,20,.65),0 0 0 4px rgba(240,130,20,.12)}
+    }
+
+    /* ── Setup next-steps strip ── */
+    .setup-next-steps{
+      display:flex;align-items:center;gap:0;margin-top:14px;
+      padding:12px 16px;border-radius:10px;
+      background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.15)
+    }
+    .sns-step{display:flex;align-items:center;gap:8px;flex:1;position:relative}
+    .sns-step--fwd::before{
+      content:'›';position:absolute;left:-10px;
+      color:rgba(240,209,138,.35);font-size:.9rem
+    }
+    .sns-num{
+      width:22px;height:22px;border-radius:50%;flex-shrink:0;
+      background:rgba(240,209,138,.15);border:1px solid rgba(240,209,138,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.68rem;font-weight:700;color:var(--gold-2)
+    }
+    .sns-step span:last-child{font-size:.76rem;color:var(--muted);line-height:1.3}
 
   
     /* ── Payment intercept modal ── */
@@ -460,9 +489,13 @@
       align-items:center;justify-content:center;padding:24px}
     .pay-intercept-modal.show{display:flex}
     .pay-intercept-box{width:100%;max-width:480px;background:linear-gradient(160deg,rgba(28,20,9,.97),rgba(14,10,3,.99));
-      border:1.5px solid rgba(240,130,20,.5);border-radius:20px;padding:36px 32px;
-      box-shadow:0 0 60px rgba(220,100,20,.25),0 24px 64px rgba(0,0,0,.7);
-      position:relative}
+      border:1.5px solid rgba(240,130,20,.65);border-radius:20px;padding:36px 32px;
+      box-shadow:0 0 60px rgba(220,100,20,.3),0 24px 64px rgba(0,0,0,.7);
+      position:relative;animation:modalGlow 2s ease-in-out infinite}
+    @keyframes modalGlow{
+      0%,100%{box-shadow:0 0 40px rgba(220,100,20,.25),0 24px 64px rgba(0,0,0,.7),0 0 0 0 rgba(220,100,20,.2)}
+      50%{box-shadow:0 0 70px rgba(220,100,20,.45),0 24px 64px rgba(0,0,0,.7),0 0 0 6px rgba(220,100,20,0)}
+    }
     .pay-intercept-close{position:absolute;top:14px;right:16px;background:none;border:none;
       color:rgba(240,209,138,.4);font-size:1.4rem;cursor:pointer;line-height:1;padding:4px}
     .pay-intercept-close:hover{color:var(--gold-1)}
@@ -651,9 +684,9 @@
 
         <!-- Welcome banner for new signups -->
         <div id="welcome-banner" class="welcome-banner" style="display:none">
-          <h3 id="wb-greeting">Welcome, Member.</h3>
+          <h3 id="wb-greeting">Welcome. You're registered.</h3>
           <div class="wb-mn" id="wb-member-number"></div>
-          <p>Your Class S Unit application is lodged. Set your password below to activate your vault — then open your <strong style="color:var(--gold-1)">Independence Vault</strong> to complete your $4 payment and secure your membership.</p>
+          <p>Your membership registration is confirmed. Choose a password below to open your Independence Vault — then complete your <strong style="color:var(--gold-1)">$4 payment via Stripe</strong> inside to activate your membership.</p>
         </div>
 
         <!-- Login panel -->
@@ -686,14 +719,19 @@
         <!-- First-time setup -->
         <div id="ap-setup" class="hidden">
           <h2>Activate your vault</h2>
-          <p class="sub">Enter your Member number and registered mobile, then choose a strong password.</p>
+          <p class="sub">Your Member number and mobile are pre-filled. Choose a strong password to continue.</p>
           <form id="f-setup">
             <input type="hidden" name="role" value="snft">
             <div class="field"><label>Member number</label><input name="member_number" required placeholder="16-digit number"></div>
             <div class="field"><label>Mobile number</label><input type="tel" name="mobile" autocomplete="tel" required placeholder="04xx xxx xxx"></div>
             <div class="field"><label>New password</label><input type="password" name="password" minlength="8" required autocomplete="new-password"></div>
             <div class="field"><label>Confirm password</label><input type="password" name="confirm_password" required autocomplete="new-password"></div>
-            <button type="submit" class="btn-gold" id="setup-btn">Set password &amp; enter</button>
+            <button type="submit" class="btn-gold" id="setup-btn">Activate my vault ›</button>
+            <div class="setup-next-steps" id="setup-next-steps">
+              <div class="sns-step"><span class="sns-num">1</span><span>Set your password above</span></div>
+              <div class="sns-step sns-step--fwd"><span class="sns-num">2</span><span>Your vault opens</span></div>
+              <div class="sns-step sns-step--fwd"><span class="sns-num">3</span><span>Complete $4 payment via Stripe</span></div>
+            </div>
             <div class="flash" id="setup-fl"></div>
           </form>
           <div class="auth-links"><button class="auth-link" onclick="showPanel('ap-login')">← Back to login</button></div>
@@ -1630,6 +1668,17 @@ function afterLoginSuccess(vault){
       localStorage.setItem('cogs_login_identity', JSON.stringify(identity));
     }
   } catch(e){}
+  // For new welcome-flow members who are unpaid, auto-open payment intercept
+  var _vaultData = vault && vault.data ? vault.data : vault;
+  var _isNewWelcome = window._isWelcomeSetup ||
+    (function(){ try{ return sessionStorage.getItem('cogs_welcome_new')==='1'; }catch(e){ return false; } })();
+  var _payStatus = ((_vaultData && _vaultData.payment_status) || 'pending').toLowerCase();
+  if(_isNewWelcome && _payStatus !== 'paid'){
+    window._isWelcomeSetup = false;
+    setTimeout(function(){
+      openPayIntercept();
+    }, 1400);
+  }
   // Clean ?next and ?reason from the URL so a refresh doesn't re-trigger the
   // "Please sign in to access your vault" message.
   try {
@@ -1726,8 +1775,8 @@ function enterCommunity(data){
     // ── Strip below the vault pill ──
     var strip = document.createElement('div');
     strip.className = 'vault-pay-strip';
-    strip.innerHTML = '<span><strong style="color:#f0c070">Your Membership is not yet active.</strong> Complete your $4 contribution to issue your Class S Unit and activate governance.</span>'
-      + '<a href="../wallets/member.html" onclick="coinTransition(this);return false;">Pay $4 now →</a>';
+    strip.innerHTML = '<span><strong style="color:#f0c070">Your $4 payment is outstanding.</strong> Complete your contribution to activate your membership and unlock governance.</span>'
+      + '<a href="../wallets/member.html" onclick="coinTransition(this);return false;">Pay $4 now ›</a>';
     wrap.appendChild(strip);
 
     // ── Highlight the vault pill itself ──
@@ -2049,14 +2098,20 @@ setTimeout(dismissSplash, 4000);
       var mn    = params.get('member') || '';
       var mob   = params.get('mobile') || '';
       var fname = params.get('name')   || '';
+      var em    = params.get('email')  || '';
       if(!mn){
         try{
           var stored = JSON.parse(localStorage.getItem('cogs_snft_member')||'{}');
           mn    = stored.member_number||'';
           mob   = stored.mobile||'';
           fname = stored.first_name||'';
+          em    = em || stored.email||'';
         }catch(ex){}
       }
+      // Store email for recovery use
+      if(em){ try{ sessionStorage.setItem('cogs_welcome_email', em); }catch(ex){} }
+      // Flag this session as a new-member welcome flow
+      try{ sessionStorage.setItem('cogs_welcome_new', '1'); }catch(ex){}
 
       // Personalise greeting if we have a first name
       var wbGreeting = document.getElementById('wb-greeting');
@@ -2307,21 +2362,26 @@ window.submitJvpaAcceptance = submitJvpaAcceptance;
 document.getElementById('f-setup')?.addEventListener('submit', async function(e){
   e.preventDefault();
   var btn = document.getElementById('setup-btn');
-  btn.disabled=true; btn.textContent='Setting up…';
+  btn.disabled=true; btn.textContent='Activating…';
   flash('setup-fl','');
+  var sns = document.getElementById('setup-next-steps');
+  if(sns) sns.style.display='none';
   try{
     var fd = Object.fromEntries(new FormData(e.target));
     if(fd.password!==fd.confirm_password){
       flash('setup-fl','Passwords do not match.','err');
-      btn.disabled=false; btn.textContent='Set password & enter';
+      btn.disabled=false; btn.textContent='Activate my vault ›';
+      if(sns) sns.style.display='';
       return;
     }
     await api('auth/setup',{method:'POST',body:JSON.stringify(fd)});
     var vault = await api('vault/member');
+    window._isWelcomeSetup = true;
     afterLoginSuccess(vault);
   }catch(err){
     flash('setup-fl', err.message||'Setup failed.','err');
-    btn.disabled=false; btn.textContent='Set password & enter';
+    btn.disabled=false; btn.textContent='Activate my vault ›';
+    if(sns) sns.style.display='';
   }
 });
 
