@@ -206,6 +206,17 @@ function renderEnrolBanner(){
 }
 
 /* ── Summary stats ──────────────────────────────────────────────────────────── */
+function scrollToSection(contentId){
+  var target = el(contentId);
+  if(!target) return;
+  var section = target.closest ? target.closest('.hub-section') : target.parentNode;
+  while(section && !section.classList.contains('hub-section')) section = section.parentNode;
+  var scrollEl = section || target;
+  var topbarH = (document.querySelector('.hub-topbar')||{}).offsetHeight || 60;
+  var y = scrollEl.getBoundingClientRect().top + (window.scrollY||window.pageYOffset) - topbarH - 12;
+  window.scrollTo({top: Math.max(0, y), behavior:'smooth'});
+}
+
 function renderSummaryStats(){
   var s = _hubData.summary || {};
   var rows = [
@@ -213,9 +224,21 @@ function renderSummaryStats(){
     {id:'stat-threads', n: s.thread_count||0, l:'Forum threads'},
     {id:'stat-projects',n: s.active_project_count||0, l:'Active projects'},
   ];
+  var scrollTargets = {
+    'stat-members':  'hub-roster-wrap',
+    'stat-threads':  'hub-forum-list',
+    'stat-projects': 'hub-projects-wrap',
+  };
   rows.forEach(function(r){
     var e = el(r.id);
-    if(e) e.innerHTML = '<div class="hub-stat-n">'+Number(r.n).toLocaleString('en-AU')+'</div><div class="hub-stat-l">'+r.l+'</div>';
+    if(!e) return;
+    e.innerHTML = '<div class="hub-stat-n">'+Number(r.n).toLocaleString('en-AU')+'</div><div class="hub-stat-l">'+r.l+'</div>';
+    var targetId = scrollTargets[r.id];
+    if(targetId){
+      e.dataset.scroll = targetId;
+      e.title = 'Jump to '+r.l;
+      e.onclick = function(){ scrollToSection(targetId); };
+    }
   });
   // Unread badge in topbar
   var unread = ((_hubData.unread_broadcasts||0) + (_hubData.unread_threads||0));
@@ -264,7 +287,7 @@ async function renderRoster(page){
       '<button onclick="renderRoster('+(page+1)+')" '+(page>=totalPages?'disabled':'')+'>Next →</button>' +
       '</div>';
 
-    wrap.innerHTML = '<div class="hub-roster-grid">'+cards+'</div>'+(totalPages>1?pager:'');
+    wrap.innerHTML = '<div class="hub-roster-grid">'+cards+'</div>'+(totalPages>1?pager:'') + '<div class="hub-section-top"><a onclick="window.scrollTo({top:0,behavior:\'smooth\'});return false;" href="#">↑ Back to top</a></div>';
   }catch(e){
     wrap.innerHTML = '<div class="hub-empty">Could not load roster: '+esc(e.message)+'</div>';
   }
@@ -295,7 +318,7 @@ function renderForumTab(tab){
   }
 
   if(!items.length){
-    wrap.innerHTML = '<div class="hub-empty">'+(tab==='broadcasts'?'No broadcasts yet.':'No threads yet — be the first to start a discussion.')+'</div>';
+    wrap.innerHTML = '<div class="hub-empty">'+(tab==='broadcasts'?'No broadcasts yet.':'No threads yet — be the first to start a discussion.')+'</div>' + '<div class="hub-section-top"><a onclick="window.scrollTo({top:0,behavior:\'smooth\'});return false;" href="#">↑ Back to top</a></div>';
     renderCompose();
     return;
   }
@@ -316,7 +339,7 @@ function renderForumTab(tab){
         (tab==='inbound'||tab==='threads' ? renderThreadReplyForm(t) : '') +
       '</div>' +
     '</div>';
-  }).join('');
+  }).join('') + '<div class="hub-section-top"><a onclick="window.scrollTo({top:0,behavior:\'smooth\'});return false;" href="#">↑ Back to top</a></div>';
 
   renderCompose();
 }
@@ -465,7 +488,7 @@ function renderProjects(){
       : '';
     wrap.innerHTML = rqEmptyHtml
       + '<div class="hub-empty">No projects in this hub yet.</div>'
-      + (_enrolled ? '<div id="create-project-form-wrap"></div>' : '<div class="hub-gate-msg">Activate participation to create the first project.</div>');
+      + (_enrolled ? '<div id="create-project-form-wrap"></div>' : '<div class="hub-gate-msg">Activate participation to create the first project.</div>') + '<div class="hub-section-top"><a onclick="window.scrollTo({top:0,behavior:\'smooth\'});return false;" href="#">↑ Back to top</a></div>';
     return;
   }
 
@@ -512,7 +535,7 @@ function renderProjects(){
 
   wrap.innerHTML = '<div id="rq-block">'+rqHtml+'</div>'
     + '<div class="hub-project-list">'+cards+'</div>'
-    + '<div id="create-project-form-wrap"></div>';
+    + '<div id="create-project-form-wrap"></div>' + '<div class="hub-section-top"><a onclick="window.scrollTo({top:0,behavior:\'smooth\'});return false;" href="#">↑ Back to top</a></div>';
 }
 
 function showCreateProject(){

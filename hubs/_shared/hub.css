@@ -233,3 +233,12 @@ button{font-family:inherit;cursor:pointer}
 /* Guide link in topbar */
 .hub-guide-link{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text3);font-size:.82rem;font-weight:600;transition:all .15s;white-space:nowrap;cursor:pointer;text-decoration:none}
 .hub-guide-link:hover{border-color:var(--gold-bdr);color:var(--gold);background:var(--gold-bg);text-decoration:none}
+
+/* ── Stat card links ─────────────────────────────────────────────────────────── */
+.hub-stat[data-scroll]{cursor:pointer;transition:background .15s,border-color .15s}
+.hub-stat[data-scroll]:hover{background:rgba(232,184,75,.07);border-color:rgba(232,184,75,.25)}
+.hub-stat[data-scroll]:hover .hub-stat-l{color:var(--gold)}
+/* ── Back-to-top section link ────────────────────────────────────────────────── */
+.hub-section-top{display:flex;justify-content:flex-end;padding-top:10px;margin-top:6px;border-top:1px solid var(--border)}
+.hub-section-top a{font-size:.75rem;color:var(--text3);transition:color .15s;text-decoration:none;display:flex;align-items:center;gap:4px}
+.hub-section-top a:hover{color:var(--gold);text-decoration:none}
