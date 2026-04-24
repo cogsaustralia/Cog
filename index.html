@@ -5,12 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
     // ── First-visit redirect to intro ────────────────────────────────
-    // Runs before any paint. Returning visitors (cogs_intro_seen=1) pass through.
+    // Only invited users (arriving with a partner/invite code in the URL) are
+    // redirected to /intro/ for the onboarding sequence.
+    // Curious browsers with no code land on the index and explore the site.
+    // Returning visitors (cogs_intro_seen=1) always pass through.
     (function(){
       try {
         if (localStorage.getItem('cogs_intro_seen') !== '1') {
-          var qs = window.location.search; // preserve ?code= if present
-          window.location.replace('/intro/' + qs);
+          var _p = new URLSearchParams(window.location.search);
+          var _code = _p.get('partner_code') || _p.get('code') ||
+                      _p.get('invite')        || _p.get('ref')  ||
+                      _p.get('invite_token');
+          if (_code) {
+            window.location.replace('/intro/' + window.location.search);
+          }
+          // No code — stay on index, let user explore the site.
         }
       } catch(e) {}
     })();
@@ -411,23 +420,23 @@ setTimeout(function(){
       </div>
 
       <h1 class="hero-title"><em>Join the<br>Australian</em><br>Joint Venture</h1>
-      <p class="hero-note">One membership contribution.<br>Permanent Member status. <br>One national managment vote,<br>with management and members' distributions operating under the joint venture legal structure.</p>
+      <p class="hero-note">One membership contribution.<br>Permanent Member status. <br>One national management vote,<br>with management and members' distributions operating under the joint venture legal structure.</p>
 
       <div class="pillars">
         <span class="pillar">Fair Go</span>
         <span class="pillar">Fair Say</span>
         <span class="pillar">Fair Share</span>
-        <span class="pillar">Real Word Value</span>
+        <span class="pillar">Real World Value</span>
         <span class="pillar">Stewardship by<br>Members</span>
         <span class="pillar">Our Own Blockchain<br>Infrastructure</span>
       </div>
 
       <div class="hero-actions">
-        <a class="btn-primary" href="join/index.html">Become a Member</a>
-        <a class="btn-tertiary" href="tell-me-more/index.html">Tell me more</a>
+        <a class="btn-primary" href="tell-me-more/index.html">Tell me more →</a>
+        <a class="btn-secondary" href="join/index.html">Become a Member — $4</a>
       </div>
 
-      <p class="hero-lead">COG$ is a community joint venture where Members collectively own and operate the management system,<br>while the Trustee holds legal title, handles compliance-facing work, and processes fiat $$ on behalf of the joint venture members.<br>The Joint Venture Particpation Agreement (JVPA) is the controlling instrument.<br>The goal is simple: real assets, transparent stewardship, and community control built to last.</p>
+      <p class="hero-lead">COG$ is a community joint venture where Members collectively own and operate the management system,<br>while the Trustee holds legal title, handles compliance-facing work, and processes fiat $$ on behalf of the joint venture members.<br>The Joint Venture Participation Agreement (JVPA) is the controlling instrument.<br>The goal is simple: real assets, transparent stewardship, and community control built to last.</p>
       
       <div class="countdown" data-countdown-target="2026-05-14T17:00:00+10:00" aria-live="polite">
         <div class="cd-title">First Members governance poll</div>
