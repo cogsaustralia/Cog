@@ -1542,6 +1542,20 @@ document.addEventListener('DOMContentLoaded', function(){
 (function () {
   'use strict';
 
+  // Private copies of esc/dts — block 2 IIFE versions are out of scope here
+  function _esc(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function _dts(s) {
+    if (!s) return '—';
+    try {
+      return new Date(s).toLocaleDateString('en-AU', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    } catch (e) { return s; }
+  }
+
   var _activityLoaded = false;
 
   /**
@@ -1555,30 +1569,16 @@ document.addEventListener('DOMContentLoaded', function(){
     var wrap = document.getElementById('hub-admin-activity');
     if (!wrap) return;
 
-    var ROOT_LOCAL = (function () {
-      var p = window.location.pathname;
-      var parts = p.replace(/\/+$/, '').split('/');
-      var depth = 0;
-      for (var i = parts.length - 1; i >= 0; i--) {
-        if (parts[i] === 'hubs') break;
-        depth++;
-      }
-      var up = '';
-      for (var j = 0; j < depth; j++) up += '../';
-      return up || '../../';
-    }());
+    var ROOT_LOCAL = document.body.dataset.root || '../../';
     var API_LOCAL = ROOT_LOCAL + '_app/api/index.php?route=';
 
     wrap.innerHTML = '<div class="hub-loading" style="font-size:.82rem">Loading operational activity…</div>';
-
-    var token = '';
-    try { token = (document.cookie.match(/snft_token=([^;]+)/) || [])[1] || ''; } catch (e) {}
 
     var res, data;
     try {
       res = await fetch(
         API_LOCAL + 'vault&action=hub-admin-activity&area_key=' + encodeURIComponent(areaKey) + '&limit=8',
-        { headers: { 'Authorization': 'Bearer ' + token } }
+        { credentials: 'include' }
       );
       data = await res.json();
     } catch (e) {
@@ -1586,8 +1586,8 @@ document.addEventListener('DOMContentLoaded', function(){
       return;
     }
 
-    // Not enrolled
-    if (res.status === 403) {
+    // Auth failure or not enrolled
+    if (res.status === 401 || res.status === 403) {
       wrap.innerHTML = '<div class="hub-empty" style="font-size:.82rem">Activate Participation to view operational activity for this hub.</div>';
       return;
     }
@@ -1607,10 +1607,10 @@ document.addEventListener('DOMContentLoaded', function(){
       html += '<div class="hub-activity-pages-title">Admin functions serving this hub</div>';
       html += '<div class="hub-activity-chips">';
       pages.primary.forEach(function (p) {
-        html += '<span class="hub-activity-chip hub-activity-chip-primary">' + esc(p.label) + '</span>';
+        html += '<span class="hub-activity-chip hub-activity-chip-primary">' + _esc(p.label) + '</span>';
       });
       pages.secondary.forEach(function (p) {
-        html += '<span class="hub-activity-chip hub-activity-chip-secondary">' + esc(p.label) + '</span>';
+        html += '<span class="hub-activity-chip hub-activity-chip-secondary">' + _esc(p.label) + '</span>';
       });
       html += '</div></div>';
     }
@@ -1622,13 +1622,13 @@ document.addEventListener('DOMContentLoaded', function(){
       html += '<div class="hub-activity-feed">';
       events.forEach(function (ev) {
         var timeStr = '';
-        try { timeStr = dts(ev.ts); } catch (e) { timeStr = ev.ts || ''; }
+        try { timeStr = _dts(ev.ts); } catch (e) { timeStr = ev.ts || ''; }
         html += '<div class="hub-activity-item">' +
           '<div class="hub-activity-item-inner">' +
-            '<span class="hub-activity-source">' + esc(ev.source || '') + '</span>' +
-            '<span class="hub-activity-summary">' + esc(ev.summary || '') + '</span>' +
+            '<span class="hub-activity-source">' + _esc(ev.source || '') + '</span>' +
+            '<span class="hub-activity-summary">' + _esc(ev.summary || '') + '</span>' +
           '</div>' +
-          '<span class="hub-activity-ts">' + esc(timeStr) + '</span>' +
+          '<span class="hub-activity-ts">' + _esc(timeStr) + '</span>' +
         '</div>';
       });
       html += '</div>';
