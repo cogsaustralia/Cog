@@ -1688,6 +1688,21 @@ function openVault(d){
     var _giftLines  = Array.isArray(d.gift_pool_unpaid_lines) ? d.gift_pool_unpaid_lines : [];
     var _kidsOrders = Array.isArray(d.kids_pending_orders)    ? d.kids_pending_orders    : [];
     var _hasSec = _giftLines.length > 0 || _kidsOrders.some(function(r){ return (parseInt(r.units||0,10)||0) > 0; });
+    // Pre-warm the cache so openOutstandingModal works without getOutstandingPayments
+    if (_hasSec && !window._lastOutstandingOp) {
+      var _lm = { donation_tokens:'Donation COG$', pay_it_forward_tokens:'Pay It Forward', kids_tokens:'Kids S-NFT' };
+      var _gm = {};
+      _giftLines.forEach(function(r){ var c=r.token_class||''; if(c) _gm[c]=(_gm[c]||0)+(parseInt(r.units||0,10)||0); });
+      var _gi = Object.keys(_gm).map(function(c){ return {token_class:c, units:_gm[c]}; });
+      var _ku = _kidsOrders.reduce(function(s,r){ return s+(parseInt(r.units||0,10)||0); }, 0);
+      var _ki = _ku > 0 ? [{token_class:'kids_tokens', units:_ku}] : [];
+      var _gt = _giftLines.reduce(function(s,r){ return s+Number(r.amount||0); }, 0);
+      var _kt = _kidsOrders.reduce(function(s,r){ return s+Number(r.amount||0); }, 0);
+      var _lines = [];
+      _giftLines.forEach(function(r){ _lines.push({label:(_lm[r.token_class]||r.token_class)+' ×'+(parseInt(r.units||0,10)||0), amount:Number(r.amount||0)}); });
+      if(_ku > 0) _lines.push({label:'Kids S-NFT ×'+_ku, amount:_kt});
+      window._lastOutstandingOp = { giftItems:_gi, kidsItems:_ki, allItems:_gi.concat(_ki), total:_gt+_kt, lines:_lines };
+    }
     setTimeout(function(){
       if(!_paid){
         // SNFT outstanding — open SNFT pay modal
@@ -4782,12 +4797,34 @@ function getOutstandingPayments(d) {
 
 /** Open the unified outstanding modal populated from current vault data. */
 function openOutstandingModal() {
-  var d = window._vaultData || {};
-  var op = getOutstandingPayments(d);
+  // Use cached op from last updateOutstandingUI call — avoids any block-3
+  // timing dependency and guarantees we use the same data that drew the card
+  var op = window._lastOutstandingOp;
+  if (!op) {
+    // Fallback: recompute from current vault data
+    var _d = window._vaultData || {};
+    var _giftLines  = Array.isArray(_d.gift_pool_unpaid_lines) ? _d.gift_pool_unpaid_lines : [];
+    var _kidsOrders = Array.isArray(_d.kids_pending_orders)    ? _d.kids_pending_orders    : [];
+    var _labelMap = { donation_tokens:'Donation COG$', pay_it_forward_tokens:'Pay It Forward', kids_tokens:'Kids S-NFT' };
+    var _gm = {};
+    _giftLines.forEach(function(r){ var c=r.token_class||''; if(c) _gm[c]=(_gm[c]||0)+(parseInt(r.units||0,10)||0); });
+    var _gi = Object.keys(_gm).map(function(c){ return {token_class:c, units:_gm[c]}; });
+    var _ku = _kidsOrders.reduce(function(s,r){ return s+(parseInt(r.units||0,10)||0); }, 0);
+    var _ki = _ku > 0 ? [{token_class:'kids_tokens', units:_ku}] : [];
+    var _gt = _giftLines.reduce(function(s,r){ return s+Number(r.amount||0); }, 0);
+    var _kt = _kidsOrders.reduce(function(s,r){ return s+Number(r.amount||0); }, 0);
+    var _lines = [];
+    _giftLines.forEach(function(r){ _lines.push({label:(_labelMap[r.token_class]||r.token_class)+' ×'+(parseInt(r.units||0,10)||0), amount:Number(r.amount||0)}); });
+    if(_ku > 0) _lines.push({label:'Kids S-NFT ×'+_ku, amount:_kt});
+    op = { giftItems:_gi, kidsItems:_ki, allItems:_gi.concat(_ki), total:_gt+_kt, lines:_lines };
+    window._lastOutstandingOp = op;
+  }
   if (!op.allItems.length) return;
 
   var modal = document.getElementById('outstanding-modal');
   if (!modal) return;
+
+  var d = window._vaultData || {};
 
   // ── Dynamic description based on what's outstanding ──
   var descEl = document.getElementById('outstanding-modal-desc');
@@ -4869,6 +4906,7 @@ async function payOutstandingByCard(items) {
 function updateOutstandingUI(d) {
   d = d || window._vaultData || {};
   var op = getOutstandingPayments(d);
+  window._lastOutstandingOp = op;  // cache for openOutstandingModal
   var hasSecondary = op.allItems.length > 0;
   var snftPaid = (d.payment_status || 'pending').toLowerCase() === 'paid';
 
