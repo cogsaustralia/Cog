@@ -2035,7 +2035,7 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-html += '</div>'; // .hub-livedata-section
+      html += '</div>'; // .hub-livedata-section
     }
 
     // ── 2. Research & Acquisitions ────────────────────────────────────────
@@ -2138,7 +2138,7 @@ html += '</div>'; // .hub-livedata-section
         html += '<div class="hub-empty" style="font-size:.82rem">No executed investment TDRs yet.</div>';
       }
 
-html += '</div>'; // .hub-livedata-section
+      html += '</div>'; // .hub-livedata-section
     }
 
     // ── 3. ESG & Proxy Voting ────────────────────────────────────────────
@@ -2320,7 +2320,7 @@ html += '</div>';
         html += '<div class="hub-empty" style="font-size:.82rem">No executed FNAC engagement TDRs yet.</div>';
       }
 
-html += '</div>';
+      html += '</div>';
     }
 
     // ── 5. Community Projects ────────────────────────────────────────────
@@ -2589,7 +2589,7 @@ html += '</div>';
         html += '<div class="hub-empty" style="font-size:.82rem">No executed distribution TDRs yet.</div>';
       }
 
-html += '</div>';
+      html += '</div>';
     }
 
     // ── 8. Place-Based Decisions ─────────────────────────────────────────
