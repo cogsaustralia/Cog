@@ -1422,6 +1422,393 @@ function handleHubAdminActivity(): void
         } catch (Throwable) {}
     }
 
+    } elseif ($area === 'esg_proxy_voting') {
+        // 1. Holdings list — ticker, company_name, units, ESG flag (no member data)
+        try {
+            $stmt = $db->query(
+                "SELECT ticker, company_name, units_held, is_poor_esg_target
+                   FROM asx_holdings
+                  ORDER BY is_poor_esg_target DESC, ticker ASC
+                  LIMIT 20"
+            );
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $poorCount = 0;
+            $hubData['holdings'] = array_map(function($r) use (&$poorCount) {
+                if ((int)$r['is_poor_esg_target']) $poorCount++;
+                return [
+                    'ticker'             => (string)$r['ticker'],
+                    'company_name'       => (string)$r['company_name'],
+                    'units_held'         => (string)$r['units_held'],
+                    'is_poor_esg_target' => (bool)(int)$r['is_poor_esg_target'],
+                ];
+            }, $rows);
+            $hubData['poor_esg_count'] = $poorCount;
+        } catch (Throwable) {}
+
+        // 2. Recent proxy engagements — join to holdings for ticker (no member data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT h.ticker, h.company_name, e.engagement_type,
+                        e.status, e.meeting_or_event_date
+                   FROM asx_proxy_engagements e
+                   JOIN asx_holdings h ON h.id = e.holding_id
+                  ORDER BY e.created_at DESC
+                  LIMIT 5"
+            );
+            $stmt->execute();
+            $hubData['recent_engagements'] = array_map(
+                fn($r) => [
+                    'ticker'              => (string)$r['ticker'],
+                    'company_name'        => (string)$r['company_name'],
+                    'engagement_type'     => (string)$r['engagement_type'],
+                    'status'              => (string)$r['status'],
+                    'meeting_date'        => (string)($r['meeting_or_event_date'] ?? ''),
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+    }
+
+    } elseif ($area === 'first_nations') {
+        // 1. Active Country overlays (no member/personal data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT COUNT(*) AS cnt FROM affected_zones
+                  WHERE status = 'active' AND zone_type = 'country_overlay'"
+            );
+            $stmt->execute();
+            $hubData['country_overlay_count'] = (int)$stmt->fetchColumn();
+
+            $stmt2 = $db->prepare(
+                "SELECT zone_name, effective_date
+                   FROM affected_zones
+                  WHERE status = 'active' AND zone_type = 'country_overlay'
+                  ORDER BY effective_date DESC
+                  LIMIT 5"
+            );
+            $stmt2->execute();
+            $hubData['country_overlays'] = array_map(
+                fn($r) => [
+                    'zone_name'      => (string)$r['zone_name'],
+                    'effective_date' => (string)($r['effective_date'] ?? ''),
+                ],
+                $stmt2->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        // 2. First Nations grants — counts by status + total disbursed (no grantee PII)
+        try {
+            $stmt = $db->prepare(
+                "SELECT status, COUNT(*) AS cnt, SUM(amount_cents) AS total
+                   FROM grants
+                  WHERE is_first_nations = 1
+                  GROUP BY status"
+            );
+            $stmt->execute();
+            $grantsByStatus = []; $totalDisbursed = 0; $totalCount = 0;
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $grantsByStatus[(string)$r['status']] = (int)$r['cnt'];
+                $totalCount += (int)$r['cnt'];
+                if (in_array($r['status'], ['disbursed','acquitted'], true)) {
+                    $totalDisbursed += (int)$r['total'];
+                }
+            }
+            $hubData['fn_grants'] = [
+                'total_count'      => $totalCount,
+                'total_disbursed'  => $totalDisbursed,
+                'by_status'        => $grantsByStatus,
+            ];
+        } catch (Throwable) {}
+
+        // 3. Recent FNAC reviews — review_key and status (no member data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT review_key, status, created_at
+                   FROM fnac_reviews
+                  ORDER BY created_at DESC
+                  LIMIT 5"
+            );
+            $stmt->execute();
+            $hubData['recent_fnac_reviews'] = array_map(
+                fn($r) => [
+                    'review_key' => (string)$r['review_key'],
+                    'status'     => (string)$r['status'],
+                    'created_at' => (string)$r['created_at'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+    }
+
+    } elseif ($area === 'community_projects') {
+        // 1. All grants — counts by status + total disbursed (no grantee PII)
+        try {
+            $stmt = $db->query(
+                "SELECT status, COUNT(*) AS cnt, SUM(amount_cents) AS total
+                   FROM grants GROUP BY status"
+            );
+            $grantsByStatus = []; $totalDisbursed = 0; $totalCount = 0;
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $grantsByStatus[(string)$r['status']] = (int)$r['cnt'];
+                $totalCount += (int)$r['cnt'];
+                if (in_array($r['status'], ['disbursed','acquitted'], true)) {
+                    $totalDisbursed += (int)$r['total'];
+                }
+            }
+            $hubData['grants'] = [
+                'total_count'     => $totalCount,
+                'total_disbursed' => $totalDisbursed,
+                'by_status'       => $grantsByStatus,
+            ];
+        } catch (Throwable) {}
+
+        // 2. Open announcements — title and close date only (no member data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT title, closes_at FROM announcements
+                  WHERE status = 'open'
+                  ORDER BY opens_at DESC LIMIT 3"
+            );
+            $stmt->execute();
+            $hubData['open_announcements'] = array_map(
+                fn($r) => [
+                    'title'     => (string)$r['title'],
+                    'closes_at' => (string)($r['closes_at'] ?? ''),
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        // 3. Trust income total last 12 months (aggregate only)
+        try {
+            $s = $db->query(
+                "SELECT COALESCE(SUM(net_amount_cents),0) AS total
+                   FROM trust_income
+                  WHERE income_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)"
+            );
+            $hubData['trust_income_12m'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
+    }
+
+    } elseif ($area === 'technology_blockchain') {
+        // 1. Ledger nodes by status (no member data)
+        try {
+            $stmt = $db->query(
+                "SELECT status, COUNT(*) AS cnt FROM ledger_nodes GROUP BY status"
+            );
+            $nodesByStatus = []; $totalNodes = 0;
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $nodesByStatus[(string)$r['status']] = (int)$r['cnt'];
+                $totalNodes += (int)$r['cnt'];
+            }
+            $hubData['nodes'] = ['total' => $totalNodes, 'by_status' => $nodesByStatus];
+        } catch (Throwable) {}
+
+        // 2. Mint queue by status (no member data)
+        try {
+            $stmt = $db->query(
+                "SELECT queue_status, COUNT(*) AS cnt FROM mint_queue GROUP BY queue_status"
+            );
+            $queueByStatus = []; $totalQueue = 0;
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $queueByStatus[(string)$r['queue_status']] = (int)$r['cnt'];
+                $totalQueue += (int)$r['cnt'];
+            }
+            $hubData['mint_queue'] = ['total' => $totalQueue, 'by_status' => $queueByStatus];
+        } catch (Throwable) {}
+
+        // 3. Recent mint batches — label, status, date (no member data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT batch_label, batch_status, created_at
+                   FROM mint_batches
+                  ORDER BY created_at DESC LIMIT 3"
+            );
+            $stmt->execute();
+            $hubData['recent_batches'] = array_map(
+                fn($r) => [
+                    'batch_label'  => (string)$r['batch_label'],
+                    'batch_status' => (string)$r['batch_status'],
+                    'created_at'   => (string)$r['created_at'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+    }
+
+    } elseif ($area === 'financial_oversight') {
+        // 1. Most recent distribution run — date, status, pool total (no member data)
+        try {
+            $stmt = $db->query(
+                "SELECT distribution_date, status, total_pool_cents
+                   FROM distribution_runs
+                  ORDER BY distribution_date DESC LIMIT 1"
+            );
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $hubData['last_distribution'] = [
+                    'distribution_date' => (string)$row['distribution_date'],
+                    'status'            => (string)$row['status'],
+                    'total_pool_cents'  => (int)$row['total_pool_cents'],
+                ];
+            }
+        } catch (Throwable) {}
+
+        // 2. Overdue transfers count (aggregate only)
+        try {
+            $s = $db->query(
+                "SELECT COUNT(*) FROM v_overdue_transfers WHERE days_overdue > 0"
+            );
+            $hubData['overdue_transfers'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
+
+        // 3. Trust income total last 12 months (aggregate only)
+        try {
+            $s = $db->query(
+                "SELECT COALESCE(SUM(net_amount_cents),0) FROM trust_income
+                  WHERE income_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)"
+            );
+            $hubData['trust_income_12m'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
+
+        // 4. Trust expenses total last 12 months by category (aggregate only, no payee)
+        try {
+            $stmt = $db->query(
+                "SELECT expense_category, COALESCE(SUM(amount_cents),0) AS total
+                   FROM trust_expenses
+                  WHERE status = 'paid'
+                    AND expense_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+                  GROUP BY expense_category
+                  ORDER BY total DESC"
+            );
+            $expByCat = [];
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $expByCat[(string)$r['expense_category']] = (int)$r['total'];
+            }
+            $hubData['expenses_by_category'] = $expByCat;
+        } catch (Throwable) {}
+    }
+
+    } elseif ($area === 'place_based_decisions') {
+        // 1. Active Affected Zones (governance zone type) — name + date (no member/address data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT COUNT(*) AS cnt FROM affected_zones
+                  WHERE status = 'active'
+                    AND zone_type IN ('affected_zone','project_impact')"
+            );
+            $stmt->execute();
+            $hubData['active_zone_count'] = (int)$stmt->fetchColumn();
+
+            $stmt2 = $db->prepare(
+                "SELECT zone_name, zone_type, effective_date
+                   FROM affected_zones
+                  WHERE status = 'active'
+                    AND zone_type IN ('affected_zone','project_impact')
+                  ORDER BY effective_date DESC LIMIT 5"
+            );
+            $stmt2->execute();
+            $hubData['active_zones'] = array_map(
+                fn($r) => [
+                    'zone_name'      => (string)$r['zone_name'],
+                    'zone_type'      => (string)$r['zone_type'],
+                    'effective_date' => (string)($r['effective_date'] ?? ''),
+                ],
+                $stmt2->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        // 2. All zones status breakdown (aggregate only)
+        try {
+            $stmt = $db->query(
+                "SELECT status, COUNT(*) AS cnt FROM affected_zones GROUP BY status"
+            );
+            $hubData['zones_by_status'] = [];
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $hubData['zones_by_status'][(string)$r['status']] = (int)$r['cnt'];
+            }
+        } catch (Throwable) {}
+
+        // 3. Active RWA assets — name, type, location (no personal data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT asset_name, asset_type, location_summary
+                   FROM rwa_asset_register
+                  WHERE status = 'active'
+                  ORDER BY created_at DESC LIMIT 5"
+            );
+            $stmt->execute();
+            $hubData['active_rwa_assets'] = array_map(
+                fn($r) => [
+                    'asset_name'       => (string)$r['asset_name'],
+                    'asset_type'       => (string)$r['asset_type'],
+                    'location_summary' => (string)($r['location_summary'] ?? ''),
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+            $hubData['rwa_count'] = count($hubData['active_rwa_assets']);
+        } catch (Throwable) {}
+    }
+
+    } elseif ($area === 'education_outreach') {
+        // 1. New members last 30 days — COUNT only, no identifying data
+        try {
+            $s = $db->query(
+                "SELECT COUNT(*) FROM members
+                  WHERE member_type = 'personal'
+                    AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+            );
+            $hubData['new_members_30d'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
+
+        // 2. Membership breakdown by wallet_status — aggregate only, no names
+        try {
+            $stmt = $db->query(
+                "SELECT wallet_status, COUNT(*) AS cnt
+                   FROM members
+                  WHERE member_type = 'personal'
+                  GROUP BY wallet_status"
+            );
+            $byStatus = []; $total = 0;
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $byStatus[(string)$r['wallet_status']] = (int)$r['cnt'];
+                $total += (int)$r['cnt'];
+            }
+            $hubData['members_total']     = $total;
+            $hubData['members_by_status'] = $byStatus;
+        } catch (Throwable) {}
+
+        // 3. Active invite codes and total uses — aggregate only, no member data
+        try {
+            $stmt = $db->query(
+                "SELECT COUNT(*) AS code_count, COALESCE(SUM(use_count),0) AS total_uses
+                   FROM partner_invite_codes WHERE status = 'active'"
+            );
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $hubData['invite_codes']  = (int)$row['code_count'];
+                $hubData['invite_uses']   = (int)$row['total_uses'];
+            }
+        } catch (Throwable) {}
+
+        // 4. Open announcements — title and close date only
+        try {
+            $stmt = $db->prepare(
+                "SELECT title, closes_at FROM announcements
+                  WHERE status = 'open'
+                  ORDER BY opens_at DESC LIMIT 3"
+            );
+            $stmt->execute();
+            $hubData['open_announcements'] = array_map(
+                fn($r) => [
+                    'title'     => (string)$r['title'],
+                    'closes_at' => (string)($r['closes_at'] ?? ''),
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+    }
+
     apiSuccess([
         'area_key'    => $area,
         'area_label'  => hubAreaLabel($area),

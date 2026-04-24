@@ -290,3 +290,8 @@ button{font-family:inherit;cursor:pointer}
 .hub-livedata-type{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);white-space:nowrap;flex-shrink:0}
 .hub-livedata-summary{font-size:.8rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .hub-livedata-ts{font-size:.7rem;color:var(--text4);white-space:nowrap;flex-shrink:0}
+
+/* ── ESG hub ────────────────────────────────────────────────────────────────── */
+.esg-poor-badge{font-size:.7rem;padding:1px 6px;border-radius:4px;background:rgba(220,80,60,.15);color:#e87070;border:1px solid rgba(220,80,60,.25);font-weight:700;white-space:nowrap}
+.node-live{background:rgba(60,180,100,.12);color:#5db87a;border:1px solid rgba(60,180,100,.25)}
+.node-other{background:rgba(255,255,255,.05);color:var(--text3);border:1px solid var(--border)}

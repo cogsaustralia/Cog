@@ -1756,6 +1756,385 @@ document.addEventListener('DOMContentLoaded', function(){
       html += '</div>'; // .hub-livedata-section
     }
 
+    // ── 3. ESG & Proxy Voting ────────────────────────────────────────────
+    else if (areaKey === 'esg_proxy_voting') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Portfolio ESG Status</div>';
+
+      if (typeof hd.poor_esg_count !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Poor ESG targets in portfolio</span>';
+        html += '<span class="hub-livedata-val' + (hd.poor_esg_count > 0 ? ' lvd-issues' : '') + '">' + hd.poor_esg_count + '</span>';
+        if (hd.poor_esg_count === 0) html += '<span class="hub-livedata-ok">✓ None flagged</span>';
+        html += '</div>';
+      }
+
+      if (hd.holdings && hd.holdings.length) {
+        html += '<div class="hub-livedata-subtitle">Holdings</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.holdings.forEach(function(hg) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(hg.ticker) + '</span>' +
+              '<span class="hub-livedata-summary">' + _esc(hg.company_name) + '</span>' +
+              (hg.is_poor_esg_target ? '<span class="esg-poor-badge">Poor ESG</span>' : '') +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + Number(hg.units_held).toLocaleString('en-AU') + ' units</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      if (hd.recent_engagements && hd.recent_engagements.length) {
+        html += '<div class="hub-livedata-subtitle">Recent proxy engagements</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.recent_engagements.forEach(function(eg) {
+          var typeLabel = _esc(eg.engagement_type.replace(/_/g, ' '));
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(eg.ticker) + '</span>' +
+              '<span class="hub-livedata-summary">' + typeLabel + ' — ' + _esc(eg.status) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _esc(eg.meeting_date) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    // ── 4. First Nations Joint Venture ───────────────────────────────────
+    else if (areaKey === 'first_nations') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">First Nations Joint Venture Data</div>';
+
+      if (typeof hd.country_overlay_count !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Active Country overlays</span>';
+        html += '<span class="hub-livedata-val">' + hd.country_overlay_count + '</span>';
+        html += '</div>';
+      }
+      if (hd.country_overlays && hd.country_overlays.length) {
+        html += '<div class="hub-livedata-list">';
+        hd.country_overlays.forEach(function(z) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">Country</span>' +
+              '<span class="hub-livedata-summary">' + _esc(z.zone_name) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _esc(z.effective_date) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      if (hd.fn_grants) {
+        var fg = hd.fn_grants;
+        var disbursedAUD = fg.total_disbursed
+          ? '$' + (fg.total_disbursed / 100).toLocaleString('en-AU', {minimumFractionDigits:2,maximumFractionDigits:2})
+          : '$0.00';
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">First Nations grants</span>';
+        html += '<span class="hub-livedata-val">' + fg.total_count + '</span>';
+        html += '</div>';
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Total disbursed</span>';
+        html += '<span class="hub-livedata-val lvd-active">' + disbursedAUD + '</span>';
+        html += '</div>';
+      }
+
+      if (hd.recent_fnac_reviews && hd.recent_fnac_reviews.length) {
+        html += '<div class="hub-livedata-subtitle">Recent FNAC reviews</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.recent_fnac_reviews.forEach(function(r) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(r.status) + '</span>' +
+              '<span class="hub-livedata-summary">' + _esc(r.review_key.replace(/_/g,' ')) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _dts(r.created_at) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    // ── 5. Community Projects ────────────────────────────────────────────
+    else if (areaKey === 'community_projects') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Community Benefit Data</div>';
+
+      if (hd.grants) {
+        var gr = hd.grants;
+        var disbAUD = gr.total_disbursed
+          ? '$' + (gr.total_disbursed / 100).toLocaleString('en-AU', {minimumFractionDigits:2,maximumFractionDigits:2})
+          : '$0.00';
+        var bs = gr.by_status || {};
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Total grants</span>';
+        html += '<span class="hub-livedata-val">' + gr.total_count + '</span>';
+        if (gr.total_count > 0) {
+          var chips = '';
+          ['proposed','approved','disbursed','acquitted','cancelled'].forEach(function(s) {
+            if (bs[s]) chips += '<span class="sev-chip sev-low">' + bs[s] + ' ' + s + '</span>';
+          });
+          if (chips) html += '<span class="hub-livedata-chips">' + chips + '</span>';
+        }
+        html += '</div>';
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Total disbursed</span>';
+        html += '<span class="hub-livedata-val lvd-active">' + disbAUD + '</span>';
+        html += '</div>';
+      }
+
+      if (typeof hd.trust_income_12m !== 'undefined' && hd.trust_income_12m > 0) {
+        var incAUD = '$' + (hd.trust_income_12m / 100).toLocaleString('en-AU', {minimumFractionDigits:2,maximumFractionDigits:2});
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Trust income (12 months)</span>';
+        html += '<span class="hub-livedata-val">' + incAUD + '</span>';
+        html += '</div>';
+      }
+
+      if (hd.open_announcements && hd.open_announcements.length) {
+        html += '<div class="hub-livedata-subtitle">Open announcements</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.open_announcements.forEach(function(a) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">Open</span>' +
+              '<span class="hub-livedata-summary">' + _esc(a.title) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + (a.closes_at ? 'closes ' + _dts(a.closes_at) : '') + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    // ── 6. Technology & Blockchain ───────────────────────────────────────
+    else if (areaKey === 'technology_blockchain') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Infrastructure Status</div>';
+
+      if (hd.nodes) {
+        var ns = hd.nodes.by_status || {};
+        var liveCount = ns['live'] || 0;
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Ledger nodes</span>';
+        html += '<span class="hub-livedata-val">' + hd.nodes.total + '</span>';
+        if (hd.nodes.total > 0) {
+          var nchips = '';
+          [['live','node-live'],['commissioning','node-other'],['planned','node-other'],
+           ['suspended','node-other'],['retired','node-other']].forEach(function(pair) {
+            if (ns[pair[0]]) nchips += '<span class="sev-chip ' + pair[1] + '">' + ns[pair[0]] + ' ' + pair[0] + '</span>';
+          });
+          if (nchips) html += '<span class="hub-livedata-chips">' + nchips + '</span>';
+        }
+        html += '</div>';
+      }
+
+      if (hd.mint_queue) {
+        var mq = hd.mint_queue;
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Mint queue items</span>';
+        html += '<span class="hub-livedata-val">' + mq.total + '</span>';
+        if (mq.total > 0) {
+          var mqchips = '';
+          Object.keys(mq.by_status || {}).forEach(function(s) {
+            mqchips += '<span class="sev-chip sev-low">' + mq.by_status[s] + ' ' + _esc(s) + '</span>';
+          });
+          if (mqchips) html += '<span class="hub-livedata-chips">' + mqchips + '</span>';
+        }
+        html += '</div>';
+      }
+
+      if (hd.recent_batches && hd.recent_batches.length) {
+        html += '<div class="hub-livedata-subtitle">Recent mint batches</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.recent_batches.forEach(function(b) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(b.batch_status) + '</span>' +
+              '<span class="hub-livedata-summary">' + _esc(b.batch_label) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _dts(b.created_at) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    // ── 7. Financial Oversight ───────────────────────────────────────────
+    else if (areaKey === 'financial_oversight') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Financial Position</div>';
+
+      if (hd.last_distribution) {
+        var ld = hd.last_distribution;
+        var poolAUD = ld.total_pool_cents
+          ? '$' + (ld.total_pool_cents / 100).toLocaleString('en-AU', {minimumFractionDigits:2,maximumFractionDigits:2})
+          : '—';
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Last distribution run</span>';
+        html += '<span class="hub-livedata-val">' + _esc(ld.distribution_date) + '</span>';
+        html += '<span class="hub-livedata-chips"><span class="sev-chip sev-low">' + _esc(ld.status) + '</span></span>';
+        html += '</div>';
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Distribution pool</span>';
+        html += '<span class="hub-livedata-val lvd-active">' + poolAUD + '</span>';
+        html += '</div>';
+      }
+
+      if (typeof hd.overdue_transfers !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Overdue transfers</span>';
+        html += '<span class="hub-livedata-val' + (hd.overdue_transfers > 0 ? ' lvd-issues' : '') + '">' + hd.overdue_transfers + '</span>';
+        if (hd.overdue_transfers === 0) html += '<span class="hub-livedata-ok">✓ None overdue</span>';
+        html += '</div>';
+      }
+
+      if (typeof hd.trust_income_12m !== 'undefined') {
+        var incAUD = '$' + (hd.trust_income_12m / 100).toLocaleString('en-AU', {minimumFractionDigits:2,maximumFractionDigits:2});
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Trust income (12 months)</span>';
+        html += '<span class="hub-livedata-val">' + incAUD + '</span>';
+        html += '</div>';
+      }
+
+      if (hd.expenses_by_category && Object.keys(hd.expenses_by_category).length) {
+        html += '<div class="hub-livedata-subtitle">Paid expenses by category (12 months)</div>';
+        html += '<div class="hub-livedata-list">';
+        Object.keys(hd.expenses_by_category).forEach(function(cat) {
+          var amt = '$' + (hd.expenses_by_category[cat] / 100).toLocaleString('en-AU', {minimumFractionDigits:2,maximumFractionDigits:2});
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-summary">' + _esc(cat.replace(/_/g,' ')) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + amt + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    // ── 8. Place-Based Decisions ─────────────────────────────────────────
+    else if (areaKey === 'place_based_decisions') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Place & Asset Data</div>';
+
+      if (typeof hd.active_zone_count !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Active Affected Zones</span>';
+        html += '<span class="hub-livedata-val">' + hd.active_zone_count + '</span>';
+        if (hd.zones_by_status) {
+          var zchips = '';
+          ['proposed','active','expired','revoked'].forEach(function(s) {
+            if (hd.zones_by_status[s]) zchips += '<span class="sev-chip sev-low">' + hd.zones_by_status[s] + ' ' + s + '</span>';
+          });
+          if (zchips) html += '<span class="hub-livedata-chips">' + zchips + '</span>';
+        }
+        html += '</div>';
+      }
+
+      if (hd.active_zones && hd.active_zones.length) {
+        html += '<div class="hub-livedata-list">';
+        hd.active_zones.forEach(function(z) {
+          var typeLabel = z.zone_type.replace(/_/g,' ');
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(typeLabel) + '</span>' +
+              '<span class="hub-livedata-summary">' + _esc(z.zone_name) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _esc(z.effective_date) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      if (typeof hd.rwa_count !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Active real-world assets</span>';
+        html += '<span class="hub-livedata-val">' + hd.rwa_count + '</span>';
+        html += '</div>';
+      }
+
+      if (hd.active_rwa_assets && hd.active_rwa_assets.length) {
+        html += '<div class="hub-livedata-list">';
+        hd.active_rwa_assets.forEach(function(a) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(a.asset_type.replace(/_/g,' ')) + '</span>' +
+              '<span class="hub-livedata-summary">' + _esc(a.asset_name) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _esc(a.location_summary) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
+    // ── 9. Education & Outreach ───────────────────────────────────────────
+    else if (areaKey === 'education_outreach') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Membership & Outreach Data</div>';
+
+      if (typeof hd.members_total !== 'undefined') {
+        var ms = hd.members_by_status || {};
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Total Partners</span>';
+        html += '<span class="hub-livedata-val">' + hd.members_total + '</span>';
+        var mchips = '';
+        [['active','sev-med'],['invited','sev-low'],['locked','sev-high']].forEach(function(pair) {
+          if (ms[pair[0]]) mchips += '<span class="sev-chip ' + pair[1] + '">' + ms[pair[0]] + ' ' + pair[0] + '</span>';
+        });
+        if (mchips) html += '<span class="hub-livedata-chips">' + mchips + '</span>';
+        html += '</div>';
+      }
+
+      if (typeof hd.new_members_30d !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">New Partners (30 days)</span>';
+        html += '<span class="hub-livedata-val' + (hd.new_members_30d > 0 ? ' lvd-active' : '') + '">' + hd.new_members_30d + '</span>';
+        html += '</div>';
+      }
+
+      if (typeof hd.invite_codes !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Active invite codes</span>';
+        html += '<span class="hub-livedata-val">' + hd.invite_codes + '</span>';
+        html += '<span class="hub-livedata-chips"><span class="sev-chip sev-low">' + hd.invite_uses + ' uses</span></span>';
+        html += '</div>';
+      }
+
+      if (hd.open_announcements && hd.open_announcements.length) {
+        html += '<div class="hub-livedata-subtitle">Open announcements</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.open_announcements.forEach(function(a) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">Open</span>' +
+              '<span class="hub-livedata-summary">' + _esc(a.title) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + (a.closes_at ? 'closes ' + _dts(a.closes_at) : '') + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
     if (html) container.insertAdjacentHTML('beforeend', html);
   }
 
