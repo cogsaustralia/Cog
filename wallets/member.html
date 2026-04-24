@@ -4955,10 +4955,6 @@ async function payOutstandingByCard(items) {
     }
   } catch(e) {
     var msg = (e && e.message) || 'Card payment unavailable.';
-    // Surface specific Stripe error if present, otherwise generic fallback
-    if (msg.toLowerCase().includes('processor') || msg.toLowerCase().includes('stripe') || msg.toLowerCase().includes('502')) {
-      msg = 'Card payment is temporarily unavailable. Please use bank transfer or PayID — both are instant and fee-free.';
-    }
     alert(msg);
     if (btn) { btn.disabled = false; btn.textContent = 'Pay by card via Stripe ›'; }
   }
