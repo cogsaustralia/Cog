@@ -67,6 +67,19 @@
     z-index: 10;
   }
 
+  /* ── Trust anchor strip ── */
+  #trust-anchor {
+    text-align: center;
+    font-size: .62rem; letter-spacing: .07em;
+    color: rgba(240,225,196,.32);
+    padding: 5px 20px 0;
+    flex-shrink: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   /* ── Top bar ── */
   #top-bar {
     display: flex; align-items: center; justify-content: space-between;
@@ -121,6 +134,19 @@
     white-space: nowrap; min-height: 44px;
   }
   #skip-btn:hover { color: var(--text2); }
+
+  /* Questions first button */
+  #questions-btn {
+    font-family: var(--sans);
+    font-size: .75rem; font-weight: 400;
+    color: var(--muted);
+    background: none; border: none; cursor: pointer;
+    padding: 6px 12px 6px 0;
+    transition: color .2s;
+    white-space: nowrap; min-height: 44px;
+    opacity: .75;
+  }
+  #questions-btn:hover { color: var(--text2); opacity: 1; }
 
   /* ── Card stage ── */
   #card-stage {
@@ -455,8 +481,8 @@
   <div id="top-bar">
     <span class="wordmark">COG$</span>
     <span id="step-label">1 of 5</span>
-    <button id="skip-btn" aria-label="Skip introduction">Skip →</button>
-    <span id="trust-anchor" style="position:absolute;left:50%;transform:translateX(-50%);font-size:.65rem;letter-spacing:.06em;color:rgba(240,225,196,.38);white-space:nowrap;pointer-events:none">COG$ of Australia Foundation · ABN 61 734 327 831 · Drake Village NSW</span>
+    <button id="questions-btn" aria-label="Read FAQ before joining">Questions first →</button>
+    <button id="skip-btn" aria-label="Skip introduction">Skip intro →</button>
     <div id="progress-track"><div id="progress-fill"></div></div>
 
     <!-- Aria-only dots -->
@@ -468,6 +494,9 @@
       <span class="dot"        role="tab" aria-label="Card 5 of 5" aria-selected="false" tabindex="-1" data-index="4"></span>
     </div>
   </div>
+
+  <!-- Trust anchor strip -->
+  <div id="trust-anchor" aria-hidden="true">COG$ of Australia Foundation · ABN 61 734 327 831 · Drake Village NSW</div>
 
   <!-- Card stage -->
   <div id="card-stage" aria-live="polite" aria-atomic="true">
@@ -553,7 +582,7 @@
             </div>
           </div>
           <div class="means-item">
-            <span class="means-icon">⚖️</span>
+            <span class="means-icon">🔒</span>
             <div>
               <strong>The system cannot be financialised</strong>
               <span>Tokens cannot be traded or redeemed for cash — by design. This protects the one-member-one-vote principle from being purchased away.</span>
@@ -563,7 +592,7 @@
             <span class="means-icon">⚙️</span>
             <div>
               <strong>Members are operators of the joint venture</strong>
-              <span>Your $4 is not refundable — it is your entry into a community governance structure, not a purchase.</span>
+              <span>You are entering a governance structure, not making a purchase. Your $4 establishes your permanent Member record.</span>
             </div>
           </div>
           <div class="means-item">
@@ -793,6 +822,12 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
     goTo(current - 1, 'back');
   });
   skipBtn.addEventListener('click', skip);
+
+  var questionsBtn = document.getElementById('questions-btn');
+  if(questionsBtn) questionsBtn.addEventListener('click', function(){
+    // Goes to FAQ without setting intro_seen — user can return via back button
+    window.location.href = '../faq/index.html';
+  });
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
