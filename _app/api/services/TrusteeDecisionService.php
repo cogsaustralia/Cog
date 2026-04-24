@@ -210,7 +210,9 @@ class TrusteeDecisionService
     }
 
     /**
-     * Update a draft TDR (only permitted while status = draft).
+     * Update a TDR (permitted while status = draft or pending_execution).
+     * Editing while pending_execution invalidates any outstanding execution token
+     * so the admin must re-issue before executing.
      */
     public static function updateDraft(PDO $db, string $decisionUuid, array $data): void
     {
@@ -218,8 +220,16 @@ class TrusteeDecisionService
         if (!$decision) {
             throw new \RuntimeException("TDR not found: {$decisionUuid}");
         }
-        if ($decision['status'] !== 'draft') {
+        if (!in_array($decision['status'], ['draft', 'pending_execution'], true)) {
             throw new \RuntimeException("TDR {$decision['decision_ref']} cannot be edited — status is {$decision['status']}.");
+        }
+
+        // If pending_execution, burn any outstanding unused execution token so it must be re-issued
+        if ($decision['status'] === 'pending_execution') {
+            $db->prepare(
+                "UPDATE one_time_tokens SET used_at = UTC_TIMESTAMP()
+                 WHERE purpose LIKE 'tdr_execution:%' AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()"
+            )->execute();
         }
         $db->prepare(
             "UPDATE trustee_decisions SET
@@ -231,7 +241,7 @@ class TrusteeDecisionService
                fpic_obtained = ?, fpic_evidence_ref = ?,
                cultural_heritage_assessed = ?, cultural_heritage_ref = ?,
                updated_at = UTC_TIMESTAMP()
-             WHERE decision_uuid = ? AND status = 'draft'"
+             WHERE decision_uuid = ? AND status IN ('draft','pending_execution')"
         )->execute([
             $data['sub_trust_context'],
             $data['decision_category'],

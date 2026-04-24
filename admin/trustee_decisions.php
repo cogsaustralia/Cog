@@ -65,7 +65,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'crea
     }
 }
 
-// POST: issue execution token
+// POST: update existing draft/pending record
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'update_draft') {
+    $uuid = trim($_POST['decision_uuid'] ?? '');
+    try {
+        $powers = [];
+        $clauses = $_POST['clause_ref']  ?? [];
+        $descs   = $_POST['clause_desc'] ?? [];
+        foreach ($clauses as $i => $cref) {
+            $cref = trim($cref);
+            $desc = trim($descs[$i] ?? '');
+            if ($cref !== '' && $desc !== '') {
+                $powers[] = ['clause_ref' => $cref, 'description' => $desc];
+            }
+        }
+        if (empty($powers)) {
+            throw new \RuntimeException('At least one power / clause reference is required.');
+        }
+        $data = [
+            'sub_trust_context'           => $_POST['sub_trust_context'] ?? '',
+            'decision_category'           => $_POST['decision_category'] ?? '',
+            'title'                       => trim($_POST['title'] ?? ''),
+            'effective_date'              => trim($_POST['effective_date'] ?? ''),
+            'powers'                      => $powers,
+            'background_md'               => trim($_POST['background_md']         ?? ''),
+            'fnac_consideration_md'       => trim($_POST['fnac_consideration_md'] ?? ''),
+            'fpic_consideration_md'       => trim($_POST['fpic_consideration_md'] ?? ''),
+            'cultural_heritage_md'        => trim($_POST['cultural_heritage_md']  ?? ''),
+            'resolution_md'               => trim($_POST['resolution_md']         ?? ''),
+            'fnac_consulted'              => !empty($_POST['fnac_consulted']),
+            'fnac_evidence_ref'           => trim($_POST['fnac_evidence_ref']          ?? ''),
+            'fpic_obtained'               => !empty($_POST['fpic_obtained']),
+            'fpic_evidence_ref'           => trim($_POST['fpic_evidence_ref']          ?? ''),
+            'cultural_heritage_assessed'  => !empty($_POST['cultural_heritage_assessed']),
+            'cultural_heritage_ref'       => trim($_POST['cultural_heritage_ref']      ?? ''),
+        ];
+        foreach (['sub_trust_context','decision_category','title','effective_date','resolution_md'] as $req) {
+            if (($data[$req] ?? '') === '') {
+                throw new \RuntimeException("Field '{$req}' is required.");
+            }
+        }
+        TrusteeDecisionService::updateDraft($pdo, $uuid, $data);
+        header('Location: ./trustee_decisions.php?id=' . urlencode($uuid) . '&msg=updated');
+        exit;
+    } catch (\Throwable $e) {
+        $error  = $e->getMessage();
+        $action = 'edit';
+        $id     = $uuid;
+        // Re-load decision so edit form can pre-fill
+        $decision = TrusteeDecisionService::getDecision($pdo, $uuid);
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'issue_token') {
     $uuid = trim($_POST['decision_uuid'] ?? '');
     try {
@@ -400,6 +451,135 @@ $statusBadge = [
   </div>
 </form>
 
+<?php elseif ($action === 'edit' && $decision): ?>
+<!-- ════════════════════════════════════════════════════════ EDIT FORM -->
+<?php
+  $editPowers = json_decode((string)($decision['powers_json'] ?? '[]'), true) ?: [];
+?>
+<div class="topbar" style="margin-bottom:20px">
+  <h2>✎ Edit — <?= td_h($decision['decision_ref']) ?></h2>
+  <p>
+    Editing a pending-execution record will invalidate the outstanding execution token.
+    You must re-issue a new token after saving.
+  </p>
+</div>
+<form method="POST">
+  <input type="hidden" name="_action" value="update_draft">
+  <input type="hidden" name="decision_uuid" value="<?= td_h($decision['decision_uuid']) ?>">
+
+  <div class="form-card">
+    <h3>Step 1 — Identification</h3>
+    <div class="form-group">
+      <label>Sub-Trust Context <span class="required">*</span></label>
+      <select name="sub_trust_context" required>
+        <option value="">— select —</option>
+        <?php foreach ($subTrustLabels as $val => $lbl): ?>
+          <option value="<?= td_h($val) ?>" <?= $decision['sub_trust_context'] === $val ? 'selected' : '' ?>>
+            <?= td_h($lbl) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Decision Category <span class="required">*</span></label>
+      <select name="decision_category" required>
+        <option value="">— select —</option>
+        <?php foreach ($categoryLabels as $val => $lbl): ?>
+          <option value="<?= td_h($val) ?>" <?= $decision['decision_category'] === $val ? 'selected' : '' ?>>
+            <?= td_h($lbl) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Title <span class="required">*</span></label>
+      <input type="text" name="title" required value="<?= td_h($decision['title']) ?>">
+    </div>
+    <div class="form-group">
+      <label>Effective Date <span class="required">*</span></label>
+      <input type="date" name="effective_date" required value="<?= td_h($decision['effective_date']) ?>">
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Step 2 — Powers Exercised</h3>
+    <div id="powers-container">
+      <?php foreach ($editPowers as $ep): ?>
+      <div class="powers-row">
+        <input type="text" name="clause_ref[]"  value="<?= td_h($ep['clause_ref']  ?? '') ?>">
+        <input type="text" name="clause_desc[]" value="<?= td_h($ep['description'] ?? '') ?>">
+        <button type="button" class="remove-power" onclick="removePower(this)">✕</button>
+      </div>
+      <?php endforeach; ?>
+      <?php if (empty($editPowers)): ?>
+      <div class="powers-row">
+        <input type="text" name="clause_ref[]"  placeholder="e.g. SubTrustA-1A.3(a)">
+        <input type="text" name="clause_desc[]" placeholder="Description of power">
+        <button type="button" class="remove-power" onclick="removePower(this)">✕</button>
+      </div>
+      <?php endif; ?>
+    </div>
+    <button type="button" class="add-power" onclick="addPower()">+ Add Clause</button>
+  </div>
+
+  <div class="form-card">
+    <h3>Step 3 — Background &amp; Considerations</h3>
+    <div class="form-group">
+      <label>Background (Markdown)</label>
+      <textarea name="background_md"><?= td_h($decision['background_md'] ?? '') ?></textarea>
+    </div>
+    <div class="form-group">
+      <label>FNAC Consideration (Markdown)</label>
+      <textarea name="fnac_consideration_md"><?= td_h($decision['fnac_consideration_md'] ?? '') ?></textarea>
+    </div>
+    <div class="form-group">
+      <label>FPIC Consideration (Markdown)</label>
+      <textarea name="fpic_consideration_md"><?= td_h($decision['fpic_consideration_md'] ?? '') ?></textarea>
+    </div>
+    <div class="form-group">
+      <label>Cultural Heritage Consideration (Markdown)</label>
+      <textarea name="cultural_heritage_md"><?= td_h($decision['cultural_heritage_md'] ?? '') ?></textarea>
+    </div>
+    <hr class="divider">
+    <div class="form-group check">
+      <input type="checkbox" name="fnac_consulted" id="fnac_consulted" value="1" <?= $decision['fnac_consulted'] ? 'checked' : '' ?>>
+      <label for="fnac_consulted">FNAC consulted</label>
+    </div>
+    <div class="form-group">
+      <label>FNAC Evidence Reference</label>
+      <input type="text" name="fnac_evidence_ref" value="<?= td_h($decision['fnac_evidence_ref'] ?? '') ?>">
+    </div>
+    <div class="form-group check">
+      <input type="checkbox" name="fpic_obtained" id="fpic_obtained" value="1" <?= $decision['fpic_obtained'] ? 'checked' : '' ?>>
+      <label for="fpic_obtained">FPIC obtained</label>
+    </div>
+    <div class="form-group">
+      <label>FPIC Evidence Reference</label>
+      <input type="text" name="fpic_evidence_ref" value="<?= td_h($decision['fpic_evidence_ref'] ?? '') ?>">
+    </div>
+    <div class="form-group check">
+      <input type="checkbox" name="cultural_heritage_assessed" id="cha" value="1" <?= $decision['cultural_heritage_assessed'] ? 'checked' : '' ?>>
+      <label for="cha">Cultural Heritage assessed</label>
+    </div>
+    <div class="form-group">
+      <label>Cultural Heritage Evidence Reference</label>
+      <input type="text" name="cultural_heritage_ref" value="<?= td_h($decision['cultural_heritage_ref'] ?? '') ?>">
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Step 4 — Resolution</h3>
+    <div class="form-group">
+      <label>Resolution <span class="required">*</span></label>
+      <textarea name="resolution_md" required style="min-height:140px"><?= td_h($decision['resolution_md']) ?></textarea>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:center">
+    <button type="submit" class="btn-primary">Save Changes</button>
+    <a href="./trustee_decisions.php?id=<?= urlencode($decision['decision_uuid']) ?>"
+       style="font-size:.8rem;color:var(--sub)">Cancel</a>
+  </div>
+</form>
+
 <?php elseif ($decision): ?>
 <!-- ════════════════════════════════════════════════════════ DETAIL VIEW -->
 <div class="topbar" style="margin-bottom:20px">
@@ -417,6 +597,9 @@ $statusBadge = [
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <?php [$bc, $bl] = $statusBadge[$decision['status']] ?? ['badge-warn', $decision['status']]; ?>
       <span class="badge <?= $bc ?>"><?= $bl ?></span>
+      <?php if (in_array($decision['status'], ['draft','pending_execution'], true)): ?>
+        <a href="./trustee_decisions.php?action=edit&amp;id=<?= urlencode($decision['decision_uuid']) ?>" class="btn-primary btn-sm">✎ Edit</a>
+      <?php endif; ?>
       <a href="./trustee_decisions.php?action=create" class="btn-primary btn-sm">+ New TDR</a>
       <a href="./trustee_decisions.php" class="btn-primary btn-sm" style="background:none;border-color:var(--line2);color:var(--sub)">← All TDRs</a>
     </div>
