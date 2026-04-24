@@ -205,7 +205,7 @@ async function loadMsAdminActivity() {
   };
   var results = await Promise.allSettled(AREAS.map(function(area) {
     return fetch(
-      API + 'vault&action=hub-admin-activity&area_key=' + area + '&limit=3',
+      API + 'vault/hub-admin-activity&area_key=' + area + '&limit=3',
       { credentials: 'include' }
     ).then(function(r){ return r.json(); });
   }));

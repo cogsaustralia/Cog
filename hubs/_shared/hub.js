@@ -1577,7 +1577,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var res, data;
     try {
       res = await fetch(
-        API_LOCAL + 'vault&action=hub-admin-activity&area_key=' + encodeURIComponent(areaKey) + '&limit=8',
+        API_LOCAL + 'vault/hub-admin-activity&area_key=' + encodeURIComponent(areaKey) + '&limit=8',
         { credentials: 'include' }
       );
       data = await res.json();
