@@ -80,6 +80,107 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
 
 if (isset($_GET['msg'])) $message = tr_h(urldecode((string)$_GET['msg']));
 
+// ── POST: add new trustee ─────────────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_trustee') {
+    try {
+        $fullName      = trim($_POST['full_name']                  ?? '');
+        $dob           = trim($_POST['date_of_birth']              ?? '');
+        $mobile        = trim($_POST['mobile']                     ?? '');
+        $personalEmail = trim($_POST['personal_email']             ?? '');
+        $address       = trim($_POST['address']                    ?? '');
+        $otpEmail      = trim($_POST['email']                      ?? '');
+        $trusteeType   = trim($_POST['trustee_type']               ?? '');
+        $subTrust      = trim($_POST['sub_trust_context']          ?? '');
+        $apptDate      = trim($_POST['appointment_date']           ?? '');
+        $apptRef       = trim($_POST['appointment_instrument_ref'] ?? '');
+        $notes         = trim($_POST['notes']                      ?? '');
+
+        if ($fullName    === '') throw new \RuntimeException('Full name is required.');
+        if ($otpEmail    === '') throw new \RuntimeException('OTP email is required.');
+        if ($trusteeType === '') throw new \RuntimeException('Trustee type is required.');
+        if ($subTrust    === '') throw new \RuntimeException('Sub-trust context is required.');
+        if ($apptDate    === '') throw new \RuntimeException('Appointment date is required.');
+        if ($apptRef     === '') throw new \RuntimeException('Appointment instrument reference is required — a TDR or deed must authorise this appointment.');
+
+        if ($dob !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+            throw new \RuntimeException('Invalid date of birth format — use YYYY-MM-DD.');
+        }
+
+        // Check for duplicate OTP email within sub-trust
+        $dup = $pdo->prepare('SELECT id FROM trustees WHERE sub_trust_context = ? AND email = ? LIMIT 1');
+        $dup->execute([$subTrust, $otpEmail]);
+        if ($dup->fetch()) {
+            throw new \RuntimeException("A trustee with OTP email {$otpEmail} already exists for that sub-trust.");
+        }
+
+        $uuid = sprintf('%04x%04x-%04x-4%03x-%04x-%04x%04x%04x',
+            mt_rand(0,0xffff), mt_rand(0,0xffff), mt_rand(0,0xffff),
+            mt_rand(0,0x0fff), mt_rand(0,0x3fff)|0x8000,
+            mt_rand(0,0xffff), mt_rand(0,0xffff), mt_rand(0,0xffff));
+
+        $pdo->prepare(
+            "INSERT INTO trustees
+               (trustee_uuid, full_name, trustee_type, sub_trust_context,
+                email, personal_email, mobile, date_of_birth, address,
+                appointment_date, appointment_instrument_ref,
+                status, notes, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())"
+        )->execute([
+            $uuid, $fullName, $trusteeType, $subTrust,
+            $otpEmail,
+            $personalEmail !== '' ? $personalEmail : null,
+            $mobile        !== '' ? $mobile        : null,
+            $dob           !== '' ? $dob           : null,
+            $address       !== '' ? $address       : null,
+            $apptDate, $apptRef,
+            $notes         !== '' ? $notes         : null,
+        ]);
+
+        header('Location: ./trustees.php?msg=' . urlencode("Trustee {$fullName} added successfully."));
+        exit;
+    } catch (\Throwable $e) {
+        $error  = $e->getMessage();
+        $action = 'add';
+    }
+}
+
+// ── POST: change trustee status (resign / remove / suspend / reinstate) ───────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'change_status') {
+    $uuid = trim($_POST['trustee_uuid'] ?? '');
+    try {
+        $newStatus  = trim($_POST['new_status']  ?? '');
+        $statusDate = trim($_POST['status_date'] ?? '');
+        $notes      = trim($_POST['status_notes'] ?? '');
+        $allowed    = ['active','resigned','removed','suspended'];
+        if (!in_array($newStatus, $allowed, true)) {
+            throw new \RuntimeException('Invalid status.');
+        }
+        if ($newStatus !== 'active' && $statusDate === '') {
+            throw new \RuntimeException('A date is required when changing status to ' . $newStatus . '.');
+        }
+        $pdo->prepare(
+            "UPDATE trustees SET
+               status      = ?,
+               status_date = ?,
+               notes       = CASE WHEN ? != '' THEN CONCAT(COALESCE(notes,''), '\n[', UTC_TIMESTAMP(), '] ', ?) ELSE notes END,
+               updated_at  = UTC_TIMESTAMP()
+             WHERE trustee_uuid = ?"
+        )->execute([
+            $newStatus,
+            $statusDate !== '' ? $statusDate : null,
+            $notes, $notes,
+            $uuid,
+        ]);
+        header('Location: ./trustees.php?msg=' . urlencode('Trustee status updated.'));
+        exit;
+    } catch (\Throwable $e) {
+        $error = $e->getMessage();
+    }
+}
+
+$action          = trim((string)($_GET['action']        ?? ''));
+$statusChangeUuid = trim((string)($_GET['status_change'] ?? ''));
+
 $stmt = $pdo->prepare('SELECT * FROM trustees ORDER BY sub_trust_context, appointment_date, status');
 $stmt->execute();
 $trustees = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -175,6 +276,16 @@ $statusBadge = [
   font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
   color: var(--gold); font-weight: 700; margin: 20px 0 10px;
 }
+.add-form-card {
+  background: var(--panel2); border: 1px solid rgba(212,178,92,.3);
+  border-radius: 10px; padding: 22px 24px; margin-bottom: 22px;
+}
+.add-form-card h3 { font-size: .88rem; font-weight: 700; color: var(--gold); margin: 0 0 16px; }
+.status-panel {
+  background: var(--warnb); border: 1px solid rgba(212,148,74,.3);
+  border-radius: 8px; padding: 14px 16px; margin-top: 12px;
+}
+.status-panel h4 { font-size: .8rem; font-weight: 700; color: var(--warn); margin: 0 0 12px; }
 </style>
 </head>
 <body>
@@ -186,15 +297,109 @@ $statusBadge = [
 <?php if ($error):   ?><div class="msg-err"><?= tr_h($error) ?></div><?php endif; ?>
 
 <div class="topbar" style="margin-bottom:18px">
-  <h2>👔 Trustees Register</h2>
-  <p>Full record of all current and former trustees of each sub-trust — names, dates of birth,
-     addresses, appointment dates, and cessation dates. Click <strong>Edit</strong> to update any record.</p>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2>👔 Trustees Register</h2>
+      <p>Full record of all current and former trustees of each sub-trust — names, dates of birth,
+         addresses, appointment dates, and cessation dates. Click <strong>Edit</strong> to update any record.</p>
+    </div>
+    <?php if ($action !== 'add'): ?>
+      <a href="./trustees.php?action=add" class="btn btn-primary">+ Add Trustee</a>
+    <?php else: ?>
+      <a href="./trustees.php" class="btn btn-ghost">✕ Cancel</a>
+    <?php endif; ?>
+  </div>
 </div>
 
 <div class="notice">
   ℹ Board meetings are not applicable while a single Caretaker Trustee is in office.
   The Board Meeting infrastructure activates on appointment of a second Trustee under Declaration cl.1.8.
 </div>
+
+<?php if ($action === 'add'): ?>
+<!-- ── Add Trustee Form ────────────────────────────────────────────── -->
+<div class="add-form-card">
+  <h3>Add Trustee</h3>
+  <p style="font-size:.8rem;color:var(--sub);margin-bottom:16px">
+    An executed appointment instrument reference (TDR or deed) is required before a trustee can be added.
+  </p>
+  <form method="POST">
+    <input type="hidden" name="_action" value="add_trustee">
+    <div class="fg-row">
+      <div class="fg">
+        <label>Full Name <span class="required">*</span></label>
+        <input type="text" name="full_name" required value="<?= tr_h($_POST['full_name'] ?? '') ?>">
+      </div>
+      <div class="fg">
+        <label>Date of Birth</label>
+        <input type="date" name="date_of_birth" value="<?= tr_h($_POST['date_of_birth'] ?? '') ?>">
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Mobile</label>
+        <input type="tel" name="mobile" value="<?= tr_h($_POST['mobile'] ?? '') ?>" placeholder="04xx xxx xxx">
+      </div>
+      <div class="fg">
+        <label>Personal Email</label>
+        <input type="email" name="personal_email" value="<?= tr_h($_POST['personal_email'] ?? '') ?>" placeholder="personal@example.com">
+      </div>
+    </div>
+    <div class="fg">
+      <label>Address</label>
+      <input type="text" name="address" value="<?= tr_h($_POST['address'] ?? '') ?>"
+             placeholder="Full street address including suburb, state, postcode">
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Trustee Type <span class="required">*</span></label>
+        <select name="trustee_type" required>
+          <option value="">— select —</option>
+          <?php foreach ($typeLabels as $val => $lbl): ?>
+            <option value="<?= tr_h($val) ?>" <?= (($_POST['trustee_type'] ?? '') === $val) ? 'selected' : '' ?>>
+              <?= tr_h($lbl) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Sub-Trust Context <span class="required">*</span></label>
+        <select name="sub_trust_context" required>
+          <option value="">— select —</option>
+          <?php foreach ($subTrustLabels as $val => $lbl): ?>
+            <option value="<?= tr_h($val) ?>" <?= (($_POST['sub_trust_context'] ?? '') === $val) ? 'selected' : '' ?>>
+              <?= tr_h($lbl) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>OTP Email (sub-trust execution address) <span class="required">*</span></label>
+      <input type="email" name="email" required value="<?= tr_h($_POST['email'] ?? '') ?>"
+             placeholder="sub-trust-x@cogsaustralia.org">
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Date Appointed <span class="required">*</span></label>
+        <input type="date" name="appointment_date" required value="<?= tr_h($_POST['appointment_date'] ?? '') ?>">
+      </div>
+      <div class="fg">
+        <label>Appointment Instrument Reference <span class="required">*</span></label>
+        <input type="text" name="appointment_instrument_ref" required
+               value="<?= tr_h($_POST['appointment_instrument_ref'] ?? '') ?>"
+               placeholder="e.g. TDR-20260425-002 or CJVM_Declaration_v1.0">
+      </div>
+    </div>
+    <div class="fg">
+      <label>Notes</label>
+      <textarea name="notes"><?= tr_h($_POST['notes'] ?? '') ?></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Add Trustee</button>
+      <a href="./trustees.php" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+<?php endif; ?>
 
 <?php
 $grouped    = [];
@@ -225,11 +430,14 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
       <span class="badge <?= $bc ?>"><?= $bl ?></span>
       <?php if (!$isEditing): ?>
         <a href="./trustees.php?edit=<?= urlencode($t['trustee_uuid']) ?>" class="btn btn-ghost btn-sm">✎ Edit</a>
+        <a href="./trustees.php?status_change=<?= urlencode($t['trustee_uuid']) ?>" class="btn btn-ghost btn-sm"
+           style="border-color:rgba(212,148,74,.4);color:var(--warn)">⬤ Status</a>
       <?php else: ?>
         <a href="./trustees.php" class="btn btn-ghost btn-sm">✕ Cancel</a>
       <?php endif; ?>
     </div>
   </div>
+  <?php $isStatusChange = ($statusChangeUuid === $t['trustee_uuid'] && !$isEditing); ?>
 
   <?php if (!$isEditing): ?>
   <div class="trustee-body">
@@ -280,6 +488,39 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
       <span class="dg-l">UUID</span>
       <span class="dg-v mono"><?= tr_h($t['trustee_uuid']) ?></span>
     </div>
+
+    <?php if ($isStatusChange): ?>
+    <div class="status-panel">
+      <h4>Change Trustee Status</h4>
+      <form method="POST" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
+        <input type="hidden" name="_action"      value="change_status">
+        <input type="hidden" name="trustee_uuid" value="<?= tr_h($t['trustee_uuid']) ?>">
+        <div class="fg" style="margin:0">
+          <label>New Status <span class="required">*</span></label>
+          <select name="new_status" required>
+            <option value="">— select —</option>
+            <?php foreach ($statusOptions as $val => $lbl): ?>
+              <option value="<?= tr_h($val) ?>" <?= $t['status']===$val ? 'disabled' : '' ?>>
+                <?= tr_h($lbl) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="fg" style="margin:0">
+          <label>Effective Date</label>
+          <input type="date" name="status_date" value="<?= tr_h(date('Y-m-d')) ?>">
+        </div>
+        <div class="fg" style="margin:0">
+          <label>Reason / Note <span style="color:var(--dim)">(appended to notes)</span></label>
+          <input type="text" name="status_notes" placeholder="e.g. Resigned by letter dated…">
+        </div>
+        <div style="display:flex;gap:8px;padding-bottom:1px">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="./trustees.php" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+    <?php endif; ?>
+
   </div>
 
   <?php else: ?>
