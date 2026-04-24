@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../_shared/hub.css?v=18">
+<link rel="stylesheet" href="../_shared/hub.css?v=20">
 </head>
 <body data-root="../../">
 <script>
@@ -38,16 +38,22 @@ window.HUB_TIP      = 'Affected Zone declarations and land-impact assessments. I
     <button class="hub-mainspring-link" id="ai-panel-btn" onclick="toggleAIPanel()" style="border:none;cursor:pointer">⬡ AI Assistant</button>
   </div>
 </header>
-<div id="hub-enrol-banner" class="hub-enrol-banner">
-  <span class="hub-enrol-text"><span class="hub-enrol-dot"></span>Loading…</span>
+<!-- Hub hero band -->
+<div class="hub-hero" id="hub-hero">
+  <div class="hub-hero-label" id="hub-hero-label"></div>
+  <div class="hub-hero-h1" id="hub-hero-h1"></div>
+  <div class="hub-hero-sub" id="hub-hero-sub"></div>
+  <div class="hub-hero-chips" id="hub-hero-chips"></div>
+  <div id="hub-enrol-inline"></div>
 </div>
+<!-- Stat strip — flush under hero, outside padded main -->
+<div class="hub-stat-row" id="hub-stat-strip">
+  <div class="hub-stat" id="stat-members"><div class="hub-stat-n">—</div><div class="hub-stat-l">Members</div><div class="hub-stat-dest">&#x2193; Roster</div></div>
+  <div class="hub-stat" id="stat-threads"><div class="hub-stat-n">—</div><div class="hub-stat-l">Threads</div><div class="hub-stat-dest">&#x2193; Forum</div></div>
+  <div class="hub-stat" id="stat-projects"><div class="hub-stat-n">—</div><div class="hub-stat-l">Projects</div><div class="hub-stat-dest">&#x2193; Projects</div></div>
+</div>
+
 <main class="hub-page">
-  <div class="hub-section">
-    <div class="hub-stat-row">
-      <div class="hub-stat" id="stat-members"><div class="hub-stat-n">—</div><div class="hub-stat-l">Members</div></div>
-      <div class="hub-stat" id="stat-threads"><div class="hub-stat-n">—</div><div class="hub-stat-l">Forum threads</div></div>
-      <div class="hub-stat" id="stat-projects"><div class="hub-stat-n">—</div><div class="hub-stat-l">Active projects</div></div>
-    </div>
   </div>
   <div id="hub-main-content">
     <div class="hub-section">
@@ -118,7 +124,7 @@ window.HUB_TIP      = 'Affected Zone declarations and land-impact assessments. I
 
     <div id="hub-project-detail" style="display:none"></div>
 </main>
-<script src="../_shared/hub.js?v=16"></script>
+<script src="../_shared/hub.js?v=20"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   if(window.loadAdminActivity && window.HUB_AREA_KEY){
