@@ -361,7 +361,8 @@ img{max-width:100%;height:auto}
 .pay-notify-btn:hover{background:rgba(62,207,110,.12);border-color:rgba(62,207,110,.5)}
 .pay-notify-btn.sent{border-color:rgba(62,207,110,.5);background:rgba(62,207,110,.12);color:var(--green);cursor:default}
 .pay-notify-btn:disabled{opacity:.6;cursor:not-allowed}
-.pay-acc{margin-bottom:7px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.pay-acc{margin-bottom:6px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.pay-acc:last-of-type{margin-bottom:0}
 .pay-acc-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:rgba(255,255,255,.02);transition:background .15s}
 .pay-acc-hd:hover{background:rgba(255,255,255,.04);border-color:rgba(232,184,75,.3);box-shadow:0 0 0 2px rgba(232,184,75,.1)}
 .pay-acc-hd[aria-expanded=true]:hover{border-color:rgba(62,207,110,.45);box-shadow:0 0 0 2px rgba(62,207,110,.1)}
@@ -372,7 +373,7 @@ img{max-width:100%;height:auto}
 .pay-acc-hd[aria-expanded=true] .pay-acc-arr{transform:rotate(90deg)}
 .pay-acc-body{padding:14px 14px 10px;display:none}
 .pay-acc-body.open{display:block}
-.bank-key{color:var(--text3)}
+.bank-key{color:var(--text3);flex-shrink:0;min-width:90px}
 .bank-val{font-family:var(--sans);font-weight:400;color:var(--text2)}
 
 /* ── PLACEHOLDER ── */
@@ -385,7 +386,8 @@ img{max-width:100%;height:auto}
 .pay-modal-bg.open{display:flex}
 .pay-modal{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:26px;max-width:460px;width:100%;box-shadow:var(--sh);max-height:90vh;overflow-y:auto}
 .pay-modal h3{font-family:var(--sans);font-size:1.3rem;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
-.pay-modal-close{float:right;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;margin-left:10px}
+.pay-modal-close{float:right;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;margin-left:10px;transition:color .15s;line-height:1}
+.pay-modal-close:hover{color:var(--text)}
 
 /* ── PROFILE DRAWER (topbar pill) ── */
 .drawer-bg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:flex-end}
@@ -1480,9 +1482,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 </div>
 
 <!-- ══ PAY MODAL ══ -->
-<div class="pay-modal-bg" id="pay-modal">
+<div class="pay-modal-bg" id="pay-modal" onclick="if(event.target===this){closePayModal();}">
   <div class="pay-modal">
-    <button class="pay-modal-close" onclick="document.getElementById('pay-modal').classList.remove('open')">✕</button>
+    <button class="pay-modal-close" onclick="closePayModal()">✕</button>
     <h3>Complete your $4.00 membership contribution</h3>
     <p style="font-size:.9rem;color:var(--text3);margin-bottom:10px;line-height:1.6">Your registration is confirmed. Choose how you'd like to pay — bank transfer and PayID are both instant and completely fee-free.</p>
     <div style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:8px;padding:5px 0;border-bottom:1px solid var(--border)">Tap a payment option to expand ↓</div>
@@ -1546,7 +1548,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 </div>
 
 <!-- ══ OUTSTANDING PAYMENTS MODAL (secondary: kids, donation, PIF) ══ -->
-<div class="pay-modal-bg" id="outstanding-modal">
+<div class="pay-modal-bg" id="outstanding-modal" onclick="if(event.target===this){closeOutstandingModal();}">
   <div class="pay-modal">
     <button class="pay-modal-close" onclick="closeOutstandingModal()" aria-label="Close">✕</button>
     <h3>Complete your contribution</h3>
@@ -3441,7 +3443,8 @@ function setElection(type){
 /* ── PAYMENT ── */
 /* pay-btn removed with top banner */
 function openPayModal(){
-  el('pay-modal').style.display = 'flex';
+  // Note: display is controlled by the block-3 override via .open class.
+  // This inner function only populates dynamic content.
   const d = window._vaultData||{};
   var _ic = d.invite_code;
   var _refCode = (_ic && (_ic.public_code||_ic.code))
@@ -4802,7 +4805,9 @@ window.openPayModal = function(){
   _origOpenPayModal && _origOpenPayModal(); // populate member ref first
   var modal = document.getElementById('pay-modal');
   if(modal){
-    modal.style.display = ''; // clear inline style — let CSS class control visibility
+    modal.style.display = ''; // clear any legacy inline style
+    resetModalAccordions(modal);
+    resetNotifyBtns(modal);
     modal.classList.add('open');
   }
   // Pre-populate Stripe Payment Link with member number and email
@@ -4956,8 +4961,6 @@ function openOutstandingModal() {
   var payidTotalEl = document.getElementById('outstanding-modal-payid-total');
   if (payidTotalEl) payidTotalEl.textContent = '$' + op.total.toFixed(2);
   // Sync outstanding-modal-payid-total with outstanding-modal-total
-  var omPayidTotal = document.getElementById('outstanding-modal-payid-total');
-  if (omPayidTotal) omPayidTotal.textContent = '$' + op.total.toFixed(2);
   var refEl = document.getElementById('outstanding-modal-ref');
   var _omic = d.invite_code;
   var refVal = (_omic && (_omic.public_code||_omic.code))
@@ -4974,6 +4977,9 @@ function openOutstandingModal() {
     cardBtn.onclick = function() { payOutstandingByCard(op.allItems); };
   }
 
+  // Reset accordions and notify buttons each time modal opens
+  resetModalAccordions(modal);
+  resetNotifyBtns(modal);
   modal.style.display = '';
   modal.classList.add('open');
 }
@@ -5660,11 +5666,38 @@ function updateTourPill(){
 })();
 
 // ── Payment accordion + copy helpers ────────────────────────────────────────
+function closePayModal() {
+  var modal = document.getElementById('pay-modal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.style.display = '';
+  resetModalAccordions(modal);
+  resetNotifyBtns(modal);
+}
+
 function togglePayAcc(hd) {
   var isOpen = hd.getAttribute('aria-expanded') === 'true';
   var body = hd.nextElementSibling;
   hd.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
   if (body) body.classList.toggle('open', !isOpen);
+}
+
+function resetModalAccordions(modal) {
+  if (!modal) return;
+  modal.querySelectorAll('.pay-acc-hd').forEach(function(hd) {
+    hd.setAttribute('aria-expanded', 'false');
+    var body = hd.nextElementSibling;
+    if (body) body.classList.remove('open');
+  });
+}
+
+function resetNotifyBtns(modal) {
+  if (!modal) return;
+  modal.querySelectorAll('.pay-notify-btn').forEach(function(btn) {
+    btn.disabled = false;
+    btn.classList.remove('sent');
+    btn.textContent = 'I’ve sent this payment →';
+  });
 }
 
 function payLaterOutstanding() {
