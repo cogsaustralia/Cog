@@ -1823,28 +1823,22 @@ function enterCommunity(data){
     }
   }
 
-  if((_snftDue || _secDue) && wrap && !document.getElementById('vault-pay-badge')){
-
-    // ── Badge over the vault pill ──
-    var badge = document.createElement('div');
-    badge.id = 'vault-pay-badge';
-    badge.className = 'vault-pay-overlay';
-    badge.textContent = '⚡ ' + _dueLabel;
-    wrap.insertBefore(badge, wrap.firstChild);
-
-    // ── Strip below the vault pill ──
-    var _stripText = _snftDue && !_secDue
-      ? '<strong style="color:#f0c070">Your $4 membership contribution is outstanding.</strong> Complete it to activate your Membership and unlock your governance vote.'
+  // ── If payment is due, inject a visible Pay now strip below the hero vault button ──
+  if((_snftDue || _secDue) && !document.getElementById('hero-pay-strip')){
+    var _stripText2 = _snftDue && !_secDue
+      ? 'Your <strong>$4 membership contribution</strong> is outstanding — complete it to activate your Membership.'
       : !_snftDue && _secDue && _secOp.lines.length === 1
-      ? '<strong style="color:#f0c070">' + _secOp.lines[0].label + ' — $' + Number(_secOp.lines[0].amount).toFixed(2) + ' outstanding.</strong> Complete payment to activate your tokens.'
-      : '<strong style="color:#f0c070">$' + _dueTotal.toFixed(2) + ' in payments outstanding.</strong> Enter your vault to review and pay.';
-
-    var strip = document.createElement('div');
-    strip.id = 'vault-pay-strip';
-    strip.className = 'vault-pay-strip';
-    strip.innerHTML = '<span>' + _stripText + '</span>'
-      + '<button style="flex-shrink:0;padding:7px 16px;border-radius:8px;background:linear-gradient(135deg,#f0a030,#c97020);color:#fff;font-size:.76rem;font-weight:700;border:none;cursor:pointer;white-space:nowrap" onclick="navigateToVault()">Pay now ›</button>';
-    wrap.appendChild(strip);
+      ? '<strong>' + _secOp.lines[0].label.split(' ×')[0] + ' — $' + Number(_secOp.lines[0].amount).toFixed(2) + '</strong> payment outstanding.'
+      : '<strong>$' + _dueTotal.toFixed(2) + '</strong> in payments outstanding.';
+    var heroRow = document.querySelector('.member-welcome-row');
+    if(heroRow){
+      var hstrip = document.createElement('div');
+      hstrip.id = 'hero-pay-strip';
+      hstrip.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;padding:12px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(200,112,32,.15),rgba(160,72,12,.1));border:1px solid rgba(200,112,32,.55);animation:stripGlow 2s ease-in-out infinite';
+      hstrip.innerHTML = '<span style="font-size:.88rem;color:#f0c070;line-height:1.5;flex:1">' + _stripText2 + '</span>'
+        + '<button style="flex-shrink:0;padding:9px 20px;border-radius:10px;background:linear-gradient(135deg,#f0a030,#c97020);color:#fff;font-size:.88rem;font-weight:700;border:none;cursor:pointer;white-space:nowrap;animation:payBtnPulse 1.6s ease-in-out infinite" onclick="navigateToVault()">Pay now ›</button>';
+      heroRow.parentNode.insertBefore(hstrip, heroRow.nextSibling);
+    }
   }
 
   // Load live community stats + master control — then keep them current:
@@ -2599,13 +2593,13 @@ async function checkPaymentAndProceed(){
     if(d && d.payment_status && d.payment_status.toLowerCase() === 'paid'){
       window._partnerPaymentStatus = 'paid';
       closePayIntercept();
-      // Remove orange payment overlays
-      var badge = document.getElementById('vault-pay-badge');
-      var strip = document.getElementById('vault-pay-strip');
-      if(badge) badge.remove();
-      if(strip) strip.remove();
-      var btn2 = document.getElementById('vault-pill-btn');
-      if(btn2){ btn2.style.borderColor=''; btn2.style.background=''; btn2.style.boxShadow=''; }
+      // Remove payment overlays
+      var hstrip = document.getElementById('hero-pay-strip');
+      if(hstrip) hstrip.remove();
+      var heroBtn2 = document.getElementById('hero-vault-btn');
+      if(heroBtn2) heroBtn2.classList.remove('payment-due');
+      var pillBtn2 = document.getElementById('vault-pill-btn');
+      if(pillBtn2) pillBtn2.classList.remove('payment-due');
       setTimeout(function(){ coinTransitionAndGo('../wallets/member.html'); }, 300);
     } else {
       if(btn){ btn.textContent = 'Not yet confirmed — payment may still be processing.'; btn.disabled = false; }
