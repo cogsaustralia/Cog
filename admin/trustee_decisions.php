@@ -1,0 +1,647 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/includes/admin_paths.php';
+require_once __DIR__ . '/includes/ops_workflow.php';
+require_once __DIR__ . '/includes/admin_sidebar.php';
+require_once __DIR__ . '/../_app/api/services/TrusteeDecisionService.php';
+
+ops_require_admin();
+$pdo = ops_db();
+
+function td_h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+$action  = trim((string)($_GET['action'] ?? ''));
+$id      = trim((string)($_GET['id']     ?? ''));
+$message = '';
+$error   = '';
+
+// POST: create draft
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'create_draft') {
+    try {
+        $powers = [];
+        $clauses = $_POST['clause_ref']  ?? [];
+        $descs   = $_POST['clause_desc'] ?? [];
+        foreach ($clauses as $i => $cref) {
+            $cref = trim($cref);
+            $desc = trim($descs[$i] ?? '');
+            if ($cref !== '' && $desc !== '') {
+                $powers[] = ['clause_ref' => $cref, 'description' => $desc];
+            }
+        }
+        if (empty($powers)) {
+            throw new \RuntimeException('At least one power / clause reference is required.');
+        }
+        $data = [
+            'sub_trust_context'           => $_POST['sub_trust_context'] ?? '',
+            'decision_category'           => $_POST['decision_category'] ?? '',
+            'title'                       => trim($_POST['title'] ?? ''),
+            'effective_date'              => trim($_POST['effective_date'] ?? ''),
+            'powers'                      => $powers,
+            'background_md'               => trim($_POST['background_md']         ?? ''),
+            'fnac_consideration_md'       => trim($_POST['fnac_consideration_md'] ?? ''),
+            'fpic_consideration_md'       => trim($_POST['fpic_consideration_md'] ?? ''),
+            'cultural_heritage_md'        => trim($_POST['cultural_heritage_md']  ?? ''),
+            'resolution_md'               => trim($_POST['resolution_md']         ?? ''),
+            'fnac_consulted'              => !empty($_POST['fnac_consulted']),
+            'fnac_evidence_ref'           => trim($_POST['fnac_evidence_ref']          ?? ''),
+            'fpic_obtained'               => !empty($_POST['fpic_obtained']),
+            'fpic_evidence_ref'           => trim($_POST['fpic_evidence_ref']          ?? ''),
+            'cultural_heritage_assessed'  => !empty($_POST['cultural_heritage_assessed']),
+            'cultural_heritage_ref'       => trim($_POST['cultural_heritage_ref']      ?? ''),
+        ];
+        foreach (['sub_trust_context','decision_category','title','effective_date','resolution_md'] as $req) {
+            if (($data[$req] ?? '') === '') {
+                throw new \RuntimeException("Field '{$req}' is required.");
+            }
+        }
+        $newUuid = TrusteeDecisionService::createDraft($pdo, $data, null);
+        header('Location: ./trustee_decisions.php?id=' . urlencode($newUuid) . '&msg=created');
+        exit;
+    } catch (\Throwable $e) {
+        $error = $e->getMessage();
+        $action = 'create';
+    }
+}
+
+// POST: issue execution token
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'issue_token') {
+    $uuid = trim($_POST['decision_uuid'] ?? '');
+    try {
+        $decision = TrusteeDecisionService::getDecision($pdo, $uuid);
+        if (!$decision) throw new \RuntimeException('TDR not found.');
+        $raw   = TrusteeDecisionService::issueExecutionToken($pdo, $uuid);
+        $email = TrusteeDecisionService::getTrusteeEmail($pdo, $decision['sub_trust_context']);
+        $link  = 'https://cogsaustralia.org/execute_tdr.php?token=' . urlencode($raw);
+
+        // Send email via platform mailer
+        $subj = '[COG$] Execute Trustee Decision Record — ' . $decision['decision_ref'];
+        $body = "Trustee Decision Record Execution\n\n"
+              . "Reference: {$decision['decision_ref']}\n"
+              . "Title: {$decision['title']}\n"
+              . "Sub-Trust: " . strtoupper(str_replace('_','-',$decision['sub_trust_context'])) . "\n\n"
+              . "Your one-time execution link (valid 15 minutes):\n{$link}\n\n"
+              . "This link is single-use. Do not forward it.";
+
+        if (function_exists('ops_send_email')) {
+            ops_send_email($email, $subj, $body);
+            $message = "Execution token issued and emailed to {$email}.";
+        } else {
+            $message = "Token issued. Email sending not available — link: " . td_h($link);
+        }
+        header('Location: ./trustee_decisions.php?id=' . urlencode($uuid) . '&msg=' . urlencode($message));
+        exit;
+    } catch (\Throwable $e) {
+        $error = $e->getMessage();
+        $id = $uuid;
+    }
+}
+
+// GET: incoming message
+if (isset($_GET['msg'])) {
+    $message = td_h(urldecode((string)$_GET['msg']));
+}
+
+// ── Data load ─────────────────────────────────────────────────────────────────
+$decision    = null;
+$execRecords = [];
+$attachments = [];
+
+if ($id !== '') {
+    $decision = TrusteeDecisionService::getDecision($pdo, $id);
+    if (!$decision) {
+        // Try by ref
+        $decision = TrusteeDecisionService::getDecisionByRef($pdo, $id);
+    }
+    if ($decision) {
+        $execRecords = TrusteeDecisionService::getExecutionRecords($pdo, $decision['decision_uuid']);
+        $attachments = TrusteeDecisionService::getAttachments($pdo, $decision['decision_uuid']);
+    }
+}
+
+$listFilters = [
+    'sub_trust_context'  => trim((string)($_GET['sub_trust']  ?? '')),
+    'decision_category'  => trim((string)($_GET['category']   ?? '')),
+    'status'             => trim((string)($_GET['status']      ?? '')),
+    'date_from'          => trim((string)($_GET['date_from']   ?? '')),
+    'date_to'            => trim((string)($_GET['date_to']     ?? '')),
+];
+$decisions = TrusteeDecisionService::listDecisions(
+    $pdo,
+    $listFilters['sub_trust_context']  ?: null,
+    $listFilters['decision_category']  ?: null,
+    $listFilters['status']             ?: null,
+    $listFilters['date_from']          ?: null,
+    $listFilters['date_to']            ?: null,
+    100, 0
+);
+
+$categoryLabels = [
+    'bank_account'                  => 'Bank Account',
+    'investment_instruction'        => 'Investment Instruction',
+    'distribution'                  => 'Distribution',
+    'operational_amendment'         => 'Operational Amendment',
+    'regulatory_compliance'         => 'Regulatory Compliance',
+    'fnac_engagement'               => 'FNAC Engagement',
+    'member_poll_implementation'    => 'Poll Implementation',
+    'fiduciary_conflict_invocation' => 'Fiduciary Conflict',
+    'record_keeping'                => 'Record Keeping',
+    'governance_instrument'         => 'Governance Instrument',
+    'other'                         => 'Other',
+];
+$subTrustLabels = [
+    'sub_trust_a' => 'Sub-Trust A',
+    'sub_trust_b' => 'Sub-Trust B',
+    'sub_trust_c' => 'Sub-Trust C',
+    'all'         => 'All Sub-Trusts',
+];
+$statusBadge = [
+    'draft'             => ['badge-warn', 'Draft'],
+    'pending_execution' => ['badge-warn', 'Pending Execution'],
+    'fully_executed'    => ['badge-ok',   'Fully Executed'],
+    'superseded'        => ['badge-err',  'Superseded'],
+];
+?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trustee Decisions | COG$ Admin</title>
+<?php if (function_exists('ops_admin_help_assets_once')) ops_admin_help_assets_once(); ?>
+<style>
+.main { padding: 24px 28px; }
+.topbar h2 { font-size: 1.1rem; font-weight: 700; margin: 0 0 4px; }
+.topbar p  { color: var(--sub); font-size: 13px; max-width: 640px; }
+
+.filter-bar {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end;
+  margin-bottom: 18px; background: var(--panel2);
+  border: 1px solid var(--line2); border-radius: 8px; padding: 12px 16px;
+}
+.filter-bar select, .filter-bar input {
+  background: var(--input); border: 1px solid var(--line2); border-radius: 6px;
+  color: var(--text); font-size: .8rem; padding: 5px 8px;
+}
+.filter-bar label { font-size: .75rem; color: var(--sub); display: block; margin-bottom: 3px; }
+
+.tdr-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.tdr-table th {
+  background: var(--panel2); border-bottom: 1px solid var(--line);
+  padding: 8px 12px; text-align: left; font-size: .72rem;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--gold);
+}
+.tdr-table td { padding: 9px 12px; border-bottom: 1px solid var(--line2); vertical-align: top; }
+.tdr-table tr:hover td { background: var(--panel2); }
+
+.badge { font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+.badge-ok   { background: var(--okb);   color: var(--ok);   border: 1px solid rgba(82,184,122,.3); }
+.badge-warn { background: var(--warnb); color: var(--warn); border: 1px solid rgba(212,148,74,.3); }
+.badge-err  { background: var(--errb);  color: var(--err);  border: 1px solid rgba(192,85,58,.3); }
+
+.btn-primary {
+  display: inline-block; padding: 7px 16px; border-radius: 7px; font-size: .8rem;
+  font-weight: 700; text-decoration: none; cursor: pointer; border: none;
+  background: rgba(212,178,92,.2); border: 1px solid rgba(212,178,92,.4);
+  color: var(--gold);
+}
+.btn-primary:hover { background: rgba(212,178,92,.35); }
+.btn-sm { padding: 4px 10px; font-size: .75rem; }
+.btn-danger {
+  background: rgba(192,85,58,.15); border-color: rgba(192,85,58,.4); color: var(--err);
+}
+
+.detail-card {
+  background: var(--panel2); border: 1px solid var(--line2);
+  border-radius: 10px; padding: 0; margin-bottom: 18px; overflow: hidden;
+}
+.detail-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 20px; border-bottom: 1px solid var(--line);
+  flex-wrap: wrap; gap: 8px;
+}
+.detail-head h3 { font-size: .9rem; font-weight: 700; margin: 0; }
+.detail-body { padding: 18px 20px; }
+.dg { display: grid; grid-template-columns: 200px 1fr; gap: 6px 14px; font-size: .82rem; margin-bottom: 14px; }
+.dg-l { color: var(--dim); }
+.dg-v { color: var(--text); word-break: break-all; }
+.dg-v.mono { font-family: monospace; font-size: .78rem; }
+.dg-v.gold { color: var(--gold); }
+.dg-v.ok   { color: var(--ok); }
+
+.section-title {
+  font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700; margin: 16px 0 8px;
+}
+.md-preview {
+  background: var(--panel); border: 1px solid var(--line2); border-radius: 6px;
+  padding: 10px 14px; font-size: .83rem; color: var(--text);
+  white-space: pre-wrap; word-break: break-word; max-height: 200px; overflow-y: auto;
+}
+.exec-row {
+  background: var(--panel); border: 1px solid var(--line2); border-radius: 6px;
+  padding: 12px 14px; margin-bottom: 10px; font-size: .8rem;
+}
+.msg-ok  { background: var(--okb);   border: 1px solid rgba(82,184,122,.3);  color: var(--ok);   border-radius: 7px; padding: 10px 14px; font-size: .83rem; margin-bottom: 14px; }
+.msg-err { background: var(--errb);  border: 1px solid rgba(192,85,58,.3);   color: var(--err);  border-radius: 7px; padding: 10px 14px; font-size: .83rem; margin-bottom: 14px; }
+
+/* Create form */
+.form-card {
+  background: var(--panel2); border: 1px solid var(--line2); border-radius: 10px;
+  padding: 22px 24px; margin-bottom: 18px;
+}
+.form-card h3 { font-size: .88rem; font-weight: 700; margin: 0 0 16px; color: var(--gold); }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: .78rem; color: var(--sub); margin-bottom: 5px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; box-sizing: border-box;
+  background: var(--input); border: 1px solid var(--line2); border-radius: 6px;
+  color: var(--text); font-size: .83rem; padding: 7px 10px;
+}
+.form-group textarea { min-height: 90px; font-family: monospace; resize: vertical; }
+.form-group.check { display: flex; align-items: center; gap: 8px; }
+.form-group.check input { width: auto; }
+.powers-row { display: grid; grid-template-columns: 200px 1fr 32px; gap: 8px; margin-bottom: 8px; align-items: start; }
+.powers-row input { width: 100%; box-sizing: border-box; }
+.remove-power { background: var(--errb); border: 1px solid rgba(192,85,58,.4); color: var(--err); border-radius: 5px; cursor: pointer; font-size: .8rem; padding: 4px 8px; }
+.add-power { font-size: .78rem; color: var(--gold); background: none; border: 1px dashed rgba(212,178,92,.4); border-radius: 5px; padding: 5px 12px; cursor: pointer; }
+.required { color: var(--err); }
+.divider { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+</style>
+</head>
+<body>
+<?php echo admin_sidebar('trustee_decisions'); ?>
+<div class="content-area">
+<div class="main">
+
+<?php if ($message): ?>
+  <div class="msg-ok"><?= $message ?></div>
+<?php endif; ?>
+<?php if ($error): ?>
+  <div class="msg-err"><?= td_h($error) ?></div>
+<?php endif; ?>
+
+<?php if ($action === 'create'): ?>
+<!-- ════════════════════════════════════════════════════════ CREATE FORM -->
+<div class="topbar" style="margin-bottom:20px">
+  <h2>🧾 New Trustee Decision Record</h2>
+  <p>Create a draft TDR. The record remains in draft until you issue an execution token.</p>
+</div>
+<form method="POST">
+  <input type="hidden" name="_action" value="create_draft">
+
+  <div class="form-card">
+    <h3>Step 1 — Identification</h3>
+    <div class="form-group">
+      <label>Sub-Trust Context <span class="required">*</span></label>
+      <select name="sub_trust_context" required>
+        <option value="">— select —</option>
+        <option value="sub_trust_a">Sub-Trust A (Members Asset Pool)</option>
+        <option value="sub_trust_b">Sub-Trust B</option>
+        <option value="sub_trust_c">Sub-Trust C</option>
+        <option value="all">All Sub-Trusts</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Decision Category <span class="required">*</span></label>
+      <select name="decision_category" required>
+        <option value="">— select —</option>
+        <?php foreach ($categoryLabels as $val => $lbl): ?>
+          <option value="<?= td_h($val) ?>"><?= td_h($lbl) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Title <span class="required">*</span></label>
+      <input type="text" name="title" required placeholder="e.g. Establishment of Sub-Trust A Bank Account">
+    </div>
+    <div class="form-group">
+      <label>Effective Date <span class="required">*</span></label>
+      <input type="date" name="effective_date" required value="<?= td_h(date('Y-m-d')) ?>">
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Step 2 — Powers Exercised</h3>
+    <p style="font-size:.8rem;color:var(--sub);margin-bottom:12px">
+      List every clause reference and corresponding power being exercised. At least one required.
+    </p>
+    <div id="powers-container">
+      <div class="powers-row">
+        <input type="text" name="clause_ref[]" placeholder="e.g. SubTrustA-1A.3(a)">
+        <input type="text" name="clause_desc[]" placeholder="Description of power">
+        <button type="button" class="remove-power" onclick="removePower(this)">✕</button>
+      </div>
+    </div>
+    <button type="button" class="add-power" onclick="addPower()">+ Add Clause</button>
+  </div>
+
+  <div class="form-card">
+    <h3>Step 3 — Background &amp; Considerations</h3>
+    <div class="form-group">
+      <label>Background (Markdown)</label>
+      <textarea name="background_md" placeholder="Factual background for the decision..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>FNAC Consideration (Markdown)</label>
+      <textarea name="fnac_consideration_md" placeholder="First Nations Advisory Committee consideration, if applicable..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>FPIC Consideration (Markdown)</label>
+      <textarea name="fpic_consideration_md" placeholder="Free, Prior and Informed Consent, if applicable..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Cultural Heritage Consideration (Markdown)</label>
+      <textarea name="cultural_heritage_md" placeholder="Cultural heritage assessment, if applicable..."></textarea>
+    </div>
+    <hr class="divider">
+    <div class="form-group check">
+      <input type="checkbox" name="fnac_consulted" id="fnac_consulted" value="1">
+      <label for="fnac_consulted">FNAC consulted</label>
+    </div>
+    <div class="form-group">
+      <label>FNAC Evidence Reference</label>
+      <input type="text" name="fnac_evidence_ref" placeholder="e.g. EVE-2026-001">
+    </div>
+    <div class="form-group check">
+      <input type="checkbox" name="fpic_obtained" id="fpic_obtained" value="1">
+      <label for="fpic_obtained">FPIC obtained</label>
+    </div>
+    <div class="form-group">
+      <label>FPIC Evidence Reference</label>
+      <input type="text" name="fpic_evidence_ref" placeholder="">
+    </div>
+    <div class="form-group check">
+      <input type="checkbox" name="cultural_heritage_assessed" id="cha" value="1">
+      <label for="cha">Cultural Heritage assessed</label>
+    </div>
+    <div class="form-group">
+      <label>Cultural Heritage Evidence Reference</label>
+      <input type="text" name="cultural_heritage_ref" placeholder="">
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Step 4 — Resolution</h3>
+    <p style="font-size:.8rem;color:var(--sub);margin-bottom:10px">
+      The operative resolution text. This is the legal substance of the decision.
+    </p>
+    <div class="form-group">
+      <label>Resolution <span class="required">*</span></label>
+      <textarea name="resolution_md" required style="min-height:140px"
+        placeholder="The Caretaker Trustee RESOLVES to..."></textarea>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:center">
+    <button type="submit" class="btn-primary">Save as Draft</button>
+    <a href="./trustee_decisions.php" style="font-size:.8rem;color:var(--sub)">Cancel</a>
+  </div>
+</form>
+
+<?php elseif ($decision): ?>
+<!-- ════════════════════════════════════════════════════════ DETAIL VIEW -->
+<div class="topbar" style="margin-bottom:20px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+    <div>
+      <h2><?= td_h($decision['decision_ref']) ?> — <?= td_h($decision['title']) ?></h2>
+      <p>
+        <?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?>
+        &nbsp;·&nbsp;
+        <?= td_h($categoryLabels[$decision['decision_category']] ?? $decision['decision_category']) ?>
+        &nbsp;·&nbsp;
+        Effective <?= td_h($decision['effective_date']) ?>
+      </p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <?php [$bc, $bl] = $statusBadge[$decision['status']] ?? ['badge-warn', $decision['status']]; ?>
+      <span class="badge <?= $bc ?>"><?= $bl ?></span>
+      <a href="./trustee_decisions.php?action=create" class="btn-primary btn-sm">+ New TDR</a>
+      <a href="./trustee_decisions.php" class="btn-primary btn-sm" style="background:none;border-color:var(--line2);color:var(--sub)">← All TDRs</a>
+    </div>
+  </div>
+</div>
+
+<div class="detail-card">
+  <div class="detail-head"><h3>Record Details</h3></div>
+  <div class="detail-body">
+    <div class="dg">
+      <span class="dg-l">Reference</span><span class="dg-v gold"><?= td_h($decision['decision_ref']) ?></span>
+      <span class="dg-l">UUID</span><span class="dg-v mono"><?= td_h($decision['decision_uuid']) ?></span>
+      <span class="dg-l">Sub-Trust</span><span class="dg-v"><?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?></span>
+      <span class="dg-l">Category</span><span class="dg-v"><?= td_h($categoryLabels[$decision['decision_category']] ?? $decision['decision_category']) ?></span>
+      <span class="dg-l">Effective Date</span><span class="dg-v"><?= td_h($decision['effective_date']) ?></span>
+      <span class="dg-l">Status</span><span class="dg-v"><span class="badge <?= $bc ?>"><?= $bl ?></span></span>
+      <span class="dg-l">Non-MIS Affirmation</span>
+      <span class="dg-v <?= $decision['non_mis_affirmation'] ? 'ok' : '' ?>">
+        <?= $decision['non_mis_affirmation'] ? '✓ Affirmed' : '✗ NOT AFFIRMED — cannot execute' ?>
+      </span>
+      <?php if ($decision['record_sha256']): ?>
+        <span class="dg-l">Record SHA-256</span><span class="dg-v mono"><?= td_h($decision['record_sha256']) ?></span>
+      <?php endif; ?>
+      <?php if ($decision['evidence_vault_id']): ?>
+        <span class="dg-l">Evidence Vault ID</span><span class="dg-v mono"><?= td_h((string)$decision['evidence_vault_id']) ?></span>
+      <?php endif; ?>
+    </div>
+
+    <div class="section-title">Powers Exercised</div>
+    <?php
+      $powers = json_decode((string)($decision['powers_json'] ?? '[]'), true) ?: [];
+      foreach ($powers as $p): ?>
+      <div style="background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:8px 12px;margin-bottom:6px;font-size:.8rem">
+        <span style="color:var(--gold);font-family:monospace"><?= td_h($p['clause_ref'] ?? '') ?></span>
+        &nbsp;—&nbsp;<?= td_h($p['description'] ?? '') ?>
+      </div>
+    <?php endforeach; ?>
+
+    <?php if ($decision['resolution_md']): ?>
+      <div class="section-title">Resolution</div>
+      <div class="md-preview"><?= td_h($decision['resolution_md']) ?></div>
+    <?php endif; ?>
+
+    <?php if ($decision['background_md']): ?>
+      <div class="section-title">Background</div>
+      <div class="md-preview"><?= td_h($decision['background_md']) ?></div>
+    <?php endif; ?>
+  </div>
+</div>
+
+<?php if ($execRecords): ?>
+<div class="detail-card">
+  <div class="detail-head"><h3>Execution Records</h3></div>
+  <div class="detail-body">
+    <?php foreach ($execRecords as $er): ?>
+    <div class="exec-row">
+      <div class="dg">
+        <span class="dg-l">Execution UUID</span><span class="dg-v mono"><?= td_h($er['execution_uuid']) ?></span>
+        <span class="dg-l">Capacity</span><span class="dg-v"><?= td_h($er['capacity_label']) ?></span>
+        <span class="dg-l">Status</span><span class="dg-v"><?= td_h($er['status']) ?></span>
+        <span class="dg-l">Timestamp (UTC)</span><span class="dg-v mono"><?= td_h($er['execution_timestamp_utc']) ?></span>
+        <span class="dg-l">Record SHA-256</span><span class="dg-v mono"><?= td_h($er['record_sha256']) ?></span>
+        <span class="dg-l">Evidence Vault ID</span><span class="dg-v mono"><?= td_h((string)($er['evidence_vault_id'] ?? '—')) ?></span>
+        <?php if ($er['witness_full_name']): ?>
+          <span class="dg-l">Witness</span><span class="dg-v"><?= td_h($er['witness_full_name']) ?></span>
+          <span class="dg-l">Witness DOB</span><span class="dg-v"><?= td_h($er['witness_dob'] ?? '') ?></span>
+          <span class="dg-l">Witness Occupation</span><span class="dg-v"><?= td_h($er['witness_occupation'] ?? '') ?></span>
+          <span class="dg-l">Witness Address</span><span class="dg-v"><?= td_h($er['witness_address'] ?? '') ?></span>
+          <?php if ($er['witness_jp_number']): ?>
+            <span class="dg-l">JP Number</span><span class="dg-v"><?= td_h($er['witness_jp_number']) ?></span>
+          <?php endif; ?>
+          <?php if ($er['witness_timestamp_utc']): ?>
+            <span class="dg-l">Witness Timestamp</span><span class="dg-v mono"><?= td_h($er['witness_timestamp_utc']) ?></span>
+          <?php endif; ?>
+        <?php endif; ?>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+</div>
+<?php endif; ?>
+
+<!-- Issue token / print actions -->
+<?php if (in_array($decision['status'], ['draft','pending_execution'], true)): ?>
+<div class="detail-card">
+  <div class="detail-head"><h3>Execute This Record</h3></div>
+  <div class="detail-body">
+    <?php if (!$decision['non_mis_affirmation']): ?>
+      <p style="color:var(--err);font-size:.83rem">⚠ non_mis_affirmation is not set. Contact admin to set before issuing token.</p>
+    <?php else: ?>
+      <p style="font-size:.82rem;color:var(--sub);margin-bottom:14px">
+        Issuing an execution token will email a one-time link (valid 15 minutes) to the
+        <strong><?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?></strong>
+        trustee email address. The Trustee executes the record via that link.
+      </p>
+      <form method="POST">
+        <input type="hidden" name="_action" value="issue_token">
+        <input type="hidden" name="decision_uuid" value="<?= td_h($decision['decision_uuid']) ?>">
+        <button type="submit" class="btn-primary">Issue Execution Token &amp; Email Trustee</button>
+      </form>
+    <?php endif; ?>
+  </div>
+</div>
+<?php endif; ?>
+
+<?php if ($decision['status'] === 'fully_executed'): ?>
+<div style="margin-top:8px">
+  <a href="./tdr_pdf.php?id=<?= urlencode($decision['decision_uuid']) ?>" class="btn-primary" target="_blank">
+    📄 Download Certified Copy (PDF)
+  </a>
+</div>
+<?php endif; ?>
+
+<?php else: ?>
+<!-- ════════════════════════════════════════════════════════ LIST VIEW -->
+<div class="topbar" style="margin-bottom:20px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2>🧾 Trustee Decision Records</h2>
+      <p>All TDRs made by the Caretaker Trustee during the Caretaker Trustee Period. Internal — visible to all authenticated members.</p>
+    </div>
+    <a href="./trustee_decisions.php?action=create" class="btn-primary">+ New TDR</a>
+  </div>
+</div>
+
+<form method="GET" class="filter-bar">
+  <div>
+    <label>Sub-Trust</label>
+    <select name="sub_trust">
+      <option value="">All</option>
+      <?php foreach ($subTrustLabels as $val => $lbl): ?>
+        <option value="<?= td_h($val) ?>" <?= ($listFilters['sub_trust_context'] === $val) ? 'selected' : '' ?>>
+          <?= td_h($lbl) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+  <div>
+    <label>Category</label>
+    <select name="category">
+      <option value="">All</option>
+      <?php foreach ($categoryLabels as $val => $lbl): ?>
+        <option value="<?= td_h($val) ?>" <?= ($listFilters['decision_category'] === $val) ? 'selected' : '' ?>>
+          <?= td_h($lbl) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+  <div>
+    <label>Status</label>
+    <select name="status">
+      <option value="">All</option>
+      <?php foreach ($statusBadge as $val => [$cls, $lbl]): ?>
+        <option value="<?= td_h($val) ?>" <?= ($listFilters['status'] === $val) ? 'selected' : '' ?>>
+          <?= td_h($lbl) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+  <div>
+    <label>From</label>
+    <input type="date" name="date_from" value="<?= td_h($listFilters['date_from']) ?>">
+  </div>
+  <div>
+    <label>To</label>
+    <input type="date" name="date_to" value="<?= td_h($listFilters['date_to']) ?>">
+  </div>
+  <button type="submit" class="btn-primary btn-sm">Filter</button>
+  <a href="./trustee_decisions.php" class="btn-primary btn-sm" style="background:none;border-color:var(--line2);color:var(--sub)">Reset</a>
+</form>
+
+<table class="tdr-table">
+  <thead>
+    <tr>
+      <th>Reference</th>
+      <th>Title</th>
+      <th>Sub-Trust</th>
+      <th>Category</th>
+      <th>Effective</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php if (empty($decisions)): ?>
+    <tr><td colspan="7" style="color:var(--sub);text-align:center;padding:24px">No Trustee Decision Records found.</td></tr>
+  <?php endif; ?>
+  <?php foreach ($decisions as $d):
+    [$bc, $bl] = $statusBadge[$d['status']] ?? ['badge-warn', $d['status']];
+  ?>
+    <tr>
+      <td><a href="./trustee_decisions.php?id=<?= urlencode($d['decision_uuid']) ?>"
+             style="color:var(--gold);font-weight:700;text-decoration:none;font-family:monospace;font-size:.8rem">
+          <?= td_h($d['decision_ref']) ?></a></td>
+      <td style="max-width:300px"><?= td_h($d['title']) ?></td>
+      <td><?= td_h($subTrustLabels[$d['sub_trust_context']] ?? $d['sub_trust_context']) ?></td>
+      <td><?= td_h($categoryLabels[$d['decision_category']] ?? $d['decision_category']) ?></td>
+      <td><?= td_h($d['effective_date']) ?></td>
+      <td><span class="badge <?= $bc ?>"><?= $bl ?></span></td>
+      <td>
+        <a href="./trustee_decisions.php?id=<?= urlencode($d['decision_uuid']) ?>"
+           class="btn-primary btn-sm">View</a>
+      </td>
+    </tr>
+  <?php endforeach; ?>
+  </tbody>
+</table>
+<?php endif; ?>
+
+</div><!-- .main -->
+</div><!-- .content-area -->
+
+<script>
+function addPower() {
+  const c = document.getElementById('powers-container');
+  const div = document.createElement('div');
+  div.className = 'powers-row';
+  div.innerHTML = '<input type="text" name="clause_ref[]" placeholder="e.g. Declaration-7.4">'
+    + '<input type="text" name="clause_desc[]" placeholder="Description of power">'
+    + '<button type="button" class="remove-power" onclick="removePower(this)">✕</button>';
+  c.appendChild(div);
+}
+function removePower(btn) {
+  const rows = document.querySelectorAll('.powers-row');
+  if (rows.length > 1) {
+    btn.closest('.powers-row').remove();
+  }
+}
+</script>
+</body>
+</html>
