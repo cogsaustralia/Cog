@@ -545,6 +545,46 @@ class TrusteeDecisionService
         return $result;
     }
 
+    /**
+     * Generate the next sequential TDR reference for a given date.
+     * Format: TDR-YYYYMMDD-NNN (3-digit sequence per date).
+     */
+    public static function generateRef(PDO $db, string $effectiveDate): string
+    {
+        $datePart = date('Ymd', strtotime($effectiveDate));
+        $prefix   = 'TDR-' . $datePart . '-';
+        $stmt     = $db->prepare(
+            "SELECT COUNT(*) FROM trustee_decisions WHERE decision_ref LIKE ?"
+        );
+        $stmt->execute([$prefix . '%']);
+        $count = (int)$stmt->fetchColumn();
+        return $prefix . str_pad((string)($count + 1), 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Return all attachments for a TDR.
+     */
+    public static function getAttachments(PDO $db, string $decisionUuid): array
+    {
+        $stmt = $db->prepare(
+            'SELECT * FROM trustee_decision_attachments WHERE decision_uuid = ? ORDER BY created_at'
+        );
+        $stmt->execute([$decisionUuid]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Return all execution records for a TDR.
+     */
+    public static function getExecutionRecords(PDO $db, string $decisionUuid): array
+    {
+        $stmt = $db->prepare(
+            'SELECT * FROM trustee_decision_execution_records WHERE decision_uuid = ? ORDER BY created_at'
+        );
+        $stmt->execute([$decisionUuid]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     private static function uuid4(): string
     {
         $d = random_bytes(16);
