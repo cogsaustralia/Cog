@@ -2611,7 +2611,9 @@ async function checkPaymentAndProceed(){
 
 function proceedToVaultAnyway(){
   closePayIntercept();
-  coinTransitionAndGo('../wallets/member.html');
+  // ?pay=1 tells the wallet to auto-open the full payment modal
+  // (bank transfer, PayID, and card) so the member can complete payment
+  coinTransitionAndGo('../wallets/member.html?pay=1');
 }
 
 /* ════ PARTICIPATION PILL ════ */

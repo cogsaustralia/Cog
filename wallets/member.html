@@ -3435,8 +3435,14 @@ function setElection(type){
 function openPayModal(){
   el('pay-modal').style.display = 'flex';
   const d = window._vaultData||{};
+  var _ic = d.invite_code;
+  var _refCode = (_ic && (_ic.public_code||_ic.code))
+    ? (_ic.public_code||_ic.code)
+    : (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
   var ref = document.getElementById('pay-modal-ref');
-  if(ref && d.member_number) ref.textContent = (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
+  if(ref) ref.textContent = _refCode || 'Your reference code';
+  var payidRef = document.getElementById('pay-modal-payid-ref');
+  if(payidRef) payidRef.textContent = _refCode || 'Your reference code';
 }
 
 /* ── KYC ── */
@@ -4318,7 +4324,13 @@ function renderTabOverview(d){
   var kpiGive= document.getElementById('ov-kpi-give'); if(kpiGive) kpiGive.textContent = fmtA2(((parseInt(d.donation_tokens||0,10)||0)+(parseInt(d.pay_it_forward_tokens||0,10)||0))*4);
   var kpiRes = document.getElementById('ov-kpi-res');  if(kpiRes)  kpiRes.textContent  = fmtDp((parseFloat(d.investment_tokens||0)||0)+(parseFloat(d.rwa_tokens||0)||0)+(parseFloat(d.landholder_tokens||0)||0));
   var ref    = document.getElementById('pay-modal-ref');
-  if(ref && d.member_number) ref.textContent = (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
+  var _ic2 = d.invite_code;
+  var _refCode2 = (_ic2 && (_ic2.public_code||_ic2.code))
+    ? (_ic2.public_code||_ic2.code)
+    : (d.member_number||'').replace(/(.{4})(?=.)/g,'$1 ');
+  if(ref) ref.textContent = _refCode2 || 'Your reference code';
+  var _pr2 = document.getElementById('pay-modal-payid-ref');
+  if(_pr2) _pr2.textContent = _refCode2 || 'Your reference code';
 
   /* ── B: Business pill + Tour pill ── */
   var tourPill = '<button class="tour-pill-inline btn btn-ghost btn-sm" onclick="startWalletTour()" style="display:inline-flex;align-items:center;gap:6px">🧭 Member Vault Tour</button>';
@@ -5428,6 +5440,10 @@ async function pgSubmit(){
     hideParticipationGate();
     document.getElementById('vault').style.display = 'block';
     updateTourPill();
+    // Auto-open payment modal if $4 is still outstanding after participation completes
+    if(window._vaultData && (window._vaultData.payment_status||'pending').toLowerCase() !== 'paid'){
+      setTimeout(function(){ if(typeof window.openPayModal === 'function') window.openPayModal(); }, 600);
+    }
 
     // Re-render vault sections that depend on vault data
     if(window._vaultData){
