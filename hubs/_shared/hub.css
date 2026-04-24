@@ -302,3 +302,14 @@ button{font-family:inherit;cursor:pointer}
 .inv-pass{background:rgba(82,184,122,.1);color:#5db87a;border:1px solid rgba(82,184,122,.2)}
 .inv-fail{background:rgba(220,80,60,.14);color:#e87070;border:1px solid rgba(220,80,60,.25)}
 .hub-st-badge{display:inline-block;font-size:.7rem;font-weight:800;padding:1px 5px;border-radius:4px;background:rgba(212,178,92,.1);color:var(--gold);border:1px solid rgba(212,178,92,.18);margin-right:2px}
+
+/* ── Mainspring command-centre stats ─────────────────────────────────────────── */
+.ms-stats-section{padding:4px 0 0}
+.ms-stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;padding:4px 2px 6px}
+.ms-stat-card{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:5px}
+.ms-stat-val{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;line-height:1;color:var(--text);min-height:1.6rem}
+.ms-stat-lbl{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)}
+.ms-stat-sub{font-size:.68rem;color:var(--text4);font-weight:400;text-transform:none;letter-spacing:0;margin-left:2px}
+.ms-stat-ok{font-size:1rem;font-weight:700;color:#5db87a}
+.ms-stat-breach{font-size:1rem;font-weight:700;color:#e87070}
+@media(max-width:600px){.ms-stats-row{grid-template-columns:repeat(2,1fr)}}

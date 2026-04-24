@@ -181,6 +181,9 @@ if ($action === 'hub-milestone-toggle') {
 if ($action === 'hub-mainspring') {
     handleHubMainspring();
 }
+if ($action === 'hub-mainspring-stats') {
+    handleHubMainspringStats();
+}
 if ($action === 'hub-query') {
     handleHubQuery();
 }
@@ -951,6 +954,61 @@ function handleHubProjectAdvance(): void {
         if ($db->inTransaction()) $db->rollBack();
         apiError('Could not advance phase: ' . $e->getMessage(), 500);
     }
+}
+
+/**
+ * GET /vault/hub-mainspring-stats
+ *
+ * Command-centre summary statistics for the Mainspring page.
+ * Five aggregated stats only — no member PII, no individual rows.
+ * Auth: requireAuth('snft') — any authenticated Partner.
+ */
+function handleHubMainspringStats(): void
+{
+    requireMethod('GET');
+    requireAuth('snft');
+    $db = getDB();
+
+    $stats = [];
+
+    // 1. Active Partners (wallet_status = 'active', no PII)
+    try {
+        $s = $db->query("SELECT COUNT(*) FROM members WHERE wallet_status = 'active'");
+        $stats['active_partners'] = (int)$s->fetchColumn();
+    } catch (Throwable) {}
+
+    // 2. ASX portfolio book value (sum of total_cost_cents)
+    try {
+        $s = $db->query("SELECT COALESCE(SUM(total_cost_cents),0) FROM asx_holdings");
+        $stats['portfolio_book_cents'] = (int)$s->fetchColumn();
+        $s2 = $db->query("SELECT COUNT(*) FROM asx_holdings");
+        $stats['portfolio_holdings'] = (int)$s2->fetchColumn();
+    } catch (Throwable) {}
+
+    // 3. Open governance proposals
+    try {
+        $s = $db->query("SELECT COUNT(*) FROM vote_proposals WHERE status = 'open'");
+        $stats['open_proposals'] = (int)$s->fetchColumn();
+    } catch (Throwable) {}
+
+    // 4. Godley invariant health (total violations across I1-I12)
+    try {
+        $s = $db->query("SELECT COALESCE(SUM(violation_count),0) FROM v_godley_invariant_status");
+        $stats['invariant_violations'] = (int)$s->fetchColumn();
+    } catch (Throwable) {}
+
+    // 5. Next compliance deadline
+    try {
+        $s = $db->query(
+            "SELECT MIN(compliance_due_by) FROM trust_transfers
+              WHERE status IN ('pending','approved')
+                AND compliance_due_by IS NOT NULL
+                AND compliance_due_by >= NOW()"
+        );
+        $stats['next_deadline'] = $s->fetchColumn() ?: null;
+    } catch (Throwable) {}
+
+    apiSuccess(['stats' => $stats]);
 }
 
 /**
