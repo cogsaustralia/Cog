@@ -1368,6 +1368,18 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
+        // 4. Pending approvals by type
+        try {
+            $stmt = $db->query("SELECT request_type, COUNT(*) AS cnt FROM approval_requests WHERE request_status = 'pending' GROUP BY request_type ORDER BY cnt DESC");
+            $hubData['pending_by_type'] = [];
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r)
+                $hubData['pending_by_type'][(string)$r['request_type']] = (int)$r['cnt'];
+        } catch (Throwable) {}
+        // 5. Overdue trust transfers
+        try {
+            $s = $db->query("SELECT COUNT(*) FROM v_overdue_transfers WHERE days_overdue > 0");
+            $hubData['overdue_transfer_count'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
             } elseif ($area === 'governance_polls') {
         // 1. Active vote proposals — titles and close dates (no member data)
         try {
@@ -1420,6 +1432,28 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
+        // 4. Closed vote proposal outcomes
+        try {
+            $stmt = $db->prepare("SELECT title, status, proposal_type, updated_at FROM vote_proposals WHERE status IN ('closed','archived') ORDER BY updated_at DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['closed_proposals'] = array_map(
+                fn($r) => ['title'=>(string)$r['title'],'status'=>(string)$r['status'],
+                           'proposal_type'=>(string)$r['proposal_type'],'updated_at'=>(string)$r['updated_at']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // 5. Binding poll outcomes
+        try {
+            $stmt = $db->prepare("SELECT title, status, voting_closes_at FROM community_polls WHERE status IN ('closed','declared','archived') ORDER BY voting_closes_at DESC LIMIT 3");
+            $stmt->execute();
+            $hubData['closed_polls'] = array_map(
+                fn($r) => ['title'=>(string)$r['title'],'status'=>(string)$r['status'],'closed_at'=>(string)($r['voting_closes_at']??'')],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // 6. Business partner count (aggregate only)
+        try {
+            $s = $db->query("SELECT COUNT(*) FROM members WHERE member_type = 'business'");
+            $hubData['business_partner_count'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
             } elseif ($area === 'esg_proxy_voting') {
         // 1. Holdings list — ticker, company_name, units, ESG flag (no member data)
         try {
@@ -1464,6 +1498,25 @@ function handleHubAdminActivity(): void
                 ],
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
+        } catch (Throwable) {}
+        // 3. ASX purchase history with price (settled trades)
+        try {
+            $stmt = $db->prepare("SELECT h.ticker, h.company_name, t.units, t.price_cents_per_unit, t.trade_date FROM asx_trades t JOIN asx_holdings h ON h.id = t.holding_id WHERE t.status = 'settled' ORDER BY t.trade_date DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['settled_trades_detail'] = array_map(
+                fn($r) => ['ticker'=>(string)$r['ticker'],'company_name'=>(string)$r['company_name'],
+                           'units'=>(int)$r['units'],'price_cents'=>(float)($r['price_cents_per_unit']??0),
+                           'trade_date'=>(string)$r['trade_date']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // 4. Token class breakdown
+        try {
+            $stmt = $db->prepare("SELECT class_code, display_name, unit_price_cents, member_type FROM token_classes ORDER BY display_order LIMIT 10");
+            $stmt->execute();
+            $hubData['token_classes'] = array_map(
+                fn($r) => ['class_code'=>(string)$r['class_code'],'display_name'=>(string)$r['display_name'],
+                           'unit_price_cents'=>(int)$r['unit_price_cents'],'member_type'=>(string)$r['member_type']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Throwable) {}
             } elseif ($area === 'first_nations') {
         // 1. Active Country overlays (no member/personal data)
@@ -1534,6 +1587,24 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
+        // 4. Active zone challenges (challenger_member_id NOT returned)
+        try {
+            $stmt = $db->prepare("SELECT zc.challenge_summary, zc.status, az.zone_name, zc.created_at FROM zone_challenges zc JOIN affected_zones az ON az.id = zc.zone_id WHERE zc.status IN ('open','in_review') ORDER BY zc.created_at DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['active_zone_challenges'] = array_map(
+                fn($r) => ['zone_name'=>(string)$r['zone_name'],'status'=>(string)$r['status'],
+                           'summary'=>(string)$r['challenge_summary'],'created_at'=>(string)$r['created_at']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // 5. Evidence reviews (member_id NOT returned)
+        try {
+            $stmt = $db->prepare("SELECT subject_type, review_type, review_status, created_at FROM evidence_reviews ORDER BY created_at DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['evidence_reviews'] = array_map(
+                fn($r) => ['subject_type'=>(string)$r['subject_type'],'review_type'=>(string)$r['review_type'],
+                           'review_status'=>(string)$r['review_status'],'created_at'=>(string)$r['created_at']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
             } elseif ($area === 'community_projects') {
         // 1. All grants — counts by status + total disbursed (no grantee PII)
         try {
@@ -1582,6 +1653,20 @@ function handleHubAdminActivity(): void
             );
             $hubData['trust_income_12m'] = (int)$s->fetchColumn();
         } catch (Throwable) {}
+        // 4. Recent grant titles + types (no grantee PII)
+        try {
+            $stmt = $db->prepare("SELECT title, grant_type, amount_cents, status FROM grants WHERE status IN ('approved','disbursed','acquitted') ORDER BY id DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['recent_grants'] = array_map(
+                fn($r) => ['title'=>(string)$r['title'],'grant_type'=>(string)$r['grant_type'],
+                           'amount_cents'=>(int)$r['amount_cents'],'status'=>(string)$r['status']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // 5. STC direct transfer compliance (2-business-day rule)
+        try {
+            $s = $db->query("SELECT COUNT(*) FROM trust_transfers WHERE transfer_type = 'a_to_c_direct' AND status = 'pending' AND compliance_due_by IS NOT NULL");
+            $hubData['stc_pending_count'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
             } elseif ($area === 'technology_blockchain') {
         // 1. Ledger nodes by status (no member data)
         try {
@@ -1625,6 +1710,24 @@ function handleHubAdminActivity(): void
                 ],
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
+        } catch (Throwable) {}
+        // 4. Active node incidents
+        try {
+            $stmt = $db->prepare("SELECT severity, status, summary, created_at FROM node_incidents WHERE status IN ('open','triaged','contained') ORDER BY created_at DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['node_incidents'] = array_map(
+                fn($r) => ['severity'=>(string)$r['severity'],'status'=>(string)$r['status'],
+                           'summary'=>(string)$r['summary'],'created_at'=>(string)$r['created_at']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // 5. Published infrastructure reports
+        try {
+            $stmt = $db->prepare("SELECT report_key, report_type, summary, created_at FROM infrastructure_reports WHERE status = 'published' ORDER BY created_at DESC LIMIT 3");
+            $stmt->execute();
+            $hubData['infra_reports'] = array_map(
+                fn($r) => ['report_key'=>(string)$r['report_key'],'report_type'=>(string)$r['report_type'],
+                           'summary'=>(string)($r['summary']??''),'created_at'=>(string)$r['created_at']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Throwable) {}
             } elseif ($area === 'financial_oversight') {
         // 1. Most recent distribution run — date, status, pool total (no member data)
@@ -1775,6 +1878,15 @@ function handleHubAdminActivity(): void
             );
             $hubData['rwa_count'] = count($hubData['active_rwa_assets']);
         } catch (Throwable) {}
+        // 4. Active zone challenges (challenger_member_id NOT returned)
+        try {
+            $stmt = $db->prepare("SELECT zc.challenge_summary, zc.status, az.zone_name, zc.created_at FROM zone_challenges zc JOIN affected_zones az ON az.id = zc.zone_id WHERE zc.status IN ('open','in_review') ORDER BY zc.created_at DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['zone_challenges'] = array_map(
+                fn($r) => ['zone_name'=>(string)$r['zone_name'],'status'=>(string)$r['status'],
+                           'summary'=>(string)$r['challenge_summary'],'created_at'=>(string)$r['created_at']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
             } elseif ($area === 'education_outreach') {
         // 1. New members last 30 days — COUNT only, no identifying data
         try {
@@ -1841,4 +1953,20 @@ function handleHubAdminActivity(): void
         'activity'    => $activity,
         'hub_data'    => $hubData,
     ]);
+        // 5. Broadcast wallet messages (member_id IS NULL = broadcast)
+        try {
+            $stmt = $db->prepare("SELECT subject, message_type, audience, created_at FROM wallet_messages WHERE member_id IS NULL ORDER BY created_at DESC LIMIT 5");
+            $stmt->execute();
+            $hubData['broadcast_messages'] = array_map(
+                fn($r) => ['subject'=>(string)$r['subject'],'message_type'=>(string)$r['message_type'],
+                           'audience'=>(string)$r['audience'],'created_at'=>(string)$r['created_at']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // 6. Email events by type (aggregate, no recipient PII)
+        try {
+            $stmt = $db->query("SELECT event_type, COUNT(*) AS cnt FROM email_access_log WHERE member_id IS NULL GROUP BY event_type ORDER BY cnt DESC LIMIT 6");
+            $hubData['email_event_summary'] = [];
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r)
+                $hubData['email_event_summary'][(string)$r['event_type']] = (int)$r['cnt'];
+        } catch (Throwable) {}
 }

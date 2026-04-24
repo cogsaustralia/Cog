@@ -1700,7 +1700,23 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>'; // .hub-livedata-section
+            // Pending approvals by type
+      if (hd.pending_by_type && Object.keys(hd.pending_by_type).length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Pending approvals by type</div>';
+        Object.keys(hd.pending_by_type).forEach(function(type) {
+          html += '<div class="hub-livedata-row">';
+          html += '<span class="hub-livedata-label">' + _esc(type.replace(/_/g,' ')) + '</span>';
+          html += '<span class="hub-livedata-val">' + hd.pending_by_type[type] + '</span></div>';
+        });
+      }
+      // Overdue transfers
+      if (typeof hd.overdue_transfer_count !== 'undefined') {
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Overdue trust transfers</span>';
+        html += '<span class="hub-livedata-val' + (hd.overdue_transfer_count > 0 ? ' lvd-issues' : '') + '">' + hd.overdue_transfer_count + '</span>';
+        if (hd.overdue_transfer_count === 0) html += '<span class="hub-livedata-ok">✓ None overdue</span>';
+        html += '</div>';
+      }
+html += '</div>'; // .hub-livedata-section
     }
 
     // ── 2. Research & Acquisitions ────────────────────────────────────────
@@ -1753,7 +1769,36 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>'; // .hub-livedata-section
+            // Decided proposals
+      if (hd.closed_proposals && hd.closed_proposals.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Decided proposals</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.closed_proposals.forEach(function(p) {
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">' + _esc((p.proposal_type||'').replace(/_/g,' ')) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(p.title) + '</span>';
+          html += '<span class="sev-chip sev-low">' + _esc(p.status) + '</span>';
+          html += '</div><span class="hub-livedata-ts">' + _dts(p.updated_at) + '</span></div>';
+        }); html += '</div>';
+      }
+      // Binding poll outcomes
+      if (hd.closed_polls && hd.closed_polls.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:8px">Binding poll outcomes</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.closed_polls.forEach(function(p) {
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">Poll</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(p.title) + '</span>';
+          html += '<span class="sev-chip sev-low">' + _esc(p.status) + '</span>';
+          html += '</div><span class="hub-livedata-ts">' + _esc((p.closed_at||'').split(' ')[0]) + '</span></div>';
+        }); html += '</div>';
+      }
+      // Business partners
+      if (typeof hd.business_partner_count !== 'undefined') {
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Business Partners registered</span>';
+        html += '<span class="hub-livedata-val">' + hd.business_partner_count + '</span></div>';
+      }
+html += '</div>'; // .hub-livedata-section
     }
 
     // ── 3. ESG & Proxy Voting ────────────────────────────────────────────
@@ -1801,7 +1846,32 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>';
+            // Purchase history
+      if (hd.settled_trades_detail && hd.settled_trades_detail.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Purchase history (settled)</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.settled_trades_detail.forEach(function(t) {
+          var price = t.price_cents > 0 ? ' @ $' + (t.price_cents/100).toFixed(4) : '';
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">' + _esc(t.ticker) + '</span>';
+          html += '<span class="hub-livedata-summary">' + Number(t.units).toLocaleString('en-AU') + ' units' + _esc(price) + '</span>';
+          html += '</div><span class="hub-livedata-ts">' + _esc(t.trade_date) + '</span></div>';
+        }); html += '</div>';
+      }
+      // Token class breakdown
+      if (hd.token_classes && hd.token_classes.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:8px">COGⓢ classes</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.token_classes.forEach(function(tc) {
+          var price = tc.unit_price_cents > 0 ? ' — $' + (tc.unit_price_cents/100).toFixed(2) : '';
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">' + _esc(tc.class_code) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(tc.display_name) + _esc(price) + '</span>';
+          html += '<span class="sev-chip sev-low">' + _esc(tc.member_type) + '</span>';
+          html += '</div></div>';
+        }); html += '</div>';
+      }
+html += '</div>';
     }
 
     // ── 4. First Nations Joint Venture ───────────────────────────────────
@@ -1859,7 +1929,34 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>';
+            // Zone challenges
+      if (typeof hd.active_zone_challenges !== 'undefined') {
+        if (hd.active_zone_challenges.length) {
+          html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Active zone challenges</div>';
+          html += '<div class="hub-livedata-list">';
+          hd.active_zone_challenges.forEach(function(zc) {
+            html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+            html += '<span class="hub-livedata-type">' + _esc(zc.status) + '</span>';
+            html += '<span class="hub-livedata-summary">' + _esc(zc.zone_name) + ' — ' + _esc(zc.summary) + '</span>';
+            html += '</div><span class="hub-livedata-ts">' + _dts(zc.created_at) + '</span></div>';
+          }); html += '</div>';
+        } else {
+          html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Zone challenges</span><span class="hub-livedata-ok">✓ None active</span></div>';
+        }
+      }
+      // Evidence reviews
+      if (hd.evidence_reviews && hd.evidence_reviews.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:8px">Evidence & FPIC reviews</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.evidence_reviews.forEach(function(er) {
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">' + _esc(er.review_type.replace(/_/g,' ')) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(er.subject_type.replace(/_/g,' ')) + '</span>';
+          html += '<span class="sev-chip sev-low">' + _esc(er.review_status) + '</span>';
+          html += '</div><span class="hub-livedata-ts">' + _dts(er.created_at) + '</span></div>';
+        }); html += '</div>';
+      }
+html += '</div>';
     }
 
     // ── 5. Community Projects ────────────────────────────────────────────
@@ -1913,7 +2010,27 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>';
+            // Recent grants (titles + types, no grantee PII)
+      if (hd.recent_grants && hd.recent_grants.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Recent approved grants</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.recent_grants.forEach(function(g) {
+          var amt = '$' + (g.amount_cents/100).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">' + _esc((g.grant_type||'').replace(/_/g,' ')) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(g.title) + '</span>';
+          html += '<span class="sev-chip sev-low">' + _esc(g.status) + '</span>';
+          html += '</div><span class="hub-livedata-ts">' + amt + '</span></div>';
+        }); html += '</div>';
+      }
+      // STC compliance
+      if (typeof hd.stc_pending_count !== 'undefined') {
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">STC transfers pending (2-day rule)</span>';
+        html += '<span class="hub-livedata-val' + (hd.stc_pending_count > 0 ? ' lvd-issues' : '') + '">' + hd.stc_pending_count + '</span>';
+        if (hd.stc_pending_count === 0) html += '<span class="hub-livedata-ok">✓ Clear</span>';
+        html += '</div>';
+      }
+html += '</div>';
     }
 
     // ── 6. Technology & Blockchain ───────────────────────────────────────
@@ -1968,7 +2085,34 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>';
+            // Active node incidents
+      if (typeof hd.node_incidents !== 'undefined') {
+        if (hd.node_incidents.length) {
+          html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Active node incidents</div>';
+          html += '<div class="hub-livedata-list">';
+          hd.node_incidents.forEach(function(inc) {
+            var sc = inc.severity==='critical'||inc.severity==='high' ? 'sev-high' : inc.severity==='medium' ? 'sev-med' : 'sev-low';
+            html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+            html += '<span class="sev-chip ' + sc + '">' + _esc(inc.severity) + '</span>';
+            html += '<span class="hub-livedata-summary">' + _esc(inc.summary) + '</span>';
+            html += '</div><span class="hub-livedata-ts">' + _dts(inc.created_at) + '</span></div>';
+          }); html += '</div>';
+        } else {
+          html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Node incidents</span><span class="hub-livedata-ok">✓ None active</span></div>';
+        }
+      }
+      // Infrastructure reports
+      if (hd.infra_reports && hd.infra_reports.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:8px">Published infrastructure reports</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.infra_reports.forEach(function(rpt) {
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">' + _esc(rpt.report_type.replace(/_/g,' ')) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(rpt.summary || rpt.report_key) + '</span>';
+          html += '</div><span class="hub-livedata-ts">' + _dts(rpt.created_at) + '</span></div>';
+        }); html += '</div>';
+      }
+html += '</div>';
     }
 
     // ── 7. Financial Oversight ───────────────────────────────────────────
@@ -2119,7 +2263,22 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>';
+            // Zone challenges
+      if (typeof hd.zone_challenges !== 'undefined') {
+        if (hd.zone_challenges.length) {
+          html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Active zone challenges</div>';
+          html += '<div class="hub-livedata-list">';
+          hd.zone_challenges.forEach(function(zc) {
+            html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+            html += '<span class="hub-livedata-type">' + _esc(zc.status) + '</span>';
+            html += '<span class="hub-livedata-summary">' + _esc(zc.zone_name) + ' — ' + _esc(zc.summary) + '</span>';
+            html += '</div><span class="hub-livedata-ts">' + _dts(zc.created_at) + '</span></div>';
+          }); html += '</div>';
+        } else {
+          html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Zone challenges</span><span class="hub-livedata-ok">✓ None active</span></div>';
+        }
+      }
+html += '</div>';
     }
 
     // ── 9. Education & Outreach ───────────────────────────────────────────
@@ -2170,7 +2329,27 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
-      html += '</div>';
+            // Broadcast wallet messages
+      if (hd.broadcast_messages && hd.broadcast_messages.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Recent broadcast wallet messages</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.broadcast_messages.forEach(function(m) {
+          html += '<div class="hub-livedata-item"><div class="hub-livedata-item-inner">';
+          html += '<span class="hub-livedata-type">' + _esc(m.message_type) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(m.subject) + '</span>';
+          html += '</div><span class="hub-livedata-ts">' + _dts(m.created_at) + '</span></div>';
+        }); html += '</div>';
+      }
+      // Email event summary
+      if (hd.email_event_summary && Object.keys(hd.email_event_summary).length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:8px">Email activity (admin/broadcast)</div>';
+        Object.keys(hd.email_event_summary).forEach(function(type) {
+          html += '<div class="hub-livedata-row">';
+          html += '<span class="hub-livedata-label">' + _esc(type.replace(/_/g,' ')) + '</span>';
+          html += '<span class="hub-livedata-val">' + hd.email_event_summary[type] + '</span></div>';
+        });
+      }
+html += '</div>';
     }
 
     if (html) container.insertAdjacentHTML('beforeend', html);
