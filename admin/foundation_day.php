@@ -566,7 +566,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
       <?php elseif ($canManage): ?>
         <p style="font-size:12px;color:var(--sub);margin-bottom:12px">Allocates 1,000 Community COG$ to every active paid Member. Idempotent — safe to re-run. Members already at 1,000 are skipped.</p>
         <form method="post">
-          <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
+          <?php if ($csrfToken): ?><input type="hidden" name="_csrf" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
           <input type="hidden" name="action" value="allocate_community_tokens">
           <button type="submit" class="btn btn-gold">Allocate 1,000 Community COG$ to all Members</button>
         </form>
@@ -594,7 +594,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
         <span class="flag-status <?php echo $isSet ? 'set' : 'unset'; ?>"><?php echo $isSet ? '✓ Set' : '— Not set'; ?></span>
         <?php if ($canManage && !$isSet): ?>
           <form method="post" style="display:inline">
-            <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
+            <?php if ($csrfToken): ?><input type="hidden" name="_csrf" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
             <input type="hidden" name="action" value="update_poll_status">
             <!-- Reuse a lightweight approach via admin_settings directly -->
             <button type="button" class="btn btn-sm btn-gold"
@@ -647,7 +647,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
             <?php $nextStatuses = ['draft'=>['deliberation','open'],'deliberation'=>['open','closed'],'open'=>['closed'],'closed'=>['declared']]; ?>
             <?php foreach ($nextStatuses[$fp['status']] ?? [] as $ns): ?>
               <form method="post" style="display:inline">
-                <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
+                <?php if ($csrfToken): ?><input type="hidden" name="_csrf" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
                 <input type="hidden" name="action" value="update_poll_status">
                 <input type="hidden" name="poll_id" value="<?php echo (int)$fp['id']; ?>">
                 <input type="hidden" name="new_status" value="<?php echo fd_h($ns); ?>">
@@ -660,7 +660,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
       <?php elseif ($canManage): ?>
         <p style="font-size:12px;color:var(--sub);margin-bottom:14px">Create the inaugural Members Poll. This is the first online cryptographic member poll — the act that defines Governance Foundation Day. Each vote will be recorded with a SHA-256 receipt hash.</p>
         <form method="post">
-          <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
+          <?php if ($csrfToken): ?><input type="hidden" name="_csrf" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
           <input type="hidden" name="action" value="create_foundation_poll">
           <div class="form-group"><label>Poll title</label><input type="text" name="poll_title" required value="COGs of Australia Foundation — Inaugural Governance Poll — Governance Foundation Day" autocomplete="off"></div>
           <div class="form-group"><label>Summary</label><input type="text" name="poll_summary" value="The Foundation's first online cryptographic member poll. A vote on this poll constitutes the Governance Foundation Day event under the Declaration." autocomplete="off"></div>
@@ -693,7 +693,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
       <?php else: ?>
         <p style="font-size:12px;color:var(--sub);margin-bottom:14px">This records the Governance Foundation Day declaration with a SHA-256 hash, marks the poll as declared, and enables Gate 2 Tier 1 token classes (kS, D, P, Lr, C). This action is irreversible.</p>
         <form method="post">
-          <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
+          <?php if ($csrfToken): ?><input type="hidden" name="_csrf" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
           <input type="hidden" name="action" value="declare_foundation_day">
           <input type="hidden" name="declaring_poll_key" value="<?php echo fd_h($fp['poll_key'] ?? ''); ?>">
           <button type="submit" class="btn btn-declare" onclick="return confirm('Declare Governance Foundation Day using poll <?php echo fd_h($fp['poll_key'] ?? ''); ?>? This is irreversible.')">
@@ -725,7 +725,7 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
               <?php $next = $nextMap[$ap['status']] ?? null; ?>
               <?php if ($next && !$fdDeclared): ?>
                 <form method="post" style="display:inline">
-                  <?php if ($csrfToken): ?><input type="hidden" name="csrf_token" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
+                  <?php if ($csrfToken): ?><input type="hidden" name="_csrf" value="<?php echo fd_h($csrfToken); ?>"><?php endif; ?>
                   <input type="hidden" name="action" value="update_poll_status">
                   <input type="hidden" name="poll_id" value="<?php echo (int)$ap['id']; ?>">
                   <input type="hidden" name="new_status" value="<?php echo fd_h($next); ?>">
