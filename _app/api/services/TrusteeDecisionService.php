@@ -21,9 +21,7 @@ declare(strict_types=1);
 class TrusteeDecisionService
 {
     public const TOKEN_PURPOSE_EXECUTION = 'tdr_execution';
-    public const TOKEN_PURPOSE_WITNESS   = 'tdr_witness';
     public const TOKEN_TTL_EXECUTION     = 900;  // 15 minutes
-    public const TOKEN_TTL_WITNESS       = 900;  // 15 minutes
 
     public const EXECUTOR_NAME    = 'Thomas Boyd Cunliffe';
     public const EXECUTOR_ADDRESS = '780 Sugarbag Road West, DRAKE 2469 NSW';
@@ -369,7 +367,7 @@ class TrusteeDecisionService
             self::NON_MIS_STATEMENT
         );
 
-        // Build canonical payload (includes all material fields; witness fields added later)
+        // Build canonical payload — complete at execution, no witness step for TDRs (spec §13)
         $canonical = [
             'record_type'              => 'trustee_decision_record',
             'execution_uuid'           => $execUuid,
@@ -401,7 +399,7 @@ class TrusteeDecisionService
 
         $db->beginTransaction();
         try {
-            // Insert execution record (witness fields NULL until witness step)
+            // Insert execution record — fully_executed immediately (no witness step for TDRs)
             $db->prepare(
                 "INSERT INTO trustee_decision_execution_records
                    (execution_uuid, decision_uuid, trustee_id, capacity_label,
@@ -417,7 +415,7 @@ class TrusteeDecisionService
                          ?, ?, ?, ?,
                          ?, ?,
                          ?, ?, ?, ?,
-                         ?, 'executor_complete', ?)"
+                         ?, 'fully_executed', ?)"
             )->execute([
                 $execUuid, $decisionUuid, $trusteeId, $capacityLabel,
                 $ackText,
@@ -454,13 +452,13 @@ class TrusteeDecisionService
                 "UPDATE trustee_decision_execution_records SET evidence_vault_id = ? WHERE execution_uuid = ?"
             )->execute([$eveId, $execUuid]);
 
-            // Update decision with canonical payload + hash + vault ID; flip to witness_pending
+            // Finalise decision — fully_executed immediately
             $db->prepare(
                 "UPDATE trustee_decisions SET
                    canonical_payload_json = ?,
                    record_sha256 = ?,
                    evidence_vault_id = ?,
-                   status = 'pending_execution',
+                   status = 'fully_executed',
                    updated_at = UTC_TIMESTAMP()
                  WHERE decision_uuid = ?"
             )->execute([
@@ -489,196 +487,6 @@ class TrusteeDecisionService
         ];
     }
 
-    /**
-     * Record witness attestation for an executed TDR.
-     * Witness data is form-captured (no hardcoded identity).
-     * Finalises the TDR to fully_executed.
-     */
-    public static function recordWitnessAttestation(
-        PDO    $db,
-        string $decisionUuid,
-        array  $witness,  // full_name, dob, occupation, address, jp_number?, comments?
-        string $rawToken,
-        string $ipAddress,
-        string $userAgent
-    ): array {
-        $decision = self::getDecision($db, $decisionUuid);
-        if (!$decision) {
-            throw new \RuntimeException("TDR not found: {$decisionUuid}");
-        }
-
-        // Find the execution record
-        $execStmt = $db->prepare(
-            "SELECT * FROM trustee_decision_execution_records
-             WHERE decision_uuid = ? AND status = 'executor_complete' LIMIT 1"
-        );
-        $execStmt->execute([$decisionUuid]);
-        $execRow = $execStmt->fetch(PDO::FETCH_ASSOC);
-        if (!$execRow) {
-            throw new \RuntimeException("No executor_complete execution record found for {$decision['decision_ref']}.");
-        }
-
-        if (!self::consumeToken($db, $rawToken, self::TOKEN_PURPOSE_WITNESS)) {
-            throw new \RuntimeException("Witness token is invalid, expired, or already used.");
-        }
-
-        $nowUtc = gmdate('Y-m-d H:i:s.') . sprintf('%03d', (int)(microtime(true) * 1000) % 1000);
-        $nowDb  = gmdate('Y-m-d H:i:s');
-
-        $witnessIpData = json_encode([
-            'ip_address'      => $ipAddress,
-            'user_agent'      => $userAgent,
-            'server_time_utc' => $nowDb,
-        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $witnessIpHash = hash('sha256', $witnessIpData);
-
-        $attestText = sprintf(
-            'I, %s, born %s, occupation %s, of %s%s, attest that I observed %s execute ' .
-            'the Trustee Decision Record %s electronically on %s. ' .
-            'I am satisfied this is the record as executed. ' .
-            'This attestation is given electronically under section 14G of the ' .
-            'Electronic Transactions Act 2000 (NSW).%s',
-            $witness['full_name'],
-            $witness['dob'],
-            $witness['occupation'],
-            $witness['address'],
-            !empty($witness['jp_number']) ? ', JP No. ' . $witness['jp_number'] : '',
-            self::EXECUTOR_NAME,
-            $decision['decision_ref'],
-            gmdate('d F Y', strtotime($nowDb)),
-            !empty($witness['comments']) ? ' Comments: ' . $witness['comments'] : ''
-        );
-
-        // Re-build canonical payload with witness fields appended
-        $existingCanonical = json_decode((string)($decision['canonical_payload_json'] ?? '{}'), true);
-        $existingCanonical['witness_full_name']         = $witness['full_name'];
-        $existingCanonical['witness_dob']               = $witness['dob'];
-        $existingCanonical['witness_occupation']        = $witness['occupation'];
-        $existingCanonical['witness_address']           = $witness['address'];
-        $existingCanonical['witness_jp_number']         = $witness['jp_number'] ?? null;
-        $existingCanonical['witness_attestation_text']  = $attestText;
-        $existingCanonical['witness_timestamp_utc']     = $nowUtc;
-        $existingCanonical['witness_ip_hash']           = $witnessIpHash;
-        $finalHash = hash('sha256', json_encode($existingCanonical, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-
-        $db->beginTransaction();
-        try {
-            // Update execution record with witness fields + final hash
-            $db->prepare(
-                "UPDATE trustee_decision_execution_records SET
-                   witness_full_name = ?, witness_dob = ?, witness_occupation = ?,
-                   witness_address = ?, witness_jp_number = ?, witness_comments = ?,
-                   witness_attestation_text = ?,
-                   witness_ip_hash = ?, witness_timestamp_utc = ?,
-                   record_sha256 = ?,
-                   status = 'fully_executed'
-                 WHERE execution_uuid = ?"
-            )->execute([
-                $witness['full_name'],
-                $witness['dob'],
-                $witness['occupation'],
-                $witness['address'],
-                $witness['jp_number'] ?? null,
-                $witness['comments']  ?? null,
-                $attestText,
-                $witnessIpHash,
-                $nowUtc,
-                $finalHash,
-                $execRow['execution_uuid'],
-            ]);
-
-            // Final evidence vault entry for witness attestation
-            $db->prepare(
-                "INSERT INTO evidence_vault_entries
-                   (entry_type, subject_type, subject_id, subject_ref,
-                    payload_hash, payload_summary, source_system,
-                    chain_tx_hash, created_by_type, created_at)
-                 VALUES ('witness_attestation', 'trustee_decision', 0, ?,
-                         ?, ?, 'trustee_decision_service',
-                         ?, 'system', ?)"
-            )->execute([
-                $execRow['execution_uuid'],
-                $finalHash,
-                sprintf('TDR witness attestation — %s — witness: %s', $decision['decision_ref'], $witness['full_name']),
-                '0x' . $finalHash,
-                $nowDb,
-            ]);
-            $witnessEveId = (int)$db->lastInsertId();
-
-            // Finalise the decision row
-            $db->prepare(
-                "UPDATE trustee_decisions SET
-                   canonical_payload_json = ?,
-                   record_sha256 = ?,
-                   status = 'fully_executed',
-                   updated_at = UTC_TIMESTAMP()
-                 WHERE decision_uuid = ?"
-            )->execute([
-                json_encode($existingCanonical, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
-                $finalHash,
-                $decisionUuid,
-            ]);
-
-            $db->commit();
-        } catch (\Throwable $e) {
-            if ($db->inTransaction()) {
-                $db->rollBack();
-            }
-            throw $e;
-        }
-
-        return [
-            'execution_uuid'         => $execRow['execution_uuid'],
-            'decision_uuid'          => $decisionUuid,
-            'decision_ref'           => $decision['decision_ref'],
-            'final_record_sha256'    => $finalHash,
-            'witness_timestamp_utc'  => $nowUtc,
-            'witness_vault_id'       => $witnessEveId,
-            'status'                 => 'fully_executed',
-        ];
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    /**
-     * Generate the next sequential TDR reference for a given date.
-     * Format: TDR-YYYYMMDD-NNN (3-digit sequence per date).
-     */
-    public static function generateRef(PDO $db, string $effectiveDate): string
-    {
-        $datePart = date('Ymd', strtotime($effectiveDate));
-        $prefix   = 'TDR-' . $datePart . '-';
-        $stmt     = $db->prepare(
-            "SELECT COUNT(*) FROM trustee_decisions WHERE decision_ref LIKE ?"
-        );
-        $stmt->execute([$prefix . '%']);
-        $count = (int)$stmt->fetchColumn();
-        return $prefix . str_pad((string)($count + 1), 3, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * Return all attachments for a TDR.
-     */
-    public static function getAttachments(PDO $db, string $decisionUuid): array
-    {
-        $stmt = $db->prepare(
-            'SELECT * FROM trustee_decision_attachments WHERE decision_uuid = ? ORDER BY created_at'
-        );
-        $stmt->execute([$decisionUuid]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Return all execution records for a TDR.
-     */
-    public static function getExecutionRecords(PDO $db, string $decisionUuid): array
-    {
-        $stmt = $db->prepare(
-            'SELECT * FROM trustee_decision_execution_records WHERE decision_uuid = ? ORDER BY created_at'
-        );
-        $stmt->execute([$decisionUuid]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 
     /**
      * Normalise a mobile number to 04xxxxxxxx (10 digits, leading 0).
