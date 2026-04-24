@@ -15,6 +15,7 @@ require_once __DIR__ . '/_app/api/config/bootstrap.php';
 require_once __DIR__ . '/_app/api/config/database.php';
 require_once __DIR__ . '/_app/api/helpers.php';
 require_once __DIR__ . '/_app/api/services/TrusteeDecisionService.php';
+require_once __DIR__ . '/_app/api/integrations/mailer.php';
 
 function tdr_h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 
@@ -76,6 +77,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mobileData = TrusteeDecisionService::lookupMobile($db, $mobileEntered);
             $result     = TrusteeDecisionService::recordExecution($db, $decisionUuid, $ipAddress, $userAgent, $rawToken, $mobileData);
             $step = 'done';
+
+            // ── Confirmation email to both sub-trust OTP and personal email ──
+            if (mailerEnabled()) {
+                $emails    = TrusteeDecisionService::getTrusteeEmails($db, $decision['sub_trust_context']);
+                $recipients = array_filter([
+                    $emails['otp_email'],
+                    $emails['personal_email'],
+                ]);
+                $execTs    = $result['execution_timestamp_utc'] ?? gmdate('Y-m-d H:i:s');
+                $sha256    = $result['record_sha256'] ?? '';
+                $eveId     = (string)($result['evidence_vault_id'] ?? '');
+                $matchNote = '';
+                if (($mobileData['match_status'] ?? '') === 'matched') {
+                    $matchNote = 'Member identity verified — ' . ($mobileData['member_name'] ?? '') .
+                                 ' (' . ($mobileData['member_number'] ?? '') . ')';
+                }
+
+                $subj = '[COG$] Executed — ' . $decision['decision_ref'] . ' — ' . $decision['title'];
+
+                $powers = json_decode((string)($decision['powers_json'] ?? '[]'), true) ?: [];
+                $powersHtml = '';
+                $powersText = '';
+                foreach ($powers as $p) {
+                    $powersHtml .= '<li><strong>' . htmlspecialchars($p['clause_ref'] ?? '', ENT_QUOTES) . '</strong> — '
+                                 . htmlspecialchars($p['description'] ?? '', ENT_QUOTES) . '</li>';
+                    $powersText .= '  • ' . ($p['clause_ref'] ?? '') . ' — ' . ($p['description'] ?? '') . "\n";
+                }
+
+                $htmlBody = '
+<div style="font-family:system-ui,sans-serif;max-width:640px;margin:0 auto;color:#1a1a2e">
+  <div style="background:#1a1a2e;padding:20px 28px;border-radius:8px 8px 0 0">
+    <span style="color:#c8a84b;font-weight:700;font-size:1rem;letter-spacing:.06em">COG$™ FOUNDATION</span>
+    <span style="color:#7a7d8a;font-size:.85rem"> — Trustee Decision Record</span>
+  </div>
+  <div style="border:1px solid #e0ddd8;border-top:none;border-radius:0 0 8px 8px;padding:24px 28px">
+    <h1 style="font-size:1rem;color:#1a1a2e;margin:0 0 4px">' . htmlspecialchars($decision['decision_ref'], ENT_QUOTES) . ' — Executed</h1>
+    <p style="color:#666;font-size:.85rem;margin:0 0 20px">' . htmlspecialchars($subTrustLabel, ENT_QUOTES) . ' &nbsp;·&nbsp; Effective ' . htmlspecialchars($decision['effective_date'], ENT_QUOTES) . '</p>
+
+    <table style="width:100%;font-size:.85rem;border-collapse:collapse;margin-bottom:20px">
+      <tr><td style="color:#888;padding:4px 0;width:180px">Reference</td><td style="font-family:monospace;color:#8b6914"><strong>' . htmlspecialchars($decision['decision_ref'], ENT_QUOTES) . '</strong></td></tr>
+      <tr><td style="color:#888;padding:4px 0">Title</td><td>' . htmlspecialchars($decision['title'], ENT_QUOTES) . '</td></tr>
+      <tr><td style="color:#888;padding:4px 0">Sub-Trust</td><td>' . htmlspecialchars($subTrustLabel, ENT_QUOTES) . '</td></tr>
+      <tr><td style="color:#888;padding:4px 0">Effective Date</td><td>' . htmlspecialchars($decision['effective_date'], ENT_QUOTES) . '</td></tr>
+      <tr><td style="color:#888;padding:4px 0">Executed</td><td>' . htmlspecialchars($execTs, ENT_QUOTES) . ' UTC</td></tr>
+      <tr><td style="color:#888;padding:4px 0">Executor</td><td>' . htmlspecialchars(TrusteeDecisionService::EXECUTOR_NAME, ENT_QUOTES) . '</td></tr>
+      ' . ($matchNote ? '<tr><td style="color:#888;padding:4px 0">Identity</td><td style="color:#2d7a4f">' . htmlspecialchars($matchNote, ENT_QUOTES) . '</td></tr>' : '') . '
+      <tr><td style="color:#888;padding:4px 0">Evidence Vault</td><td style="font-family:monospace">#' . htmlspecialchars($eveId, ENT_QUOTES) . '</td></tr>
+    </table>
+
+    <h3 style="font-size:.85rem;color:#1a1a2e;margin:0 0 8px">Powers Exercised</h3>
+    <ul style="font-size:.83rem;color:#333;margin:0 0 20px;padding-left:20px">' . $powersHtml . '</ul>
+
+    <h3 style="font-size:.85rem;color:#1a1a2e;margin:0 0 8px">Resolution</h3>
+    <div style="background:#f8f7f4;border-left:3px solid #8b6914;padding:12px 16px;font-size:.83rem;color:#333;white-space:pre-wrap;margin-bottom:20px">' . htmlspecialchars($decision['resolution_md'], ENT_QUOTES) . '</div>
+
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:12px 16px;margin-bottom:20px">
+      <div style="font-size:.75rem;color:#166534;font-weight:700;margin-bottom:6px">CRYPTOGRAPHIC RECORD</div>
+      <div style="font-family:monospace;font-size:.73rem;color:#166534;word-break:break-all">SHA-256: ' . htmlspecialchars($sha256, ENT_QUOTES) . '</div>
+    </div>
+
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:10px 14px;font-size:.78rem;color:#92400e">
+      This is a cryptographically executed Trustee Decision Record of the COGS of Australia Foundation
+      Community Joint Venture Mainspring Hybrid Trust (ABN 61 734 327 831). This record is not a managed
+      investment scheme instrument. Retain this email as your confirmation copy.
+    </div>
+  </div>
+  <p style="text-align:center;font-size:.73rem;color:#aaa;margin-top:16px">
+    COGS of Australia Foundation &nbsp;·&nbsp; ABN 61 734 327 831 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation
+  </p>
+</div>';
+
+                $textBody = "COG\$™ FOUNDATION — Trustee Decision Record\n"
+                    . str_repeat('=', 60) . "\n\n"
+                    . $decision['decision_ref'] . " — EXECUTED\n\n"
+                    . "Title:        " . $decision['title'] . "\n"
+                    . "Sub-Trust:    " . $subTrustLabel . "\n"
+                    . "Effective:    " . $decision['effective_date'] . "\n"
+                    . "Executed:     " . $execTs . " UTC\n"
+                    . "Executor:     " . TrusteeDecisionService::EXECUTOR_NAME . "\n"
+                    . ($matchNote ? "Identity:     " . $matchNote . "\n" : '')
+                    . "Evidence:     #" . $eveId . "\n\n"
+                    . "POWERS EXERCISED\n" . $powersText . "\n"
+                    . "RESOLUTION\n" . $decision['resolution_md'] . "\n\n"
+                    . "CRYPTOGRAPHIC RECORD\n"
+                    . "SHA-256: " . $sha256 . "\n\n"
+                    . str_repeat('-', 60) . "\n"
+                    . "COGS of Australia Foundation · ABN 61 734 327 831\n"
+                    . "Wahlubal Country, Bundjalung Nation\n";
+
+                foreach ($recipients as $to) {
+                    try {
+                        smtpSendEmail($to, $subj, $htmlBody, $textBody);
+                    } catch (\Throwable $mailErr) {
+                        error_log('TDR confirmation email failed to ' . $to . ': ' . $mailErr->getMessage());
+                    }
+                }
+            }
         } catch (\Throwable $e) {
             $errors[] = $e->getMessage();
         }

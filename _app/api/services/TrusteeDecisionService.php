@@ -306,6 +306,25 @@ class TrusteeDecisionService
     }
 
     /**
+     * Return both OTP email and personal email for a sub-trust trustee.
+     * Used for confirmation email delivery after execution.
+     * Returns ['otp_email' => ..., 'personal_email' => ...] — either may be null.
+     */
+    public static function getTrusteeEmails(PDO $db, string $subTrustContext): array
+    {
+        $stmt = $db->prepare(
+            "SELECT email, personal_email FROM trustees
+             WHERE sub_trust_context = ? AND status = 'active' LIMIT 1"
+        );
+        $stmt->execute([$subTrustContext]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return [
+            'otp_email'      => $row ? (string)$row['email']          : null,
+            'personal_email' => $row ? ($row['personal_email'] ?? null): null,
+        ];
+    }
+
+    /**
      * Execute a TDR (Trustee acceptance step).
      * Called from execute_tdr.php after token validation.
      * Returns execution record array.
