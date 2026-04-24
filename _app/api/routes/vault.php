@@ -2589,16 +2589,29 @@ function createStripeCheckout(): void {
         if (!in_array($cls, $allowedPay, true)) continue;
         $code = $classCodeMap[$cls];
 
+        // Try token_classes first; fall back to static prices if row not yet seeded.
+        // DONATION_COG and PAY_IT_FORWARD_COG are $4.00 per unit — entrenched by
+        // the JVPA and identical to the SNFT contribution amount.
+        $staticFallback = [
+            'DONATION_COG'       => ['unit_price_cents' => 400, 'display_name' => 'Donation COG$'],
+            'PAY_IT_FORWARD_COG' => ['unit_price_cents' => 400, 'display_name' => 'Pay It Forward COG$'],
+        ];
         $tcStmt = $db->prepare('SELECT unit_price_cents, display_name FROM token_classes WHERE class_code = ? AND is_active = 1 LIMIT 1');
         $tcStmt->execute([$code]);
         $tc = $tcStmt->fetch();
-        if (!$tc) continue;
+        if (!$tc) {
+            if (isset($staticFallback[$code])) {
+                $tc = $staticFallback[$code];
+            } else {
+                continue; // unknown class — skip
+            }
+        }
 
         $priceCents = (int)$tc['unit_price_cents'];
         $totalCents += $priceCents * $units;
         $meta = $productMeta[$code] ?? [];
         $productData = [
-            'name'        => (string)$tc['display_name'] . ' COG$',
+            'name'        => (string)$tc['display_name'],
             'description' => $meta['desc'] ?? ($units . ' × ' . (string)$tc['display_name']),
         ];
         if (!empty($meta['image'])) {
