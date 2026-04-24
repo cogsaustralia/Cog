@@ -255,598 +255,913 @@ if(!$showSummary){
 $recentSnftAcceptance = function_exists('ops_member_acceptance_map') ? ops_member_acceptance_map($pdo, array_map(fn($r) => (int)($r['id'] ?? 0), $recentSnft)) : [];
 $rowAcceptance = function_exists('ops_member_acceptance_map') ? ops_member_acceptance_map($pdo, array_map(fn($r) => (int)($r['id'] ?? 0), $rows)) : [];
 $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array_map(fn($r) => (int)($r['id'] ?? 0), $rows)) : [];
-?><!doctype html>
+?>?><!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Member Registry</title>
+<title>Member Registry | COG$ Admin</title>
+<?php ops_admin_help_assets_once(); ?>
 <style>
-/* ── Members page specific ── */
-.table-wrap{overflow:auto;max-width:100%}
-.btns{display:flex;gap:8px;flex-wrap:wrap}
-.btns form{display:inline-flex}
-.hint{font-size:12px;color:var(--muted)}
-.segmented{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.segmented a{text-decoration:none;color:var(--text);padding:.7rem .95rem;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);font-weight:700;font-size:13px}
-.segmented a.active{background:rgba(212,178,92,.12);color:var(--gold);border-color:rgba(212,178,92,.3)}
-.progress-stack{display:grid;gap:8px;min-width:240px}
-.progress-pill{display:inline-block;padding:.35rem .6rem;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:12px}
-.progress-meters{display:grid;gap:6px}
-.progress-row{display:grid;grid-template-columns:120px minmax(0,1fr) 70px;gap:10px;align-items:center}
-.meter{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
-.meter > span{display:block;height:100%;background:var(--gold)}
-.kpi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.kpi-box{padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
-.kpi-box .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.kpi-box .value{font-size:1.6rem;font-weight:800}
-/* ── Summary grid ── */
-.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.summary-card{border-color:rgba(212,178,92,.2);padding:16px 20px}
-.summary-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.summary-card-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em}
-.summary-card-count{font-size:1.8rem;font-weight:800;margin-top:4px}
-.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.mini-stat{padding:10px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;text-align:center}
-.mini-stat-val{font-size:1.1rem;font-weight:800}
-.mini-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;margin-top:2px}
-.mini-stat.ok .mini-stat-val{color:var(--ok)}
-.mini-stat.warn .mini-stat-val{color:var(--warn)}
-.mini-stat.gold .mini-stat-val{color:var(--gold)}
-@media(max-width:980px){.summary-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr}.progress-row{grid-template-columns:1fr}}
+/* ── Member Registry ── */
+.mr-main { padding: 24px 28px; }
+.mr-topbar { display:flex; justify-content:space-between; align-items:flex-start;
+             flex-wrap:wrap; gap:12px; margin-bottom:20px; }
+.mr-topbar h2 { font-size:1.1rem; font-weight:700; margin:0 0 3px; }
+.mr-topbar p  { font-size:.8rem; color:var(--sub); margin:0; max-width:560px; }
+
+/* Nav tabs */
+.mr-tabs { display:flex; gap:4px; margin-bottom:22px; flex-wrap:wrap; }
+.mr-tab  { padding:7px 16px; border-radius:8px; font-size:.8rem; font-weight:700;
+           text-decoration:none; border:1px solid var(--line2);
+           color:var(--sub); background:var(--panel2); }
+.mr-tab:hover  { border-color:rgba(212,178,92,.3); color:var(--gold); }
+.mr-tab.active { background:rgba(212,178,92,.15); border-color:rgba(212,178,92,.4);
+                 color:var(--gold); }
+
+/* Pipeline stages */
+.pipeline { display:flex; gap:0; margin-bottom:22px; border:1px solid var(--line2);
+            border-radius:10px; overflow:hidden; }
+.pipeline-stage { flex:1; padding:12px 14px; border-right:1px solid var(--line2);
+                  text-align:center; }
+.pipeline-stage:last-child { border-right:none; }
+.pipeline-stage .ps-num   { font-size:1.4rem; font-weight:800; line-height:1; margin-bottom:3px; }
+.pipeline-stage .ps-label { font-size:.68rem; text-transform:uppercase;
+                             letter-spacing:.07em; color:var(--sub); }
+.pipeline-stage .ps-note  { font-size:.7rem; color:var(--dim); margin-top:2px; }
+.pipeline-stage.ps-done   .ps-num { color:var(--ok); }
+.pipeline-stage.ps-action .ps-num { color:var(--gold); }
+.pipeline-stage.ps-warn   .ps-num { color:var(--warn); }
+
+/* Summary cards */
+.reg-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; }
+.reg-card  { background:var(--panel2); border:1px solid var(--line2);
+             border-radius:10px; overflow:hidden; }
+.rc-head   { padding:14px 18px 12px; border-bottom:1px solid var(--line2);
+             display:flex; justify-content:space-between; align-items:flex-end; }
+.rc-head h3    { font-size:.78rem; font-weight:700; text-transform:uppercase;
+                 letter-spacing:.07em; margin:0 0 4px; }
+.rc-head .rc-n { font-size:2rem; font-weight:800; line-height:1; }
+.rc-stats  { display:grid; grid-template-columns:repeat(4,1fr); }
+.rc-stat   { padding:10px 12px; border-right:1px solid var(--line2);
+             text-align:center; }
+.rc-stat:last-child { border-right:none; }
+.rc-stat-v { font-size:1rem; font-weight:800; }
+.rc-stat-l { font-size:.65rem; text-transform:uppercase; letter-spacing:.05em;
+             color:var(--sub); margin-top:2px; }
+
+/* Recent mini-table */
+.recent-section { margin-bottom:22px; }
+.recent-head { display:flex; justify-content:space-between; align-items:center;
+               margin-bottom:10px; }
+.recent-head h3 { font-size:.78rem; font-weight:700; text-transform:uppercase;
+                  letter-spacing:.08em; color:var(--sub); margin:0; }
+.mr-table { width:100%; border-collapse:collapse; font-size:.8rem; }
+.mr-table th { background:var(--panel2); padding:7px 12px; text-align:left;
+               font-size:.7rem; text-transform:uppercase; letter-spacing:.07em;
+               color:var(--gold); border-bottom:1px solid var(--line); font-weight:700; }
+.mr-table td { padding:9px 12px; border-bottom:1px solid var(--line2);
+               vertical-align:middle; }
+.mr-table tr:last-child td { border-bottom:none; }
+.mr-table tr:hover td { background:rgba(255,255,255,.02); }
+
+/* Search bar */
+.mr-search { display:flex; gap:8px; align-items:center; margin-bottom:18px;
+             flex-wrap:wrap; }
+.mr-search input { flex:1; min-width:220px; background:var(--panel2);
+                   border:1px solid var(--line2); border-radius:8px; color:var(--text);
+                   font-size:.83rem; padding:8px 12px; }
+.mr-search input:focus { outline:none; border-color:rgba(212,178,92,.4); }
+
+/* Member cards (list view) */
+.member-card { border:1px solid var(--line2); border-radius:10px; margin-bottom:8px;
+               overflow:hidden; transition:border-color .15s; }
+.member-card:hover { border-color:rgba(212,178,92,.2); }
+.mc-header { display:grid; grid-template-columns:1fr auto auto 28px;
+             gap:10px; align-items:center; padding:12px 16px;
+             cursor:pointer; background:var(--panel); user-select:none; }
+.mc-identity h4  { font-size:.85rem; font-weight:700; margin:0 0 2px; }
+.mc-identity .mc-sub { font-size:.73rem; color:var(--sub); }
+.mc-status-flags { display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+.mc-body { border-top:1px solid var(--line2); background:var(--panel2);
+           display:none; }
+.mc-body.open { display:block; }
+.mc-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0;
+           border-bottom:1px solid var(--line2); }
+.mc-col  { padding:16px; border-right:1px solid var(--line2); }
+.mc-col:last-child { border-right:none; }
+.mc-col-title { font-size:.68rem; text-transform:uppercase; letter-spacing:.08em;
+                color:var(--gold); font-weight:700; margin-bottom:10px; }
+.mc-row  { display:flex; justify-content:space-between; align-items:flex-start;
+           margin-bottom:5px; font-size:.78rem; }
+.mc-row-l { color:var(--dim); flex-shrink:0; margin-right:8px; }
+.mc-row-v { color:var(--text); text-align:right; word-break:break-word; }
+.mc-actions { padding:14px 16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.mc-actions-group { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.mc-divider { width:1px; height:20px; background:var(--line2); margin:0 2px; }
+
+/* Status flags */
+.sf { display:inline-flex; align-items:center; gap:3px; font-size:.68rem;
+      font-weight:700; padding:3px 7px; border-radius:20px; white-space:nowrap; }
+.sf-ok   { background:var(--okb);   color:var(--ok);   border:1px solid rgba(82,184,122,.25); }
+.sf-warn { background:var(--warnb); color:var(--warn); border:1px solid rgba(212,148,74,.25); }
+.sf-err  { background:var(--errb);  color:var(--err);  border:1px solid rgba(192,85,58,.25); }
+.sf-dim  { background:var(--panel2);color:var(--sub);  border:1px solid var(--line2); }
+
+/* Progress bar */
+.mr-bar { height:6px; border-radius:3px; background:rgba(255,255,255,.07); overflow:hidden;
+          margin-top:5px; }
+.mr-bar-fill { height:100%; border-radius:3px; background:var(--gold); }
+
+/* Buttons */
+.btn-mr  { display:inline-block; padding:6px 13px; border-radius:7px; font-size:.76rem;
+           font-weight:700; cursor:pointer; border:none; text-decoration:none; }
+.btn-mr-primary { background:rgba(212,178,92,.18); border:1px solid rgba(212,178,92,.4);
+                  color:var(--gold); }
+.btn-mr-primary:hover { background:rgba(212,178,92,.3); }
+.btn-mr-ghost { background:none; border:1px solid var(--line2); color:var(--sub); }
+.btn-mr-ghost:hover { border-color:rgba(212,178,92,.3); color:var(--gold); }
+.btn-mr-ok    { background:rgba(82,184,122,.12); border:1px solid rgba(82,184,122,.3);
+                color:var(--ok); }
+.btn-mr-ok:hover { background:rgba(82,184,122,.22); }
+.btn-mr-err   { background:rgba(192,85,58,.1); border:1px solid rgba(192,85,58,.3);
+                color:var(--err); }
+
+/* Verification panels */
+.vp { background:var(--panel); border:1px solid var(--line2); border-radius:8px;
+      padding:12px 14px; margin-top:10px; }
+.vp-title { font-size:.68rem; text-transform:uppercase; letter-spacing:.07em;
+            color:var(--sub); font-weight:700; margin-bottom:8px; }
+.vp-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.vp-field label { font-size:.7rem; color:var(--dim); display:block; margin-bottom:3px; }
+.vp-field select, .vp-field input {
+  width:100%; background:var(--panel2); border:1px solid var(--line2);
+  border-radius:6px; color:var(--text); font-size:.78rem; padding:5px 8px; }
+.vp-result { margin-top:8px; font-size:.77rem; display:none; }
+
+/* Wallet status */
+.ws-invited { color:var(--sub); }
+.ws-active  { color:var(--ok); }
+.ws-locked  { color:var(--err); }
+
+/* JVPA mini block */
+.jvpa-block { background:var(--panel); border:1px solid var(--line2);
+              border-radius:7px; padding:10px 12px; margin-top:8px; }
+.jvpa-block .jvpa-status { font-size:.8rem; font-weight:700; }
+.jvpa-block .jvpa-meta   { font-size:.71rem; color:var(--sub); margin-top:3px; }
+
+@media (max-width:900px) {
+  .mc-grid { grid-template-columns:1fr; }
+  .mc-col  { border-right:none; border-bottom:1px solid var(--line2); }
+  .reg-cards { grid-template-columns:1fr; }
+  .pipeline { flex-direction:column; }
+  .pipeline-stage { border-right:none; border-bottom:1px solid var(--line2); }
+}
 </style>
 </head>
 <body>
-<?php ops_admin_help_assets_once(); ?>
 <div class="shell">
-<?php admin_sidebar_render('members'); ?>
-<main class="main">
-  <div class="card">
-    <div class="card-body">
-    <h1 style="margin:0 0 8px">Member Registry <?= ops_admin_help_button('Member Registry', 'Use this page to understand where a person or entity sits in the registry journey. It shows identity, wallet readiness, JVPA acceptance, reservation mix, and whether the record is ready to move into later operational pages such as Payments, Approvals, and Execution.') ?></h1>
-    <?php if($showSummary): ?>
-    <p style="color:#9fb0c1;margin:0 0 14px">Overview of the authoritative member registry across personal and business pathways.</p>
-    <?php else: ?>
-    <p style="color:#9fb0c1;margin:0 0 14px">Registry progress: <strong>reserved</strong> → <strong>contribution received</strong> → <strong>approved</strong> → <strong>execution-ready</strong>.</p>
-    <?php endif; ?>
-    <div class="segmented">
-      <a href="./members.php" class="<?=$showSummary?'active':''?>">Summary</a>
-      <a href="./members.php?type=personal" class="<?=$type==='personal'?'active':''?>">Personal registry</a>
-      <a href="./businesses.php">Business (B-NFT)</a>
-    </div>
-    </div>
-  </div>
+<?php admin_sidebar_render('partner_registry'); ?>
+<main class="main mr-main">
 
-  <details class="help-section">
-    <summary>Page guide &amp; workflow</summary>
-    <div class="help-section-body">
-      <?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_info_panel('Stage 4 · Registry management', 'What this page does', 'The registry pages are the operator view of who is in the system, what evidence exists for them, what their current state is, and what should happen next.', ['Summary view is for orientation and health checks.', 'Personal registry shows Member records, JVPA state, and readiness signals.', 'Business records are on the Use this page to understand each business member record page; children on the Kids page.']),
-]) ?>
-<?<?= ops_admin_collapsible_help('Page guide & workflow', [
-  ops_admin_workflow_panel('Typical workflow', '', [['title'=>'Locate the record','body'=>'Open summary for a health check, or open the personal registry for a specific Member.'], ['title'=>'Read the evidence trail','body'=>'Check JVPA, wallet status, contribution, G-NAF, and KYC before acting.'], ['title'=>'Use the correct next page','body'=>'Payments for money, Approvals for sign-off, KYC for identity, Execution after approval.']]),
-]) ?>
+<div class="mr-topbar">
+  <div>
+    <h2>👥 Member Registry</h2>
+    <p>Registry progress: <strong>Reserved</strong> → <strong>Contribution received</strong> → <strong>Approved</strong> → <strong>Execution-ready</strong>.</p>
+  </div>
 </div>
-  </details>
-  <?php if($error): ?><div class="msg err"><?=h($error)?></div><?php endif; ?>
 
-<?php if($showSummary): ?>
-  <div class="summary-grid">
-    <div class="card summary-card">
-      <div class="summary-card-header">
-        <div><div class="summary-card-title">Personal Members (S-NFT)</div><div class="summary-card-count"><?=$snftTotal?></div></div>
-        <a href="./members.php?type=personal" class="btn btn-sm">View all →</a>
+<!-- Navigation tabs -->
+<div class="mr-tabs">
+  <a href="./members.php"                class="mr-tab <?= $showSummary   ? 'active' : '' ?>">📊 Summary</a>
+  <a href="./members.php?type=personal"  class="mr-tab <?= $type==='personal' ? 'active' : '' ?>">👤 Personal (S-NFT)</a>
+  <a href="./businesses.php"             class="mr-tab">🏢 Business (B-NFT)</a>
+</div>
+
+<?php if ($error): ?>
+  <div style="background:var(--errb);border:1px solid rgba(192,85,58,.3);border-radius:8px;
+              padding:10px 14px;font-size:.82rem;color:var(--err);margin-bottom:16px">
+    <?= h($error) ?>
+  </div>
+<?php endif; ?>
+
+<!-- ════════════════════════ SUMMARY VIEW ════════════════════════ -->
+<?php if ($showSummary): ?>
+
+<!-- Pipeline overview -->
+<div class="pipeline">
+  <div class="pipeline-stage">
+    <div class="ps-num"><?= $snftTotal + $bnftTotal ?></div>
+    <div class="ps-label">Total Registered</div>
+    <div class="ps-note">All pathways</div>
+  </div>
+  <div class="pipeline-stage ps-action">
+    <div class="ps-num"><?= $snftPaid + $bnftPaid ?></div>
+    <div class="ps-label">Entry Paid</div>
+    <div class="ps-note">S-NFT $4 · B-NFT $40</div>
+  </div>
+  <div class="pipeline-stage">
+    <div class="ps-num"><?= $snftGnaf + $bnftGnaf ?></div>
+    <div class="ps-label">G-NAF Verified</div>
+    <div class="ps-note">Address confirmed</div>
+  </div>
+  <div class="pipeline-stage">
+    <div class="ps-num"><?= $snftIdV ?></div>
+    <div class="ps-label">ID Verified</div>
+    <div class="ps-note">KYC complete</div>
+  </div>
+  <div class="pipeline-stage ps-done">
+    <div class="ps-num"><?= $snftActive + $bnftActive ?></div>
+    <div class="ps-label">Active Wallets</div>
+    <div class="ps-note">Ready to operate</div>
+  </div>
+</div>
+
+<!-- Registry cards -->
+<div class="reg-cards">
+  <div class="reg-card">
+    <div class="rc-head">
+      <div>
+        <h3 style="color:var(--gold)">Personal Members (S-NFT)</h3>
+        <div class="rc-n"><?= $snftTotal ?></div>
       </div>
-      <div class="mini-stats">
-        <div class="mini-stat ok"><div class="mini-stat-val"><?=$snftPaid?></div><div class="mini-stat-label">Entry paid</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--blue)"><?=$snftGnaf?></div><div class="mini-stat-label">G-NAF</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:var(--purple)"><?=$snftIdV?></div><div class="mini-stat-label">ID Verified</div></div>
-        <div class="mini-stat gold"><div class="mini-stat-val"><?=$snftActive?></div><div class="mini-stat-label">Active</div></div>
+      <a href="./members.php?type=personal" class="btn-mr btn-mr-primary" style="font-size:.75rem">
+        View all →
+      </a>
+    </div>
+    <div class="rc-stats">
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:var(--ok)"><?= $snftPaid ?></div>
+        <div class="rc-stat-l">Entry paid</div>
+      </div>
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:#60b4d8"><?= $snftGnaf ?></div>
+        <div class="rc-stat-l">G-NAF</div>
+      </div>
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:#b088d4"><?= $snftIdV ?></div>
+        <div class="rc-stat-l">ID verified</div>
+      </div>
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:var(--gold)"><?= $snftActive ?></div>
+        <div class="rc-stat-l">Active</div>
       </div>
     </div>
-    <div class="card summary-card" style="border-color:rgba(96,212,184,.2)">
-      <div class="summary-card-header">
-        <div><div class="summary-card-title" style="color:#60d4b8">Business Members (B-NFT)</div><div class="summary-card-count"><?=$bnftTotal?></div></div>
-        <a href="./businesses.php" class="btn btn-sm">View all →</a>
+  </div>
+
+  <div class="reg-card">
+    <div class="rc-head">
+      <div>
+        <h3 style="color:#60d4b8">Business Members (B-NFT)</h3>
+        <div class="rc-n"><?= $bnftTotal ?></div>
       </div>
-      <div class="mini-stats">
-        <div class="mini-stat ok"><div class="mini-stat-val"><?=$bnftPaid?></div><div class="mini-stat-label">Paid ($40)</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:#60d4b8"><?=$bnftGnaf?></div><div class="mini-stat-label">G-NAF</div></div>
-        <div class="mini-stat gold"><div class="mini-stat-val"><?=$bnftSteward?></div><div class="mini-stat-label">Stewardship</div></div>
-        <div class="mini-stat"><div class="mini-stat-val" style="color:#60d4b8"><?=$bnftActive?></div><div class="mini-stat-label">Active</div></div>
+      <a href="./businesses.php" class="btn-mr btn-mr-ghost" style="font-size:.75rem">
+        View all →
+      </a>
+    </div>
+    <div class="rc-stats">
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:var(--ok)"><?= $bnftPaid ?></div>
+        <div class="rc-stat-l">Entry paid</div>
+      </div>
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:#60d4b8"><?= $bnftGnaf ?></div>
+        <div class="rc-stat-l">G-NAF</div>
+      </div>
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:var(--gold)"><?= $bnftSteward ?></div>
+        <div class="rc-stat-l">Stewardship</div>
+      </div>
+      <div class="rc-stat">
+        <div class="rc-stat-v" style="color:#60d4b8"><?= $bnftActive ?></div>
+        <div class="rc-stat-l">Active</div>
       </div>
     </div>
   </div>
-  <div class="card">
-    <div class="card-head"><h2>Recent Personal Members</h2><a href="./members.php?type=personal">View all →</a></div>
-    <div class="card-body table-wrap"><table><thead><tr><th>Name</th><th>Member # <?= ops_admin_help_button('Member number', 'This is the primary record reference. Use the Member number where available for operator-facing support, while the legacy member number remains the underlying technical identifier.') ?></th><th>Payment</th><th>G-NAF</th><th>ID</th><th>Status <?= ops_admin_help_button('Status', 'Status combines wallet and registry readiness signals. Read it with JVPA, contribution, and approval context before taking any action.') ?></th><th>Joined</th></tr></thead><tbody>
-    <?php foreach($recentSnft as $s): $sPaid=($s['signup_payment_status']??'')=='paid'; $sGnaf=!empty($s['gnaf_pid']); $sIdV=((int)($s['id_verified']??0)===1)||in_array($s['kyc_status']??'',['verified','address_verified'],true); $sAcc=$recentSnftAcceptance[(int)($s['id']??0)]??null; $sAccLabel=function_exists('ops_acceptance_status_label')?ops_acceptance_status_label($sAcc):'—'; $sAccTone=function_exists('ops_acceptance_status_tone')?ops_acceptance_status_tone($sAcc):'warn'; ?>
-      <tr><td><strong><?=h($s['full_name']??'')?></strong><div class="muted small"><?=h($s['email']??'')?></div></td><td class="mono muted"><?=h($s['member_number']??'')?></td><td><?=$sPaid?'<span class="st st-ok">✓ Paid</span>':'<span class="st st-warn">Pending</span>'?></td><td><span class="st <?= $sAccTone==='ok'?'st-ok':($sAccTone==='warn'?'st-warn':'st-bad') ?>"><?=h($sAccLabel)?></span></td><td><?=$sGnaf?'<span class="st st-ok">✓</span>':'<span class="muted">—</span>'?></td><td><?=$sIdV?'<span class="st st-ok">✓</span>':'<span class="muted">—</span>'?></td><td><span class="st st-dim"><?=h($s['wallet_status']??'')?></span></td><td class="muted small"><?=h(substr($s['created_at']??'',0,10))?></td></tr>
-    <?php endforeach; if(!$recentSnft):?><tr><td colspan="8" class="empty">No personal members yet.</td></tr><?php endif;?>
-    </tbody></table></div>
+</div>
+
+<!-- Recent personal members -->
+<div class="recent-section">
+  <div class="recent-head">
+    <h3>Recent Personal Members</h3>
+    <a href="./members.php?type=personal" class="btn-mr btn-mr-ghost" style="font-size:.73rem">
+      View all →
+    </a>
   </div>
-  <div class="card">
-    <div class="card-head"><h2>Recent Businesses</h2><a href="./businesses.php">View all →</a></div>
-    <div class="card-body table-wrap"><table><thead><tr><th>Business</th><th>ABN</th><th>Payment</th><th>G-NAF</th><th>Stewardship</th><th>Status</th><th>Joined</th></tr></thead><tbody>
-    <?php foreach($recentBnft as $b): $bPaid=($b['signup_payment_status']??'')=='paid'; $bGnaf=!empty($b['gnaf_pid']); $bSw=!empty($b['attestation_hash']); ?>
-      <tr><td><strong><?=h($b['legal_name']??'')?></strong><div class="muted small"><?=h($b['email']??'')?></div></td><td class="mono muted"><?=h($b['abn']??'')?></td><td><?=$bPaid?'<span class="st st-ok">✓ Paid</span>':'<span class="st st-warn">Pending</span>'?></td><td><?=$bGnaf?'<span class="st st-ok">✓</span>':'<span class="muted">—</span>'?></td><td><?=$bSw?'<span class="st st-ok">✓</span>':'<span class="muted">—</span>'?></td><td><span class="st st-dim"><?=h($b['wallet_status']??'')?></span></td><td class="muted small"><?=h(substr($b['created_at']??'',0,10))?></td></tr>
-    <?php endforeach; if(!$recentBnft):?><tr><td colspan="7" style="color:#9fb0c1;text-align:center;padding:16px">No business registrations yet.</td></tr><?php endif;?>
-    </tbody></table></div>
+  <div style="background:var(--panel2);border:1px solid var(--line2);border-radius:10px;overflow:hidden">
+    <table class="mr-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Member #</th>
+          <th>Entry</th>
+          <th>JVPA</th>
+          <th>G-NAF</th>
+          <th>ID</th>
+          <th>Wallet</th>
+          <th>Joined</th>
+        </tr>
+      </thead>
+      <tbody>
+      <?php foreach ($recentSnft as $s):
+        $sPaid = ($s['signup_payment_status'] ?? '') === 'paid';
+        $sGnaf = !empty($s['gnaf_pid']);
+        $sIdV  = ((int)($s['id_verified'] ?? 0) === 1) || in_array($s['kyc_status'] ?? '', ['verified','address_verified'], true);
+        $sAcc  = $recentSnftAcceptance[(int)($s['id'] ?? 0)] ?? null;
+        $sAccLabel = function_exists('ops_acceptance_status_label') ? ops_acceptance_status_label($sAcc) : '—';
+        $sAccTone  = function_exists('ops_acceptance_status_tone')  ? ops_acceptance_status_tone($sAcc)  : 'warn';
+        $wClass = 'ws-' . ($s['wallet_status'] ?? 'invited');
+      ?>
+        <tr>
+          <td>
+            <strong style="font-size:.82rem"><?= h($s['full_name'] ?? '') ?></strong>
+            <div style="font-size:.7rem;color:var(--sub)"><?= h($s['email'] ?? '') ?></div>
+          </td>
+          <td style="font-family:monospace;font-size:.72rem;color:var(--sub)"><?= h($s['member_number'] ?? '') ?></td>
+          <td><?= $sPaid ? '<span class="sf sf-ok">✓ Paid</span>' : '<span class="sf sf-warn">Pending</span>' ?></td>
+          <td><span class="sf sf-<?= $sAccTone === 'ok' ? 'ok' : ($sAccTone === 'warn' ? 'warn' : 'err') ?>"><?= h($sAccLabel) ?></span></td>
+          <td><?= $sGnaf ? '<span class="sf sf-ok">✓</span>' : '<span style="color:var(--dim)">—</span>' ?></td>
+          <td><?= $sIdV  ? '<span class="sf sf-ok">✓</span>' : '<span style="color:var(--dim)">—</span>' ?></td>
+          <td><span class="<?= $wClass ?>" style="font-size:.75rem"><?= h($s['wallet_status'] ?? '') ?></span></td>
+          <td style="font-size:.72rem;color:var(--dim)"><?= h(substr($s['created_at'] ?? '', 0, 10)) ?></td>
+        </tr>
+      <?php endforeach; if (!$recentSnft): ?>
+        <tr><td colspan="8" style="text-align:center;color:var(--sub);padding:20px">No personal members yet.</td></tr>
+      <?php endif; ?>
+      </tbody>
+    </table>
   </div>
-<?php else: /* LIST VIEW */ ?>
-  <?php if($lastActionSummary): ?>
-    <div class="card"><div class="card-body"><strong>Latest queue result</strong><div class="hint" style="margin-top:6px">#<?= (int)$lastActionSummary['id'] ?> · <?=h($lastActionSummary['recipient'])?> · <?=h($lastActionSummary['template_key'])?> · <?=h($lastActionSummary['status'])?><?php if(!empty($lastActionSummary['last_error'])): ?> · <?=h($lastActionSummary['last_error'])?><?php endif; ?></div></div></div>
+</div>
+
+<!-- Recent businesses -->
+<?php if (!empty($recentBnft)): ?>
+<div class="recent-section">
+  <div class="recent-head">
+    <h3>Recent Business Members</h3>
+    <a href="./businesses.php" class="btn-mr btn-mr-ghost" style="font-size:.73rem">View all →</a>
+  </div>
+  <div style="background:var(--panel2);border:1px solid var(--line2);border-radius:10px;overflow:hidden">
+    <table class="mr-table">
+      <thead>
+        <tr><th>Business</th><th>ABN</th><th>Entry</th><th>G-NAF</th><th>Stewardship</th><th>Wallet</th><th>Joined</th></tr>
+      </thead>
+      <tbody>
+      <?php foreach ($recentBnft as $b):
+        $bPaid = ($b['signup_payment_status'] ?? '') === 'paid';
+        $bGnaf = !empty($b['gnaf_pid']);
+        $bSw   = !empty($b['attestation_hash']);
+      ?>
+        <tr>
+          <td><strong style="font-size:.82rem"><?= h($b['legal_name'] ?? '') ?></strong>
+              <div style="font-size:.7rem;color:var(--sub)"><?= h($b['email'] ?? '') ?></div></td>
+          <td style="font-family:monospace;font-size:.72rem;color:var(--sub)"><?= h($b['abn'] ?? '') ?></td>
+          <td><?= $bPaid ? '<span class="sf sf-ok">✓ Paid</span>' : '<span class="sf sf-warn">Pending</span>' ?></td>
+          <td><?= $bGnaf ? '<span class="sf sf-ok">✓</span>' : '<span style="color:var(--dim)">—</span>' ?></td>
+          <td><?= $bSw   ? '<span class="sf sf-ok">✓</span>' : '<span style="color:var(--dim)">—</span>' ?></td>
+          <td style="font-size:.75rem;color:var(--sub)"><?= h($b['wallet_status'] ?? '') ?></td>
+          <td style="font-size:.72rem;color:var(--dim)"><?= h(substr($b['created_at'] ?? '', 0, 10)) ?></td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
+<?php endif; ?>
+
+<!-- ════════════════════════ LIST VIEW ════════════════════════ -->
+<?php else: ?>
+
+<?php if ($lastActionSummary): ?>
+  <div style="background:var(--okb);border:1px solid rgba(82,184,122,.3);border-radius:8px;
+              padding:10px 14px;font-size:.8rem;color:var(--ok);margin-bottom:14px">
+    Queue result — #<?= (int)$lastActionSummary['id'] ?> · <?= h($lastActionSummary['recipient']) ?>
+    · <?= h($lastActionSummary['template_key']) ?> · <?= h($lastActionSummary['status']) ?>
+    <?php if (!empty($lastActionSummary['last_error'])): ?> · <?= h($lastActionSummary['last_error']) ?><?php endif; ?>
+  </div>
+<?php endif; ?>
+
+<!-- Search -->
+<form method="get" class="mr-search">
+  <input type="hidden" name="type" value="<?= h($type) ?>">
+  <input type="text" name="search" value="<?= h($fSearch) ?>"
+         placeholder="Search by name, email, or member number…" autofocus>
+  <button type="submit" class="btn-mr btn-mr-primary">Search</button>
+  <a href="./members.php?type=<?= h($type) ?>" class="btn-mr btn-mr-ghost">Reset</a>
+  <?php if ($fSearch !== ''): ?>
+    <span style="font-size:.78rem;color:var(--gold)"><?= count($rows) ?> result<?= count($rows) !== 1 ? 's' : '' ?></span>
   <?php endif; ?>
+</form>
 
-  <form method="get" style="margin-bottom:0">
-  <input type="hidden" name="type" value="<?=h($type)?>">
-  <div class="filter-bar">
-    <div class="filter-group">
-      <label>Name / email / member no.</label>
-      <input type="text" name="search" value="<?=h($fSearch)?>" placeholder="Search…" style="min-width:220px" autofocus>
-    </div>
-    <div style="display:flex;gap:6px;align-items:flex-end">
-      <button type="submit" class="btn btn-sm" style="background:rgba(212,178,92,.15);border-color:rgba(212,178,92,.3);color:var(--gold)">Search</button>
-      <a href="members.php?type=<?=h($type)?>" class="btn btn-sm">Reset</a>
-    </div>
-    <?php if ($fSearch !== ''): ?>
-      <span style="font-size:11px;color:var(--gold);align-self:center"><?=count($rows)?> result<?=count($rows)!==1?'s':''?></span>
-    <?php endif; ?>
+<!-- Member count / context -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <div style="font-size:.78rem;color:var(--sub)">
+    Showing <?= count($rows) ?> <?= h($type) ?> member<?= count($rows) !== 1 ? 's' : '' ?>
+    <?= $fSearch ? '— filtered' : '(most recent 50)' ?>
   </div>
-  </form>
-
-  <div class="card">
-    <div class="card-body">
-    <div class="kpi-grid">
-      <div class="kpi-box"><div class="label">Personal records shown</div><div class="value"><?=count($rows)?></div></div>
-      <div class="kpi-box"><div class="label">What "reserved" means</div><div class="hint" style="margin-top:8px">The member has asked for those classes or units in the reservation mix.</div></div>
-      <div class="kpi-box"><div class="label">What "approved / live-ready" means</div><div class="hint" style="margin-top:8px">Admin has approved the relevant lines.</div></div>
-    </div>
-    </div>
+  <div style="display:flex;gap:6px">
+    <a href="./payments.php" class="btn-mr btn-mr-ghost" style="font-size:.73rem">→ Payments</a>
+    <a href="./approvals.php" class="btn-mr btn-mr-ghost" style="font-size:.73rem">→ Approvals</a>
+    <a href="./admin_kyc.php" class="btn-mr btn-mr-ghost" style="font-size:.73rem">→ KYC</a>
   </div>
+</div>
 
-  <div class="card">
-    <div class="card-head">
-      <h2><?= $type === 'business' ? 'Use this page to understand each business member record' : 'Personal Registry' ?></h2>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th><?= $type === 'business' ? 'Business' : 'Name' ?></th>
-            <th>Member #</th>
-            <th>Status</th>
-            <th>JVPA <?= ops_admin_help_button('JVPA', 'This column shows whether the membership acceptance record is complete enough to support the registry record.') ?></th>
-            <th>Reserved <?= ops_admin_help_button('Reserved units', 'Reserved shows recorded units in the reservation mix. It does not mean approved, issued, or published.') ?></th>
-            <th>G-NAF</th>
-            <th style="width:28px"></th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php foreach($rows as $r):
-          $ref = member_ref($r);
-          $sum = reservation_summary($r);
-          $reserved = max(0, $sum['reserved']);
-          $paid = min($reserved, max(0, $sum['paid']));
-          $approved = min($reserved, max(0, $sum['approved']));
-          // Use identity_reserved (PERSONAL_SNFT + KIDS_SNFT) as the base for the paid/approved
-          // percentage — avoids the bar showing ~0% just because ASX/Landholder/RWA tokens
-          // (which require no payment) dominate the total reserved count.
-          $identityReserved = max(0, $sum['identity_reserved']);
-          $identityBase = max(1, $identityReserved);
-          $paidPct     = $identityReserved > 0 ? min(100, round(($paid     / $identityBase) * 100)) : 0;
-          $approvedPct = $identityReserved > 0 ? min(100, round(($approved / $identityBase) * 100)) : 0;
-          $signupPaid  = ($r['signup_payment_status'] ?? 'pending') === 'paid';
-          $acceptance = $rowAcceptance[(int)($r['id'] ?? 0)] ?? null;
-          $acceptanceLabel = function_exists('ops_acceptance_status_label') ? ops_acceptance_status_label($acceptance) : '—';
-          $acceptanceTone = function_exists('ops_acceptance_status_tone') ? ops_acceptance_status_tone($acceptance) : 'warn';
-          $kyc = $rowKyc[(int)($r['id'] ?? 0)] ?? null;
-          $rowId = 'mrow-' . (int)$r['id'];
-        ?>
-          <!-- Compact summary row -->
-          <tr onclick="toggleMember('<?=$rowId?>')" style="cursor:pointer" id="<?=$rowId?>-hdr">
-            <td>
-              <strong style="font-size:13px"><?=h($r['full_name'] ?? '')?></strong>
-              <div style="font-size:11px;color:#9fb0c1"><?=h($r['email'] ?? '')?></div><?php if(!empty($r['partner_number'])): ?><div style="font-size:11px;color:#d4b25c">Partner # <?=h($r['partner_number'])?></div><?php endif; ?>
-            </td>
-            <td style="font-size:12px;font-family:monospace;color:#9fb0c1"><?=h($ref)?></td>
-            <td>
-              <span class="progress-pill" style="font-size:11px"><?=h($r['wallet_status'] ?? '')?></span>
-              <?php if($signupPaid): ?>
-                <span style="font-size:11px;color:#7ee0a0;margin-left:4px">✓ $4 paid</span>
-              <?php else: ?>
-                <span style="font-size:11px;color:#ffb4be;margin-left:4px">● fee unpaid</span>
-              <?php endif; ?>
-              <?php if((int)($r['is_active']??0)!==1): ?><span style="font-size:11px;color:#ffb4be;margin-left:4px">inactive</span><?php endif; ?>
-            </td>
-            <td><span style="font-size:11px;color:<?= $acceptanceTone==='ok' ? '#7ee0a0' : ($acceptanceTone==='warn' ? '#d4b25c' : '#ffb4be') ?>"><?=h($acceptanceLabel)?></span></td>
-            <td style="font-size:12px"><?=number_format($reserved)?></td>
-            <td><?php if(!empty($r['gnaf_pid'])): ?><span style="color:#7ee0a0;font-size:11px">✓</span><?php else: ?><span style="color:#9fb0c1;font-size:11px">—</span><?php endif; ?></td>
-            <td style="text-align:center;color:#9fb0c1;font-size:12px" id="<?=$rowId?>-chev">▼</td>
-          </tr>
-          <!-- Expandable detail row -->
-          <tr id="<?=$rowId?>" style="display:none">
-            <td colspan="7" style="padding:0">
-              <div style="padding:16px;background:rgba(255,255,255,.02);border-top:1px solid rgba(255,255,255,.06)">
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
-                  <!-- Col 1: Identity -->
-                  <div>
-                    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Member</div>
-                    <div style="font-size:13px;font-weight:700"><?=h($r['full_name']??'')?></div>
-                    <div style="font-size:12px;color:#9fb0c1"><?php if(!empty($r['partner_number'])): ?><?=h($r['partner_number'])?> · <?php endif; ?><?=h($ref)?></div>
-                    <div style="font-size:12px;color:#9fb0c1"><?=h($r['email']??'')?></div>
-                    <div style="font-size:12px;color:#9fb0c1;margin-top:4px"><?=h($r['mobile']??$r['phone']??'')?></div>
-                    <div style="margin-top:6px">
-                      <span class="progress-pill"><?=h($r['wallet_status']??'')?></span>
-                      <span style="font-size:11px;margin-left:6px;<?=$signupPaid?'color:#7ee0a0':'color:#ffb4be'?>">
-                        <?=$signupPaid?'✓ Entry contribution received':'● Entry contribution outstanding'?>
-                      </span>
-                    </div>
-                    <div style="font-size:11px;color:#9fb0c1;margin-top:4px"><?php if(!empty($r['governance_status'])): ?>Governance: <?=h($r['governance_status'])?> · <?php endif; ?><?=bucket_label($r)?></div>
-                    <div style="margin-top:8px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px">
-                      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">JVPA acceptance</div>
-                      <div style="font-size:13px;font-weight:700;color:<?= $acceptanceTone==='ok' ? '#7ee0a0' : ($acceptanceTone==='warn' ? '#d4b25c' : '#ffb4be') ?>"><?=h($acceptanceLabel)?></div>
-                      <div style="font-size:11px;color:#9fb0c1;margin-top:4px">
-                        <?php if(!empty($acceptance['accepted_version'])): ?><?=h($acceptance['accepted_version'])?><?php else: ?>No recorded version yet<?php endif; ?>
-                        <?php if(!empty($acceptance['accepted_at'])): ?> · <?=h(substr((string)$acceptance['accepted_at'],0,16))?><?php endif; ?>
-                      </div>
-                      <div style="font-size:11px;color:#9fb0c1;margin-top:4px">
-                        Evidence: <?php if(!empty($acceptance['evidence_vault_id'])): ?>linked<?php else: ?>not linked<?php endif; ?>
-                        <?php if(!empty($acceptance['jvpa_title'])): ?> · <?=h($acceptance['jvpa_title'])?><?php endif; ?>
-                      </div>
-                      <?php if(!empty($acceptance['acceptance_record_hash'])): ?><div style="font-size:11px;color:#9fb0c1;margin-top:4px;font-family:monospace">Hash <?=h(substr((string)$acceptance['acceptance_record_hash'],0,16))?>…</div><?php endif; ?>
-                      <div style="font-size:11px;color:#9fb0c1;margin-top:6px"><?= $acceptanceTone==='ok' ? 'Admin action: none — acceptance record is present.' : ($acceptanceTone==='warn' ? 'Admin action: acceptance exists but the evidence trail is incomplete or legacy.' : 'Admin action: no usable JVPA acceptance record is available yet.') ?></div>
-                    </div>
-                    <div style="margin-top:8px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px">
-                      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">KYC / Medicare</div>
-                      <div style="font-size:13px;font-weight:700;color:<?= (($kyc['status_tone'] ?? 'bad')==='ok' ? '#7ee0a0' : (($kyc['status_tone'] ?? 'bad')==='warn' ? '#d4b25c' : '#ffb4be')) ?>"><?=h((string)($kyc['status_label'] ?? 'Not submitted'))?></div>
-                      <div style="font-size:11px;color:#9fb0c1;margin-top:4px">
-                        <?php if(!empty($kyc['submission_id'])): ?>Submission #<?= (int)$kyc['submission_id'] ?><?php else: ?>No Medicare submission recorded<?php endif; ?>
-                        <?php if(!empty($kyc['submission_status'])): ?> · <?=h((string)$kyc['submission_status'])?><?php endif; ?>
-                        <?php if(!empty($kyc['kyc_method'])): ?> · <?=h((string)$kyc['kyc_method'])?><?php endif; ?>
-                      </div>
-                      <?php if(!empty($kyc['latest_review_action'])): ?><div style="font-size:11px;color:#9fb0c1;margin-top:4px">Latest review action: <?=h((string)$kyc['latest_review_action'])?><?php if(!empty($kyc['latest_review_at'])): ?> · <?=h(substr((string)$kyc['latest_review_at'],0,16))?><?php endif; ?></div><?php endif; ?>
-                      <?php if(!empty($kyc['submission_verified_at']) || !empty($kyc['kyc_verified_at']) || !empty($kyc['id_verified_at'])): ?><div style="font-size:11px;color:#9fb0c1;margin-top:4px">Verified at: <?=h(substr((string)($kyc['submission_verified_at'] ?? $kyc['kyc_verified_at'] ?? $kyc['id_verified_at'] ?? ''),0,16))?></div><?php endif; ?>
-                      <?php if(!empty($kyc['submission_id'])): ?><div style="margin-top:8px"><a class="btn secondary" style="font-size:12px;padding:6px 12px" href="./admin_kyc.php?view=<?= (int)$kyc['submission_id'] ?>">Open KYC review</a></div><?php endif; ?>
-                    </div>
-                  </div>
-                  <!-- Col 2: Reservation progress -->
-                  <div>
-                    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Reservations</div>
-                    <div style="font-size:12px;color:#9fb0c1;margin-bottom:8px"><strong style="color:#eef2f7"><?=number_format($reserved)?></strong> reserved · <?=number_format((int)($r['line_count']??0))?> lines</div>
-                    <div class="progress-meters">
-                      <div class="progress-row"><div>All reserved</div><div class="meter"><span style="width:100%"></span></div><div><?=number_format($reserved)?></div></div>
-                      <div class="progress-row" title="Identity tokens only (S-NFT + Kids S-NFT — these require payment)"><div>Fee paid</div><div class="meter"><span style="width:<?=$paidPct?>%"></span></div><div><?=number_format($paid)?><?=$identityReserved>0?' / '.number_format($identityReserved):''?></div></div>
-                      <div class="progress-row"><div>Approved</div><div class="meter"><span style="width:<?=$approvedPct?>%"></span></div><div><?=number_format($approved)?></div></div>
-                    </div>
-                  </div>
-                  <!-- Col 3: Actions -->
-                  <div>
-                    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Actions</div>
-                    <div class="btns" style="flex-direction:column;align-items:flex-start">
-                <?php if(!$signupPaid): ?>
-                <a class="btn secondary" href="./payments.php?member_ref=<?=urlencode((string)$ref)?>">Receive contribution</a>
-                <form method="post" style="display:inline">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="mark_paid" onclick="return confirm('Mark signup payment as received for this member?')" style="background:rgba(82,184,122,.08);border-color:rgba(82,184,122,.25);color:#7ee0a0">✓ Mark Entry paid</button></form>
-                <?php else: ?>
-                <a class="btn secondary" href="./payments.php?member_ref=<?=urlencode((string)$ref)?>">View contributions</a>
-                <?php endif; ?>
-                <a class="btn secondary" href="./approvals.php">Open approvals</a>
-                <form method="post">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="resend_thankyou">Resend thank you</button></form>
-                <form method="post">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="resend_admin_notice">Resend admin email</button></form>
-                <form method="post">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="resend_both">Resend both</button></form>
-                <?php if(($r['wallet_status'] ?? '') === 'locked'): ?>
-                  <form method="post">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="unlock">Unlock</button></form>
-                <?php else: ?>
-                  <form method="post">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="lock">Lock</button></form>
-                <?php endif; ?>
-                <?php if((int)($r['is_active'] ?? 0) === 1): ?>
-                  <form method="post">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="deactivate">Deactivate</button></form>
-                <?php else: ?>
-                  <form method="post">
-      <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>"><input type="hidden" name="member_id" value="<?=$r['id']?>"><button class="secondary" type="submit" name="action" value="activate">Activate</button></form>
-                <?php endif; ?>
-                    </div><!-- /btns -->
-                    <div style="font-size:11px;color:var(--muted);margin-top:6px">Notices → <?=h($adminRecipient)?></div>
-                  </div><!-- /col3 -->
-                </div><!-- /grid -->
+<!-- Member cards -->
+<?php if (empty($rows)): ?>
+  <div style="text-align:center;padding:48px;color:var(--sub);font-size:.85rem;
+              background:var(--panel2);border:1px solid var(--line2);border-radius:10px">
+    No <?= h($type) ?> records found.<?= $fSearch ? ' Try a different search term.' : '' ?>
+  </div>
+<?php endif; ?>
 
-                <!-- Verification panels -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <!-- G-NAF Address Verification -->
-              <?php if($type === 'personal' && !empty($r['street_address'])): ?>
-              <div style="margin-top:12px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:12px">
-                <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Address Verification</div>
-                <div style="font-size:13px;margin-bottom:8px">
-                  <?=h($r['street_address'] ?? '')?>, <?=h($r['suburb'] ?? '')?> <?=h($r['state_code'] ?? '')?> <?=h($r['postcode'] ?? '')?>
-                </div>
-                <?php if(!empty($r['gnaf_pid'])): ?>
-                  <div style="font-size:12px;color:#7ee0a0;margin-bottom:6px">✓ Verified — PID: <?=h($r['gnaf_pid'])?></div>
-                  <?php if(!empty($r['zone_id'])): ?>
-                    <div style="font-size:12px;color:#d4b25c">◈ In Affected Zone (ID: <?=(int)$r['zone_id']?>)</div>
-                  <?php else: ?>
-                    <div style="font-size:12px;color:var(--muted)">Not in an Affected Zone</div>
-                  <?php endif; ?>
-                <?php else: ?>
-                  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Not yet verified</div>
-                <?php endif; ?>
-                <button
-                  class="secondary"
-                  style="margin-top:8px;font-size:12px;padding:6px 14px"
-                  onclick="gnafVerify(<?=(int)$r['id']?>, this)"
-                  type="button"
-                ><?=empty($r['gnaf_pid']) ? 'Run G-NAF Verification' : 'Re-verify Address'?></button>
-                <div id="gnaf-result-<?=(int)$r['id']?>" style="margin-top:8px;font-size:12px;display:none"></div>
-                <details style="margin-top:10px">
-                  <summary style="font-size:12px;color:var(--muted);cursor:pointer">Edit address</summary>
-                  <form method="post" style="margin-top:10px">
-                    <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
-                    <input type="hidden" name="action" value="update_address">
-                    <input type="hidden" name="member_id" value="<?=(int)$r['id']?>">
-                    <div style="display:grid;gap:6px">
-                      <input name="street_address" value="<?=h($r['street_address'] ?? '')?>" placeholder="Street address" style="width:100%;font:inherit;font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
-                      <div style="display:grid;grid-template-columns:1fr auto auto;gap:6px">
-                        <input name="suburb" value="<?=h($r['suburb'] ?? '')?>" placeholder="Suburb" style="font:inherit;font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
-                        <input name="state_code" value="<?=h($r['state_code'] ?? '')?>" placeholder="State" maxlength="3" style="width:56px;font:inherit;font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
-                        <input name="postcode" value="<?=h($r['postcode'] ?? '')?>" placeholder="Postcode" maxlength="4" style="width:72px;font:inherit;font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text)">
-                      </div>
-                      <button type="submit" class="secondary" style="font-size:12px;padding:6px 14px">Save address &amp; clear G-NAF</button>
-                    </div>
-                  </form>
-                </details>
-              </div>
-              <?php endif; ?>
-                <!-- Landholder Parcel Verification -->
-              <?php if($type === 'personal'): ?>
-              <div style="margin-top:10px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:12px">
-                <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Landholder COG$ Verification</div>
-                <?php if(!empty($r['landholder_verified_at'])): ?>
-                  <div style="font-size:12px;color:#7ee0a0;margin-bottom:4px">
-                    ✓ Verified — <?=number_format((float)($r['landholder_hectares'] ?? 0), 2)?> ha
-                    · <?=number_format((int)($r['landholder_tokens_calculated'] ?? 0))?> Lh tokens
-                    <?=!empty($r['landholder_zero_cost']) ? '· <span style="color:#d4b25c">Zero-cost (LALC/PBC)</span>' : ''?>
-                    <?=!empty($r['landholder_fnac_required']) ? '· <span style="color:#ffb4be">FNAC required</span>' : ''?>
-                  </div>
-                  <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
-                    Type: <?=h($r['landholder_holder_type'] ?? 'freehold')?> · Verified: <?=h(substr($r['landholder_verified_at'],0,10))?>
-                  </div>
-                <?php else: ?>
-                  <div style="font-size:12px;color:var(--muted);margin-bottom:8px">No parcel claim verified yet.</div>
-                <?php endif; ?>
+<?php foreach ($rows as $r):
+  $ref   = member_ref($r);
+  $sum   = reservation_summary($r);
+  $reserved = max(0, $sum['reserved']);
+  $paid     = min($reserved, max(0, $sum['paid']));
+  $approved = min($reserved, max(0, $sum['approved']));
+  $identityReserved = max(0, $sum['identity_reserved']);
+  $identityBase = max(1, $identityReserved);
+  $paidPct     = $identityReserved > 0 ? min(100, round(($paid     / $identityBase) * 100)) : 0;
+  $approvedPct = $identityReserved > 0 ? min(100, round(($approved / $identityBase) * 100)) : 0;
+  $signupPaid  = ($r['signup_payment_status'] ?? 'pending') === 'paid';
+  $isActive    = (int)($r['is_active'] ?? 0) === 1;
+  $isLocked    = ($r['wallet_status'] ?? '') === 'locked';
+  $acceptance  = $rowAcceptance[(int)($r['id'] ?? 0)] ?? null;
+  $acceptanceLabel = function_exists('ops_acceptance_status_label') ? ops_acceptance_status_label($acceptance) : '—';
+  $acceptanceTone  = function_exists('ops_acceptance_status_tone')  ? ops_acceptance_status_tone($acceptance)  : 'warn';
+  $kyc    = $rowKyc[(int)($r['id'] ?? 0)] ?? null;
+  $cardId = 'mc-' . (int)$r['id'];
+  $hasGnaf = !empty($r['gnaf_pid']);
+  $hasLand = !empty($r['landholder_verified_at']);
+?>
 
-                <div id="parcel-form-<?=(int)$r['id']?>" style="margin-top:4px">
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-                    <div>
-                      <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Holder type</label>
-                      <select id="pf-type-<?=(int)$r['id']?>" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
-                        <option value="freehold">Freehold</option>
-                        <option value="lalc">LALC (Aboriginal Land Rights Act)</option>
-                        <option value="pbc">PBC (Native Title Act)</option>
-                        <option value="native_title_group">Native Title Holder Group</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Jurisdiction</label>
-                      <select id="pf-juris-<?=(int)$r['id']?>" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
-                        <?php foreach(['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] as $st): ?>
-                          <option value="<?=$st?>" <?=($r['state_code']??'')===$st?'selected':''?>><?=$st?></option>
-                        <?php endforeach; ?>
-                      </select>
-                    </div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-                    <div>
-                      <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Lot number</label>
-                      <input id="pf-lot-<?=(int)$r['id']?>" type="text" placeholder="e.g. 1" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
-                    </div>
-                    <div>
-                      <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Plan number</label>
-                      <input id="pf-plan-<?=(int)$r['id']?>" type="text" placeholder="e.g. DP755123" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
-                    </div>
-                  </div>
-                  <div style="margin-bottom:6px">
-                    <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Title reference (optional)</label>
-                    <input id="pf-title-<?=(int)$r['id']?>" type="text" placeholder="e.g. CT/12345/67" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
-                  </div>
-                  <?php if(!empty($r['landholder_verified_at'])): ?>
-                  <div style="margin-bottom:6px">
-                    <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:2px">Parcel PID (from G-NAF, optional)</label>
-                    <input id="pf-pid-<?=(int)$r['id']?>" type="text" placeholder="auto-detected if blank" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:#eef2f7;padding:5px 7px;border-radius:8px;font-size:12px">
-                  </div>
-                  <?php endif; ?>
-                  <button
-                    class="secondary"
-                    style="margin-top:4px;font-size:12px;padding:6px 14px"
-                    onclick="parcelVerify(<?=(int)$r['id']?>, this)"
-                    type="button"
-                  >Verify Parcel Claim</button>
-                </div>
-                <div id="parcel-result-<?=(int)$r['id']?>" style="margin-top:8px;font-size:12px;display:none"></div>
-              </div>
-              <?php endif; ?>
-                </div><!-- /verification grid -->
-              </div><!-- /detail inner -->
-            </td>
-          </tr>
-        <?php endforeach; if(!$rows): ?>
-          <tr><td colspan="4">No <?=h($type)?> records found.</td></tr>
+<div class="member-card">
+
+  <!-- ── Card header ── -->
+  <div class="mc-header" onclick="toggleMember('<?= $cardId ?>')">
+
+    <div class="mc-identity">
+      <h4><?= h($r['full_name'] ?? '') ?></h4>
+      <div class="mc-sub">
+        <?= h($r['email'] ?? '') ?>
+        <?php if (!empty($r['partner_number'])): ?>
+          &nbsp;·&nbsp; <?= h($r['partner_number']) ?>
         <?php endif; ?>
-        </tbody>
-      </table>
+        &nbsp;·&nbsp; <span style="font-family:monospace"><?= h($ref) ?></span>
+      </div>
     </div>
+
+    <div class="mc-status-flags">
+      <?php if ($signupPaid): ?>
+        <span class="sf sf-ok">✓ $4 paid</span>
+      <?php else: ?>
+        <span class="sf sf-warn">Fee pending</span>
+      <?php endif; ?>
+
+      <span class="sf sf-<?= $acceptanceTone === 'ok' ? 'ok' : ($acceptanceTone === 'warn' ? 'warn' : 'err') ?>">
+        JVPA: <?= h($acceptanceLabel) ?>
+      </span>
+
+      <?php if ($hasGnaf): ?>
+        <span class="sf sf-ok">G-NAF ✓</span>
+      <?php else: ?>
+        <span class="sf sf-dim">No G-NAF</span>
+      <?php endif; ?>
+
+      <?php
+        $wStatus = $r['wallet_status'] ?? 'invited';
+        $wClass  = $wStatus === 'active' ? 'sf-ok' : ($wStatus === 'locked' ? 'sf-err' : 'sf-dim');
+      ?>
+      <span class="sf <?= $wClass ?>"><?= h($wStatus) ?></span>
+
+      <?php if (!$isActive): ?>
+        <span class="sf sf-err">Inactive</span>
+      <?php endif; ?>
+    </div>
+
+    <div style="text-align:right;font-size:.73rem;color:var(--dim)">
+      <?= h(substr($r['created_at'] ?? '', 0, 10)) ?>
+    </div>
+
+    <div style="color:var(--dim);font-size:.75rem;text-align:center" id="<?= $cardId ?>-chev">▼</div>
   </div>
-<?php endif; /* end showSummary/list conditional */ ?>
+
+  <!-- ── Expanded body ── -->
+  <div class="mc-body" id="<?= $cardId ?>">
+    <div class="mc-grid">
+
+      <!-- Col 1: Member details + JVPA + KYC -->
+      <div class="mc-col">
+        <div class="mc-col-title">Member</div>
+
+        <div class="mc-row"><span class="mc-row-l">Name</span>
+          <span class="mc-row-v" style="font-weight:700"><?= h($r['full_name'] ?? '') ?></span></div>
+        <div class="mc-row"><span class="mc-row-l">Email</span>
+          <span class="mc-row-v"><?= h($r['email'] ?? '') ?></span></div>
+        <?php if (!empty($r['mobile'] ?? $r['phone'] ?? '')): ?>
+        <div class="mc-row"><span class="mc-row-l">Mobile</span>
+          <span class="mc-row-v"><?= h($r['mobile'] ?? $r['phone'] ?? '') ?></span></div>
+        <?php endif; ?>
+        <div class="mc-row"><span class="mc-row-l">Member #</span>
+          <span class="mc-row-v" style="font-family:monospace;font-size:.72rem"><?= h($ref) ?></span></div>
+        <?php if (!empty($r['partner_number'])): ?>
+        <div class="mc-row"><span class="mc-row-l">Partner #</span>
+          <span class="mc-row-v" style="font-family:monospace;font-size:.72rem;color:var(--gold)"><?= h($r['partner_number']) ?></span></div>
+        <?php endif; ?>
+        <div class="mc-row"><span class="mc-row-l">Wallet</span>
+          <span class="mc-row-v ws-<?= h($r['wallet_status'] ?? 'invited') ?>"><?= h($r['wallet_status'] ?? '') ?></span></div>
+        <div class="mc-row"><span class="mc-row-l">Entry fee</span>
+          <span class="mc-row-v" style="color:<?= $signupPaid ? 'var(--ok)' : 'var(--warn)' ?>">
+            <?= $signupPaid ? '✓ Received' : '● Pending' ?></span></div>
+        <?php if (!empty($r['governance_status'])): ?>
+        <div class="mc-row"><span class="mc-row-l">Governance</span>
+          <span class="mc-row-v"><?= h($r['governance_status']) ?></span></div>
+        <?php endif; ?>
+
+        <!-- JVPA -->
+        <div class="jvpa-block" style="margin-top:10px">
+          <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;
+                      color:var(--sub);font-weight:700;margin-bottom:6px">JVPA Acceptance</div>
+          <div class="jvpa-status" style="color:<?= $acceptanceTone === 'ok' ? 'var(--ok)' : ($acceptanceTone === 'warn' ? 'var(--warn)' : 'var(--err)') ?>">
+            <?= h($acceptanceLabel) ?>
+          </div>
+          <div class="jvpa-meta">
+            <?php if (!empty($acceptance['accepted_version'])): ?><?= h($acceptance['accepted_version']) ?><?php else: ?>No version recorded<?php endif; ?>
+            <?php if (!empty($acceptance['accepted_at'])): ?> · <?= h(substr((string)$acceptance['accepted_at'], 0, 16)) ?><?php endif; ?>
+          </div>
+          <?php if (!empty($acceptance['acceptance_record_hash'])): ?>
+          <div class="jvpa-meta" style="font-family:monospace;font-size:.68rem;margin-top:2px">
+            <?= h(substr((string)$acceptance['acceptance_record_hash'], 0, 20)) ?>…
+          </div>
+          <?php endif; ?>
+        </div>
+
+        <!-- KYC -->
+        <div class="jvpa-block" style="margin-top:8px">
+          <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;
+                      color:var(--sub);font-weight:700;margin-bottom:6px">KYC / Identity</div>
+          <div class="jvpa-status" style="color:<?= ($kyc['status_tone'] ?? '') === 'ok' ? 'var(--ok)' : (($kyc['status_tone'] ?? '') === 'warn' ? 'var(--warn)' : 'var(--err)') ?>">
+            <?= h((string)($kyc['status_label'] ?? 'Not submitted')) ?>
+          </div>
+          <div class="jvpa-meta">
+            <?php if (!empty($kyc['submission_id'])): ?>
+              Sub #<?= (int)$kyc['submission_id'] ?>
+              <?php if (!empty($kyc['submission_status'])): ?> · <?= h((string)$kyc['submission_status']) ?><?php endif; ?>
+            <?php else: ?>No submission recorded<?php endif; ?>
+          </div>
+          <?php if (!empty($kyc['submission_id'])): ?>
+          <div style="margin-top:6px">
+            <a href="./admin_kyc.php?view=<?= (int)$kyc['submission_id'] ?>"
+               class="btn-mr btn-mr-ghost" style="font-size:.72rem;padding:4px 10px">
+              Open KYC Review →
+            </a>
+          </div>
+          <?php endif; ?>
+        </div>
+      </div>
+
+      <!-- Col 2: Reservations + Address + Landholder -->
+      <div class="mc-col">
+        <div class="mc-col-title">Reservations & Verification</div>
+
+        <!-- Reservation progress -->
+        <div style="margin-bottom:14px">
+          <div class="mc-row" style="margin-bottom:6px">
+            <span class="mc-row-l">Total reserved</span>
+            <span class="mc-row-v" style="font-weight:700"><?= number_format($reserved) ?></span>
+          </div>
+          <?php if ($identityReserved > 0): ?>
+          <div style="margin-bottom:5px">
+            <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--sub);margin-bottom:3px">
+              <span>Entry paid <span style="color:var(--dim)">(identity tokens)</span></span>
+              <span><?= number_format($paid) ?> / <?= number_format($identityReserved) ?></span>
+            </div>
+            <div class="mr-bar"><div class="mr-bar-fill" style="width:<?= $paidPct ?>%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--sub);margin-bottom:3px">
+              <span>Approved</span>
+              <span><?= number_format($approved) ?></span>
+            </div>
+            <div class="mr-bar"><div class="mr-bar-fill" style="width:<?= $approvedPct ?>%;background:var(--ok)"></div></div>
+          </div>
+          <?php else: ?>
+          <div style="font-size:.77rem;color:var(--dim)">No identity token reservations recorded.</div>
+          <?php endif; ?>
+          <div style="font-size:.72rem;color:var(--dim);margin-top:6px">
+            <?= (int)($r['line_count'] ?? 0) ?> reservation line<?= (int)($r['line_count'] ?? 0) !== 1 ? 's' : '' ?>
+            · <?= h(bucket_label($r)) ?>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <?php if ($type === 'personal' && !empty($r['street_address'])): ?>
+        <div class="vp">
+          <div class="vp-title">Address Verification</div>
+          <div style="font-size:.79rem;margin-bottom:8px">
+            <?= h($r['street_address'] ?? '') ?>, <?= h($r['suburb'] ?? '') ?>
+            <?= h($r['state_code'] ?? '') ?> <?= h($r['postcode'] ?? '') ?>
+          </div>
+          <?php if ($hasGnaf): ?>
+            <div style="font-size:.77rem;color:var(--ok);margin-bottom:4px">✓ G-NAF verified — <?= h($r['gnaf_pid']) ?></div>
+            <?php if (!empty($r['zone_id'])): ?>
+              <div style="font-size:.77rem;color:var(--gold)">◈ In Affected Zone (ID: <?= (int)$r['zone_id'] ?>)</div>
+            <?php else: ?>
+              <div style="font-size:.77rem;color:var(--dim)">Not in an Affected Zone</div>
+            <?php endif; ?>
+          <?php else: ?>
+            <div style="font-size:.77rem;color:var(--dim);margin-bottom:6px">Not yet G-NAF verified</div>
+          <?php endif; ?>
+          <button type="button" onclick="gnafVerify(<?= (int)$r['id'] ?>, this)"
+                  class="btn-mr btn-mr-ghost" style="font-size:.72rem;padding:4px 10px;margin-top:6px">
+            <?= $hasGnaf ? 'Re-verify Address' : 'Run G-NAF Verification' ?>
+          </button>
+          <div class="vp-result" id="gnaf-result-<?= (int)$r['id'] ?>"></div>
+
+          <details style="margin-top:8px">
+            <summary style="font-size:.73rem;color:var(--dim);cursor:pointer">Edit address</summary>
+            <form method="post" style="margin-top:8px;display:grid;gap:5px">
+              <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+              <input type="hidden" name="action" value="update_address">
+              <input type="hidden" name="member_id" value="<?= (int)$r['id'] ?>">
+              <input name="street_address" value="<?= h($r['street_address'] ?? '') ?>"
+                     placeholder="Street address" style="font-size:.78rem;padding:5px 8px;background:var(--panel);border:1px solid var(--line2);border-radius:6px;color:var(--text);width:100%">
+              <div style="display:grid;grid-template-columns:1fr 52px 68px;gap:5px">
+                <input name="suburb"     value="<?= h($r['suburb']     ?? '') ?>" placeholder="Suburb"   style="font-size:.78rem;padding:5px 8px;background:var(--panel);border:1px solid var(--line2);border-radius:6px;color:var(--text)">
+                <input name="state_code" value="<?= h($r['state_code'] ?? '') ?>" placeholder="State" maxlength="3" style="font-size:.78rem;padding:5px 8px;background:var(--panel);border:1px solid var(--line2);border-radius:6px;color:var(--text)">
+                <input name="postcode"   value="<?= h($r['postcode']   ?? '') ?>" placeholder="Postcode" maxlength="4" style="font-size:.78rem;padding:5px 8px;background:var(--panel);border:1px solid var(--line2);border-radius:6px;color:var(--text)">
+              </div>
+              <button type="submit" class="btn-mr btn-mr-ghost" style="font-size:.73rem;padding:5px 12px;margin-top:2px">
+                Save &amp; clear G-NAF
+              </button>
+            </form>
+          </details>
+        </div>
+        <?php endif; ?>
+
+        <!-- Landholder -->
+        <?php if ($type === 'personal'): ?>
+        <div class="vp" style="margin-top:8px">
+          <div class="vp-title">Landholder COG$ Verification</div>
+          <?php if ($hasLand): ?>
+            <div style="font-size:.79rem;color:var(--ok);margin-bottom:4px">
+              ✓ <?= number_format((float)($r['landholder_hectares'] ?? 0), 2) ?> ha
+              · <?= number_format((int)($r['landholder_tokens_calculated'] ?? 0)) ?> Lh tokens
+            </div>
+            <div style="font-size:.72rem;color:var(--sub)">
+              <?= h($r['landholder_holder_type'] ?? 'freehold') ?>
+              · Verified <?= h(substr($r['landholder_verified_at'], 0, 10)) ?>
+              <?= !empty($r['landholder_zero_cost']) ? ' · <span style="color:var(--gold)">Zero-cost</span>' : '' ?>
+              <?= !empty($r['landholder_fnac_required']) ? ' · <span style="color:var(--warn)">FNAC required</span>' : '' ?>
+            </div>
+          <?php else: ?>
+            <div style="font-size:.77rem;color:var(--dim);margin-bottom:8px">No parcel claim verified.</div>
+          <?php endif; ?>
+
+          <div class="vp-grid" style="margin-top:8px">
+            <div class="vp-field">
+              <label>Holder type</label>
+              <select id="pf-type-<?= (int)$r['id'] ?>">
+                <?php foreach(['freehold'=>'Freehold','lalc'=>'LALC','pbc'=>'PBC','native_title_group'=>'Native Title Group'] as $v=>$l): ?>
+                  <option value="<?= $v ?>"><?= $l ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="vp-field">
+              <label>Jurisdiction</label>
+              <select id="pf-juris-<?= (int)$r['id'] ?>">
+                <?php foreach(['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'] as $st): ?>
+                  <option value="<?= $st ?>" <?= ($r['state_code'] ?? '') === $st ? 'selected' : '' ?>><?= $st ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="vp-field">
+              <label>Lot number</label>
+              <input id="pf-lot-<?= (int)$r['id'] ?>" type="text" placeholder="e.g. 1">
+            </div>
+            <div class="vp-field">
+              <label>Plan number</label>
+              <input id="pf-plan-<?= (int)$r['id'] ?>" type="text" placeholder="e.g. DP755123">
+            </div>
+          </div>
+          <div class="vp-field" style="margin-top:5px">
+            <label>Title reference (optional)</label>
+            <input id="pf-title-<?= (int)$r['id'] ?>" type="text" placeholder="e.g. CT/12345/67">
+          </div>
+          <button type="button" onclick="parcelVerify(<?= (int)$r['id'] ?>, this)"
+                  class="btn-mr btn-mr-ghost" style="font-size:.72rem;padding:4px 10px;margin-top:8px">
+            Verify Parcel Claim
+          </button>
+          <div class="vp-result" id="parcel-result-<?= (int)$r['id'] ?>"></div>
+        </div>
+        <?php endif; ?>
+      </div>
+
+      <!-- Col 3: Actions -->
+      <div class="mc-col">
+        <div class="mc-col-title">Actions</div>
+
+        <!-- Entry contribution -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:.73rem;color:var(--sub);font-weight:700;
+                      text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+            Entry Contribution
+          </div>
+          <?php if (!$signupPaid): ?>
+            <a href="./payments.php?member_ref=<?= urlencode((string)$ref) ?>"
+               class="btn-mr btn-mr-primary" style="display:block;text-align:center;margin-bottom:5px">
+              → Receive Contribution
+            </a>
+            <form method="post">
+              <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+              <input type="hidden" name="member_id" value="<?= $r['id'] ?>">
+              <button type="submit" name="action" value="mark_paid"
+                      onclick="return confirm('Mark entry payment as received for <?= h(addslashes($r['full_name'] ?? '')) ?>?')"
+                      class="btn-mr btn-mr-ok" style="width:100%">
+                ✓ Mark Entry Paid
+              </button>
+            </form>
+          <?php else: ?>
+            <a href="./payments.php?member_ref=<?= urlencode((string)$ref) ?>"
+               class="btn-mr btn-mr-ghost" style="display:block;text-align:center">
+              View Contributions →
+            </a>
+          <?php endif; ?>
+        </div>
+
+        <!-- Approvals -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:.73rem;color:var(--sub);font-weight:700;
+                      text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+            Reservations
+          </div>
+          <a href="./approvals.php" class="btn-mr btn-mr-ghost" style="display:block;text-align:center">
+            Open Approvals →
+          </a>
+        </div>
+
+        <!-- Notifications -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:.73rem;color:var(--sub);font-weight:700;
+                      text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+            Notifications
+          </div>
+          <div style="display:grid;gap:5px">
+            <form method="post">
+              <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+              <input type="hidden" name="member_id" value="<?= $r['id'] ?>">
+              <button type="submit" name="action" value="resend_thankyou"
+                      class="btn-mr btn-mr-ghost" style="width:100%">Resend Welcome Email</button>
+            </form>
+            <form method="post">
+              <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+              <input type="hidden" name="member_id" value="<?= $r['id'] ?>">
+              <button type="submit" name="action" value="resend_admin_notice"
+                      class="btn-mr btn-mr-ghost" style="width:100%">Resend Admin Notice</button>
+            </form>
+          </div>
+          <div style="font-size:.7rem;color:var(--dim);margin-top:5px">→ <?= h($adminRecipient) ?></div>
+        </div>
+
+        <!-- Account control -->
+        <div>
+          <div style="font-size:.73rem;color:var(--sub);font-weight:700;
+                      text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+            Account Control
+          </div>
+          <div style="display:grid;gap:5px">
+            <?php if ($isLocked): ?>
+              <form method="post">
+                <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+                <input type="hidden" name="member_id" value="<?= $r['id'] ?>">
+                <button type="submit" name="action" value="unlock"
+                        class="btn-mr btn-mr-ok" style="width:100%">🔓 Unlock Wallet</button>
+              </form>
+            <?php else: ?>
+              <form method="post">
+                <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+                <input type="hidden" name="member_id" value="<?= $r['id'] ?>">
+                <button type="submit" name="action" value="lock"
+                        class="btn-mr btn-mr-ghost" style="width:100%">🔒 Lock Wallet</button>
+              </form>
+            <?php endif; ?>
+            <?php if ($isActive): ?>
+              <form method="post">
+                <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+                <input type="hidden" name="member_id" value="<?= $r['id'] ?>">
+                <button type="submit" name="action" value="deactivate"
+                        onclick="return confirm('Deactivate <?= h(addslashes($r['full_name'] ?? '')) ?>?')"
+                        class="btn-mr btn-mr-err" style="width:100%">Deactivate</button>
+              </form>
+            <?php else: ?>
+              <form method="post">
+                <input type="hidden" name="_csrf" value="<?= ops_h(admin_csrf_token()) ?>">
+                <input type="hidden" name="member_id" value="<?= $r['id'] ?>">
+                <button type="submit" name="action" value="activate"
+                        class="btn-mr btn-mr-ok" style="width:100%">Activate</button>
+              </form>
+            <?php endif; ?>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /mc-grid -->
+  </div><!-- /mc-body -->
+</div><!-- /member-card -->
+<?php endforeach; ?>
+
+<?php endif; /* end summary/list */ ?>
+
 </main>
 </div>
+
 <script>
-function toggleMember(rowId) {
-  var row  = document.getElementById(rowId);
-  var chev = document.getElementById(rowId + '-chev');
-  if (!row) return;
-  var open = row.style.display !== 'none';
-  row.style.display  = open ? 'none' : 'table-row';
+function toggleMember(id) {
+  var body = document.getElementById(id);
+  var chev = document.getElementById(id + '-chev');
+  if (!body) return;
+  var open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
   if (chev) chev.textContent = open ? '▼' : '▲';
 }
 
 function gnafVerify(memberId, btn) {
   var resultEl = document.getElementById('gnaf-result-' + memberId);
   var orig = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Verifying…';
+  btn.disabled = true; btn.textContent = 'Verifying…';
   if (resultEl) { resultEl.style.display = 'none'; resultEl.textContent = ''; }
-
   fetch('../_app/api/index.php/address-verify', {
-    method: 'POST',
-    credentials: 'include',
+    method: 'POST', credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'member', member_id: memberId })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data) {
-    btn.disabled = false;
-    btn.textContent = orig;
+  }).then(function(r){ return r.json(); }).then(function(data) {
+    btn.disabled = false; btn.textContent = orig;
     if (!resultEl) return;
     resultEl.style.display = 'block';
     if (data.success) {
       var d = data.data;
-      var zoneMsg = d.in_affected_zone
-        ? '◈ Zone: ' + (d.zone_code || 'unknown')
-        : 'Not in an Affected Zone';
-      var color = d.status === 'verified' ? '#7ee0a0'
-                : d.status === 'low_confidence' ? '#d4b25c'
-                : '#ffb4be';
+      var zoneMsg = d.in_affected_zone ? '◈ Zone: ' + (d.zone_code || 'unknown') : 'Not in an Affected Zone';
+      var color = d.status === 'verified' ? '#7ee0a0' : d.status === 'low_confidence' ? '#d4b25c' : '#ffb4be';
       resultEl.style.color = color;
-      resultEl.innerHTML =
-        'Status: <strong>' + d.status + '</strong> · ' +
-        'Confidence: ' + (d.confidence || 0).toFixed(0) + '% · ' +
-        zoneMsg +
-        (d.gnaf_address ? '<br>Address: ' + d.gnaf_address : '') +
-        (d.requires_review ? '<br><span style="color:#ffb4be">⚠ Routed to manual review</span>' : '');
-      if (d.status === 'verified' || d.in_affected_zone) {
-        setTimeout(function(){ window.location.reload(); }, 1500);
-      }
+      resultEl.innerHTML = 'Status: <strong>' + d.status + '</strong> · Confidence: ' + (d.confidence || 0).toFixed(0) + '% · ' + zoneMsg +
+        (d.gnaf_address ? '<br>' + d.gnaf_address : '') +
+        (d.requires_review ? '<br><span style="color:#ffb4be">⚠ Manual review required</span>' : '');
+      if (d.status === 'verified' || d.in_affected_zone) setTimeout(function(){ window.location.reload(); }, 1500);
     } else {
       resultEl.style.color = '#ffb4be';
       resultEl.textContent = 'Error: ' + (data.error || 'Verification failed');
     }
-  })
-  .catch(function(err) {
-    btn.disabled = false;
-    btn.textContent = orig;
-    if (resultEl) {
-      resultEl.style.display = 'block';
-      resultEl.style.color = '#ffb4be';
-      resultEl.textContent = 'Request failed: ' + err.message;
-    }
+  }).catch(function(err) {
+    btn.disabled = false; btn.textContent = orig;
+    if (resultEl) { resultEl.style.display = 'block'; resultEl.style.color = '#ffb4be'; resultEl.textContent = 'Request failed: ' + err.message; }
   });
 }
 
 function parcelVerify(memberId, btn) {
   var resultEl = document.getElementById('parcel-result-' + memberId);
   var orig = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Verifying…';
+  btn.disabled = true; btn.textContent = 'Verifying…';
   if (resultEl) { resultEl.style.display = 'none'; resultEl.textContent = ''; }
-
   var holderType = document.getElementById('pf-type-'  + memberId)?.value  || 'freehold';
   var juris      = document.getElementById('pf-juris-' + memberId)?.value  || 'NSW';
   var lot        = (document.getElementById('pf-lot-'  + memberId)?.value  || '').trim();
   var plan       = (document.getElementById('pf-plan-' + memberId)?.value  || '').trim();
   var titleRef   = (document.getElementById('pf-title-'+ memberId)?.value  || '').trim();
   var parcelPid  = (document.getElementById('pf-pid-'  + memberId)?.value  || '').trim();
-
   if (!lot && !plan && !parcelPid) {
-    btn.disabled = false;
-    btn.textContent = orig;
-    if (resultEl) {
-      resultEl.style.display = 'block';
-      resultEl.style.color = '#ffb4be';
-      resultEl.textContent = 'Enter a lot number, plan number, or parcel PID to verify.';
-    }
+    btn.disabled = false; btn.textContent = orig;
+    if (resultEl) { resultEl.style.display = 'block'; resultEl.style.color = '#ffb4be'; resultEl.textContent = 'Enter a lot number, plan number, or parcel PID to verify.'; }
     return;
   }
-
   fetch('../_app/api/index.php/parcel-verify', {
-    method: 'POST',
-    credentials: 'include',
+    method: 'POST', credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      action: 'member',
-      member_id: memberId,
-      holder_type: holderType,
-      lot: lot,
-      plan: plan,
-      jurisdiction: juris,
-      title_reference: titleRef,
-      parcel_pid: parcelPid
-    })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data) {
-    btn.disabled = false;
-    btn.textContent = orig;
+    body: JSON.stringify({ action:'member', member_id:memberId, holder_type:holderType, lot:lot, plan:plan, jurisdiction:juris, title_reference:titleRef, parcel_pid:parcelPid })
+  }).then(function(r){ return r.json(); }).then(function(data) {
+    btn.disabled = false; btn.textContent = orig;
     if (!resultEl) return;
     resultEl.style.display = 'block';
-
     if (data.success) {
       var d = data.data;
-      var statusColor = d.status === 'cadastre_matched' || d.status === 'verified' ? '#7ee0a0'
-                      : d.status === 'fnac_pending' ? '#d4b25c'
-                      : '#ffb4be';
-      var html = '<strong style="color:' + statusColor + '">' + d.status + '</strong>';
-
-      if (d.area_hectares) {
-        html += ' · ' + parseFloat(d.area_hectares).toFixed(2) + ' ha';
-      }
-      if (d.tokens_calculated) {
-        html += ' · <strong>' + d.tokens_calculated.toLocaleString() + '</strong> Lh tokens';
-      }
-      if (d.zero_cost_eligible) {
-        html += ' · <span style="color:#d4b25c">Zero-cost (LALC/PBC)</span>';
-      }
-      if (d.tenement_overlap) {
-        html += '<br>◈ Tenement zone: ' + (d.tenement_zone_code || 'matched');
-      } else {
-        html += '<br><span style="color:#ffb4be">⚠ No tenement adjacency found</span>';
-      }
-      if (d.fnac_routing_required) {
-        html += '<br><span style="color:#d4b25c">⚑ FNAC endorsement required (MD 23.4.3)</span>';
-      }
-      if (d.nntt_overlap) {
-        html += '<br><span style="color:#d4b25c">◈ NNTT / Country overlay detected</span>';
-      }
-      if (d.note) {
-        html += '<br><span style="color:var(--muted);font-size:11px">' + d.note + '</span>';
-      }
-      if (d.mock_mode) {
-        html += '<br><span style="color:var(--muted);font-size:11px">⚙ Mock mode — add GEOSCAPE_API_KEY to .env for live data</span>';
-      }
+      var sc = d.status === 'cadastre_matched' || d.status === 'verified' ? '#7ee0a0' : d.status === 'fnac_pending' ? '#d4b25c' : '#ffb4be';
+      var html = '<strong style="color:' + sc + '">' + d.status + '</strong>';
+      if (d.area_hectares) html += ' · ' + parseFloat(d.area_hectares).toFixed(2) + ' ha';
+      if (d.tokens_calculated) html += ' · <strong>' + d.tokens_calculated.toLocaleString() + '</strong> Lh tokens';
+      if (d.zero_cost_eligible) html += ' · <span style="color:#d4b25c">Zero-cost (LALC/PBC)</span>';
+      if (d.tenement_overlap) html += '<br>◈ Tenement zone: ' + (d.tenement_zone_code || 'matched');
+      else html += '<br><span style="color:#ffb4be">⚠ No tenement adjacency</span>';
+      if (d.fnac_routing_required) html += '<br><span style="color:#d4b25c">⚑ FNAC endorsement required</span>';
+      if (d.nntt_overlap) html += '<br><span style="color:#d4b25c">◈ NNTT / Country overlay detected</span>';
+      if (d.note) html += '<br><span style="color:var(--muted);font-size:11px">' + d.note + '</span>';
+      if (d.mock_mode) html += '<br><span style="color:var(--muted);font-size:11px">⚙ Mock mode</span>';
       resultEl.innerHTML = html;
-
-      // Reload page after short delay if verified
-      if (d.status === 'cadastre_matched' || d.status === 'verified') {
-        setTimeout(function(){ window.location.reload(); }, 2000);
-      }
+      if (d.status === 'cadastre_matched' || d.status === 'verified') setTimeout(function(){ window.location.reload(); }, 2000);
     } else {
-      resultEl.style.color = '#ffb4be';
-      resultEl.textContent = 'Error: ' + (data.error || 'Verification failed');
+      resultEl.style.color = '#ffb4be'; resultEl.textContent = 'Error: ' + (data.error || 'Verification failed');
     }
-  })
-  .catch(function(err) {
-    btn.disabled = false;
-    btn.textContent = orig;
-    if (resultEl) {
-      resultEl.style.display = 'block';
-      resultEl.style.color = '#ffb4be';
-      resultEl.textContent = 'Request failed: ' + err.message;
-    }
+  }).catch(function(err) {
+    btn.disabled = false; btn.textContent = orig;
+    if (resultEl) { resultEl.style.display = 'block'; resultEl.style.color = '#ffb4be'; resultEl.textContent = 'Request failed: ' + err.message; }
   });
 }
 </script>
