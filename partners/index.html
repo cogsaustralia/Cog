@@ -255,6 +255,21 @@
     .vault-pay-label{display:none;font-size:.7rem;font-weight:600;letter-spacing:.08em;
       text-transform:uppercase;color:#f0a040;margin-top:2px;opacity:.9}
 
+    /* ── Hero vault button — all state via class, no inline style overrides ── */
+    .vault-btn-hero{
+      display:none;align-items:center;gap:14px;padding:14px 24px 14px 16px;
+      background:linear-gradient(135deg,rgba(240,209,138,.22),rgba(200,151,62,.14));
+      border:2.5px solid rgba(240,209,138,.65);border-radius:16px;color:var(--gold-1);
+      font-size:1rem;font-weight:700;text-decoration:none;position:relative;
+      white-space:nowrap;
+      transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;
+      box-shadow:0 4px 28px rgba(200,151,62,.32),0 0 0 1px rgba(240,209,138,.12)}
+    .vault-btn-hero.visible{display:inline-flex}
+    .vault-btn-hero:hover{
+      transform:translateY(-3px);
+      box-shadow:0 10px 40px rgba(200,151,62,.5),0 0 0 1px rgba(240,209,138,.2);
+      border-color:rgba(240,209,138,.9)}
+
     /* Coin spin page transition (vault navigation) */
     .coin-transition{position:fixed;inset:0;z-index:9999;background:rgba(10,8,4,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .25s ease}
     .coin-transition.active{opacity:1}
@@ -834,20 +849,12 @@
           </div>
           <div class="member-welcome-row ha" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
             <h1 class="member-welcome-hd" style="margin-bottom:0">Welcome, <span id="member-first-name">Member</span>.</h1>
-            <a href="../wallets/member.html" id="hero-vault-btn" onclick="handleVaultEntry(event);return false;"
-               style="display:none;align-items:center;gap:14px;padding:14px 24px 14px 16px;
-                      background:linear-gradient(135deg,rgba(240,209,138,.22),rgba(200,151,62,.14));
-                      border:2.5px solid rgba(240,209,138,.65);border-radius:16px;color:var(--gold-1);
-                      font-size:1rem;font-weight:700;text-decoration:none;
-                      transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;
-                      box-shadow:0 4px 28px rgba(200,151,62,.32),0 0 0 1px rgba(240,209,138,.12);
-                      white-space:nowrap;position:relative"
-               onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 40px rgba(200,151,62,.5),0 0 0 1px rgba(240,209,138,.2)';this.style.borderColor='rgba(240,209,138,.9)'"
-               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 28px rgba(200,151,62,.32),0 0 0 1px rgba(240,209,138,.12)';this.style.borderColor='rgba(240,209,138,.65)'">
+            <a href="../wallets/member.html" id="hero-vault-btn" class="vault-btn-primary vault-btn-hero"
+               onclick="handleVaultEntry(event);return false;">
               <img src="../assets/cogs_coin_web.png" alt="" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(240,209,138,.5);flex-shrink:0;box-shadow:0 0 16px rgba(240,209,138,.25)">
               <span>
                 <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em" id="hero-vault-label">Enter Independence Vault</span>
-                <span style="display:block;font-size:.75rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.02em" id="hero-vault-sub">Holdings &middot; Governance &middot; Profile &rarr;</span>
+                <span style="display:block;font-size:.75rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.02em" id="hero-vault-sub">Holdings &middot; Governance &middot; Profile ›</span>
                 <span class="vault-pay-label" id="hero-vault-pay-label">Payment due — tap to pay</span>
               </span>
             </a>
@@ -1793,7 +1800,7 @@ function enterCommunity(data){
 
   // ── Show hero vault button ──
   if(heroBtn){
-    heroBtn.style.display = 'inline-flex';
+    heroBtn.classList.add('visible');
     if(_snftDue || _secDue){
       heroBtn.classList.add('payment-due');
       var payLbl = document.getElementById('hero-vault-pay-label');
@@ -1809,6 +1816,8 @@ function enterCommunity(data){
       pillBtn.classList.add('payment-due');
       var pillPayLbl = document.getElementById('pill-vault-pay-label');
       if(pillPayLbl) pillPayLbl.textContent = _dueLabel;
+      // Show vault-pill-wrap so badge and strip are visible
+      if(wrap) wrap.style.display = '';
     } else {
       pillBtn.classList.remove('payment-due');
     }
