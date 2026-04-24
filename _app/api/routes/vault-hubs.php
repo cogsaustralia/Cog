@@ -1368,7 +1368,7 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
-    } elseif ($area === 'governance_polls') {
+            } elseif ($area === 'governance_polls') {
         // 1. Active vote proposals — titles and close dates (no member data)
         try {
             $stmt = $db->prepare(
@@ -1420,9 +1420,7 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
-    }
-
-    } elseif ($area === 'esg_proxy_voting') {
+            } elseif ($area === 'esg_proxy_voting') {
         // 1. Holdings list — ticker, company_name, units, ESG flag (no member data)
         try {
             $stmt = $db->query(
@@ -1467,9 +1465,7 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
-    }
-
-    } elseif ($area === 'first_nations') {
+            } elseif ($area === 'first_nations') {
         // 1. Active Country overlays (no member/personal data)
         try {
             $stmt = $db->prepare(
@@ -1538,9 +1534,7 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
-    }
-
-    } elseif ($area === 'community_projects') {
+            } elseif ($area === 'community_projects') {
         // 1. All grants — counts by status + total disbursed (no grantee PII)
         try {
             $stmt = $db->query(
@@ -1588,9 +1582,7 @@ function handleHubAdminActivity(): void
             );
             $hubData['trust_income_12m'] = (int)$s->fetchColumn();
         } catch (Throwable) {}
-    }
-
-    } elseif ($area === 'technology_blockchain') {
+            } elseif ($area === 'technology_blockchain') {
         // 1. Ledger nodes by status (no member data)
         try {
             $stmt = $db->query(
@@ -1634,9 +1626,7 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
-    }
-
-    } elseif ($area === 'financial_oversight') {
+            } elseif ($area === 'financial_oversight') {
         // 1. Most recent distribution run — date, status, pool total (no member data)
         try {
             $stmt = $db->query(
@@ -1687,9 +1677,7 @@ function handleHubAdminActivity(): void
             }
             $hubData['expenses_by_category'] = $expByCat;
         } catch (Throwable) {}
-    }
-
-    } elseif ($area === 'place_based_decisions') {
+            } elseif ($area === 'place_based_decisions') {
         // 1. Active Affected Zones (governance zone type) — name + date (no member/address data)
         try {
             $stmt = $db->prepare(
@@ -1748,9 +1736,7 @@ function handleHubAdminActivity(): void
             );
             $hubData['rwa_count'] = count($hubData['active_rwa_assets']);
         } catch (Throwable) {}
-    }
-
-    } elseif ($area === 'education_outreach') {
+            } elseif ($area === 'education_outreach') {
         // 1. New members last 30 days — COUNT only, no identifying data
         try {
             $s = $db->query(
@@ -1807,7 +1793,7 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
-    }
+        }
 
     apiSuccess([
         'area_key'    => $area,
