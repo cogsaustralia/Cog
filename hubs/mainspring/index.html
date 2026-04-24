@@ -151,10 +151,9 @@ function renderGrid(tiles, myAreas){
   var wrap = document.getElementById('ms-grid-wrap');
   if(!tiles.length){ wrap.innerHTML='<div class="hub-empty">No hub data available.</div>'; return; }
 
-  var html = '<div class="ms-grid">' + tiles.map(function(t){
-    var enrolled = myAreas.indexOf(t.area_key) >= 0;
+  function tileHtml(t, enrolled){
     var path = HUB_PATHS[t.area_key] || ('../'+t.area_key+'/');
-    return '<div class="ms-tile'+(enrolled?' enrolled':'')+'" data-hub-path="'+path+'" data-hub-label="Opening '+esc(t.area_label||t.area_key)+'" onclick="msTileClick(this)">' +
+    return '<div class="ms-tile'+(enrolled?' enrolled':'')+'" data-hub-path="'+path+'" data-hub-label="Opening '+esc(t.area_label||t.area_key)+'" onclick="msTileClick(this)" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){msTileClick(this);}">' +
       (enrolled?'<span class="ms-enrolled-badge">Active</span>':'') +
       '<div class="ms-tile-name">'+esc(t.area_label||t.area_key)+'</div>' +
       '<div class="ms-tile-stats">' +
@@ -163,7 +162,23 @@ function renderGrid(tiles, myAreas){
         '<div class="ms-tile-stat"><strong>'+Number(t.active_project_count||0).toLocaleString('en-AU')+'</strong>Projects</div>' +
       '</div>' +
     '</div>';
-  }).join('') + '</div>';
+  }
+
+  var myTiles    = tiles.filter(function(t){ return myAreas.indexOf(t.area_key) >= 0; });
+  var otherTiles = tiles.filter(function(t){ return myAreas.indexOf(t.area_key) < 0; });
+  var sectionStyle = 'font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px;margin:0 0 10px';
+  var barStyle = 'display:inline-block;width:3px;height:12px;border-radius:2px;background:var(--gold);flex-shrink:0';
+
+  var html = '';
+  if(myTiles.length){
+    html += '<div style="'+sectionStyle+'"><span style="'+barStyle+'"></span>Your hubs</div>';
+    html += '<div class="ms-grid">' + myTiles.map(function(t){ return tileHtml(t, true); }).join('') + '</div>';
+  }
+  if(otherTiles.length){
+    var sep = myTiles.length ? 'margin-top:24px;' : '';
+    html += '<div style="'+sep+sectionStyle+'"><span style="'+barStyle+'"></span>'+(myTiles.length?'Other hubs':'Management Hubs')+'</div>';
+    html += '<div class="ms-grid">' + otherTiles.map(function(t){ return tileHtml(t, false); }).join('') + '</div>';
+  }
   wrap.innerHTML = html;
 }
 

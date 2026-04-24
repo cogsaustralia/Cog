@@ -111,6 +111,10 @@ async function boot(){
   var status = window.HUB_STATUS || 'live';
   var areaKey= window.HUB_AREA_KEY || '';
 
+  // Update splash line to show specific hub name
+  var splashLine = document.querySelector('.splash-line');
+  if(splashLine) splashLine.textContent = label;
+
   document.title = label + ' Hub — COG$ of Australia Foundation';
 
   var titleEl = el('hub-title');
@@ -135,13 +139,18 @@ async function boot(){
     return;
   }
 
+  // 5-second splash safety net — hide splash regardless of API outcome
+  var _splashTimeout = setTimeout(function(){ hideSplash(); }, 5000);
+
   try{
     var [_d] = await Promise.all([
       api('vault/hub&area='+areaKey),
       fetchResolvedQueries(),
     ]);
+    clearTimeout(_splashTimeout);
     _hubData = _d;
   }catch(e){
+    clearTimeout(_splashTimeout);
     hideSplash();
     var status = e && e.status;
     var msg    = (e&&e.message)||'';
@@ -220,9 +229,9 @@ function scrollToSection(contentId){
 function renderSummaryStats(){
   var s = _hubData.summary || {};
   var rows = [
-    {id:'stat-members', n: s.member_count||0, l:'Members'},
-    {id:'stat-threads', n: s.thread_count||0, l:'Forum threads'},
-    {id:'stat-projects',n: s.active_project_count||0, l:'Active projects'},
+    {id:'stat-members', n: s.member_count||0, l:'Members', zeroLabel:'No members yet'},
+    {id:'stat-threads', n: s.thread_count||0, l:'Forum threads', zeroLabel:'No threads yet'},
+    {id:'stat-projects',n: s.active_project_count||0, l:'Active projects', zeroLabel:'No projects yet'},
   ];
   var scrollTargets = {
     'stat-members':  'hub-roster-wrap',
@@ -232,7 +241,9 @@ function renderSummaryStats(){
   rows.forEach(function(r){
     var e = el(r.id);
     if(!e) return;
-    e.innerHTML = '<div class="hub-stat-n">'+Number(r.n).toLocaleString('en-AU')+'</div><div class="hub-stat-l">'+r.l+'</div>';
+    var displayN = r.n > 0 ? Number(r.n).toLocaleString('en-AU') : '<span style="font-size:.9rem;color:var(--text4)">'+r.zeroLabel+'</span>';
+    var arrow = '<div style="font-size:.65rem;color:var(--text4);margin-top:4px">↓</div>';
+    e.innerHTML = '<div class="hub-stat-n">'+displayN+'</div><div class="hub-stat-l">'+r.l+'</div>'+arrow;
     var targetId = scrollTargets[r.id];
     if(targetId){
       e.dataset.scroll = targetId;
