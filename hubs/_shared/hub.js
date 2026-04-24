@@ -1062,20 +1062,38 @@ function renderHubNavDropdown(){
   if(!btn || !panel) return;
 
   var currentKey = window.HUB_AREA_KEY || '';
+
+  // Two-letter abbreviations for icon squares
+  var _ABBR = {
+    operations_oversight:  'OO', governance_polls:      'RA',
+    esg_proxy_voting:      'ES', first_nations:         'FN',
+    community_projects:    'CP', technology_blockchain: 'TB',
+    financial_oversight:   'FO', place_based_decisions: 'PB',
+    education_outreach:    'EO'
+  };
+
   var html = '<div class="hub-nav-panel-hd">Management Hubs</div>';
+  html += '<div class="hub-nav-section">';
+
   _HUB_NAV_ITEMS.forEach(function(h){
     var isCurrent = h.key === currentKey;
+    var abbr = _ABBR[h.key] || h.label.slice(0,2).toUpperCase();
     html += '<button class="hub-nav-item'+(isCurrent?' current':'')+'"';
     html += ' data-hub-path="'+esc(h.path)+'" data-hub-label="'+esc(h.label)+'"';
     html += ' onclick="hubNavItemClick(this)">';
-    html += '<span class="hub-nav-item-dot"></span>';
+    html += '<span class="hub-nav-item-icon">'+abbr+'</span>';
     html += '<span class="hub-nav-item-label">'+esc(h.label)+'</span>';
+    html += '<span class="hub-nav-item-check">✓</span>';
     html += '</button>';
   });
+
+  html += '</div>';
   html += '<div class="hub-nav-panel-foot">';
   html += '<button class="hub-nav-mainspring-btn" data-hub-path="../mainspring/" data-hub-label="Mainspring" onclick="hubNavItemClick(this)">';
-  html += '⬡ View all hubs — Mainspring';
-  html += '</button></div>';
+  html += 'All hubs overview — Mainspring →';
+  html += '</button>';
+  html += '</div>';
+
   panel.innerHTML = html;
 }
 
