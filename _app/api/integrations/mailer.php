@@ -844,7 +844,7 @@ return [$html, $plain];
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;width:38%;">Value</td><td style="color:#f0b429;font-weight:700;">$' . number_format((float)($p['reservation_value'] ?? 0), 2) . '</td></tr>'
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Notice version</td><td style="color:#f0e8d6;">' . htmlspecialchars((string)($p['reservation_notice_version'] ?? '')) . '</td></tr>'
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Accepted at</td><td style="color:#f0e8d6;">' . htmlspecialchars((string)($p['reservation_notice_accepted_at'] ?? '')) . '</td></tr>'
-            . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Due today</td><td style="color:#f0b429;font-weight:700;">' . htmlspecialchars((string)($p['joining_fee_due_now'] ?? '$4.00')) . '</td></tr>'
+            . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Due today</td><td style="color:#f0b429;font-weight:700;">' . htmlspecialchars((string)($p['joining_fee_due_now'] ?? '$40.00')) . '</td></tr>'
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">PayID</td><td style="color:#f0e8d6;">0494 578 706</td></tr>'
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">Bank</td><td style="color:#f0e8d6;">Macquarie Bank</td></tr>'
             . '<tr><td style="color:#9a8a74;padding:.25rem 0;">BSB</td><td style="color:#f0e8d6;">182-182</td></tr>'
@@ -873,7 +873,7 @@ return [$html, $plain];
             . ($summary !== '' ? $summary . "\n" : '')
             . "Notice: " . (($p['reservation_notice_version'] ?? '')) . "\n"
             . "Accepted at: " . (($p['reservation_notice_accepted_at'] ?? '')) . "\n"
-            . "Due today: " . (($p['joining_fee_due_now'] ?? '$4.00')) . "\n"
+            . "Due today: " . (($p['joining_fee_due_now'] ?? '$40.00')) . "\n"
             . "PayID: 0494 578 706\n"
             . "Bank: Macquarie Bank\n"
             . "BSB: 182-182\n"
@@ -1177,6 +1177,56 @@ return [$html, $plain];
                 . "Open Mainspring: {$mainspringUrl}\n\n"
                 . "To unsubscribe, visit your Vault settings.\n";
 
+            return [$html, $plain];
+        })(),
+
+        'login_magic_link' => (function() use ($p, $site): array {
+            // Fallback render when cron picks up a queued magic-link entry.
+            // Primary path is direct smtpSendEmail() in auth.php; this only fires
+            // if that send failed and the entry was queued instead.
+            $firstName = htmlspecialchars((string)($p['first_name'] ?? explode(' ', trim((string)($p['name'] ?? 'Member')))[0]));
+            $magicUrl  = htmlspecialchars((string)($p['magic_url'] ?? $site));
+            $html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>COG$ Sign-in Link</title></head>'
+                . '<body style="margin:0;padding:0;background:#0d0f14;font-family:Arial,sans-serif">'
+                . '<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 16px">'
+                . '<table width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;background:#0d0f14;border-radius:16px;padding:40px 36px;color:#fff8e8">'
+                . '<tr><td style="text-align:center;padding-bottom:28px"><span style="font-size:26px;font-weight:700;color:#f0d18a">COG$ Independence Vault</span></td></tr>'
+                . '<tr><td><p style="font-size:17px;line-height:1.6;margin:0 0 14px">Hello ' . $firstName . ',</p>'
+                . '<p style="font-size:15px;line-height:1.7;color:rgba(255,248,232,.85);margin:0 0 28px">Tap the button below to open your Independence Vault. This link expires in <strong style="color:#f0d18a">10 minutes</strong> and can only be used once.</p>'
+                . '<div style="text-align:center;margin:0 0 28px">'
+                . '<a href="' . $magicUrl . '" style="display:inline-block;background:#f0d18a;color:#0a0804;font-size:17px;font-weight:700;padding:16px 40px;border-radius:12px;text-decoration:none">Open my Independence Vault →</a>'
+                . '</div>'
+                . '<p style="font-size:12px;color:rgba(255,248,232,.4);text-align:center;margin:0 0 8px">Or copy this link into your browser:</p>'
+                . '<p style="font-size:11px;color:rgba(255,248,232,.3);text-align:center;word-break:break-all;margin:0 0 28px">' . $magicUrl . '</p>'
+                . '<hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:0 0 20px">'
+                . '<p style="font-size:11px;color:rgba(255,248,232,.3);margin:0">If you did not request this sign-in link, you can safely ignore this email. Your vault remains secure.</p>'
+                . '</td></tr></table></td></tr></table></body></html>';
+            $plain = "COG\$ Independence Vault — sign-in link\n\nHello {$firstName},\n\n"
+                . "Click the link below to open your Independence Vault.\nExpires in 10 minutes, one use only.\n\n"
+                . (string)($p['magic_url'] ?? $site) . "\n\n"
+                . "If you did not request this, ignore this email.\n\n— COG\$ of Australia Foundation\n";
+            return [$html, $plain];
+        })(),
+
+        'otp_login' => (function() use ($p): array {
+            // Fallback render when cron picks up a queued OTP/password-reset entry.
+            // Primary path is direct smtpSendEmail() in auth.php.
+            $name   = htmlspecialchars((string)($p['name'] ?? 'Member'));
+            $otp    = htmlspecialchars((string)($p['otp'] ?? ''));
+            $gold   = '#c8973e';
+            $html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>COG$ Reset Code</title></head>'
+                . '<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">'
+                . '<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 16px">'
+                . '<table width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background:#fff;border-radius:12px;padding:36px;box-shadow:0 2px 12px rgba(0,0,0,.08)">'
+                . '<tr><td><h2 style="color:' . $gold . ';margin:0 0 4px">COG$ Independence Vault</h2>'
+                . '<p style="color:#555;margin:0 0 12px">Hello ' . $name . ',</p>'
+                . '<p style="color:#333;margin:0 0 16px">Your password reset code:</p>'
+                . '<div style="font-size:40px;font-weight:700;letter-spacing:14px;text-align:center;background:#0f1720;color:#f0d98a;padding:22px;border-radius:10px;margin:0 0 16px">' . $otp . '</div>'
+                . '<p style="color:#888;font-size:13px;margin:0 0 10px">Expires in <strong>10 minutes</strong>. One use only. Do not share this code.</p>'
+                . '<p style="color:#c00;font-size:12px;margin:0">If you did not request a password reset, contact us immediately at members@cogsaustralia.org</p>'
+                . '</td></tr></table></td></tr></table></body></html>';
+            $plain = "COG\$ password reset code: {$otp}\nExpires in 10 minutes. One use only. Do not share.\n"
+                . "If you did not request this, contact members@cogsaustralia.org immediately.\n";
             return [$html, $plain];
         })(),
 
