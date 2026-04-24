@@ -2298,6 +2298,62 @@ function handleHubAdminActivity(): void
                 }
             } catch (Throwable) {}
         }
+        // Asset book values
+        // ASX: total book value + per-holding breakdown
+        try {
+            $stmt = $db->query(
+                "SELECT asx_code, company_name, shares_held,
+                        total_book_value_cents
+                   FROM v_foundation_asx_holdings_live
+                  ORDER BY total_book_value_cents DESC"
+            );
+            $asxRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $asxTotal = 0;
+            $hubData['asx_holdings_book'] = array_map(
+                function($r) use (&$asxTotal) {
+                    $val = (int)$r['total_book_value_cents'];
+                    $asxTotal += $val;
+                    return [
+                        'ticker'     => (string)$r['asx_code'],
+                        'company'    => (string)$r['company_name'],
+                        'units'      => (string)$r['shares_held'],
+                        'book_cents' => $val,
+                    ];
+                },
+                $asxRows
+            );
+            $hubData['asx_book_total_cents'] = $asxTotal;
+        } catch (Throwable) {}
+
+        // RWA: total verified valuation + per-asset breakdown
+        try {
+            $stmt = $db->query(
+                "SELECT asset_code, pool_name, asset_type,
+                        location_summary, verified_valuation_cents,
+                        valuation_basis, valuation_date
+                   FROM v_foundation_rwa_assets_live
+                  ORDER BY verified_valuation_cents DESC"
+            );
+            $rwaRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rwaTotal = 0;
+            $hubData['rwa_assets_book'] = array_map(
+                function($r) use (&$rwaTotal) {
+                    $val = (int)$r['verified_valuation_cents'];
+                    $rwaTotal += $val;
+                    return [
+                        'code'       => (string)($r['asset_code'] ?? ''),
+                        'name'       => (string)$r['pool_name'],
+                        'type'       => (string)$r['asset_type'],
+                        'location'   => (string)($r['location_summary'] ?? ''),
+                        'val_cents'  => $val,
+                        'basis'      => (string)($r['valuation_basis'] ?? ''),
+                        'val_date'   => (string)($r['valuation_date'] ?? ''),
+                    ];
+                },
+                $rwaRows
+            );
+            $hubData['rwa_book_total_cents'] = $rwaTotal;
+        } catch (Throwable) {}
             } elseif ($area === 'place_based_decisions') {
         // 1. Active Affected Zones (governance zone type) — name + date (no member/address data)
         try {

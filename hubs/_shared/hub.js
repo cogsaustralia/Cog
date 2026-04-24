@@ -2597,6 +2597,60 @@ html += '</div>';
         html += '<div class="hub-empty" style="font-size:.82rem">No executed distribution TDRs yet.</div>';
       }
 
+      // ── ASX Holdings Book Value ─────────────────────────────────────
+      if (typeof hd.asx_book_total_cents !== 'undefined') {
+        var asxTotal = '$' + (hd.asx_book_total_cents/100).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">';
+        html += 'ASX Portfolio — book value <span class="hub-livedata-ok" style="font-size:.85rem;margin-left:6px">' + asxTotal + '</span></div>';
+        if (hd.asx_holdings_book && hd.asx_holdings_book.length) {
+          html += '<div class="hub-livedata-list">';
+          hd.asx_holdings_book.forEach(function(h) {
+            var bv = '$' + (h.book_cents/100).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+            html += '<div class="hub-livedata-item">';
+            html += '<div class="hub-livedata-item-inner">';
+            html += '<span class="hub-tdr-ref">' + _esc(h.ticker) + '</span>';
+            html += '<span class="hub-livedata-summary">' + _esc(h.company) + '</span>';
+            html += '<span class="sev-chip sev-low">' + Number(h.units).toLocaleString('en-AU') + ' units</span>';
+            html += '</div>';
+            html += '<span class="hub-livedata-ts">$' + bv.replace('$','') + '</span>';
+            html += '</div>';
+          });
+          html += '</div>';
+        } else {
+          html += '<div class="tdr-empty">No ASX holdings on record.</div>';
+        }
+      }
+
+      // ── RWA Assets Verified Valuation ───────────────────────────────
+      if (typeof hd.rwa_book_total_cents !== 'undefined') {
+        var rwaTotal = '$' + (hd.rwa_book_total_cents/100).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">';
+        html += 'Real-World Assets — verified valuation <span class="hub-livedata-ok" style="font-size:.85rem;margin-left:6px">' + rwaTotal + '</span></div>';
+        if (hd.rwa_assets_book && hd.rwa_assets_book.length) {
+          html += '<div class="hub-livedata-list">';
+          hd.rwa_assets_book.forEach(function(a) {
+            var av = '$' + (a.val_cents/100).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+            html += '<div class="hub-livedata-item">';
+            html += '<div class="hub-livedata-item-inner">';
+            html += '<span class="hub-livedata-type">' + _esc(a.type.replace(/_/g,' ')) + '</span>';
+            html += '<span class="hub-livedata-summary">' + _esc(a.name) + '</span>';
+            if (a.location) html += '<span class="sev-chip sev-low">' + _esc(a.location) + '</span>';
+            html += '</div>';
+            html += '<span class="hub-livedata-ts">' + (a.val_cents > 0 ? '$' + av.replace('$','') : '—') + '</span>';
+            html += '</div>';
+            if (a.basis || a.val_date) {
+              html += '<div style="font-size:.7rem;color:var(--text4);padding:0 10px 6px">';
+              if (a.basis)    html += 'Basis: ' + _esc(a.basis);
+              if (a.val_date) html += (a.basis ? ' · ' : '') + 'Valued: ' + _esc(a.val_date);
+              html += '</div>';
+            }
+          });
+          html += '</div>';
+        } else {
+          html += '<div class="tdr-empty">No RWA assets on record.</div>';
+        }
+      }
+
       html += '</div>';
     }
 
