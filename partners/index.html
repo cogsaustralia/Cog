@@ -339,26 +339,29 @@
     .tf-tag{font-size:.72rem;color:var(--muted);border:1px solid var(--line);border-radius:12px;padding:2px 8px}
 
     /* Trust flow steps */
-    .tf-step{border-radius:12px;border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:border-color .2s}
-    .tf-step:hover{border-color:rgba(240,209,138,.25)}
-    .tf-step.open{border-color:rgba(240,209,138,.3)}
-    .tf-step-hd{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(255,255,255,.02)}
-    .tf-num{width:24px;height:24px;border-radius:50%;background:rgba(240,209,138,.12);color:var(--gold-1);font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .tf-step{border-radius:12px;border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .15s}
+    .tf-step:hover{border-color:rgba(240,209,138,.28);transform:translateY(-1px)}
+    .tf-step.open{border-color:rgba(240,209,138,.45);box-shadow:0 0 0 3px rgba(240,209,138,.07)}
+    .tf-step.first-pulse{animation:tf-step-glow 1.8s ease 0.5s 3}
+    .tf-step-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(255,255,255,.02)}
+    .tf-num{position:relative;width:28px;height:28px;border-radius:50%;background:rgba(240,209,138,.12);color:var(--gold-1);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .tf-step.open .tf-num{background:var(--gold-2);color:#1a0f00}
-    .tf-step-title{flex:1;font-size:.82rem;font-weight:500;color:var(--text)}
-    .tf-arrow{color:var(--muted);font-size:.7rem;flex-shrink:0;transition:transform .2s}
+    .tf-visited-check{position:absolute;top:-4px;right:-4px;font-size:.48rem;background:var(--ok);color:#000;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
+    .tf-step-title{flex:1;font-size:.92rem;font-weight:500;color:var(--text)}
+    .tf-arrow{color:var(--muted);font-size:.76rem;flex-shrink:0;transition:transform .2s}
     .tf-step.open .tf-arrow{transform:rotate(0)}
-    .tf-step-body{display:none;padding:0 16px 14px}
+    .tf-step-body{display:none;padding:0 16px 16px;animation:tf-entry .22s ease}
     .tf-step.open .tf-step-body{display:block}
     .tf-note{font-size:.82rem;color:var(--muted);line-height:1.72;margin-bottom:8px}
     .tf-detail{font-size:.80rem;color:rgba(210,185,130,.45);line-height:1.55;margin:4px 0 0}
-    .tf-connector{text-align:center;color:rgba(240,209,138,.2);font-size:.8rem;line-height:1;padding:2px 0}
-    .tf-next{margin-top:12px;padding:8px 14px;border-radius:8px;background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.15);color:var(--gold-2);font-size:.72rem;font-weight:500;text-align:center;cursor:pointer;transition:background .2s}
-    .tf-next:hover{background:rgba(240,209,138,.12)}
+    .tf-connector{text-align:center;color:rgba(240,209,138,.3);font-size:.92rem;line-height:1;padding:5px 0;user-select:none;transition:color .3s}
+    .tf-step.open + .tf-connector{color:rgba(240,209,138,.7)}
+    .tf-next{margin-top:14px;padding:11px 18px;border-radius:10px;background:rgba(240,209,138,.09);border:1.5px solid rgba(240,209,138,.3);color:var(--gold-1);font-size:.92rem;font-weight:700;text-align:left;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .2s,transform .15s,box-shadow .2s}
+    .tf-next:hover{background:rgba(240,209,138,.16);transform:translateX(4px);box-shadow:0 2px 14px rgba(240,180,30,.15)}
     .tf-split-row{display:flex;align-items:center;gap:8px;margin:5px 0}
     .tf-pct{min-width:30px;font-size:.78rem;font-weight:600;color:var(--text);text-align:right}
     .tf-bar{flex:1;height:7px;border-radius:4px}
-    .tf-dest{font-size:.68rem;color:var(--muted);flex:2}
+    .tf-dest{font-size:.76rem;color:var(--muted);flex:2}
     .tf-callout{margin-top:10px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);font-size:.7rem;color:rgba(210,185,130,.45);line-height:1.55}
 
     /* Logout bar */
@@ -434,6 +437,15 @@
 
     /* ── Vault pill payment overlay ── */
     .vault-pill-wrap{position:relative;display:block;width:100%;padding-top:14px;margin-top:2px}
+    /* ── Sticky payment pill ── */
+    #sticky-pay-pill{position:fixed;top:0;left:0;right:0;z-index:8500;display:none;background:linear-gradient(135deg,rgba(180,80,10,.97),rgba(140,50,5,.95));border-bottom:2px solid rgba(240,160,40,.55);padding:11px 20px;box-shadow:0 4px 28px rgba(0,0,0,.45)}
+    #sticky-pay-pill.visible{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;animation:sticky-pill-in .2s ease}
+    .spp-left{display:flex;align-items:center;gap:10px}
+    .spp-icon{font-size:1.3rem;flex-shrink:0}
+    .spp-text{font-size:.96rem;font-weight:700;color:#fff8e8;letter-spacing:.01em}
+    .spp-sub{font-size:.80rem;color:rgba(255,248,232,.65);margin-top:1px}
+    .spp-btn{flex-shrink:0;background:#f0d18a;color:#1a0800;font-weight:700;font-size:.92rem;padding:9px 20px;border-radius:9px;border:none;cursor:pointer;font-family:var(--serif);white-space:nowrap;transition:opacity .15s}
+    .spp-btn:hover{opacity:.88}
     .vault-pay-overlay{
       position:absolute;top:-11px;left:50%;transform:translateX(-50%);
       white-space:nowrap;
@@ -599,6 +611,10 @@
     .hub-card-bd{padding:14px 18px;animation:hubFadeIn .22s ease}
     .hub-card.collapsed .hub-card-bd{display:none}
     @keyframes hubFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+    @keyframes jvpa-pulse-bar{0%,100%{opacity:.7}50%{opacity:1}}
+    @keyframes tf-step-glow{0%,100%{box-shadow:0 0 0 0 rgba(240,209,138,0)}50%{box-shadow:0 0 0 7px rgba(240,209,138,.15)}}
+    @keyframes tf-entry{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+    @keyframes sticky-pill-in{from{transform:translateY(-100%)}to{transform:translateY(0)}}
     /* Identity rows */
     .hub-id-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap}
     .hub-id-row:last-child{border-bottom:none}
@@ -839,14 +855,15 @@
             </div>
           </div>
 
-          <!-- ══ JVPA signing banner — shown when needs_signing is true ══ -->
-          <div id="jvpa-banner" style="display:none;background:rgba(240,209,138,.08);border:1.5px solid rgba(240,209,138,.35);border-radius:14px;padding:18px 20px;margin-bottom:4px">
-            <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
-              <div style="font-size:1.6rem;line-height:1">📄</div>
+          <!-- ══ JVPA signing banner — shown when needs_signing is true, persists until executed ══ -->
+          <div id="jvpa-banner" style="display:none;background:linear-gradient(135deg,rgba(240,160,30,.18),rgba(200,100,20,.12));border:2px solid rgba(240,160,30,.65);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:0 0 0 4px rgba(240,160,30,.06),0 8px 32px rgba(200,100,20,.15);position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(240,160,30,.9),rgba(240,200,80,.7),rgba(240,160,30,.9));animation:jvpa-pulse-bar 2.4s ease-in-out infinite"></div>
+            <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
+              <div style="font-size:2rem;line-height:1;flex-shrink:0;margin-top:2px">⚠</div>
               <div style="flex:1;min-width:220px">
-                <div style="font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--gold-1);margin-bottom:5px">Joint Venture Agreement — action required</div>
-                <div id="jvpa-banner-desc" style="font-size:.92rem;color:var(--text2);line-height:1.6;margin-bottom:12px">The current Joint Venture Participation Agreement requires your electronic acceptance.</div>
-                <button type="button" class="btn-gold" style="font-size:.92rem;padding:10px 20px;border-radius:10px" onclick="openJvpaModal()">Read &amp; sign the agreement →</button>
+                <div style="font-family:var(--serif);font-size:1.15rem;font-weight:700;color:#f0c060;margin-bottom:6px;letter-spacing:-.01em">Action required — Joint Venture Agreement</div>
+                <div id="jvpa-banner-desc" style="font-size:.98rem;color:rgba(240,220,160,.85);line-height:1.65;margin-bottom:16px">The current Joint Venture Participation Agreement requires your electronic acceptance before you can participate in governance.</div>
+                <button type="button" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#f0c030,#e08820);color:#1a0800;font-weight:700;font-size:1rem;padding:13px 26px;border-radius:12px;border:none;cursor:pointer;font-family:var(--serif);box-shadow:0 4px 20px rgba(240,160,30,.35);transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 28px rgba(240,160,30,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(240,160,30,.35)'" onclick="openJvpaModal()">Read &amp; sign the agreement <span style="font-size:1.2em">→</span></button>
               </div>
             </div>
           </div>
@@ -944,10 +961,10 @@
 
           <!-- Trust architecture — step-by-step walkthrough -->
           <div class="trust-flow" style="max-width:640px;margin:0 auto 28px">
-            <div style="font-size:.88rem;color:var(--muted);margin-bottom:14px;text-align:center">Follow the flow — click each step to understand how the structure works</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(240,209,138,.7);animation:payPulse 2s ease-in-out infinite;flex-shrink:0"></span><span style="font-size:1rem;color:var(--text2);font-weight:500">Follow the flow — tap each step to learn how the structure works</span></div>
 
             <!-- Step 1 -->
-            <div class="tf-step open" id="tf-step-1" onclick="openFlowStep(1)">
+            <div class="tf-step open first-pulse" id="tf-step-1" onclick="openFlowStep(1)">
               <div class="tf-step-hd"><span class="tf-num">1</span><span class="tf-step-title">The Members Asset Pool — Sub-Trust A</span><span class="tf-arrow">▾</span></div>
               <div class="tf-step-body" id="tf-body-1">
                 <p class="tf-note">Sub-Trust A is the engine room. It holds every ASX share and Real World Asset the community owns — registered directly on the CHESS Register in the Foundation's name. It is also the sole minting engine for every token class. Nothing leaves. Assets are held in perpetuity with no power of sale.</p>
@@ -1528,6 +1545,18 @@
       </section>
 
     
+  <!-- ── Sticky Payment Pill — payment-due only, sticks on scroll ── -->
+  <div id="sticky-pay-pill" role="alert" aria-live="polite">
+    <div class="spp-left">
+      <span class="spp-icon">💳</span>
+      <div>
+        <div class="spp-text" id="spp-label">Payment due</div>
+        <div class="spp-sub">Tap to complete your joining payment</div>
+      </div>
+    </div>
+    <button type="button" class="spp-btn" onclick="handleVaultEntry(event)">Pay now →</button>
+  </div>
+
   <!-- ── Payment Intercept Modal ── -->
   <div class="pay-intercept-modal" id="pay-intercept-modal">
     <div class="pay-intercept-box">
@@ -1755,6 +1784,11 @@ function enterCommunity(data){
     }
   }
 
+  // ── Activate sticky payment pill when payment is due ──
+  if(typeof window.setStickyPayDue === 'function'){
+    window.setStickyPayDue(_snftDue || _secDue, _dueLabel || 'Payment due');
+  }
+
   // ── If payment is due, inject a visible Pay now strip below the hero vault button ──
   if((_snftDue || _secDue) && !document.getElementById('hero-pay-strip')){
     var _stripText2 = _snftDue && !_secDue
@@ -1915,19 +1949,70 @@ window.toggleExpand = function(btn){
 
 /* ── Trust flow step-by-step ── */
 window.openFlowStep = function(n){
+  var _visited = window._tfVisited || (window._tfVisited = {});
   for(var i=1;i<=5;i++){
     var step = document.getElementById('tf-step-'+i);
     if(!step) continue;
     if(i===n){
+      var willOpen = !step.classList.contains('open');
       step.classList.toggle('open');
-      if(step.classList.contains('open')){
+      if(willOpen){
+        _visited[i] = true;
+        step.classList.remove('first-pulse'); // stop pulse once interacted
+        // Remove old check, add fresh one to the num circle if previously visited
         step.scrollIntoView({behavior:'smooth',block:'nearest'});
       }
     } else {
+      var wasOpen = step.classList.contains('open');
       step.classList.remove('open');
+      // Add visited checkmark when closing a step
+      if(wasOpen && !_visited[i]){ _visited[i] = true; }
+      if(_visited[i]){
+        var numEl = step.querySelector('.tf-num');
+        if(numEl && !numEl.querySelector('.tf-visited-check')){
+          var chk = document.createElement('span');
+          chk.className = 'tf-visited-check';
+          chk.textContent = '✓';
+          numEl.appendChild(chk);
+        }
+      }
     }
   }
 };
+
+/* ── Sticky payment pill — shown only when payment is due and hero out of view ── */
+(function(){
+  var _payDue = false;
+  var _heroVisible = true;
+  var _stickyPill = document.getElementById('sticky-pay-pill');
+  var _sppLabel   = document.getElementById('spp-label');
+
+  function updateStickyPill(){
+    if(!_stickyPill) return;
+    if(_payDue && !_heroVisible){
+      _stickyPill.classList.add('visible');
+    } else {
+      _stickyPill.classList.remove('visible');
+    }
+  }
+
+  // IntersectionObserver on the hero section
+  var hero = document.querySelector('section.page-hero');
+  if(hero && typeof IntersectionObserver !== 'undefined'){
+    var obs = new IntersectionObserver(function(entries){
+      _heroVisible = entries[0].isIntersecting;
+      updateStickyPill();
+    }, {threshold: 0.05});
+    obs.observe(hero);
+  }
+
+  // Expose setter so payment logic can activate it
+  window.setStickyPayDue = function(isDue, label){
+    _payDue = !!isDue;
+    if(_sppLabel && label) _sppLabel.textContent = label;
+    updateStickyPill();
+  };
+})();
 
 /* ── Share / invite ── */
 var _partnerInviteShareUrl = null;
