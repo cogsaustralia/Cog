@@ -4087,8 +4087,8 @@ window.updateNextStep = function(payDue, jvpaDue) {
 
   if (jvpaDue) {
     icon.textContent   = '✍';
-    label.textContent  = 'Action required';
-    action.textContent = 'Sign the Joint Venture Participation Agreement to activate governance rights.';
+    label.textContent  = 'Sign the Joint Venture Agreement';
+    action.textContent = 'Your formal acceptance activates governance rights and confirms your entry into the partnership.';
     btn.textContent    = 'Sign now →';
     btn.onclick        = function(){ openJvpaModal(); };
   } else if (payDue) {
