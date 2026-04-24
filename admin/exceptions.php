@@ -54,9 +54,9 @@ $page    = max(1, (int)($_GET['page'] ?? 1));
 $openCount     = 0; $reviewCount = 0; $resolvedCount = 0; $criticalCount = 0;
 if (ops_table_exists($pdo, 'admin_exceptions')) {
     $openCount     = (int)ops_fetch_one($pdo, "SELECT COUNT(*) AS c FROM admin_exceptions WHERE status='open'")['c'];
-    $reviewCount   = (int)ops_fetch_one($pdo, "SELECT COUNT(*) AS c FROM admin_exceptions WHERE status='in_review'")['c'];
+    $reviewCount   = (int)ops_fetch_one($pdo, "SELECT COUNT(*) AS c FROM admin_exceptions WHERE status='in_progress'")['c'];
     $resolvedCount = (int)ops_fetch_one($pdo, "SELECT COUNT(*) AS c FROM admin_exceptions WHERE status='resolved'")['c'];
-    $criticalCount = (int)ops_fetch_one($pdo, "SELECT COUNT(*) AS c FROM admin_exceptions WHERE status<>'resolved' AND severity IN('critical','high')")['c'];
+    $criticalCount = (int)ops_fetch_one($pdo, "SELECT COUNT(*) AS c FROM admin_exceptions WHERE status<>'resolved' AND severity = 'high'")['c'];
 }
 
 $totalExceptions = $openCount + $reviewCount + $resolvedCount;
@@ -64,7 +64,7 @@ $totalPages      = max(1, (int)ceil($totalExceptions / $perPage));
 $page            = min($page, $totalPages);
 $offset          = ($page - 1) * $perPage;
 
-$rows = ops_table_exists($pdo, 'admin_exceptions') ? ops_fetch_all($pdo, 'SELECT ae.*, m.full_name, m.member_number FROM admin_exceptions ae LEFT JOIN members m ON m.id = ae.member_id ORDER BY FIELD(ae.status, "open", "in_review", "resolved"), FIELD(ae.severity,"critical","high","medium","low"), ae.id DESC LIMIT ' . $perPage . ' OFFSET ' . $offset) : [];
+$rows = ops_table_exists($pdo, 'admin_exceptions') ? ops_fetch_all($pdo, 'SELECT ae.*, m.full_name, m.member_number FROM admin_exceptions ae LEFT JOIN members m ON m.id = ae.member_id ORDER BY FIELD(ae.status, "open", "in_progress", "resolved"), FIELD(ae.severity,"high","medium","low"), ae.id DESC LIMIT ' . $perPage . ' OFFSET ' . $offset) : [];
 
 if (!function_exists('render_pager')) {
     function render_pager(string $base, int $page, int $totalPages, int $total, string $label = 'result'): string {
@@ -89,7 +89,7 @@ if (!function_exists('render_pager')) {
 
 $statusItems = [
     ['label' => 'open', 'body' => 'New or unresolved issue. These should be triaged first.'],
-    ['label' => 'in_review', 'body' => 'Under investigation. Evidence or operator action is still being gathered.'],
+    ['label' => 'in_progress', 'body' => 'Under investigation. Evidence or operator action is still being gathered.'],
     ['label' => 'resolved', 'body' => 'Closed with a clear outcome and resolution note in the record.'],
     ['label' => 'critical / high severity', 'body' => 'Operational, legal, or ledger-impacting items that should be prioritised.'],
 ];
@@ -145,12 +145,12 @@ ops_admin_help_assets_once();
       // Stat counts are pre-computed from DB above — already available as $openCount etc.
     ?>
     <div class="exception-stat"><div class="k">Open exceptions</div><strong><?= (int)$openCount ?></strong></div>
-    <div class="exception-stat"><div class="k">In review</div><strong><?= (int)$reviewCount ?></strong></div>
+    <div class="exception-stat"><div class="k">In progress</div><strong><?= (int)$reviewCount ?></strong></div>
     <div class="exception-stat"><div class="k">Resolved</div><strong><?= (int)$resolvedCount ?></strong></div>
-    <div class="exception-stat"><div class="k">Critical / high still open</div><strong><?= (int)$criticalCount ?></strong></div>
+    <div class="exception-stat"><div class="k">High severity still open</div><strong><?= (int)$criticalCount ?></strong></div>
   </div>
   <div class="table-wrap" style="margin-top:16px"><table>
-    <thead><tr><th>ID</th><th>Type<?= ops_admin_help_button('Exception type', 'The category of issue. Use it to see whether the problem is operational, compliance-related, wallet-related, or another tracked exception class.') ?></th><th>Severity<?= ops_admin_help_button('Severity', 'Severity indicates operator priority. Critical and high items should be addressed before low-risk informational issues.') ?></th><th>Member<?= ops_admin_help_button('Linked member', 'If a specific Member is affected, the row will show the linked person and their Member number.') ?></th><th>Summary<?= ops_admin_help_button('Summary and details', 'The summary should state the issue plainly. The details line should explain context, evidence, or what still needs to be checked.') ?></th><th>Status<?= ops_admin_help_button('Exception status', 'Open means unresolved, in_review means actively being investigated, and resolved means the issue has been closed.') ?></th><th>Updated</th></tr></thead>
+    <thead><tr><th>ID</th><th>Type<?= ops_admin_help_button('Exception type', 'The category of issue. Use it to see whether the problem is operational, compliance-related, wallet-related, or another tracked exception class.') ?></th><th>Severity<?= ops_admin_help_button('Severity', 'Severity indicates operator priority. Critical and high items should be addressed before low-risk informational issues.') ?></th><th>Member<?= ops_admin_help_button('Linked member', 'If a specific Member is affected, the row will show the linked person and their Member number.') ?></th><th>Summary<?= ops_admin_help_button('Summary and details', 'The summary should state the issue plainly. The details line should explain context, evidence, or what still needs to be checked.') ?></th><th>Status<?= ops_admin_help_button('Exception status', 'Open means unresolved, in_progress means actively being investigated, and resolved means the issue has been closed.') ?></th><th>Updated</th></tr></thead>
     <tbody>
     <?php if(!$rows): ?><tr><td colspan="7">No exceptions found.</td></tr><?php endif; ?>
     <?php foreach($rows as $r): ?>
@@ -181,7 +181,7 @@ ops_admin_help_assets_once();
       <div class="field"><label>Exception ID (leave blank for new)<?= ops_admin_help_button('Exception ID', 'Enter an existing ID only when you intend to update a current exception record. Leave blank to create a new one.') ?></label><input type="number" name="exception_id" min="0"></div>
       <div class="field"><label>Type<?= ops_admin_help_button('Type', 'Choose the best available category so reporting and filtering stay meaningful.') ?></label><select name="exception_type"><?php foreach(ops_exception_types() as $t): ?><option value="<?= ops_h($t) ?>"><?= ops_h($t) ?></option><?php endforeach; ?></select></div>
       <div class="field"><label>Severity<?= ops_admin_help_button('Severity', 'Use severity to show operator urgency, not just technical complexity.') ?></label><select name="severity"><?php foreach(ops_exception_severities() as $s): ?><option value="<?= ops_h($s) ?>"><?= ops_h($s) ?></option><?php endforeach; ?></select></div>
-      <div class="field"><label>Status<?= ops_admin_help_button('Status', 'Move to resolved only after the underlying issue has truly been fixed or formally waived.') ?></label><select name="status"><option value="open">open</option><option value="in_review">in_review</option><option value="resolved">resolved</option></select></div>
+      <div class="field"><label>Status<?= ops_admin_help_button('Status', 'Move to resolved only after the underlying issue has truly been fixed or formally waived.') ?></label><select name="status"><option value="open">open</option><option value="in_progress">in_progress</option><option value="resolved">resolved</option></select></div>
       <div class="field"><label>Member<?= ops_admin_help_button('Member', 'Attach a Member when the exception is tied to a specific person, vault, or account path.') ?></label><select name="member_id"><option value="0">— none —</option><?php foreach($members as $m): ?><option value="<?= (int)$m['id'] ?>"><?= ops_h($m['full_name'].' · '.$m['member_number']) ?></option><?php endforeach; ?></select></div>
       <div class="field"><label>Summary<?= ops_admin_help_button('Summary', 'Write the issue in one clear sentence.') ?></label><input name="summary"></div>
       <div class="field full"><label>Details<?= ops_admin_help_button('Details', 'Context, evidence, what was checked, and what page or workflow is affected.') ?></label><textarea name="details"></textarea></div>
