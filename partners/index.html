@@ -914,7 +914,7 @@
                 <span class="hub-card-ico">&#10022;</span>
                 <span class="hub-card-title">COG$ Management</span>
                 <span class="hub-card-badge" id="hub-gov-badge" style="display:none"></span>
-                <a class="hub-card-link" href="../wallets/member.html" onclick="event.stopPropagation();hubCoinTransition('../wallets/member.html');return false;">Vote in vault &rarr;</a>
+                <a class="hub-card-link" href="../wallets/member.html" onclick="event.stopPropagation();navigateToVault();return false;">Vote in vault ›</a>
                 <span class="hub-card-chevron">&#9660;</span>
               </div>
               <div class="hub-card-bd" id="hub-governance-bd">
@@ -928,7 +928,7 @@
                 <span class="hub-card-ico">&#9685;</span>
                 <span class="hub-card-title">Communications</span>
                 <span class="hub-card-badge" id="hub-comms-badge" style="display:none"></span>
-                <a class="hub-card-link" href="../wallets/member.html" onclick="event.stopPropagation();hubCoinTransition('../wallets/member.html');return false;">View all in vault &rarr;</a>
+                <a class="hub-card-link" href="../wallets/member.html" onclick="event.stopPropagation();navigateToVault();return false;">View all in vault ›</a>
                 <span class="hub-card-chevron">&#9660;</span>
               </div>
               <div class="hub-card-bd" id="hub-comms-bd">
@@ -1843,7 +1843,7 @@ function enterCommunity(data){
     strip.id = 'vault-pay-strip';
     strip.className = 'vault-pay-strip';
     strip.innerHTML = '<span>' + _stripText + '</span>'
-      + '<a href="../wallets/member.html" onclick="coinTransition(this);return false;">Pay now ›</a>';
+      + '<button style="flex-shrink:0;padding:7px 16px;border-radius:8px;background:linear-gradient(135deg,#f0a030,#c97020);color:#fff;font-size:.76rem;font-weight:700;border:none;cursor:pointer;white-space:nowrap" onclick="navigateToVault()">Pay now ›</button>';
     wrap.appendChild(strip);
   }
 
@@ -2521,17 +2521,33 @@ function getOutstandingPayments(d) {
   return {giftItems:giftItems,kidsItems:kidsItems,allItems:allItems,total:total,lines:lines};
 }
 
-function handleVaultEntry(e){
-  if(e) e.preventDefault();
-  // Only intercept when payment status is explicitly known and not paid.
-  // Fail open if status not yet loaded — vault pay-banner handles it.
-  var status = window._partnerPaymentStatus;
-  if(status && status.toLowerCase() !== 'paid'){
+/* ── navigateToVault: single routing function for all vault navigation ──
+   SNFT unpaid  → openPayIntercept() (Stripe buy button inline)
+   Secondary due → navigate to vault with ?pay=1 (auto-opens modal on arrival)
+   All paid      → navigate directly
+──────────────────────────────────────────────────────────────────────── */
+function navigateToVault(){
+  var snftStatus = (window._partnerPaymentStatus || '');
+  var snftUnpaid = snftStatus && snftStatus.toLowerCase() !== 'paid';
+  var secOp = (typeof getOutstandingPayments === 'function')
+    ? getOutstandingPayments(window._communityData || {})
+    : { allItems: [] };
+  var secDue = secOp.allItems.length > 0;
+
+  if(snftUnpaid){
+    // SNFT outstanding — show the Stripe intercept modal (existing flow)
     openPayIntercept();
     return;
   }
-  // Navigate directly — no overlay, no timing issues
-  window.location.href = '../wallets/member.html';
+  // Navigate to vault — pass ?pay=1 if secondary payments are outstanding
+  // so the vault auto-opens the outstanding modal immediately on load
+  var url = '../wallets/member.html' + (secDue ? '?pay=1' : '');
+  window.location.href = url;
+}
+
+function handleVaultEntry(e){
+  if(e) e.preventDefault();
+  navigateToVault();
 }
 
 function coinTransitionAndGo(url){
@@ -2673,7 +2689,7 @@ function renderHubIdentity(data){
 
   /* ── Vault entry link — top of card ── */
   html += '<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07)">'
-    + '<a href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" '
+    + '<a href="../wallets/member.html" onclick="navigateToVault();return false;" '
     + 'style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(240,190,80,.08),rgba(200,130,20,.04));border:1px solid rgba(240,190,80,.2);border-radius:10px;text-decoration:none;transition:border-color .15s" '
     + 'onmouseover="this.style.borderColor=\'rgba(240,190,80,.45)\'" onmouseout="this.style.borderColor=\'rgba(240,190,80,.2)\'">'
     + '<img src="../assets/cogs_coin_web.png" alt="" style="width:36px;height:36px;border-radius:50%;flex-shrink:0">'
@@ -2832,7 +2848,7 @@ function renderHubGovernance(data){
         +   '<span class="hub-tally-pill hub-tally-no">No &middot; '+noV+'</span>'
         +   (mv ? '<span class="hub-tally-pill hub-tally-neutral">&#10003; Voted '+esc2(mv.choice||'')+'</span>' : '')
         + '</div>'
-        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" style="font-size:.74rem">Vote in vault &rarr;</a>'
+        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="navigateToVault();return false;" style="font-size:.74rem">Vote in vault ›</a>'
         + '</div>';
     }).join('');
   }
@@ -2847,14 +2863,14 @@ function renderHubGovernance(data){
         + '<div class="hub-poll-meta"><span class="hub-chip hub-chip-amber">Initiation in progress</span>'
         + '<span style="font-size:.68rem;color:var(--muted)">'+(p.initiator_count||0)+' / '+(p.initiation_threshold||0)+' Members</span></div>'
         + '<div class="hub-poll-title">'+esc2(p.title||'')+'</div>'
-        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" style="font-size:.74rem">'+(joined?'View in vault':'Join in vault')+' &rarr;</a>'
+        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="navigateToVault();return false;" style="font-size:.74rem">'+(joined?'View in vault ›':'Join in vault ›')+'</a>'
         + '</div>';
     }).join('');
     html += activeProps.map(function(p){
       return '<div class="hub-poll-item">'
         + '<div class="hub-poll-meta"><span class="hub-chip hub-chip-amber">'+esc2(p.status||'Proposal')+'</span></div>'
         + '<div class="hub-poll-title">'+esc2(p.title||'')+'</div>'
-        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="hubCoinTransition(\'../wallets/member.html\');return false;" style="font-size:.74rem">View in vault &rarr;</a>'
+        + '<a class="hub-btn hub-btn-ghost" href="../wallets/member.html" onclick="navigateToVault();return false;" style="font-size:.74rem">View in vault ›</a>'
         + '</div>';
     }).join('');
   }
@@ -3069,10 +3085,10 @@ async function hubOrderKids(){
   }
 }
 function hubPayNow(){
-  hubCoinTransition('../wallets/member.html');
+  navigateToVault();
 }
 function hubPayKidsCard(){
-  hubCoinTransition('../wallets/member.html');
+  navigateToVault();
 }
 function hubCopyText(text, btn){
   navigator.clipboard.writeText(text).then(function(){

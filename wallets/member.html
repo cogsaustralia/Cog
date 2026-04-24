@@ -1688,6 +1688,31 @@ function openVault(d){
   // Update outstanding secondary payment UI after all data is loaded
   if(typeof updateOutstandingUI === 'function') updateOutstandingUI(d);
 
+  // ?pay=1 — navigated from partners hub with outstanding payment
+  // Auto-open the correct payment modal after a brief render settle
+  (function(){
+    var _urlPay = new URLSearchParams(window.location.search).get('pay');
+    if(_urlPay !== '1') return;
+    // Clean the param so a refresh doesn't re-trigger
+    try{
+      var _u = new URL(window.location.href);
+      _u.searchParams.delete('pay');
+      window.history.replaceState({}, '', _u.toString());
+    }catch(e){}
+    var _paid = (d.payment_status||'pending').toLowerCase() === 'paid';
+    var _secOp = (typeof getOutstandingPayments === 'function') ? getOutstandingPayments(d) : {allItems:[]};
+    var _hasSec = _secOp.allItems.length > 0;
+    setTimeout(function(){
+      if(!_paid){
+        // SNFT outstanding — open SNFT pay modal
+        if(typeof openPayModal === 'function') openPayModal();
+      } else if(_hasSec){
+        // Secondary payments outstanding — open outstanding modal
+        if(typeof openOutstandingModal === 'function') openOutstandingModal();
+      }
+    }, 600);
+  })();
+
   // Auto-open sections that need attention
   if((d.open_polls||0) > 0 || (d.open_poll_initiations||0) > 0){
     el('s-polls').classList.add('open');
