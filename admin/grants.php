@@ -206,6 +206,12 @@ $fnPct = $totalGrantsCents > 0 ? round($fnGrantsCents / $totalGrantsCents * 100,
 $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
 
 ob_start();
+<?php
+require_once __DIR__ . '/includes/tdr_gate.php';
+tdr_gate($pdo, [
+    'TDR-20260425-009', // Sub-Trust C bank account
+    'TDR-20260425-011', // ACNC registration resolution
+], 'Sub-Trust C Grants');
 ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_info_panel('Sub-Trust C grants', 'What this page does', 'Use this page to create, review, and manage community grants paid from Sub-Trust C. At least 30% of all grants must go to First Nations beneficiaries per the trust deed.', [

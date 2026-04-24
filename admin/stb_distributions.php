@@ -222,6 +222,12 @@ $stcUnitsCalc = (int)(stb_ok($pdo,
 $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
 
 ob_start();
+<?php
+require_once __DIR__ . '/includes/tdr_gate.php';
+tdr_gate($pdo, [
+    'TDR-20260425-006', // Sub-Trust B bank account
+    'TDR-20260425-008', // Beneficial Unit Register
+], 'Sub-Trust B Distributions');
 ?>
 <div class="card"><div class="card-head"><h1 style="margin:0">Sub-Trust B Distributions</h1></div><div class="card-body" style="padding-top:6px"><p class="muted small" style="margin:0">Sub-Trust B distribution runs — 100% of STB inflows must be distributed within 60 days.</p></div></div>
 

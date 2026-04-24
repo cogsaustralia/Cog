@@ -611,13 +611,52 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
 <!-- ── Trustee Decision Records ────────────────────────────────────────────── -->
 <?php
 // Load all TDRs grouped by sub_trust_context
+// Priority map: lower number = higher priority
+$tdrPriority = [
+    // Tier 1 — Immediate / blocking
+    'TDR-20260422-001' => 1,  // A-1 Sub-Trust A bank account (executed)
+    'TDR-20260425-002' => 2,  // A-2 CHESS Registration Policy
+    'TDR-20260425-003' => 3,  // A-3 Ratification of LGM holdings
+    'TDR-20260425-004' => 4,  // A-4 Stockbroker appointment
+    'TDR-20260425-006' => 5,  // B-1 Sub-Trust B bank account
+    'TDR-20260425-009' => 6,  // C-1 Sub-Trust C bank account
+    'TDR-20260425-013' => 7,  // X-1 Indemnity & cost allocation policy
+    // Tier 2 — Before Governance Foundation Day (14 May 2026)
+    'TDR-20260425-005' => 8,  // A-5 Non-MIS Sub-Trust A
+    'TDR-20260425-007' => 9,  // B-2 Non-MIS Sub-Trust B
+    'TDR-20260425-008' => 10, // B-3 Beneficial Unit Register
+    'TDR-20260425-010' => 11, // C-2 Non-MIS Sub-Trust C
+    'TDR-20260425-011' => 12, // C-3 ACNC Registration
+    'TDR-20260425-012' => 13, // C-4 DGR Application
+    'TDR-20260425-014' => 14, // X-2 Inaugural Meeting timetable
+    'TDR-20260425-015' => 15, // X-3 Auditor appointment
+    // Tier 3 — Before Expansion Day
+    'TDR-20260425-016' => 16, // X-4 Privacy policy
+    'TDR-20260425-017' => 17, // X-5 AML/CTF procedure
+];
+$tdrTierLabels = [
+    1  => '🔴 Tier 1 — Immediate',
+    8  => '🟡 Tier 2 — Before Foundation Day',
+    16 => '🟢 Tier 3 — Before Expansion Day',
+    99 => '⚪ Tier 4 — Event-triggered',
+];
+
 $tdrStmt = $pdo->query(
     "SELECT decision_uuid, decision_ref, sub_trust_context, decision_category,
             title, effective_date, status
      FROM trustee_decisions
-     ORDER BY sub_trust_context, status DESC, effective_date ASC"
+     ORDER BY sub_trust_context, decision_ref ASC"
 );
 $allTdrs   = $tdrStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Sort by priority within each sub-trust group
+usort($allTdrs, function($a, $b) use ($tdrPriority) {
+    $pa = $tdrPriority[$a['decision_ref']] ?? 99;
+    $pb = $tdrPriority[$b['decision_ref']] ?? 99;
+    if ($pa !== $pb) return $pa - $pb;
+    return strcmp($a['decision_ref'], $b['decision_ref']);
+});
+
 $tdrGrouped = [];
 foreach ($allTdrs as $tdr) {
     $tdrGrouped[$tdr['sub_trust_context']][] = $tdr;
@@ -670,6 +709,9 @@ $tdrStatusBadge = [
       <tr>
         <th style="text-align:left;padding:6px 10px;color:var(--gold);font-size:.7rem;
                    text-transform:uppercase;letter-spacing:.07em;background:var(--panel2);
+                   border-bottom:1px solid var(--line);width:30px">#</th>
+        <th style="text-align:left;padding:6px 10px;color:var(--gold);font-size:.7rem;
+                   text-transform:uppercase;letter-spacing:.07em;background:var(--panel2);
                    border-bottom:1px solid var(--line)">Reference</th>
         <th style="text-align:left;padding:6px 10px;color:var(--gold);font-size:.7rem;
                    text-transform:uppercase;letter-spacing:.07em;background:var(--panel2);
@@ -683,10 +725,28 @@ $tdrStatusBadge = [
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($tdrGrouped[$ctx] as $tdr):
+    <?php
+    $lastTier = null;
+    foreach ($tdrGrouped[$ctx] as $tdr):
       [$tbc, $tbl] = $tdrStatusBadge[$tdr['status']] ?? ['badge-warn', $tdr['status']];
+      $pri  = $tdrPriority[$tdr['decision_ref']] ?? 99;
+      $tier = $pri >= 16 ? 16 : ($pri >= 8 ? 8 : 1);
+      if ($tier !== $lastTier):
+        $tierLabel = $tdrTierLabels[$tier] ?? 'Tier 4';
+        $lastTier  = $tier;
     ?>
+      <tr>
+        <td colspan="5" style="padding:8px 10px 4px;background:var(--panel);
+            font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--sub);
+            border-bottom:1px solid var(--line2)">
+          <?= tr_h($tierLabel) ?>
+        </td>
+      </tr>
+    <?php endif; ?>
       <tr style="border-bottom:1px solid var(--line2)">
+        <td style="padding:7px 10px;color:var(--dim);font-family:monospace;font-size:.72rem">
+          <?= $pri < 99 ? $pri : '—' ?>
+        </td>
         <td style="padding:7px 10px">
           <a href="./trustee_decisions.php?id=<?= urlencode($tdr['decision_uuid']) ?>"
              style="color:var(--gold);font-family:monospace;font-size:.78rem;
@@ -694,7 +754,7 @@ $tdrStatusBadge = [
             <?= tr_h($tdr['decision_ref']) ?>
           </a>
         </td>
-        <td style="padding:7px 10px;color:var(--text);max-width:340px">
+        <td style="padding:7px 10px;color:var(--text);max-width:320px">
           <?= tr_h($tdr['title']) ?>
         </td>
         <td style="padding:7px 10px;color:var(--sub)">
