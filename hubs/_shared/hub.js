@@ -1635,8 +1635,75 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     wrap.innerHTML = html;
+    // Append hub-specific live data if present
+    var _hd = (data.data && data.data.hub_data) || {};
+    if (Object.keys(_hd).length) { _renderHubData(areaKey, _hd, wrap); }
   }
 
   window.loadAdminActivity = loadAdminActivity;
+
+  /* ── Hub-specific live data renderer ──────────────────────────────────────
+     One branch per area_key. Returns nothing — mutates container via
+     insertAdjacentHTML. All data already sanitised server-side; _esc()
+     used as belt-and-braces on display strings. */
+  function _renderHubData(areaKey, hd, container) {
+    var html = '';
+
+    // ── 1. Operations Oversight ───────────────────────────────────────────
+    if (areaKey === 'operations_oversight') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Live Operational Data</div>';
+
+      // Exception counts
+      if (hd.exceptions) {
+        var ex  = hd.exceptions;
+        var sev = ex.by_severity || {};
+        var hi  = sev['high']   || 0;
+        var med = sev['medium'] || 0;
+        var lo  = sev['low']    || 0;
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Open exceptions</span>';
+        html += '<span class="hub-livedata-val' + (ex.open_count > 0 ? ' lvd-issues' : '') + '">' + ex.open_count + '</span>';
+        if (ex.open_count > 0) {
+          html += '<span class="hub-livedata-chips">';
+          if (hi)  html += '<span class="sev-chip sev-high">'   + hi  + ' high</span>';
+          if (med) html += '<span class="sev-chip sev-med">'    + med + ' med</span>';
+          if (lo)  html += '<span class="sev-chip sev-low">'    + lo  + ' low</span>';
+          html += '</span>';
+        } else {
+          html += '<span class="hub-livedata-ok">✓ All clear</span>';
+        }
+        html += '</div>';
+      }
+
+      // Pending approvals
+      if (typeof hd.pending_approvals !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Pending approvals</span>';
+        html += '<span class="hub-livedata-val">' + hd.pending_approvals + '</span>';
+        html += '</div>';
+      }
+
+      // Recently resolved exceptions
+      if (hd.recent_resolved && hd.recent_resolved.length) {
+        html += '<div class="hub-livedata-subtitle">Recently resolved</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.recent_resolved.forEach(function(r) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(r.exception_type) + '</span>' +
+              '<span class="hub-livedata-summary">' + _esc(r.summary) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _dts(r.resolved_at) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>'; // .hub-livedata-section
+    }
+
+    if (html) container.insertAdjacentHTML('beforeend', html);
+  }
 
 }());

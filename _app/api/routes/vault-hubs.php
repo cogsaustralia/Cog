@@ -1319,10 +1319,62 @@ function handleHubAdminActivity(): void
     usort($activity, static fn($a, $b) => strcmp((string)$b['ts'], (string)$a['ts']));
     $activity = array_slice($activity, 0, $limit);
 
+    // ── Hub-specific live data ────────────────────────────────────────────────
+    $hubData = [];
+
+    if ($area === 'operations_oversight') {
+        // 1. Exception counts by severity (open + in_progress)
+        try {
+            $stmt = $db->prepare(
+                "SELECT severity, COUNT(*) AS cnt
+                   FROM admin_exceptions
+                  WHERE status IN ('open','in_progress')
+                  GROUP BY severity"
+            );
+            $stmt->execute();
+            $bySev = []; $total = 0;
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $bySev[(string)$r['severity']] = (int)$r['cnt'];
+                $total += (int)$r['cnt'];
+            }
+            $hubData['exceptions'] = ['open_count' => $total, 'by_severity' => $bySev];
+        } catch (Throwable) {}
+
+        // 2. Pending approvals
+        try {
+            $s = $db->query(
+                "SELECT COUNT(*) FROM approval_requests WHERE request_status = 'pending'"
+            );
+            $hubData['pending_approvals'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
+
+        // 3. Recent resolved exceptions (summary only, no PII)
+        try {
+            $stmt = $db->prepare(
+                "SELECT summary, exception_type, severity, resolved_at
+                   FROM admin_exceptions
+                  WHERE status = 'resolved'
+                  ORDER BY resolved_at DESC
+                  LIMIT 5"
+            );
+            $stmt->execute();
+            $hubData['recent_resolved'] = array_map(
+                fn($r) => [
+                    'summary'        => (string)$r['summary'],
+                    'exception_type' => (string)$r['exception_type'],
+                    'severity'       => (string)$r['severity'],
+                    'resolved_at'    => (string)($r['resolved_at'] ?? ''),
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+    }
+
     apiSuccess([
         'area_key'    => $area,
         'area_label'  => hubAreaLabel($area),
         'admin_pages' => $adminPages,
         'activity'    => $activity,
+        'hub_data'    => $hubData,
     ]);
 }
