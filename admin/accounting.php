@@ -26,6 +26,11 @@ function ac_val(PDO $p, string $q): int {
     catch (Throwable $e) { return 0; }
 }
 
+function ac_val_float(PDO $p, string $q): float {
+    try { $s = $p->query($q); return (float)$s->fetchColumn(); }
+    catch (Throwable $e) { return 0.0; }
+}
+
 function ac_rows(PDO $p, string $q): array {
     try { $s = $p->query($q); return $s->fetchAll(PDO::FETCH_ASSOC) ?: []; }
     catch (Throwable $e) { return []; }
@@ -76,7 +81,9 @@ if ($acctOk) {
     $adminFundOut = ac_val($pdo, "SELECT COALESCE(SUM(CASE WHEN le.entry_type='credit' THEN le.amount_cents ELSE 0 END),0) FROM ledger_entries le JOIN stewardship_accounts sa ON sa.id = le.stewardship_account_id WHERE sa.account_key='STA-ADMIN-FUND' AND le.flow_category IN ('stripe_fee','operating_expense')");
     $adminFundBal = $adminFundIn - $adminFundOut;
     // ASX holdings book value (total_cost_cents is DECIMAL storing cents, e.g. 23947.5 = $239.475)
-    $asxBookValue = (float) ac_val($pdo, "SELECT COALESCE(SUM(total_cost_cents),0) FROM asx_holdings") / 100;
+    $asxBookValue = ($hasTable && ops_has_table($pdo, 'asx_holdings'))
+        ? ac_val_float($pdo, "SELECT COALESCE(SUM(total_cost_cents),0) FROM asx_holdings") / 100
+        : 0.0;
 }
 
 // Overdue transfers
