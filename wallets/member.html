@@ -1684,8 +1684,10 @@ function openVault(d){
       window.history.replaceState({}, '', _u.toString());
     }catch(e){}
     var _paid = (d.payment_status||'pending').toLowerCase() === 'paid';
-    var _secOp = (typeof getOutstandingPayments === 'function') ? getOutstandingPayments(d) : {allItems:[]};
-    var _hasSec = _secOp.allItems.length > 0;
+    // Detect secondary outstanding directly from vault data — no block-3 dependency
+    var _giftLines  = Array.isArray(d.gift_pool_unpaid_lines) ? d.gift_pool_unpaid_lines : [];
+    var _kidsOrders = Array.isArray(d.kids_pending_orders)    ? d.kids_pending_orders    : [];
+    var _hasSec = _giftLines.length > 0 || _kidsOrders.some(function(r){ return (parseInt(r.units||0,10)||0) > 0; });
     setTimeout(function(){
       if(!_paid){
         // SNFT outstanding — open SNFT pay modal
