@@ -121,8 +121,8 @@
           <h1><em>Simple first step.</em><br>Real joint venture behind it.</h1>
           <p class="lead">You are becoming a Member in a joint venture. Your first step is a $4 membership contribution for a Personal S-NFT Member position. From there, you gain access to the Independence Vault, direct participation in Member Governance, and the wider structure the Members operate together.</p>
           <div class="hero-actions">
-            <a class="btn-primary" href="../join/index.html">Become a Member</a>
-            <a class="btn-secondary" href="../faq/index.html">Read the FAQ</a>
+            <a class="btn-primary" href="../join/index.html">Become a Member — $4</a>
+            <a class="btn-secondary" href="../vision/index.html">The Vision →</a>
           </div>
         </div>
       </div>
@@ -269,7 +269,7 @@
             <p class="doc-copy">The charitable and shared-benefit layer, including First Nations custodianship, public-benefit purposes, and designated public and Member outcomes. <strong>Not less than 30%</strong> of annual Sub-Trust C distributions go to First Nations programs — an entrenched minimum that cannot be reduced by any resolution.</p>
           </article>
         </div>
-        <p style="font-size:.82rem;color:var(--muted);margin-top:18px;line-height:1.7">All governing documents are provided to new Members during the Joint Venture Agreement process. <a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline">Become a Member to access them →</a></p>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:18px;line-height:1.7">All governing documents are provided to new Members during the Joint Venture Agreement process. <a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline">Become a Member — $4 →</a></p>
       </div>
     </section>
 
@@ -280,9 +280,12 @@
           <h2>Start as a Member. Go deeper when you are ready.</h2>
           <p>You do not need to master every clause on the first visit. Start with the first step, then read the governing documents as deeply as you want.</p>
           <div class="cta-actions">
-            <a class="btn-primary" href="../join/index.html">Become a Member</a>
-            <a class="btn-secondary" href="../skeptic/index.html">Have harder questions?</a>
+            <a class="btn-primary" href="../join/index.html">Become a Member — $4</a>
+            <a class="btn-secondary" href="../vision/index.html">The Vision →</a>
           </div>
+          <p style="margin-top:14px;font-size:.88rem;color:var(--muted)">
+            Still have questions? <a href="../skeptic/index.html" style="color:var(--gold-2);text-decoration:underline">Read the Skeptic's Guide →</a>
+          </p>
         </div>
       </div>
     </section>
@@ -291,5 +294,29 @@
     <div id="cogs-footer"></div>
   <script src="/assets/site-footer.js"></script>
 </div>
+
+<script>
+/* ── Invite code propagation — carry stored code to all join links ── */
+(function(){
+  var STORAGE_KEY = 'cogs_partner_invite_v1';
+  var MAX_AGE_MS  = 7 * 24 * 60 * 60 * 1000;
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    var parsed = JSON.parse(raw);
+    if (!parsed || !parsed.code || !parsed.stored_at) return;
+    var age = Date.now() - new Date(parsed.stored_at).getTime();
+    if (!isFinite(age) || age < 0 || age > MAX_AGE_MS) return;
+    var code = String(parsed.code).trim().toUpperCase();
+    if (!code) return;
+    document.querySelectorAll('a[href]').forEach(function(link){
+      var href = link.getAttribute('href') || '';
+      if (href.indexOf('join/index.html') === -1) return;
+      var sep = href.indexOf('?') === -1 ? '?' : '&';
+      link.setAttribute('href', href + sep + 'partner_code=' + encodeURIComponent(code));
+    });
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
