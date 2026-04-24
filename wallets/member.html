@@ -1468,36 +1468,40 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <h3>Complete your $4 contribution</h3>
     <p style="font-size:1.02rem;color:var(--text3);margin-bottom:20px;line-height:1.65">Your membership registration is confirmed. The $4 contribution activates it and issues your equal national governance vote.</p>
 
-    <!-- Pay by card -->
-    <div style="font-size:1.02rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pay by card</div>
-    <div id="stripe-container" style="margin-bottom:4px">
-      <a id="stripe-pay-link" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener" class="btn btn-gold" style="display:block;text-align:center;text-decoration:none;padding:13px;font-size:1rem;letter-spacing:.02em">Pay $4 by card ›</a>
-    </div>
-    <p id="stripe-pay-sub" style="font-size:1rem;color:var(--text3);margin-bottom:0;line-height:1.5">Opens Stripe's secure checkout in a new tab.</p>
-
-    <!-- Divider -->
-    <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-      <span style="font-size:1rem;color:var(--text3)">or pay by bank transfer</span>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-    </div>
-
-    <!-- Bank transfer — PayID first -->
-    <div style="padding:14px 16px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border)">
-      <div class="bank-detail-row"><span class="bank-key">PayID</span><span class="bank-val">0494 578 706</span></div>
-      <div class="bank-detail-row"><span class="bank-key">Reference</span><span class="bank-val" id="pay-modal-ref">Your Member number</span></div>
-      <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val">$4.00</span></div>
-    </div>
-    <details style="margin-top:8px">
-      <summary style="font-size:1.02rem;color:var(--text3);cursor:pointer;padding:4px 0;list-style:none">&#9654; Full BSB / account details</summary>
-      <div style="padding:10px 14px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);margin-top:6px">
-        <div class="bank-detail-row"><span class="bank-key">BSB</span><span class="bank-val">182-182</span></div>
-        <div class="bank-detail-row"><span class="bank-key">Account</span><span class="bank-val">035 249 275</span></div>
-        <div class="bank-detail-row"><span class="bank-key">Account name</span><span class="bank-val" style="font-size:1rem">The Trustee for COGS of Australia Foundation Hybrid Trust</span></div>
+    <!-- Bank transfer — standout, fee-free -->
+    <div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:1.02rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Bank transfer</div>
+        <span style="font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:99px;background:rgba(62,207,110,.1);border:1px solid rgba(62,207,110,.28);color:var(--green)">No fees</span>
       </div>
-    </details>
+      <div style="padding:14px 16px;background:rgba(232,184,75,.05);border-radius:var(--r2);border:1.5px solid rgba(232,184,75,.25)">
+        <div class="bank-detail-row"><span class="bank-key">PayID / OSKO</span><span class="bank-val" style="color:var(--gold)">0494 578 706</span></div>
+        <div class="bank-detail-row"><span class="bank-key">Reference</span><span class="bank-val" id="pay-modal-ref">Your Member number</span></div>
+        <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val">$4.00</span></div>
+      </div>
+      <details style="margin-top:8px">
+        <summary style="font-size:1.02rem;color:var(--text3);cursor:pointer;padding:4px 0;list-style:none">&#9654; Full BSB / account details</summary>
+        <div style="padding:10px 14px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);margin-top:6px">
+          <div class="bank-detail-row"><span class="bank-key">BSB</span><span class="bank-val">182-512</span></div>
+          <div class="bank-detail-row"><span class="bank-key">Account</span><span class="bank-val">975 174 624</span></div>
+          <div class="bank-detail-row"><span class="bank-key">Account name</span><span class="bank-val" style="font-size:1rem">The Trustee for the CJVM Sub-Trust A</span></div>
+          <div class="bank-detail-row"><span class="bank-key">Bank</span><span class="bank-val">Macquarie Bank</span></div>
+        </div>
+      </details>
+      <p style="font-size:.9rem;color:var(--text3);line-height:1.5;margin-top:8px">Instant via OSKO. Fee-free direct to the trust account. Your vault updates on the next refresh after payment arrives.</p>
+    </div>
 
-    <p style="font-size:1rem;color:var(--text3);line-height:1.55;margin-top:16px">After payment arrives your vault updates on the next refresh. The $4 is your once-only membership contribution — entrenched at this amount forever.</p>
+    <!-- Card via Stripe — secondary -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <span style="font-size:.88rem;color:var(--text3)">or pay by card</span>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+    <div id="stripe-container" style="margin-bottom:6px">
+      <a id="stripe-pay-link" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener" class="btn btn-gold" style="display:block;text-align:center;text-decoration:none;padding:13px;font-size:1rem;letter-spacing:.02em">Pay $4 by card via Stripe ›</a>
+    </div>
+    <p id="stripe-pay-sub" style="font-size:.88rem;color:var(--text3);margin-bottom:0;line-height:1.5;text-align:center">Card, Apple Pay and Google Pay accepted. Stripe processing fees may apply.</p>
+
     <div id="pay-modal-body"></div>
   </div>
 </div>
@@ -1506,31 +1510,41 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 <div class="pay-modal-bg" id="outstanding-modal">
   <div class="pay-modal">
     <button class="pay-modal-close" onclick="closeOutstandingModal()" aria-label="Close">✕</button>
-    <h3>Outstanding payments</h3>
+    <h3>Complete your contribution</h3>
     <p style="font-size:1.02rem;color:var(--text3);margin-bottom:20px;line-height:1.65" id="outstanding-modal-desc"></p>
     <div id="outstanding-modal-items" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px"></div>
-    <div style="font-size:1.02rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pay by card</div>
-    <button id="outstanding-card-btn" class="btn btn-gold" style="width:100%;margin-bottom:4px;font-size:1rem">Pay by card ›</button>
-    <p style="font-size:1rem;color:var(--text3);margin-bottom:0;line-height:1.5">Opens Stripe secure checkout — card, Apple Pay, Google Pay accepted.</p>
-    <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-      <span style="font-size:1rem;color:var(--text3)">or bank transfer</span>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-    </div>
-    <div style="padding:14px 16px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border)">
-      <div class="bank-detail-row"><span class="bank-key">PayID</span><span class="bank-val">0494 578 706</span></div>
-      <div class="bank-detail-row"><span class="bank-key">Reference</span><span class="bank-val" id="outstanding-modal-ref">Your Member number</span></div>
-      <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val" id="outstanding-modal-total">—</span></div>
-    </div>
-    <details style="margin-top:8px">
-      <summary style="font-size:1.02rem;color:var(--text3);cursor:pointer;padding:4px 0;list-style:none">&#9654; Full BSB / account details</summary>
-      <div style="padding:10px 14px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);margin-top:6px">
-        <div class="bank-detail-row"><span class="bank-key">BSB</span><span class="bank-val">182-182</span></div>
-        <div class="bank-detail-row"><span class="bank-key">Account</span><span class="bank-val">035 249 275</span></div>
-        <div class="bank-detail-row"><span class="bank-key">Account name</span><span class="bank-val" style="font-size:1rem">The Trustee for COGS of Australia Foundation Hybrid Trust</span></div>
+
+    <!-- Bank transfer — standout, fee-free, OSKO/PayID -->
+    <div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:1.02rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Bank transfer</div>
+        <span style="font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:99px;background:rgba(62,207,110,.1);border:1px solid rgba(62,207,110,.28);color:var(--green)">No fees</span>
       </div>
-    </details>
-    <p style="font-size:1rem;color:var(--text3);line-height:1.55;margin-top:16px">After payment arrives your vault updates on the next refresh.</p>
+      <div style="padding:14px 16px;background:rgba(232,184,75,.05);border-radius:var(--r2);border:1.5px solid rgba(232,184,75,.25)">
+        <div class="bank-detail-row"><span class="bank-key">PayID / OSKO</span><span class="bank-val" style="color:var(--gold)">0494 578 706</span></div>
+        <div class="bank-detail-row"><span class="bank-key">Reference</span><span class="bank-val" id="outstanding-modal-ref">Your Member number</span></div>
+        <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val" id="outstanding-modal-total">—</span></div>
+      </div>
+      <details style="margin-top:8px">
+        <summary style="font-size:1.02rem;color:var(--text3);cursor:pointer;padding:4px 0;list-style:none">&#9654; Full BSB / account details</summary>
+        <div style="padding:10px 14px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);margin-top:6px">
+          <div class="bank-detail-row"><span class="bank-key">BSB</span><span class="bank-val">182-512</span></div>
+          <div class="bank-detail-row"><span class="bank-key">Account</span><span class="bank-val">975 174 624</span></div>
+          <div class="bank-detail-row"><span class="bank-key">Account name</span><span class="bank-val" style="font-size:1rem">The Trustee for the CJVM Sub-Trust A</span></div>
+          <div class="bank-detail-row"><span class="bank-key">Bank</span><span class="bank-val">Macquarie Bank</span></div>
+        </div>
+      </details>
+      <p style="font-size:.9rem;color:var(--text3);line-height:1.5;margin-top:8px">Instant via OSKO. Fee-free direct to the trust account. Your vault updates on the next refresh after payment arrives.</p>
+    </div>
+
+    <!-- Card via Stripe — secondary option -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <span style="font-size:.88rem;color:var(--text3)">or pay by card</span>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+    <button id="outstanding-card-btn" class="btn btn-gold" style="width:100%;margin-bottom:6px;font-size:1rem">Pay by card via Stripe ›</button>
+    <p style="font-size:.88rem;color:var(--text3);margin-bottom:0;line-height:1.5;text-align:center">Card, Apple Pay and Google Pay accepted. Stripe processing fees may apply.</p>
   </div>
 </div>
 
@@ -3057,16 +3071,17 @@ function renderPendingOrders(d){
 
       <div style="padding:12px 14px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
         <div style="display:grid;gap:6px;font-size:1rem;color:var(--text2)">
-          <div><strong style="color:var(--text)">PayID:</strong> 0494 578 706</div>
+          <div><strong style="color:var(--text)">PayID / OSKO:</strong> 0494 578 706</div>
           <div><strong style="color:var(--text)">Reference:</strong> ${((window._vaultData||{}).member_number) ? esc((window._vaultData||{}).member_number) : 'Your Member number'}</div>
           <div><strong style="color:var(--text)">Outstanding:</strong> ${fmtA(total)}</div>
         </div>
         <details style="margin-top:8px">
           <summary style="font-size:1rem;color:var(--text3);cursor:pointer;list-style:none">&#9654; Full BSB / account details</summary>
           <div style="margin-top:6px;display:grid;gap:4px;font-size:1.02rem;color:var(--text2)">
-            <div><strong style="color:var(--text)">BSB:</strong> 182-182</div>
-            <div><strong style="color:var(--text)">Account:</strong> 035 249 275</div>
-            <div><strong style="color:var(--text)">Account name:</strong> The Trustee for COGS of Australia Foundation Hybrid Trust</div>
+            <div><strong style="color:var(--text)">BSB:</strong> 182-512</div>
+            <div><strong style="color:var(--text)">Account:</strong> 975 174 624</div>
+            <div><strong style="color:var(--text)">Account name:</strong> The Trustee for the CJVM Sub-Trust A</div>
+            <div><strong style="color:var(--text)">Bank:</strong> Macquarie Bank</div>
           </div>
         </details>
         <div style="font-size:1rem;color:var(--text3);margin-top:8px">After payment arrives, refresh the vault to update pending status.</div>
