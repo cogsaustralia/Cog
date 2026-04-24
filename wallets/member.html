@@ -2060,6 +2060,7 @@ function renderInviteCard(d){
     +   '<button class="ov-stag-btn" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.25);color:#60d4b8" data-channel="sms" onclick="stagShare(this)">&#x1F4F1; SMS</button>'
     +   '<button class="ov-stag-btn" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.25);color:#6ea8d8" data-channel="email" onclick="stagShare(this)">&#x2709; Email</button>'
     +   '<button class="ov-stag-btn primary" data-channel="copy" onclick="stagShare(this)">&#x1F517; Copy link</button>'
+    +   '<button class="ov-stag-btn" style="background:rgba(240,209,138,.08);border-color:rgba(240,209,138,.25);color:var(--gold)" onclick="(function(){var c=document.getElementById(\'ov-stag-card\');if(c)showQrCode(c.dataset.link,c.dataset.code);})()">&#x2B1B; QR Code</button>'
     + '</div>'
     + '</div>';
 }
@@ -5919,5 +5920,59 @@ async function notifyPaymentSent(btn, context) {
   }
 }
 </script>
+
+<!-- QR Code library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- QR Modal -->
+<div id="qr-modal" role="dialog" aria-modal="true" aria-label="Invite QR Code" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;box-sizing:border-box" onclick="if(event.target===this)closeQrCode()">
+  <div style="background:#fdf8f0;border-radius:20px;padding:32px 28px 28px;max-width:340px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.5);position:relative">
+    <button onclick="closeQrCode()" aria-label="Close" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.6rem;cursor:pointer;color:#4a3828;line-height:1">&#x2715;</button>
+    <div style="font-size:1.1rem;font-weight:700;color:#1a1208;margin-bottom:4px;font-family:Georgia,serif">Scan to join COG$</div>
+    <div style="font-size:.92rem;color:#6b5c44;margin-bottom:20px;line-height:1.5">Point your phone camera at the code below</div>
+    <div id="iv-qr-wrap" style="display:inline-block;padding:16px;background:#fff;border-radius:12px;border:2px solid #e8dcc8;margin-bottom:18px"></div>
+    <div id="iv-qr-code" style="font-size:1.1rem;font-weight:700;color:#1a1208;letter-spacing:.12em;font-family:monospace;background:#f5edd8;border-radius:8px;padding:10px 16px;margin-bottom:8px"></div>
+    <div id="iv-qr-link" style="font-size:.78rem;color:#9a8a74;word-break:break-all;margin-bottom:18px;line-height:1.5"></div>
+    <button onclick="closeQrCode()" style="width:100%;padding:14px;background:#1a1208;color:#f0d98a;border:none;border-radius:12px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:Georgia,serif">Done</button>
+  </div>
+</div>
+<script>
+(function(){
+  var _qrMod = document.getElementById('qr-modal');
+  var _qrInst = null;
+  window.showQrCode = function(url, code) {
+    var wrap = document.getElementById('iv-qr-wrap');
+    var codEl = document.getElementById('iv-qr-code');
+    var lnkEl = document.getElementById('iv-qr-link');
+    wrap.innerHTML = '';
+    if (_qrInst) { try { _qrInst.clear(); } catch(e){} _qrInst = null; }
+    try {
+      _qrInst = new QRCode(wrap, {
+        text: url || window.location.origin,
+        width: 220,
+        height: 220,
+        colorDark: '#1a1208',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch(e) {
+      wrap.innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;color:#c00;font-size:.85rem">QR unavailable</div>';
+    }
+    codEl.textContent = code || '';
+    codEl.style.display = code ? '' : 'none';
+    lnkEl.textContent = url || '';
+    _qrMod.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeQrCode = function() {
+    _qrMod.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeQrCode();
+  });
+})();
+</script>
+
 </body>
 </html>

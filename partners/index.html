@@ -195,7 +195,7 @@
     .stag-ppl{font-family:var(--serif);font-size:1.5rem;font-weight:600;color:#f0a870;line-height:1}
     .stag-label{font-size:.65rem;color:rgba(240,168,112,.5);margin:3px 0 8px}
     .stag-result{font-size:.88rem;font-weight:500;color:var(--gold-1)}
-    .share-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:10px;border:1px solid;font-size:.78rem;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s;font-family:var(--sans)}
+    .share-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;border:1px solid;font-size:.94rem;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s;font-family:var(--sans)}
     .share-btn:hover{opacity:.85;transform:translateY(-1px)}
 
     /* Library */
@@ -659,9 +659,9 @@
     .hub-tally-neutral{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
     /* Invite section */
     .hub-invite-meta{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 12px;padding:10px 0;border-top:1px solid rgba(240,190,80,.12);border-bottom:1px solid rgba(240,190,80,.12)}
-    .hub-invite-block .hub-invite-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-    .hub-invite-block .hub-invite-val{font-size:.88rem;font-weight:700;color:var(--text);font-family:var(--mono);letter-spacing:.08em;margin-top:2px}
-    .hub-invite-block .hub-invite-names{font-size:.76rem;color:var(--text2);font-weight:400;letter-spacing:0;font-family:inherit}
+    .hub-invite-block .hub-invite-lbl{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+    .hub-invite-block .hub-invite-val{font-size:1.05rem;font-weight:700;color:var(--text);font-family:var(--mono);letter-spacing:.06em;margin-top:3px}
+    .hub-invite-block .hub-invite-names{font-size:.92rem;color:var(--text2);font-weight:400;letter-spacing:0;font-family:inherit}
     .hub-invite-actions{display:flex;gap:8px;flex-wrap:wrap}
     /* KYC inline form on hub */
     .hub-kyc-form{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-top:10px}
@@ -949,20 +949,23 @@
 
 
             <!-- Share to invite a Member -->
-            <div style="padding:16px 18px;text-align:center">
-              <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">Know someone who should be part of this?</div>
-              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+            <div style="padding:20px 18px;text-align:center">
+              <div style="font-size:.9rem;color:var(--text2);margin-bottom:16px;font-weight:500">Know someone who should be part of this?</div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
             <button class="share-btn" onclick="shareVia('whatsapp')" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.25);color:#25d366">
-              <span style="font-size:1rem">💬</span> WhatsApp
+              <span style="font-size:1.1rem">💬</span> WhatsApp
             </button>
             <button class="share-btn" onclick="shareVia('sms')" style="background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.2);color:#60d4b8">
-              <span style="font-size:1rem">📱</span> Text message
+              <span style="font-size:1.1rem">📱</span> Text
             </button>
             <button class="share-btn" onclick="shareVia('email')" style="background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.2);color:#6ea8d8">
-              <span style="font-size:1rem">✉️</span> Email
+              <span style="font-size:1.1rem">✉️</span> Email
             </button>
             <button class="share-btn" onclick="shareVia('copy')" id="copy-link-btn" style="background:rgba(240,209,138,.06);border-color:rgba(240,209,138,.15);color:var(--gold-2)">
-              <span style="font-size:1rem">🔗</span> Copy invite link
+              <span style="font-size:1.1rem">🔗</span> Copy link
+            </button>
+            <button class="share-btn" onclick="showQrModal()" style="background:rgba(240,209,138,.08);border-color:rgba(240,209,138,.2);color:var(--gold-2)">
+              <span style="font-size:1.1rem">⬛</span> QR Code
             </button>
           </div>
             </div>
@@ -2981,6 +2984,7 @@ function renderHubInvite(data){
     +   '<button class="hub-btn hub-btn-gold" onclick="hubCopyText(\''+escA(link||code)+'\',this)">Copy invite link</button>'
     +   '<button class="hub-btn hub-btn-ghost" onclick="hubShareInvite(\''+escA(code)+'\',\''+escA(link)+'\')">Share</button>'
     +   '<button class="hub-btn hub-btn-ghost" onclick="hubCopyText(\''+escA(code)+'\',this)">Copy code</button>'
+    +   '<button class="hub-btn hub-btn-ghost" onclick="showQrModal(\''+escA(link)+'\',\''+escA(rawCode)+'\')" style="display:inline-flex;align-items:center;gap:6px"><span>⬛</span> QR Code</button>'
     + '</div>';
 }
 
@@ -3537,5 +3541,75 @@ window.savePeSelections = savePeSelections;
   };
 })();
 </script>
+
+<!-- QR Code library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- QR Modal -->
+<div id="qr-modal" role="dialog" aria-modal="true" aria-label="QR Code" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;box-sizing:border-box" onclick="if(event.target===this)closeQrModal()">
+  <div style="background:#fdf8f0;border-radius:20px;padding:32px 28px 28px;max-width:340px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.4);position:relative">
+    <button onclick="closeQrModal()" aria-label="Close" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.6rem;cursor:pointer;color:#4a3828;line-height:1">&#x2715;</button>
+    <div style="font-size:1.1rem;font-weight:700;color:#1a1208;margin-bottom:4px;font-family:Georgia,serif">Scan to join</div>
+    <div id="qr-modal-sub" style="font-size:.92rem;color:#6b5c44;margin-bottom:20px;line-height:1.5">Point your phone camera at the code below</div>
+    <div id="qr-canvas-wrap" style="display:inline-block;padding:16px;background:#fff;border-radius:12px;border:2px solid #e8dcc8;margin-bottom:18px"></div>
+    <div id="qr-code-display" style="font-size:1.1rem;font-weight:700;color:#1a1208;letter-spacing:.12em;font-family:monospace;background:#f5edd8;border-radius:8px;padding:10px 16px;margin-bottom:8px"></div>
+    <div id="qr-link-display" style="font-size:.78rem;color:#9a8a74;word-break:break-all;margin-bottom:18px;line-height:1.5"></div>
+    <button onclick="closeQrModal()" style="width:100%;padding:14px;background:#1a1208;color:#f0d98a;border:none;border-radius:12px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:Georgia,serif">Done</button>
+  </div>
+</div>
+<script>
+(function(){
+  var _qrModal = document.getElementById('qr-modal');
+  var _qrObj   = null;
+
+  window.showQrModal = function(url, code) {
+    // Resolve url/code from community data if not provided
+    if (!url) {
+      var inv = window._communityData && window._communityData.invite_code;
+      if (inv) {
+        code = inv.public_code || inv.code || '';
+        var origin = window.location.origin || 'https://cogsaustralia.org';
+        var root = origin.replace(/\/partners$/, '').replace(/\/partners\/.*$/, '');
+        url = code ? root + '/?invite=' + encodeURIComponent(code) : root + '/';
+      } else {
+        url = window.location.origin || 'https://cogsaustralia.org';
+        code = '';
+      }
+    }
+    var wrap = document.getElementById('qr-canvas-wrap');
+    var codEl = document.getElementById('qr-code-display');
+    var lnkEl = document.getElementById('qr-link-display');
+    wrap.innerHTML = '';
+    if (_qrObj) { try { _qrObj.clear(); } catch(e){} _qrObj = null; }
+    try {
+      _qrObj = new QRCode(wrap, {
+        text: url,
+        width: 220,
+        height: 220,
+        colorDark: '#1a1208',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch(e) {
+      wrap.innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;color:#c00;font-size:.85rem">QR unavailable</div>';
+    }
+    codEl.textContent = code || '';
+    codEl.style.display = code ? '' : 'none';
+    lnkEl.textContent = url;
+    _qrModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeQrModal = function() {
+    _qrModal.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeQrModal();
+  });
+})();
+</script>
+
 </body>
 </html>
