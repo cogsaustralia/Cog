@@ -608,6 +608,112 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
   <p style="color:var(--sub);font-size:.85rem">No trustees found.</p>
 <?php endif; ?>
 
+<!-- ── Trustee Decision Records ────────────────────────────────────────────── -->
+<?php
+// Load all TDRs grouped by sub_trust_context
+$tdrStmt = $pdo->query(
+    "SELECT decision_uuid, decision_ref, sub_trust_context, decision_category,
+            title, effective_date, status
+     FROM trustee_decisions
+     ORDER BY sub_trust_context, status DESC, effective_date ASC"
+);
+$allTdrs   = $tdrStmt->fetchAll(PDO::FETCH_ASSOC);
+$tdrGrouped = [];
+foreach ($allTdrs as $tdr) {
+    $tdrGrouped[$tdr['sub_trust_context']][] = $tdr;
+}
+$tdrContextOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
+$tdrCategoryLabels = [
+    'bank_account'                  => 'Bank Account',
+    'investment_instruction'        => 'Investment',
+    'distribution'                  => 'Distribution',
+    'operational_amendment'         => 'Operational Amendment',
+    'regulatory_compliance'         => 'Regulatory Compliance',
+    'fnac_engagement'               => 'FNAC Engagement',
+    'member_poll_implementation'    => 'Poll Implementation',
+    'fiduciary_conflict_invocation' => 'Fiduciary Conflict',
+    'record_keeping'                => 'Record Keeping',
+    'governance_instrument'         => 'Governance',
+    'other'                         => 'Other',
+];
+$tdrStatusBadge = [
+    'draft'             => ['badge-warn', 'Draft'],
+    'pending_execution' => ['badge-warn', 'Pending Execution'],
+    'fully_executed'    => ['badge-ok',   'Executed'],
+    'superseded'        => ['badge-err',  'Superseded'],
+];
+?>
+
+<div class="sub-heading" style="margin-top:32px">Trustee Decision Records</div>
+
+<p style="font-size:.81rem;color:var(--sub);margin-bottom:16px">
+  All TDRs required or anticipated across all three sub-trusts.
+  Click a reference to view or execute the full record.
+</p>
+
+<?php foreach ($tdrContextOrder as $ctx):
+  if (empty($tdrGrouped[$ctx])) continue;
+  $ctxLabel = $subTrustLabels[$ctx] ?? $ctx; ?>
+
+<div style="margin-bottom:20px">
+  <div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+              color:var(--sub);font-weight:700;margin-bottom:8px;padding-bottom:4px;
+              border-bottom:1px solid var(--line2)">
+    <?= tr_h($ctxLabel) ?>
+    <span style="color:var(--dim);font-weight:400;margin-left:8px">
+      — <?= count($tdrGrouped[$ctx]) ?> record<?= count($tdrGrouped[$ctx]) !== 1 ? 's' : '' ?>
+    </span>
+  </div>
+
+  <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+    <thead>
+      <tr>
+        <th style="text-align:left;padding:6px 10px;color:var(--gold);font-size:.7rem;
+                   text-transform:uppercase;letter-spacing:.07em;background:var(--panel2);
+                   border-bottom:1px solid var(--line)">Reference</th>
+        <th style="text-align:left;padding:6px 10px;color:var(--gold);font-size:.7rem;
+                   text-transform:uppercase;letter-spacing:.07em;background:var(--panel2);
+                   border-bottom:1px solid var(--line)">Title</th>
+        <th style="text-align:left;padding:6px 10px;color:var(--gold);font-size:.7rem;
+                   text-transform:uppercase;letter-spacing:.07em;background:var(--panel2);
+                   border-bottom:1px solid var(--line)">Category</th>
+        <th style="text-align:left;padding:6px 10px;color:var(--gold);font-size:.7rem;
+                   text-transform:uppercase;letter-spacing:.07em;background:var(--panel2);
+                   border-bottom:1px solid var(--line)">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($tdrGrouped[$ctx] as $tdr):
+      [$tbc, $tbl] = $tdrStatusBadge[$tdr['status']] ?? ['badge-warn', $tdr['status']];
+    ?>
+      <tr style="border-bottom:1px solid var(--line2)">
+        <td style="padding:7px 10px">
+          <a href="./trustee_decisions.php?id=<?= urlencode($tdr['decision_uuid']) ?>"
+             style="color:var(--gold);font-family:monospace;font-size:.78rem;
+                    font-weight:700;text-decoration:none">
+            <?= tr_h($tdr['decision_ref']) ?>
+          </a>
+        </td>
+        <td style="padding:7px 10px;color:var(--text);max-width:340px">
+          <?= tr_h($tdr['title']) ?>
+        </td>
+        <td style="padding:7px 10px;color:var(--sub)">
+          <?= tr_h($tdrCategoryLabels[$tdr['decision_category']] ?? $tdr['decision_category']) ?>
+        </td>
+        <td style="padding:7px 10px">
+          <span class="badge <?= $tbc ?>"><?= $tbl ?></span>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+<?php endforeach; ?>
+
+<?php if (empty($allTdrs)): ?>
+  <p style="color:var(--sub);font-size:.82rem">No Trustee Decision Records found.</p>
+<?php endif; ?>
+
 <p style="font-size:.75rem;color:var(--dim);margin-top:28px">
   New trustee rows require an executed appointment instrument reference (TDR or deed).
   Contact the system administrator to add a new trustee row after the instrument is executed.
