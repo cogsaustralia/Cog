@@ -1117,6 +1117,69 @@ return [$html, $plain];
             return [$html, $plain];
         })(),
 
+        'hub_weekly_digest' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $h3Style, $pStyle, $boxStyle, $btnStyle, $urlStyle, $noticeStyle, $site): array {
+            $firstName    = htmlspecialchars((string)($p['member_first_name'] ?? 'Member'));
+            $weekEnding   = htmlspecialchars((string)($p['week_ending']       ?? date('Y-m-d')));
+            $mainspringUrl = htmlspecialchars((string)($p['mainspring_url']   ?? $site . '/hubs/mainspring/'));
+            $hubs          = is_array($p['hubs'] ?? null) ? $p['hubs'] : [];
+
+            // Build per-hub rows
+            $hubRows = '';
+            $plainHubs = '';
+            foreach ($hubs as $hub) {
+                $label   = htmlspecialchars((string)($hub['area_label'] ?? ''));
+                $inInput = (int)($hub['entered_input']          ?? 0);
+                $inDelib = (int)($hub['entered_deliberation']   ?? 0);
+                $inVote  = (int)($hub['entered_vote']           ?? 0);
+                $inAcct  = (int)($hub['entered_accountability'] ?? 0);
+                $done    = (int)($hub['completed']              ?? 0);
+                $titles  = is_array($hub['highlight_titles'] ?? null) ? $hub['highlight_titles'] : [];
+                $highlight = $titles ? '<div style="font-size:12px;color:#9a8a74;margin-top:4px">Notable: ' . htmlspecialchars(implode(', ', $titles)) . '</div>' : '';
+
+                $stats = [];
+                if ($inInput > 0)  $stats[] = "{$inInput} opened for input";
+                if ($inDelib > 0)  $stats[] = "{$inDelib} in deliberation";
+                if ($inVote  > 0)  $stats[] = "{$inVote} open for vote";
+                if ($inAcct  > 0)  $stats[] = "{$inAcct} adopted";
+                if ($done    > 0)  $stats[] = "{$done} completed";
+                $statsStr = $stats ? implode(' · ', $stats) : 'No phase changes this week';
+
+                $hubRows .= '<div style="' . $boxStyle . 'margin-bottom:.5rem;">'
+                    . '<div style="font-size:13px;font-weight:700;color:#f0b429;margin-bottom:4px;">' . $label . '</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;">' . $statsStr . '</div>'
+                    . $highlight
+                    . '</div>';
+
+                $plainHubs .= "{$label}\n  {$statsStr}\n";
+                if ($titles) $plainHubs .= "  Notable: " . implode(', ', $titles) . "\n";
+                $plainHubs .= "\n";
+            }
+
+            if (!$hubRows) {
+                $hubRows = '<p style="' . $pStyle . '">No hub activity this week.</p>';
+            }
+
+            $html = $wrapOpen . $headerBar . $body
+                . '<h2 style="' . $h2Style . '">Your weekly hub digest</h2>'
+                . '<p style="' . $pStyle . '">G\'day ' . $firstName . ', here\'s what moved in your hubs this week (ending ' . $weekEnding . ').</p>'
+                . $hubRows
+                . '<div style="margin:1.25rem 0;">'
+                . '<a href="' . $mainspringUrl . '" style="' . $btnStyle . '">Open Mainspring ›</a>'
+                . '</div>'
+                . '<p style="' . $noticeStyle . '">You\'re receiving this because you joined one or more Management Hubs in your Independence Vault. '
+                . 'Digest frequency: weekly (Friday). To stop receiving this email, visit your Vault settings.</p>'
+                . '</div>' . $footerBar . $wrapClose;
+
+            $plain = "COG$ Australia — Weekly Hub Digest\n"
+                . "Week ending: {$weekEnding}\n\n"
+                . "G'day {$firstName},\n\n"
+                . $plainHubs
+                . "Open Mainspring: {$mainspringUrl}\n\n"
+                . "To unsubscribe, visit your Vault settings.\n";
+
+            return [$html, $plain];
+        })(),
+
         default => throw new RuntimeException('Unknown email template: ' . $templateKey),
     };
 }
