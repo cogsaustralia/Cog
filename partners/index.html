@@ -3781,11 +3781,6 @@ window.updateNextStep = function(payDue, jvpaDue) {
 };
 
 // Wire into the community data load
-var _origShowComm = window.showCommunityContent || null;
-document.addEventListener('DOMContentLoaded', function(){
-  // Patch into the payment status flow after data loads
-  var _origLoadComm = window.loadCommunityData || null;
-});
 
 // ── Milestone state update ──────────────────────────────────────────────────
 window.updateMilestones = function(payDue, jvpaDue) {
@@ -3863,32 +3858,27 @@ function animateCountUp(el, targetStr) {
   requestAnimationFrame(step);
 }
 
-// Patch the existing setCommStripValues or cs-* updates
-var _csObserver = new MutationObserver(function(mutations) {
-  mutations.forEach(function(m) {
-    var el = m.target;
-    if (el && el.dataset && el.dataset.countup && m.oldValue === '—' && el.textContent !== '—') {
-      animateCountUp(el, el.textContent);
-    }
-  });
-});
+// Count-up: observe cs-* elements; fires when textContent is set from '—' to a real value.
+// textContent assignment fires childList mutation (removes old text node, inserts new one).
+// m.target is the element; m.type is 'childList'; m.oldValue is null for childList.
+// We track initial state via a data attribute instead of relying on m.oldValue.
 ['cs-members','cs-cogs','cs-value'].forEach(function(id) {
   var el = document.getElementById(id);
-  if (el) _csObserver.observe(el, {childList:true, characterData:true, subtree:true, attributeOldValue:true, characterDataOldValue:true, oldValue:'—'});
+  if (!el) return;
+  el.dataset.csInit = '—'; // mark as uninitialised
+  new MutationObserver(function(mutations) {
+    if (el.dataset.csInit !== '—') return; // already animated
+    var val = el.textContent.trim();
+    if (val && val !== '—') {
+      el.dataset.csInit = 'done'; // prevent double-fire
+      animateCountUp(el, val);
+    }
+  }).observe(el, {childList: true});
 });
 
-// ── Hub teaser: hide teaser on card open, show on collapse ─────────────────
-// Extend the existing toggleHubCard to manage teasers
-var _origToggleHub = window.toggleHubCard;
-window.toggleHubCard = function(cardId) {
-  if (typeof _origToggleHub === 'function') _origToggleHub(cardId);
-  // Teasers are CSS-driven via .collapsed class — no extra JS needed
-};
+// Teasers are CSS-driven (.hub-card.collapsed .hub-card-teaser{display:block}) — no JS needed.
 
 // ── Wire milestone + next-step into community data load ─────────────────────
-// The data load calls showJvpaBanner and sets _partnerPaymentStatus.
-// We patch into the block that computes _snftDue / _secDue.
-// Since we can't wrap an anonymous inline block, we use a custom event.
 document.addEventListener('cogsDataReady', function(e) {
   var d      = e.detail || {};
   var jvpaDue= d.jvpaDue || false;
