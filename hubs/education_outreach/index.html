@@ -83,6 +83,14 @@ window.HUB_TIP      = 'Help new Members understand their role, explain the struc
     </div>
   </div>
 
+  <!-- Operational Activity (hub-admin-activity) -->
+  <div class="hub-section" id="hub-admin-activity-section">
+    <div class="hub-section-hd">
+      <span class="hub-section-title">Operational Activity</span>
+    </div>
+    <div id="hub-admin-activity"><div class="hub-loading" style="font-size:.82rem">Loading…</div></div>
+  </div>
+
   <!-- Query section -->
   <div class="hub-section" id="hub-query-section">
     <div class="hub-section-hd">
@@ -109,6 +117,13 @@ window.HUB_TIP      = 'Help new Members understand their role, explain the struc
 
     <div id="hub-project-detail" style="display:none"></div>
 </main>
-<script src="../_shared/hub.js?v=13"></script>
+<script src="../_shared/hub.js?v=14"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  if(window.loadAdminActivity && window.HUB_AREA_KEY){
+    window.loadAdminActivity(window.HUB_AREA_KEY);
+  }
+});
+</script>
 </body>
 </html>

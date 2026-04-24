@@ -242,3 +242,29 @@ button{font-family:inherit;cursor:pointer}
 .hub-section-top{display:flex;justify-content:flex-end;padding-top:10px;margin-top:6px;border-top:1px solid var(--border)}
 .hub-section-top a{font-size:.75rem;color:var(--text3);transition:color .15s;text-decoration:none;display:flex;align-items:center;gap:4px}
 .hub-section-top a:hover{color:var(--gold);text-decoration:none}
+
+/* ── Hub Admin Activity card ────────────────────────────────────────────────── */
+.hub-activity-pages{margin-bottom:14px;padding:12px 14px;background:rgba(212,178,92,.04);border:1px solid rgba(212,178,92,.14);border-radius:10px}
+.hub-activity-pages-title{font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);margin-bottom:8px;opacity:.8}
+.hub-activity-chips{display:flex;flex-wrap:wrap;gap:5px}
+.hub-activity-chip{font-size:.75rem;padding:2px 8px;border-radius:6px;line-height:1.5;white-space:nowrap}
+.hub-activity-chip-primary{background:rgba(212,178,92,.1);color:var(--gold);border:1px solid rgba(212,178,92,.2)}
+.hub-activity-chip-secondary{background:rgba(255,255,255,.04);color:var(--text3);border:1px solid var(--border)}
+.hub-activity-feed{display:flex;flex-direction:column;gap:7px}
+.hub-activity-item{display:flex;align-items:baseline;gap:10px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border)}
+.hub-activity-item-inner{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px}
+.hub-activity-source{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);white-space:nowrap;flex-shrink:0}
+.hub-activity-summary{font-size:.82rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.hub-activity-ts{font-size:.72rem;color:var(--text4);white-space:nowrap;flex-shrink:0}
+
+/* ── Mainspring cross-hub admin activity grid ───────────────────────────────── */
+.ms-admin-grid{display:grid;gap:10px}
+.ms-admin-row{padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid var(--border)}
+.ms-admin-row-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ms-admin-hub-label{font-size:.82rem;font-weight:700;color:var(--text)}
+.ms-admin-page-count{font-size:.72rem;color:var(--text4);margin-left:auto;white-space:nowrap}
+.ms-admin-empty{font-size:.78rem;color:var(--text4);padding:4px 0}
+.ms-admin-item{display:flex;align-items:baseline;gap:8px;padding:4px 0;border-top:1px solid var(--border)}
+.ms-admin-source{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);white-space:nowrap;flex-shrink:0}
+.ms-admin-summary{flex:1;min-width:0;font-size:.8rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-admin-ts{font-size:.72rem;color:var(--text4);white-space:nowrap;flex-shrink:0}

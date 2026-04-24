@@ -1530,3 +1530,113 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 })();
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   BLOCK 3 — Hub Admin Activity
+   loadAdminActivity(areaKey) — called from DOMContentLoaded on each hub page.
+   Fetches /vault/hub-admin-activity and renders into #hub-admin-activity.
+   Not enrolled → shows Activate Participation prompt.
+   Empty activity → renders empty state, still shows admin pages panel.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  var _activityLoaded = false;
+
+  /**
+   * Fetch and render the Operational Activity card for the current hub.
+   * Safe to call multiple times — renders only once per page load.
+   */
+  async function loadAdminActivity(areaKey) {
+    if (_activityLoaded) return;
+    _activityLoaded = true;
+
+    var wrap = document.getElementById('hub-admin-activity');
+    if (!wrap) return;
+
+    var ROOT_LOCAL = (function () {
+      var p = window.location.pathname;
+      var parts = p.replace(/\/+$/, '').split('/');
+      var depth = 0;
+      for (var i = parts.length - 1; i >= 0; i--) {
+        if (parts[i] === 'hubs') break;
+        depth++;
+      }
+      var up = '';
+      for (var j = 0; j < depth; j++) up += '../';
+      return up || '../../';
+    }());
+    var API_LOCAL = ROOT_LOCAL + '_app/api/index.php?route=';
+
+    wrap.innerHTML = '<div class="hub-loading" style="font-size:.82rem">Loading operational activity…</div>';
+
+    var token = '';
+    try { token = (document.cookie.match(/snft_token=([^;]+)/) || [])[1] || ''; } catch (e) {}
+
+    var res, data;
+    try {
+      res = await fetch(
+        API_LOCAL + 'vault&action=hub-admin-activity&area_key=' + encodeURIComponent(areaKey) + '&limit=8',
+        { headers: { 'Authorization': 'Bearer ' + token } }
+      );
+      data = await res.json();
+    } catch (e) {
+      wrap.innerHTML = '<div class="hub-empty" style="font-size:.82rem">Operational activity unavailable.</div>';
+      return;
+    }
+
+    // Not enrolled
+    if (res.status === 403) {
+      wrap.innerHTML = '<div class="hub-empty" style="font-size:.82rem">Activate Participation to view operational activity for this hub.</div>';
+      return;
+    }
+
+    if (!data || !data.success) {
+      wrap.innerHTML = '<div class="hub-empty" style="font-size:.82rem">Operational activity unavailable.</div>';
+      return;
+    }
+
+    var pages   = (data.data && data.data.admin_pages)  || { primary: [], secondary: [] };
+    var events  = (data.data && data.data.activity)     || [];
+    var html    = '';
+
+    // ── Admin pages panel ──────────────────────────────────────────────────
+    if (pages.primary.length || pages.secondary.length) {
+      html += '<div class="hub-activity-pages">';
+      html += '<div class="hub-activity-pages-title">Admin functions serving this hub</div>';
+      html += '<div class="hub-activity-chips">';
+      pages.primary.forEach(function (p) {
+        html += '<span class="hub-activity-chip hub-activity-chip-primary">' + esc(p.label) + '</span>';
+      });
+      pages.secondary.forEach(function (p) {
+        html += '<span class="hub-activity-chip hub-activity-chip-secondary">' + esc(p.label) + '</span>';
+      });
+      html += '</div></div>';
+    }
+
+    // ── Activity feed ──────────────────────────────────────────────────────
+    if (!events.length) {
+      html += '<div class="hub-empty" style="font-size:.82rem;margin-top:12px">No recent operational activity recorded yet.</div>';
+    } else {
+      html += '<div class="hub-activity-feed">';
+      events.forEach(function (ev) {
+        var timeStr = '';
+        try { timeStr = dts(ev.ts); } catch (e) { timeStr = ev.ts || ''; }
+        html += '<div class="hub-activity-item">' +
+          '<div class="hub-activity-item-inner">' +
+            '<span class="hub-activity-source">' + esc(ev.source || '') + '</span>' +
+            '<span class="hub-activity-summary">' + esc(ev.summary || '') + '</span>' +
+          '</div>' +
+          '<span class="hub-activity-ts">' + esc(timeStr) + '</span>' +
+        '</div>';
+      });
+      html += '</div>';
+    }
+
+    wrap.innerHTML = html;
+  }
+
+  window.loadAdminActivity = loadAdminActivity;
+
+}());

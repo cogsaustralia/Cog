@@ -60,6 +60,12 @@
     <div id="ms-feed-wrap"><div class="hub-loading">Loading activity…</div></div>
   </div>
 
+  <!-- Cross-hub Operational Activity -->
+  <div class="hub-section">
+    <div class="hub-section-hd"><span class="hub-section-title">Operational Activity — All Hubs</span></div>
+    <div id="ms-admin-activity-wrap"><div class="hub-loading" style="font-size:.82rem">Loading…</div></div>
+  </div>
+
 </main>
 
 <script>
@@ -182,7 +188,65 @@ function renderFeed(activity){
 window.msTileClick = msTileClick;
 window.coinTransition = coinTransition;
 
-document.addEventListener('DOMContentLoaded', boot);
+async function loadMsAdminActivity() {
+  var wrap = document.getElementById('ms-admin-activity-wrap');
+  if (!wrap) return;
+  var AREAS = [
+    'operations_oversight','governance_polls','esg_proxy_voting','first_nations',
+    'community_projects','technology_blockchain','financial_oversight',
+    'place_based_decisions','education_outreach'
+  ];
+  var LABELS = {
+    operations_oversight:'Day-to-Day Operations', governance_polls:'Research & Acquisitions',
+    esg_proxy_voting:'ESG & Proxy Voting', first_nations:'First Nations Joint Venture',
+    community_projects:'Community Projects', technology_blockchain:'Technology & Blockchain',
+    financial_oversight:'Financial Oversight', place_based_decisions:'Place-Based Decisions',
+    education_outreach:'Education & Outreach'
+  };
+  var token = '';
+  try { token = (document.cookie.match(/snft_token=([^;]+)/) || [])[1] || ''; } catch(e) {}
+
+  var results = await Promise.allSettled(AREAS.map(function(area) {
+    return fetch(
+      API + 'vault&action=hub-admin-activity&area_key=' + area + '&limit=3',
+      { headers: { 'Authorization': 'Bearer ' + token } }
+    ).then(function(r){ return r.json(); });
+  }));
+
+  var rows = '';
+  results.forEach(function(r, i) {
+    var area  = AREAS[i];
+    var label = LABELS[area] || area;
+    var data  = (r.status === 'fulfilled' && r.value && r.value.success) ? r.value.data : null;
+    var events = (data && data.activity) || [];
+    var pages  = (data && data.admin_pages) || { primary: [], secondary: [] };
+    var adminCount = pages.primary.length + pages.secondary.length;
+
+    rows += '<div class="ms-admin-row">';
+    rows += '<div class="ms-admin-row-hd">';
+    rows += '<span class="ms-admin-hub-label">' + esc(label) + '</span>';
+    if (adminCount) rows += '<span class="ms-admin-page-count">' + adminCount + ' admin function' + (adminCount !== 1 ? 's' : '') + '</span>';
+    rows += '</div>';
+    if (!events.length) {
+      rows += '<div class="ms-admin-empty">No recent activity</div>';
+    } else {
+      events.forEach(function(ev) {
+        var ts = ''; try { ts = dts(ev.ts); } catch(e) { ts = ev.ts || ''; }
+        rows += '<div class="ms-admin-item">' +
+          '<span class="ms-admin-source">' + esc(ev.source || '') + '</span>' +
+          '<span class="ms-admin-summary">' + esc(ev.summary || '') + '</span>' +
+          '<span class="ms-admin-ts">' + esc(ts) + '</span>' +
+        '</div>';
+      });
+    }
+    rows += '</div>';
+  });
+
+  wrap.innerHTML = rows ? '<div class="ms-admin-grid">' + rows + '</div>'
+    : '<div class="hub-empty">No activity data available.</div>';
+}
+
+document.addEventListener('DOMContentLoaded', function() { boot(); loadMsAdminActivity(); });
 </script>
 </body>
 </html>
