@@ -2693,14 +2693,13 @@ function createStripeCheckout(): void {
     $postData['payment_intent_data[description]'] = 'COG$ Community Gift Pool — ' . (string)$member['full_name'] . ' (' . (string)$member['member_number'] . ')';
     $postData['payment_intent_data[statement_descriptor]'] = 'COGS AUSTRALIA';
 
-    // TEMP DEBUG — remove after diagnosis
-    if (defined('COGS_STRIPE_DEBUG') && COGS_STRIPE_DEBUG) {
-        apiError('[DEBUG] site=' . json_encode($site) . ' success_url=' . json_encode($site . '/wallets/member.html?payment=success') . ' SITE_URL_const=' . json_encode(defined('SITE_URL') ? SITE_URL : 'NOT_DEFINED'), 503);
-    }
+    $encodedBody = http_build_query($postData);
+    // TEMP: return raw post body first 800 chars so we can inspect
+    apiError('[RAW_POST] ' . substr($encodedBody, 0, 800), 503);
     $ch = curl_init('https://api.stripe.com/v1/checkout/sessions');
     curl_setopt_array($ch, [
         CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => http_build_query($postData),
+        CURLOPT_POSTFIELDS     => $encodedBody,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER     => [
             'Authorization: Bearer ' . $secretKey,
@@ -2723,6 +2722,8 @@ function createStripeCheckout(): void {
         $stripeErr  = (string)($result['error']['message'] ?? 'Unknown Stripe error');
         $stripeCode = (string)($result['error']['code']    ?? '');
         $stripeType = (string)($result['error']['type']    ?? '');
+        error_log('[vault/create-checkout] Stripe error HTTP=' . $httpCode . ' type=' . $stripeType . ' code=' . $stripeCode . ' msg=' . $stripeErr);
+        error_log('[vault/create-checkout] Full Stripe response: ' . substr((string)$response, 0, 500));
         apiError('Card payment is temporarily unavailable. Please use bank transfer or PayID — both are fee-free.', 503);
     }
 
