@@ -12,12 +12,73 @@ function tr_h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-
 
 $message = '';
 $error   = '';
+
+// ── POST: update trustee record ───────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'update_trustee') {
+    $uuid = trim($_POST['trustee_uuid'] ?? '');
+    try {
+        if ($uuid === '') throw new \RuntimeException('Trustee UUID missing.');
+        $fullName   = trim($_POST['full_name']   ?? '');
+        $dob        = trim($_POST['date_of_birth'] ?? '');
+        $address    = trim($_POST['address']     ?? '');
+        $apptDate   = trim($_POST['appointment_date'] ?? '');
+        $apptRef    = trim($_POST['appointment_instrument_ref'] ?? '');
+        $status     = trim($_POST['status']      ?? '');
+        $statusDate = trim($_POST['status_date'] ?? '');
+        $email      = trim($_POST['email']       ?? '');
+        $notes      = trim($_POST['notes']       ?? '');
+        if ($fullName === '') throw new \RuntimeException('Full name is required.');
+        if ($apptDate === '') throw new \RuntimeException('Appointment date is required.');
+        if ($status   === '') throw new \RuntimeException('Status is required.');
+        foreach (['date_of_birth' => $dob, 'appointment_date' => $apptDate] as $field => $val) {
+            if ($val !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $val)) {
+                throw new \RuntimeException("Invalid date format for {$field} — use YYYY-MM-DD.");
+            }
+        }
+        if ($statusDate !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $statusDate)) {
+            throw new \RuntimeException('Invalid date format for date ended — use YYYY-MM-DD.');
+        }
+        $stmt = $pdo->prepare(
+            "UPDATE trustees SET
+               full_name                  = ?,
+               date_of_birth              = ?,
+               address                    = ?,
+               appointment_date           = ?,
+               appointment_instrument_ref = ?,
+               status                     = ?,
+               status_date                = ?,
+               email                      = ?,
+               notes                      = ?,
+               updated_at                 = UTC_TIMESTAMP()
+             WHERE trustee_uuid = ?"
+        );
+        $stmt->execute([
+            $fullName,
+            $dob        !== '' ? $dob        : null,
+            $address    !== '' ? $address    : null,
+            $apptDate,
+            $apptRef    !== '' ? $apptRef    : null,
+            $status,
+            $statusDate !== '' ? $statusDate : null,
+            $email,
+            $notes      !== '' ? $notes      : null,
+            $uuid,
+        ]);
+        if ($stmt->rowCount() === 0) throw new \RuntimeException('No row updated — UUID not found.');
+        header('Location: ./trustees.php?msg=' . urlencode('Trustee record updated.'));
+        exit;
+    } catch (\Throwable $e) {
+        $error = $e->getMessage();
+    }
+}
+
 if (isset($_GET['msg'])) $message = tr_h(urldecode((string)$_GET['msg']));
 
-// ── Fetch all trustees ────────────────────────────────────────────────────────
-$stmt = $pdo->prepare('SELECT * FROM trustees ORDER BY sub_trust_context, status, appointment_date');
+$stmt = $pdo->prepare('SELECT * FROM trustees ORDER BY sub_trust_context, appointment_date, status');
 $stmt->execute();
 $trustees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$editUuid = trim((string)($_GET['edit'] ?? ''));
 
 $typeLabels = [
     'caretaker_trustee'  => 'Caretaker Trustee',
@@ -30,6 +91,12 @@ $subTrustLabels = [
     'sub_trust_b' => 'Sub-Trust B',
     'sub_trust_c' => 'Sub-Trust C',
     'all'         => 'All Sub-Trusts',
+];
+$statusOptions = [
+    'active'    => 'Active',
+    'resigned'  => 'Resigned',
+    'removed'   => 'Removed',
+    'suspended' => 'Suspended',
 ];
 $statusBadge = [
     'active'    => ['badge-ok',   'Active'],
@@ -55,25 +122,53 @@ $statusBadge = [
 .badge-err  { background: var(--errb);  color: var(--err);  border: 1px solid rgba(192,85,58,.3); }
 .trustee-card {
   background: var(--panel2); border: 1px solid var(--line2);
-  border-radius: 10px; padding: 0; margin-bottom: 16px; overflow: hidden;
+  border-radius: 10px; margin-bottom: 16px; overflow: hidden;
 }
-.trustee-card.active { border-color: rgba(82,184,122,.25); }
+.trustee-card.active  { border-color: rgba(82,184,122,.25); }
+.trustee-card.editing { border-color: rgba(212,178,92,.35); }
 .trustee-head {
   display: flex; justify-content: space-between; align-items: center;
   padding: 13px 18px; border-bottom: 1px solid var(--line);
   flex-wrap: wrap; gap: 8px;
 }
-.trustee-head h3 { font-size: .88rem; font-weight: 700; margin: 0; color: var(--text); }
+.trustee-head h3   { font-size: .88rem; font-weight: 700; margin: 0; color: var(--text); }
 .trustee-head .sub { font-size: .75rem; color: var(--sub); margin-top: 2px; }
-.trustee-body { padding: 14px 18px; }
-.dg { display: grid; grid-template-columns: 190px 1fr; gap: 5px 12px; font-size: .81rem; }
-.dg-l { color: var(--dim); }
+.trustee-body { padding: 16px 18px; }
+.dg { display: grid; grid-template-columns: 200px 1fr; gap: 6px 14px; font-size: .81rem; }
+.dg-l { color: var(--dim); padding-top: 1px; }
 .dg-v { color: var(--text); word-break: break-word; }
-.dg-v.mono { font-family: monospace; font-size: .78rem; }
-.dg-v.gold { color: var(--gold); }
-.msg-ok  { background: var(--okb);  border: 1px solid rgba(82,184,122,.3); color: var(--ok);  border-radius: 7px; padding: 10px 14px; font-size: .83rem; margin-bottom: 14px; }
-.msg-err { background: var(--errb); border: 1px solid rgba(192,85,58,.3);  color: var(--err); border-radius: 7px; padding: 10px 14px; font-size: .83rem; margin-bottom: 14px; }
-.notice { background: var(--warnb); border: 1px solid rgba(212,148,74,.3); border-radius: 8px; padding: 12px 16px; font-size: .82rem; color: var(--warn); margin-bottom: 18px; }
+.dg-v.mono    { font-family: monospace; font-size: .73rem; }
+.dg-v.gold    { color: var(--gold); }
+.dg-v.missing { color: var(--err); font-style: italic; }
+.edit-form { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+.fg { margin-bottom: 12px; }
+.fg label { display: block; font-size: .75rem; color: var(--sub); margin-bottom: 4px; }
+.fg input, .fg select, .fg textarea {
+  width: 100%; box-sizing: border-box;
+  background: var(--input); border: 1px solid var(--line2); border-radius: 6px;
+  color: var(--text); font-size: .82rem; padding: 6px 9px;
+}
+.fg textarea { min-height: 60px; resize: vertical; }
+.fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.required { color: var(--err); }
+.form-actions { display: flex; gap: 10px; align-items: center; margin-top: 14px; }
+.btn { display: inline-block; padding: 6px 14px; border-radius: 7px; font-size: .78rem;
+       font-weight: 700; cursor: pointer; border: none; text-decoration: none; }
+.btn-primary { background: rgba(212,178,92,.18); border: 1px solid rgba(212,178,92,.4); color: var(--gold); }
+.btn-primary:hover { background: rgba(212,178,92,.32); }
+.btn-ghost { background: none; border: 1px solid var(--line2); color: var(--sub); }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-sm { padding: 4px 10px; font-size: .73rem; }
+.msg-ok  { background: var(--okb);  border: 1px solid rgba(82,184,122,.3); color: var(--ok);
+           border-radius: 7px; padding: 10px 14px; font-size: .83rem; margin-bottom: 14px; }
+.msg-err { background: var(--errb); border: 1px solid rgba(192,85,58,.3);  color: var(--err);
+           border-radius: 7px; padding: 10px 14px; font-size: .83rem; margin-bottom: 14px; }
+.notice  { background: var(--warnb); border: 1px solid rgba(212,148,74,.3);
+           border-radius: 8px; padding: 12px 16px; font-size: .82rem; color: var(--warn); margin-bottom: 18px; }
+.sub-heading {
+  font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700; margin: 20px 0 10px;
+}
 </style>
 </head>
 <body>
@@ -82,15 +177,12 @@ $statusBadge = [
 <div class="main">
 
 <?php if ($message): ?><div class="msg-ok"><?= $message ?></div><?php endif; ?>
-<?php if ($error):   ?><div class="msg-err"><?= $error ?></div><?php endif; ?>
+<?php if ($error):   ?><div class="msg-err"><?= tr_h($error) ?></div><?php endif; ?>
 
 <div class="topbar" style="margin-bottom:18px">
   <h2>👔 Trustees Register</h2>
-  <p>
-    All trustees of the COGS of Australia Foundation CJVM Hybrid Trust, including current and historical.
-    New trustees may only be added after an executed TDR or deed authorising their appointment.
-    Appointment references must resolve to an executed record.
-  </p>
+  <p>Full record of all current and former trustees of each sub-trust — names, dates of birth,
+     addresses, appointment dates, and cessation dates. Click <strong>Edit</strong> to update any record.</p>
 </div>
 
 <div class="notice">
@@ -98,10 +190,22 @@ $statusBadge = [
   The Board Meeting infrastructure activates on appointment of a second Trustee under Declaration cl.1.8.
 </div>
 
-<?php foreach ($trustees as $t):
-  [$bc, $bl] = $statusBadge[$t['status']] ?? ['badge-warn', $t['status']];
+<?php
+$grouped    = [];
+foreach ($trustees as $t) $grouped[$t['sub_trust_context']][] = $t;
+$groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
 ?>
-<div class="trustee-card <?= $t['status'] === 'active' ? 'active' : '' ?>">
+
+<?php foreach ($groupOrder as $ctx):
+  if (empty($grouped[$ctx])) continue; ?>
+
+<div class="sub-heading"><?= tr_h($subTrustLabels[$ctx] ?? $ctx) ?></div>
+
+<?php foreach ($grouped[$ctx] as $t):
+  [$bc,$bl] = $statusBadge[$t['status']] ?? ['badge-warn',$t['status']];
+  $isEditing = ($editUuid === $t['trustee_uuid']); ?>
+
+<div class="trustee-card <?= $t['status']==='active'?'active':'' ?> <?= $isEditing?'editing':'' ?>">
   <div class="trustee-head">
     <div>
       <h3><?= tr_h($t['full_name']) ?></h3>
@@ -111,37 +215,136 @@ $statusBadge = [
         <?= tr_h($subTrustLabels[$t['sub_trust_context']] ?? $t['sub_trust_context']) ?>
       </div>
     </div>
-    <span class="badge <?= $bc ?>"><?= $bl ?></span>
-  </div>
-  <div class="trustee-body">
-    <div class="dg">
-      <span class="dg-l">UUID</span><span class="dg-v mono"><?= tr_h($t['trustee_uuid']) ?></span>
-      <span class="dg-l">OTP Email</span><span class="dg-v gold"><?= tr_h($t['email']) ?></span>
-      <span class="dg-l">Address</span><span class="dg-v"><?= tr_h($t['address'] ?? '—') ?></span>
-      <span class="dg-l">Appointment Date</span><span class="dg-v"><?= tr_h($t['appointment_date']) ?></span>
-      <span class="dg-l">Appointment Instrument</span>
-      <span class="dg-v mono"><?= tr_h($t['appointment_instrument_ref'] ?? '—') ?></span>
-      <?php if ($t['status'] !== 'active' && $t['status_date']): ?>
-        <span class="dg-l">Status Date</span><span class="dg-v"><?= tr_h($t['status_date']) ?></span>
-      <?php endif; ?>
-      <?php if ($t['notes']): ?>
-        <span class="dg-l">Notes</span><span class="dg-v"><?= tr_h($t['notes']) ?></span>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="badge <?= $bc ?>"><?= $bl ?></span>
+      <?php if (!$isEditing): ?>
+        <a href="./trustees.php?edit=<?= urlencode($t['trustee_uuid']) ?>" class="btn btn-ghost btn-sm">✎ Edit</a>
+      <?php else: ?>
+        <a href="./trustees.php" class="btn btn-ghost btn-sm">✕ Cancel</a>
       <?php endif; ?>
     </div>
   </div>
-</div>
+
+  <?php if (!$isEditing): ?>
+  <div class="trustee-body">
+    <div class="dg">
+      <span class="dg-l">Full Name</span>
+      <span class="dg-v"><?= tr_h($t['full_name']) ?></span>
+
+      <span class="dg-l">Date of Birth</span>
+      <span class="dg-v <?= empty($t['date_of_birth'])?'missing':'' ?>">
+        <?= !empty($t['date_of_birth']) ? tr_h($t['date_of_birth']) : 'Not recorded — click Edit' ?>
+      </span>
+
+      <span class="dg-l">Address</span>
+      <span class="dg-v"><?= !empty($t['address']) ? tr_h($t['address']) : '—' ?></span>
+
+      <span class="dg-l">OTP Email</span>
+      <span class="dg-v gold"><?= tr_h($t['email']) ?></span>
+
+      <span class="dg-l">Date Appointed</span>
+      <span class="dg-v"><?= tr_h($t['appointment_date']) ?></span>
+
+      <span class="dg-l">Appointment Instrument</span>
+      <span class="dg-v mono"><?= tr_h($t['appointment_instrument_ref'] ?? '—') ?></span>
+
+      <span class="dg-l">Status</span>
+      <span class="dg-v"><span class="badge <?= $bc ?>"><?= $bl ?></span></span>
+
+      <?php if ($t['status_date']): ?>
+        <span class="dg-l">Date Ended</span>
+        <span class="dg-v"><?= tr_h($t['status_date']) ?></span>
+      <?php endif; ?>
+
+      <?php if ($t['notes']): ?>
+        <span class="dg-l">Notes</span>
+        <span class="dg-v"><?= tr_h($t['notes']) ?></span>
+      <?php endif; ?>
+
+      <span class="dg-l">UUID</span>
+      <span class="dg-v mono"><?= tr_h($t['trustee_uuid']) ?></span>
+    </div>
+  </div>
+
+  <?php else: ?>
+  <div class="trustee-body">
+    <form method="POST">
+      <input type="hidden" name="_action"      value="update_trustee">
+      <input type="hidden" name="trustee_uuid" value="<?= tr_h($t['trustee_uuid']) ?>">
+      <div class="edit-form">
+        <div class="fg-row">
+          <div class="fg">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" name="full_name" required value="<?= tr_h($t['full_name']) ?>">
+          </div>
+          <div class="fg">
+            <label>Date of Birth</label>
+            <input type="date" name="date_of_birth" value="<?= tr_h($t['date_of_birth'] ?? '') ?>">
+          </div>
+        </div>
+        <div class="fg">
+          <label>Address</label>
+          <input type="text" name="address" value="<?= tr_h($t['address'] ?? '') ?>"
+                 placeholder="Full street address including suburb, state, postcode">
+        </div>
+        <div class="fg">
+          <label>OTP Email</label>
+          <input type="email" name="email" required value="<?= tr_h($t['email']) ?>">
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Date Appointed <span class="required">*</span></label>
+            <input type="date" name="appointment_date" required value="<?= tr_h($t['appointment_date']) ?>">
+          </div>
+          <div class="fg">
+            <label>Appointment Instrument Reference</label>
+            <input type="text" name="appointment_instrument_ref"
+                   value="<?= tr_h($t['appointment_instrument_ref'] ?? '') ?>"
+                   placeholder="e.g. CJVM_Hybrid_Trust_Declaration_v1.0">
+          </div>
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Status <span class="required">*</span></label>
+            <select name="status" required>
+              <?php foreach ($statusOptions as $val => $lbl): ?>
+                <option value="<?= tr_h($val) ?>" <?= $t['status']===$val?'selected':'' ?>>
+                  <?= tr_h($lbl) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Date Ended <span style="color:var(--dim)">(blank if still active)</span></label>
+            <input type="date" name="status_date" value="<?= tr_h($t['status_date'] ?? '') ?>">
+          </div>
+        </div>
+        <div class="fg">
+          <label>Notes</label>
+          <textarea name="notes"><?= tr_h($t['notes'] ?? '') ?></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save Record</button>
+          <a href="./trustees.php" class="btn btn-ghost">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+  <?php endif; ?>
+
+</div><!-- .trustee-card -->
+<?php endforeach; ?>
 <?php endforeach; ?>
 
 <?php if (empty($trustees)): ?>
   <p style="color:var(--sub);font-size:.85rem">No trustees found.</p>
 <?php endif; ?>
 
-<p style="font-size:.75rem;color:var(--dim);margin-top:24px">
-  New Trustee addition requires an executed appointment instrument reference (TDR or deed).
+<p style="font-size:.75rem;color:var(--dim);margin-top:28px">
+  New trustee rows require an executed appointment instrument reference (TDR or deed).
   Contact the system administrator to add a new trustee row after the instrument is executed.
 </p>
 
-</div>
-</div>
+</div><!-- .main -->
+</div><!-- .admin-shell -->
 </body>
 </html>
