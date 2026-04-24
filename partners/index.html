@@ -2445,7 +2445,7 @@ function enterCommunity(data){
   var _jvpaStatus = (window._communityData && window._communityData.jvpa_acceptance) || {};
   var _jvpaDue    = !!_jvpaStatus.needs_signing;
   document.dispatchEvent(new CustomEvent('cogsDataReady', {
-    detail: { payDue: !!(_snftDue || _secDue), jvpaDue: _jvpaDue }
+    detail: { payDue: !!(_snftDue || _secDue), snftDue: !!_snftDue, jvpaDue: _jvpaDue }
   }));
 
   // ── If payment is due, inject a visible Pay now strip below the hero vault button ──
@@ -3073,7 +3073,8 @@ async function submitJvpaAcceptance() {
       window._communityData.jvpa_acceptance.verified = true;
       // Re-fire data ready so milestone/next-step updates
       var _pd = (window._partnerPaymentStatus || 'pending') !== 'paid';
-      document.dispatchEvent(new CustomEvent('cogsDataReady', { detail: { payDue: _pd, jvpaDue: false } }));
+      var _pdSnft = (window._partnerPaymentStatus || 'pending') !== 'paid';
+      document.dispatchEvent(new CustomEvent('cogsDataReady', { detail: { payDue: _pd, snftDue: _pdSnft, jvpaDue: false } }));
     }
     setTimeout(closeJvpaModal, 1200);
   } catch(err) {
@@ -3271,7 +3272,7 @@ async function checkPaymentAndProceed(){
       window._partnerPaymentStatus = 'paid';
       // Re-fire data ready so milestone/next-step clears
       var _jd = !!(window._communityData && window._communityData.jvpa_acceptance && window._communityData.jvpa_acceptance.needs_signing);
-      document.dispatchEvent(new CustomEvent('cogsDataReady', { detail: { payDue: false, jvpaDue: _jd } }));
+      document.dispatchEvent(new CustomEvent('cogsDataReady', { detail: { payDue: false, snftDue: false, jvpaDue: _jd } }));
       closePayIntercept();
       // Remove payment overlays
       var hstrip = document.getElementById('hero-pay-strip');
@@ -4116,7 +4117,8 @@ window.updateNextStep = function(payDue, jvpaDue) {
 // Wire into the community data load
 
 // ── Milestone state update ──────────────────────────────────────────────────
-window.updateMilestones = function(payDue, jvpaDue) {
+window.updateMilestones = function(payDue, jvpaDue, snftDue) {
+  // snftDue: signup payment only. payDue: any outstanding payment. Step 3 uses snftDue.
   var data = window._communityData || {};
 
   // Step 1 — Registered: always done
@@ -4141,7 +4143,8 @@ window.updateMilestones = function(payDue, jvpaDue) {
   var s3ico  = document.getElementById('milestone-pay-ico');
   var s3btn  = document.getElementById('milestone-pay-btn');
   if (s3card) {
-    if (!payDue) {
+    var _s3Due = (typeof snftDue !== 'undefined') ? snftDue : payDue;
+    if (!_s3Due) {
       s3card.classList.add('milestone-done');
       if (s3ico) s3ico.textContent = '✓';
       if (s3btn) s3btn.style.display = 'none';
@@ -4216,8 +4219,9 @@ document.addEventListener('cogsDataReady', function(e) {
   var d      = e.detail || {};
   var jvpaDue= d.jvpaDue || false;
   var payDue = d.payDue  || false;
+  var snftDue= (typeof d.snftDue !== 'undefined') ? d.snftDue : payDue;
   window.updateNextStep(payDue, jvpaDue);
-  window.updateMilestones(payDue, jvpaDue);
+  window.updateMilestones(payDue, jvpaDue, snftDue);
 });
 
 </script>
