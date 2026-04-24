@@ -919,6 +919,28 @@
     /* ── Library section lead fix ── */
     .section-lead + p{margin-top:0}
 
+
+    /* ── Four Spokes section ── */
+    .four-spokes-section{padding:28px 0 8px}
+    .four-spokes-eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px}
+    .four-spokes-heading{font-family:var(--serif);font-size:clamp(1.3rem,3vw,1.75rem);font-weight:500;color:var(--gold-1);line-height:1.15;letter-spacing:-.02em;margin-bottom:18px}
+    .four-spokes-body{font-size:.92rem;color:var(--muted);line-height:1.78}
+    .four-spokes-body>p{margin-bottom:14px}
+    .four-spokes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:22px 0 20px}
+    .spoke-card{padding:20px 22px;border-radius:16px;background:linear-gradient(160deg,rgba(28,22,10,.88),rgba(14,11,5,.75));border:1px solid var(--gold-rim);transition:border-color .2s,box-shadow .2s,transform .15s}
+    .spoke-card:hover{border-color:var(--gold-rim2);box-shadow:0 6px 24px rgba(0,0,0,.3);transform:translateY(-1px)}
+    .spoke-label{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:4px}
+    .spoke-token{font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--gold-1);margin-bottom:12px;line-height:1.2}
+    .spoke-body{font-size:.86rem;color:var(--muted);line-height:1.72;margin:0}
+    .spoke-body strong{color:var(--text2)}
+    .spoke-rim-block,.spoke-road-block{padding:18px 22px;border-radius:14px;border-left:3px solid rgba(240,209,138,.4);background:rgba(240,209,138,.04);margin-bottom:14px}
+    .spoke-rim-hd{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-1);margin-bottom:8px}
+    .spoke-rim-block p,.spoke-road-block p{font-size:.88rem;color:var(--muted);line-height:1.72;margin:0 0 8px}
+    .spoke-road-block p:last-child{margin:0}
+    .spoke-closing{font-size:.94rem;font-weight:600;color:var(--text);margin-top:10px!important}
+    @media(max-width:720px){.four-spokes-grid{grid-template-columns:1fr}}
+    @media(max-width:580px){.four-spokes-section{padding:20px 0 4px}.spoke-card{padding:16px 18px}}
+
   </style>
 </head>
 <body data-root="../">
@@ -1230,6 +1252,51 @@
               </div>
             </div>
             <p class="milestone-notice">This is a founding phase confirmation. All reserved interests are recorded but are no-obligation and will not activate until the Foundation transitions from founding to expansion phase.</p>
+          </div>
+
+          <!-- ══ Four Spokes of the COG$ Circular Economy ══════════════════════════════ -->
+          <div class="four-spokes-section">
+            <div class="four-spokes-eyebrow">From a Founding Member</div>
+            <h3 class="four-spokes-heading">The Four Spokes of the COG$ Circular Economy</h3>
+            <div class="four-spokes-body">
+              <p>A wheel is one of humanity's oldest and most elegant solutions. It doesn't consume what it moves across — it simply turns, converting energy into forward motion, distributing force evenly, and returning to the same point it started from before moving on. That is exactly what the COG$ circular economy is designed to do: not extract, not accumulate, not collapse inward — but turn. Continuously, sustainably, and together.</p>
+              <p>At the centre of the wheel sits the hub — the Community Joint Venture itself. It is the fixed point around which everything rotates, the anchor that holds the spokes in tension and gives the wheel its form. Without the community, there is no wheel. Without the wheel, the community goes nowhere.</p>
+              <p>From that hub extend four spokes. Each one is distinct in its material, its purpose, and the load it carries. But a wheel with uneven spokes wobbles. A wheel with a missing spoke buckles under pressure. The COG$ model is designed so that all four spokes are present, tensioned, and load-bearing — because the integrity of the whole depends on the integrity of each.</p>
+
+              <div class="four-spokes-grid">
+                <div class="spoke-card">
+                  <div class="spoke-label">Spoke of identity</div>
+                  <div class="spoke-token">NFT COG$</div>
+                  <p class="spoke-body"><strong>NFT COG$ are the spoke of identity.</strong> This is the spoke that names every participant and gives them their place in the wheel. Minted once, at the moment an individual member or business joins the community, each NFT COG$ is permanently and uniquely bound to that participant — their signature on the wheel, their seat at the table. It cannot be transferred, replicated, or cashed out, because identity cannot be transferred, replicated, or sold. This spoke does not stretch to accommodate demand. It grows only as the community genuinely grows — one consenting participant at a time — because a community built on manufactured membership is not a community at all. It is a rim without a hub.</p>
+                </div>
+                <div class="spoke-card">
+                  <div class="spoke-label">Spoke of equity</div>
+                  <div class="spoke-token">ASX COG$</div>
+                  <p class="spoke-body"><strong>ASX COG$ are the spoke of equity.</strong> This is the spoke that connects the wheel to the broader economy of real, publicly accountable resource companies. Minted against a pooled holding of shares in ASX-listed resource companies, every ASX COG$ represents a proportional stake in that pool — and it cannot exist without a corresponding share underpinning it. The spoke lengthens only when the pool grows, through new company joint ventures or additional share contributions. It is market-anchored and transparent by design, tied directly to the performance of real companies operating under real regulatory scrutiny. This spoke does not speculate. It reflects.</p>
+                </div>
+                <div class="spoke-card">
+                  <div class="spoke-label">Spoke of resource</div>
+                  <div class="spoke-token">RWA COG$</div>
+                  <p class="spoke-body"><strong>RWA COG$ are the spoke of resource.</strong> This is the deepest spoke — reaching furthest from the hub, anchored not in markets or memberships but in the earth itself. Not yet in circulation, each RWA COG$ will be minted via smart contract and tied to an independently verified, in-situ resource: minerals, biological assets, or other natural assets valued before a single gram is extracted. The minting quantity is fixed at the point of independent valuation and cannot be revisited. If the underlying resource increases in value, existing tokens appreciate — the spoke carries more weight, but it does not grow longer. The only way to extend this spoke is to register additional verified resources. This is the spoke that makes inflation structurally impossible — not by rule, but by architecture.</p>
+                </div>
+                <div class="spoke-card">
+                  <div class="spoke-label">Spoke of exchange</div>
+                  <div class="spoke-token">Community COG$ (CC)</div>
+                  <p class="spoke-body"><strong>Community COG$ (CC) are the spoke of exchange.</strong> This is the most active spoke — the one in constant motion, flexing and turning with the daily life of the community. Carrying no directly linked underlying asset, Community COG$ derive their value entirely from what members agree they are worth through the exchange of real goods and services. Every Individual Member receives 1,000 CC upon entry; every Business Member receives 10,000 CC — enough to begin participating, not enough to dominate. Additional CC may be minted and issued only in exchange for genuine goods or services. This spoke grows in direct proportion to the productive activity of the community itself.</p>
+                </div>
+              </div>
+
+              <div class="spoke-rim-block">
+                <div class="spoke-rim-hd">The Rim — The No-Fiat Rule</div>
+                <p>Four strong spokes are not enough on their own. What holds them together — what gives the wheel its shape and keeps value from flying outward — is the rim. In the COG$ model, that rim is the no-fiat rule. No COG$ token of any type can be converted to or exchanged for Australian dollars or any other fiat currency. Value generated within the circular economy stays within the circular economy. This is not a restriction imposed on the community — it is the boundary condition that makes circularity possible. A wheel without a rim is just four spokes spinning in the air. The moment a cash-out pathway exists, the wheel stops being a wheel. It becomes a funnel — and value flows in one direction only, away from the people who created it.</p>
+              </div>
+
+              <div class="spoke-road-block">
+                <div class="spoke-rim-hd">The Road — The Real World</div>
+                <p>A wheel is only as useful as the ground it moves on. The COG$ circular economy does not exist in abstraction — it turns on the real world. The shares are real. The in-situ resources are real. The members are real people and real businesses. The goods and services exchanged are real contributions to real community operations. And unlike extraction, which tears up the road as it goes, a wheel leaves the road as it found it.</p>
+                <p class="spoke-closing">Four spokes. One hub. One rim. One road.</p>
+              </div>
+            </div>
           </div>
 
       <hr class="divider">
