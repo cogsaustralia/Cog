@@ -2023,6 +2023,44 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '</div>';
       }
 
+      // Invariant strip
+      if (hd.invariants && hd.invariants.length) {
+        var tv = hd.invariant_violations_total || 0;
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">'
+          + 'Godley invariants (I1–I12) '
+          + (tv === 0 ? '<span class="hub-livedata-ok">✓ All clear</span>'
+            : '<span style="color:#e87070;font-weight:700">⚠ ' + tv + ' violation' + (tv !== 1 ? 's' : '') + '</span>') + '</div>';
+        html += '<div class="hub-invariant-strip">';
+        hd.invariants.forEach(function(inv) {
+          var pass = inv.violation_count === 0;
+          html += '<span class="hub-inv-chip ' + (pass ? 'inv-pass' : 'inv-fail') + '" title="' + _esc(inv.name) + '">'
+            + _esc(inv.code) + (pass ? '' : ' ⚠') + '</span>';
+        });
+        html += '</div>';
+      }
+      // Sub-trust balances
+      if (hd.sub_trust_balances && hd.sub_trust_balances.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:10px">Sub-trust balances</div>';
+        hd.sub_trust_balances.forEach(function(st) {
+          var bal = (Math.abs(st.balance_cents)/100).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+          var sign = st.balance_cents < 0 ? ' Cr' : (st.balance_cents > 0 ? ' Dr' : '');
+          var zero = st.balance_cents === 0;
+          html += '<div class="hub-livedata-row"><span class="hub-livedata-label">';
+          html += '<span class="hub-st-badge">ST ' + _esc(st.sub_trust) + '</span> ' + _esc(st.display_name) + '</span>';
+          html += '<span class="hub-livedata-val">' + (zero ? '✓ Zero' : '$' + bal + sign) + '</span></div>';
+        });
+      }
+      // Upcoming deadlines
+      if (hd.upcoming_deadlines) {
+        var ud = hd.upcoming_deadlines;
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Upcoming compliance deadlines (14 days)</span>';
+        html += '<span class="hub-livedata-val' + (ud.count > 0 ? ' lvd-issues' : '') + '">' + ud.count + '</span>';
+        if (ud.count > 0 && ud.earliest)
+          html += '<span class="hub-livedata-chips"><span class="sev-chip sev-med">next ' + _esc(ud.earliest.split(' ')[0]) + '</span></span>';
+        else html += '<span class="hub-livedata-ok">✓ None due</span>';
+        html += '</div>';
+      }
+
       html += '</div>';
     }
 

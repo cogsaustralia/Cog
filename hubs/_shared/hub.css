@@ -295,3 +295,10 @@ button{font-family:inherit;cursor:pointer}
 .esg-poor-badge{font-size:.7rem;padding:1px 6px;border-radius:4px;background:rgba(220,80,60,.15);color:#e87070;border:1px solid rgba(220,80,60,.25);font-weight:700;white-space:nowrap}
 .node-live{background:rgba(60,180,100,.12);color:#5db87a;border:1px solid rgba(60,180,100,.25)}
 .node-other{background:rgba(255,255,255,.05);color:var(--text3);border:1px solid var(--border)}
+
+/* ── Hub 7 invariant strip ───────────────────────────────────────────────────── */
+.hub-invariant-strip{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 10px}
+.hub-inv-chip{font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;cursor:default}
+.inv-pass{background:rgba(82,184,122,.1);color:#5db87a;border:1px solid rgba(82,184,122,.2)}
+.inv-fail{background:rgba(220,80,60,.14);color:#e87070;border:1px solid rgba(220,80,60,.25)}
+.hub-st-badge{display:inline-block;font-size:.7rem;font-weight:800;padding:1px 5px;border-radius:4px;background:rgba(212,178,92,.1);color:var(--gold);border:1px solid rgba(212,178,92,.18);margin-right:2px}

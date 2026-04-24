@@ -1677,6 +1677,45 @@ function handleHubAdminActivity(): void
             }
             $hubData['expenses_by_category'] = $expByCat;
         } catch (Throwable) {}
+
+        // 5. Godley invariants I1-I12
+        try {
+            $stmt = $db->query("SELECT code, name, violation_count FROM v_godley_invariant_status ORDER BY code");
+            $totalViol = 0;
+            $hubData['invariants'] = array_map(function($r) use (&$totalViol) {
+                $vc = (int)$r['violation_count']; $totalViol += $vc;
+                return ['code' => (string)$r['code'], 'name' => (string)$r['name'], 'violation_count' => $vc];
+            }, $stmt->fetchAll(PDO::FETCH_ASSOC));
+            $hubData['invariant_violations_total'] = $totalViol;
+        } catch (Throwable) {}
+
+        // 6. Sub-trust balances
+        try {
+            $stmt = $db->query("SELECT sub_trust, display_name, balance_cents FROM v_godley_consolidated ORDER BY sub_trust");
+            $hubData['sub_trust_balances'] = array_map(
+                fn($r) => ['sub_trust' => (string)$r['sub_trust'], 'display_name' => (string)$r['display_name'], 'balance_cents' => (int)$r['balance_cents']],
+                $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+
+        // 7. Upcoming compliance deadlines within 14 days
+        try {
+            $stmt = $db->query("SELECT COUNT(*) AS cnt, MIN(compliance_due_by) AS earliest FROM trust_transfers WHERE status IN ('pending','approved') AND compliance_due_by IS NOT NULL AND compliance_due_by >= NOW() AND compliance_due_by <= DATE_ADD(NOW(), INTERVAL 14 DAY)");
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $hubData['upcoming_deadlines'] = ['count' => (int)($row['cnt'] ?? 0), 'earliest' => (string)($row['earliest'] ?? '')];
+        } catch (Throwable) {}
+
+        // 8. Enhanced distribution run (add per-unit rate + due date)
+        if (!empty($hubData['last_distribution'])) {
+            try {
+                $stmt = $db->query("SELECT cents_per_unit, total_beneficial_units, distribution_due_by FROM distribution_runs ORDER BY distribution_date DESC LIMIT 1");
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($row) {
+                    $hubData['last_distribution']['cents_per_unit']         = (int)$row['cents_per_unit'];
+                    $hubData['last_distribution']['total_beneficial_units']  = (int)$row['total_beneficial_units'];
+                    $hubData['last_distribution']['distribution_due_by']    = (string)($row['distribution_due_by'] ?? '');
+                }
+            } catch (Throwable) {}
+        }
             } elseif ($area === 'place_based_decisions') {
         // 1. Active Affected Zones (governance zone type) — name + date (no member/address data)
         try {
