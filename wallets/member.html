@@ -1000,12 +1000,12 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- Outstanding secondary payments nudge — shown when kids/donation/PIF payments are due -->
       <div id="ov-outstanding-card" style="display:none;margin-bottom:14px;padding:14px 16px;background:var(--pay-gold-bg);border:1px solid var(--pay-gold-bdr);border-radius:12px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:0">
             <div style="font-size:1rem;font-weight:600;color:var(--pay-gold);margin-bottom:3px" id="ov-outstanding-title">Payments outstanding</div>
-            <div style="font-size:.92rem;color:var(--text3);line-height:1.45" id="ov-outstanding-desc"></div>
+            <div style="font-size:.88rem;color:var(--text3);line-height:1.5" id="ov-outstanding-desc"></div>
           </div>
-          <button class="btn btn-sm" style="background:var(--pay-gold);color:#fff;border:none;flex-shrink:0" onclick="openOutstandingModal()">Pay now ›</button>
+          <button class="btn btn-sm" style="background:var(--pay-gold);color:#fff;border:none;flex-shrink:0;margin-top:2px" onclick="openOutstandingModal()">Pay now ›</button>
         </div>
       </div>
 
@@ -2782,7 +2782,7 @@ function renderHoldings(d){
       ? '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--pay-gold-bg);border:1px solid var(--pay-gold-bdr);border-radius:8px;flex-wrap:wrap">'
       +   '<div style="flex:1;min-width:0">'
       +     '<div style="font-size:1rem;font-weight:600;color:var(--pay-gold);margin-bottom:2px">Kids S-NFT payment outstanding — ' + unpaidKidsUnits + ' Kids S-NFT' + (unpaidKidsUnits!==1?'s':'') + '</div>'
-      +     '<div style="font-size:1.02rem;color:var(--text3)">$' + unpaidKidsTotal.toFixed(2) + ' due &middot; pay via PayID <span style="font-family:var(--mono);color:var(--text2)">0494 578 706</span> using your Member number as reference</div>'
+      +     '<div style="font-size:.92rem;color:var(--text3);line-height:1.5">$' + unpaidKidsTotal.toFixed(2) + ' due — tap Pay now to complete by card or bank transfer.</div>'
       +   '</div>'
       +   '<button class="btn btn-sm" style="background:var(--pay-gold);color:#fff;border:none;flex-shrink:0" onclick="openOutstandingModal()">Pay now ›</button>'
       + '</div>'
