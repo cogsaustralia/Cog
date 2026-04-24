@@ -603,6 +603,53 @@ function renderProjectDetail(){
       '</div>'
     : '<div class="hub-gate-msg">Activate participation in this hub to comment.</div>';
 
+  // Vote widget — only shown when project is in 'vote' phase and member is enrolled
+  var voteWidget = '';
+  if(p.status === 'vote' && enrolledInArea){
+    var vs = _projectData.vote_summary || {agree_count:0,disagree_count:0,block_count:0,abstain_count:0,total_votes:0};
+    var mv = _projectData.my_vote || null;
+    var myPos = mv ? mv.position : null;
+    var _posBtn = function(pos, label, cls){
+      var active = myPos === pos ? ' style="outline:2px solid currentColor;outline-offset:2px"' : '';
+      return '<button class="btn btn-sm hub-vote-btn '+cls+'"'+active
+        +' data-project-id="'+p.id+'" data-position="'+pos+'"'
+        +' onclick="castVote(this)">'+label+'</button>';
+    };
+    var blockNote = (myPos === 'block' && mv && mv.reasoning)
+      ? '<div style="font-size:.8rem;color:var(--text3);margin-top:6px">Your block reason: '+esc(mv.reasoning)+'</div>'
+      : '';
+    voteWidget =
+      '<div class="hub-section">' +
+        '<div class="hub-section-hd"><span class="hub-section-title">Consent Vote</span></div>' +
+        '<div style="padding:0 0 12px">' +
+          '<div style="font-size:.85rem;color:var(--text3);margin-bottom:12px">' +
+            'Cast your position. A single block re-opens deliberation. You may change your vote while voting is open.' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">' +
+            _posBtn('agree',    '✔ Agree',    'hub-vote-agree') +
+            _posBtn('disagree', '✕ Disagree', 'hub-vote-disagree') +
+            _posBtn('block',    '⛔ Block',    'hub-vote-block') +
+            _posBtn('abstain',  '○ Abstain',  'hub-vote-abstain') +
+          '</div>' +
+          '<div id="block-reason-wrap" style="display:'+(myPos==='block'?'block':'none')+'">' +
+            '<textarea class="hub-textarea" id="block-reason-txt" rows="2" maxlength="2000"' +
+            ' placeholder="Required: explain your block (what would need to change?)">'+
+            (mv && mv.reasoning ? esc(mv.reasoning) : '')+
+            '</textarea>' +
+          '</div>' +
+          blockNote +
+          '<div class="flash" id="vote-fl" style="margin-top:4px"></div>' +
+          '<div style="margin-top:10px;font-size:.82rem;color:var(--text3)">' +
+            '✔ Agree: <b>'+vs.agree_count+'</b> · ' +
+            '✕ Disagree: <b>'+vs.disagree_count+'</b> · ' +
+            '⛔ Block: <b>'+vs.block_count+'</b> · ' +
+            '○ Abstain: <b>'+vs.abstain_count+'</b> · ' +
+            'Total: <b>'+vs.total_votes+'</b>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
   wrap.innerHTML =
     '<button class="hub-detail-back" onclick="closeProject()">← Back to '+esc(window.HUB_LABEL||'Hub')+'</button>' +
     '<div class="hub-detail-card">' +
@@ -622,6 +669,7 @@ function renderProjectDetail(){
       '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">'+joinBtn+'</div>' +
       '<div class="flash" id="pj-fl"></div>' +
     '</div>' +
+    voteWidget +
     '<div class="hub-section">' +
       '<div class="hub-section-hd"><span class="hub-section-title">Discussion</span></div>' +
       '<div class="hub-comment-list">'+commentsHtml+'</div>' +
@@ -691,6 +739,40 @@ async function advancePhase(projectId){
   }catch(e){
     flash('advance-fl', e.message||'Could not advance phase.', 'err');
     if(advBtn){ advBtn.disabled=false; advBtn.textContent=origLabel; }
+  }
+}
+
+async function castVote(btn){
+  var projectId = parseInt(btn.dataset.projectId, 10);
+  var position  = btn.dataset.position;
+  var reasoning = '';
+  if(position === 'block'){
+    // Show textarea if hidden, require content
+    var wrap = document.getElementById('block-reason-wrap');
+    if(wrap) wrap.style.display = 'block';
+    var ta = document.getElementById('block-reason-txt');
+    reasoning = ta ? ta.value.trim() : '';
+    if(!reasoning){ flash('vote-fl','Please explain your block before submitting.','err'); return; }
+  } else {
+    // Hide block textarea when switching to another position
+    var bwrap = document.getElementById('block-reason-wrap');
+    if(bwrap) bwrap.style.display = 'none';
+  }
+  var allBtns = document.querySelectorAll('.hub-vote-btn');
+  allBtns.forEach(function(b){ b.disabled=true; });
+  try{
+    var res = await api('vault/hub-project-vote',{method:'POST',body:JSON.stringify({
+      project_id:projectId, position:position, reasoning:reasoning||undefined
+    })});
+    // Update summary counts and my_vote in cached data, re-render
+    if(_projectData){
+      _projectData.vote_summary = res.summary;
+      _projectData.my_vote = {position:res.my_position, reasoning:reasoning||null};
+    }
+    renderProjectDetail();
+  }catch(e){
+    flash('vote-fl', e.message||'Could not cast vote.', 'err');
+    allBtns.forEach(function(b){ b.disabled=false; });
   }
 }
 
@@ -765,6 +847,7 @@ window.closeProject        = closeProject;
 window.joinProject         = joinProject;
 window.leaveProject        = leaveProject;
 window.advancePhase        = advancePhase;
+window.castVote            = castVote;
 window.postComment         = postComment;
 window.hubJoin             = hubJoin;
 window.hubLeave            = hubLeave;

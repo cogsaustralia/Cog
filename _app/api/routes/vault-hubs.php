@@ -169,6 +169,9 @@ if ($action === 'hub-project-advance') {
     require_once __DIR__ . '/hub_lifecycle.php';
     handleHubProjectAdvance();
 }
+if ($action === 'hub-project-vote') {
+    handleHubProjectVote();
+}
 if ($action === 'hub-mainspring') {
     handleHubMainspring();
 }
@@ -572,12 +575,33 @@ function handleHubProject(): void {
     $cStmt->execute([$id]);
     $comments = $cStmt->fetchAll();
 
+    // Vote summary — available for all phases; only meaningful when status='vote'
+    $vsStmt = $db->prepare(
+        'SELECT agree_count, disagree_count, block_count, abstain_count, total_votes
+           FROM v_hub_project_vote_summary WHERE project_id = ? LIMIT 1'
+    );
+    $vsStmt->execute([$id]);
+    $voteSummary = $vsStmt->fetch(PDO::FETCH_ASSOC) ?: [
+        'agree_count' => 0, 'disagree_count' => 0,
+        'block_count' => 0, 'abstain_count'  => 0, 'total_votes' => 0,
+    ];
+
+    // Caller's own vote position (null if not voted)
+    $myVoteStmt = $db->prepare(
+        'SELECT position, reasoning FROM hub_project_votes
+          WHERE project_id = ? AND member_id = ? LIMIT 1'
+    );
+    $myVoteStmt->execute([$id, $me['id']]);
+    $myVote = $myVoteStmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
     apiSuccess([
-        'project'      => $project,
-        'participants' => $participants,
-        'comments'     => $comments,
-        'my_role'      => $myRole ?: null,
+        'project'          => $project,
+        'participants'     => $participants,
+        'comments'         => $comments,
+        'my_role'          => $myRole ?: null,
         'enrolled_in_area' => in_array((string)$project['area_key'], $me['areas'], true),
+        'vote_summary'     => $voteSummary,
+        'my_vote'          => $myVote,
     ]);
 }
 
@@ -707,6 +731,72 @@ function handleHubProjectComment(): void {
        ->execute([$pid]);
 
     apiSuccess(['created' => true, 'comment_id' => (int)$db->lastInsertId()]);
+}
+
+/**
+ * POST /vault/hub-project-vote { project_id, position, reasoning? }
+ * Cast or change a consent vote on a project in 'vote' phase.
+ * position: agree | disagree | block | abstain
+ * reasoning is required when position = 'block'.
+ * One vote per member per project — re-voting updates the existing row.
+ */
+function handleHubProjectVote(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+
+    $projectId = (int)($body['project_id'] ?? 0);
+    $position  = trim((string)($body['position']  ?? ''));
+    $reasoning = trim((string)($body['reasoning'] ?? ''));
+
+    if ($projectId < 1) apiError('project_id required.');
+    if (!in_array($position, ['agree','disagree','block','abstain'], true)) {
+        apiError('position must be agree, disagree, block, or abstain.');
+    }
+    if ($position === 'block' && $reasoning === '') {
+        apiError('Reasoning is required when blocking a proposal.');
+    }
+    if (mb_strlen($reasoning) > 2000) apiError('Reasoning too long (max 2000 characters).');
+
+    // Project must exist and be in 'vote' phase
+    $pStmt = $db->prepare('SELECT status, area_key FROM hub_projects WHERE id = ? LIMIT 1');
+    $pStmt->execute([$projectId]);
+    $proj = $pStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$proj) apiError('Project not found.', 404);
+    if ((string)$proj['status'] !== 'vote') {
+        apiError('Votes can only be cast while the project is in the vote phase.', 409);
+    }
+
+    $me = hubResolveMember($db, $principal);
+
+    // Must be enrolled in the hub to vote
+    if (!in_array((string)$proj['area_key'], $me['areas'], true)) {
+        apiError('Activate participation in this hub before voting.', 403);
+    }
+
+    // Upsert — one vote per (project, member)
+    $db->prepare(
+        'INSERT INTO hub_project_votes (project_id, member_id, position, reasoning)
+         VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+           position  = VALUES(position),
+           reasoning = VALUES(reasoning),
+           updated_at = NOW()'
+    )->execute([$projectId, $me['id'], $position, $reasoning ?: null]);
+
+    // Return fresh summary
+    $vsStmt = $db->prepare(
+        'SELECT agree_count, disagree_count, block_count, abstain_count, total_votes
+           FROM v_hub_project_vote_summary WHERE project_id = ? LIMIT 1'
+    );
+    $vsStmt->execute([$projectId]);
+    $summary = $vsStmt->fetch(PDO::FETCH_ASSOC) ?: [
+        'agree_count' => 0, 'disagree_count' => 0,
+        'block_count' => 0, 'abstain_count'  => 0, 'total_votes' => 0,
+    ];
+
+    apiSuccess(['summary' => $summary, 'my_position' => $position]);
 }
 
 /**
