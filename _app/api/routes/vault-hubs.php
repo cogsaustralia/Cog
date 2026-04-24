@@ -1762,23 +1762,36 @@ function handleHubAdminActivity(): void
             );
         } catch (Throwable) {}
 
-        // TDR: Deed execution records (JVPA, Declaration, Sub-Trusts)
+        // TDR: Deed execution records — one row per deed_key
+        // Prefer caretaker_trustee capacity (operative completion); fall back
+        // to any capacity where only declarant exists.
         try {
             $stmt = $db->prepare(
-                "SELECT deed_key, deed_title, deed_version, execution_date,
-                        status, capacity
-                   FROM declaration_execution_records
-                  ORDER BY execution_date DESC"
+                "SELECT d.deed_key, d.deed_title, d.deed_version,
+                        d.execution_date, d.status, d.capacity
+                   FROM declaration_execution_records d
+                  INNER JOIN (
+                      SELECT deed_key,
+                             MAX(capacity = 'caretaker_trustee') AS has_trustee,
+                             MAX(execution_date) AS max_date
+                        FROM declaration_execution_records
+                       GROUP BY deed_key
+                  ) best ON d.deed_key = best.deed_key
+                        AND (
+                            (best.has_trustee = 1 AND d.capacity = 'caretaker_trustee')
+                         OR (best.has_trustee = 0 AND d.execution_date = best.max_date)
+                        )
+                  ORDER BY d.execution_date DESC"
             );
             $stmt->execute();
             $hubData['deed_records'] = array_map(
                 fn($r) => [
-                    'deed_key'   => (string)$r['deed_key'],
-                    'title'      => (string)$r['deed_title'],
-                    'version'    => (string)$r['deed_version'],
-                    'date'       => (string)$r['execution_date'],
-                    'status'     => (string)$r['status'],
-                    'capacity'   => (string)$r['capacity'],
+                    'deed_key' => (string)$r['deed_key'],
+                    'title'    => (string)$r['deed_title'],
+                    'version'  => (string)$r['deed_version'],
+                    'date'     => (string)$r['execution_date'],
+                    'status'   => (string)$r['status'],
+                    'capacity' => (string)$r['capacity'],
                 ],
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
