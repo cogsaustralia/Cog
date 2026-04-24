@@ -1807,6 +1807,9 @@ document.addEventListener('DOMContentLoaded', function(){
   'use strict';
 
   // Private copies of esc/dts — block 2 IIFE versions are out of scope here
+  // Path to TDR detail page (one level up from hub area folder)
+  var ROOT_TDR = (document.body.dataset.root || '../../') + 'hubs/tdr/';
+
   function _esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
@@ -1991,7 +1994,8 @@ document.addEventListener('DOMContentLoaded', function(){
           if (tdr.fnac) badges += '<span class="sev-chip sev-low">FNAC</span>';
           if (tdr.fpic) badges += '<span class="sev-chip sev-low">FPIC</span>';
           if (tdr.visibility === 'public') badges += '<span class="sev-chip inv-pass">Public</span>';
-          html += '<div class="hub-livedata-item hub-tdr-item">';
+          var tdrUrl1 = ROOT_TDR + '?ref=' + encodeURIComponent(tdr.ref);
+          html += '<div class="hub-livedata-item hub-tdr-item" onclick="coinTransition(\''+tdrUrl1+'\',\'Opening '+_esc(tdr.ref)+'\')" style="cursor:pointer">';
           html += '<div class="hub-livedata-item-inner">';
           html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
           html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';
@@ -2011,7 +2015,8 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '<div class="hub-livedata-list">';
         hd.deed_records.forEach(function(dr) {
           var statusClass = dr.status === 'fully_executed' ? 'inv-pass' : 'sev-med';
-          html += '<div class="hub-livedata-item">';
+          var deedUrl = ROOT_TDR + '?deed=' + encodeURIComponent(dr.deed_key);
+          html += '<div class="hub-livedata-item" onclick="coinTransition(\''+deedUrl+'\',\'Opening deed record\')" style="cursor:pointer">';
           html += '<div class="hub-livedata-item-inner">';
           html += '<span class="hub-tdr-ref">' + _esc(dr.deed_key) + '</span>';
           html += '<span class="hub-livedata-summary">' + _esc(dr.title) + '</span>';
@@ -2124,7 +2129,8 @@ document.addEventListener('DOMContentLoaded', function(){
         hd.tdr_investment.forEach(function(tdr) {
           var cat = _esc(tdr.category.replace(/_/g,' '));
           var ctx = tdr.context !== 'all' ? ' · ST ' + _esc(tdr.context.replace('sub_trust_','')) : '';
-          html += '<div class="hub-livedata-item hub-tdr-item">';
+          var tdrUrl2 = ROOT_TDR + '?ref=' + encodeURIComponent(tdr.ref);
+          html += '<div class="hub-livedata-item hub-tdr-item" onclick="coinTransition(\''+tdrUrl2+'\',\'Opening '+_esc(tdr.ref)+'\')" style="cursor:pointer">';
           html += '<div class="hub-livedata-item-inner">';
           html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
           html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';
@@ -2306,7 +2312,8 @@ html += '</div>';
           if (tdr.fpic)             badges += '<span class="sev-chip sev-low">FPIC obtained</span>';
           if (tdr.cultural_assessed)badges += '<span class="sev-chip sev-low">Cultural assessed</span>';
           if (tdr.visibility === 'public') badges += '<span class="sev-chip inv-pass">Public</span>';
-          html += '<div class="hub-livedata-item hub-tdr-item">';
+          var tdrUrl4 = ROOT_TDR + '?ref=' + encodeURIComponent(tdr.ref);
+          html += '<div class="hub-livedata-item hub-tdr-item" onclick="coinTransition(\''+tdrUrl4+'\',\'Opening '+_esc(tdr.ref)+'\')" style="cursor:pointer">';
           html += '<div class="hub-livedata-item-inner">';
           html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
           html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';
@@ -2575,7 +2582,8 @@ html += '</div>';
         html += '<div class="hub-livedata-list">';
         hd.tdr_distribution.forEach(function(tdr) {
           var ctx = tdr.context !== 'all' ? ' · ST ' + _esc(tdr.context.replace('sub_trust_','')) : ' · All sub-trusts';
-          html += '<div class="hub-livedata-item hub-tdr-item">';
+          var tdrUrl7 = ROOT_TDR + '?ref=' + encodeURIComponent(tdr.ref);
+          html += '<div class="hub-livedata-item hub-tdr-item" onclick="coinTransition(\''+tdrUrl7+'\',\'Opening '+_esc(tdr.ref)+'\')" style="cursor:pointer">';
           html += '<div class="hub-livedata-item-inner">';
           html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
           html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';

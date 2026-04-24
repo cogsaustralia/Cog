@@ -214,6 +214,9 @@ if ($action === 'hub-mainspring') {
 if ($action === 'hub-mainspring-stats') {
     handleHubMainspringStats();
 }
+if ($action === 'hub-tdr-detail') {
+    handleHubTdrDetail();
+}
 if ($action === 'hub-query') {
     handleHubQuery();
 }
@@ -1055,6 +1058,194 @@ function handleHubProjectAdvance(): void {
     } catch (Throwable $e) {
         if ($db->inTransaction()) $db->rollBack();
         apiError('Could not advance phase: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * GET /vault/hub-tdr-detail?ref=TDR-XXXX or ?deed=jvpa
+ *
+ * Returns full public fields of a Trustee Decision Record or deed execution record.
+ * No member PII. No admin IDs. No IP/device data. Auth: any Partner.
+ */
+function handleHubTdrDetail(): void
+{
+    requireMethod('GET');
+    requireAuth('snft');
+    $db = getDB();
+
+    $ref     = trim((string)($_GET['ref']  ?? ''));
+    $deedKey = trim((string)($_GET['deed'] ?? ''));
+
+    if ($ref !== '') {
+        // ── Trustee Decision Record ──────────────────────────────────────
+        if (!preg_match('/^TDR-[0-9A-Za-z\-]+$/', $ref)) {
+            apiError('Invalid TDR reference.', 400);
+        }
+        $stmt = $db->prepare(
+            "SELECT decision_uuid, decision_ref, sub_trust_context, decision_category,
+                    title, effective_date, related_poll_id,
+                    background_md, fnac_consideration_md, fpic_consideration_md,
+                    cultural_heritage_md, resolution_md,
+                    fnac_consulted, fnac_evidence_ref,
+                    fpic_obtained, fpic_evidence_ref,
+                    cultural_heritage_assessed, cultural_heritage_ref,
+                    non_mis_affirmation, visibility,
+                    powers_json, record_sha256, status,
+                    superseded_by_uuid, superseded_at,
+                    created_at, updated_at
+               FROM trustee_decisions
+              WHERE decision_ref = ?
+              LIMIT 1"
+        );
+        $stmt->execute([$ref]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) apiError('TDR not found.', 404);
+
+        // Parse powers_json safely
+        $powers = [];
+        if (!empty($row['powers_json'])) {
+            $decoded = json_decode($row['powers_json'], true);
+            $powers = is_array($decoded) ? $decoded : [];
+        }
+
+        // Fetch attachments (filename, description, file_sha256 only — no stored_path)
+        $attachments = [];
+        try {
+            $attStmt = $db->prepare(
+                "SELECT filename, description, file_sha256, file_size_bytes, created_at
+                   FROM trustee_decision_attachments
+                  WHERE decision_uuid = ?
+                  ORDER BY created_at"
+            );
+            $attStmt->execute([$row['decision_uuid']]);
+            $attachments = array_map(
+                fn($r) => [
+                    'filename'    => (string)$r['filename'],
+                    'description' => (string)($r['description'] ?? ''),
+                    'sha256'      => (string)$r['file_sha256'],
+                    'size_bytes'  => (int)$r['file_size_bytes'],
+                    'created_at'  => (string)$r['created_at'],
+                ],
+                $attStmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        // Fetch execution record count (how many capacities signed)
+        $execCount = 0;
+        try {
+            $exStmt = $db->prepare(
+                "SELECT COUNT(*) FROM trustee_decision_execution_records WHERE decision_uuid = ?"
+            );
+            $exStmt->execute([$row['decision_uuid']]);
+            $execCount = (int)$exStmt->fetchColumn();
+        } catch (Throwable) {}
+
+        apiSuccess([
+            'type'        => 'tdr',
+            'ref'         => (string)$row['decision_ref'],
+            'uuid'        => (string)$row['decision_uuid'],
+            'title'       => (string)$row['title'],
+            'category'    => (string)$row['decision_category'],
+            'context'     => (string)$row['sub_trust_context'],
+            'effective'   => (string)$row['effective_date'],
+            'status'      => (string)$row['status'],
+            'visibility'  => (string)$row['visibility'],
+            'resolution'  => (string)$row['resolution_md'],
+            'background'  => (string)($row['background_md'] ?? ''),
+            'fnac_consulted'          => (bool)(int)$row['fnac_consulted'],
+            'fnac_evidence_ref'       => (string)($row['fnac_evidence_ref'] ?? ''),
+            'fnac_consideration'      => (string)($row['fnac_consideration_md'] ?? ''),
+            'fpic_obtained'           => (bool)(int)$row['fpic_obtained'],
+            'fpic_evidence_ref'       => (string)($row['fpic_evidence_ref'] ?? ''),
+            'fpic_consideration'      => (string)($row['fpic_consideration_md'] ?? ''),
+            'cultural_assessed'       => (bool)(int)$row['cultural_heritage_assessed'],
+            'cultural_ref'            => (string)($row['cultural_heritage_ref'] ?? ''),
+            'cultural_consideration'  => (string)($row['cultural_heritage_md'] ?? ''),
+            'non_mis_affirmation'     => (bool)(int)$row['non_mis_affirmation'],
+            'powers'      => $powers,
+            'record_sha256'    => (string)($row['record_sha256'] ?? ''),
+            'superseded_by'    => (string)($row['superseded_by_uuid'] ?? ''),
+            'execution_count'  => $execCount,
+            'attachments'      => $attachments,
+            'created_at'       => (string)$row['created_at'],
+            'updated_at'       => (string)$row['updated_at'],
+        ]);
+
+    } elseif ($deedKey !== '') {
+        // ── Deed Execution Record ──────────────────────────────────────
+        if (!preg_match('/^[a-z_]{2,60}$/', $deedKey)) {
+            apiError('Invalid deed key.', 400);
+        }
+        $stmt = $db->prepare(
+            "SELECT record_id, session_id, capacity, executor_full_name,
+                    deed_key, deed_title, deed_version, execution_date,
+                    deed_sha256, execution_timestamp_utc, acceptance_flag_engaged,
+                    execution_method, witness_required, record_sha256,
+                    onchain_commitment_txid, status, created_at
+               FROM declaration_execution_records
+              WHERE deed_key = ?
+              ORDER BY execution_timestamp_utc"
+        );
+        $stmt->execute([$deedKey]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!$rows) apiError('Deed record not found.', 404);
+
+        // Witness attestations (name + occupation only, no DOB/address)
+        $witnesses = [];
+        try {
+            $wStmt = $db->prepare(
+                "SELECT wa.witness_full_name, wa.witness_occupation,
+                        wa.attestation_method, wa.attestation_timestamp_utc,
+                        wa.attestation_flag_engaged, wa.record_sha256
+                   FROM declaration_witness_attestations wa
+                  WHERE wa.deed_key = ?
+                  ORDER BY wa.attestation_timestamp_utc"
+            );
+            $wStmt->execute([$deedKey]);
+            $witnesses = array_map(
+                fn($r) => [
+                    'name'       => (string)$r['witness_full_name'],
+                    'occupation' => (string)$r['witness_occupation'],
+                    'method'     => (string)$r['attestation_method'],
+                    'timestamp'  => (string)$r['attestation_timestamp_utc'],
+                    'flag'       => (bool)(int)$r['attestation_flag_engaged'],
+                    'sha256'     => (string)$r['record_sha256'],
+                ],
+                $wStmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        $execRows = array_map(
+            fn($r) => [
+                'capacity'     => (string)$r['capacity'],
+                'executor'     => (string)$r['executor_full_name'],
+                'deed_title'   => (string)$r['deed_title'],
+                'deed_version' => (string)$r['deed_version'],
+                'exec_date'    => (string)$r['execution_date'],
+                'exec_ts'      => (string)$r['execution_timestamp_utc'],
+                'method'       => (string)$r['execution_method'],
+                'deed_sha256'  => (string)$r['deed_sha256'],
+                'flag'         => (bool)(int)$r['acceptance_flag_engaged'],
+                'onchain_txid' => (string)($r['onchain_commitment_txid'] ?? ''),
+                'record_sha256'=> (string)$r['record_sha256'],
+                'status'       => (string)$r['status'],
+                'witness_required' => (bool)(int)$r['witness_required'],
+            ],
+            $rows
+        );
+
+        $first = $execRows[0];
+        apiSuccess([
+            'type'       => 'deed',
+            'deed_key'   => $deedKey,
+            'deed_title' => $first['deed_title'],
+            'deed_version'=> $first['deed_version'],
+            'executions' => $execRows,
+            'witnesses'  => $witnesses,
+        ]);
+
+    } else {
+        apiError('Provide ref or deed parameter.', 400);
     }
 }
 

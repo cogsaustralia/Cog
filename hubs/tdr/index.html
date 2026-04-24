@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,max-age=0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Trustee Record — COG$ of Australia Foundation</title>
+<link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/hub.css?v=19">
+<style>
+/* ── TDR detail page ───────────────────────────────────────────────────────── */
+.tdr-wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px}
+.tdr-header{margin-bottom:24px}
+.tdr-ref{font-family:var(--mono,monospace);font-size:.8rem;font-weight:700;color:var(--gold);letter-spacing:.08em;margin-bottom:6px}
+.tdr-title{font-family:var(--serif);font-size:1.55rem;font-weight:500;color:var(--text);line-height:1.35;margin-bottom:12px}
+.tdr-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tdr-meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:20px}
+.tdr-meta-item{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.tdr-meta-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:3px}
+.tdr-meta-value{font-size:.85rem;color:var(--text);font-weight:500}
+.tdr-section{margin-bottom:22px}
+.tdr-section-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.tdr-md{font-size:.9rem;line-height:1.7;color:var(--text2);white-space:pre-wrap;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.tdr-resolution{background:rgba(212,178,92,.05);border-color:rgba(212,178,92,.2)}
+.tdr-power-item{padding:8px 12px;border-radius:8px;background:var(--panel);border:1px solid var(--border);margin-bottom:6px;font-size:.84rem;color:var(--text2)}
+.tdr-power-clause{font-size:.72rem;font-family:var(--mono,monospace);color:var(--gold);font-weight:700;margin-bottom:3px}
+.tdr-integrity{font-family:var(--mono,monospace);font-size:.72rem;color:var(--text4);word-break:break-all;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.tdr-exec-row{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;font-size:.83rem}
+.tdr-exec-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);align-self:center}
+.tdr-exec-value{color:var(--text2)}
+.tdr-att-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--panel);border:1px solid var(--border);border-radius:8px;margin-bottom:6px}
+.tdr-att-name{flex:1;font-size:.84rem;color:var(--text2)}
+.tdr-att-sha{font-size:.7rem;font-family:var(--mono,monospace);color:var(--text4)}
+.tdr-empty{color:var(--text4);font-size:.84rem;padding:12px 0}
+.tdr-back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:.82rem;cursor:pointer;margin-bottom:20px;transition:color .15s,border-color .15s}
+.tdr-back-btn:hover{color:var(--text);border-color:var(--gold)}
+</style>
+</head>
+<body data-root="../../">
+
+<div id="splash">
+  <img src="../../assets/cogs_coin_web.png" alt="" class="splash-coin">
+  <div class="splash-line">Trustee Record</div>
+</div>
+
+<header class="hub-topbar">
+  <div class="hub-topbar-left">
+    <div class="hub-breadcrumb">
+      <button id="back-btn">← Back</button>
+      <span class="sep">/</span>
+      <span id="breadcrumb-label">Trustee Record</span>
+    </div>
+  </div>
+  <div class="hub-topbar-right">
+    <span class="hub-status-pill live">Record</span>
+  </div>
+</header>
+
+<main class="hub-page">
+  <div class="tdr-wrap">
+    <div id="tdr-content"><div class="hub-loading">Loading record…</div></div>
+  </div>
+</main>
+
+<script>
+var ROOT = document.body.dataset.root || '../../';
+var API  = ROOT + '_app/api/index.php?route=';
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function coinTransition(href, label){
+  label = label || 'Opening…';
+  var ov = document.createElement('div');
+  ov.className = 'coin-transition';
+  ov.innerHTML = '<img src="'+ROOT+'assets/cogs_coin_web.png" alt=""><div class="ct-label">'+esc(label)+'</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function(){ ov.classList.add('active'); });
+  setTimeout(function(){ window.location.href = href; }, 1700);
+}
+
+function hideSplash(){
+  var s = document.getElementById('splash');
+  if(s){ s.classList.add('hidden'); setTimeout(function(){ s.style.display='none'; }, 450); }
+}
+
+function statusChip(status){
+  var cls = status === 'fully_executed' ? 'inv-pass'
+          : status === 'pending_execution' ? 'sev-med'
+          : status === 'superseded' ? 'sev-low'
+          : 'sev-low';
+  return '<span class="sev-chip '+cls+'">'+esc(status.replace(/_/g,' '))+'</span>';
+}
+
+function renderTDR(d){
+  var html = '';
+
+  // Header
+  html += '<div class="tdr-header">';
+  html += '<div class="tdr-ref">'+esc(d.ref)+'</div>';
+  html += '<div class="tdr-title">'+esc(d.title)+'</div>';
+  html += '<div class="tdr-badges">';
+  html += statusChip(d.status);
+  if(d.visibility==='public') html += '<span class="sev-chip inv-pass">Public record</span>';
+  if(d.fnac_consulted) html += '<span class="sev-chip sev-low">FNAC consulted</span>';
+  if(d.fpic_obtained)  html += '<span class="sev-chip sev-low">FPIC obtained</span>';
+  if(d.cultural_assessed) html += '<span class="sev-chip sev-low">Cultural heritage assessed</span>';
+  if(d.non_mis_affirmation) html += '<span class="sev-chip sev-low">Non-MIS affirmed</span>';
+  html += '</div></div>';
+
+  // Meta grid
+  html += '<div class="tdr-meta-grid">';
+  html += metaItem('Reference',      d.ref);
+  html += metaItem('Effective date', d.effective);
+  html += metaItem('Category',       d.category.replace(/_/g,' '));
+  html += metaItem('Sub-trust',      d.context === 'all' ? 'All sub-trusts' : 'ST\u00a0'+d.context.replace('sub_trust_',''));
+  html += metaItem('Visibility',     d.visibility);
+  html += metaItem('Executions recorded', String(d.execution_count));
+  html += '</div>';
+
+  // Resolution (operative text)
+  html += '<div class="tdr-section">';
+  html += '<div class="tdr-section-title">Operative Resolution</div>';
+  html += '<div class="tdr-md tdr-resolution">'+esc(d.resolution)+'</div>';
+  html += '</div>';
+
+  // Background
+  if(d.background){
+    html += '<div class="tdr-section">';
+    html += '<div class="tdr-section-title">Background</div>';
+    html += '<div class="tdr-md">'+esc(d.background)+'</div>';
+    html += '</div>';
+  }
+
+  // FNAC consideration
+  if(d.fnac_consulted && d.fnac_consideration){
+    html += '<div class="tdr-section">';
+    html += '<div class="tdr-section-title">FNAC Consultation</div>';
+    if(d.fnac_evidence_ref) html += '<div style="font-size:.78rem;color:var(--gold);margin-bottom:8px">Evidence ref: '+esc(d.fnac_evidence_ref)+'</div>';
+    html += '<div class="tdr-md">'+esc(d.fnac_consideration)+'</div>';
+    html += '</div>';
+  }
+
+  // FPIC consideration
+  if(d.fpic_obtained && d.fpic_consideration){
+    html += '<div class="tdr-section">';
+    html += '<div class="tdr-section-title">FPIC Consent</div>';
+    if(d.fpic_evidence_ref) html += '<div style="font-size:.78rem;color:var(--gold);margin-bottom:8px">Evidence ref: '+esc(d.fpic_evidence_ref)+'</div>';
+    html += '<div class="tdr-md">'+esc(d.fpic_consideration)+'</div>';
+    html += '</div>';
+  }
+
+  // Cultural heritage
+  if(d.cultural_assessed && d.cultural_consideration){
+    html += '<div class="tdr-section">';
+    html += '<div class="tdr-section-title">Cultural Heritage Assessment</div>';
+    if(d.cultural_ref) html += '<div style="font-size:.78rem;color:var(--gold);margin-bottom:8px">Ref: '+esc(d.cultural_ref)+'</div>';
+    html += '<div class="tdr-md">'+esc(d.cultural_consideration)+'</div>';
+    html += '</div>';
+  }
+
+  // Powers exercised
+  if(d.powers && d.powers.length){
+    html += '<div class="tdr-section">';
+    html += '<div class="tdr-section-title">Powers Exercised</div>';
+    d.powers.forEach(function(p){
+      html += '<div class="tdr-power-item">';
+      if(p.clause_ref) html += '<div class="tdr-power-clause">'+esc(p.clause_ref)+'</div>';
+      html += esc(p.description || p.power_description || JSON.stringify(p));
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Attachments
+  if(d.attachments && d.attachments.length){
+    html += '<div class="tdr-section">';
+    html += '<div class="tdr-section-title">Attachments</div>';
+    d.attachments.forEach(function(a){
+      html += '<div class="tdr-att-item">';
+      html += '<div class="tdr-att-name">'+esc(a.filename);
+      if(a.description) html += ' <span style="color:var(--text4)">— '+esc(a.description)+'</span>';
+      html += '</div>';
+      html += '<div class="tdr-att-sha">SHA-256: '+esc(a.sha256.substring(0,12))+'…</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Integrity
+  html += '<div class="tdr-section">';
+  html += '<div class="tdr-section-title">Record Integrity</div>';
+  html += '<div class="tdr-integrity">';
+  html += 'Record SHA-256: '+esc(d.record_sha256||'—');
+  html += '</div></div>';
+
+  return html;
+}
+
+function renderDeed(d){
+  var html = '';
+  var first = d.executions[0] || {};
+
+  html += '<div class="tdr-header">';
+  html += '<div class="tdr-ref">'+esc(d.deed_key.replace(/_/g,' ').toUpperCase())+'</div>';
+  html += '<div class="tdr-title">'+esc(d.deed_title)+'</div>';
+  html += '<div class="tdr-badges">';
+  // Overall status = all fully_executed?
+  var allExec = d.executions.every(function(e){ return e.status === 'fully_executed'; });
+  html += '<span class="sev-chip '+(allExec?'inv-pass':'sev-med')+'">'+(allExec?'Fully executed':'Pending')+'</span>';
+  html += '<span class="sev-chip sev-low">'+esc(d.deed_version)+'</span>';
+  html += '</div></div>';
+
+  html += '<div class="tdr-meta-grid">';
+  html += metaItem('Deed key',      d.deed_key);
+  html += metaItem('Version',       d.deed_version);
+  html += metaItem('Execution date',first.exec_date||'—');
+  html += metaItem('Capacities recorded', String(d.executions.length));
+  html += metaItem('Witnesses recorded',  String(d.witnesses.length));
+  html += '</div>';
+
+  // Execution records
+  html += '<div class="tdr-section">';
+  html += '<div class="tdr-section-title">Execution Records</div>';
+  d.executions.forEach(function(ex){
+    html += '<div class="tdr-exec-row">';
+    html += '<span class="tdr-exec-label">Capacity</span><span class="tdr-exec-value">'+esc(ex.capacity.replace(/_/g,' '))+'</span>';
+    html += '<span class="tdr-exec-label">Executor</span><span class="tdr-exec-value">'+esc(ex.executor)+'</span>';
+    html += '<span class="tdr-exec-label">Method</span><span class="tdr-exec-value">'+esc(ex.method)+'</span>';
+    html += '<span class="tdr-exec-label">Timestamp</span><span class="tdr-exec-value">'+esc(ex.exec_ts)+'</span>';
+    html += '<span class="tdr-exec-label">Status</span><span class="tdr-exec-value">'+statusChip(ex.status)+'</span>';
+    if(ex.onchain_txid){ html += '<span class="tdr-exec-label">On-chain ref</span><span class="tdr-exec-value tdr-att-sha">'+esc(ex.onchain_txid)+'</span>'; }
+    html += '<span class="tdr-exec-label">Record SHA-256</span><span class="tdr-exec-value tdr-att-sha">'+esc(ex.record_sha256)+'</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Witness attestations
+  if(d.witnesses.length){
+    html += '<div class="tdr-section">';
+    html += '<div class="tdr-section-title">Witness Attestations</div>';
+    d.witnesses.forEach(function(w){
+      html += '<div class="tdr-exec-row">';
+      html += '<span class="tdr-exec-label">Witness</span><span class="tdr-exec-value">'+esc(w.name)+'</span>';
+      html += '<span class="tdr-exec-label">Occupation</span><span class="tdr-exec-value">'+esc(w.occupation)+'</span>';
+      html += '<span class="tdr-exec-label">Method</span><span class="tdr-exec-value">'+esc(w.method)+'</span>';
+      html += '<span class="tdr-exec-label">Timestamp</span><span class="tdr-exec-value">'+esc(w.timestamp)+'</span>';
+      html += '<span class="tdr-exec-label">Flag engaged</span><span class="tdr-exec-value">'+esc(w.flag?'Yes':'No')+'</span>';
+      html += '<span class="tdr-exec-label">Attestation SHA-256</span><span class="tdr-exec-value tdr-att-sha">'+esc(w.sha256)+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Integrity
+  html += '<div class="tdr-section">';
+  html += '<div class="tdr-section-title">Record Integrity</div>';
+  if(first.deed_sha256){
+    html += '<div class="tdr-integrity" style="margin-bottom:8px">Deed SHA-256: '+esc(first.deed_sha256)+'</div>';
+  }
+  html += '</div>';
+
+  return html;
+}
+
+function metaItem(label, value){
+  return '<div class="tdr-meta-item"><div class="tdr-meta-label">'+esc(label)+'</div><div class="tdr-meta-value">'+esc(value)+'</div></div>';
+}
+
+async function boot(){
+  var params = new URLSearchParams(window.location.search);
+  var ref     = params.get('ref')  || '';
+  var deedKey = params.get('deed') || '';
+
+  var backHref = document.referrer || (ROOT + 'hubs/operations_oversight/');
+
+  document.getElementById('back-btn').addEventListener('click', function(){
+    coinTransition(backHref, 'Going back');
+  });
+
+  var wrap = document.getElementById('tdr-content');
+
+  if(!ref && !deedKey){
+    hideSplash();
+    wrap.innerHTML = '<div class="hub-empty">No record specified.</div>';
+    return;
+  }
+
+  var url = API + 'vault/hub-tdr-detail&' + (ref ? 'ref='+encodeURIComponent(ref) : 'deed='+encodeURIComponent(deedKey));
+
+  try {
+    var r = await fetch(url, {credentials:'include', headers:{'Accept':'application/json'}});
+    var j = await r.json();
+    hideSplash();
+    if(!r.ok || j.success === false){
+      wrap.innerHTML = '<div class="hub-empty">Record not found or access denied.</div>';
+      return;
+    }
+    var d = j.data !== undefined ? j.data : j;
+    document.getElementById('breadcrumb-label').textContent = d.ref || d.deed_title || 'Record';
+    document.title = (d.ref || d.deed_title || 'Trustee Record') + ' — COG$ Foundation';
+    wrap.innerHTML = d.type === 'tdr' ? renderTDR(d) : renderDeed(d);
+  } catch(e) {
+    hideSplash();
+    wrap.innerHTML = '<div class="hub-empty">Failed to load record. Please try again.</div>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
