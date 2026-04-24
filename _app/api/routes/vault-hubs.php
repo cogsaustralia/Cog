@@ -736,21 +736,9 @@ function handleHubAI(): void {
     }
     $messages[] = ['role' => 'user', 'content' => $userMsg];
 
-    $apiKey = ''; // read from .env via helpers
-    if (function_exists('ops_env')) {
-        $apiKey = ops_env('ANTHROPIC_API_KEY');
-    } else {
-        // Fallback: read directly from .env file
-        $envFile = dirname(__DIR__, 3) . '/.env';
-        if (is_file($envFile)) {
-            foreach (file($envFile) ?: [] as $line) {
-                if (str_starts_with(trim($line), 'ANTHROPIC_API_KEY=')) {
-                    $apiKey = trim(explode('=', $line, 2)[1] ?? '');
-                    break;
-                }
-            }
-        }
-    }
+    // env() is always available here — loaded by _app/api/config/bootstrap.php
+    // via cogs_load_env_once() which reads .env into $_ENV on first call.
+    $apiKey = (string)(env('ANTHROPIC_API_KEY') ?? '');
 
     if ($apiKey === '') {
         apiError('AI assistant not configured — ANTHROPIC_API_KEY not set.', 503);
