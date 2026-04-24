@@ -650,6 +650,49 @@ function renderProjectDetail(){
       '</div>';
   }
 
+  // Milestones section — shown in accountability phase for all enrolled members
+  var milestonesSection = '';
+  if(p.status === 'accountability'){
+    var milestones = _projectData.milestones || [];
+    var isCoord = myRole === 'coordinator';
+    var mItems = milestones.length
+      ? milestones.map(function(m){
+          var doneClass = m.done ? 'style="text-decoration:line-through;opacity:.55"' : '';
+          var toggleBtn = isCoord
+            ? '<button class="btn btn-ghost btn-sm" style="padding:1px 8px;font-size:.75rem;margin-left:8px"'
+              + ' data-milestone-id="'+m.id+'" onclick="toggleMilestone(this)">'
+              + (m.done ? 'Reopen' : 'Mark done')+'</button>'
+            : '';
+          var dateStr = m.target_date
+            ? '<span style="color:var(--text3);font-size:.78rem;margin-left:6px">by '+dt(m.target_date)+'</span>'
+            : '';
+          return '<div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">'
+            + '<span style="font-size:1rem;margin-right:8px;color:'+(m.done?'var(--green)':'var(--text3)')+'">'
+            + (m.done ? '✓' : '○') + '</span>'
+            + '<span '+doneClass+'>'+esc(m.label)+'</span>'
+            + dateStr
+            + toggleBtn
+            + '</div>';
+        }).join('')
+      : '<div style="color:var(--text3);font-size:.85rem;padding:6px 0">No milestones added yet.</div>';
+
+    var addForm = isCoord
+      ? '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">'
+          + '<input class="hub-input" id="ms-label" placeholder="Milestone label" maxlength="255" style="flex:1;min-width:140px">'
+          + '<input class="hub-input" id="ms-date" type="date" style="width:140px;flex:none">'
+          + '<button class="btn btn-gold btn-sm" data-project-id="'+p.id+'" onclick="addMilestone(this)">Add</button>'
+          + '</div>'
+          + '<div class="flash" id="ms-fl" style="margin-top:4px"></div>'
+      : '';
+
+    milestonesSection =
+      '<div class="hub-section">' +
+        '<div class="hub-section-hd"><span class="hub-section-title">Delivery Milestones</span></div>' +
+        '<div style="padding:0 0 4px">'+mItems+'</div>' +
+        addForm +
+      '</div>';
+  }
+
   wrap.innerHTML =
     '<button class="hub-detail-back" onclick="closeProject()">← Back to '+esc(window.HUB_LABEL||'Hub')+'</button>' +
     '<div class="hub-detail-card">' +
@@ -669,6 +712,7 @@ function renderProjectDetail(){
       '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">'+joinBtn+'</div>' +
       '<div class="flash" id="pj-fl"></div>' +
     '</div>' +
+    milestonesSection +
     voteWidget +
     '<div class="hub-section">' +
       '<div class="hub-section-hd"><span class="hub-section-title">Discussion</span></div>' +
@@ -776,6 +820,40 @@ async function castVote(btn){
   }
 }
 
+async function addMilestone(btn){
+  var projectId = parseInt(btn.dataset.projectId, 10);
+  var label = (document.getElementById('ms-label')||{}).value||'';
+  var date  = (document.getElementById('ms-date')||{}).value||'';
+  label = label.trim();
+  if(!label){ flash('ms-fl','Milestone label is required.','err'); return; }
+  btn.disabled = true; btn.textContent = 'Adding…';
+  try{
+    var res = await api('vault/hub-milestone-add',{method:'POST',body:JSON.stringify({
+      project_id:projectId, label:label, target_date:date||undefined
+    })});
+    if(_projectData) _projectData.milestones = res.milestones;
+    renderProjectDetail();
+  }catch(e){
+    flash('ms-fl', e.message||'Could not add milestone.','err');
+    btn.disabled=false; btn.textContent='Add';
+  }
+}
+
+async function toggleMilestone(btn){
+  var milestoneId = parseInt(btn.dataset.milestoneId, 10);
+  btn.disabled = true;
+  try{
+    var res = await api('vault/hub-milestone-toggle',{method:'POST',body:JSON.stringify({
+      milestone_id:milestoneId
+    })});
+    if(_projectData) _projectData.milestones = res.milestones;
+    renderProjectDetail();
+  }catch(e){
+    flash('ms-fl', e.message||'Could not update milestone.','err');
+    btn.disabled=false;
+  }
+}
+
 /* ── Enrolment actions ──────────────────────────────────────────────────────── */
 async function hubJoin(){
   var btn = el('activate-btn');
@@ -848,6 +926,8 @@ window.joinProject         = joinProject;
 window.leaveProject        = leaveProject;
 window.advancePhase        = advancePhase;
 window.castVote            = castVote;
+window.addMilestone        = addMilestone;
+window.toggleMilestone     = toggleMilestone;
 window.postComment         = postComment;
 window.hubJoin             = hubJoin;
 window.hubLeave            = hubLeave;

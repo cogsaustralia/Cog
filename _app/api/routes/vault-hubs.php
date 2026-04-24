@@ -172,6 +172,12 @@ if ($action === 'hub-project-advance') {
 if ($action === 'hub-project-vote') {
     handleHubProjectVote();
 }
+if ($action === 'hub-milestone-add') {
+    handleHubMilestoneAdd();
+}
+if ($action === 'hub-milestone-toggle') {
+    handleHubMilestoneToggle();
+}
 if ($action === 'hub-mainspring') {
     handleHubMainspring();
 }
@@ -594,6 +600,16 @@ function handleHubProject(): void {
     $myVoteStmt->execute([$id, $me['id']]);
     $myVote = $myVoteStmt->fetch(PDO::FETCH_ASSOC) ?: null;
 
+    // Milestones — always fetched; rendered in accountability phase
+    $mlStmt = $db->prepare(
+        'SELECT id, label, target_date, done, done_at, sort_order
+           FROM hub_project_milestones
+          WHERE project_id = ?
+          ORDER BY sort_order ASC'
+    );
+    $mlStmt->execute([$id]);
+    $milestones = $mlStmt->fetchAll();
+
     apiSuccess([
         'project'          => $project,
         'participants'     => $participants,
@@ -602,6 +618,7 @@ function handleHubProject(): void {
         'enrolled_in_area' => in_array((string)$project['area_key'], $me['areas'], true),
         'vote_summary'     => $voteSummary,
         'my_vote'          => $myVote,
+        'milestones'       => $milestones,
     ]);
 }
 
@@ -797,6 +814,106 @@ function handleHubProjectVote(): void {
     ];
 
     apiSuccess(['summary' => $summary, 'my_position' => $position]);
+}
+
+/**
+ * POST /vault/hub-milestone-add { project_id, label, target_date? }
+ * Coordinator adds a delivery milestone to a project in 'accountability' phase.
+ */
+function handleHubMilestoneAdd(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+
+    $projectId  = (int)($body['project_id']  ?? 0);
+    $label      = trim((string)($body['label']       ?? ''));
+    $targetDate = trim((string)($body['target_date'] ?? ''));
+
+    if ($projectId < 1) apiError('project_id required.');
+    if ($label === '')  apiError('Milestone label is required.');
+    if (mb_strlen($label) > 255) apiError('Label too long (max 255).');
+
+    $ts = $targetDate !== '' ? strtotime($targetDate) : false;
+    $tDate = ($ts !== false) ? date('Y-m-d', $ts) : null;
+
+    // Must be coordinator of a project in accountability phase
+    $pStmt = $db->prepare('SELECT status, lead_member_id FROM hub_projects WHERE id = ? LIMIT 1');
+    $pStmt->execute([$projectId]);
+    $proj = $pStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$proj) apiError('Project not found.', 404);
+    if ((string)$proj['status'] !== 'accountability') {
+        apiError('Milestones can only be added in the accountability phase.', 409);
+    }
+
+    $me = hubResolveMember($db, $principal);
+    if ((int)$proj['lead_member_id'] !== (int)$me['id']) {
+        apiError('Only the project coordinator can add milestones.', 403);
+    }
+
+    // sort_order = max existing + 1
+    $maxOrd = (int)$db->prepare('SELECT COALESCE(MAX(sort_order),0) FROM hub_project_milestones WHERE project_id = ?')
+        ->execute([$projectId]) ? $db->query("SELECT COALESCE(MAX(sort_order),0) FROM hub_project_milestones WHERE project_id = $projectId")->fetchColumn() : 0;
+
+    $db->prepare(
+        'INSERT INTO hub_project_milestones (project_id, label, target_date, sort_order)
+         VALUES (?, ?, ?, ?)'
+    )->execute([$projectId, $label, $tDate, ((int)$maxOrd) + 1]);
+
+    $mid = (int)$db->lastInsertId();
+
+    // Return full milestone list so UI refreshes atomically
+    $mStmt = $db->prepare(
+        'SELECT id, label, target_date, done, done_at, sort_order
+           FROM hub_project_milestones WHERE project_id = ? ORDER BY sort_order ASC'
+    );
+    $mStmt->execute([$projectId]);
+    apiSuccess(['created' => true, 'milestone_id' => $mid, 'milestones' => $mStmt->fetchAll()]);
+}
+
+/**
+ * POST /vault/hub-milestone-toggle { milestone_id }
+ * Coordinator toggles the done state of a milestone.
+ */
+function handleHubMilestoneToggle(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $body      = jsonBody();
+
+    $milestoneId = (int)($body['milestone_id'] ?? 0);
+    if ($milestoneId < 1) apiError('milestone_id required.');
+
+    // Load milestone + project to verify coordinator
+    $mStmt = $db->prepare(
+        'SELECT m.*, p.lead_member_id, p.status
+           FROM hub_project_milestones m
+           JOIN hub_projects p ON p.id = m.project_id
+          WHERE m.id = ? LIMIT 1'
+    );
+    $mStmt->execute([$milestoneId]);
+    $m = $mStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$m) apiError('Milestone not found.', 404);
+
+    $me = hubResolveMember($db, $principal);
+    if ((int)$m['lead_member_id'] !== (int)$me['id']) {
+        apiError('Only the project coordinator can update milestones.', 403);
+    }
+
+    $newDone  = $m['done'] ? 0 : 1;
+    $newDoneAt = $newDone ? date('Y-m-d H:i:s') : null;
+
+    $db->prepare(
+        'UPDATE hub_project_milestones SET done = ?, done_at = ?, updated_at = NOW() WHERE id = ?'
+    )->execute([$newDone, $newDoneAt, $milestoneId]);
+
+    // Return full milestone list
+    $listStmt = $db->prepare(
+        'SELECT id, label, target_date, done, done_at, sort_order
+           FROM hub_project_milestones WHERE project_id = ? ORDER BY sort_order ASC'
+    );
+    $listStmt->execute([(int)$m['project_id']]);
+    apiSuccess(['done' => (bool)$newDone, 'milestones' => $listStmt->fetchAll()]);
 }
 
 /**
