@@ -94,6 +94,8 @@
     color: var(--gold-2);
     letter-spacing: .04em;
     opacity: .8;
+    text-decoration: none;
+    cursor: pointer;
   }
 
   /* Progress bar — thin line, not dots */
@@ -479,7 +481,7 @@
 
   <!-- Top bar -->
   <div id="top-bar">
-    <span class="wordmark">COG$</span>
+    <a class="wordmark" id="wordmark-home" href="/" aria-label="COG$ of Australia — go to home page">COG$</a>
     <span id="step-label">1 of 5</span>
     <button id="questions-btn" aria-label="Read FAQ before joining">Questions first →</button>
     <button id="skip-btn" aria-label="Skip introduction">Skip intro →</button>
@@ -692,6 +694,14 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
   if (activeCode) {
     try { sessionStorage.setItem('cogs_intro_code', activeCode); } catch (e) {}
   }
+
+  // ── 1b. Wire wordmark to home, preserving any invite code ──
+  (function(){
+    var wm = document.getElementById('wordmark-home');
+    if(!wm) return;
+    var homeHref = activeCode ? '/?partner_code=' + encodeURIComponent(activeCode) : '/';
+    wm.setAttribute('href', homeHref);
+  })();
 
   // ── 2. Destination URL ──
   function destination() {

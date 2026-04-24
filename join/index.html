@@ -988,6 +988,18 @@ document.getElementById('join-form').addEventListener('submit', async function(e
   status.className = 'form-status loading';
   status.textContent = 'Lodging your registration\u2026';
 
+  // Progress sequence
+  var _pMsgs = [
+    { t: 900,  m: 'Creating your Member record\u2026' },
+    { t: 1900, m: 'Securing your reservation\u2026' },
+    { t: 3000, m: 'Almost there\u2026' },
+  ];
+  var _pTimers = _pMsgs.map(function(msg){
+    return setTimeout(function(){
+      if(status.className === 'form-status loading') status.textContent = msg.m;
+    }, msg.t);
+  });
+
   try {
     var data = Object.fromEntries(new FormData(this));
     data['reservation_notice_accepted']    = true;
@@ -1018,6 +1030,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     var d = (json && json.data) ? json.data : json;
     if (!res.ok) throw new Error(d.message || d.error || json.error || 'Registration failed.');
 
+    _pTimers.forEach(clearTimeout);
     status.className = 'form-status success';
     status.textContent = 'Registration complete. Welcome to COG$\u2026';
 
@@ -1039,6 +1052,8 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     setTimeout(function(){ window.location.href = dest; }, 800);
 
   } catch(err) {
+    _pTimers.forEach(clearTimeout);
+    _pTimers.forEach(clearTimeout);
     status.className = 'form-status error';
     status.textContent = err.message || 'Something went wrong. Please try again.';
     btn.disabled = false;

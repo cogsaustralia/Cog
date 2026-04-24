@@ -169,7 +169,21 @@
             </a>
             <a class="btn-secondary" href="../faq/index.html#faq-vault">What is the vault?</a>
           </div>
-          <div class="payment-note">Your $4 payment is completed inside the vault via Stripe — nothing is charged now.</div>
+          <div class="payment-note">Your $4 payment is completed inside the vault — nothing is charged now.</div>
+        </div>
+
+        <!-- Pay now convenience card -->
+        <div style="margin-top:20px;padding:18px 20px;background:rgba(232,184,75,.05);border:1.5px solid rgba(232,184,75,.22);border-radius:16px">
+          <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Ready to pay now? Transfer directly to the trust account:</div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:.88rem;line-height:1.8">
+            <span style="color:var(--text2)">PayID / OSKO</span><strong style="color:var(--gold-1);font-family:monospace">0494 578 706</strong>
+            <span style="color:var(--text2)">BSB</span><strong style="font-family:monospace">182-512</strong>
+            <span style="color:var(--text2)">Account</span><strong style="font-family:monospace">975 174 624</strong>
+            <span style="color:var(--text2)">Account name</span><strong>The Trustee for the CJVM Sub-Trust A</strong>
+            <span style="color:var(--text2)">Reference</span><strong id="ty-bsb-ref">Your Member number</strong>
+            <span style="color:var(--text2)">Amount</span><strong>$4.00</strong>
+          </div>
+          <p style="font-size:.8rem;color:var(--text2);margin-top:10px;line-height:1.5">Fee-free · Instant via OSKO · Your vault updates after payment arrives. Use your Member number as the reference.</p>
         </div>
 
       </div>
@@ -263,6 +277,8 @@ document.addEventListener('DOMContentLoaded', function() {
   /* ── Member name ── */
   var nameEl = document.getElementById('member-name');
   if (nameEl) nameEl.textContent = partnerName || '—';
+  var bsbRef = document.getElementById('ty-bsb-ref');
+  if (bsbRef && num) bsbRef.textContent = num.replace(/(.{4})(?=.)/g, '$1 ');
 
   /* ── Personalise heading ── */
   var greetEl = document.getElementById('member-greeting');
