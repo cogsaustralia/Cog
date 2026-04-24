@@ -192,35 +192,7 @@ function renderEmailTemplate(string $templateKey, array $p): array {
     $urlStyle  = 'font-size:11px;color:#9a8a74;word-break:break-all;margin:.5rem 0;';
     $noticeStyle='font-size:11px;color:#9a8a74;line-height:1.7;border-top:1px solid rgba(255,255,255,.06);margin-top:1.25rem;padding-top:.75rem;';
 
-    // Payment details (SNFT)
-    $snftPayBlock = '<div style="' . $payStyle . '">'
-        . '<div style="' . $labelStyle . '">Complete your $4 partnership contribution</div>'
-        . '<table style="width:100%;border-collapse:collapse;margin-top:.5rem;font-size:13px;">'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">PayID</td><td style="color:#f0e8d6;font-weight:600;text-align:right;">0494 578 706</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Bank</td><td style="color:#f0e8d6;text-align:right;">Macquarie Bank</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Account name</td><td style="color:#f0e8d6;text-align:right;font-size:12px;">The Trustee for COGS of Australia Foundation Hybrid Trust</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">BSB</td><td style="color:#f0e8d6;font-weight:600;text-align:right;">182-182</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Account</td><td style="color:#f0e8d6;font-weight:600;text-align:right;">035 249 275</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Amount</td><td style="color:#f0b429;font-weight:700;text-align:right;">$4.00</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Reference</td><td style="color:#f0e8d6;font-weight:600;text-align:right;font-family:monospace;">' . htmlspecialchars((string)($p['member_number'] ?? 'your Partner number')) . '</td></tr>'
-        . '</table>'
-        . '<div style="font-size:11px;color:#9a8a74;margin-top:.65rem;line-height:1.6;">Use your Partner number as the payment reference. Once received, your vault becomes fully active.</div>'
-        . '</div>';
 
-    // Payment details (BNFT)
-    $bnftPayBlock = '<div style="' . $payStyle . '">'
-        . '<div style="' . $labelStyle . '">Complete your $40 business partnership contribution</div>'
-        . '<table style="width:100%;border-collapse:collapse;margin-top:.5rem;font-size:13px;">'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">PayID</td><td style="color:#f0e8d6;font-weight:600;text-align:right;">0494 578 706</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Bank</td><td style="color:#f0e8d6;text-align:right;">Macquarie Bank</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Account name</td><td style="color:#f0e8d6;text-align:right;font-size:12px;">The Trustee for COGS of Australia Foundation Hybrid Trust</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">BSB</td><td style="color:#f0e8d6;font-weight:600;text-align:right;">182-182</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Account</td><td style="color:#f0e8d6;font-weight:600;text-align:right;">035 249 275</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Amount</td><td style="color:#f0b429;font-weight:700;text-align:right;">$40.00</td></tr>'
-        . '<tr><td style="color:#9a8a74;padding:.2rem 0;">Reference</td><td style="color:#f0e8d6;font-weight:600;text-align:right;font-family:monospace;">' . htmlspecialchars((string)($p['abn'] ?? 'your ABN')) . '</td></tr>'
-        . '</table>'
-        . '<div style="font-size:11px;color:#9a8a74;margin-top:.65rem;line-height:1.6;">Use your ABN as the payment reference. Once received, your Business Vault becomes fully active.</div>'
-        . '</div>';
 
     return match ($templateKey) {
         'snft_user_confirmation' => (function() use ($p, $setupUrl, $foundingNotice, $site, $activationToken) {
@@ -557,7 +529,7 @@ $resValue    = number_format((float)($p['reservation_value'] ?? 40), 2);
 $gold    = '#b07d1a'; $goldLt = '#c8901a'; $dark = '#1a1208';
 $body_c  = '#1e1208'; $muted  = '#4a3828'; $green = '#2d6e45';
 $greenBg = '#edf7f1'; $greenBd = '#a8d5b8';
-$feeDisplay = ltrim((string)($p['joining_fee_due_now'] ?? '$' . $feeDisplay), '$');
+$feeDisplay = ltrim((string)($p['joining_fee_due_now'] ?? '$40.00'), '$');
 
 $interestRows = '';
 foreach ([
@@ -620,7 +592,7 @@ $html = '<!DOCTYPE html>
         <tr valign="top">
           <td width="48%" style="background:#fff8ed;border:1px solid #e8c97a;border-radius:10px;padding:16px 18px">
             <div style="font-size:11px;font-weight:bold;color:' . $goldLt . ';text-transform:uppercase;letter-spacing:.08em;font-family:Arial,sans-serif">Due today</div>
-            <div style="font-size:32px;font-weight:bold;color:' . $goldLt . ';margin:6px 0 4px;font-family:Georgia,serif">' . $feeDisplay . '</div>
+            <div style="font-size:32px;font-weight:bold;color:' . $goldLt . ';margin:6px 0 4px;font-family:Georgia,serif">$' . $feeDisplay . '</div>
             <div style="font-size:12px;color:' . $muted . ';line-height:1.5;font-family:Arial,sans-serif">Business partnership contribution only. Your selected business COG$ are recorded separately and are not payable today.</div>
           </td>
           <td width="4%"></td>
@@ -645,7 +617,7 @@ $html = '<!DOCTYPE html>
         <tr><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Account name</td><td style="padding:8px 16px;font-size:12px;color:' . $body_c . ';font-family:Arial,sans-serif">The Trustee for COGS of Australia Foundation Hybrid Trust</td></tr>
         <tr style="background:#f7f3ec"><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">BSB</td><td style="padding:8px 16px;font-size:13px;font-weight:bold;color:' . $body_c . ';font-family:Arial,sans-serif">182-182</td></tr>
         <tr><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Account</td><td style="padding:8px 16px;font-size:13px;font-weight:bold;color:' . $body_c . ';font-family:Arial,sans-serif">035 249 275</td></tr>
-        <tr style="background:#f7f3ec"><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Amount</td><td style="padding:8px 16px;font-size:15px;font-weight:bold;color:' . $goldLt . ';font-family:Georgia,serif">' . $feeDisplay . '</td></tr>
+        <tr style="background:#f7f3ec"><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Amount</td><td style="padding:8px 16px;font-size:15px;font-weight:bold;color:' . $goldLt . ';font-family:Georgia,serif">$' . $feeDisplay . '</td></tr>
         <tr><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Reference</td><td style="padding:8px 16px;font-size:13px;font-weight:bold;color:' . $body_c . ';font-family:Courier New,monospace">' . $abn . '</td></tr>
       </table>
     </td></tr>
@@ -709,7 +681,7 @@ $plain = "Your business is in, {$contactName}.
     . "Use this with your business email to log in to your Business Vault.
 
 "
-    . "DUE TODAY: \$40.00
+    . "DUE TODAY: $" . $feeDisplay . "
 "
     . str_repeat("-", 40) . "
 "
