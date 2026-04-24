@@ -192,7 +192,7 @@
           <h1 class="hero-animate">A joint venture circulating real value, anchored to Country, Co-operation and shared stewardship.</h1>
           <p class="lead hero-animate">The vision behind COG$ is to build a member-operated joint venture in which ordinary Australians step closer to real value, real assets and real decision-making. Members direct the life of the joint venture through Member Polls and the Independence Vault, while the Trustee performs limited legal custody, compliance, and fiat-processing functions.</p>
           <div class="hero-actions hero-animate">
-            <a class="btn-primary" href="../join/index.html">Become a Member</a>
+            <a class="btn-primary" href="../join/index.html">Become a Member — $4</a>
             <a class="btn-secondary" href="../tell-me-more/index.html">Tell me how it works</a>
           </div>
           <div class="quick-pills hero-animate" aria-label="Quick navigation">
@@ -560,7 +560,7 @@
           <span class="kicker">The governing documents</span>
           <h2>The Vision sits inside a document hierarchy, not beside it.</h2>
           <p>The Joint Venture Agreement is the supreme instrument. Below it sit the Hybrid Trust Declaration and the three Sub-Trust Deeds. All governing documents are provided to new Members during the Joint Venture Agreement process.</p>
-          <p style="margin-top:14px"><a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline;font-weight:600">Become a Member to access the full document suite →</a></p>
+          <p style="margin-top:14px"><a href="../join/index.html" style="color:var(--gold-2);text-decoration:underline;font-weight:600">Become a Member — $4 — to access the full document suite →</a></p>
         </div>
       </div>
     </section>
@@ -576,9 +576,9 @@
             <p class="lead">Join not in triumphal spirit, but in service. Join because the country is worth the effort. Join because Members should be closer to the value they help protect and direct. Join because some futures can only be secured when people decide that standing together, under rules they can live with, is wiser than waiting separately for someone else to act first.</p>
           </div>
           <div class="cta-actions">
-            <a class="btn-primary" href="../join/index.html">Become a Member</a>
-            <a class="btn-secondary" href="../faq/index.html">Read the FAQ</a>
-            <a class="btn-secondary" href="../skeptic/index.html">Read the Skeptic’s Guide</a>
+            <a class="btn-primary" href="../join/index.html">Become a Member — $4</a>
+            <a class="btn-secondary" href="../tell-me-more/index.html">How it works →</a>
+            <a class="btn-secondary" href="../skeptic/index.html">Skeptic’s Guide →</a>
           </div>
         </div>
       </div>
@@ -595,6 +595,30 @@
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
   },{threshold:.08});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+
+<script>
+/* ── Invite code propagation — carry stored code to all join links ── */
+(function(){
+  var STORAGE_KEY = 'cogs_partner_invite_v1';
+  var MAX_AGE_MS  = 7 * 24 * 60 * 60 * 1000;
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    var parsed = JSON.parse(raw);
+    if (!parsed || !parsed.code || !parsed.stored_at) return;
+    var age = Date.now() - new Date(parsed.stored_at).getTime();
+    if (!isFinite(age) || age < 0 || age > MAX_AGE_MS) return;
+    var code = String(parsed.code).trim().toUpperCase();
+    if (!code) return;
+    document.querySelectorAll('a[href]').forEach(function(link){
+      var href = link.getAttribute('href') || '';
+      if (href.indexOf('join/index.html') === -1) return;
+      var sep = href.indexOf('?') === -1 ? '?' : '&';
+      link.setAttribute('href', href + sep + 'partner_code=' + encodeURIComponent(code));
+    });
+  } catch(e) {}
 })();
 </script>
 </body>
