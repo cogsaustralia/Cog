@@ -368,7 +368,7 @@ img{max-width:100%;height:auto}
 .pay-acc-body{padding:14px 14px 10px;display:none}
 .pay-acc-body.open{display:block}
 .bank-key{color:var(--text3)}
-.bank-val{font-family:var(--mono);font-weight:600;color:var(--text)}
+.bank-val{font-family:var(--sans);font-weight:400;color:var(--text2)}
 
 /* ── PLACEHOLDER ── */
 .placeholder{text-align:center;padding:28px 0;color:var(--text3)}
@@ -1594,6 +1594,13 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <p style="font-size:.8rem;color:var(--text3);margin:0;line-height:1.5;text-align:center">Card, Apple Pay and Google Pay accepted. Includes $0.40 Stripe processing fee.</p>
       </div>
     </div>
+
+    <!-- Defer / Cancel actions -->
+    <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="btn btn-ghost btn-sm" style="flex:1;color:var(--text3)" onclick="payLaterOutstanding()">Pay later</button>
+      <button class="btn btn-ghost btn-sm" style="flex:1;color:#ff6b6b;border-color:rgba(255,107,107,.3)" onclick="cancelOutstandingOrder()">Cancel order</button>
+    </div>
+    <p style="font-size:.75rem;color:var(--text3);text-align:center;margin-top:6px;line-height:1.4">Pay later dismisses this until your next login. Cancel removes the pending payment entirely.</p>
   </div>
 </div>
 
@@ -1771,8 +1778,10 @@ function openVault(d){
         // SNFT outstanding — open SNFT pay modal
         if(typeof window.openPayModal === 'function') window.openPayModal();
       } else if(_hasSec){
-        // Secondary payments outstanding — open outstanding modal
-        if(typeof window.openOutstandingModal === 'function') window.openOutstandingModal();
+        // Secondary payments outstanding — open unless member chose Pay Later
+        if(!sessionStorage.getItem('cogs_pay_deferred')){
+          if(typeof window.openOutstandingModal === 'function') window.openOutstandingModal();
+        }
       }
     }, 800);
   })();
@@ -4927,11 +4936,11 @@ function openOutstandingModal() {
   var omPayidTotal = document.getElementById('outstanding-modal-payid-total');
   if (omPayidTotal) omPayidTotal.textContent = '$' + op.total.toFixed(2);
   var refEl = document.getElementById('outstanding-modal-ref');
-  var refVal = d.member_number
-    ? (d.member_number).replace(/(.{4})(?=.)/g, '$1\u00a0')
-    : 'Your Member number';
+  var _omic = d.invite_code;
+  var refVal = (_omic && (_omic.public_code||_omic.code))
+    ? (_omic.public_code||_omic.code)
+    : (d.member_number ? (d.member_number).replace(/(.{4})(?=.)/g,'$1\u00a0') : 'Your reference code');
   if (refEl) refEl.textContent = refVal;
-  // Sync PayID reference field
   var payidRefEl = document.getElementById('outstanding-modal-payid-ref');
   if (payidRefEl) payidRefEl.textContent = refVal;
 
@@ -5629,6 +5638,35 @@ function togglePayAcc(hd) {
   var body = hd.nextElementSibling;
   hd.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
   if (body) body.classList.toggle('open', !isOpen);
+}
+
+function payLaterOutstanding() {
+  // Dismiss for this session only — auto-open suppressed until next login
+  sessionStorage.setItem('cogs_pay_deferred', '1');
+  closeOutstandingModal();
+}
+
+async function cancelOutstandingOrder() {
+  var confirmed = window.confirm(
+    'Cancel your pending payment?\n\n' +
+    'This will remove the pending order. You can create a new one any time from your vault.'
+  );
+  if (!confirmed) return;
+  var btn = document.querySelector('[onclick="cancelOutstandingOrder()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Cancelling…'; }
+  try {
+    await window.api('vault/cancel-gift-order', {
+      method: 'POST',
+      body: JSON.stringify({ cancel_all: true })
+    });
+    closeOutstandingModal();
+    // Refresh vault data so outstanding card disappears
+    if (typeof window.loadVault === 'function') window.loadVault();
+    else window.location.reload();
+  } catch(e) {
+    alert((e && e.message) || 'Could not cancel the order. Please try again.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Cancel order'; }
+  }
 }
 
 function copyVal(text, btn) {
