@@ -928,11 +928,16 @@ async function sendAIMessage(){
     var th = el('ai-thinking');
     if(th) th.remove();
 
-    if(j.reply){
-      appendAIMsg('assistant', esc(j.reply).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>'));
-      _aiHistory.push({role:'assistant',content:j.reply});
+    // apiSuccess wraps payload under .data — unwrap it
+    var reply = (j.data && j.data.reply) ? j.data.reply : (j.reply || null);
+    var errMsg = (j.data && j.data.error) ? j.data.error : (j.error || null);
+
+    if(reply){
+      appendAIMsg('assistant', esc(reply).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>'));
+      _aiHistory.push({role:'assistant',content:reply});
     }else{
-      appendAIMsg('assistant','<span style="color:var(--amber)">⚠ '+(j.error||'Could not get a response. Please try again.')+'</span>');
+      var displayErr = errMsg || ('Server returned HTTP ' + r.status + '. Please try again.');
+      appendAIMsg('assistant','<span style="color:var(--amber)">⚠ '+esc(displayErr)+'</span>');
     }
   }catch(e){
     var th2=el('ai-thinking'); if(th2) th2.remove();
