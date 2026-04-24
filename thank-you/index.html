@@ -175,15 +175,15 @@
         <!-- Pay now convenience card -->
         <div style="margin-top:20px;padding:18px 20px;background:rgba(232,184,75,.05);border:1.5px solid rgba(232,184,75,.22);border-radius:16px">
           <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Ready to pay now? Transfer directly to the trust account:</div>
-          <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:.88rem;line-height:1.8">
-            <span style="color:var(--text2)">PayID / OSKO</span><strong style="color:var(--gold-1);font-family:monospace">0494 578 706</strong>
-            <span style="color:var(--text2)">BSB</span><strong style="font-family:monospace">182-512</strong>
-            <span style="color:var(--text2)">Account</span><strong style="font-family:monospace">975 174 624</strong>
-            <span style="color:var(--text2)">Account name</span><strong>The Trustee for the CJVM Sub-Trust A</strong>
-            <span style="color:var(--text2)">Reference</span><strong id="ty-bsb-ref">Your Member number</strong>
-            <span style="color:var(--text2)">Amount</span><strong>$4.00</strong>
+          <div style="display:flex;flex-direction:column;gap:2px;font-size:.88rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">PayID / OSKO</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-payid" style="color:var(--gold-1);font-family:monospace">0494 578 706</strong><button onclick="tyCopy(this,'ty-payid')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">BSB</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-bsb" style="font-family:monospace">182-512</strong><button onclick="tyCopy(this,'ty-bsb')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Account</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-acct" style="font-family:monospace">975 174 624</strong><button onclick="tyCopy(this,'ty-acct')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Account name</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-aname" style="font-size:.85rem">The Trustee for the CJVM Sub-Trust A</strong><button onclick="tyCopy(this,'ty-aname')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Reference</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-bsb-ref" style="font-family:monospace;font-size:.85rem">See vault</strong><button onclick="tyCopy(this,'ty-bsb-ref')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0"><span style="color:var(--text2)">Amount</span><strong>$4.00</strong></div>
           </div>
-          <p style="font-size:.8rem;color:var(--text2);margin-top:10px;line-height:1.5">Fee-free · Instant via OSKO · Your vault updates after payment arrives. Use your Member number as the reference.</p>
+          <p style="font-size:.8rem;color:var(--text2);margin-top:10px;line-height:1.5">Fee-free · Instant via OSKO · Your vault updates after payment arrives. Your payment reference code is shown in your vault payment options.</p>
         </div>
 
       </div>
@@ -337,6 +337,26 @@ document.addEventListener('DOMContentLoaded', function() {
   }, { threshold: 0.06 });
   document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
 })();
+</script>
+
+<script>
+/* ── Thank-you page copy helper ── */
+function tyCopy(btn, id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var text = el.textContent.replace(/ /g, '').trim();
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = '✓'; btn.style.color = '#52b87a';
+    setTimeout(function() { btn.textContent = '⎘'; btn.style.color = ''; }, 1600);
+  }).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;top:-9999px';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓'; btn.style.color = '#52b87a';
+    setTimeout(function() { btn.textContent = '⎘'; btn.style.color = ''; }, 1600);
+  });
+}
 </script>
 </body>
 </html>
