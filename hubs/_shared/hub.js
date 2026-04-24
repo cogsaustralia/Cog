@@ -1703,6 +1703,59 @@ document.addEventListener('DOMContentLoaded', function(){
       html += '</div>'; // .hub-livedata-section
     }
 
+    // ── 2. Research & Acquisitions ────────────────────────────────────────
+    else if (areaKey === 'governance_polls') {
+      html += '<div class="hub-livedata-section">';
+      html += '<div class="hub-livedata-title">Live Research Data</div>';
+
+      // Active proposals
+      html += '<div class="hub-livedata-row">';
+      html += '<span class="hub-livedata-label">Active proposals</span>';
+      var propCount = (typeof hd.open_proposal_count !== 'undefined') ? hd.open_proposal_count : '—';
+      html += '<span class="hub-livedata-val' + (propCount > 0 ? ' lvd-active' : '') + '">' + propCount + '</span>';
+      html += '</div>';
+      if (hd.open_proposals && hd.open_proposals.length) {
+        html += '<div class="hub-livedata-list">';
+        hd.open_proposals.forEach(function(p) {
+          var closeStr = p.closes_at ? (' — closes ' + _dts(p.closes_at)) : '';
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">Proposal</span>' +
+              '<span class="hub-livedata-summary">' + _esc(p.title) + '</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _esc(closeStr) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      // Portfolio holdings
+      if (typeof hd.holdings_count !== 'undefined') {
+        html += '<div class="hub-livedata-row">';
+        html += '<span class="hub-livedata-label">Portfolio holdings</span>';
+        html += '<span class="hub-livedata-val">' + hd.holdings_count + '</span>';
+        html += '</div>';
+      }
+
+      // Recent settled trades
+      if (hd.recent_trades && hd.recent_trades.length) {
+        html += '<div class="hub-livedata-subtitle">Recent settled trades</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.recent_trades.forEach(function(t) {
+          html += '<div class="hub-livedata-item">' +
+            '<div class="hub-livedata-item-inner">' +
+              '<span class="hub-livedata-type">' + _esc(t.ticker) + '</span>' +
+              '<span class="hub-livedata-summary">' + Number(t.units).toLocaleString('en-AU') + ' units</span>' +
+            '</div>' +
+            '<span class="hub-livedata-ts">' + _esc(t.trade_date) + '</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>'; // .hub-livedata-section
+    }
+
     if (html) container.insertAdjacentHTML('beforeend', html);
   }
 

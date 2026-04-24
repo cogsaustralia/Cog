@@ -1368,6 +1368,58 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
+    } elseif ($area === 'governance_polls') {
+        // 1. Active vote proposals — titles and close dates (no member data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT COUNT(*) AS total_open FROM vote_proposals WHERE status = 'open'"
+            );
+            $stmt->execute();
+            $hubData['open_proposal_count'] = (int)$stmt->fetchColumn();
+
+            $stmt2 = $db->prepare(
+                "SELECT title, closes_at
+                   FROM vote_proposals
+                  WHERE status = 'open'
+                  ORDER BY closes_at ASC
+                  LIMIT 3"
+            );
+            $stmt2->execute();
+            $hubData['open_proposals'] = array_map(
+                fn($r) => [
+                    'title'     => (string)$r['title'],
+                    'closes_at' => (string)($r['closes_at'] ?? ''),
+                ],
+                $stmt2->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        // 2. Portfolio holdings count (distinct ASX positions held)
+        try {
+            $s = $db->query("SELECT COUNT(*) FROM asx_holdings");
+            $hubData['holdings_count'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
+
+        // 3. Recent settled trades — ticker, units, date (no member data)
+        try {
+            $stmt = $db->prepare(
+                "SELECT h.ticker, t.units, t.trade_date
+                   FROM asx_trades t
+                   JOIN asx_holdings h ON h.id = t.holding_id
+                  WHERE t.status = 'settled'
+                  ORDER BY t.trade_date DESC
+                  LIMIT 3"
+            );
+            $stmt->execute();
+            $hubData['recent_trades'] = array_map(
+                fn($r) => [
+                    'ticker'     => (string)$r['ticker'],
+                    'units'      => (int)$r['units'],
+                    'trade_date' => (string)$r['trade_date'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
     }
 
     apiSuccess([
