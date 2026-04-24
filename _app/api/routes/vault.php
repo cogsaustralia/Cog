@@ -2693,13 +2693,10 @@ function createStripeCheckout(): void {
     $postData['payment_intent_data[description]'] = 'COG$ Community Gift Pool — ' . (string)$member['full_name'] . ' (' . (string)$member['member_number'] . ')';
     $postData['payment_intent_data[statement_descriptor]'] = 'COGS AUSTRALIA';
 
-    $encodedBody = http_build_query($postData);
-    // TEMP: return raw post body first 800 chars so we can inspect
-    apiError('[RAW_POST] ' . substr($encodedBody, 0, 800), 503);
     $ch = curl_init('https://api.stripe.com/v1/checkout/sessions');
     curl_setopt_array($ch, [
         CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $encodedBody,
+        CURLOPT_POSTFIELDS     => http_build_query($postData),
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER     => [
             'Authorization: Bearer ' . $secretKey,
