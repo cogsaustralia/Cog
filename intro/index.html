@@ -483,7 +483,7 @@
   <div id="top-bar">
     <a class="wordmark" id="wordmark-home" href="/" aria-label="COG$ of Australia — go to home page">COG$</a>
     <span id="step-label">1 of 5</span>
-    <button id="questions-btn" aria-label="Read FAQ before joining">Questions first →</button>
+    <button id="questions-btn" aria-label="Read the Skeptic's Guide before joining">Questions first →</button>
     <button id="skip-btn" aria-label="Skip introduction">Skip intro →</button>
     <div id="progress-track"><div id="progress-fill"></div></div>
 
@@ -835,8 +835,8 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
 
   var questionsBtn = document.getElementById('questions-btn');
   if(questionsBtn) questionsBtn.addEventListener('click', function(){
-    // Goes to FAQ without setting intro_seen — user can return via back button
-    window.location.href = '../faq/index.html';
+    // Goes to Skeptic's Guide without setting intro_seen — user can return via back button
+    window.location.href = '../skeptic/index.html';
   });
 
   document.addEventListener('keydown', function (e) {
