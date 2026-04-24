@@ -135,8 +135,8 @@ async function boot(){
   if(heroH1) heroH1.textContent = label;
   var heroSub = el('hub-hero-sub');
   if(heroSub && window.HUB_TIP){
-    var _tipFirst = window.HUB_TIP.split('.')[0].replace(/\\n/g,' ').trim();
-    heroSub.textContent = _tipFirst + '.';
+    var _tipFull = window.HUB_TIP.split('\\n\\n')[0].replace(/\\n/g,' ').trim();
+    heroSub.textContent = _tipFull;
   }
   var chipsWrap = el('hub-hero-chips');
   if(chipsWrap){
