@@ -336,6 +336,54 @@ $statusBadge = [
 .add-power { font-size: .78rem; color: var(--gold); background: none; border: 1px dashed rgba(212,178,92,.4); border-radius: 5px; padding: 5px 12px; cursor: pointer; }
 .required { color: var(--err); }
 .divider { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+/* ── Certificate / print styles ── */
+.cert-wrap {
+  display: none; max-width: 780px; margin: 0 auto; padding: 40px 32px 60px;
+  font-family: system-ui, sans-serif; color: #1a1a1a; background: #ffffff;
+  position: relative; z-index: 10;
+}
+.cert-wrap.active { display: block; background: #ffffff; color: #1a1a1a; }
+body.cert-open .admin-shell { display: none; }
+@media print {
+  .admin-shell, .main, .no-print, .cert-actions { display: none !important; }
+  .cert-wrap { display: none !important; }
+  .cert-wrap.active { display: block !important; padding: 0; }
+  body { background: white; color: black; }
+}
+.cert-header { text-align: center; margin-bottom: 32px; border-bottom: 2px solid #8b6914; padding-bottom: 20px; }
+.cert-header .org { font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; color: #666; }
+.cert-header h1  { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin: 8px 0 4px; }
+.cert-header .sub { font-size: .82rem; color: #666; }
+.cert-status { text-align: center; margin: 20px 0 28px; }
+.cert-status .tick { font-size: 2rem; color: #52b87a; }
+.cert-status h2   { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin: 6px 0 0; }
+.cert-section { margin-bottom: 20px; }
+.cert-section-title {
+  font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+  color: #8b6914; font-weight: 700; margin-bottom: 10px;
+  border-bottom: 1px solid #e0d8c8; padding-bottom: 4px;
+}
+.cert-row { display: flex; gap: 16px; margin-bottom: 8px; }
+.cert-lbl { font-size: .75rem; color: #666; min-width: 200px; padding-top: 2px; }
+.cert-val { font-size: .82rem; color: #1a1a1a; word-break: break-all; overflow-wrap: anywhere; }
+.cert-val.mono { font-family: 'Courier New', monospace; }
+.cert-val.highlight { color: #1a1a2e; font-weight: 600; }
+.cert-resolution {
+  background: #f8f7f4; border-left: 3px solid #8b6914; border-radius: 0 4px 4px 0;
+  padding: 12px 16px; font-size: .82rem; color: #333; line-height: 1.6;
+  white-space: pre-wrap; word-break: break-word; margin: 8px 0 0;
+}
+.cert-notice {
+  background: #f0ede8; border: 1px solid #d4b25c; border-radius: 6px;
+  padding: 14px 18px; margin-top: 24px; font-size: .8rem; color: #555; line-height: 1.6;
+}
+.cert-footer { text-align: center; margin-top: 32px; font-size: .72rem; color: #999; }
+.print-btn {
+  margin: 16px 8px 0 0; padding: 9px 18px; border-radius: 7px;
+  background: transparent; border: 1px solid var(--line2); color: var(--sub);
+  font-size: .82rem; cursor: pointer;
+}
+.print-btn:hover { border-color: rgba(212,178,92,.4); color: var(--gold); }
 </style>
 </head>
 <body>
@@ -741,9 +789,9 @@ $statusBadge = [
 
 <?php if ($decision['status'] === 'fully_executed'): ?>
 <div style="margin-top:8px">
-  <a href="./tdr_pdf.php?id=<?= urlencode($decision['decision_uuid']) ?>" class="btn-primary" target="_blank">
-    📄 Download Certified Copy (PDF)
-  </a>
+  <button class="btn-primary print-btn" onclick="showCert()">
+    📄 View / Download Certified Copy
+  </button>
 </div>
 <?php endif; ?>
 
@@ -859,6 +907,102 @@ function removePower(btn) {
     btn.closest('.powers-row').remove();
   }
 }
+function showCert() {
+  document.getElementById('tdr-cert').classList.add('active');
+  document.body.classList.add('cert-open');
+  window.scrollTo(0, 0);
+}
+function hideCert() {
+  document.getElementById('tdr-cert').classList.remove('active');
+  document.body.classList.remove('cert-open');
+}
 </script>
+
+<?php if ($decision && $decision['status'] === 'fully_executed'):
+  $certExec  = !empty($execRecords) ? $execRecords[0] : [];
+  $certPowers = json_decode((string)($decision['powers_json'] ?? '[]'), true) ?: [];
+?>
+<div class="cert-wrap" id="tdr-cert">
+  <div class="cert-header">
+    <div class="org">COGS of Australia Foundation · ABN 61 734 327 831</div>
+    <h1>Trustee Decision Record</h1>
+    <div class="sub">
+      <?= htmlspecialchars($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context'], ENT_QUOTES) ?>
+      — Electronic Trustee Minute
+    </div>
+  </div>
+
+  <div class="cert-status">
+    <div class="tick">✓</div>
+    <h2>Trustee Decision Record — Fully Executed</h2>
+  </div>
+
+  <div class="cert-section">
+    <div class="cert-section-title">Record Identity</div>
+    <div class="cert-row"><div class="cert-lbl">Reference</div><div class="cert-val highlight"><?= td_h($decision['decision_ref']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Title</div><div class="cert-val highlight"><?= td_h($decision['title']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Sub-Trust</div><div class="cert-val"><?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Category</div><div class="cert-val"><?= td_h($categoryLabels[$decision['decision_category']] ?? $decision['decision_category']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Effective Date</div><div class="cert-val"><?= td_h($decision['effective_date']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Decision UUID</div><div class="cert-val mono"><?= td_h($decision['decision_uuid']) ?></div></div>
+  </div>
+
+  <div class="cert-section">
+    <div class="cert-section-title">Executor</div>
+    <div class="cert-row"><div class="cert-lbl">Full Name</div><div class="cert-val highlight"><?= td_h(TrusteeDecisionService::EXECUTOR_NAME) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Address</div><div class="cert-val"><?= td_h(TrusteeDecisionService::EXECUTOR_ADDRESS) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Capacity</div><div class="cert-val"><?= td_h($certExec['capacity_label'] ?? '') ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Execution Timestamp</div><div class="cert-val mono"><?= td_h($certExec['execution_timestamp_utc'] ?? '') ?> UTC</div></div>
+    <div class="cert-row"><div class="cert-lbl">Execution Method</div><div class="cert-val"><?= td_h(TrusteeDecisionService::EXECUTION_METHOD) ?></div></div>
+    <?php if (!empty($certExec['member_match_status']) && $certExec['member_match_status'] === 'matched'): ?>
+    <div class="cert-row"><div class="cert-lbl">Identity Verified</div><div class="cert-val highlight" style="color:#2d7a4f">✓ Member <?= td_h($certExec['member_number_matched'] ?? '') ?> — <?= td_h($certExec['member_name_matched'] ?? '') ?></div></div>
+    <?php endif; ?>
+  </div>
+
+  <div class="cert-section">
+    <div class="cert-section-title">Powers Exercised</div>
+    <?php foreach ($certPowers as $p): ?>
+    <div class="cert-row">
+      <div class="cert-lbl mono"><?= td_h($p['clause_ref'] ?? '') ?></div>
+      <div class="cert-val"><?= td_h($p['description'] ?? '') ?></div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+
+  <div class="cert-section">
+    <div class="cert-section-title">Resolution</div>
+    <div class="cert-resolution"><?= td_h($decision['resolution_md']) ?></div>
+  </div>
+
+  <div class="cert-section">
+    <div class="cert-section-title">Cryptographic Integrity</div>
+    <div class="cert-row"><div class="cert-lbl">Record SHA-256</div><div class="cert-val mono highlight"><?= td_h($decision['record_sha256'] ?? '') ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Evidence Vault Entry</div><div class="cert-val mono">#<?= td_h((string)($decision['evidence_vault_id'] ?? '')) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Non-MIS Affirmation</div><div class="cert-val" style="color:#2d7a4f">✓ Affirmed</div></div>
+  </div>
+
+  <div class="cert-notice">
+    This Trustee Decision Record is a sole-trustee administrative minute of the COGS of Australia
+    Foundation Community Joint Venture Mainspring Hybrid Trust (ABN 61 734 327 831). It is executed
+    electronically in accordance with the Electronic Transactions Act 1999 (Cth). No wet-ink signature
+    or paper counterpart is required or produced. The record is not a managed investment scheme
+    instrument (JVPA clause 4.9, Declaration clause 1.1A). The SHA-256 hash above constitutes the
+    cryptographic integrity reference for this record. An electronically authenticated copy of this
+    record, produced from the Foundation's secure systems and bearing the SHA-256 hash, is a legal
+    copy for all purposes consistent with Declaration clause 1.5A.
+  </div>
+
+  <div class="cert-footer">
+    COGS of Australia Foundation · cogsaustralia.org · Wahlubal Country, Bundjalung Nation<br>
+    Generated <?= td_h(gmdate('d F Y H:i:s')) ?> UTC
+  </div>
+
+  <div class="cert-actions no-print" style="margin-top:24px">
+    <button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+    <button class="print-btn" onclick="hideCert()">✕ Close</button>
+  </div>
+</div>
+<?php endif; ?>
+
 </body>
 </html>
