@@ -359,7 +359,8 @@ img{max-width:100%;height:auto}
 .copy-btn.copied{border-color:var(--green-bdr);color:var(--green)}
 .pay-acc{margin-bottom:7px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
 .pay-acc-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:rgba(255,255,255,.02);transition:background .15s}
-.pay-acc-hd:hover{background:rgba(255,255,255,.04)}
+.pay-acc-hd:hover{background:rgba(255,255,255,.04);border-color:rgba(232,184,75,.3);box-shadow:0 0 0 2px rgba(232,184,75,.1)}
+.pay-acc-hd[aria-expanded=true]:hover{border-color:rgba(62,207,110,.45);box-shadow:0 0 0 2px rgba(62,207,110,.1)}
 .pay-acc-hd[aria-expanded=true]{background:rgba(62,207,110,.05);border-bottom:1px solid rgba(62,207,110,.2)}
 .pay-acc-hd[aria-expanded=false]{border-bottom:none}
 .pay-acc-name{flex:1;font-size:.9rem;font-weight:600;color:var(--text)}
@@ -5650,8 +5651,8 @@ function payLaterOutstanding() {
 
 async function cancelOutstandingOrder() {
   var confirmed = window.confirm(
-    'Cancel your pending payment?\n\n' +
-    'This will remove the pending order. You can create a new one any time from your vault.'
+    'Remove this pending payment?\n\n' +
+    'The order will be cancelled. You can start a new one any time from your vault.'
   );
   if (!confirmed) return;
   var btn = document.querySelector('[onclick="cancelOutstandingOrder()"]');
@@ -5662,9 +5663,9 @@ async function cancelOutstandingOrder() {
       body: JSON.stringify({ cancel_all: true })
     });
     closeOutstandingModal();
-    // Refresh vault data so outstanding card disappears
-    if (typeof window.loadVault === 'function') window.loadVault();
-    else window.location.reload();
+    // In-place refresh — no page reload, session stays intact
+    var fresh = await window.api('vault/member');
+    if (typeof openVault === 'function') openVault(fresh);
   } catch(e) {
     alert((e && e.message) || 'Could not cancel the order. Please try again.');
     if (btn) { btn.disabled = false; btn.textContent = 'Cancel order'; }
