@@ -1241,6 +1241,272 @@ window.sendAIMessage    = sendAIMessage;
 window.aiKeydown        = aiKeydown;
 
 
+/* ── Info popout system ─────────────────────────────────────────────────────── */
+// All popout definitions. key → {title, body (HTML string)}
+var _INFO = {
+  // Hub-level
+  'hub-enrol': {
+    title: 'Activate Participation',
+    body: '<p>Joining a hub gives you write access — you can create projects, post in the forum, vote, and raise queries.</p><p>You remain in read-only mode until you activate.</p>'
+  },
+  'hub-leave': {
+    title: 'Leave this hub',
+    body: '<p>Leaving removes your write access. You can re-join at any time. Your past contributions remain in the record.</p>'
+  },
+  'hub-roster-vis': {
+    title: 'Roster visibility',
+    body: '<p>Controls whether your name appears in this hub's member list. Hiding yourself is a global setting — it applies to all hubs you belong to.</p>'
+  },
+  'hub-show-name': {
+    title: 'Show your name',
+    body: '<p>When you opt in, your first name is shown next to your membership number on the roster. When opted out, you appear as Anonymous.</p>'
+  },
+  'hub-status-live': {
+    title: 'Hub status: Live',
+    body: '<p>This hub is fully active. You can read, comment, create projects, and vote.</p>'
+  },
+  'hub-status-soon': {
+    title: 'Hub status: Expansion Day',
+    body: '<p>This hub activates at Expansion Day. You can read content now but write actions are not yet available.</p>'
+  },
+  // Phase
+  'phase-draft': {
+    title: 'Phase: Draft',
+    body: '<p>The coordinator is still preparing the proposal. It's visible to participants but not open for community input yet.</p><p>Only the coordinator can advance to the next phase.</p>'
+  },
+  'phase-open_for_input': {
+    title: 'Phase: Open for Input',
+    body: '<p>The proposal is open for at least <strong>7 days</strong>. Read, comment, and join the project. This is where you ask questions and propose refinements.</p>'
+  },
+  'phase-deliberation': {
+    title: 'Phase: Deliberation',
+    body: '<p>At least <strong>7 days</strong> of structured debate on the refined proposal. Weigh arguments and prepare your position before voting opens.</p>'
+  },
+  'phase-vote': {
+    title: 'Phase: Vote Open',
+    body: '<p>Cast your consent vote — agree, disagree, block, or abstain. Minimum <strong>7 days</strong> (48 hours in certified urgency). A single block re-opens deliberation.</p>'
+  },
+  'phase-accountability': {
+    title: 'Phase: Accountability',
+    body: '<p>The proposal is adopted. The coordinator tracks delivery via milestones. All members can see progress and comment on execution.</p>'
+  },
+  'phase-advance': {
+    title: 'Advance the phase',
+    body: '<p>Moves this project to the next governance phase. Only the project coordinator can do this. Each phase has a minimum period — the button's label shows the next phase name.</p><p><a href="../../guide/" target="_blank">See the full lifecycle guide ›</a></p>'
+  },
+  // Voting
+  'vote-agree': {
+    title: '✔ Agree',
+    body: '<p>I support this proposal and consent to its adoption. The outcome can proceed.</p>'
+  },
+  'vote-disagree': {
+    title: '✗ Disagree',
+    body: '<p>I do not support this proposal but accept the outcome if the majority agrees. Your disagreement is recorded but does not block adoption.</p>'
+  },
+  'vote-block': {
+    title: '⛔ Block',
+    body: '<p>I have a <strong>paramount objection</strong> based on the Foundation's purpose or governing principles. Requires written reasoning. <strong>A single block re-opens deliberation.</strong></p><p>This is not a personal veto — it must relate to the Foundation's purpose or rules.</p>'
+  },
+  'vote-abstain': {
+    title: '○ Abstain',
+    body: '<p>I am not expressing a position. I acknowledge the vote is proceeding and accept the outcome.</p>'
+  },
+  'vote-tally': {
+    title: 'Live vote tally',
+    body: '<p>Updates immediately when any enrolled member votes. You may change your position at any time while the Vote phase is open.</p>'
+  },
+  // Milestones
+  'milestone-list': {
+    title: 'Delivery Milestones',
+    body: '<p>Specific deliverables the coordinator has committed to. All members can see progress. Only the coordinator can add or toggle milestones.</p><p>Milestones feed the Foundation's quarterly evidence compilation under the JVPA Schedule.</p>'
+  },
+  'milestone-add': {
+    title: 'Add a milestone',
+    body: '<p>Describe a specific deliverable and set a target date. Members will see whether it has been completed.</p><p>Only available to the project coordinator in the Accountability phase.</p>'
+  },
+  // Queries
+  'query-transparency': {
+    title: 'Transparency level',
+    body: '<p><strong>🔒 Private</strong> — only you and admins see this.<br><strong>👥 Hub Members</strong> — enrolled members in this hub see the resolution summary.<br><strong>📢 Public Record</strong> — the reply is broadcast to the entire hub.</p><p>Choose based on whether others would benefit from the answer.</p>'
+  },
+  'query-resolved': {
+    title: 'Resolved this month',
+    body: '<p>Questions raised by members that have been answered in the past 30 days. Only queries where the member chose Hub Members or Public Record transparency are shown here.</p><p>Private queries are never surfaced.</p>'
+  },
+  // AI
+  'ai-assistant': {
+    title: '⬡ Governance Assistant',
+    body: '<p>Answers governance questions about this hub — how the rules work, what phases mean, and how to interpret the Foundation's governing instruments.</p><p>Powered by Claude. Governance context only — it does not have access to your wallet or personal data.</p>'
+  },
+  // Mainspring
+  'mainspring': {
+    title: '⬡ Mainspring',
+    body: '<p>An at-a-glance overview across all nine Management Hubs — project counts by phase, recent activity, and quick links to each hub area.</p>'
+  },
+};
+
+// Active popout state
+var _popoutEl = null;
+var _popoutKey = null;
+
+function showPopout(key, anchorEl){
+  // Toggle off if same key
+  if(_popoutKey === key && _popoutEl){ hidePopout(); return; }
+  hidePopout();
+
+  var def = _INFO[key];
+  if(!def) return;
+
+  var pop = document.createElement('div');
+  pop.className = 'hub-popout';
+  pop.setAttribute('role','tooltip');
+  pop.innerHTML =
+    '<div class="hub-popout-arrow"><div></div></div>' +
+    '<div class="hub-popout-title">'+esc(def.title)+'</div>' +
+    '<div class="hub-popout-body">'+def.body+'</div>';
+
+  document.body.appendChild(pop);
+  _popoutEl  = pop;
+  _popoutKey = key;
+
+  // Position relative to anchor
+  var rect = anchorEl.getBoundingClientRect();
+  var scrollY = window.scrollY || window.pageYOffset;
+  var left = Math.min(rect.left, window.innerWidth - 280);
+  left = Math.max(8, left);
+  pop.style.top  = (rect.bottom + scrollY + 6) + 'px';
+  pop.style.left = left + 'px';
+
+  // Reposition arrow
+  var arrow = pop.querySelector('.hub-popout-arrow');
+  if(arrow) arrow.style.left = Math.max(8, rect.left - left + 3) + 'px';
+
+  if(anchorEl) anchorEl.setAttribute('aria-expanded','true');
+  _popoutAnchor = anchorEl;
+}
+
+var _popoutAnchor = null;
+
+function hidePopout(){
+  if(_popoutEl){ _popoutEl.remove(); _popoutEl = null; _popoutKey = null; }
+  if(_popoutAnchor){ _popoutAnchor.setAttribute('aria-expanded','false'); _popoutAnchor = null; }
+}
+
+document.addEventListener('click', function(e){
+  if(_popoutEl && !_popoutEl.contains(e.target) && !e.target.classList.contains('hub-info-btn')){
+    hidePopout();
+  }
+}, true);
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') hidePopout();
+});
+
+function infoBtn(key){
+  return '<button class="hub-info-btn" aria-label="More information" aria-expanded="false" '
+    + 'onclick="showPopout(''+key+'',this)">ⓘ</button>';
+}
+
+window.showPopout = showPopout;
+window.hidePopout = hidePopout;
+
+// ── Patch section titles with info buttons ───────────────────────────────────
+// Called once after renderAll() to decorate static section headings
+function attachInfoBtns(){
+  // Stat labels
+  var statMembers = document.querySelector('#stat-members .hub-stat-l');
+  if(statMembers && !statMembers.querySelector('.hub-info-btn'))
+    statMembers.innerHTML += infoBtn('hub-roster-vis');
+
+  // Phase chip in project detail (delegated — handled in renderProjectDetail)
+  // Roster vis / show name buttons
+  var rvWrap = el('hub-roster-vis-wrap');
+  if(rvWrap && !rvWrap.querySelector('.hub-info-btn'))
+    rvWrap.insertAdjacentHTML('beforeend', infoBtn('hub-roster-vis'));
+}
+
+// ── Override renderProjectDetail to inject info buttons ───────────────────────
+// We monkey-patch by wrapping the wrap.innerHTML setter with a MutationObserver
+// (simpler: call injectProjectInfoBtns() at end of renderProjectDetail)
+var _origRenderProjectDetail = renderProjectDetail;
+renderProjectDetail = function(){
+  _origRenderProjectDetail.apply(this, arguments);
+  injectProjectInfoBtns();
+};
+
+function injectProjectInfoBtns(){
+  // Phase banner info button on the phase chip
+  var detailWrap = el('hub-project-detail');
+  if(!detailWrap) return;
+  var chips = detailWrap.querySelectorAll('.hub-status-chip');
+  chips.forEach(function(chip){
+    if(chip.querySelector('.hub-info-btn')) return;
+    var cls = Array.from(chip.classList).find(function(c){ return c !== 'hub-status-chip'; });
+    if(cls && _INFO['phase-'+cls]) chip.insertAdjacentHTML('beforeend', infoBtn('phase-'+cls));
+  });
+
+  // Advance button — add info icon next to it
+  var advBtn = detailWrap.querySelector('[onclick*="advancePhase"]');
+  if(advBtn && !advBtn.previousElementSibling?.classList.contains('hub-info-btn')){
+    advBtn.insertAdjacentHTML('beforebegin', infoBtn('phase-advance')+' ');
+  }
+
+  // Consent vote section title
+  detailWrap.querySelectorAll('.hub-section-title').forEach(function(t){
+    if(t.textContent.trim()==='Consent Vote' && !t.querySelector('.hub-info-btn'))
+      t.insertAdjacentHTML('beforeend', infoBtn('vote-tally'));
+    if(t.textContent.trim()==='Delivery Milestones' && !t.querySelector('.hub-info-btn'))
+      t.insertAdjacentHTML('beforeend', infoBtn('milestone-list'));
+  });
+
+  // Vote buttons
+  var voteMap = {'.hub-vote-agree':'vote-agree','.hub-vote-disagree':'vote-disagree','.hub-vote-block':'vote-block','.hub-vote-abstain':'vote-abstain'};
+  Object.keys(voteMap).forEach(function(sel){
+    var btn = detailWrap.querySelector(sel);
+    if(btn && !btn.previousElementSibling?.classList.contains('hub-info-btn'))
+      btn.insertAdjacentHTML('afterend', ' '+infoBtn(voteMap[sel]));
+  });
+
+  // Milestone add label
+  var msLabel = detailWrap.querySelector('#ms-label');
+  if(msLabel){
+    var msAddBtn = detailWrap.querySelector('[onclick*="addMilestone"]');
+    if(msAddBtn && !msAddBtn.nextElementSibling?.classList.contains('hub-info-btn'))
+      msAddBtn.insertAdjacentHTML('afterend', ' '+infoBtn('milestone-add'));
+  }
+}
+
+// ── Patch renderQuerySection for transparency info button ─────────────────────
+var _origShowQueryForm = showQueryForm;
+showQueryForm = function(){
+  _origShowQueryForm.apply(this, arguments);
+  // After the form renders, add info button next to transparency label
+  setTimeout(function(){
+    var transLabel = document.querySelector('#hub-query-form-wrap label');
+    if(transLabel && !transLabel.querySelector('.hub-info-btn'))
+      transLabel.insertAdjacentHTML('beforeend', infoBtn('query-transparency'));
+  }, 50);
+};
+
+// ── Patch renderProjects for resolved-queries info button ─────────────────────
+var _origRenderProjects = renderProjects;
+renderProjects = function(){
+  _origRenderProjects.apply(this, arguments);
+  var rqBlock = el('rq-block');
+  if(rqBlock && rqBlock.firstElementChild){
+    var rqTitle = rqBlock.querySelector('div');
+    if(rqTitle && !rqTitle.querySelector('.hub-info-btn'))
+      rqTitle.insertAdjacentHTML('beforeend', ' '+infoBtn('query-resolved'));
+  }
+};
+
+// ── Override renderAll to call attachInfoBtns ─────────────────────────────────
+var _origRenderAll = renderAll;
+renderAll = function(){
+  _origRenderAll.apply(this, arguments);
+  attachInfoBtns();
+};
+
 /* ── Start ───────────────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', function(){
   boot();

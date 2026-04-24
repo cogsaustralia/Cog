@@ -218,3 +218,18 @@ button{font-family:inherit;cursor:pointer}
   .hub-stat-row{flex-direction:column}
   .hub-enrol-banner{flex-direction:column;align-items:flex-start}
 }
+
+/* ── Info popout system ─────────────────────────────────────────────────────── */
+.hub-info-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-size:.65rem;font-weight:700;cursor:pointer;vertical-align:middle;margin-left:5px;flex-shrink:0;line-height:1;transition:all .15s;font-family:inherit;padding:0;position:relative;top:-1px}
+.hub-info-btn:hover,.hub-info-btn:focus,.hub-info-btn[aria-expanded=true]{background:rgba(232,184,75,.15);border-color:rgba(232,184,75,.5);color:var(--gold);outline:none}
+.hub-popout{position:absolute;z-index:500;background:#1c1a14;border:1px solid var(--gold-bdr);border-radius:10px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.6);font-size:.8rem;line-height:1.55;color:var(--text2);pointer-events:auto}
+.hub-popout-title{font-weight:700;color:var(--gold);font-size:.78rem;letter-spacing:.04em;margin-bottom:5px}
+.hub-popout-body p{margin:0 0 5px;color:var(--text2)}
+.hub-popout-body p:last-child{margin:0}
+.hub-popout-body strong{color:var(--text)}
+.hub-popout-body a{color:var(--gold);font-size:.78rem}
+.hub-popout-arrow{position:absolute;top:-6px;left:16px;width:10px;height:6px;overflow:hidden}
+.hub-popout-arrow::after{content:'';position:absolute;width:8px;height:8px;background:#1c1a14;border:1px solid var(--gold-bdr);transform:rotate(45deg);top:2px;left:1px}
+/* Guide link in topbar */
+.hub-guide-link{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text3);font-size:.82rem;font-weight:600;transition:all .15s;white-space:nowrap;cursor:pointer;text-decoration:none}
+.hub-guide-link:hover{border-color:var(--gold-bdr);color:var(--gold);background:var(--gold-bg);text-decoration:none}

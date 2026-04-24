@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Management Hubs — Member Guide · COG$ of Australia Foundation</title>
+<link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--s1:#111;--s2:#181818;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.18);
+  --text:#fff;--text2:rgba(255,255,255,.88);--text3:rgba(255,255,255,.55);
+  --sans:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;
+  --gold:#e8b84b;--gold-bg:rgba(232,184,75,.09);--gold-bdr:rgba(232,184,75,.28);
+  --green:#3ecf6e;--green-bg:rgba(62,207,110,.08);--green-bdr:rgba(62,207,110,.24);
+  --amber:#e09a42;--amber-bg:rgba(224,154,66,.08);--amber-bdr:rgba(224,154,66,.24);
+  --navy:#1a1a2e;--bronze:#8b6914;--cream:#f0ede8;
+  --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text2);min-height:100vh;font-size:16px;-webkit-font-smoothing:antialiased;line-height:1.7}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(8,8,8,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topbar-left{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text3)}
+.topbar-left button{background:none;border:none;color:var(--text3);font-family:inherit;font-size:.85rem;cursor:pointer;padding:0;transition:color .15s}
+.topbar-left button:hover{color:var(--gold)}
+.topbar-left .sep{opacity:.4}
+.topbar-title{font-weight:700;color:var(--gold);font-size:.9rem}
+.toc-toggle{background:var(--gold-bg);border:1px solid var(--gold-bdr);color:var(--gold);font-size:.78rem;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;font-family:inherit}
+
+/* ── Layout ── */
+.guide-wrap{max-width:800px;margin:0 auto;padding:40px 24px 80px}
+
+/* ── Cover ── */
+.cover{text-align:center;padding:48px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.cover-kicker{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.cover-title{font-size:clamp(28px,5vw,48px);font-weight:700;color:var(--text);line-height:1.15;margin-bottom:8px}
+.cover-sub{font-size:1.1rem;color:var(--text3);margin-bottom:24px}
+.cover-meta{font-size:.82rem;color:var(--text3);line-height:1.8}
+
+/* ── TOC ── */
+.toc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px;margin-bottom:40px}
+.toc-title{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.toc ol{padding-left:20px}
+.toc li{margin-bottom:6px}
+.toc a{color:var(--text2);font-size:.9rem;transition:color .15s}
+.toc a:hover{color:var(--gold);text-decoration:none}
+
+/* ── Sections ── */
+.guide-section{margin-bottom:56px}
+.section-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.section-title{font-size:clamp(20px,3vw,26px);font-weight:700;color:var(--text);margin-bottom:4px;padding-bottom:10px;border-bottom:2px solid var(--bronze, #8b6914)}
+.sub-title{font-size:1.05rem;font-weight:700;color:var(--text);margin:28px 0 8px}
+p{color:var(--text2);margin-bottom:14px;line-height:1.75}
+ul,ol{padding-left:22px;margin-bottom:14px}
+li{color:var(--text2);margin-bottom:6px;line-height:1.65}
+
+/* ── Callout boxes ── */
+.callout{background:var(--gold-bg);border:1px solid var(--gold-bdr);border-left:4px solid var(--gold);border-radius:var(--r2, 8px);padding:14px 18px;margin:20px 0}
+.callout-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.callout p{color:var(--text2);margin:0;font-size:.9rem}
+.callout.green{background:var(--green-bg);border-color:var(--green-bdr);border-left-color:var(--green)}
+.callout.green .callout-label{color:var(--green)}
+
+/* ── Phase table ── */
+.phase-table{width:100%;border-collapse:collapse;margin:16px 0 24px}
+.phase-table th{background:rgba(255,255,255,.04);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border2)}
+.phase-table td{padding:12px 14px;vertical-align:top;border-bottom:1px solid var(--border);font-size:.92rem}
+.phase-table tr:last-child td{border-bottom:none}
+.phase-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.phase-badge.draft{background:rgba(255,255,255,.04);border:1px solid var(--border2);color:var(--text3)}
+.phase-badge.open_for_input{background:rgba(56,132,255,.12);border:1px solid rgba(56,132,255,.35);color:#5ea8ff}
+.phase-badge.deliberation{background:rgba(163,94,255,.12);border:1px solid rgba(163,94,255,.35);color:#c47dff}
+.phase-badge.vote{background:var(--amber-bg);border:1px solid var(--amber-bdr);color:var(--amber)}
+.phase-badge.accountability{background:var(--green-bg);border:1px solid var(--green-bdr);color:var(--green)}
+
+/* ── Vote table ── */
+.vote-table{width:100%;border-collapse:collapse;margin:16px 0}
+.vote-table td{padding:12px 14px;vertical-align:top;border-bottom:1px solid var(--border);font-size:.92rem}
+.vote-table tr:last-child td{border-bottom:none}
+.vote-tag{font-weight:700;white-space:nowrap}
+.vote-tag.agree{color:var(--green)}
+.vote-tag.disagree{color:#ff6b6b}
+.vote-tag.block{color:#ff3b30}
+.vote-tag.abstain{color:var(--text3)}
+
+/* ── Steps ── */
+.steps{counter-reset:step;padding:0;list-style:none;margin-bottom:20px}
+.steps li{counter-increment:step;display:flex;gap:14px;margin-bottom:12px;font-size:.92rem}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:var(--gold-bg);border:1px solid var(--gold-bdr);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;margin-top:1px}
+.steps li p{margin:0;color:var(--text2)}
+
+/* ── Permission table ── */
+.perm-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem}
+.perm-table th{background:rgba(255,255,255,.04);padding:8px 12px;text-align:center;font-size:.75rem;font-weight:700;letter-spacing:.05em;color:var(--text3);border-bottom:1px solid var(--border2)}
+.perm-table th:first-child{text-align:left}
+.perm-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
+.perm-table td:not(:first-child){text-align:center}
+.perm-table tr:last-child td{border-bottom:none}
+.check{color:var(--green);font-weight:700}
+.dash{color:var(--text3)}
+
+/* ── Hub list ── */
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:16px 0}
+.hub-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2,8px);padding:12px 14px}
+.hub-card-name{font-weight:700;font-size:.9rem;color:var(--gold);margin-bottom:4px}
+.hub-card-desc{font-size:.8rem;color:var(--text3);line-height:1.5}
+
+/* ── Back to top ── */
+.back-top{position:fixed;bottom:28px;right:24px;background:var(--gold-bg);border:1px solid var(--gold-bdr);color:var(--gold);border-radius:99px;padding:8px 16px;font-size:.8rem;font-weight:700;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s;z-index:200}
+.back-top.vis{opacity:1;pointer-events:all}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <button onclick="history.back()">← Back</button>
+    <span class="sep">/</span>
+    <span class="topbar-title">Member Guide</span>
+  </div>
+  <button class="toc-toggle" onclick="document.getElementById('toc').scrollIntoView({behavior:'smooth'})">Contents ↓</button>
+</div>
+
+<div class="guide-wrap">
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="cover-kicker">COG$ of Australia Foundation</div>
+    <div class="cover-title">Management Hubs<br>Member Guide</div>
+    <div class="cover-sub">How to propose, deliberate, vote, and track delivery</div>
+    <div class="cover-meta">
+      Issued April 2026 &nbsp;·&nbsp; Governance Foundation Day: 14 May 2026<br>
+      Drake Village Resource Centre &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li><a href="#intro">Introduction — What are the Hubs?</a></li>
+      <li><a href="#lifecycle">The Five-Phase Lifecycle</a></li>
+      <li><a href="#voting">Consent Voting</a></li>
+      <li><a href="#milestones">Accountability Milestones</a></li>
+      <li><a href="#digest">The Weekly Hub Digest</a></li>
+      <li><a href="#queries">Resolved Queries</a></li>
+      <li><a href="#reference">Quick Reference</a></li>
+    </ol>
+  </div>
+
+  <!-- Section 1 — Intro -->
+  <div class="guide-section" id="intro">
+    <div class="section-label">Overview</div>
+    <div class="section-title">Introduction — What are the Hubs?</div>
+    <p>The nine Management Hubs are the day-to-day governance spaces of the COG$ of Australia Foundation. Each hub covers a distinct area of Foundation activity. When you join a hub, you gain the ability to create projects, participate in discussions, cast votes, and raise governance questions — all within that area of the Foundation's work.</p>
+    <p>Everything you do in a hub is recorded with a cryptographic timestamp as part of your Member participation record. The hubs are not a discussion forum. They are the operational expression of your rights as a Joint Venture Partner under the JVPA.</p>
+
+    <div class="callout">
+      <div class="callout-label">Your governing rights</div>
+      <p>Under cl. 6.1 of the Joint Venture Participation Agreement, Members govern the Foundation continuously and self-initiatively. The hubs are the interface through which you exercise that authority. The Trustee does not convene, chair, or control hub proceedings.</p>
+    </div>
+
+    <div class="sub-title">The nine hubs</div>
+    <div class="hub-grid">
+      <div class="hub-card"><div class="hub-card-name">Day-to-Day Operations</div><div class="hub-card-desc">Operational decisions, procedures, and foundation administration</div></div>
+      <div class="hub-card"><div class="hub-card-name">Research &amp; Acquisitions</div><div class="hub-card-desc">Investment research, new ASX company proposals, portfolio analysis</div></div>
+      <div class="hub-card"><div class="hub-card-name">ESG &amp; Proxy Voting</div><div class="hub-card-desc">Environmental, social, and governance engagement with portfolio companies</div></div>
+      <div class="hub-card"><div class="hub-card-name">First Nations Joint Venture</div><div class="hub-card-desc">FNAC governance, FPIC matters, and Indigenous co-stewardship</div></div>
+      <div class="hub-card"><div class="hub-card-name">Community Projects</div><div class="hub-card-desc">Community-benefit initiatives funded from Sub-Trust C distributions</div></div>
+      <div class="hub-card"><div class="hub-card-name">Technology &amp; Blockchain</div><div class="hub-card-desc">Platform development, cryptographic infrastructure, blockchain rollout</div></div>
+      <div class="hub-card"><div class="hub-card-name">Financial Oversight</div><div class="hub-card-desc">Distribution calculations, accounting oversight, and financial reporting</div></div>
+      <div class="hub-card"><div class="hub-card-name">Place-Based Decisions</div><div class="hub-card-desc">Decisions where Affected Zone residents have amplified standing</div></div>
+      <div class="hub-card"><div class="hub-card-name">Education &amp; Outreach</div><div class="hub-card-desc">Member education, public engagement, and community communications</div></div>
+    </div>
+    <p>The <strong>Mainspring</strong> hub gives you an at-a-glance view across all nine areas — project phase counts, recent activity, and links to each hub.</p>
+  </div>
+
+  <!-- Section 2 — Lifecycle -->
+  <div class="guide-section" id="lifecycle">
+    <div class="section-label">Section 1</div>
+    <div class="section-title">The Five-Phase Lifecycle</div>
+    <p>Every project in a hub moves through a defined sequence of phases. The phases reflect the governance process required by the Joint Venture Participation Agreement — ensuring that important matters receive proper deliberation before any decision is made.</p>
+
+    <table class="phase-table">
+      <thead><tr><th>Phase</th><th>Minimum</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="phase-badge draft">Draft</span></td>
+          <td style="white-space:nowrap;color:var(--text3)">No minimum</td>
+          <td>The coordinator is preparing the proposal. Not yet open for input. Edit freely until ready to advance.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-badge open_for_input">Open for Input</span></td>
+          <td style="white-space:nowrap;color:var(--text3)">7 days</td>
+          <td>The proposal is open. Enrolled members read the full proposal, add comments, join the project, and raise questions. This is the structured input phase.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-badge deliberation">Deliberation</span></td>
+          <td style="white-space:nowrap;color:var(--text3)">7 days</td>
+          <td>The refined proposal is under deliberation. Members weigh arguments, identify agreement and disagreement, and prepare their position before voting opens.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-badge vote">Vote Open</span></td>
+          <td style="white-space:nowrap;color:var(--text3)">7 days (48h urgent)</td>
+          <td>Members cast their consent vote — agree, disagree, block, or abstain. A single block re-opens deliberation. Urgency requires certification under JVPA cl. 6.3.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-badge accountability">Accountability</span></td>
+          <td style="white-space:nowrap;color:var(--text3)">No fixed end</td>
+          <td>The proposal is adopted. The coordinator sets delivery milestones. All members track progress and comment on execution.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-label">Why a minimum period?</div>
+      <p>JVPA cl. 6.3 requires a deliberation period of not less than 7 days before voting opens. This protects every member's right to participate regardless of time zone, work schedule, or connectivity. It cannot be waived — only a valid urgency certification reduces the vote phase to 48 hours.</p>
+    </div>
+
+    <div class="sub-title">Creating a project</div>
+    <p>To create a project you must first activate participation in the hub by clicking <strong>⬡ Activate Participation</strong> in the banner at the top of the page. Once enrolled, click <strong>+ New Project</strong> in the Management Projects section.</p>
+    <ol class="steps">
+      <li><p>Click <strong>+ New Project</strong>.</p></li>
+      <li><p>Enter a title (required), summary, full description, and optional target close date.</p></li>
+      <li><p>Click <strong>Create Project</strong>. The project is created in Draft phase.</p></li>
+      <li><p>Open the project and click <strong>Open for Input</strong> in the Phase panel when your proposal is ready to share.</p></li>
+    </ol>
+
+    <div class="sub-title">Advancing the phase</div>
+    <p>Only the project coordinator (the member who created the project) can advance to the next phase. The Phase panel at the top of the project detail page shows the current phase, the target end date, and — for the coordinator — an advance button labelled with the next phase name.</p>
+    <p>Other members can comment at any stage, join the project as a participant, and — once the Vote phase opens — cast their consent vote.</p>
+  </div>
+
+  <!-- Section 3 — Voting -->
+  <div class="guide-section" id="voting">
+    <div class="section-label">Section 2</div>
+    <div class="section-title">Consent Voting</div>
+    <p>When a project reaches the Vote Open phase, enrolled members cast a consent vote. COG$ uses a consent model — not a simple majority poll — because it surfaces genuine objections that majority systems can override. A consent decision is one that no member has a paramount objection to, not one that everyone enthusiastically supports.</p>
+
+    <table class="vote-table">
+      <tr>
+        <td style="width:140px"><span class="vote-tag agree">✔ Agree</span></td>
+        <td>I support this proposal and consent to its adoption.</td>
+      </tr>
+      <tr>
+        <td><span class="vote-tag disagree">✗ Disagree</span></td>
+        <td>I do not support this proposal, but I accept the outcome if the majority agrees. My disagreement is registered but does not prevent adoption.</td>
+      </tr>
+      <tr>
+        <td><span class="vote-tag block">⛔ Block</span></td>
+        <td>I have a paramount objection based on the Foundation's purpose or governing principles. A block requires written reasoning explaining the problem and what would need to change. <strong>A single block re-opens deliberation.</strong> This is not a veto — it is a call to address a genuine concern.</td>
+      </tr>
+      <tr>
+        <td><span class="vote-tag abstain">○ Abstain</span></td>
+        <td>I am not expressing a position on this proposal. I acknowledge the vote is proceeding and accept the outcome.</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">How to vote</div>
+    <ol class="steps">
+      <li><p>Open the project — click its card in the Management Projects section.</p></li>
+      <li><p>Scroll to the <strong>Consent Vote</strong> section (visible only when the project is in Vote Open phase).</p></li>
+      <li><p>Click your position button. If you click <strong>Block</strong>, a reasoning text box appears — this field is required.</p></li>
+      <li><p>The tally updates live. You may change your vote at any time while voting is open.</p></li>
+    </ol>
+
+    <div class="callout">
+      <div class="callout-label">Hub votes vs Members Polls</div>
+      <p>Consent votes in the hubs are the working tool for project-level decisions within each area. They are distinct from Members Polls under JVPA Part 6 — the binding mechanism for investment direction, distribution decisions, and Declaration amendments. Hub votes inform those formal polls; they do not replace them.</p>
+    </div>
+  </div>
+
+  <!-- Section 4 — Milestones -->
+  <div class="guide-section" id="milestones">
+    <div class="section-label">Section 3</div>
+    <div class="section-title">Accountability Milestones</div>
+    <p>When a project is adopted and moves to the Accountability phase, the coordinator can add delivery milestones — specific deliverables with target dates. All enrolled members can see the milestone list at all times and can comment on progress.</p>
+    <p>The accountability milestone system exists for one reason: decisions should produce outcomes. An adopted proposal that disappears without a delivery record destroys the trust that makes governance worth participating in.</p>
+
+    <div class="sub-title">Adding milestones (coordinator only)</div>
+    <ol class="steps">
+      <li><p>Open the project in Accountability phase.</p></li>
+      <li><p>Scroll to the <strong>Delivery Milestones</strong> section.</p></li>
+      <li><p>Enter a label describing the deliverable and an optional target date.</p></li>
+      <li><p>Click <strong>Add</strong>. The milestone appears in the list immediately.</p></li>
+    </ol>
+
+    <div class="sub-title">Marking milestones done (coordinator only)</div>
+    <p>Click <strong>Mark done</strong> next to a milestone. The ○ indicator becomes ✓ and the label is struck through. Click <strong>Reopen</strong> to reverse this if the deliverable needs revision.</p>
+
+    <div class="callout green">
+      <div class="callout-label">Constitutional record</div>
+      <p>The JVPA Schedule requires the Trustee to compile evidence of member engagement and governance outcomes quarterly. Your hub projects and milestone completions contribute directly to that evidence record. An active milestone list is not just useful — it is part of the Foundation's constitutional accountability to all members.</p>
+    </div>
+  </div>
+
+  <!-- Section 5 — Digest -->
+  <div class="guide-section" id="digest">
+    <div class="section-label">Section 4</div>
+    <div class="section-title">The Weekly Hub Digest</div>
+    <p>The hubs are asynchronous — you do not need to check in every day. Once a week, on Friday evening (Australian Eastern time), you receive a single email summarising what moved in the hubs you belong to.</p>
+    <p>The digest shows, per hub: how many projects entered each phase, and the titles of the most notable proposals in deliberation. It is a navigation signal — a reason to open Mainspring and drill into what needs your attention.</p>
+    <p>You receive a digest only if at least one of your enrolled hubs had project activity in the past 7 days. In quiet weeks, no email is sent.</p>
+    <p>To stop receiving the digest, visit your Vault settings and turn off the weekly hub digest toggle. This does not affect your participation rights in any way.</p>
+  </div>
+
+  <!-- Section 6 — Queries -->
+  <div class="guide-section" id="queries">
+    <div class="section-label">Section 5</div>
+    <div class="section-title">Resolved Queries — The Feedback Loop</div>
+    <p>Each hub includes a query system for raising governance questions — about how a hub operates, how a decision was made, or how a matter should be interpreted under the Foundation's governing instruments.</p>
+
+    <div class="sub-title">Raising a query</div>
+    <ol class="steps">
+      <li><p>Click <strong>+ New Query</strong> in the Raise a Query section at the bottom of any hub page.</p></li>
+      <li><p>Write a subject line and your question in full.</p></li>
+      <li><p>Choose your <strong>transparency level</strong> — this determines who sees the query and its resolution.</p></li>
+      <li><p>Submit. Your query is received by the Foundation for review.</p></li>
+    </ol>
+
+    <div class="sub-title">Transparency levels</div>
+    <ul>
+      <li><strong>🔒 Private</strong> — only you and administrators see this query and its resolution.</li>
+      <li><strong>👥 Hub Members</strong> — all members enrolled in this hub can see the query and the resolution summary.</li>
+      <li><strong>📢 Public Record</strong> — the query and resolution appear in the hub record for all Foundation members.</li>
+    </ul>
+
+    <div class="sub-title">The resolved queries block</div>
+    <p>At the top of the Management Projects section, a green <strong>✓ Resolved this month</strong> block appears when any hub_members or public_record queries have been resolved in the past 30 days. Private queries never appear here — only those where the member chose to share the answer.</p>
+  </div>
+
+  <!-- Section 7 — Reference -->
+  <div class="guide-section" id="reference">
+    <div class="section-label">Quick Reference</div>
+    <div class="section-title">Permissions &amp; Phase Periods</div>
+
+    <div class="sub-title">Who can do what</div>
+    <table class="perm-table">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Any member<br>(read-only)</th>
+          <th>Enrolled member</th>
+          <th>Project coordinator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Read hub overview and projects</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>View milestone list</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Comment on projects</td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Join a project</td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Create a project</td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Cast a consent vote</td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Advance the project phase</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Add / toggle milestones</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Raise a hub query</td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="sub-title">Phase minimum periods</div>
+    <ul>
+      <li><strong>Draft</strong> — no minimum. Advance when ready.</li>
+      <li><strong>Open for Input</strong> — 7 days minimum.</li>
+      <li><strong>Deliberation</strong> — 7 days minimum.</li>
+      <li><strong>Vote Open</strong> — 7 days minimum (48 hours if urgency certified under JVPA cl. 6.3).</li>
+      <li><strong>Accountability</strong> — no fixed end date. Ongoing until milestones are complete.</li>
+    </ul>
+
+    <div style="margin-top:40px;padding-top:20px;border-top:1px solid var(--border);text-align:center;color:var(--text3);font-size:.82rem;line-height:2">
+      COG$ of Australia Foundation &nbsp;·&nbsp; ABN: 61 734 327 831<br>
+      Drake Village Resource Centre, Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation<br>
+      <a href="mailto:members@cogsaustralia.org">members@cogsaustralia.org</a> &nbsp;·&nbsp; <a href="https://cogsaustralia.org">cogsaustralia.org</a>
+    </div>
+  </div>
+
+</div><!-- /guide-wrap -->
+
+<button class="back-top" id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Top</button>
+
+<script>
+var bt = document.getElementById('back-top');
+window.addEventListener('scroll', function(){
+  bt.classList.toggle('vis', window.scrollY > 400);
+}, {passive:true});
+</script>
+</body>
+</html>
