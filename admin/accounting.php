@@ -65,7 +65,8 @@ $received = 0; $adminExp = 0; $investRet = 0; $directC = 0; $pendingC = 0; $toB 
 if ($acctOk) {
     $received  = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM payments WHERE payment_status='paid'")
                  + ac_val($pdo, "SELECT COALESCE(SUM(net_amount_cents),0) FROM trust_income");
-    $investRet = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type IN ('a_to_a_reinvest_bds','a_to_a_reinvest_dds') AND status='completed'");
+    $investRet = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type IN ('a_to_a_reinvest_bds','a_to_a_reinvest_dds') AND status='completed'")
+                 + ac_val($pdo, "SELECT COALESCE(SUM(net_amount_cents),0) FROM trust_income");
     $directC   = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type='a_to_c_direct' AND status='completed'");
     $pendingC  = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type='a_to_c_direct' AND status='pending'");
     $toB       = ac_val($pdo, "SELECT COALESCE(SUM(amount_cents),0) FROM trust_transfers WHERE transfer_type IN ('a_to_b_bds','a_to_b_dds') AND status='completed'");
@@ -426,11 +427,11 @@ ob_start();
   </div>
   <div class="stat">
     <div class="stat-val" style="color:var(--blue)"><?php echo ac_dollars($investRet); ?></div>
-    <div class="stat-label">Members Asset Pool <?php echo ops_admin_help_button('Sub-Trust A Members Asset Pool', 'Total allocated to the Members Asset Pool — $1.00 per Personal S-NFT, $10.00 per Business NFT, $1.00 per Kids S-NFT. These funds are held for ASX share acquisition per Declaration cl.35 and Sub-Trust A Deed cl.6.2. Does not yet include interest income accrued to the pool.'); ?></div>
+    <div class="stat-label">Members Asset Pool <?php echo ops_admin_help_button('Sub-Trust A Members Asset Pool', 'STA-PARTNERS-POOL balance: member allocations ($1.00 per Personal S-NFT, $10.00 per Business NFT, $1.00 per Kids S-NFT) plus trust income credited to the pool (bank interest, ASX dividends, RWA yield). Held for ASX share acquisition per Declaration cl.35 and Sub-Trust A Deed cl.6.2.'); ?></div>
   </div>
   <div class="stat">
     <div class="stat-val" style="color:var(--gold)"><?php echo ac_dollars($adminFundIn); ?></div>
-    <div class="stat-label">Admin fund — total in <?php echo ops_admin_help_button('Administration Fund — total allocated in', 'Total allocated into the Sub-Trust A Administration Fund — $3.00 per Personal S-NFT, $30.00 per Business NFT. This fund pays Stripe processing fees, hosting, compliance, and other operating expenses. It is an allocation, not income.'); ?></div>
+    <div class="stat-label">Admin fund — allocated in <?php echo ops_admin_help_button('Administration Fund — allocated in', 'Total allocated into STA-ADMIN-FUND via payment_to_admin transfers — $3.00 per Personal S-NFT, $30.00 per Business NFT. This is an internal allocation from STA-OPERATING, not income. The Admin Fund pays Stripe processing fees, hosting, compliance, and other approved operating expenses.'); ?></div>
   </div>
   <div class="stat">
     <div class="stat-val" style="color:var(--err)"><?php echo ac_dollars($adminFundOut); ?></div>
