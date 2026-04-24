@@ -2708,13 +2708,9 @@ function createStripeCheckout(): void {
 
     $result = json_decode((string)$response, true);
     if ($httpCode !== 200 || empty($result['url'])) {
-        $stripeErr  = (string)($result['error']['message'] ?? 'Unknown Stripe error');
-        $stripeCode = (string)($result['error']['code']    ?? '');
-        $stripeParam= (string)($result['error']['param']   ?? '');
-        $fullMsg = 'Stripe[' . $httpCode . '] ' . $stripeCode . ' param=' . $stripeParam . ': ' . $stripeErr;
-        error_log('[vault/create-checkout] ' . $fullMsg);
-        // TEMP: expose full error for diagnosis — remove after confirmed
-        apiError($fullMsg, 502);
+        $stripeErr = (string)($result['error']['message'] ?? 'Unknown Stripe error');
+        error_log('[vault/create-checkout] Stripe error [' . $httpCode . ']: ' . $stripeErr);
+        apiError('Payment processor error: ' . $stripeErr, 502);
     }
 
     apiSuccess([
