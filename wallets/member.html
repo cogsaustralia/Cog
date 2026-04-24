@@ -958,7 +958,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- Payment banner -->
   <div class="pay-banner" id="pay-banner" style="display:none">
     <div class="pay-banner-inner">
-      <span class="pay-banner-text">● $4 payment required to secure your Class S Unit — your Membership is not yet active.</span>
+      <span class="pay-banner-text">● $4 payment required to activate your Membership.</span>
       <button class="btn btn-sm" style="background:var(--red);color:#fff;border:none;flex-shrink:0" id="pay-btn">Pay $4 now</button>
     </div>
   </div>
@@ -1464,14 +1464,14 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="pay-modal">
     <button class="pay-modal-close" onclick="document.getElementById('pay-modal').classList.remove('open')">✕</button>
     <h3>Complete your $4 contribution</h3>
-    <p style="font-size:1.02rem;color:var(--text3);margin-bottom:20px;line-height:1.65">Your Class S Unit is reserved. The $4 contribution issues it and activates your equal national governance vote.</p>
+    <p style="font-size:1.02rem;color:var(--text3);margin-bottom:20px;line-height:1.65">Your membership registration is confirmed. The $4 contribution activates it and issues your equal national governance vote.</p>
 
     <!-- Pay by card -->
     <div style="font-size:1.02rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pay by card</div>
     <div id="stripe-container" style="margin-bottom:4px">
-      <a href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener" class="btn btn-gold" style="display:block;text-align:center;text-decoration:none;padding:13px;font-size:1rem;letter-spacing:.02em">Pay $4 by card →</a>
+      <a id="stripe-pay-link" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener" class="btn btn-gold" style="display:block;text-align:center;text-decoration:none;padding:13px;font-size:1rem;letter-spacing:.02em">Pay $4 by card ›</a>
     </div>
-    <p style="font-size:1rem;color:var(--text3);margin-bottom:0;line-height:1.5">Opens Stripe's secure checkout in a new tab. Enter your Member number as the payment reference.</p>
+    <p id="stripe-pay-sub" style="font-size:1rem;color:var(--text3);margin-bottom:0;line-height:1.5">Opens Stripe's secure checkout in a new tab.</p>
 
     <!-- Divider -->
     <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
@@ -1495,11 +1495,10 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       </div>
     </details>
 
-    <p style="font-size:1rem;color:var(--text3);line-height:1.55;margin-top:16px">After payment arrives your vault updates on the next refresh. The $4 is your once-only membership contribution — entrenched at this amount forever under Declaration clause 35(a).</p>
+    <p style="font-size:1rem;color:var(--text3);line-height:1.55;margin-top:16px">After payment arrives your vault updates on the next refresh. The $4 is your once-only membership contribution — entrenched at this amount forever.</p>
     <div id="pay-modal-body"></div>
   </div>
 </div>
-
 <script>
 (function(){
 'use strict';
@@ -4635,6 +4634,22 @@ window.openPayModal = function(){
   if(modal){
     modal.style.display = ''; // clear inline style — let CSS class control visibility
     modal.classList.add('open');
+  }
+  // Pre-populate Stripe Payment Link with member number and email
+  var d = window._vaultData || {};
+  var memberNum = (d.member_number || '').trim();
+  var memberEmail = (d.email || '').trim();
+  var stripeBase = 'https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00';
+  var stripeLink = document.getElementById('stripe-pay-link');
+  var stripeSub  = document.getElementById('stripe-pay-sub');
+  if(stripeLink && memberNum){
+    var url = stripeBase + '?client_reference_id=' + encodeURIComponent(memberNum);
+    if(memberEmail) url += '&prefilled_email=' + encodeURIComponent(memberEmail);
+    stripeLink.href = url;
+    if(stripeSub){
+      stripeSub.innerHTML = 'Opens Stripe&#8217;s secure checkout in a new tab.'
+        + ' Your Member number (<strong style="color:var(--gold)">' + memberNum.replace(/(.{4})(?=.)/g,'$1\u00a0') + '</strong>) is pre-filled as the reference.';
+    }
   }
 };
 
