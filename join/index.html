@@ -36,6 +36,11 @@
 
     /* Page hero */
     .page-hero{padding:52px 0 40px}
+    /* Compact hero for members arriving from intro */
+    .page-hero.compact{padding:28px 0 20px}
+    .page-hero.compact .lead,.page-hero.compact .trust-box,.page-hero.compact .hero-grid{display:none}
+    .page-hero.compact h1{font-size:clamp(1.4rem,3vw,1.9rem);margin-bottom:6px;text-align:center}
+    .page-hero.compact .hero-animate:first-child{margin-bottom:4px}
     .hero-grid{display:grid;grid-template-columns:1fr 360px;gap:36px;align-items:start}
     .eyebrow{display:inline-block;font-size:.8rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:6px 18px;border-radius:99px;margin-bottom:18px}
     .page-hero h1{font-family:var(--serif);font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:500;line-height:1.12;letter-spacing:-.025em;color:var(--text);margin-bottom:14px}
@@ -225,6 +230,11 @@
     .invite-status.loading{display:block;color:var(--text2)}
     .invite-inviter-name{font-weight:700;color:#52b87a}
     .invite-admin-note{margin-top:10px;font-size:.82rem;color:var(--muted);line-height:1.6}
+    /* Collapsed invite state after validation */
+    .invite-field-wrap.validated .invite-input-row,
+    .invite-field-wrap.validated .invite-helper,
+    .invite-field-wrap.validated .invite-admin-note{display:none}
+    .invite-field-wrap.validated .invite-label{font-size:.82rem;color:#52b87a;margin-bottom:4px}
     /* Block state on step 2 */
     .invite-block{background:rgba(200,60,60,.06);border:1.5px solid rgba(240,100,100,.35);border-radius:14px;padding:18px 20px;margin-bottom:18px;display:none}
     .invite-block.active{display:block}
@@ -521,7 +531,7 @@
                 <div class="confirm-ico">⬡</div>
                 <div>
                   <strong>What happens next</strong>
-                  <span>You go straight to your Member area. Your $4 payment options — bank transfer or card — are waiting for you there.</span>
+                  <span>Your vault opens immediately. Complete your $4 contribution — by bank transfer or card — to activate your membership and your equal governance vote.</span>
                 </div>
               </div>
             </div>
@@ -565,6 +575,19 @@
                   <span style="font-size:.9rem">&#9654;</span> Key rights and obligations — summary disclosure (JVPA cl.8.1A)
                 </summary>
                 <div style="margin-top:14px;display:flex;flex-direction:column;gap:14px;font-size:.88rem;line-height:1.7;color:var(--text2)">
+                  <div>
+                    <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">Entrenched rules that protect you — cannot be changed by any resolution (JVPA cl.1.5)</div>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;padding:0">
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> $4 entry contribution is permanently fixed — no resolution may increase it</li>
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> No COG$ Token may be sold for fiat currency or listed on any exchange</li>
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> One Member, one vote — governance cannot be purchased</li>
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Anti-capture cap: no person or entity may hold more than 1,000,000 Units across all classes</li>
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Sub-Trust B income distributions are mandatory and non-discretionary — within 60 days of receipt</li>
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Members Asset Pool cannot be sold or distributed to private persons</li>
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> First Nations Advisory Council cannot be removed or sidelined without 75% Special Resolution</li>
+                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Minimum 30% of Sub-Trust C distributions to First Nations programs every financial year</li>
+                    </ul>
+                  </div>
 
                   <div>
                     <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">What you are entitled to as a Member</div>
@@ -588,20 +611,6 @@
                     </ul>
                   </div>
 
-                  <div>
-                    <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">Entrenched rules that protect you — cannot be changed by any resolution (JVPA cl.1.5)</div>
-                    <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;padding:0">
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> $4 entry contribution is permanently fixed — no resolution may increase it</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> No COG$ Token may be sold for fiat currency or listed on any exchange</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> One Member, one vote — governance cannot be purchased</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Anti-capture cap: no person or entity may hold more than 1,000,000 Units across all classes</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Sub-Trust B income distributions are mandatory and non-discretionary — within 60 days of receipt</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Members Asset Pool cannot be sold or distributed to private persons</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> First Nations Advisory Council cannot be removed or sidelined without 75% Special Resolution</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Minimum 30% of Sub-Trust C distributions to First Nations programs every financial year</li>
-                    </ul>
-                  </div>
-
                   <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:12px 14px;border:1px solid rgba(240,209,138,.14)">
                     <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">What this is not</div>
                     <ul style="list-style:none;display:flex;flex-direction:column;gap:4px;padding:0">
@@ -611,7 +620,9 @@
                     </ul>
                   </div>
 
-                  <p style="font-size:.82rem;color:var(--muted)">This is a summary only. The full agreement is the <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)">Joint Venture Membership Agreement Version 1.0 (PDF)</a>. In the event of any inconsistency between this summary and the Agreement, the Agreement prevails.</p>
+                  <p style="font-size:.82rem;color:var(--muted)">
+
+                  This is a summary only. The full agreement is the <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)">Joint Venture Membership Agreement Version 1.0 (PDF)</a>. In the event of any inconsistency between this summary and the Agreement, the Agreement prevails.</p>
                 </div>
               </details>
 
@@ -651,6 +662,16 @@
 </div>
 
 <script>
+/* ── Compact hero if arrived from intro ── */
+(function(){
+  try{
+    if(localStorage.getItem('cogs_intro_seen') === '1'){
+      var hero = document.querySelector('.page-hero');
+      if(hero) hero.classList.add('compact');
+    }
+  }catch(e){}
+})();
+
 /* ── DOB select population ── */
 (function() {
   var dayEl = document.getElementById('dob_day');
