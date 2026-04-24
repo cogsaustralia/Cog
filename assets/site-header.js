@@ -268,6 +268,8 @@
           <a href="/tell-me-more/">How it works</a>
           <a href="/faq/">FAQ</a>
           <a href="/skeptic/">Skeptic&rsquo;s Guide</a>
+          <a href="/landholders/">Landholders &amp; Affected Community</a>
+          <a href="/gold-cogs/">Get Involved &amp; Golden COG$</a>
           <a href="/join/">Become a Member &mdash; $4</a>
           <a class="sh-drawer-portal" href="/partners/index.html">&#x1F6E1;&#xFE0E; Member's Vault &mdash; secure access</a>
         </nav>
