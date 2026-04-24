@@ -11,9 +11,11 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_shared/hub.css?v=18">
 <style>
-.ms-header{padding:28px 20px 20px;text-align:center;border-bottom:1px solid var(--border)}
-.ms-header-title{font-family:var(--serif);font-size:2.2rem;font-weight:500;color:var(--text);letter-spacing:.01em}
-.ms-header-sub{font-size:.95rem;color:var(--text3);margin-top:6px;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto}
+.ms-command-strip{display:flex;border-bottom:1px solid var(--border);background:var(--bg)}
+.ms-command-cell{flex:1;padding:14px 16px;border-right:1px solid var(--border);text-align:left}
+.ms-command-cell:last-child{border-right:none}
+.ms-command-n{font-family:var(--mono);font-size:1.35rem;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
+.ms-command-l{font-size:.68rem;color:var(--text4);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
 </style>
 </head>
 <body data-root="../../">
@@ -26,23 +28,24 @@
 
 <!-- Top bar -->
 <header class="hub-topbar">
-  <div class="hub-topbar-left">
+  <div class="hub-topbar-left" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
     <div class="hub-breadcrumb">
-      <button id="back-btn">← Vault</button>
+      <button id="back-btn">&#x2190; Vault</button>
       <span class="sep">/</span>
-      <span>Mainspring Hub</span>
     </div>
+    <div class="hub-live-dot visible" style="display:block"></div>
+    <span class="hub-title">Mainspring</span>
   </div>
   <div class="hub-topbar-right">
-    <span class="hub-status-pill live">Overview</span>
-    <a class="hub-guide-link" href="../guide/" target="_blank">? Member Guide</a>
+    <a class="hub-guide-link" href="../guide/" target="_blank">Guide</a>
   </div>
 </header>
 
-<!-- Header -->
-<div class="ms-header">
-  <div class="ms-header-title">⬡ Mainspring Hub</div>
-  <div class="ms-header-sub">The nine management hubs of the COG$ Joint Venture — at a glance. Click any tile to open that hub.</div>
+<!-- Mainspring hero -->
+<div style="padding:24px 20px 20px;background:var(--bg);border-bottom:1px solid var(--border)">
+  <div style="font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(232,184,75,.6);margin-bottom:8px">Command Centre</div>
+  <div style="font-size:1.45rem;font-weight:700;letter-spacing:-.02em;color:var(--text);line-height:1.15;margin-bottom:6px">Mainspring Hub</div>
+  <div style="font-size:.88rem;color:var(--text3);line-height:1.58;max-width:56ch">All nine management hubs at a glance — live stats, recent activity, and quick access to every governance area.</div>
 </div>
 
 <!-- Main -->
@@ -57,6 +60,13 @@
   <div class="hub-section">
     <div class="hub-section-hd"><span class="hub-section-title">Management Hubs</span></div>
     <div id="ms-grid-wrap"><div class="hub-loading">Loading hubs…</div></div>
+  </div>
+  <!-- Command strip: fast stats pulled from ms-stats-wrap data -->
+  <div class="ms-command-strip" id="ms-command-strip" style="display:none">
+    <div class="ms-command-cell"><div class="ms-command-n" id="mcc-partners">—</div><div class="ms-command-l">Active Partners</div></div>
+    <div class="ms-command-cell"><div class="ms-command-n" id="mcc-portfolio">—</div><div class="ms-command-l">Portfolio value</div></div>
+    <div class="ms-command-cell"><div class="ms-command-n" id="mcc-proposals">—</div><div class="ms-command-l">Open proposals</div></div>
+    <div class="ms-command-cell"><div class="ms-command-n" id="mcc-health">—</div><div class="ms-command-l">Invariants</div></div>
   </div>
 
   <!-- Activity feed -->
@@ -317,6 +327,28 @@ async function loadMsStats() {
 
   html += '</div>';
   wrap.innerHTML = html;
+
+  // Populate command strip from same data
+  var strip = document.getElementById('ms-command-strip');
+  if(strip){
+    var p = document.getElementById('mcc-partners');
+    var pv = document.getElementById('mcc-portfolio');
+    var pr = document.getElementById('mcc-proposals');
+    var ph = document.getElementById('mcc-health');
+    if(p) p.textContent = typeof s.active_partners !== 'undefined' ? Number(s.active_partners).toLocaleString('en-AU') : '—';
+    if(pv){
+      pv.textContent = typeof s.portfolio_book_cents !== 'undefined'
+        ? '$'+(s.portfolio_book_cents/100).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0})
+        : '—';
+    }
+    if(pr) pr.textContent = typeof s.open_proposals !== 'undefined' ? s.open_proposals : '—';
+    if(ph){
+      var iv = typeof s.invariant_violations !== 'undefined' ? s.invariant_violations : null;
+      ph.textContent = iv === null ? '—' : iv === 0 ? '✓ Clear' : '⚠ '+iv;
+      if(iv !== null) ph.style.color = iv === 0 ? 'var(--green)' : 'var(--red)';
+    }
+    strip.style.display = '';
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() { boot(); loadMsAdminActivity(); loadMsStats(); });

@@ -23,12 +23,13 @@ window.HUB_TIP      = 'Help new Members understand their role, explain the struc
   <div class="splash-line">Management Hub</div>
 </div>
 <header class="hub-topbar">
-  <div class="hub-topbar-left">
+  <div class="hub-topbar-left" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
     <div class="hub-breadcrumb">
-      <button onclick="coinTransition('../../wallets/member.html','Returning to Vault')">← Vault</button>
+      <button onclick="coinTransition('../../wallets/member.html','Returning to Vault')">&#x2190; Vault</button>
       <span class="sep">/</span>
-      <span id="hub-title">Education and Outreach Hub</span>
     </div>
+    <div class="hub-live-dot" id="hub-live-dot"></div>
+    <span id="hub-title" class="hub-title"></span>
   </div>
   <div class="hub-topbar-right">
     <span id="hub-status-pill" class="hub-status-pill live">Live</span>

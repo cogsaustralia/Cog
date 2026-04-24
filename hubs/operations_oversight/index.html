@@ -31,12 +31,13 @@ window.HUB_TIP      = 'Monitor Trustee activity, raise issues, and ensure the Jo
 
 <!-- Top bar -->
 <header class="hub-topbar">
-  <div class="hub-topbar-left">
+  <div class="hub-topbar-left" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
     <div class="hub-breadcrumb">
-      <button onclick="coinTransition('../../wallets/member.html','Returning to Vault')">← Vault</button>
+      <button onclick="coinTransition('../../wallets/member.html','Returning to Vault')">&#x2190; Vault</button>
       <span class="sep">/</span>
-      <span id="hub-title">Day-to-Day Operations Hub</span>
     </div>
+    <div class="hub-live-dot" id="hub-live-dot"></div>
+    <span id="hub-title" class="hub-title"></span>
   </div>
   <div class="hub-topbar-right">
     <span id="hub-status-pill" class="hub-status-pill live">Live</span>
@@ -49,6 +50,14 @@ window.HUB_TIP      = 'Monitor Trustee activity, raise issues, and ensure the Jo
 <!-- Enrolment banner -->
 <div id="hub-enrol-banner" class="hub-enrol-banner">
   <span class="hub-enrol-text"><span class="hub-enrol-dot"></span>Loading…</span>
+</div>
+<!-- Hub hero band -->
+<div class="hub-hero" id="hub-hero">
+  <div class="hub-hero-label" id="hub-hero-label"></div>
+  <div class="hub-hero-h1" id="hub-hero-h1"></div>
+  <div class="hub-hero-sub" id="hub-hero-sub"></div>
+  <div class="hub-hero-chips" id="hub-hero-chips"></div>
+  <div id="hub-enrol-inline"></div>
 </div>
 
 <!-- Main page -->

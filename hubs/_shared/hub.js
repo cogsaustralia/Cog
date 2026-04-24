@@ -118,12 +118,37 @@ async function boot(){
   document.title = label + ' Hub — COG$ of Australia Foundation';
 
   var titleEl = el('hub-title');
-  if(titleEl) titleEl.textContent = label + ' Hub';
+  if(titleEl) titleEl.textContent = label;
 
   var pillEl = el('hub-status-pill');
   if(pillEl){
     pillEl.textContent = status === 'soon' ? 'Activates at Expansion Day' : 'Live';
     pillEl.className = 'hub-status-pill ' + (status === 'soon' ? 'soon' : 'live');
+  }
+
+  var dotEl = el('hub-live-dot');
+  if(dotEl && status === 'live') dotEl.classList.add('visible');
+
+  var heroLabel = el('hub-hero-label');
+  if(heroLabel) heroLabel.textContent = 'Management Hub · ' + label;
+  var heroH1 = el('hub-hero-h1');
+  if(heroH1) heroH1.textContent = label;
+  var heroSub = el('hub-hero-sub');
+  if(heroSub && window.HUB_TIP){
+    var _tipFirst = window.HUB_TIP.split('.')[0].replace(/\\n/g,' ').trim();
+    heroSub.textContent = _tipFirst + '.';
+  }
+  var chipsWrap = el('hub-hero-chips');
+  if(chipsWrap){
+    var chipDefs = [
+      {label:'Forum',    target:'hub-forum-list'},
+      {label:'Projects', target:'hub-projects-wrap'},
+      {label:'Roster',   target:'hub-roster-wrap'},
+      {label:'Queries',  target:'hub-query-section'},
+    ];
+    chipsWrap.innerHTML = chipDefs.map(function(c,i){
+      return '<button class="hub-hero-chip'+(i===0?' active':'')+'" onclick="hubChipClick(this,\''+c.target+'\')">' + esc(c.label) + '</button>';
+    }).join('');
   }
 
   var tipEl = el('hub-overview-text');
@@ -189,17 +214,20 @@ function renderAll(){
 /* ── Enrolment banner ───────────────────────────────────────────────────────── */
 function renderEnrolBanner(){
   var b = el('hub-enrol-banner');
-  if(!b) return;
-  if(_enrolled){
-    b.className = 'hub-enrol-banner enrolled';
-    b.innerHTML =
-      '<span class="hub-enrol-text"><span class="hub-enrol-dot active"></span>You are active in this hub — you can post, create projects, and join discussions.</span>' +
-      '<button class="hub-leave-btn" onclick="hubLeave()">Leave this hub</button>';
-  }else{
-    b.className = 'hub-enrol-banner';
-    b.innerHTML =
-      '<span class="hub-enrol-text"><span class="hub-enrol-dot"></span>You are viewing in read-only mode. Activate to post, create projects, and join discussions.</span>' +
-      '<button class="hub-activate-btn" id="activate-btn" onclick="hubJoin()">⬡ Activate Participation</button>';
+  if(b) b.style.display = 'none';
+  var inl = el('hub-enrol-inline');
+  if(inl){
+    if(_enrolled){
+      inl.className = 'hub-enrol-inline enrolled';
+      inl.innerHTML =
+        '<span class="hub-enrol-inline-t"><span style="color:var(--green)">&#x25CF;</span> You are active in this hub.</span>' +
+        '<button class="hub-enrol-leave" onclick="hubLeave()">Leave</button>';
+    }else{
+      inl.className = 'hub-enrol-inline';
+      inl.innerHTML =
+        '<span class="hub-enrol-inline-t">Read-only mode — activate to post, create projects, and join discussions.</span>' +
+        '<button class="hub-enrol-inline-cta" id="activate-btn" onclick="hubJoin()">Activate</button>';
+    }
   }
   // Roster visibility toggle
   var rv = el('hub-roster-vis-wrap');
@@ -229,9 +257,9 @@ function scrollToSection(contentId){
 function renderSummaryStats(){
   var s = _hubData.summary || {};
   var rows = [
-    {id:'stat-members', n: s.member_count||0, l:'Members', zeroLabel:'No members yet'},
-    {id:'stat-threads', n: s.thread_count||0, l:'Forum threads', zeroLabel:'No threads yet'},
-    {id:'stat-projects',n: s.active_project_count||0, l:'Active projects', zeroLabel:'No projects yet'},
+    {id:'stat-members', n: s.member_count||0, l:'Members', dest:'Roster', target:'hub-roster-wrap'},
+    {id:'stat-threads', n: s.thread_count||0, l:'Threads', dest:'Forum', target:'hub-forum-list'},
+    {id:'stat-projects',n: s.active_project_count||0, l:'Projects', dest:'Projects', target:'hub-projects-wrap'},
   ];
   var scrollTargets = {
     'stat-members':  'hub-roster-wrap',
@@ -241,15 +269,11 @@ function renderSummaryStats(){
   rows.forEach(function(r){
     var e = el(r.id);
     if(!e) return;
-    var displayN = r.n > 0 ? Number(r.n).toLocaleString('en-AU') : '<span style="font-size:.9rem;color:var(--text4)">'+r.zeroLabel+'</span>';
-    var arrow = '<div style="font-size:.65rem;color:var(--text4);margin-top:4px">↓</div>';
-    e.innerHTML = '<div class="hub-stat-n">'+displayN+'</div><div class="hub-stat-l">'+r.l+'</div>'+arrow;
-    var targetId = scrollTargets[r.id];
-    if(targetId){
-      e.dataset.scroll = targetId;
-      e.title = 'Jump to '+r.l;
-      e.onclick = function(){ scrollToSection(targetId); };
-    }
+    var nDisplay = r.n > 0 ? Number(r.n).toLocaleString('en-AU') : '<span style="opacity:.4">—</span>';
+    e.innerHTML = '<div class="hub-stat-n">'+nDisplay+'</div><div class="hub-stat-l">'+r.l+'</div><div class="hub-stat-dest">↓ '+r.dest+'</div>';
+    e.dataset.scroll = r.target;
+    e.title = 'Jump to '+r.dest;
+    (function(tgt){ e.onclick = function(){ scrollToSection(tgt); }; })(r.target);
   });
   // Unread badge in topbar
   var unread = ((_hubData.unread_broadcasts||0) + (_hubData.unread_threads||0));
@@ -282,13 +306,24 @@ async function renderRoster(page){
       wrap.innerHTML = '<div class="hub-empty">No members have opted into this hub yet.</div>';
       return;
     }
+    var _AV_COLS = [
+      'rgba(232,184,75,.18);color:#e8b84b','rgba(62,207,110,.14);color:#3ecf6e',
+      'rgba(56,132,255,.14);color:#5ea8ff','rgba(224,92,92,.14);color:#e05c5c',
+      'rgba(163,94,255,.14);color:#a35eff','rgba(224,154,66,.14);color:#e09a42',
+    ];
     var cards = members.map(function(m){
+      var colIdx = (parseInt((m.member_number_masked||'1').replace(/\D/g,'').slice(-3)||'1',10)||1) % _AV_COLS.length;
+      var avStyle = 'background:'+_AV_COLS[colIdx];
+      var initials = m.first_name ? esc(m.first_name.charAt(0).toUpperCase()) : '?';
+      var displayName = m.first_name ? esc(m.first_name) : '<span style="opacity:.45;font-style:italic">Anonymous</span>';
+      var sinceStr = m.joined_area_at ? 'Since '+dt(m.joined_area_at) : '';
       return '<div class="hub-roster-card">' +
-        '<div class="hub-roster-name">'+(m.first_name ? esc(m.first_name) : '<span style="color:var(--text3);font-style:italic">Anonymous member</span>')+'</div>' +
-        '<div class="hub-roster-meta">'+esc(m.state_code||'')+(m.state_code&&m.suburb?' · ':'')+esc(m.suburb||'')+'</div>' +
-        '<div class="hub-roster-meta" style="margin-top:4px;font-size:.75rem">'+esc(m.member_number_masked||'')+'</div>' +
-        '<div class="hub-roster-meta" style="margin-top:4px">Joined '+dt(m.joined_area_at)+'</div>' +
-        '</div>';
+        '<div class="hub-roster-avatar" style="'+avStyle+'">'+initials+'</div>' +
+        '<div class="hub-roster-info">' +
+          '<div class="hub-roster-name">'+displayName+'</div>' +
+          (sinceStr ? '<div class="hub-roster-meta">'+sinceStr+'</div>' : '') +
+        '</div>' +
+      '</div>';
     }).join('');
 
     var totalPages = Math.ceil(_rosterTotal / _rosterPer);
@@ -334,15 +369,21 @@ function renderForumTab(tab){
     return;
   }
 
+  var _threadStatusMap = {open:'Open',in_review:'In review',resolved:'Resolved',closed:'Closed'};
+  var _threadBadgeCls  = {open:'badge-open',in_review:'badge-rev',resolved:'badge-res',closed:'badge-closed'};
   wrap.innerHTML = items.map(function(t){
     var isOpen = !!_openThreads[t.id];
     var unread = !t.read_at && t.direction==='broadcast';
+    var statusLabel = _threadStatusMap[t.status] || (t.direction==='broadcast' ? 'Broadcast' : 'Thread');
+    var statusCls   = _threadBadgeCls[t.status]  || 'badge-open';
     return '<div class="hub-thread'+(unread?' unread':'')+'" id="thread-'+t.id+'">' +
       '<div class="hub-thread-hd" onclick="toggleThread('+t.id+')">' +
-        '<div>' +
+        '<span class="hub-thread-dot'+(unread?'':' read')+'"></span>' +
+        '<div style="flex:1;min-width:0">' +
           '<div class="hub-thread-subject">'+esc(t.subject)+'</div>' +
           '<div class="hub-thread-meta">'+(t.author_first_name||'Foundation')+' · '+dts(t.created_at)+(t.reply_count>0?' · '+t.reply_count+' repl'+(t.reply_count===1?'y':'ies'):'')+'</div>' +
         '</div>' +
+        '<span class="hub-thread-status-chip '+statusCls+'">'+esc(statusLabel)+'</span>' +
         '<span class="hub-thread-chevron'+(isOpen?' open':'')+'">▾</span>' +
       '</div>' +
       '<div class="hub-thread-body'+(isOpen?' open':'')+'" id="thread-body-'+t.id+'">' +
@@ -503,21 +544,26 @@ function renderProjects(){
     return;
   }
 
+  var _PHASE_WIDTHS = {
+    draft:'8%',proposed:'8%',open_for_input:'35%',deliberation:'55%',
+    vote:'75%',accountability:'100%',active:'60%',paused:'50%',
+    completed:'100%',archived:'100%'
+  };
   var cards = projects.map(function(p){
     var statusCls = p.status||'draft';
-    var joinedMark = p.joined_by_me ? ' <span style="color:var(--green);font-size:.78rem">✓ Joined</span>' : '';
-    var phaseEnd = p.phase_target_end_at
-      ? '<span>Phase ends: '+dt(p.phase_target_end_at)+'</span>'
-      : (p.target_close_at ? '<span>Target: '+dt(p.target_close_at)+'</span>' : '');
+    var barWidth  = _PHASE_WIDTHS[statusCls] || '10%';
+    var joinedMark = p.joined_by_me ? '<span style="color:var(--green);font-size:.72rem">✓ Joined</span>' : '';
+    var phaseEnd = p.phase_target_end_at ? '<span>ends '+dt(p.phase_target_end_at)+'</span>' : '';
     return '<div class="hub-project-card" onclick="openProject('+p.id+')">' +
-      '<div class="hub-project-row">' +
-        '<div class="hub-project-title">'+esc(p.title)+'</div>' +
+      '<div class="hub-proj-phase-row">' +
         '<span class="hub-status-chip '+statusCls+'">'+esc(phaseLabel(statusCls))+'</span>' +
+        (p.phase_target_end_at ? '<span class="hub-proj-phase-end">ends '+dt(p.phase_target_end_at)+'</span>' : '') +
       '</div>' +
-      (p.summary?'<div class="hub-project-summary">'+esc(p.summary.substring(0,120))+(p.summary.length>120?'…':'')+'</div>':'') +
+      '<div class="hub-proj-bar"><div class="hub-proj-bar-fill ph-'+statusCls+'" style="width:'+barWidth+'"></div></div>' +
+      '<div class="hub-project-title">'+esc(p.title)+'</div>' +
+      (p.summary?'<div class="hub-project-summary">'+esc(p.summary.substring(0,100))+(p.summary.length>100?'…':'')+'</div>':'') +
       '<div class="hub-project-footer">' +
         '<span>'+p.participant_count+' participant'+(p.participant_count===1?'':'s')+'</span>' +
-        phaseEnd +
         joinedMark +
       '</div>' +
     '</div>';
@@ -992,6 +1038,11 @@ function renderError(msg){
 }
 
 /* ── Expose to inline onclick handlers ──────────────────────────────────────── */
+window.hubChipClick = function(btn, targetId){
+  document.querySelectorAll('.hub-hero-chip').forEach(function(c){ c.classList.remove('active'); });
+  btn.classList.add('active');
+  scrollToSection(targetId);
+};
 window.switchForumTab      = switchForumTab;
 window.toggleThread        = toggleThread;
 window.postReply           = postReply;
