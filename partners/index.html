@@ -1791,14 +1791,6 @@ function enterCommunity(data){
   var _snftDue = paymentStatus !== 'paid';
   var _secDue  = _secOp.allItems.length > 0;
 
-  // DEBUG — remove after confirming
-  console.log('[PAY_DEBUG] partnerPaymentStatus:', paymentStatus,
-    '| _snftDue:', _snftDue,
-    '| _secDue:', _secDue,
-    '| gift_lines:', (_communityDataLocal.gift_pool_unpaid_lines||[]).length,
-    '| kids_orders:', (_communityDataLocal.kids_pending_orders||[]).length,
-    '| _secOp.allItems:', _secOp.allItems.length);
-
   // Build a concise label for the outstanding amount
   var _dueTotal = (_snftDue ? 4 : 0) + (_secDue ? _secOp.total : 0);
   var _dueLabel = _snftDue && !_secDue ? '$4 membership payment due'
