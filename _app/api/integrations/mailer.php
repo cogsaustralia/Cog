@@ -1053,23 +1053,51 @@ return [$html, $plain];
         })(),
 
         'payment_intent_admin' => (function() use ($p) {
-            $name = (string)($p['full_name'] ?? '');
-            $memberNum = (string)($p['member_number'] ?? '');
-            $cls = (string)($p['token_class'] ?? '');
-            $units = (int)($p['units'] ?? 0);
-            $amount = (string)($p['amount'] ?? '0.00');
-            $ref = (string)($p['reference'] ?? '');
-            $html = '<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;background:#0f0d09;color:#f0e8d6;padding:24px;border-radius:10px">'
-                . '<h2 style="color:#c8901a;margin:0 0 12px">Payment Intent Received</h2>'
+            $name     = (string)($p['full_name']     ?? '');
+            $memberNum= (string)($p['member_number'] ?? '');
+            $email    = (string)($p['email']         ?? '');
+            $cls      = (string)($p['token_class']   ?? '');
+            $units    = (int)($p['units']            ?? 0);
+            $amount   = (string)($p['amount']        ?? '0.00');
+            $ref      = (string)($p['reference']     ?? '');
+            $payId    = (string)($p['pay_id']        ?? '');
+            $bankName = (string)($p['bank_name']     ?? '');
+            $bankBsb  = (string)($p['bank_bsb']      ?? '');
+            $bankAcct = (string)($p['bank_account']  ?? '');
+            $gold = '#c8901a'; $dark = '#0f0d09';
+            $html = '<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:' . $dark . ';color:#f0e8d6;padding:24px;border-radius:10px">'
+                . '<h2 style="color:' . $gold . ';margin:0 0 4px;font-size:17px">Payment Intent Received</h2>'
+                . '<div style="font-size:11px;color:#6b5c44;margin-bottom:16px;font-family:monospace">' . htmlspecialchars($ref) . '</div>'
                 . '<table style="width:100%;font-size:13px;border-collapse:collapse">'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Member</td><td style="font-weight:600">' . htmlspecialchars($name) . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Number</td><td style="font-family:monospace">' . htmlspecialchars($memberNum) . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Class</td><td>' . htmlspecialchars($cls) . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Units</td><td style="font-weight:600">' . $units . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Amount</td><td style="color:#c8901a;font-weight:700">$' . htmlspecialchars($amount) . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Reference</td><td style="font-family:monospace">' . htmlspecialchars($ref) . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:5px 0;width:36%">Member</td><td style="font-weight:600;color:#f0e8d6">' . htmlspecialchars($name) . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:5px 0">Partner number</td><td style="font-family:monospace;color:#f0e8d6">' . htmlspecialchars($memberNum) . '</td></tr>'
+                . ($email !== '' ? '<tr><td style="color:#9a8a74;padding:5px 0">Email</td><td style="color:#f0e8d6">' . htmlspecialchars($email) . '</td></tr>' : '')
+                . '<tr><td style="color:#9a8a74;padding:5px 0">Token class</td><td style="color:#f0e8d6">' . htmlspecialchars($cls) . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:5px 0">Units</td><td style="font-weight:700;color:#f0e8d6">' . $units . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:5px 0">Amount due</td><td style="color:' . $gold . ';font-weight:700;font-size:15px">$' . htmlspecialchars($amount) . ' AUD</td></tr>'
+                . '</table>'
+                . '<div style="border-top:1px solid rgba(255,255,255,.08);margin:14px 0 10px"></div>'
+                . '<div style="font-size:11px;font-weight:700;color:#9a8a74;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Expect incoming transfer</div>'
+                . '<table style="width:100%;font-size:13px;border-collapse:collapse">'
+                . ($payId    !== '' ? '<tr><td style="color:#9a8a74;padding:4px 0;width:36%">PayID</td><td style="font-weight:600;color:#f0e8d6">' . htmlspecialchars($payId)    . '</td></tr>' : '')
+                . ($bankName !== '' ? '<tr><td style="color:#9a8a74;padding:4px 0">Bank</td><td style="color:#f0e8d6">'                                . htmlspecialchars($bankName) . '</td></tr>' : '')
+                . ($bankBsb  !== '' ? '<tr><td style="color:#9a8a74;padding:4px 0">BSB</td><td style="font-weight:600;color:#f0e8d6">'                  . htmlspecialchars($bankBsb)  . '</td></tr>' : '')
+                . ($bankAcct !== '' ? '<tr><td style="color:#9a8a74;padding:4px 0">Account</td><td style="font-weight:600;color:#f0e8d6">'              . htmlspecialchars($bankAcct) . '</td></tr>' : '')
+                . '<tr><td style="color:#9a8a74;padding:4px 0">Reference</td><td style="font-family:monospace;font-weight:600;color:#f0b429">' . htmlspecialchars($memberNum) . '</td></tr>'
                 . '</table></div>';
-            $plain = "Payment Intent Received\nMember: {$name} ({$memberNum})\nClass: {$cls}\nUnits: {$units}\nAmount: \${$amount}\nRef: {$ref}\n";
+            $plain = "Payment Intent Received\n" . str_repeat('-', 36) . "\n"
+                . "Reference:      {$ref}\n"
+                . "Member:         {$name} ({$memberNum})\n"
+                . ($email !== '' ? "Email:          {$email}\n" : '')
+                . "Token class:    {$cls}\n"
+                . "Units:          {$units}\n"
+                . "Amount due:     \${$amount} AUD\n"
+                . "\nExpect incoming transfer:\n"
+                . ($payId    !== '' ? "PayID:          {$payId}\n"    : '')
+                . ($bankName !== '' ? "Bank:           {$bankName}\n" : '')
+                . ($bankBsb  !== '' ? "BSB:            {$bankBsb}\n"  : '')
+                . ($bankAcct !== '' ? "Account:        {$bankAcct}\n" : '')
+                . "Payment ref:    {$memberNum}\n";
             return [$html, $plain];
         })(),
 
@@ -1097,23 +1125,30 @@ return [$html, $plain];
         })(),
 
         'gift_order_cancelled_admin' => (function() use ($p) {
-            $name = htmlspecialchars((string)($p['full_name'] ?? ''));
-            $memberNum = htmlspecialchars((string)($p['member_number'] ?? ''));
-            $items = htmlspecialchars((string)($p['cancelled_items'] ?? ''));
+            $name       = htmlspecialchars((string)($p['full_name']       ?? ''));
+            $memberNum  = htmlspecialchars((string)($p['member_number']   ?? ''));
+            $email      = htmlspecialchars((string)($p['email']           ?? ''));
+            $items      = htmlspecialchars((string)($p['cancelled_items'] ?? ''));
             $totalUnits = (int)($p['total_units'] ?? 0);
             $html = '<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;background:#0f0d09;color:#f0e8d6;padding:24px;border-radius:10px">'
                 . '<h2 style="color:#c46060;margin:0 0 12px">Gift Pool Order Cancelled</h2>'
                 . '<p style="font-size:13px;color:#d4c9b8;line-height:1.6;margin:0 0 16px">A Partner has cancelled unpaid gift pool order(s). If a bank transfer was expected, it should no longer be reconciled.</p>'
                 . '<table style="width:100%;font-size:13px;border-collapse:collapse">'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Member</td><td style="font-weight:600">' . $name . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Number</td><td style="font-family:monospace">' . $memberNum . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Cancelled</td><td style="color:#c46060;font-weight:600">' . $items . '</td></tr>'
-                . '<tr><td style="color:#9a8a74;padding:4px 0">Total units</td><td>' . $totalUnits . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:5px 0;width:36%">Member</td><td style="font-weight:600">' . $name . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:5px 0">Partner number</td><td style="font-family:monospace">' . $memberNum . '</td></tr>'
+                . ($email !== '' ? '<tr><td style="color:#9a8a74;padding:5px 0">Email</td><td>' . $email . '</td></tr>' : '')
+                . '<tr><td style="color:#9a8a74;padding:5px 0">Cancelled orders</td><td style="color:#c46060;font-weight:600">' . $items . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:5px 0">Total units</td><td style="font-weight:600">' . $totalUnits . '</td></tr>'
                 . '</table>'
                 . '<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)">'
                 . '<p style="font-size:12px;color:#9a8a74;margin:0">Related pending payments have been auto-cancelled. Check <strong style="color:#f0e8d6">Reconciliation</strong> if a bank transfer was in progress.</p>'
                 . '</div></div>';
-            $plain = "Gift Pool Order Cancelled\nMember: {$p['full_name']} ({$p['member_number']})\nCancelled: {$p['cancelled_items']}\nTotal units: {$totalUnits}\n\nRelated pending payments auto-cancelled. Check Reconciliation if needed.\n";
+            $plain = "Gift Pool Order Cancelled\n" . str_repeat('-', 36) . "\n"
+                . "Member:         {$p['full_name']} ({$p['member_number']})\n"
+                . ($email !== '' ? "Email:          {$email}\n" : '')
+                . "Cancelled:      {$p['cancelled_items']}\n"
+                . "Total units:    {$totalUnits}\n\n"
+                . "Related pending payments auto-cancelled. Check Reconciliation if a bank transfer was in progress.\n";
             return [$html, $plain];
         })(),
 

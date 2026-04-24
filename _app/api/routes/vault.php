@@ -2909,10 +2909,10 @@ function cancelGiftOrder(): void {
     // Look up the member — must resolve BOTH members.id and snft_memberships.member_number
     // because payments may be keyed on either depending on when they were created.
     if ($isBusiness) {
-        $mStmt = $db->prepare('SELECT id, abn AS member_number, legal_name AS full_name FROM bnft_memberships WHERE id = ? LIMIT 1');
+        $mStmt = $db->prepare('SELECT id, abn AS member_number, legal_name AS full_name, email FROM bnft_memberships WHERE id = ? LIMIT 1');
         $mStmt->execute([(int)$principal['principal_id']]);
     } else {
-        $mStmt = $db->prepare('SELECT id, member_number, full_name FROM members WHERE member_number = ? LIMIT 1');
+        $mStmt = $db->prepare('SELECT id, member_number, full_name, email FROM members WHERE member_number = ? LIMIT 1');
         $mStmt->execute([(string)$principal['subject_ref']]);
     }
     $member = $mStmt->fetch();
@@ -2920,6 +2920,7 @@ function cancelGiftOrder(): void {
     $membersId    = (int)$member['id'];
     $memberNumber = (string)$member['member_number'];
     $memberName   = (string)($member['full_name'] ?? '');
+    $memberEmail  = strtolower(trim((string)($member['email'] ?? '')));
 
     // Also get snft_memberships.id for payment rows created by createPaymentIntent
     $snftId = $membersId; // default — same for most members
@@ -3108,6 +3109,7 @@ function cancelGiftOrder(): void {
                 [
                     'full_name'       => $memberName,
                     'member_number'   => $memberNumber,
+                    'email'           => $memberEmail,
                     'cancelled_items' => $cancelledSummary,
                     'total_units'     => $totalUnits,
                 ]
@@ -3747,7 +3749,10 @@ function createKidsOrder(): void {
     }
 
     // Queue payment instructions email
-    $payId = (string)env('BANK_PAYID', 'members@cogsaustralia.org');
+    $payId       = (string)env('BANK_PAYID',    'members@cogsaustralia.org');
+    $bankName    = (string)env('BANK_NAME',     'COG$ Foundation Account');
+    $bankBSB     = (string)env('BANK_BSB',      'BSB on request');
+    $bankAccount = (string)env('BANK_ACCOUNT',  'Account on request');
     try {
         queueEmail($db, 'snft_member', (int)$member['id'], $member['email'],
             'payment_intent_member',
@@ -3761,6 +3766,9 @@ function createKidsOrder(): void {
                 'amount'        => number_format($totalAmount, 2),
                 'reference'     => $ref,
                 'pay_id'        => $payId,
+                'bank_name'     => $bankName,
+                'bank_bsb'      => $bankBSB,
+                'bank_account'  => $bankAccount,
                 'is_donation'   => false,
             ]
         );
@@ -3770,11 +3778,16 @@ function createKidsOrder(): void {
             "Kids S-NFT order — {$ref} — {$member['full_name']}",
             [
                 'full_name'     => $member['full_name'],
+                'email'         => $member['email'],
                 'member_number' => $member['member_number'],
                 'token_class'   => $className,
                 'units'         => $units,
                 'amount'        => number_format($totalAmount, 2),
                 'reference'     => $ref,
+                'pay_id'        => $payId,
+                'bank_name'     => $bankName,
+                'bank_bsb'      => $bankBSB,
+                'bank_account'  => $bankAccount,
             ]
         );
     } catch (Throwable $e) {
