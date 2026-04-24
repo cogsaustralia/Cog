@@ -797,99 +797,178 @@ body.cert-open .admin-shell { display: none; }
 
 <?php else: ?>
 <!-- ════════════════════════════════════════════════════════ LIST VIEW -->
-<div class="topbar" style="margin-bottom:20px">
+<?php
+// Priority map for ordering
+$tdrPriority = [
+    'TDR-20260422-001'=>1,  'TDR-20260425-002'=>2,  'TDR-20260425-003'=>3,
+    'TDR-20260425-004'=>4,  'TDR-20260425-006'=>5,  'TDR-20260425-009'=>6,
+    'TDR-20260425-013'=>7,  'TDR-20260425-005'=>8,  'TDR-20260425-007'=>9,
+    'TDR-20260425-008'=>10, 'TDR-20260425-010'=>11, 'TDR-20260425-011'=>12,
+    'TDR-20260425-012'=>13, 'TDR-20260425-014'=>14, 'TDR-20260425-015'=>15,
+    'TDR-20260425-016'=>16, 'TDR-20260425-017'=>17,
+];
+$tierDefs = [
+    ['min'=>1,  'max'=>7,  'label'=>'Tier 1 — Immediate'],
+    ['min'=>8,  'max'=>15, 'label'=>'Tier 2 — Before Foundation Day'],
+    ['min'=>16, 'max'=>99, 'label'=>'Tier 3 — Before Expansion Day'],
+];
+usort($decisions, function($a, $b) use ($tdrPriority) {
+    $pa = $tdrPriority[$a['decision_ref']] ?? 99;
+    $pb = $tdrPriority[$b['decision_ref']] ?? 99;
+    return $pa !== $pb ? $pa - $pb : strcmp($a['decision_ref'], $b['decision_ref']);
+});
+$grouped = [];
+foreach ($decisions as $d) {
+    $grouped[$d['sub_trust_context']][] = $d;
+}
+$ctxOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
+$filterStatus = trim((string)($_GET['status'] ?? ''));
+?>
+
+<div class="topbar" style="margin-bottom:16px">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
     <div>
       <h2>🧾 Trustee Decision Records</h2>
-      <p>All TDRs made by the Caretaker Trustee during the Caretaker Trustee Period. Internal — visible to all authenticated members.</p>
+      <p>All TDRs grouped by sub-trust and ordered by execution priority. Click any row to expand.</p>
     </div>
     <a href="./trustee_decisions.php?action=create" class="btn-primary">+ New TDR</a>
   </div>
 </div>
 
-<form method="GET" class="filter-bar">
-  <div>
-    <label>Sub-Trust</label>
-    <select name="sub_trust">
-      <option value="">All</option>
-      <?php foreach ($subTrustLabels as $val => $lbl): ?>
-        <option value="<?= td_h($val) ?>" <?= ($listFilters['sub_trust_context'] === $val) ? 'selected' : '' ?>>
-          <?= td_h($lbl) ?></option>
-      <?php endforeach; ?>
-    </select>
-  </div>
-  <div>
-    <label>Category</label>
-    <select name="category">
-      <option value="">All</option>
-      <?php foreach ($categoryLabels as $val => $lbl): ?>
-        <option value="<?= td_h($val) ?>" <?= ($listFilters['decision_category'] === $val) ? 'selected' : '' ?>>
-          <?= td_h($lbl) ?></option>
-      <?php endforeach; ?>
-    </select>
-  </div>
-  <div>
-    <label>Status</label>
-    <select name="status">
-      <option value="">All</option>
-      <?php foreach ($statusBadge as $val => [$cls, $lbl]): ?>
-        <option value="<?= td_h($val) ?>" <?= ($listFilters['status'] === $val) ? 'selected' : '' ?>>
-          <?= td_h($lbl) ?></option>
-      <?php endforeach; ?>
-    </select>
-  </div>
-  <div>
-    <label>From</label>
-    <input type="date" name="date_from" value="<?= td_h($listFilters['date_from']) ?>">
-  </div>
-  <div>
-    <label>To</label>
-    <input type="date" name="date_to" value="<?= td_h($listFilters['date_to']) ?>">
-  </div>
-  <button type="submit" class="btn-primary btn-sm">Filter</button>
-  <a href="./trustee_decisions.php" class="btn-primary btn-sm" style="background:none;border-color:var(--line2);color:var(--sub)">Reset</a>
-</form>
-
-<table class="tdr-table">
-  <thead>
-    <tr>
-      <th>Reference</th>
-      <th>Title</th>
-      <th>Sub-Trust</th>
-      <th>Category</th>
-      <th>Effective</th>
-      <th>Status</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  <?php if (empty($decisions)): ?>
-    <tr><td colspan="7" style="color:var(--sub);text-align:center;padding:24px">No Trustee Decision Records found.</td></tr>
-  <?php endif; ?>
-  <?php foreach ($decisions as $d):
-    [$bc, $bl] = $statusBadge[$d['status']] ?? ['badge-warn', $d['status']];
-  ?>
-    <tr>
-      <td><a href="./trustee_decisions.php?id=<?= urlencode($d['decision_uuid']) ?>"
-             style="color:var(--gold);font-weight:700;text-decoration:none;font-family:monospace;font-size:.8rem">
-          <?= td_h($d['decision_ref']) ?></a></td>
-      <td style="max-width:300px"><?= td_h($d['title']) ?></td>
-      <td><?= td_h($subTrustLabels[$d['sub_trust_context']] ?? $d['sub_trust_context']) ?></td>
-      <td><?= td_h($categoryLabels[$d['decision_category']] ?? $d['decision_category']) ?></td>
-      <td><?= td_h($d['effective_date']) ?></td>
-      <td><span class="badge <?= $bc ?>"><?= $bl ?></span></td>
-      <td>
-        <a href="./trustee_decisions.php?id=<?= urlencode($d['decision_uuid']) ?>"
-           class="btn-primary btn-sm">View</a>
-      </td>
-    </tr>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;align-items:center">
+  <span style="font-size:.73rem;color:var(--dim);margin-right:4px">Show:</span>
+  <?php foreach ([''=>'All','draft'=>'Draft','pending_execution'=>'Pending Execution','fully_executed'=>'Executed'] as $val=>$lbl):
+    $isActive = ($filterStatus === $val); ?>
+    <a href="./trustee_decisions.php<?= $val ? '?status='.urlencode($val) : '' ?>"
+       style="font-size:.73rem;font-weight:<?= $isActive?'700':'400' ?>;padding:4px 11px;
+              border-radius:20px;text-decoration:none;
+              background:<?= $isActive?'rgba(212,178,92,.25)':'var(--panel2)' ?>;
+              border:1px solid <?= $isActive?'rgba(212,178,92,.5)':'var(--line2)' ?>;
+              color:<?= $isActive?'var(--gold)':'var(--sub)' ?>"><?= td_h($lbl) ?></a>
   <?php endforeach; ?>
-  </tbody>
-</table>
+  <span style="font-size:.72rem;color:var(--dim);margin-left:8px">
+    <?= count($decisions) ?> record<?= count($decisions)!==1?'s':'' ?>
+  </span>
+</div>
+
+<?php if (empty($decisions)): ?>
+  <div style="text-align:center;padding:48px 0;color:var(--sub);font-size:.85rem">
+    No Trustee Decision Records found.
+  </div>
+<?php endif; ?>
+
+<?php foreach ($ctxOrder as $ctx):
+  if (empty($grouped[$ctx])) continue;
+  $ctxDecisions = $grouped[$ctx];
+  $ctxLabel     = $subTrustLabels[$ctx] ?? $ctx;
+  $ctxPending   = count(array_filter($ctxDecisions, fn($d) => $d['status'] !== 'fully_executed'));
+  $ctxDone      = count($ctxDecisions) - $ctxPending;
+?>
+<div style="margin-bottom:24px">
+  <div style="display:flex;justify-content:space-between;align-items:center;
+              margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line)">
+    <div style="font-size:.82rem;font-weight:700;color:var(--gold)"><?= td_h($ctxLabel) ?></div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <?php if ($ctxPending > 0): ?>
+        <span style="font-size:.7rem;background:rgba(192,85,58,.15);border:1px solid rgba(192,85,58,.35);
+                     color:var(--err);border-radius:10px;padding:2px 8px;font-weight:700">
+          <?= $ctxPending ?> pending</span>
+      <?php endif; ?>
+      <?php if ($ctxDone > 0): ?>
+        <span style="font-size:.7rem;background:var(--okb);border:1px solid rgba(82,184,122,.3);
+                     color:var(--ok);border-radius:10px;padding:2px 8px"><?= $ctxDone ?> executed</span>
+      <?php endif; ?>
+      <button onclick="toggleGroup('grp-<?= $ctx ?>')"
+              style="background:none;border:1px solid var(--line2);border-radius:5px;
+                     color:var(--sub);font-size:.72rem;padding:2px 8px;cursor:pointer">
+        Toggle all</button>
+    </div>
+  </div>
+  <div id="grp-<?= $ctx ?>">
+  <?php
+  $lastTier = null;
+  foreach ($ctxDecisions as $d):
+    [$bc,$bl] = $statusBadge[$d['status']] ?? ['badge-warn',$d['status']];
+    $pri  = $tdrPriority[$d['decision_ref']] ?? 99;
+    $tier = null;
+    foreach ($tierDefs as $td) { if ($pri>=$td['min']&&$pri<=$td['max']) { $tier=$td; break; } }
+    if ($tier && ($lastTier===null||$lastTier['label']!==$tier['label'])):
+      $lastTier=$tier;
+  ?>
+    <div style="font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;
+                color:var(--sub);padding:10px 0 4px;display:flex;align-items:center;gap:8px">
+      <span style="display:inline-block;width:7px;height:7px;border-radius:50%;
+                   background:<?= $pri<=7?'rgba(192,85,58,.7)':($pri<=15?'rgba(212,148,74,.7)':'rgba(82,184,122,.6)') ?>"></span>
+      <?= td_h($tier['label']) ?>
+    </div>
+  <?php endif;
+    $rowId  = 'row-'.preg_replace('/[^a-z0-9]/','-',strtolower($d['decision_ref']));
+    $isOpen = ($d['status']==='pending_execution');
+    $isDone = ($d['status']==='fully_executed');
+    $icon   = $isDone ? '✓' : ($isOpen ? '◉' : '○');
+    $iconC  = $isDone ? 'var(--ok)' : ($isOpen ? 'var(--warn)' : 'var(--dim)');
+  ?>
+  <div style="border:1px solid var(--line2);border-radius:8px;margin-bottom:5px;overflow:hidden;
+              <?= $isDone?'opacity:.65':'' ?>">
+    <div onclick="toggleRow('<?= $rowId ?>')" id="<?= $rowId ?>-hdr"
+         style="display:grid;grid-template-columns:18px 92px 1fr auto auto;gap:0 12px;
+                align-items:center;padding:9px 14px;cursor:pointer;user-select:none;
+                background:<?= $isOpen?'var(--panel2)':'var(--panel)' ?>">
+      <span style="color:<?= $iconC ?>;font-size:.82rem;text-align:center"><?= $icon ?></span>
+      <span style="font-family:monospace;font-size:.74rem;color:var(--gold);font-weight:700;white-space:nowrap">
+        <?= td_h($d['decision_ref']) ?></span>
+      <span style="font-size:.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+        <?= td_h($d['title']) ?></span>
+      <span class="badge <?= $bc ?>" style="white-space:nowrap"><?= $bl ?></span>
+      <span id="<?= $rowId ?>-chev" style="color:var(--dim);font-size:.72rem">
+        <?= $isOpen?'▲':'▼' ?></span>
+    </div>
+    <div id="<?= $rowId ?>" style="display:<?= $isOpen?'block':'none' ?>;
+         border-top:1px solid var(--line2);background:var(--panel2)">
+      <div style="padding:14px 16px">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;font-size:.77rem;color:var(--sub)">
+          <span><?= td_h($categoryLabels[$d['decision_category']]??$d['decision_category']) ?></span>
+          <span>·</span><span>Effective <?= td_h($d['effective_date']) ?></span>
+          <?php if ($d['record_sha256']): ?>
+            <span>·</span>
+            <span style="font-family:monospace;font-size:.69rem">
+              <?= td_h(substr($d['record_sha256'],0,16)) ?>…</span>
+          <?php endif; ?>
+        </div>
+        <?php if ($d['resolution_md']): ?>
+        <div style="background:var(--panel);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;
+                    padding:9px 13px;font-size:.77rem;color:var(--text);line-height:1.55;
+                    white-space:pre-wrap;word-break:break-word;max-height:110px;overflow-y:auto;
+                    margin-bottom:12px"><?= td_h(mb_strimwidth($d['resolution_md'],0,420,'…')) ?></div>
+        <?php endif; ?>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a href="./trustee_decisions.php?id=<?= urlencode($d['decision_uuid']) ?>"
+             class="btn-primary btn-sm">View Full Record</a>
+          <?php if (in_array($d['status'],['draft','pending_execution'],true)): ?>
+            <a href="./trustee_decisions.php?action=edit&id=<?= urlencode($d['decision_uuid']) ?>"
+               class="btn-primary btn-sm"
+               style="background:none;border-color:var(--line2);color:var(--sub)">✎ Edit</a>
+          <?php endif; ?>
+          <?php if ($isDone): ?>
+            <a href="./trustee_decisions.php?id=<?= urlencode($d['decision_uuid']) ?>"
+               class="btn-primary btn-sm"
+               style="background:var(--okb);border-color:rgba(82,184,122,.3);color:var(--ok)">
+              📄 Certificate</a>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+  <?php endforeach; ?>
+  </div>
+</div>
+<?php endforeach; ?>
+
 <?php endif; ?>
 
 </div><!-- .main -->
 </div><!-- .admin-shell -->
+
 
 <script>
 function addPower() {
@@ -915,6 +994,27 @@ function showCert() {
 function hideCert() {
   document.getElementById('tdr-cert').classList.remove('active');
   document.body.classList.remove('cert-open');
+}
+function toggleRow(id) {
+  const body = document.getElementById(id);
+  const chev = document.getElementById(id + '-chev');
+  const hdr  = document.getElementById(id + '-hdr');
+  if (!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (chev) chev.textContent = open ? '▼' : '▲';
+  if (hdr)  hdr.style.background = open ? 'var(--panel)' : 'var(--panel2)';
+}
+function toggleGroup(grpId) {
+  const grp = document.getElementById(grpId);
+  if (!grp) return;
+  const rows = grp.querySelectorAll('[id^="row-"]:not([id$="-hdr"]):not([id$="-chev"])');
+  const anyOpen = Array.from(rows).some(el => el.style.display !== 'none');
+  rows.forEach(el => { el.style.display = anyOpen ? 'none' : 'block'; });
+  grp.querySelectorAll('[id$="-chev"]').forEach(el => { el.textContent = anyOpen ? '▼' : '▲'; });
+  grp.querySelectorAll('[id$="-hdr"]').forEach(el => {
+    el.style.background = anyOpen ? 'var(--panel)' : 'var(--panel2)';
+  });
 }
 </script>
 
