@@ -2717,10 +2717,8 @@ function createStripeCheckout(): void {
         $stripeErr  = (string)($result['error']['message'] ?? 'Unknown Stripe error');
         $stripeCode = (string)($result['error']['code']    ?? '');
         $stripeType = (string)($result['error']['type']    ?? '');
-        error_log('[vault/create-checkout] Stripe error [HTTP ' . $httpCode . '] type=' . $stripeType . ' code=' . $stripeCode . ' msg=' . $stripeErr);
-        error_log('[vault/create-checkout] Full Stripe response: ' . substr((string)$response, 0, 500));
-        // Don't expose raw Stripe error to client — use friendly message
-        apiError('Card payment is temporarily unavailable. Please use bank transfer or PayID — both are fee-free.', 503);
+        // DEBUG — exposes Stripe error detail in response temporarily
+        apiError('[DEBUG] HTTP=' . $httpCode . ' type=' . $stripeType . ' code=' . $stripeCode . ' msg=' . $stripeErr . ' raw=' . substr((string)$response, 0, 400), 503);
     }
 
     apiSuccess([
