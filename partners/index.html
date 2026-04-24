@@ -224,6 +224,9 @@
     .vault-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;background:rgba(240,209,138,.06);border:1px solid var(--gold-rim);color:var(--gold-1);font-size:.78rem;font-weight:500;text-decoration:none;transition:background .2s,border-color .2s}
     .vault-btn:hover{background:rgba(240,209,138,.12);border-color:rgba(240,209,138,.4)}
     .vault-btn svg{opacity:.7}
+    /* ── Golden-red payment state palette ── */
+    --pay-gold:#c87020;--pay-gold-bg:rgba(200,112,32,.13);--pay-gold-bdr:rgba(200,112,32,.55);
+
     .vault-btn-primary{
       display:inline-flex;align-items:center;gap:14px;
       padding:14px 22px 14px 14px;border-radius:16px;
@@ -235,6 +238,22 @@
     .vault-btn-primary:hover{background:linear-gradient(135deg,rgba(240,209,138,.22),rgba(200,151,62,.14));border-color:rgba(240,209,138,.7);box-shadow:0 6px 32px rgba(200,151,62,.28);transform:translateY(-2px)}
     .vault-coin{width:44px;height:44px;border-radius:50%;flex-shrink:0;transition:transform .5s cubic-bezier(.25,.46,.45,.94);border:1.5px solid rgba(240,209,138,.35)}
     .vault-btn-primary:hover .vault-coin{transform:perspective(200px) rotateY(180deg)}
+
+    /* ── Payment-due state on vault entry button ── */
+    @keyframes vaultPayPulse{
+      0%,100%{box-shadow:0 4px 18px rgba(200,112,32,.35),0 0 0 0 rgba(200,112,32,.4)}
+      50%{box-shadow:0 4px 32px rgba(200,112,32,.65),0 0 0 7px rgba(200,112,32,0)}
+    }
+    .vault-btn-primary.payment-due{
+      background:linear-gradient(135deg,rgba(200,112,32,.18),rgba(160,72,12,.12));
+      border-color:rgba(200,112,32,.7);color:#f0c070;
+      animation:vaultPayPulse 1.8s ease-in-out infinite}
+    .vault-btn-primary.payment-due:hover{
+      background:linear-gradient(135deg,rgba(200,112,32,.28),rgba(160,72,12,.2));
+      border-color:rgba(200,112,32,.95);transform:translateY(-2px)}
+    .vault-btn-primary.payment-due .vault-pay-label{display:block}
+    .vault-pay-label{display:none;font-size:.7rem;font-weight:600;letter-spacing:.08em;
+      text-transform:uppercase;color:#f0a040;margin-top:2px;opacity:.9}
 
     /* Coin spin page transition (vault navigation) */
     .coin-transition{position:fixed;inset:0;z-index:9999;background:rgba(10,8,4,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .25s ease}
@@ -791,8 +810,9 @@
                 <a href="../wallets/member.html" class="vault-btn-primary" id="vault-pill-btn" onclick="handleVaultEntry(event);return false;">
                   <img src="../assets/cogs_coin_web.png" alt="" class="vault-coin">
                   <span>Member Independence Vault
-                    <span style="display:block;font-size:.72rem;font-weight:500;opacity:.85;margin-top:3px;letter-spacing:.01em">Enter Here →</span>
+                    <span style="display:block;font-size:.72rem;font-weight:500;opacity:.85;margin-top:3px;letter-spacing:.01em" id="pill-vault-sub">Enter Here ›</span>
                     <span style="display:block;font-size:.6rem;font-weight:400;opacity:.55;margin-top:1px">Holdings · Governance · Profile</span>
+                    <span class="vault-pay-label" id="pill-vault-pay-label">Payment due — tap to pay</span>
                   </span>
                 </a>
               </div>
@@ -826,8 +846,9 @@
                onmouseout="this.style.transform='';this.style.boxShadow='0 4px 28px rgba(200,151,62,.32),0 0 0 1px rgba(240,209,138,.12)';this.style.borderColor='rgba(240,209,138,.65)'">
               <img src="../assets/cogs_coin_web.png" alt="" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(240,209,138,.5);flex-shrink:0;box-shadow:0 0 16px rgba(240,209,138,.25)">
               <span>
-                <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em">Enter Independence Vault</span>
-                <span style="display:block;font-size:.75rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.02em">Holdings &middot; Governance &middot; Profile &rarr;</span>
+                <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em" id="hero-vault-label">Enter Independence Vault</span>
+                <span style="display:block;font-size:.75rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.02em" id="hero-vault-sub">Holdings &middot; Governance &middot; Profile &rarr;</span>
+                <span class="vault-pay-label" id="hero-vault-pay-label">Payment due — tap to pay</span>
               </span>
             </a>
           </div>
@@ -1753,39 +1774,68 @@ function enterCommunity(data){
   window._communityData = data;
   var paymentStatus = window._partnerPaymentStatus;
   var wrap = document.getElementById('vault-pill-wrap');
-  // Show the hero inline vault button
   var heroBtn = document.getElementById('hero-vault-btn');
+  var pillBtn = document.getElementById('vault-pill-btn');
+
+  // ── Determine total outstanding label for buttons ──
+  var _communityDataLocal = window._communityData || {};
+  var _secOp = (typeof getOutstandingPayments === 'function')
+    ? getOutstandingPayments(_communityDataLocal) : { total: 0, allItems: [] };
+  var _snftDue = paymentStatus !== 'paid';
+  var _secDue  = _secOp.allItems.length > 0;
+
+  // Build a concise label for the outstanding amount
+  var _dueTotal = (_snftDue ? 4 : 0) + (_secDue ? _secOp.total : 0);
+  var _dueLabel = _snftDue && !_secDue ? '$4 membership payment due'
+    : !_snftDue && _secDue ? '$' + _secOp.total.toFixed(2) + ' payment due'
+    : _snftDue && _secDue  ? '$' + _dueTotal.toFixed(2) + ' in payments due'
+    : '';
+
+  // ── Show hero vault button ──
   if(heroBtn){
     heroBtn.style.display = 'inline-flex';
-    if(paymentStatus !== 'paid'){
-      heroBtn.style.borderColor = 'rgba(240,130,20,.7)';
-      heroBtn.style.background = 'linear-gradient(135deg,rgba(240,130,20,.18),rgba(200,90,20,.1))';
-      heroBtn.querySelector('span').childNodes[0].textContent = 'Complete your Membership';
+    if(_snftDue || _secDue){
+      heroBtn.classList.add('payment-due');
+      var payLbl = document.getElementById('hero-vault-pay-label');
+      if(payLbl) payLbl.textContent = _dueLabel;
+    } else {
+      heroBtn.classList.remove('payment-due');
     }
   }
-  if(paymentStatus !== 'paid' && wrap && !document.getElementById('vault-pay-badge')){
 
-    // ── Badge pulsing over the vault pill ──
+  // ── Vault pill button state ──
+  if(pillBtn){
+    if(_snftDue || _secDue){
+      pillBtn.classList.add('payment-due');
+      var pillPayLbl = document.getElementById('pill-vault-pay-label');
+      if(pillPayLbl) pillPayLbl.textContent = _dueLabel;
+    } else {
+      pillBtn.classList.remove('payment-due');
+    }
+  }
+
+  if((_snftDue || _secDue) && wrap && !document.getElementById('vault-pay-badge')){
+
+    // ── Badge over the vault pill ──
     var badge = document.createElement('div');
     badge.id = 'vault-pay-badge';
     badge.className = 'vault-pay-overlay';
-    badge.textContent = '⚡ $4 payment outstanding';
+    badge.textContent = '⚡ ' + _dueLabel;
     wrap.insertBefore(badge, wrap.firstChild);
 
     // ── Strip below the vault pill ──
-    var strip = document.createElement('div');
-    strip.className = 'vault-pay-strip';
-    strip.innerHTML = '<span><strong style="color:#f0c070">Your $4 payment is outstanding.</strong> Complete your contribution to activate your membership and unlock governance.</span>'
-      + '<a href="../wallets/member.html" onclick="coinTransition(this);return false;">Pay $4 now ›</a>';
-    wrap.appendChild(strip);
+    var _stripText = _snftDue && !_secDue
+      ? '<strong style="color:#f0c070">Your $4 membership contribution is outstanding.</strong> Complete it to activate your Membership and unlock your governance vote.'
+      : !_snftDue && _secDue && _secOp.lines.length === 1
+      ? '<strong style="color:#f0c070">' + _secOp.lines[0].label + ' — $' + Number(_secOp.lines[0].amount).toFixed(2) + ' outstanding.</strong> Complete payment to activate your tokens.'
+      : '<strong style="color:#f0c070">$' + _dueTotal.toFixed(2) + ' in payments outstanding.</strong> Enter your vault to review and pay.';
 
-    // ── Highlight the vault pill itself ──
-    var btn = document.getElementById('vault-pill-btn');
-    if(btn){
-      btn.style.borderColor = 'rgba(240,130,20,.8)';
-      btn.style.background  = 'linear-gradient(135deg,rgba(240,130,20,.15),rgba(200,90,20,.08))';
-      btn.style.boxShadow   = '0 0 0 3px rgba(240,130,20,.2), 0 6px 28px rgba(200,80,20,.22)';
-    }
+    var strip = document.createElement('div');
+    strip.id = 'vault-pay-strip';
+    strip.className = 'vault-pay-strip';
+    strip.innerHTML = '<span>' + _stripText + '</span>'
+      + '<a href="../wallets/member.html" onclick="coinTransition(this);return false;">Pay now ›</a>';
+    wrap.appendChild(strip);
   }
 
   // Load live community stats + master control — then keep them current:
@@ -2439,6 +2489,29 @@ window.downloadDoc = function(filename){
 <script src="/assets/ask-widget.js"></script>
 <script>
 /* ════ VAULT ENTRY INTERCEPT ════ */
+
+/* Lightweight outstanding payments aggregator for partners hub.
+   Full version lives in wallets/member.html — this covers button labelling only. */
+function getOutstandingPayments(d) {
+  d = d || {};
+  var giftLines  = Array.isArray(d.gift_pool_unpaid_lines) ? d.gift_pool_unpaid_lines : [];
+  var kidsOrders = Array.isArray(d.kids_pending_orders)    ? d.kids_pending_orders    : [];
+  var labelMap = { donation_tokens:'Donation COG$', pay_it_forward_tokens:'Pay It Forward', kids_tokens:'Kids S-NFT' };
+  var _giftMap = {};
+  giftLines.forEach(function(r){ var c=r.token_class||''; if(c) _giftMap[c]=(_giftMap[c]||0)+(parseInt(r.units||0,10)||0); });
+  var giftItems = Object.keys(_giftMap).map(function(c){ return {token_class:c,units:_giftMap[c]}; });
+  var kidsUnits = kidsOrders.reduce(function(s,r){ return s+(parseInt(r.units||0,10)||0); },0);
+  var kidsItems = kidsUnits > 0 ? [{token_class:'kids_tokens',units:kidsUnits}] : [];
+  var allItems  = giftItems.concat(kidsItems);
+  var giftTotal = giftLines.reduce(function(s,r){ return s+Number(r.amount||0); },0);
+  var kidsTotal = kidsOrders.reduce(function(s,r){ return s+Number(r.amount||0); },0);
+  var total = giftTotal + kidsTotal;
+  var lines = [];
+  giftLines.forEach(function(r){ lines.push({label:(labelMap[r.token_class]||r.token_class)+' ×'+(parseInt(r.units||0,10)||0),amount:Number(r.amount||0)}); });
+  if(kidsUnits>0) lines.push({label:'Kids S-NFT ×'+kidsUnits,amount:kidsTotal});
+  return {giftItems:giftItems,kidsItems:kidsItems,allItems:allItems,total:total,lines:lines};
+}
+
 function handleVaultEntry(e){
   if(e) e.preventDefault();
   // Only intercept when payment status is explicitly known and not paid.

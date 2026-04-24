@@ -27,6 +27,7 @@
   --green:#3ecf6e;--green-bg:rgba(62,207,110,.08);--green-bdr:rgba(62,207,110,.24);
   --red:#e05c5c;--red-bg:rgba(224,92,92,.08);--red-bdr:rgba(224,92,92,.26);
   --amber:#e09a42;--amber-bg:rgba(224,154,66,.08);--amber-bdr:rgba(224,154,66,.24);
+  --pay-gold:#c87020;--pay-gold-bg:rgba(200,112,32,.12);--pay-gold-bdr:rgba(200,112,32,.50);
   --blue:#5ea8e8;--blue-bg:rgba(94,168,232,.08);--blue-bdr:rgba(94,168,232,.22);
   --r:12px;--r2:8px;--mono:'DM Mono','Courier New',monospace;
   --sans:'DM Sans',system-ui,sans-serif;--serif:'Cormorant Garamond',Georgia,serif;
@@ -100,9 +101,9 @@ img{max-width:100%;height:auto}
 
 
 /* ── PAY BANNER ── */
-.pay-banner{position:fixed;top:100px;left:0;right:0;z-index:97;background:linear-gradient(90deg,rgba(224,92,92,.12),rgba(224,92,92,.06));border-bottom:1px solid var(--red-bdr);padding:8px 16px;display:none}
+.pay-banner{position:fixed;top:100px;left:0;right:0;z-index:97;background:linear-gradient(90deg,rgba(200,112,32,.12),rgba(200,112,32,.06));border-bottom:1px solid var(--pay-gold-bdr);padding:8px 16px;display:none}
 .pay-banner-inner{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.pay-banner-text{font-size:1.02rem;color:var(--red)}
+.pay-banner-text{font-size:1.02rem;color:var(--pay-gold)}
 
 /* ── TOUR PILL ── */
 .tour-pill-banner{display:none!important}
@@ -144,6 +145,7 @@ img{max-width:100%;height:auto}
 .chip-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7;flex-shrink:0}
 .chip-green{background:var(--green-bg);border-color:var(--green-bdr);color:var(--green)}
 .chip-red{background:var(--red-bg);border-color:var(--red-bdr);color:var(--red)}
+.chip-pay{background:var(--pay-gold-bg);border-color:var(--pay-gold-bdr);color:var(--pay-gold)}
 .chip-amber{background:var(--amber-bg);border-color:var(--amber-bdr);color:var(--amber)}
 .chip-blue{background:var(--blue-bg);border-color:var(--blue-bdr);color:var(--blue)}
 .chip-gold{background:var(--gold-bg);border-color:var(--gold-bdr);color:var(--gold)}
@@ -958,8 +960,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- Payment banner -->
   <div class="pay-banner" id="pay-banner" style="display:none">
     <div class="pay-banner-inner">
-      <span class="pay-banner-text">● $4 payment required to activate your Membership.</span>
-      <button class="btn btn-sm" style="background:var(--red);color:#fff;border:none;flex-shrink:0" id="pay-btn">Pay $4 now</button>
+      <span class="pay-banner-text" id="pay-banner-text">● $4 membership contribution outstanding — tap to complete payment.</span>
+      <button class="btn btn-sm" style="background:var(--pay-gold);color:#fff;border:none;flex-shrink:0" id="pay-btn">Pay now ›</button>
     </div>
   </div>
 
@@ -996,13 +998,13 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div id="ov-business-pill" style="display:none;margin-bottom:12px"></div>
 
       <!-- Outstanding secondary payments nudge — shown when kids/donation/PIF payments are due -->
-      <div id="ov-outstanding-card" style="display:none;margin-bottom:14px;padding:14px 16px;background:var(--red-bg);border:1px solid var(--red-bdr);border-radius:12px">
+      <div id="ov-outstanding-card" style="display:none;margin-bottom:14px;padding:14px 16px;background:var(--pay-gold-bg);border:1px solid var(--pay-gold-bdr);border-radius:12px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div>
-            <div style="font-size:1rem;font-weight:600;color:var(--red);margin-bottom:3px" id="ov-outstanding-title">Payments outstanding</div>
+            <div style="font-size:1rem;font-weight:600;color:var(--pay-gold);margin-bottom:3px" id="ov-outstanding-title">Payments outstanding</div>
             <div style="font-size:.92rem;color:var(--text3);line-height:1.45" id="ov-outstanding-desc"></div>
           </div>
-          <button class="btn btn-sm" style="background:var(--red);color:#fff;border:none;flex-shrink:0" onclick="openOutstandingModal()">Pay now ›</button>
+          <button class="btn btn-sm" style="background:var(--pay-gold);color:#fff;border:none;flex-shrink:0" onclick="openOutstandingModal()">Pay now ›</button>
         </div>
       </div>
 
@@ -1516,7 +1518,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="pay-modal">
     <button class="pay-modal-close" onclick="closeOutstandingModal()" aria-label="Close">✕</button>
     <h3>Outstanding payments</h3>
-    <p style="font-size:1.02rem;color:var(--text3);margin-bottom:20px;line-height:1.65" id="outstanding-modal-desc">Complete the payments below to activate your tokens.</p>
+    <p style="font-size:1.02rem;color:var(--text3);margin-bottom:20px;line-height:1.65" id="outstanding-modal-desc"></p>
     <div id="outstanding-modal-items" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px"></div>
     <div style="font-size:1.02rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pay by card</div>
     <button id="outstanding-card-btn" class="btn btn-gold" style="width:100%;margin-bottom:4px;font-size:1rem">Pay by card ›</button>
@@ -1667,7 +1669,7 @@ function openVault(d){
   el('tb-name').textContent = first;
   el('tb-mn').textContent = fmtMN(d.member_number||'');
 
-  // Payment banner
+  // Payment banner — SNFT $4
   const paid = (d.payment_status||'pending').toLowerCase() === 'paid';
   el('pay-banner').style.display = paid ? 'none' : 'block';
   var vault2 = el('vault');
@@ -1713,7 +1715,7 @@ function renderIdentity(d){
   // Status chip on section header
   el('s-identity-chip').innerHTML = paid
     ? chip('Class S Unit Secured','green')
-    : chip('$4 Payment Required','red');
+    : chip('$4 payment due','pay');
 
   // Entitlements
   const rows = [];
@@ -1722,7 +1724,7 @@ function renderIdentity(d){
     icon:'◈',
     title: paid
       ? 'Class S Unit — <span style="color:var(--green)">SECURED</span>'
-      : 'Class S Unit — <span style="color:var(--red)">$4 payment required</span>',
+      : 'Class S Unit — <span style="color:var(--pay-gold)">$4 payment due</span>',
     desc: paid
       ? 'Issued under Sub-Trust A. Personal S-NFT COG$ token — your permanent, inheritable, soulbound Membership token.'
       : 'Your Class S Unit is reserved. Complete the $4 membership contribution to issue it. ' + (paid ? '' : '<button class="btn btn-gold btn-sm" style="margin-top:6px" onclick="el(\'pay-btn\').click()">Pay $4 now →</button>')
@@ -2619,12 +2621,12 @@ function renderHoldings(d){
 
   const statusChipFor = function(status){
     var iqS   = infoQ(`Your Class S Unit is issued and secured. Permanent, soulbound, carries your equal governance vote and Sub-Trust B income unit.`);
-    var iqPR  = infoQ(`The $4 once-only membership contribution is required to issue your Class S Unit and activate your governance vote.`);
+    var iqPR  = infoQ(`Your $4 membership contribution is outstanding. Complete it to issue your Class S Unit and activate your equal governance vote.`);
     var iqLck = infoQ(`This token class is locked until Expansion Day. That is when Members activate the Foundation's own blockchain node. No payment is due now — this is a no-obligation reservation you can change at any time.`);
     var iqCC  = infoQ(`Donation COG$ and Pay It Forward are community and charity pathway tokens — separate from the no-obligation reservation classes. $4 per unit, with $2 going directly to Sub-Trust C.`);
     var iqNow = infoQ(`Community COG$ is the only class transferable Member-to-Member right now, before Expansion Day. Instant transfer using the recipient's hash address.`);
     if(status === 'secured') return chip('Secured','green') + iqS;
-    if(status === 'payment_required') return chip('$4 payment required','red') + iqPR;
+    if(status === 'payment_required') return chip('$4 payment due','pay') + iqPR;
     if(status === 'locked_until_expansion_day') return chip('Locked until Expansion Day','amber') + iqLck;
     if(status === 'community_charity_pathway') return chip('Separate community pathway','dim') + iqCC;
     if(status === 'transferable_now') return chip('Transferable now','blue') + iqNow;
@@ -2679,7 +2681,7 @@ function renderHoldings(d){
       let status = chip('Recorded','dim');
       let value  = r.price > 0 ? fmtA(count * r.price) : '—';
       if(r.key === 'reserved_tokens') {
-        status = (d.payment_status==='paid') ? chip('Class S Unit secured','green') : chip('$4 payment required','red');
+        status = (d.payment_status==='paid') ? chip('Class S Unit secured','green') : chip('$4 payment due','pay');
       } else if(r.key === 'kids_tokens') {
         status = count > 0 ? chip('Family pathway active','green') : chip('Ready for legacy kids pathway','dim');
       } else if(r.key === 'investment_tokens' || r.key === 'rwa_tokens' || r.key === 'landholder_tokens') {
@@ -2756,7 +2758,7 @@ function renderHoldings(d){
     +   '<div><div style="font-size:1rem;font-weight:600;color:var(--text)">Personal S-NFT</div>'
     +   '<div style="font-size:1.02rem;color:var(--text3);margin-top:2px">Class S &middot; One equal national governance vote</div></div>'
     +   '<div style="display:flex;align-items:center;gap:6px">'
-    +     (paid ? chip('Secured','green') : '<button class="btn btn-sm" style="background:var(--red-bg);border-color:var(--red-bdr);color:var(--red)" onclick="openPayModal()">$4 required &rarr;</button>')
+    +     (paid ? chip('Secured','green') : '<button class="btn btn-sm" style="background:var(--pay-gold-bg);border-color:var(--pay-gold-bdr);color:var(--pay-gold)" onclick="openPayModal()">$4 payment due ›</button>')
     +   '</div>'
     + '</div>'
 
@@ -2776,12 +2778,12 @@ function renderHoldings(d){
 
     // ── Row 3: Outstanding payment pill (if any unpaid kids orders) ──
     + (unpaidKidsUnits > 0
-      ? '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--red-bg);border:1px solid var(--red-bdr);border-radius:8px;flex-wrap:wrap">'
+      ? '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--pay-gold-bg);border:1px solid var(--pay-gold-bdr);border-radius:8px;flex-wrap:wrap">'
       +   '<div style="flex:1;min-width:0">'
-      +     '<div style="font-size:1rem;font-weight:600;color:var(--red);margin-bottom:2px">Payment outstanding &mdash; ' + unpaidKidsUnits + ' Kids S-NFT' + (unpaidKidsUnits!==1?'s':'') + '</div>'
+      +     '<div style="font-size:1rem;font-weight:600;color:var(--pay-gold);margin-bottom:2px">Kids S-NFT payment outstanding — ' + unpaidKidsUnits + ' Kids S-NFT' + (unpaidKidsUnits!==1?'s':'') + '</div>'
       +     '<div style="font-size:1.02rem;color:var(--text3)">$' + unpaidKidsTotal.toFixed(2) + ' due &middot; pay via PayID <span style="font-family:var(--mono);color:var(--text2)">0494 578 706</span> using your Member number as reference</div>'
       +   '</div>'
-      +   '<button class="btn btn-sm" style="background:var(--red);color:#fff;border:none;flex-shrink:0" onclick="openOutstandingModal()">Pay now ›</button>'
+      +   '<button class="btn btn-sm" style="background:var(--pay-gold);color:#fff;border:none;flex-shrink:0" onclick="openOutstandingModal()">Pay now ›</button>'
       + '</div>'
       : '')
 
@@ -4205,7 +4207,7 @@ function renderTabOverview(d){
     var iqPayReq  = infoQ(`Your Class S Unit is reserved but not yet issued. Complete the $4 once-only membership contribution to activate your Membership, issue your token, and unlock your equal governance vote.`);
     pill.innerHTML = paid
       ? '<span class="chip chip-green"><span class="chip-dot"></span>Class S Unit Secured</span>' + iqSecured
-      : '<span class="chip chip-red"><span class="chip-dot"></span>$4 Payment Required</span>' + iqPayReq;
+      : '<span class="chip chip-pay"><span class="chip-dot"></span>$4 payment due</span>' + iqPayReq;
   }
 
   /* Hidden KPI stubs — keep in sync so other render paths don't throw */
@@ -4775,6 +4777,21 @@ function openOutstandingModal() {
   var modal = document.getElementById('outstanding-modal');
   if (!modal) return;
 
+  // ── Dynamic description based on what's outstanding ──
+  var descEl = document.getElementById('outstanding-modal-desc');
+  if (descEl) {
+    var _types = op.lines.map(function(l) { return l.label.split(' ×')[0]; });
+    var _desc;
+    if (_types.length === 1) {
+      _desc = _types[0] + ' payment outstanding — $' + op.total.toFixed(2)
+        + '. Complete below to activate your token.';
+    } else {
+      _desc = _types.length + ' payments outstanding totalling $' + op.total.toFixed(2)
+        + '. All items are listed below — one card payment covers everything.';
+    }
+    descEl.textContent = _desc;
+  }
+
   // Populate item list
   var itemsEl = document.getElementById('outstanding-modal-items');
   if (itemsEl) {
@@ -4844,26 +4861,35 @@ function updateOutstandingUI(d) {
   var snftPaid = (d.payment_status || 'pending').toLowerCase() === 'paid';
 
   // ── Pay banner ──
-  // Already handled for SNFT by renderVault core.
-  // For secondary: show/extend the banner when secondary items are outstanding.
   var banner    = document.getElementById('pay-banner');
-  var bannerTxt = document.querySelector('#pay-banner .pay-banner-text');
+  var bannerTxt = document.getElementById('pay-banner-text');
   var bannerBtn = document.getElementById('pay-btn');
   if (banner && hasSecondary) {
     banner.style.display = 'block';
     if (bannerTxt) {
       if (!snftPaid) {
-        // SNFT also outstanding — banner already shows $4, leave it
-      } else {
-        bannerTxt.textContent = '● ' + op.lines.map(function(l) { return l.label; }).join(', ')
-          + ' — $' + op.total.toFixed(2) + ' payment outstanding.';
-        // Re-wire button to secondary modal
+        // Both SNFT and secondary outstanding — combine
+        var _bText = '$' + (4 + op.total).toFixed(2) + ' in payments outstanding — Membership contribution + '
+          + op.lines.map(function(l) { return l.label.split(' ×')[0]; }).join(', ') + '.';
+        bannerTxt.textContent = '● ' + _bText;
         if (bannerBtn) {
-          bannerBtn.textContent = 'Pay $' + op.total.toFixed(2) + ' now';
+          bannerBtn.textContent = 'Pay now ›';
+          bannerBtn.onclick = function() { openOutstandingModal(); };
+        }
+      } else {
+        var _bText2 = op.lines.length === 1
+          ? '● ' + op.lines[0].label + ' — $' + Number(op.lines[0].amount).toFixed(2) + ' outstanding.'
+          : '● ' + op.lines.length + ' payments outstanding — $' + op.total.toFixed(2) + ' total.';
+        bannerTxt.textContent = _bText2;
+        if (bannerBtn) {
+          bannerBtn.textContent = 'Pay $' + op.total.toFixed(2) + ' now ›';
           bannerBtn.onclick = function() { openOutstandingModal(); };
         }
       }
     }
+  } else if (banner && !snftPaid && bannerTxt) {
+    // SNFT-only — banner already shown by render pipeline, just ensure text is correct
+    bannerTxt.textContent = '● Membership contribution outstanding — $4 to activate your Membership.';
   }
 
   // ── Overview outstanding card ──
