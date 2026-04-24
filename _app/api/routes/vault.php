@@ -2616,6 +2616,20 @@ function createStripeCheckout(): void {
 
     if (empty($lineItems)) apiError('No valid items to checkout.');
 
+    // Add $0.40 Stripe processing fee as a separate line item
+    $lineItems[] = [
+        'price_data' => [
+            'currency'     => 'aud',
+            'unit_amount'  => 40,
+            'product_data' => [
+                'name'        => 'Stripe processing fee',
+                'description' => 'Card processing fee charged directly by Stripe.',
+            ],
+        ],
+        'quantity' => 1,
+    ];
+    $totalCents += 40;
+
     // Build metadata for webhook to process
     $metaItems = [];
     foreach ($items as $item) {
