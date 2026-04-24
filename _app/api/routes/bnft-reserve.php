@@ -309,13 +309,12 @@ try {
         'reservation_notice_accepted_at' => $acceptedAt,
         'abn' => $abn,
         'wallet_path' => 'wallets/business.html',
+        'joining_fee_due_now' => '$' . number_format(BNFT_TOKEN_PRICE, 2),
         'reservation_value' => $reservationValue,
         'reserved_tokens' => $reservedTokens,
         'invest_tokens' => $investTokens,
         'donation_tokens' => $donationTokens,
         'pay_it_forward_tokens' => $payItForwardTokens,
-        'landholder_hectares' => $landholderHectares,
-        'landholder_tokens' => $landholderTokens,
         'trace_line' => 'Trace: bnft_business#' . $businessId . ' | ABN ' . $abn . ' | ' . $acceptedAt,
     ]);
 

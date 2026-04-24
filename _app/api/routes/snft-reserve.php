@@ -635,6 +635,12 @@ try {
         'attestation_hash' => $stewardshipModule['attestation_hash'],
     ]);
 
+    $joiningFeeDueNow = round(
+        ((int)($classRows['PERSONAL_SNFT']['unit_price_cents'] ?? 0)) / 100
+        + ((int)$tokenInputs['KIDS_SNFT']) * (((int)($classRows['KIDS_SNFT']['unit_price_cents'] ?? 0)) / 100),
+        2
+    );
+
     enqueueReservationEmails($db, 'snft_member', $memberId, [
         'first_name' => $firstName,
     'last_name' => $lastName,
@@ -654,13 +660,11 @@ try {
         'support_code' => substr(generateWalletSupportCode('snft', $memberNumber, $email), 0, 4),
         'wallet_path' => 'wallets/member.html',
         'reservation_value' => $reservationValue ?? 0,
+        'joining_fee_due_now' => '$' . number_format($joiningFeeDueNow, 2),
         'kids_tokens' => (int)$tokenInputs['KIDS_SNFT'],
-        'landholder_tokens' => (int)$tokenInputs['LANDHOLDER_COG'],
         'investment_tokens' => (int)$tokenInputs['ASX_INVESTMENT_COG'],
         'pay_it_forward_tokens' => (int)$tokenInputs['PAY_IT_FORWARD_COG'],
         'donation_tokens' => (int)$tokenInputs['DONATION_COG'],
-        'rwa_tokens' => (int)$tokenInputs['RWA_COG'],
-        'lr_tokens' => (int)$tokenInputs['LR_COG'],
         'trace_line' => 'Trace: snft_member#' . $memberId . ' | ' . $memberNumber . ' | ' . $acceptedAt,
     ]);
 

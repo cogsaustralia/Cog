@@ -133,20 +133,16 @@ function processEmailQueue(PDO $db, int $limit = 10): array {
 function reservationSummaryLines(array $p): array {
     $lines = [];
     foreach ([
-        'reserved_tokens' => 'Reserved COG$',
-        'investment_tokens' => 'ASX (investment) COG$',
-        'invest_tokens' => 'Investment COG$',
-        'donation_tokens' => 'Donation COG$',
-        'pay_it_forward_tokens' => 'Pay It Forward COG$',
-        'kids_tokens' => 'Kids S-NFT COG$',
-        'landholder_tokens' => 'Landholder COG$',
+        'reserved_tokens'      => 'Reserved COG$',
+        'investment_tokens'    => 'ASX (investment) COG$',
+        'invest_tokens'        => 'Investment COG$',
+        'donation_tokens'      => 'Donation COG$',
+        'pay_it_forward_tokens'=> 'Pay It Forward COG$',
+        'kids_tokens'          => 'Kids S-NFT COG$',
     ] as $k => $label) {
         if (array_key_exists($k, $p) && is_numeric($p[$k]) && (float)$p[$k] > 0) {
             $lines[] = $label . ': ' . number_format((float)$p[$k], 0, '.', ',');
         }
-    }
-    if (!empty($p['landholder_hectares'])) {
-        $lines[] = 'Landholder hectares: ' . rtrim(rtrim(number_format((float)$p['landholder_hectares'], 2, '.', ''), '0'), '.');
     }
     return $lines;
 }
@@ -235,10 +231,8 @@ function renderEmailTemplate(string $templateKey, array $p): array {
 $firstName = htmlspecialchars(explode(' ', trim((string)($p['full_name'] ?? 'there')))[0]);
 $memberNum = htmlspecialchars((string)($p['member_number'] ?? ''));
 $memberNumDisplay = implode(' ', str_split($memberNum, 4));
-$resValue  = number_format((float)($p['reservation_value'] ?? 0), 2);
 $kidsTokens = (int)($p['kids_tokens'] ?? 0);
-$dueToday = 4 + $kidsTokens;
-$dueTodayDisplay = number_format((float)$dueToday, 2);
+$dueTodayDisplay = ltrim((string)($p['joining_fee_due_now'] ?? ('$' . (4 + $kidsTokens) . '.00')), '$');
 
 // Colour palette
 $gold   = '#b07d1a';
@@ -258,7 +252,6 @@ foreach ([
     'investment_tokens'     => 'ASX (investment) COG$',
     'donation_tokens'       => 'Community donation COG$',
     'pay_it_forward_tokens' => 'Pay It Forward COG$',
-    'landholder_tokens'     => 'Land-linked voice COG$',
 ] as $k => $label) {
     $val = (int)($p[$k] ?? 0);
     if ($val > 0) {
@@ -267,13 +260,6 @@ foreach ([
             . '<td style="padding:5px 0;font-size:13px;color:' . $body . ';font-weight:600;text-align:right">' . number_format($val) . '</td>'
             . '</tr>';
     }
-}
-if (!empty($p['landholder_hectares']) && (float)$p['landholder_hectares'] > 0) {
-    $ha = rtrim(rtrim(number_format((float)$p['landholder_hectares'], 2), '0'), '.');
-    $interestRows .= '<tr>'
-        . '<td style="padding:5px 0;font-size:13px;font-weight:500;color:' . $muted . '">Landholder hectares</td>'
-        . '<td style="padding:5px 0;font-size:13px;color:' . $body . ';font-weight:600;text-align:right">' . $ha . ' ha</td>'
-        . '</tr>';
 }
 
 $html = '<!DOCTYPE html>
@@ -571,6 +557,7 @@ $resValue    = number_format((float)($p['reservation_value'] ?? 40), 2);
 $gold    = '#b07d1a'; $goldLt = '#c8901a'; $dark = '#1a1208';
 $body_c  = '#1e1208'; $muted  = '#4a3828'; $green = '#2d6e45';
 $greenBg = '#edf7f1'; $greenBd = '#a8d5b8';
+$feeDisplay = ltrim((string)($p['joining_fee_due_now'] ?? '$' . $feeDisplay), '$');
 
 $interestRows = '';
 foreach ([
@@ -633,7 +620,7 @@ $html = '<!DOCTYPE html>
         <tr valign="top">
           <td width="48%" style="background:#fff8ed;border:1px solid #e8c97a;border-radius:10px;padding:16px 18px">
             <div style="font-size:11px;font-weight:bold;color:' . $goldLt . ';text-transform:uppercase;letter-spacing:.08em;font-family:Arial,sans-serif">Due today</div>
-            <div style="font-size:32px;font-weight:bold;color:' . $goldLt . ';margin:6px 0 4px;font-family:Georgia,serif">$40.00</div>
+            <div style="font-size:32px;font-weight:bold;color:' . $goldLt . ';margin:6px 0 4px;font-family:Georgia,serif">' . $feeDisplay . '</div>
             <div style="font-size:12px;color:' . $muted . ';line-height:1.5;font-family:Arial,sans-serif">Business partnership contribution only. Your selected business COG$ are recorded separately and are not payable today.</div>
           </td>
           <td width="4%"></td>
@@ -649,7 +636,7 @@ $html = '<!DOCTYPE html>
     <tr><td style="padding:24px 32px 0"><hr style="border:none;border-top:1px solid #e8e0d0;margin:0"></td></tr>
 
     <tr><td style="padding:20px 32px 0">
-      <div style="font-size:16px;font-weight:bold;color:' . $dark . ';margin-bottom:4px;font-family:Georgia,serif">Complete your $40 bank transfer</div>
+      <div style="font-size:16px;font-weight:bold;color:' . $dark . ';margin-bottom:4px;font-family:Georgia,serif">Complete your joining payment</div>
       <p style="font-size:13px;color:' . $muted . ';margin:0 0 14px;font-family:Arial,sans-serif">Use PayID for the fastest activation, or BSB + account if you prefer. Use your ABN as the payment reference.</p>
       <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f6f2;border-radius:8px;overflow:hidden">
         <tr style="background:#f7f3ec"><td colspan="2" style="padding:10px 16px;font-size:12px;font-weight:bold;color:' . $goldLt . ';text-transform:uppercase;letter-spacing:.06em;font-family:Arial,sans-serif">Bank transfer details</td></tr>
@@ -658,7 +645,7 @@ $html = '<!DOCTYPE html>
         <tr><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Account name</td><td style="padding:8px 16px;font-size:12px;color:' . $body_c . ';font-family:Arial,sans-serif">The Trustee for COGS of Australia Foundation Hybrid Trust</td></tr>
         <tr style="background:#f7f3ec"><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">BSB</td><td style="padding:8px 16px;font-size:13px;font-weight:bold;color:' . $body_c . ';font-family:Arial,sans-serif">182-182</td></tr>
         <tr><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Account</td><td style="padding:8px 16px;font-size:13px;font-weight:bold;color:' . $body_c . ';font-family:Arial,sans-serif">035 249 275</td></tr>
-        <tr style="background:#f7f3ec"><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Amount</td><td style="padding:8px 16px;font-size:15px;font-weight:bold;color:' . $goldLt . ';font-family:Georgia,serif">$40.00</td></tr>
+        <tr style="background:#f7f3ec"><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Amount</td><td style="padding:8px 16px;font-size:15px;font-weight:bold;color:' . $goldLt . ';font-family:Georgia,serif">' . $feeDisplay . '</td></tr>
         <tr><td style="padding:8px 16px;font-size:13px;color:' . $muted . ';font-family:Arial,sans-serif">Reference</td><td style="padding:8px 16px;font-size:13px;font-weight:bold;color:' . $body_c . ';font-family:Courier New,monospace">' . $abn . '</td></tr>
       </table>
     </td></tr>
@@ -689,7 +676,7 @@ $html = '<!DOCTYPE html>
 
     <tr><td style="padding:20px 32px 28px">
       <p style="font-size:11px;color:#b0a090;line-height:1.7;margin:0;border-top:1px solid #e8e0d0;padding-top:16px;font-family:Arial,sans-serif">
-        <strong style="color:#8a7a6a">Founding phase notice:</strong> This is a founding phase confirmation only. Your $40 business partnership contribution and ABN-linked Partner record are real. Your selected business COG$ remain no-obligation future intentions and are not payable today. They will activate on Expansion Day, subject to any regulatory requirements determined by applicable law. Nothing else has been offered or issued.
+        <strong style="color:#8a7a6a">Founding phase notice:</strong> This is a founding phase confirmation only. Your partnership contribution and ABN-linked Partner record are real. Your selected business COG$ remain no-obligation future intentions and are not payable today. They will activate on Expansion Day, subject to any regulatory requirements determined by applicable law. Nothing else has been offered or issued.
       </p>
     </td></tr>
 
@@ -736,7 +723,7 @@ $plain = "Your business is in, {$contactName}.
 "
     . "Account: 035 249 275
 "
-    . "Amount: \$40.00
+    . "Amount: $" . $feeDisplay . "
 "
     . "Reference: " . (string)($p['abn'] ?? '') . "
 
