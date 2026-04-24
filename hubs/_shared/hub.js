@@ -1980,6 +1980,61 @@ document.addEventListener('DOMContentLoaded', function(){
         if (hd.overdue_transfer_count === 0) html += '<span class="hub-livedata-ok">✓ None overdue</span>';
         html += '</div>';
       }
+      // ── TDR: Operational Trustee Decisions ─────────────────────────
+      if (hd.tdr_operational && hd.tdr_operational.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (operational)</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.tdr_operational.forEach(function(tdr) {
+          var cat = _esc(tdr.category.replace(/_/g,' '));
+          var ctx = tdr.context !== 'all' ? ' · ST ' + _esc(tdr.context.replace('sub_trust_','')) : '';
+          var badges = '';
+          if (tdr.fnac) badges += '<span class="sev-chip sev-low">FNAC</span>';
+          if (tdr.fpic) badges += '<span class="sev-chip sev-low">FPIC</span>';
+          if (tdr.visibility === 'public') badges += '<span class="sev-chip inv-pass">Public</span>';
+          html += '<div class="hub-livedata-item hub-tdr-item">';
+          html += '<div class="hub-livedata-item-inner">';
+          html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';
+          html += badges;
+          html += '</div>';
+          html += '<div class="hub-tdr-meta">' + cat + ctx + '<span class="hub-livedata-ts">' + _esc(tdr.effective) + '</span></div>';
+          html += '</div>';
+        }); html += '</div>';
+      } else if (typeof hd.tdr_operational !== 'undefined') {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (operational)</div>';
+        html += '<div class="hub-empty" style="font-size:.82rem">No executed operational TDRs yet.</div>';
+      }
+
+      // ── TDR: Deed Execution Records ─────────────────────────────────
+      if (hd.deed_records && hd.deed_records.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:12px">Legal instrument execution records</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.deed_records.forEach(function(dr) {
+          var statusClass = dr.status === 'fully_executed' ? 'inv-pass' : 'sev-med';
+          html += '<div class="hub-livedata-item">';
+          html += '<div class="hub-livedata-item-inner">';
+          html += '<span class="hub-tdr-ref">' + _esc(dr.deed_key) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(dr.title) + '</span>';
+          html += '<span class="sev-chip ' + statusClass + '">' + _esc(dr.status.replace(/_/g,' ')) + '</span>';
+          html += '</div>';
+          html += '<span class="hub-livedata-ts">' + _esc(dr.date) + '</span>';
+          html += '</div>';
+        }); html += '</div>';
+      }
+
+      // ── TDR: Trustee Counterpart Record ─────────────────────────────
+      if (hd.trustee_counterpart) {
+        var tcr = hd.trustee_counterpart;
+        html += '<div class="hub-livedata-subtitle" style="margin-top:12px">Trustee Counterpart Record (JVPA cl. 10.10A)</div>';
+        html += '<div class="hub-tdr-tcr-card">';
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Caretaker Trustee</span><span class="hub-livedata-val" style="font-size:.9rem">' + _esc(tcr.trustee_name) + '</span></div>';
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">JVPA</span><span class="hub-livedata-val" style="font-size:.82rem">' + _esc(tcr.jvpa_version) + ' · executed ' + _esc(tcr.jvpa_date) + '</span></div>';
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Acceptance recorded</span><span class="hub-livedata-val" style="font-size:.82rem">' + _esc(tcr.accepted_date) + '</span></div>';
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Record SHA-256</span><span class="hub-livedata-val" style="font-size:.78rem;font-family:monospace">' + _esc(tcr.sha256_prefix) + '…</span></div>';
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Status</span><span class="sev-chip inv-pass">Active</span></div>';
+        html += '</div>';
+      }
+
 html += '</div>'; // .hub-livedata-section
     }
 
@@ -2062,6 +2117,27 @@ html += '</div>'; // .hub-livedata-section
         html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Business Partners registered</span>';
         html += '<span class="hub-livedata-val">' + hd.business_partner_count + '</span></div>';
       }
+      // ── TDR: Investment & Poll Implementation ───────────────────────
+      if (hd.tdr_investment && hd.tdr_investment.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (investment & polls)</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.tdr_investment.forEach(function(tdr) {
+          var cat = _esc(tdr.category.replace(/_/g,' '));
+          var ctx = tdr.context !== 'all' ? ' · ST ' + _esc(tdr.context.replace('sub_trust_','')) : '';
+          html += '<div class="hub-livedata-item hub-tdr-item">';
+          html += '<div class="hub-livedata-item-inner">';
+          html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';
+          if (tdr.visibility === 'public') html += '<span class="sev-chip inv-pass">Public</span>';
+          html += '</div>';
+          html += '<div class="hub-tdr-meta">' + cat + ctx + '<span class="hub-livedata-ts">' + _esc(tdr.effective) + '</span></div>';
+          html += '</div>';
+        }); html += '</div>';
+      } else if (typeof hd.tdr_investment !== 'undefined') {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (investment & polls)</div>';
+        html += '<div class="hub-empty" style="font-size:.82rem">No executed investment TDRs yet.</div>';
+      }
+
 html += '</div>'; // .hub-livedata-section
     }
 
@@ -2220,6 +2296,30 @@ html += '</div>';
           html += '</div><span class="hub-livedata-ts">' + _dts(er.created_at) + '</span></div>';
         }); html += '</div>';
       }
+      // ── TDR: FNAC Engagement Decisions ──────────────────────────────
+      if (hd.tdr_fnac && hd.tdr_fnac.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (First Nations engagement)</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.tdr_fnac.forEach(function(tdr) {
+          var badges = '';
+          if (tdr.fnac)             badges += '<span class="sev-chip sev-low">FNAC consulted</span>';
+          if (tdr.fpic)             badges += '<span class="sev-chip sev-low">FPIC obtained</span>';
+          if (tdr.cultural_assessed)badges += '<span class="sev-chip sev-low">Cultural assessed</span>';
+          if (tdr.visibility === 'public') badges += '<span class="sev-chip inv-pass">Public</span>';
+          html += '<div class="hub-livedata-item hub-tdr-item">';
+          html += '<div class="hub-livedata-item-inner">';
+          html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';
+          html += badges;
+          html += '</div>';
+          html += '<div class="hub-tdr-meta">FNAC engagement<span class="hub-livedata-ts">' + _esc(tdr.effective) + '</span></div>';
+          html += '</div>';
+        }); html += '</div>';
+      } else if (typeof hd.tdr_fnac !== 'undefined') {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (First Nations engagement)</div>';
+        html += '<div class="hub-empty" style="font-size:.82rem">No executed FNAC engagement TDRs yet.</div>';
+      }
+
 html += '</div>';
     }
 
@@ -2469,7 +2569,27 @@ html += '</div>';
         html += '</div>';
       }
 
-      html += '</div>';
+            // ── TDR: Distribution Decisions ─────────────────────────────────
+      if (hd.tdr_distribution && hd.tdr_distribution.length) {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (distributions)</div>';
+        html += '<div class="hub-livedata-list">';
+        hd.tdr_distribution.forEach(function(tdr) {
+          var ctx = tdr.context !== 'all' ? ' · ST ' + _esc(tdr.context.replace('sub_trust_','')) : ' · All sub-trusts';
+          html += '<div class="hub-livedata-item hub-tdr-item">';
+          html += '<div class="hub-livedata-item-inner">';
+          html += '<span class="hub-tdr-ref">' + _esc(tdr.ref) + '</span>';
+          html += '<span class="hub-livedata-summary">' + _esc(tdr.title) + '</span>';
+          if (tdr.visibility === 'public') html += '<span class="sev-chip inv-pass">Public</span>';
+          html += '</div>';
+          html += '<div class="hub-tdr-meta">Distribution' + ctx + '<span class="hub-livedata-ts">' + _esc(tdr.effective) + '</span></div>';
+          html += '</div>';
+        }); html += '</div>';
+      } else if (typeof hd.tdr_distribution !== 'undefined') {
+        html += '<div class="hub-livedata-subtitle" style="margin-top:14px">Trustee Decision Records (distributions)</div>';
+        html += '<div class="hub-empty" style="font-size:.82rem">No executed distribution TDRs yet.</div>';
+      }
+
+html += '</div>';
     }
 
     // ── 8. Place-Based Decisions ─────────────────────────────────────────

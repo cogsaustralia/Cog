@@ -1540,6 +1540,83 @@ function handleHubAdminActivity(): void
             $s = $db->query("SELECT COUNT(*) FROM v_overdue_transfers WHERE days_overdue > 0");
             $hubData['overdue_transfer_count'] = (int)$s->fetchColumn();
         } catch (Throwable) {}
+        // TDR: Operational decisions (all non-hub-specific categories)
+        try {
+            $stmt = $db->prepare(
+                "SELECT decision_ref, title, effective_date, decision_category,
+                        sub_trust_context, status, visibility,
+                        fnac_consulted, fpic_obtained
+                   FROM trustee_decisions
+                  WHERE decision_category IN (
+                        'bank_account','operational_amendment','regulatory_compliance',
+                        'record_keeping','governance_instrument',
+                        'fiduciary_conflict_invocation','other'
+                  ) AND status != 'draft'
+                  ORDER BY effective_date DESC LIMIT 10"
+            );
+            $stmt->execute();
+            $hubData['tdr_operational'] = array_map(
+                fn($r) => [
+                    'ref'          => (string)$r['decision_ref'],
+                    'title'        => (string)$r['title'],
+                    'effective'    => (string)$r['effective_date'],
+                    'category'     => (string)$r['decision_category'],
+                    'context'      => (string)$r['sub_trust_context'],
+                    'status'       => (string)$r['status'],
+                    'visibility'   => (string)$r['visibility'],
+                    'fnac'         => (bool)(int)$r['fnac_consulted'],
+                    'fpic'         => (bool)(int)$r['fpic_obtained'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        // TDR: Deed execution records (JVPA, Declaration, Sub-Trusts)
+        try {
+            $stmt = $db->prepare(
+                "SELECT deed_key, deed_title, deed_version, execution_date,
+                        status, capacity
+                   FROM declaration_execution_records
+                  ORDER BY execution_date DESC"
+            );
+            $stmt->execute();
+            $hubData['deed_records'] = array_map(
+                fn($r) => [
+                    'deed_key'   => (string)$r['deed_key'],
+                    'title'      => (string)$r['deed_title'],
+                    'version'    => (string)$r['deed_version'],
+                    'date'       => (string)$r['execution_date'],
+                    'status'     => (string)$r['status'],
+                    'capacity'   => (string)$r['capacity'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
+        } catch (Throwable) {}
+
+        // TDR: Trustee Counterpart Record (JVPA cl.10.10A acceptance)
+        try {
+            $stmt = $db->query(
+                "SELECT trustee_full_name, jvpa_version, jvpa_title,
+                        jvpa_execution_date, capacity_type,
+                        DATE(acceptance_timestamp_utc) AS accepted_date,
+                        record_sha256
+                   FROM trustee_counterpart_records
+                  WHERE superseded_at IS NULL
+                  ORDER BY created_at DESC LIMIT 1"
+            );
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $hubData['trustee_counterpart'] = [
+                    'trustee_name'  => (string)$row['trustee_full_name'],
+                    'jvpa_version'  => (string)$row['jvpa_version'],
+                    'jvpa_title'    => (string)$row['jvpa_title'],
+                    'jvpa_date'     => (string)$row['jvpa_execution_date'],
+                    'capacity_type' => (string)$row['capacity_type'],
+                    'accepted_date' => (string)$row['accepted_date'],
+                    'sha256_prefix' => substr((string)$row['record_sha256'], 0, 12),
+                ];
+            }
+        } catch (Throwable) {}
             } elseif ($area === 'governance_polls') {
         // 1. Active vote proposals — titles and close dates (no member data)
         try {
@@ -1613,6 +1690,30 @@ function handleHubAdminActivity(): void
         try {
             $s = $db->query("SELECT COUNT(*) FROM members WHERE member_type = 'business'");
             $hubData['business_partner_count'] = (int)$s->fetchColumn();
+        } catch (Throwable) {}
+        // TDR: Investment & poll implementation decisions
+        try {
+            $stmt = $db->prepare(
+                "SELECT decision_ref, title, effective_date, decision_category,
+                        sub_trust_context, status, visibility
+                   FROM trustee_decisions
+                  WHERE decision_category IN ('investment_instruction','member_poll_implementation')
+                    AND status != 'draft'
+                  ORDER BY effective_date DESC LIMIT 10"
+            );
+            $stmt->execute();
+            $hubData['tdr_investment'] = array_map(
+                fn($r) => [
+                    'ref'       => (string)$r['decision_ref'],
+                    'title'     => (string)$r['title'],
+                    'effective' => (string)$r['effective_date'],
+                    'category'  => (string)$r['decision_category'],
+                    'context'   => (string)$r['sub_trust_context'],
+                    'status'    => (string)$r['status'],
+                    'visibility'=> (string)$r['visibility'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
         } catch (Throwable) {}
             } elseif ($area === 'esg_proxy_voting') {
         // 1. Holdings list — ticker, company_name, units, ESG flag (no member data)
@@ -1764,6 +1865,33 @@ function handleHubAdminActivity(): void
                 fn($r) => ['subject_type'=>(string)$r['subject_type'],'review_type'=>(string)$r['review_type'],
                            'review_status'=>(string)$r['review_status'],'created_at'=>(string)$r['created_at']],
                 $stmt->fetchAll(PDO::FETCH_ASSOC));
+        } catch (Throwable) {}
+        // TDR: FNAC engagement decisions
+        try {
+            $stmt = $db->prepare(
+                "SELECT decision_ref, title, effective_date, sub_trust_context,
+                        status, visibility, fnac_consulted, fpic_obtained,
+                        cultural_heritage_assessed
+                   FROM trustee_decisions
+                  WHERE decision_category = 'fnac_engagement'
+                    AND status != 'draft'
+                  ORDER BY effective_date DESC LIMIT 10"
+            );
+            $stmt->execute();
+            $hubData['tdr_fnac'] = array_map(
+                fn($r) => [
+                    'ref'                 => (string)$r['decision_ref'],
+                    'title'               => (string)$r['title'],
+                    'effective'           => (string)$r['effective_date'],
+                    'context'             => (string)$r['sub_trust_context'],
+                    'status'              => (string)$r['status'],
+                    'visibility'          => (string)$r['visibility'],
+                    'fnac'                => (bool)(int)$r['fnac_consulted'],
+                    'fpic'                => (bool)(int)$r['fpic_obtained'],
+                    'cultural_assessed'   => (bool)(int)$r['cultural_heritage_assessed'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
         } catch (Throwable) {}
             } elseif ($area === 'community_projects') {
         // 1. All grants — counts by status + total disbursed (no grantee PII)
@@ -2128,5 +2256,28 @@ function handleHubAdminActivity(): void
             $hubData['email_event_summary'] = [];
             foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r)
                 $hubData['email_event_summary'][(string)$r['event_type']] = (int)$r['cnt'];
+        } catch (Throwable) {}
+        // TDR: Distribution decisions
+        try {
+            $stmt = $db->prepare(
+                "SELECT decision_ref, title, effective_date, sub_trust_context,
+                        status, visibility
+                   FROM trustee_decisions
+                  WHERE decision_category = 'distribution'
+                    AND status != 'draft'
+                  ORDER BY effective_date DESC LIMIT 10"
+            );
+            $stmt->execute();
+            $hubData['tdr_distribution'] = array_map(
+                fn($r) => [
+                    'ref'       => (string)$r['decision_ref'],
+                    'title'     => (string)$r['title'],
+                    'effective' => (string)$r['effective_date'],
+                    'context'   => (string)$r['sub_trust_context'],
+                    'status'    => (string)$r['status'],
+                    'visibility'=> (string)$r['visibility'],
+                ],
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
         } catch (Throwable) {}
 }
