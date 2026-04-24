@@ -199,6 +199,25 @@ async function boot(){
   _enrolled = !!_hubData.enrolled;
   hideSplash();
   renderAll();
+
+  // Deliverable 5: ?project=<id> auto-open. If the URL carries a project
+  // parameter AND the project exists in this hub's owned projects, open it.
+  // This is the destination side of openReferencedProject() navigation.
+  try{
+    var params = new URLSearchParams(window.location.search || '');
+    var pidStr = params.get('project');
+    if(pidStr){
+      var pidNum = parseInt(pidStr, 10);
+      if(pidNum > 0 && Array.isArray(_hubData.projects)){
+        var match = _hubData.projects.some(function(p){
+          return (!p.is_referenced) && parseInt(p.id,10) === pidNum;
+        });
+        if(match){
+          setTimeout(function(){ openProject(pidNum); }, 120);
+        }
+      }
+    }
+  }catch(_ignored){ /* defensive */ }
 }
 
 /* ── Render orchestrator ────────────────────────────────────────────────────── */
@@ -552,6 +571,28 @@ function renderProjects(){
   var cards = projects.map(function(p){
     var statusCls = p.status||'draft';
     var barWidth  = _PHASE_WIDTHS[statusCls] || '10%';
+
+    // Referenced (cross-hub) project — read-only in this hub
+    if(p.is_referenced){
+      var ownerKey   = p.owner_area_key || '';
+      var ownerLbl   = p.owner_area_label || ownerKey;
+      return '<div class="hub-project-card referenced" data-owner-key="'+esc(ownerKey)+'" data-project-id="'+p.id+'" onclick="openReferencedProject(this)">' +
+        '<div class="hub-proj-ref-pill">Referenced from '+esc(ownerLbl)+'</div>' +
+        '<div class="hub-proj-phase-row">' +
+          '<span class="hub-status-chip '+statusCls+'">'+esc(phaseLabel(statusCls))+'</span>' +
+          (p.phase_target_end_at ? '<span class="hub-proj-phase-end">ends '+dt(p.phase_target_end_at)+'</span>' : '') +
+        '</div>' +
+        '<div class="hub-proj-bar"><div class="hub-proj-bar-fill ph-'+statusCls+'" style="width:'+barWidth+'"></div></div>' +
+        '<div class="hub-project-title">'+esc(p.title)+'</div>' +
+        (p.summary?'<div class="hub-project-summary">'+esc(p.summary.substring(0,100))+(p.summary.length>100?'…':'')+'</div>':'') +
+        '<div class="hub-project-footer">' +
+          '<span>'+p.participant_count+' participant'+(p.participant_count===1?'':'s')+'</span>' +
+          '<span class="hub-proj-ref-arrow">Open in '+esc(ownerLbl)+' →</span>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // Owned project — full interaction
     var joinedMark = p.joined_by_me ? '<span style="color:var(--green);font-size:.72rem">✓ Joined</span>' : '';
     var phaseEnd = p.phase_target_end_at ? '<span>ends '+dt(p.phase_target_end_at)+'</span>' : '';
     return '<div class="hub-project-card" onclick="openProject('+p.id+')">' +
@@ -599,6 +640,25 @@ function showCreateProject(){
   var fw = el('create-project-form-wrap');
   if(!fw) return;
   if(fw.innerHTML){fw.innerHTML=''; return;} // toggle
+
+  // Trustee-only advanced section — cross-hub interest areas
+  var trusteeAdv = '';
+  if(_hubData && _hubData.is_trustee){
+    var currentKey = window.HUB_AREA_KEY || '';
+    var otherHubs = _HUB_NAV_ITEMS.filter(function(h){ return h.key !== currentKey; });
+    var checkboxes = otherHubs.map(function(h){
+      return '<label><input type="checkbox" class="cp-ia" value="'+esc(h.key)+'"> '+esc(h.label)+'</label>';
+    }).join('');
+    trusteeAdv =
+      '<div class="hub-proj-trustee-adv">' +
+        '<div class="hub-proj-trustee-adv-hd">Trustee · Link to other hubs (optional)</div>' +
+        '<div style="font-size:.78rem;color:var(--text3);margin-bottom:10px;line-height:1.5">' +
+          'Tag other hubs to make this project appear there as a read-only reference card. Each referenced hub can see the project; all interaction (join, comment, phase advance) remains here in the owner hub.' +
+        '</div>' +
+        '<div class="hub-proj-trustee-adv-grid">' + checkboxes + '</div>' +
+      '</div>';
+  }
+
   fw.innerHTML =
     '<div class="hub-compose" style="margin-top:16px">' +
       '<div class="hub-compose-title">Create a new project</div>' +
@@ -609,6 +669,7 @@ function showCreateProject(){
         '<label style="font-size:.88rem;color:var(--text3)">Target close date (optional)</label>' +
         '<input class="hub-input" id="cp-date" type="date" style="width:auto;flex:none">' +
       '</div>' +
+      trusteeAdv +
       '<button class="btn btn-gold" onclick="submitCreateProject()">Create Project</button>' +
       '<button class="btn btn-ghost" style="margin-left:8px" onclick="cancelCreateProject()">Cancel</button>' +
       '<div class="flash" id="cp-fl"></div>' +
@@ -627,14 +688,25 @@ async function submitCreateProject(){
   var date    = (el('cp-date')||{}).value||'';
   title = title.trim();
   if(!title){ flash('cp-fl','Project title is required.','err'); return; }
+
+  // Trustee-only: collect checked interest areas. Empty on non-Trustee flows.
+  var interestKeys = [];
+  var boxes = document.querySelectorAll('#create-project-form-wrap .cp-ia:checked');
+  for(var i=0;i<boxes.length;i++){
+    var v = (boxes[i].value||'').trim();
+    if(v) interestKeys.push(v);
+  }
+
   var btn = document.querySelector('#create-project-form-wrap .btn-gold');
   if(btn){ btn.disabled=true; btn.textContent='Creating…'; }
   try{
-    var res = await api('vault/hub-projects',{method:'POST',body:JSON.stringify({
+    var payload = {
       area_key: window.HUB_AREA_KEY,
       title:title, summary:summary.trim(), body:body.trim(),
       target_close_at: date||undefined
-    })});
+    };
+    if(interestKeys.length) payload.interest_area_keys = interestKeys;
+    var res = await api('vault/hub-projects',{method:'POST',body:JSON.stringify(payload)});
     cancelCreateProject();
     // Refresh projects
     var d2 = await api('vault/hub&area='+window.HUB_AREA_KEY);
@@ -647,6 +719,27 @@ async function submitCreateProject(){
   }catch(e){
     flash('cp-fl',e.message||'Could not create project.','err');
     if(btn){ btn.disabled=false; btn.textContent='Create Project'; }
+  }
+}
+
+/* ── Cross-hub referenced project navigation ─────────────────────────────────
+   Invoked when a Member clicks a referenced (read-only) project card.
+   Navigates to the owner hub with ?project=<id> so the destination can
+   auto-scroll and auto-open the project detail. Uses data-* attributes
+   per JS architecture rule — no onclick string concatenation. */
+function openReferencedProject(cardEl){
+  if(!cardEl || !cardEl.dataset) return;
+  var ownerKey = (cardEl.dataset.ownerKey || '').trim();
+  var pid      = parseInt(cardEl.dataset.projectId || '0', 10);
+  if(!ownerKey || !pid) return;
+  // Validate against known hub list to avoid open-redirect via tampered DOM
+  var known = _HUB_NAV_ITEMS.some(function(h){ return h.key === ownerKey; });
+  if(!known) return;
+  var path = '../' + ownerKey + '/index.html?project=' + pid;
+  if(typeof coinTransition === 'function'){
+    coinTransition(path, 'Opening in owner hub');
+  }else{
+    window.location.href = path;
   }
 }
 
@@ -1159,6 +1252,7 @@ window.showCreateProject   = showCreateProject;
 window.cancelCreateProject = cancelCreateProject;
 window.submitCreateProject = submitCreateProject;
 window.openProject         = openProject;
+window.openReferencedProject = openReferencedProject;
 window.closeProject        = closeProject;
 window.joinProject         = joinProject;
 window.leaveProject        = leaveProject;

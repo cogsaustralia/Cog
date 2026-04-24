@@ -385,3 +385,60 @@ button{font-family:inherit;cursor:pointer}
 .hub-live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px rgba(62,207,110,.18);flex-shrink:0;display:none}.hub-live-dot.visible{display:block}
 .hub-thread-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-right:2px}
 .hub-thread-dot.read{background:rgba(255,255,255,.15)}
+/* ── Phase 1: Cross-hub referenced projects ─────────────────────────────────
+   Read-only project cards imported from another hub via interest_area_keys.
+   Owner hub controls interaction; referenced hub shows only visibility. */
+.hub-project-card.referenced{
+  border-left:3px dashed var(--text4);
+  background:rgba(255,255,255,.015);
+  opacity:.92
+}
+.hub-project-card.referenced:hover{
+  border-left-color:var(--gold);
+  opacity:1
+}
+.hub-proj-ref-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:99px;
+  font-size:.68rem;font-weight:600;letter-spacing:.04em;
+  background:rgba(232,184,75,.08);
+  border:1px solid rgba(232,184,75,.2);
+  color:var(--gold);
+  margin-bottom:8px
+}
+.hub-proj-ref-pill::before{content:"↗";font-size:.75rem;margin-right:2px;opacity:.8}
+.hub-proj-ref-arrow{
+  font-size:.72rem;color:var(--text3);font-style:italic
+}
+.hub-project-card.referenced:hover .hub-proj-ref-arrow{color:var(--gold)}
+
+/* ── Phase 1: Trustee advanced section inside create-project form ───────── */
+.hub-proj-trustee-adv{
+  margin-top:14px;margin-bottom:14px;
+  padding:12px 14px;
+  border:1px dashed rgba(232,184,75,.3);
+  border-radius:8px;
+  background:rgba(232,184,75,.03)
+}
+.hub-proj-trustee-adv-hd{
+  font-size:.72rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px
+}
+.hub-proj-trustee-adv-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px
+}
+.hub-proj-trustee-adv-grid label{
+  display:flex;align-items:center;gap:6px;
+  font-size:.82rem;color:var(--text2);cursor:pointer;
+  padding:4px 6px;border-radius:4px;
+  user-select:none
+}
+.hub-proj-trustee-adv-grid label:hover{background:rgba(255,255,255,.03)}
+.hub-proj-trustee-adv-grid input[type=checkbox]{
+  accent-color:var(--gold);cursor:pointer;flex-shrink:0
+}
+@media (max-width:520px){
+  .hub-proj-trustee-adv-grid{grid-template-columns:1fr}
+}

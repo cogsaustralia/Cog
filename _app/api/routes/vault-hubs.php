@@ -108,6 +108,36 @@ function hubResolveMember(PDO $db, array $principal): array {
     ];
 }
 
+/**
+ * Returns true if the given member is cross-referenced to an active
+ * trustee record via mobile OR personal_email match.
+ *
+ * No schema changes — joins on existing columns:
+ *   trustees.mobile         ↔ members.mobile
+ *   trustees.personal_email ↔ members.email
+ *
+ * Defensive: if the trustees table does not exist (e.g. on legacy envs
+ * predating the Trustee Records System migration), returns false silently.
+ */
+function hubMemberIsTrustee(PDO $db, int $memberId): bool {
+    if ($memberId < 1) return false;
+    try {
+        $stmt = $db->prepare(
+            "SELECT 1
+               FROM members m
+               JOIN trustees t
+                 ON (t.mobile = m.mobile OR t.personal_email = m.email)
+              WHERE m.id = ?
+                AND t.status = 'active'
+              LIMIT 1"
+        );
+        $stmt->execute([$memberId]);
+        return (bool)$stmt->fetchColumn();
+    } catch (Throwable) {
+        return false;
+    }
+}
+
 /** Update the member's participation_answers atomically. Returns fresh list. */
 function hubUpdateAreas(PDO $db, int $memberId, array $areas): array {
     $areas = array_values(array_unique(array_filter(array_map('strval', $areas), 'strlen')));
@@ -288,6 +318,32 @@ function handleHub(): void {
         $joined = array_map('intval', array_column($jStmt->fetchAll(), 'project_id'));
     }
 
+    // Referenced projects — projects in OTHER hubs that tag this area as an
+    // interest area. Read-only in this hub. Capped at 5 to prevent clutter.
+    // Silently degrades to empty if interest_area_keys column not yet migrated.
+    $referenced = [];
+    try {
+        $refStmt = $db->prepare(
+            "SELECT p.id, p.area_key AS owner_area_key, p.title, p.summary,
+                    p.status, p.lead_type, p.lead_member_id,
+                    lm.first_name AS lead_first_name,
+                    lm.state_code AS lead_state_code,
+                    p.target_close_at, p.linked_poll_id, p.participant_count,
+                    p.phase_target_end_at,
+                    p.created_at, p.updated_at
+               FROM hub_projects p
+               LEFT JOIN members lm ON lm.id = p.lead_member_id
+              WHERE p.area_key != ?
+                AND p.status != 'archived'
+                AND p.interest_area_keys IS NOT NULL
+                AND FIND_IN_SET(?, p.interest_area_keys) > 0
+              ORDER BY p.updated_at DESC
+              LIMIT 5"
+        );
+        $refStmt->execute([$area, $area]);
+        $referenced = $refStmt->fetchAll();
+    } catch (Throwable) { /* column not yet migrated */ }
+
     // Summary counts
     $summary = ['member_count' => 0, 'thread_count' => 0,
                 'active_project_count' => 0, 'last_activity_at' => null];
@@ -306,14 +362,24 @@ function handleHub(): void {
         'enrolled'       => $enrolled,
         'roster_visible' => $me['roster_visible'],
         'show_name'      => $me['show_name'] ?? false,
+        'is_trustee'     => hubMemberIsTrustee($db, $me['id']),
         'summary'        => $summary,
         'unread_broadcasts' => $unreadBc,
         'unread_threads'    => $unreadPosts,
         'threads'        => $threads,
-        'projects'       => array_map(function($p) use ($joined) {
-            $p['joined_by_me'] = in_array((int)$p['id'], $joined, true);
-            return $p;
-        }, $projects),
+        'projects'       => array_merge(
+            array_map(function($p) use ($joined) {
+                $p['joined_by_me']  = in_array((int)$p['id'], $joined, true);
+                $p['is_referenced'] = false;
+                return $p;
+            }, $projects),
+            array_map(function($r) {
+                $r['joined_by_me']    = false;
+                $r['is_referenced']   = true;
+                $r['owner_area_label'] = hubAreaLabel((string)$r['owner_area_key']);
+                return $r;
+            }, $referenced)
+        ),
     ]);
 }
 
@@ -495,16 +561,52 @@ function handleHubProjects(): void {
         apiError('Activate participation in this area before creating projects.', 403);
     }
 
+    // Trustee-gated: interest_area_keys for cross-hub referencing.
+    // Non-Trustees: silently ignore any interest_area_keys in the body (defensive).
+    $interestKeys = null;
+    if (hubMemberIsTrustee($db, $me['id'])) {
+        $raw = $body['interest_area_keys'] ?? null;
+        if (is_array($raw)) {
+            $valid   = [];
+            $allKeys = hubAreaKeys();
+            foreach ($raw as $k) {
+                $k = trim((string)$k);
+                if ($k === '' || $k === $area)        continue; // cannot self-reference
+                if (!in_array($k, $allKeys, true))    continue; // must be valid hub
+                if (!in_array($k, $valid, true))      $valid[] = $k;
+            }
+            if ($valid) $interestKeys = implode(',', $valid);
+        }
+    }
+
     $db->beginTransaction();
     try {
-        $db->prepare(
-            "INSERT INTO hub_projects
-                (area_key, title, summary, body, status, lead_type,
-                 lead_member_id, target_close_at, created_by_member_id,
-                 phase_opened_at, participant_count, created_at, updated_at)
-             VALUES (?, ?, ?, ?, 'draft', 'member', ?, ?, ?, NOW(), 1, NOW(), NOW())"
-        )->execute([$area, $title, $summary ?: null, $bodyTxt ?: null,
-                    $me['id'], $tcDate, $me['id']]);
+        // Column list is conditional on interest_area_keys presence so that
+        // project creation by non-Trustees continues to work even if the
+        // phase1 SQL migration hasn't yet been run. Trustees submitting
+        // interest_area_keys before the migration runs will get a clear
+        // error message (column not found) — acceptable and diagnostic.
+        if ($interestKeys !== null) {
+            $db->prepare(
+                "INSERT INTO hub_projects
+                    (area_key, title, summary, body, status, lead_type,
+                     lead_member_id, target_close_at, created_by_member_id,
+                     phase_opened_at, participant_count, interest_area_keys,
+                     created_at, updated_at)
+                 VALUES (?, ?, ?, ?, 'draft', 'member', ?, ?, ?, NOW(), 1, ?, NOW(), NOW())"
+            )->execute([$area, $title, $summary ?: null, $bodyTxt ?: null,
+                        $me['id'], $tcDate, $me['id'], $interestKeys]);
+        } else {
+            $db->prepare(
+                "INSERT INTO hub_projects
+                    (area_key, title, summary, body, status, lead_type,
+                     lead_member_id, target_close_at, created_by_member_id,
+                     phase_opened_at, participant_count,
+                     created_at, updated_at)
+                 VALUES (?, ?, ?, ?, 'draft', 'member', ?, ?, ?, NOW(), 1, NOW(), NOW())"
+            )->execute([$area, $title, $summary ?: null, $bodyTxt ?: null,
+                        $me['id'], $tcDate, $me['id']]);
+        }
         $pid = (int)$db->lastInsertId();
 
         $db->prepare(
