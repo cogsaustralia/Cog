@@ -1688,6 +1688,8 @@ function openVault(d){
     var _giftLines  = Array.isArray(d.gift_pool_unpaid_lines) ? d.gift_pool_unpaid_lines : [];
     var _kidsOrders = Array.isArray(d.kids_pending_orders)    ? d.kids_pending_orders    : [];
     var _hasSec = _giftLines.length > 0 || _kidsOrders.some(function(r){ return (parseInt(r.units||0,10)||0) > 0; });
+    // DEBUG — remove after confirming
+    console.log('[PAY_DEBUG wallet ?pay=1] _paid:', _paid, '| _giftLines:', _giftLines.length, '| _kidsOrders:', _kidsOrders.length, '| _hasSec:', _hasSec);
     // Pre-warm the cache so openOutstandingModal works without getOutstandingPayments
     if (_hasSec && !window._lastOutstandingOp) {
       var _lm = { donation_tokens:'Donation COG$', pay_it_forward_tokens:'Pay It Forward', kids_tokens:'Kids S-NFT' };
@@ -4819,6 +4821,8 @@ function openOutstandingModal() {
     op = { giftItems:_gi, kidsItems:_ki, allItems:_gi.concat(_ki), total:_gt+_kt, lines:_lines };
     window._lastOutstandingOp = op;
   }
+  // DEBUG — remove after confirming
+  console.log('[PAY_DEBUG openOutstandingModal] op.allItems:', op ? op.allItems.length : 'no op', '| _lastOutstandingOp:', window._lastOutstandingOp ? window._lastOutstandingOp.allItems.length : 'null');
   if (!op.allItems.length) return;
 
   var modal = document.getElementById('outstanding-modal');
