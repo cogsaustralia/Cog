@@ -20,6 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
         if ($uuid === '') throw new \RuntimeException('Trustee UUID missing.');
         $fullName   = trim($_POST['full_name']   ?? '');
         $dob        = trim($_POST['date_of_birth'] ?? '');
+        $mobile     = trim($_POST['mobile']      ?? '');
+        $personalEmail = trim($_POST['personal_email'] ?? '');
         $address    = trim($_POST['address']     ?? '');
         $apptDate   = trim($_POST['appointment_date'] ?? '');
         $apptRef    = trim($_POST['appointment_instrument_ref'] ?? '');
@@ -42,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
             "UPDATE trustees SET
                full_name                  = ?,
                date_of_birth              = ?,
+               mobile                     = ?,
+               personal_email             = ?,
                address                    = ?,
                appointment_date           = ?,
                appointment_instrument_ref = ?,
@@ -54,14 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'upda
         );
         $stmt->execute([
             $fullName,
-            $dob        !== '' ? $dob        : null,
-            $address    !== '' ? $address    : null,
+            $dob           !== '' ? $dob           : null,
+            $mobile        !== '' ? $mobile        : null,
+            $personalEmail !== '' ? $personalEmail : null,
+            $address       !== '' ? $address       : null,
             $apptDate,
-            $apptRef    !== '' ? $apptRef    : null,
+            $apptRef       !== '' ? $apptRef       : null,
             $status,
-            $statusDate !== '' ? $statusDate : null,
+            $statusDate    !== '' ? $statusDate    : null,
             $email,
-            $notes      !== '' ? $notes      : null,
+            $notes         !== '' ? $notes         : null,
             $uuid,
         ]);
         if ($stmt->rowCount() === 0) throw new \RuntimeException('No row updated — UUID not found.');
@@ -236,6 +242,16 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
         <?= !empty($t['date_of_birth']) ? tr_h($t['date_of_birth']) : 'Not recorded — click Edit' ?>
       </span>
 
+      <span class="dg-l">Mobile</span>
+      <span class="dg-v <?= empty($t['mobile'])?'missing':'' ?>">
+        <?= !empty($t['mobile']) ? tr_h($t['mobile']) : 'Not recorded — click Edit' ?>
+      </span>
+
+      <span class="dg-l">Personal Email</span>
+      <span class="dg-v <?= empty($t['personal_email'])?'missing':'' ?>">
+        <?= !empty($t['personal_email']) ? tr_h($t['personal_email']) : 'Not recorded — click Edit' ?>
+      </span>
+
       <span class="dg-l">Address</span>
       <span class="dg-v"><?= !empty($t['address']) ? tr_h($t['address']) : '—' ?></span>
 
@@ -280,6 +296,18 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
           <div class="fg">
             <label>Date of Birth</label>
             <input type="date" name="date_of_birth" value="<?= tr_h($t['date_of_birth'] ?? '') ?>">
+          </div>
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Mobile</label>
+            <input type="tel" name="mobile" value="<?= tr_h($t['mobile'] ?? '') ?>"
+                   placeholder="04xx xxx xxx">
+          </div>
+          <div class="fg">
+            <label>Personal Email</label>
+            <input type="email" name="personal_email" value="<?= tr_h($t['personal_email'] ?? '') ?>"
+                   placeholder="personal@example.com">
           </div>
         </div>
         <div class="fg">
