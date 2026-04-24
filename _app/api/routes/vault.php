@@ -2520,11 +2520,13 @@ function createStripeCheckout(): void {
     $db = getDB();
     $body = jsonBody();
 
+    $site      = rtrim((string)(defined('SITE_URL') && SITE_URL ? SITE_URL : 'https://cogsaustralia.org'), '/');
     $secretKey = defined('STRIPE_SECRET_KEY') ? STRIPE_SECRET_KEY : '';
     if ($secretKey === '') {
         error_log('[vault/create-checkout] STRIPE_SECRET_KEY is not set in .env — card payment cannot proceed.');
         apiError('Card payment is currently unavailable. Please use bank transfer or PayID.', 503);
     }
+    define('COGS_STRIPE_DEBUG', true); // TEMP — remove after diagnosis
     // Validate key format — Stripe live keys start sk_live_, test keys sk_test_
     if (!str_starts_with($secretKey, 'sk_')) {
         error_log('[vault/create-checkout] STRIPE_SECRET_KEY does not appear to be a valid Stripe key (missing sk_ prefix).');
@@ -2691,6 +2693,10 @@ function createStripeCheckout(): void {
     $postData['payment_intent_data[description]'] = 'COG$ Community Gift Pool — ' . (string)$member['full_name'] . ' (' . (string)$member['member_number'] . ')';
     $postData['payment_intent_data[statement_descriptor]'] = 'COGS AUSTRALIA';
 
+    // TEMP DEBUG — remove after diagnosis
+    if (defined('COGS_STRIPE_DEBUG') && COGS_STRIPE_DEBUG) {
+        apiError('[DEBUG] site=' . json_encode($site) . ' success_url=' . json_encode($site . '/wallets/member.html?payment=success') . ' SITE_URL_const=' . json_encode(defined('SITE_URL') ? SITE_URL : 'NOT_DEFINED'), 503);
+    }
     $ch = curl_init('https://api.stripe.com/v1/checkout/sessions');
     curl_setopt_array($ch, [
         CURLOPT_POST           => true,
@@ -2717,8 +2723,7 @@ function createStripeCheckout(): void {
         $stripeErr  = (string)($result['error']['message'] ?? 'Unknown Stripe error');
         $stripeCode = (string)($result['error']['code']    ?? '');
         $stripeType = (string)($result['error']['type']    ?? '');
-        // DEBUG — exposes Stripe error detail in response temporarily
-        apiError('[DEBUG] HTTP=' . $httpCode . ' type=' . $stripeType . ' code=' . $stripeCode . ' msg=' . $stripeErr . ' raw=' . substr((string)$response, 0, 400), 503);
+        apiError('Card payment is temporarily unavailable. Please use bank transfer or PayID — both are fee-free.', 503);
     }
 
     apiSuccess([
