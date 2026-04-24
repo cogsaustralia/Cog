@@ -234,8 +234,21 @@
     /* Inviter confirm row */
     .invite-confirm-row{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:rgba(82,184,122,.04)}
 
-    /* Animations */
-    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    /* Field group divider */
+    .field-group-hd{display:flex;align-items:center;gap:12px;margin:22px 0 14px}
+    .field-group-hd span{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-2);white-space:nowrap}
+    .field-group-hd::after{content:'';flex:1;height:1px;background:var(--line)}
+
+    /* DOB selects */
+    .dob-row{display:grid;grid-template-columns:2fr 3fr 2fr;gap:10px}
+    .dob-row select{width:100%;background:rgba(255,255,255,.10);border:1.5px solid var(--line2);border-radius:10px;padding:13px 16px;color:var(--text);font-family:var(--sans);font-size:1rem;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none;min-height:50px;cursor:pointer}
+    .dob-row select:focus{border-color:var(--gold-rim2);background:rgba(240,209,138,.07)}
+    .dob-row select option{background:#1a1206;color:var(--text)}
+
+    /* Step nav full-width on mobile */
+    @media(max-width:580px){
+      .step-nav .btn-primary{width:100%;justify-content:center}
+    }
     .hero-animate{animation:fadeUp .6s ease both}
     .hero-animate:nth-child(1){animation-delay:.05s}
     .hero-animate:nth-child(2){animation-delay:.15s}
@@ -293,8 +306,8 @@
       <div class="container hero-grid">
         <div>
           <span class="eyebrow hero-animate">Governance Foundation Day · 14 May 2026</span>
-          <h1 class="hero-animate">Become a Member in Australia's community joint venture.</h1>
-          <p class="lead hero-animate">Become a Member for $4 once only. That's it. Your Member record, your Independence Vault, and your equal vote are set up from this one step. No ongoing fees. No obligations beyond the contribution.</p>
+          <h1 class="hero-animate">Your $4. Your voice.<br>Your vault.</h1>
+          <p class="lead hero-animate">One membership contribution, once only. Your Member record, your Independence Vault, and your equal governance vote — all set up from this single step. No ongoing fees. No obligations beyond the $4.</p>
           <div class="hero-animate" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:10px">
             <a class="btn-primary" href="#form">Become a Member — $4</a>
             <a class="btn-secondary" href="../faq/index.html">Questions first?</a>
@@ -370,59 +383,65 @@
               </div>
               <input type="hidden" id="full_name" name="full_name">
               <div class="field full">
-                <label for="email">Email address <span style="font-weight:400;opacity:.6">(required — for vault access and updates)</span></label>
+                <label for="email">Email address</label>
                 <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
               </div>
               <div class="field full">
-                <label for="mobile">Mobile number <span style="font-weight:400;opacity:.6">(required — your primary vault login key)</span></label>
+                <label for="mobile">Mobile number <span style="font-weight:400;font-size:.82em;opacity:.65;text-transform:none;letter-spacing:0">— used for vault login</span></label>
                 <input id="mobile" name="mobile" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx">
               </div>
               <div class="field full">
-                <label for="dob">Date of birth <span style="font-weight:400;opacity:.6">(required)</span></label>
-                <input id="dob" name="date_of_birth" type="date" autocomplete="bday" required>
+                <label>Date of birth</label>
+                <div class="dob-row">
+                  <select id="dob_day" name="dob_day" aria-label="Day">
+                    <option value="">Day</option>
+                  </select>
+                  <select id="dob_month" name="dob_month" aria-label="Month">
+                    <option value="">Month</option>
+                    <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+                    <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+                    <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+                    <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                  </select>
+                  <select id="dob_year" name="dob_year" aria-label="Year">
+                    <option value="">Year</option>
+                  </select>
+                </div>
+                <input type="hidden" id="dob" name="date_of_birth">
               </div>
             </div>
 
-            <!-- Address -->
-            <div style="margin-top:16px">
-              <div class="field full" style="margin-bottom:4px">
-                <label>Street address</label>
-                <div class="addr-wrap">
-                  <input id="addr-search" type="text" autocomplete="off" placeholder="Start typing your address…"
-                    style="display:none" oninput="addrSearch(this.value)">
-                  <div class="addr-dropdown" id="addr-dropdown"></div>
-                </div>
-                
+            <!-- Address section -->
+            <div class="field-group-hd"><span>Your address</span></div>
+            <div class="form-grid" id="addr-manual">
+              <div class="field full"><label for="street">Street address</label><input id="street" name="street" placeholder="123 Main Street" autocomplete="street-address"></div>
+              <div class="field full"><label for="street2">Line 2 <span style="font-weight:400;opacity:.55;text-transform:none;letter-spacing:0;font-size:.9em">optional</span></label><input id="street2" name="street2" placeholder="Unit / suite / PO Box" autocomplete="address-line2"></div>
+              <div class="field"><label for="suburb">Suburb</label><input id="suburb" name="suburb" placeholder="Suburb" autocomplete="address-level2"></div>
+              <div class="field"><label for="state">State</label>
+                <select id="state" name="state" autocomplete="address-level1">
+                  <option value="">Select</option><option>NSW</option><option>VIC</option><option>QLD</option><option>WA</option><option>SA</option><option>TAS</option><option>ACT</option><option>NT</option>
+                </select>
               </div>
-              <div id="addr-manual" class="form-grid">
-                <div class="field full"><label for="street">Street</label><input id="street" name="street" placeholder="123 Main Street" autocomplete="street-address"></div>
-                <div class="field full"><label for="street2">Line 2 <span style="opacity:.6">(optional)</span></label><input id="street2" name="street2" placeholder="Unit / suite" autocomplete="address-line2"></div>
-                <div class="field"><label for="suburb">Suburb</label><input id="suburb" name="suburb" placeholder="Suburb" autocomplete="address-level2"></div>
-                <div class="field"><label for="state">State</label>
-                  <select id="state" name="state" autocomplete="address-level1">
-                    <option value="">Select</option><option>NSW</option><option>VIC</option><option>QLD</option><option>WA</option><option>SA</option><option>TAS</option><option>ACT</option><option>NT</option>
-                  </select>
-                </div>
-                <div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode" inputmode="numeric" pattern="[0-9]{4}" required placeholder="2000" autocomplete="postal-code"></div>
-              </div>
+              <div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode" inputmode="numeric" pattern="[0-9]{4}" required placeholder="2000" autocomplete="postal-code"></div>
             </div>
 
             <!-- Member Invitation Code -->
+            <div class="field-group-hd" style="margin-top:22px"><span>Invitation</span></div>
             <div class="invite-field-wrap" id="invite-wrap">
-              <label class="invite-label" for="invite_code_input">Inviting Member Code</label>
-              <p class="invite-helper">Enter the code from the Member who invited you, or use their invitation link. A valid Member invitation code is required to join the membership.</p>
+              <label class="invite-label" for="invite_code_input">Member invitation code</label>
+              <p class="invite-helper" id="invite-helper-text">Enter the code from the Member who invited you. You need a valid Member code to complete your registration.</p>
               <div class="invite-input-row">
-                <input id="invite_code_input" name="invite_code_display" type="text" maxlength="40" placeholder="e.g. TBC-DRAKE-01" autocomplete="off" autocapitalize="characters" oninput="onInviteInput()">
-                <button type="button" class="invite-validate-btn" id="invite-validate-btn" onclick="validateInviteCode()">Verify code</button>
+                <input id="invite_code_input" name="invite_code_display" type="text" maxlength="40" placeholder="e.g. COGS-XXXXX" autocomplete="off" autocapitalize="characters" oninput="onInviteInput()">
+                <button type="button" class="invite-validate-btn" id="invite-validate-btn" onclick="validateInviteCode()">Verify</button>
               </div>
               <div class="invite-status" id="invite-status"></div>
-              <p class="invite-admin-note">Do not have a Member code? <a href="mailto:hello@cogsaustralia.org?subject=Partner%20Invitation%20Request" style="color:var(--gold-2)">Contact administration</a> to request a reviewed invitation pathway.</p>
+              <p class="invite-admin-note" id="invite-admin-note">No code? <a href="mailto:hello@cogsaustralia.org?subject=Invitation+Request" style="color:var(--gold-2)">Contact administration</a> to request an invitation.</p>
             </div>
             <input type="hidden" id="invite_code_used" name="invite_code_used">
             <input type="hidden" id="invite_validation_status" name="invite_validation_status" value="missing">
             <input type="hidden" id="invited_by_partner_id" name="invited_by_partner_id">
             <input type="hidden" id="invite_verified_at" name="invite_verified_at">
-                        </div>
+          </div>
 
             <!-- Membership pill -->
             <div class="membership-pill">
@@ -639,6 +658,34 @@
 </div>
 
 <script>
+/* ── DOB select population ── */
+(function() {
+  var dayEl = document.getElementById('dob_day');
+  var yearEl = document.getElementById('dob_year');
+  for (var d = 1; d <= 31; d++) {
+    var o = document.createElement('option');
+    o.value = String(d).padStart(2, '0');
+    o.textContent = d;
+    dayEl.appendChild(o);
+  }
+  var curYear = new Date().getFullYear();
+  for (var y = curYear - 16; y >= curYear - 100; y--) {
+    var o2 = document.createElement('option');
+    o2.value = y;
+    o2.textContent = y;
+    yearEl.appendChild(o2);
+  }
+  function syncDob() {
+    var d = document.getElementById('dob_day').value;
+    var m = document.getElementById('dob_month').value;
+    var y = document.getElementById('dob_year').value;
+    document.getElementById('dob').value = (d && m && y) ? y + '-' + m + '-' + d : '';
+  }
+  ['dob_day','dob_month','dob_year'].forEach(function(id) {
+    document.getElementById(id).addEventListener('change', syncDob);
+  });
+})();
+
 /* ── Invitation code state ── */
 var _inviteValid = false;
 var _inviterName = '';
@@ -764,7 +811,11 @@ async function validateInviteCode() {
       document.getElementById('invite_verified_at').value       = new Date().toISOString();
       wrap.classList.add('validated');
       st.className = 'invite-status ok';
-      st.innerHTML = 'Invitation confirmed. You were invited by Member: <span class="invite-inviter-name">' + escText(_inviterName) + '</span>.';
+      st.innerHTML = 'Invitation confirmed &#10003; — invited by Member: <span class="invite-inviter-name">' + escText(_inviterName) + '</span>.';
+      var ht = document.getElementById('invite-helper-text');
+      if (ht) ht.style.display = 'none';
+      var an = document.getElementById('invite-admin-note');
+      if (an) an.style.display = 'none';
     } else {
       _inviteValid = false;
       wrap.classList.add('invalid');
@@ -848,7 +899,6 @@ function validateStep1() {
     if (el && !el.value.trim()) { addrEmpty = true; }
   });
   if (addrEmpty) {
-    showManual();
     ['street','suburb','state','postcode'].forEach(function(id){
       var el = document.getElementById(id);
       if (el && !el.value.trim()) {
@@ -860,6 +910,21 @@ function validateStep1() {
         el.addEventListener('input',  function(){ target.style.borderColor = ''; }, {once:true});
       }
     });
+  }
+  /* Gate on invite validation */
+  if (!_inviteValid) {
+    var wrap = document.getElementById('invite-wrap');
+    if (wrap) {
+      wrap.style.outline = '2px solid #f0857a';
+      wrap.style.borderRadius = '14px';
+      setTimeout(function(){ wrap.style.outline = ''; }, 2000);
+    }
+    var st = document.getElementById('invite-status');
+    if (st && !st.textContent.trim()) {
+      st.className = 'invite-status err';
+      st.textContent = 'Please verify your Member invitation code before continuing.';
+    }
+    ok = false;
   }
   if (!ok) {
     var first = document.querySelector('#step-1 [style*="f0857a"]');
@@ -919,28 +984,6 @@ function checkSubmit() {
   btn.style.opacity = canSubmit ? '1' : '.45';
   btn.style.cursor  = canSubmit ? 'pointer' : 'not-allowed';
   updateInviteBlock();
-}
-
-/* ── Address search (stub) ── */
-function addrSearch(val) {
-  var dd = document.getElementById('addr-dropdown');
-  if (val.length < 3) { dd.classList.remove('open'); return; }
-  dd.classList.add('open');
-  dd.innerHTML = '<div class="addr-option" onclick="selectAddr(\''+val+'\')">'+val+' (continue typing or enter manually below)</div>';
-}
-function selectAddr(val) {
-  document.getElementById('addr-search').value = val;
-  document.getElementById('addr-dropdown').classList.remove('open');
-}
-function showManual() {
-  var m = document.getElementById('addr-manual');
-  m.classList.remove('hidden'); m.classList.add('show'); m.style.display = 'grid';
-  var btn = document.querySelector('.addr-manual-btn');
-  if (btn) btn.style.display = 'none';
-  ['street','suburb','state','postcode'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.required = true;
-  });
 }
 
 /* ── Form submit ── */
