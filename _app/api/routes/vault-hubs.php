@@ -193,6 +193,9 @@ if ($action === 'hub-resolved-queries') {
 if ($action === 'hub-ai') {
     handleHubAI();
 }
+if ($action === 'hub-admin-activity') {
+    handleHubAdminActivity();
+}
 
 // =============================================================================
 // Handlers
@@ -1185,5 +1188,141 @@ function handleHubMainspring(): void {
         'tiles'    => $tiles,
         'activity' => $activity,
         'my_areas' => $me['areas'],
+    ]);
+}
+
+
+/**
+ * GET /vault/hub-admin-activity?area_key=<key>&limit=<n>
+ *
+ * Returns two things:
+ *   admin_pages — the static hub→admin page map for this area (from config).
+ *                 Shows Partners which admin functions serve their hub.
+ *   activity    — recent operational events for this area (read-only, no PII).
+ *
+ * Auth: requireAuth('snft') + hub enrolment check.
+ * Read-only. No writes. No mutation.
+ */
+function handleHubAdminActivity(): void
+{
+    requireMethod('GET');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+
+    $area  = hubRequireArea((string)($_GET['area_key'] ?? ''));
+    $limit = max(1, min(20, (int)($_GET['limit'] ?? 10)));
+
+    $me = hubResolveMember($db, $principal);
+
+    // Gate: Partner must be enrolled in this hub
+    if (!in_array($area, $me['areas'], true)) {
+        apiError('You are not enrolled in this hub. Activate Participation to view operational activity.', 403);
+    }
+
+    // ── Static admin page map for this hub ──────────────────────────────────
+    $helpersPath = __DIR__ . '/../../config/hub_admin_helpers.php';
+    $adminPages  = ['primary' => [], 'secondary' => []];
+    if (file_exists($helpersPath)) {
+        require_once $helpersPath;
+        $raw = hub_admin_pages_for($area);
+        $toLabelled = static function(array $keys): array {
+            return array_map(static function(string $k): array {
+                return ['key' => $k, 'label' => hub_admin_page_label($k)];
+            }, $keys);
+        };
+        $adminPages = [
+            'primary'   => $toLabelled($raw['primary']),
+            'secondary' => $toLabelled($raw['secondary']),
+        ];
+    }
+
+    // ── Dynamic activity feed — three sources, each try/caught ──────────────
+    $activity = [];
+
+    // Source 1: admin-initiated forum threads for this area
+    try {
+        $stmt = $db->prepare(
+            "SELECT 'thread' AS source,
+                    subject        AS summary,
+                    'admin'      AS actor_type,
+                    created_at     AS ts
+               FROM partner_op_threads
+              WHERE area_key = ?
+                AND created_by_admin_user_id IS NOT NULL
+              ORDER BY created_at DESC
+              LIMIT 8"
+        );
+        $stmt->execute([$area]);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $activity[] = [
+                'ts'         => (string)$row['ts'],
+                'source'     => 'Admin thread',
+                'summary'    => (string)$row['summary'],
+                'actor_type' => 'admin',
+            ];
+        }
+    } catch (Throwable) { /* table not available */ }
+
+    // Source 2: recent hub projects (created or updated) for this area
+    try {
+        $stmt = $db->prepare(
+            "SELECT title,
+                    status,
+                    updated_at AS ts
+               FROM hub_projects
+              WHERE area_key = ?
+              ORDER BY updated_at DESC
+              LIMIT 6"
+        );
+        $stmt->execute([$area]);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $statusLabel = match((string)$row['status']) {
+                'open'      => 'Active project',
+                'completed' => 'Completed project',
+                'closed'    => 'Closed project',
+                'draft'     => 'Draft project',
+                default      => 'Project',
+            };
+            $activity[] = [
+                'ts'         => (string)$row['ts'],
+                'source'     => $statusLabel,
+                'summary'    => (string)$row['title'],
+                'actor_type' => 'system',
+            ];
+        }
+    } catch (Throwable) { /* table not available */ }
+
+    // Source 3: resolved/closed member queries (hub_members or public transparency)
+    try {
+        $stmt = $db->prepare(
+            "SELECT subject     AS summary,
+                    updated_at  AS ts
+               FROM member_hub_queries
+              WHERE area_key      = ?
+                AND status        IN ('resolved', 'closed')
+                AND transparency  IN ('hub_members', 'public_record')
+              ORDER BY updated_at DESC
+              LIMIT 5"
+        );
+        $stmt->execute([$area]);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $activity[] = [
+                'ts'         => (string)$row['ts'],
+                'source'     => 'Query resolved',
+                'summary'    => (string)$row['summary'],
+                'actor_type' => 'admin',
+            ];
+        }
+    } catch (Throwable) { /* table not available */ }
+
+    // Sort all sources by ts DESC and apply limit
+    usort($activity, static fn($a, $b) => strcmp((string)$b['ts'], (string)$a['ts']));
+    $activity = array_slice($activity, 0, $limit);
+
+    apiSuccess([
+        'area_key'    => $area,
+        'area_label'  => hubAreaLabel($area),
+        'admin_pages' => $adminPages,
+        'activity'    => $activity,
     ]);
 }

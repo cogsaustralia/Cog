@@ -80,6 +80,37 @@ if (!function_exists('admin_sidebar_link')) {
     }
 }
 
+if (!function_exists('admin_sidebar_link_annotated')) {
+    /**
+     * Renders an admin nav link with optional hub-chip annotations below it.
+     * $primary_hubs  — area_keys where this page is a primary admin function.
+     * $secondary_hubs — area_keys where this page is a secondary function.
+     */
+    function admin_sidebar_link_annotated(
+        string $href,
+        string $label,
+        string $key,
+        string $active,
+        array  $primary_hubs   = [],
+        array  $secondary_hubs = []
+    ): string {
+        $link = admin_sidebar_link($href, $label, $key, $active);
+        if (empty($primary_hubs) && empty($secondary_hubs)) {
+            return $link;
+        }
+        $chips = '';
+        foreach ($primary_hubs as $areaKey) {
+            $chipLabel = function_exists('hub_admin_short_label') ? hub_admin_short_label($areaKey) : $areaKey;
+            $chips .= '<span class="nav-hub-chip">' . htmlspecialchars($chipLabel, ENT_QUOTES, 'UTF-8') . '</span>';
+        }
+        foreach ($secondary_hubs as $areaKey) {
+            $chipLabel = function_exists('hub_admin_short_label') ? hub_admin_short_label($areaKey) : $areaKey;
+            $chips .= '<span class="nav-hub-chip nav-hub-chip-sec">' . htmlspecialchars($chipLabel, ENT_QUOTES, 'UTF-8') . '</span>';
+        }
+        return '<div class="nav-link-wrap">' . $link . '<div class="nav-hub-chips">' . $chips . '</div></div>';
+    }
+}
+
 if (!function_exists('admin_sidebar_styles_once')) {
     function admin_sidebar_styles_once(): void {
         static $printed = false;
@@ -107,6 +138,10 @@ if (!function_exists('admin_sidebar_styles_once')) {
 .sidebar .nav a{display:block;text-decoration:none;color:var(--sub);padding:6px 9px;border:1px solid transparent;border-radius:8px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .12s,color .12s}
 .sidebar .nav a:hover{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}
 .sidebar .nav a.active{background:rgba(212,178,92,.1);color:var(--gold);border-color:rgba(212,178,92,.25);font-weight:700}
+.nav-link-wrap{display:flex;flex-direction:column}
+.nav-hub-chips{display:flex;flex-wrap:wrap;gap:2px;padding:1px 9px 5px;margin-top:-3px}
+.nav-hub-chip{font-size:9px;line-height:1.2;padding:1px 5px;border-radius:4px;background:rgba(212,178,92,.08);color:rgba(212,178,92,.7);border:1px solid rgba(212,178,92,.14);white-space:nowrap}
+.nav-hub-chip-sec{opacity:.5}
 .sidebar .card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:12px}
 .sidebar-toggle{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer;font-size:14px;line-height:26px;text-align:center}
 .admin-shell.is-collapsed,.shell.is-collapsed{grid-template-columns:var(--sidebar-collapsed) minmax(0,1fr)}
@@ -166,6 +201,12 @@ if (!function_exists('admin_sidebar_render')) {
         if ($active === '') $active = admin_sidebar_detect_active();
         admin_sidebar_styles_once();
 
+        // Load hub→admin helpers for sidebar chip annotations (defensive: no-op if not deployed yet)
+        $__hubHelpersPath = __DIR__ . '/../../_app/config/hub_admin_helpers.php';
+        if (file_exists($__hubHelpersPath)) {
+            require_once $__hubHelpersPath;
+        }
+
         $groups = [
             'Operations' => [
                 ['key' => 'dashboard',         'label' => '◈  Dashboard',                 'href' => './dashboard.php'],
@@ -173,7 +214,6 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'businesses',        'label' => '🏢  Businesses',               'href' => './businesses.php'],
                 ['key' => 'payments',          'label' => '💳  Payments',                  'href' => './payments.php'],
                 ['key' => 'approvals',         'label' => '✅  Approvals',                 'href' => './approvals.php'],
-                ['key' => 'kids',              'label' => '👶  Kids Tokens',               'href' => './kids.php'],
                 ['key' => 'execution',         'label' => '⛓  Token Execution',           'href' => './execution.php'],
                 ['key' => 'classes',           'label' => '🪙  COG$ Classes',              'href' => './classes.php'],
                 ['key' => 'settings',          'label' => '⚙  Settings',                  'href' => './settings.php'],
@@ -228,6 +268,9 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'errors',            'label' => '🚨  Error Log',                 'href' => './errors.php'],
                 ['key' => 'hub_queries',       'label' => '💬  Hub Queries',               'href' => './hub_queries.php'],
             ],
+            'Education & Outreach' => [
+                ['key' => 'kids',          'label' => '👶  Kids Tokens',         'href' => './kids.php'],
+            ],
             'Bridge / Diagnostics' => [
                 ['key' => 'reconciliation',     'label' => '🔍  Legacy Reconciliation',    'href' => './reconciliation.php'],
                 ['key' => 'mint_queue',         'label' => '⛏  Token Mint Queue',         'href' => './mint_queue.php'],
@@ -255,7 +298,12 @@ if (!function_exists('admin_sidebar_render')) {
                 <span class="side-chev">▼</span>
               </div>
               <div class="nav">
-                <?php foreach ($links as $link): echo admin_sidebar_link($link['href'], $link['label'], $link['key'], $active); endforeach; ?>
+                <?php foreach ($links as $link):
+                  $__hubs = function_exists('hub_admin_hubs_for_page')
+                    ? hub_admin_hubs_for_page($link['key'])
+                    : ['primary' => [], 'secondary' => []];
+                  echo admin_sidebar_link_annotated($link['href'], $link['label'], $link['key'], $active, $__hubs['primary'], $__hubs['secondary']);
+                endforeach; ?>
               </div>
             </div>
           <?php endforeach; ?>
