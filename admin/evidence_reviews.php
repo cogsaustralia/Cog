@@ -135,7 +135,7 @@ ob_start(); ?>
 
   <div class="card">
     <div class="card-head"><h2>Evidence reviews <?= ops_admin_help_button('Evidence reviews list', 'This table shows the evidence review register. Update the status and notes as the review progresses so later operators can see what happened and why.') ?></h2></div>
-    <div class="card-body table-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>Type</th><th>Status</th><th>Doc ref</th><th>Updated</th><th>Action</th></tr></thead><tbody>
+    <div class="card-body"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Subject</th><th>Type</th><th>Status</th><th>Doc ref</th><th>Updated</th><th>Action</th></tr></thead><tbody>
     <?php if(!$rows): ?><tr><td colspan="7">No evidence reviews found.</td></tr><?php endif; ?>
     <?php foreach($rows as $r): ?><tr>
       <td><?= (int)$r['id'] ?></td>

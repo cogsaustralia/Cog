@@ -142,7 +142,7 @@ ob_start();     // Inner buffer — captures page body for ops_render_page
   <div class="card">
     <div class="card-head"><h2>Live ASX holdings <?= ops_admin_help_button('Live ASX holdings', 'These totals update from the ASX purchase ledger. Pending or failed trades should not inflate the settled book value if the purchase page is used correctly.') ?></h2></div>
     <div class="card-body table-wrap">
-      <table>
+      <div class="table-wrap"><table>
         <thead><tr><th>ASX code</th><th>Company</th><th>Shares</th><th>Avg price/share</th><th>Total book value</th><th>COG$ backed</th><th>COG$ minted</th><th>COG$ available</th><th></th></tr></thead>
         <tbody>
         <?php if (!$rows): ?>
@@ -164,7 +164,7 @@ ob_start();     // Inner buffer — captures page body for ops_render_page
           </tr>
         <?php endforeach; endif; ?>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
 </div>

@@ -7,6 +7,14 @@ require_once __DIR__ . '/includes/admin_sidebar.php';
 ops_require_admin();
 $pdo = ops_db();
 
+// Lazy-load ajax card handler
+$ajax      = isset($_GET['ajax']) && $_GET['ajax'] === '1';
+$card      = isset($_GET['card']) ? preg_replace('/[^a-z_]/', '', (string)$_GET['card']) : '';
+$needsBS   = $ajax && in_array($card, ['balance_sheet','godley_matrix'], true);
+$needsComp = $ajax && $card === 'compliance';
+$needsLed  = $ajax && $card === 'ledger_tables';
+
+
 $hooksFile = __DIR__ . '/includes/AccountingHooks.php';
 if (file_exists($hooksFile)) { require_once $hooksFile; }
 $hasHooks = class_exists('AccountingHooks');
@@ -93,7 +101,8 @@ $distRuns = ($acctOk && $hasTable && ops_has_table($pdo, 'distribution_runs'))
 // Invariant status strip
 $invariants = ac_rows($pdo, "SELECT code, name, violation_count FROM v_godley_invariant_status ORDER BY code");
 
-// Sub-trust sector balances (for matrix row grouping)
+// Sub-trust balances + flow matrix + balance sheets - ajax only
+if ($needsBS) {
 $sectorBalances = ac_rows($pdo, "
     SELECT ga.sub_trust,
            sa.id AS sa_id,
@@ -141,6 +150,14 @@ $bsB = ac_rows($pdo, "SELECT account_key, display_name, account_type, balance_ce
 $bsC = ac_rows($pdo, "SELECT account_key, display_name, account_type, balance_cents, entry_count, last_activity_date FROM v_godley_st_c ORDER BY account_key");
 
 // ── Compliance deadline tracker ───────────────────────────────────────────────
+} // end needsBS
+$sectorBalances = $sectorBalances ?? [];
+$flowLookup = $flowLookup ?? []; $flowCols = $flowCols ?? [];
+$consolidated = $consolidated ?? [];
+$bsA = $bsA ?? []; $bsB = $bsB ?? []; $bsC = $bsC ?? [];
+
+// Compliance rows + ledger tables - ajax only
+if ($needsComp || $needsLed) {
 // I3: pending 5-biz-day dividend splits (currently OVERDUE ones from the view)
 $i3Rows = ac_rows($pdo, "SELECT event_ref, event_date, deadline_date, days_overdue FROM v_invariant_i3_5bizday_transfer ORDER BY days_overdue DESC");
 // I4: pending 60-day STB distributions
@@ -159,10 +176,21 @@ if ($acctOk && $hasTable && ops_has_table($pdo, 'grants')) {
     try { $fnData = ac_rows($pdo, "SELECT * FROM v_fn_grant_compliance ORDER BY financial_year DESC LIMIT 3"); } catch (Throwable $e) {}
 }
 
+} // end needsComp/needsLed
+$i3Rows = $i3Rows ?? []; $i4Rows = $i4Rows ?? [];
+$i5Rows = $i5Rows ?? []; $i12Rows = $i12Rows ?? [];
+$pendingDeadlines = $pendingDeadlines ?? [];
+$transfers = $transfers ?? []; $expenses = $expenses ?? [];
+$accounts = $accounts ?? []; $distRuns = $distRuns ?? [];
+$fnData = $fnData ?? [];
+
 // Pre-compute conditional colors
 $pendingCColor = ($pendingC > 0) ? 'var(--warn)' : 'var(--ok)';
 $dlColor = ($dlPending > 0) ? 'var(--warn)' : 'var(--ok)';
 $adminBalColor = ($adminFundBal > 0) ? 'var(--ok)' : 'var(--err)';
+
+$isCardRequest = $ajax && in_array($card,
+    ['balance_sheet','godley_matrix','compliance','ledger_tables'], true);
 
 ob_start();
 ?>
@@ -174,6 +202,10 @@ ob_start();
 @media(max-width:980px) { .grid2 { grid-template-columns:1fr; } }
 .lazy-card{opacity:0;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease}
 .lazy-card.revealed{opacity:1;transform:none}
+.lazy-card-body{min-height:60px}
+.ac-skeleton{padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.ac-sk-bar{height:14px;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:ac-shimmer 1.4s infinite}
+@keyframes ac-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .acct-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; background:rgba(255,255,255,.04); border:1px solid var(--line); }
 .acct-dot { width:8px; height:8px; border-radius:50%; }
 .acct-dot.a { background:var(--blue); }
@@ -432,12 +464,13 @@ $bsTrusts = [
 $consMap = [];
 foreach($consolidated as $cr) { $consMap[$cr['sub_trust']] = $cr; }
 ?>
-<div class="card lazy-card" style="margin-bottom:18px">
+<div class="card lazy-card" style="margin-bottom:18px" data-lazy-card="balance_sheet">
   <div class="card-head">
     <h2>Balance sheet<?php echo ops_admin_help_button('Balance sheet', 'Current net balances for each stewardship account, grouped by sub-trust. A positive (Dr) balance means more debits than credits — for asset accounts this is the expected direction. Grand totals must net to zero across the full system.'); ?></h2>
     <span style="font-size:12px;color:var(--dim)">Live from ledger_entries</span>
   </div>
-  <div class="card-body" style="padding:12px 16px">
+  <div class="card-body lazy-card-body" style="padding:12px 16px">
+  <?php if($needsBS)ob_start();if($needsBS): ?>
     <div class="bs-grid">
       <?php foreach($bsTrusts as $key => $trust): ?>
       <div class="bs-col">
@@ -497,6 +530,7 @@ foreach($consolidated as $cr) { $consMap[$cr['sub_trust']] = $cr; }
 
 <?php
 // ── Compliance deadline tracker ────────────────────────────────────────────
+<?php endif;if($needsBS){$_cb=ob_get_clean();ob_end_clean();header("Content-Type: text/html; charset=utf-8");echo $_cb;exit;}?>
 $compTabs = [
     'i3'  => ['label'=>'I3 · Div splits',  'rows'=>$i3Rows,  'empty'=>'No overdue dividend split transfers (5-biz-day rule).'],
     'i4'  => ['label'=>'I4 · B distribute','rows'=>$i4Rows,  'empty'=>'No overdue Sub-Trust B distributions (60-day rule).'],
@@ -509,7 +543,7 @@ foreach($compTabs as $tid => $tab) {
 }
 if($firstActiveTab === null) $firstActiveTab = 'i3';
 ?>
-<div class="card lazy-card" style="margin-bottom:18px">
+<div class="card lazy-card" style="margin-bottom:18px" data-lazy-card="compliance">
   <div class="card-head">
     <h2>Compliance deadline tracker<?php echo ops_admin_help_button('Compliance deadline tracker', 'Shows overdue items per constitutional invariant: I3 (dividend splits within 5 business days), I4 (Sub-Trust B distributions within 60 days), I5 (Sub-Trust C direct transfers within 2 business days), I12 (ASX Stewardship Season locks). Each tab shows the violating records. Green tab = no violations.'); ?></h2>
     <?php
@@ -534,6 +568,7 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
     </div>
     <?php endif; ?>
 
+  <?php if($needsComp)ob_start();if($needsComp): ?>
     <div class="comp-tabs">
       <?php foreach($compTabs as $tid => $tab):
         $hasViol = !empty($tab['rows']);
@@ -599,16 +634,18 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
       <?php endif; ?>
     </div>
     <?php endforeach; ?>
+  <?php endif;if($needsComp){$_cb=ob_get_clean();ob_end_clean();header("Content-Type: text/html; charset=utf-8");echo $_cb;exit;}?>
   </div>
 </div>
 
 <?php if (!empty($sectorBalances) && !empty($flowCols)): ?>
 <!-- ── Godley sector-by-flow matrix ──────────────────────────────────── -->
-<div class="card lazy-card" style="margin-bottom:18px">
+<div class="card lazy-card" style="margin-bottom:18px" data-lazy-card="godley_matrix">
   <div class="card-head">
     <h2>Godley ledger matrix<?php echo ops_admin_help_button('Godley ledger matrix', 'Rows are stewardship accounts grouped by sub-trust sector. Columns are flow categories. Each cell shows the net balance for that account-flow combination. Dr = debit total, Cr = credit total. The grand total row must sum to zero (double-entry integrity).'); ?></h2>
     <span style="font-size:12px;color:var(--dim)"><?php echo count($sectorBalances); ?> accounts &middot; <?php echo count($flowCols); ?> flow types</span>
   </div>
+  <?php if($needsBS&&$card==='godley_matrix')ob_start();if($needsBS&&$card==='godley_matrix'): ?>
   <div class="godley-wrap">
     <table class="godley-table">
       <thead>
@@ -715,11 +752,13 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
         </tr>
       </tfoot>
     </table>
+  <?php endif;if($needsBS&&$card==='godley_matrix'){$_cb=ob_get_clean();ob_end_clean();header("Content-Type: text/html; charset=utf-8");echo $_cb;exit;}?>
   </div>
 </div>
 <?php endif; ?>
 
-<div class="grid2 lazy-card">
+<div class="grid2 lazy-card" data-lazy-card="ledger_tables">
+<?php if($needsLed)ob_start();if($needsLed): ?>
 <div>
 
   <div class="card">
@@ -852,6 +891,7 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
       <?php endif; ?>
     </div>
   </div>
+  <?php endif;if($needsLed){$_cb=ob_get_clean();ob_end_clean();header("Content-Type: text/html; charset=utf-8");echo $_cb;exit;}?>
 
 </div>
 </div>
@@ -969,20 +1009,39 @@ if($firstActiveTab === null) $firstActiveTab = 'i3';
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') bg.classList.remove('open'); });
 })();
 
-// Lazy reveal — IntersectionObserver on .lazy-card elements
+// Lazy reveal + deferred data fetch for cards with data-lazy-card
 (function() {
+  var BASE = window.location.pathname;
+  function loadCard(el) {
+    var key = el.dataset.lazyCard;
+    if (!key || el.dataset.lazyLoaded) return;
+    el.dataset.lazyLoaded = '1';
+    var target = el.querySelector('.lazy-card-body');
+    if (target) target.innerHTML = '<div class="ac-skeleton">'
+      + '<div class="ac-sk-bar"></div><div class="ac-sk-bar" style="width:72%"></div>'
+      + '<div class="ac-sk-bar" style="width:55%"></div></div>';
+    fetch(BASE + '?card=' + encodeURIComponent(key) + '&ajax=1', { credentials: 'same-origin' })
+      .then(function(r) { return r.text(); })
+      .then(function(html) { if (target) target.innerHTML = html; el.classList.add('revealed'); })
+      .catch(function() {
+        if (target) target.innerHTML = '<p class="empty" style="padding:16px">'
+          + 'Content unavailable. <a href="">Reload</a>.</p>';
+        el.classList.add('revealed');
+      });
+  }
   if (!('IntersectionObserver' in window)) {
-    document.querySelectorAll('.lazy-card').forEach(function(el) { el.classList.add('revealed'); });
+    document.querySelectorAll('.lazy-card').forEach(function(el) { el.classList.add('revealed'); loadCard(el); });
     return;
   }
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('revealed');
+        loadCard(entry.target);
         io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.02, rootMargin: '120px 0px 0px 0px' });
   document.querySelectorAll('.lazy-card').forEach(function(el) { io.observe(el); });
 })();
 </script>

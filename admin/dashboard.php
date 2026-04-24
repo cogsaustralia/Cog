@@ -262,6 +262,10 @@ function activity_label(string $type): string {
 /* ── Lazy reveal ── */
 .lazy-card{opacity:0;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease}
 .lazy-card.revealed{opacity:1;transform:none}
+.lazy-card-body{min-height:40px}
+.ac-skeleton{padding:14px 20px;display:flex;flex-direction:column;gap:10px}
+.ac-sk-bar{height:12px;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:ac-shimmer 1.4s infinite}
+@keyframes ac-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 </style>
 <?php ops_admin_help_assets_once(); ?>
 </head>
@@ -573,7 +577,7 @@ function toggleSys() {
         io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.02, rootMargin: '120px 0px 0px 0px' });
   document.querySelectorAll('.lazy-card').forEach(function(el) { io.observe(el); });
 })();
 </script>

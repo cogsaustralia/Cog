@@ -260,7 +260,7 @@ ALTER TABLE `asx_holdings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unic
   <div class="card">
     <div class="card-head"><h2>Recent purchase lots <?= ops_admin_help_button('Recent purchase lots', 'Use this ledger to review all recorded ASX trade lots. The status controls whether the lot contributes to live book value and token-backing capacity.') ?></h2></div>
     <div class="card-body table-wrap">
-      <table>
+      <div class="table-wrap"><table>
         <thead><tr><th>Ref</th><th>Holding</th><th>Type</th><th>Shares</th><th>Price/share</th><th>Total cost</th><th>Status</th><th>Dates</th><th>Action</th></tr></thead>
         <tbody>
           <?php if (!$recentTrades): ?><tr><td colspan="9" class="muted">No purchase lots recorded yet.</td></tr><?php else: foreach ($recentTrades as $t):
@@ -324,7 +324,7 @@ ALTER TABLE `asx_holdings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unic
             <?php endif; ?>
           <?php endforeach; endif; ?>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
   <div class="card">
@@ -377,7 +377,7 @@ ALTER TABLE `asx_holdings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unic
   <div class="card">
     <div class="card-head"><h2>Document vault <?= ops_admin_help_button('Document vault', 'All PDF documents uploaded for this holding. Each document is SHA-256 hashed on upload and anchored in the evidence vault. Chain attestation status shows whether the hash has been submitted to the blockchain record.') ?></h2></div>
     <div class="card-body table-wrap">
-      <table>
+      <div class="table-wrap"><table>
         <thead><tr><th>Ref</th><th>Type</th><th>File</th><th>SHA-256</th><th>Trade lot</th><th>Attestation</th><th>Uploaded</th></tr></thead>
         <tbody>
           <?php foreach ($holdingDocs as $d): ?>
@@ -395,7 +395,7 @@ ALTER TABLE `asx_holdings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unic
             </tr>
           <?php endforeach; ?>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
   <?php endif; ?>

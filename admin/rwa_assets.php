@@ -192,7 +192,7 @@ ob_start();
   <div class="card">
     <div class="card-head"><h2>Live RWA register <?= ops_admin_help_button('Live RWA register', 'This is the current asset-level register view. Values shown here come from the latest valuation record per asset.') ?></h2></div>
     <div class="card-body table-wrap">
-      <table>
+      <div class="table-wrap"><table>
         <thead><tr><th>Code</th><th>Asset</th><th>Type</th><th>Verified value</th><th>Basis</th><th>COG$ backed</th><th>COG$ minted</th><th>COG$ available</th><th></th></tr></thead>
         <tbody>
           <?php if (!$rows): ?><tr><td colspan="9" class="muted">No RWA assets registered yet.</td></tr><?php else: foreach ($rows as $r): ?>
@@ -209,7 +209,7 @@ ob_start();
             </tr>
           <?php endforeach; endif; ?>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
 </div>
