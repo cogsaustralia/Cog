@@ -257,7 +257,7 @@
           </div>
           <div class="cta-actions">
             <a class="btn-primary" href="../join/index.html">Join now — $4</a>
-            <a class="btn-secondary" href="../faq/index.html">Read the FAQ</a>
+            <a class="btn-secondary" href="../vision/index.html">The Vision →</a>
           </div>
         </div>
       </div>
@@ -449,5 +449,29 @@
 })();
 </script>
 <script src="/assets/ask-widget.js"></script>
+
+<script>
+/* ── Invite code propagation — carry stored code to all join links ── */
+(function(){
+  var STORAGE_KEY = 'cogs_partner_invite_v1';
+  var MAX_AGE_MS  = 7 * 24 * 60 * 60 * 1000;
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    var parsed = JSON.parse(raw);
+    if (!parsed || !parsed.code || !parsed.stored_at) return;
+    var age = Date.now() - new Date(parsed.stored_at).getTime();
+    if (!isFinite(age) || age < 0 || age > MAX_AGE_MS) return;
+    var code = String(parsed.code).trim().toUpperCase();
+    if (!code) return;
+    document.querySelectorAll('a[href]').forEach(function(link){
+      var href = link.getAttribute('href') || '';
+      if (href.indexOf('join/index.html') === -1) return;
+      var sep = href.indexOf('?') === -1 ? '?' : '&';
+      link.setAttribute('href', href + sep + 'partner_code=' + encodeURIComponent(code));
+    });
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
