@@ -29,22 +29,9 @@
     .site-shell{position:relative;z-index:1}
     .container{max-width:960px;margin:0 auto;padding:0 24px}
 
-    /* Header */
-    .site-header{border-bottom:1px solid var(--line);background:rgba(8,6,2,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:sticky;top:0;z-index:200}
-    .nav-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0}
-    .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-    .brand-logo{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rim);display:block}
-    .brand-copy{display:flex;flex-direction:column;gap:1px}
-    .brand-name{font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.1}
-    .brand-sub{font-size:.61rem;color:rgba(255,248,232,.65);letter-spacing:.04em}
-    .brand-tag{font-size:.58rem;color:var(--muted);letter-spacing:.05em}
-    .nav-links{display:flex;align-items:center;gap:4px}
-    .nav-links a{font-size:.76rem;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:99px;transition:color .2s,background .2s}
-    .nav-links a:hover{color:var(--gold-1);background:var(--gold-pale)}
-
     /* Buttons */
-    .btn-primary{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;font-weight:500;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:12px 24px;border-radius:99px;transition:opacity .2s;border:none;cursor:pointer;white-space:nowrap}
-    .btn-primary:hover{opacity:.88}
+    .btn-primary{display:inline-flex;align-items:center;gap:8px;font-size:.95rem;font-weight:600;color:#1a0f00;text-decoration:none;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));padding:14px 28px;border-radius:99px;transition:opacity .2s,box-shadow .2s;border:none;cursor:pointer;white-space:nowrap;box-shadow:0 4px 20px rgba(201,151,61,.3)}
+    .btn-primary:hover{opacity:.9;box-shadow:0 6px 28px rgba(201,151,61,.44)}
     .btn-secondary{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);text-decoration:none;border:1px solid var(--gold-rim);padding:10px 20px;border-radius:99px;transition:color .2s,border-color .2s,background .2s;background:none;white-space:nowrap}
     .btn-secondary:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
 
@@ -54,27 +41,36 @@
     .success-badge::before{content:'✓';font-size:.8rem}
     .welcome-hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.4rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin-bottom:14px}
     .welcome-hero h1 em{font-style:italic;color:var(--gold-1)}
-    .welcome-hero .lead{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.78;max-width:56ch;margin:0 auto 28px}
+    .welcome-hero .lead{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.78;max-width:52ch;margin:0 auto 28px}
 
     /* Member card */
-    .member-card-wrap{max-width:560px;margin:0 auto 48px}
+    .member-card-wrap{max-width:520px;margin:0 auto 32px}
     .member-card{background:linear-gradient(160deg,rgba(52,38,15,.98),rgba(18,14,10,.96));border:1px solid var(--gold-rim2);border-radius:22px;padding:26px 28px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
     .member-card::after{content:'';position:absolute;inset:auto -40px -45px auto;width:180px;height:180px;background:url('../assets/cogs_coin_web.png') center/contain no-repeat;opacity:.08;pointer-events:none}
     .member-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
-    .member-token-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(240,209,138,.08);color:var(--gold-1);font-size:.76rem;font-weight:600}
+    .member-token-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:99px;border:1px solid var(--gold-rim);background:rgba(240,209,138,.08);color:var(--gold-1);font-size:.76rem;font-weight:600;flex-shrink:0}
     .member-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);display:block;margin-bottom:6px}
     .member-num{font-family:var(--serif);font-size:1.55rem;font-weight:600;color:var(--gold-1);letter-spacing:.04em;margin:0}
+    .member-num.fallback{font-size:1rem;color:var(--muted);font-family:var(--sans);font-weight:400}
     .member-sub{font-size:.76rem;color:var(--muted);margin-top:4px}
     .member-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .member-field{padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px}
     .member-field span{display:block;font-size:.63rem;letter-spacing:.09em;text-transform:uppercase;color:rgba(240,209,138,.65);margin-bottom:3px}
     .member-field strong{font-size:.88rem;color:var(--text);font-weight:400}
 
+    /* Inviter line */
+    .inviter-line{max-width:520px;margin:-8px auto 20px;text-align:center;font-size:.8rem;color:var(--muted)}
+    .inviter-line strong{color:var(--gold-2)}
+
     /* Vault CTA */
-    .vault-cta{background:linear-gradient(135deg,rgba(240,209,138,.1),rgba(200,151,60,.06));border:1px solid var(--gold-rim2);border-radius:20px;padding:28px 30px;text-align:center;margin-bottom:56px;max-width:600px;margin-left:auto;margin-right:auto}
+    .vault-cta{background:linear-gradient(135deg,rgba(240,209,138,.1),rgba(200,151,60,.06));border:1px solid var(--gold-rim2);border-radius:20px;padding:32px 30px;text-align:center;margin-bottom:56px;max-width:560px;margin-left:auto;margin-right:auto}
     .vault-cta h2{font-family:var(--serif);font-size:1.7rem;font-weight:500;color:var(--gold-1);margin-bottom:10px}
-    .vault-cta p{font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:20px;max-width:44ch;margin-left:auto;margin-right:auto}
+    .vault-cta p{font-size:.92rem;color:var(--text2);line-height:1.72;margin-bottom:24px;max-width:40ch;margin-left:auto;margin-right:auto}
     .vault-cta-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+    /* Payment note */
+    .payment-note{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);margin-top:14px}
+    .payment-note::before{content:'ℹ';font-size:.85rem;color:var(--gold-3)}
 
     /* Section */
     .section{padding:0 0 52px}
@@ -84,15 +80,6 @@
     .section-hd h2{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.4rem);font-weight:500;line-height:1.1;letter-spacing:-.022em;margin-bottom:10px}
     .section-hd p{font-size:.9rem;color:var(--muted);line-height:1.7;max-width:58ch;margin:0 auto}
 
-    /* Involvement grid */
-    .involve-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-    .involve-card{padding:22px;border-radius:var(--r);background:linear-gradient(160deg,rgba(32,23,10,.90),rgba(16,11,5,.82));border:1px solid var(--line);transition:border-color .2s}
-    .involve-card:hover{border-color:var(--gold-rim)}
-    .involve-ico{font-size:1.5rem;display:block;margin-bottom:12px}
-    .involve-card h3{font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin-bottom:7px}
-    .involve-card p{font-size:.8rem;color:var(--muted);line-height:1.68;margin:0}
-    .involve-card a{display:inline-block;margin-top:10px;font-size:.76rem;color:var(--gold-2);text-decoration:underline;text-underline-offset:2px}
-
     /* Foundation day band */
     .fday-band{background:linear-gradient(135deg,rgba(240,209,138,.1),rgba(200,151,60,.05));border:1px solid var(--gold-rim);border-radius:var(--r);padding:28px 32px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;margin-bottom:50px}
     .fday-band h2{font-family:var(--serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:500;line-height:1.15;margin-bottom:8px;color:var(--gold-1)}
@@ -101,20 +88,14 @@
     .fday-date strong{display:block;font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--gold-1);line-height:1.1}
     .fday-date span{font-size:.76rem;color:var(--muted)}
 
-    /* Bwp / community links */
-    .links-band{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:50px}
-    .link-card{display:flex;align-items:center;gap:16px;padding:18px 20px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:16px;text-decoration:none;color:var(--text);transition:border-color .2s,background .2s}
-    .link-card:hover{border-color:var(--gold-rim);background:rgba(240,209,138,.04)}
-    .link-card-ico{width:40px;height:40px;border-radius:12px;background:rgba(240,209,138,.08);border:1px solid var(--gold-rim);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;color:var(--gold-2)}
-    .link-card-copy strong{display:block;font-size:.9rem;color:var(--gold-1);margin-bottom:3px}
-    .link-card-copy p{margin:0;font-size:.78rem;color:var(--muted);line-height:1.4}
-    .link-arrow{margin-left:auto;color:var(--gold-2);font-size:.9rem;opacity:.5}
-
-    /* Reassure strip */
-    .reassure-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:50px}
-    .reassure-item{text-align:center;padding:10px}
-    .reassure-item strong{display:block;font-size:.86rem;color:var(--text);margin-bottom:4px}
-    .reassure-item p{margin:0;font-size:.76rem;color:var(--muted);line-height:1.5}
+    /* Involvement grid — 3 cards */
+    .involve-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+    .involve-card{padding:22px;border-radius:var(--r);background:linear-gradient(160deg,rgba(32,23,10,.90),rgba(16,11,5,.82));border:1px solid var(--line);transition:border-color .2s}
+    .involve-card:hover{border-color:var(--gold-rim)}
+    .involve-ico{font-size:1.5rem;display:block;margin-bottom:12px}
+    .involve-card h3{font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin-bottom:7px}
+    .involve-card p{font-size:.8rem;color:var(--muted);line-height:1.68;margin:0}
+    .involve-card a{display:inline-block;margin-top:10px;font-size:.76rem;color:var(--gold-2);text-decoration:underline;text-underline-offset:2px}
 
     /* Animations */
     @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -127,17 +108,15 @@
     .reveal.in{opacity:1;transform:none}
 
     @media(max-width:760px){
-      .involve-grid{grid-template-columns:1fr 1fr}
       .fday-band{grid-template-columns:1fr}
       .fday-date{text-align:left}
-      .links-band{grid-template-columns:1fr}
-      .reassure-strip{grid-template-columns:1fr}
-      }
+      .involve-grid{grid-template-columns:1fr 1fr}
+    }
     @media(max-width:560px){
       .involve-grid{grid-template-columns:1fr}
       .member-fields{grid-template-columns:1fr}
-          }
-</style>
+    }
+  </style>
 </head>
 <body data-root="../">
 <div class="bg-layer" aria-hidden="true"><div class="bg-img"></div><div class="bg-vignette"></div></div>
@@ -153,55 +132,44 @@
       <div class="container">
         <div class="success-badge ha">Registration submitted</div>
         <h1 class="ha"><span id="member-greeting">You're</span> <em>in</em>.</h1>
-        <p class="lead ha">Your Membership has been recorded. Your next step is to set up your Independence Vault — that is where your governance participation in the Joint Venture lives, and where you will find your payment link.</p>
+        <p class="lead ha">Your Member record has been created. One step left — set up your Independence Vault to access governance, then complete your $4 payment inside.</p>
 
-        <!-- Member number card -->
+        <!-- Member card -->
         <div class="member-card-wrap ha">
           <div class="member-card">
             <div class="member-card-top">
               <div>
                 <span class="member-eyebrow">Member record</span>
-                <p class="member-num" id="member-num" data-member-number>Generating…</p>
-                <p class="member-sub">Keep this — it is your Member record reference inside COG$.</p>
+                <p class="member-num" id="member-num" data-member-number>Loading…</p>
+                <p class="member-sub" id="member-sub">Keep this — it is your Member record reference inside COG$.</p>
               </div>
               <div class="member-token-pill">◈ Foundation S-NFT</div>
             </div>
             <div class="member-fields">
               <div class="member-field"><span>Member name</span><strong id="member-name" data-member-name style="color:var(--gold-1)">—</strong></div>
+              <div class="member-field"><span>Email</span><strong id="member-email" style="color:var(--text2);font-size:.82rem;word-break:break-all">—</strong></div>
+              <div class="member-field"><span>Mobile</span><strong id="member-mobile" style="color:var(--text2)">—</strong></div>
               <div class="member-field"><span>Status</span><strong style="color:var(--ok)">Registration lodged</strong></div>
             </div>
           </div>
         </div>
 
-        <!-- Optional inviter display — shown only when invite data is available -->
-        <div id="inviter-line" style="display:none;max-width:560px;margin:-16px auto 24px;text-align:center">
-          <span style="font-size:.78rem;color:var(--muted)">Invited by Member: <strong id="inviter-name-display" style="color:var(--gold-2)"></strong></span>
+        <!-- Inviter line -->
+        <div class="inviter-line" id="inviter-line" style="display:none">
+          Invited by Member: <strong id="inviter-name-display"></strong>
         </div>
 
-        <!-- Vault setup CTA -->
+        <!-- Vault CTA — single job -->
         <div class="vault-cta ha">
           <h2>Set up your Independence Vault</h2>
-          <p>Your vault is where you participate in governance, receive updates, and complete your $4 payment through Stripe. It takes less than two minutes to set up.</p>
-
-          <!-- Token reserve info -->
-          <div style="background:rgba(200,151,62,.07);border:1px solid rgba(200,151,62,.22);border-radius:14px;padding:18px 20px;margin:18px 0 22px;text-align:left">
-            <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Inside your vault you can also reserve</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;border:1px solid rgba(200,151,62,.3);background:rgba(200,151,62,.06);font-size:12px;color:var(--gold-1)">◇ ASX Investment COG$</span>
-              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;border:1px solid rgba(200,151,62,.3);background:rgba(200,151,62,.06);font-size:12px;color:var(--gold-1)">◇ RWA COG$</span>
-              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;border:1px solid rgba(200,151,62,.3);background:rgba(200,151,62,.06);font-size:12px;color:var(--gold-1)">◇ Donation COG$</span>
-              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;border:1px solid rgba(200,151,62,.3);background:rgba(200,151,62,.06);font-size:12px;color:var(--gold-1)">◇ Landholder COG$</span>
-              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;border:1px solid rgba(82,184,122,.3);background:rgba(82,184,122,.06);font-size:12px;color:var(--ok)">◈ Kids S-NFT</span>
-            </div>
-            <p style="margin:10px 0 0;font-size:12px;color:var(--muted);line-height:1.5">All token reservations are no-obligation intentions recorded on the ledger. They activate on Expansion Day, subject to any regulatory requirements determined by applicable law. Nothing further is payable beyond the $4 membership payment today.</p>
-          </div>
-
+          <p>Your vault is where you vote, receive updates, and complete your $4 payment via Stripe. Takes less than two minutes.</p>
           <div class="vault-cta-actions">
-            <a class="btn-primary" id="vault-link" href="../partners/index.html?welcome=1" data-vault-link>
-              Set up my vault →
+            <a class="btn-primary" id="vault-link" href="../partners/index.html?welcome=1">
+              Open my vault ›
             </a>
             <a class="btn-secondary" href="../faq/index.html#faq-vault">What is the vault?</a>
           </div>
+          <div class="payment-note">Your $4 payment is completed inside the vault via Stripe — nothing is charged now.</div>
         </div>
 
       </div>
@@ -216,7 +184,7 @@
           <div>
             <div class="kicker">Your first vote</div>
             <h2>Governance Foundation Day — 14 May 2026</h2>
-            <p>This is the first Members Poll of the Joint Venture — the first live test of the Joint Venture’s cryptographic governance system. Every Member gets one equal vote. With your vault set up, you will be ready to participate. Discussions, proposals, and updates will flow through your vault as we approach the day.</p>
+            <p>The first Members Poll of the Joint Venture — the first live test of the cryptographic governance system. Every Member gets one equal vote. With your vault set up, you will be ready to participate.</p>
           </div>
           <div class="fday-date">
             <strong>14 May<br>2026</strong>
@@ -226,115 +194,31 @@
       </div>
     </section>
 
-    <!-- Get involved -->
+    <!-- What's next — 3 cards -->
     <section class="section reveal">
       <div class="container">
         <div class="section-hd">
-          <span class="kicker">Get involved</span>
-          <h2>There's more than voting.</h2>
-          <p>COG$ is built by the people in it. Here are some ways to go deeper as a Member.</p>
+          <span class="kicker">While you're here</span>
+          <h2>Three things worth knowing.</h2>
         </div>
         <div class="involve-grid">
           <div class="involve-card">
             <span class="involve-ico">📖</span>
             <h3>Read the Black &amp; White Paper</h3>
-            <p>The full constitutional statement and founding document for the Foundation — written in plain language, built for community reading.</p>
-            <a href="../bw_paper/index.html">Read the paper →</a>
+            <p>The full constitutional statement of the Foundation — written in plain language for community reading.</p>
+            <a href="../bw_paper/index.html">Read the paper ›</a>
           </div>
           <div class="involve-card">
             <span class="involve-ico">🌏</span>
-            <h3>Bring someone else in</h3>
-            <p>Share your invitation code or link from inside your vault. Every Member you invite strengthens the Joint Venture’s collective governance.</p>
-            <a href="../wallets/member.html">Invite a new Member →</a>
+            <h3>Invite someone</h3>
+            <p>Your invitation code is inside your vault. Every Member you invite strengthens the collective governance weight.</p>
+            <a href="../partners/index.html" id="invite-link">Get your code ›</a>
           </div>
           <div class="involve-card">
-            <span class="involve-ico">🏢</span>
-            <h3>Are you a business?</h3>
-            <p>Businesses join through a different pathway within the Joint Venture, with limited governance rights on trustee-structure matters rather than national Member votes. If you have a business, consider both pathways.</p>
-            <a href="../businesses/index.html">Business pathway →</a>
-          </div>
-          <div class="involve-card">
-            <span class="involve-ico">🌾</span>
-            <h3>Are you a landholder?</h3>
-            <p>If your land or community is near exploration or mining tenements, the Landholder pathway gives you weighted local standing in relevant decisions.</p>
-            <a href="../landholders/index.html">Landholder pathway →</a>
-          </div>
-          <div class="involve-card">
-            <span class="involve-ico">👨‍👧</span>
-            <h3>Family membership</h3>
-            <p>Children under 18 can join for $1 with a parent or guardian. Their proxy vote transfers to them on their 18th birthday.</p>
-            <a href="../kids/index.html">Kids pathway →</a>
-          </div>
-          <div class="involve-card">
-            <span class="involve-ico">💛</span>
-            <h3>Support the mission</h3>
-            <p>Golden COG$ pathway lets you contribute time, skills, and resources beyond standard membership in the Joint Venture — and be recognised for it.</p>
-            <a href="../gold-cogs/index.html">Golden COG$ →</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Community links -->
-    <section class="section reveal">
-      <div class="container">
-        <div class="section-hd">
-          <span class="kicker">Community</span>
-          <h2>Stay connected as we build.</h2>
-          <p>Updates, discussions, and governance preparation happen through the vault and the community pages.</p>
-        </div>
-        <div class="links-band">
-          <a class="link-card" href="../partners/index.html">
-            <div class="link-card-ico">🌏</div>
-            <div class="link-card-copy">
-              <strong>Community hub</strong>
-              <p>News, updates, and Member activity as Governance Foundation Day approaches.</p>
-            </div>
-            <span class="link-arrow">→</span>
-          </a>
-          <a class="link-card" href="../bw_paper/index.html">
-            <div class="link-card-ico">📄</div>
-            <div class="link-card-copy">
-              <strong>Black &amp; White Paper</strong>
-              <p>The constitutional foundation of COG$ — read it in full.</p>
-            </div>
-            <span class="link-arrow">→</span>
-          </a>
-          <a class="link-card" href="../faq/index.html">
-            <div class="link-card-ico">❓</div>
-            <div class="link-card-copy">
-              <strong>Frequently asked questions</strong>
-              <p>Governance, stewardship, the vault, tokens, and more.</p>
-            </div>
-            <span class="link-arrow">→</span>
-          </a>
-          <a class="link-card" href="../ask/index.html">
-            <div class="link-card-ico">💬</div>
-            <div class="link-card-copy">
-              <strong>Ask COG$</strong>
-              <p>Have a question? Our AI assistant knows the structure inside out.</p>
-            </div>
-            <span class="link-arrow">→</span>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Reassure strip -->
-    <section class="section reveal">
-      <div class="container">
-        <div class="reassure-strip">
-          <div class="reassure-item">
-            <strong>One equal vote</strong>
-            <p>Governance is people-first. Wealth doesn't buy extra national say.</p>
-          </div>
-          <div class="reassure-item">
-            <strong>$4 once only</strong>
-            <p>No subscription. No ongoing fee. Your membership is once-only and remains on the record.</p>
-          </div>
-          <div class="reassure-item">
-            <strong>Joint Venture, Member-directed</strong>
-            <p>COG$ is a community Joint Venture operated through the trust structure. You and your fellow Members direct governance and day-to-day operations through the system.</p>
+            <span class="involve-ico">❓</span>
+            <h3>Frequently asked questions</h3>
+            <p>Governance, stewardship, the vault, tokens — answers to the most common questions about how COG$ works.</p>
+            <a href="../faq/index.html">Read the FAQ ›</a>
           </div>
         </div>
       </div>
@@ -350,7 +234,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-  /* ── Read Partner data — three sources, priority order ── */
+  /* ── Read Member data — three sources in priority order ── */
   var ls = {}, ss = {};
   try { ls = JSON.parse(localStorage.getItem('cogs_snft_member')    || '{}'); } catch(e) {}
   try { ss = JSON.parse(sessionStorage.getItem('cogs_snft_thankyou') || '{}'); } catch(e) {}
@@ -358,23 +242,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var num         = (ls.member_number || ss.member_number || p.get('member') || '').trim();
   var mob         = (ls.mobile        || ss.mobile        || p.get('mobile') || '').trim();
+  var email       = (ls.email         || ss.email         || p.get('email')  || '').trim();
   var partnerName = (ls.first_name    || ss.first_name    || p.get('name')   || '').trim();
   var inviterName = (ls.inviter_name  || ss.inviter_name  || '').trim();
 
-  /* ── Populate Partner number ── */
-  document.querySelectorAll('[data-member-number]').forEach(function(el) {
-    el.textContent = num || 'Check your inbox';
-  });
+  /* ── Member number — with fallback ── */
+  var numEl  = document.getElementById('member-num');
+  var subEl  = document.getElementById('member-sub');
+  if (numEl) {
+    if (num) {
+      numEl.textContent = num;
+      numEl.classList.remove('fallback');
+    } else {
+      numEl.textContent = 'Check your email';
+      numEl.classList.add('fallback');
+      if (subEl) subEl.textContent = 'Your Member number will arrive by email shortly. Use it to sign in to your vault.';
+    }
+  }
 
-  /* ── Populate name field ── */
+  /* ── Member name ── */
   var nameEl = document.getElementById('member-name');
   if (nameEl) nameEl.textContent = partnerName || '—';
 
-  /* ── Personalise greeting: "Hi Jane, you're in." ── */
+  /* ── Personalise heading ── */
   var greetEl = document.getElementById('member-greeting');
   if (greetEl && partnerName) greetEl.textContent = 'Hi ' + partnerName + ', you\'re';
 
-  /* ── Optional inviter display ── */
+  /* ── Email field ── */
+  var emailEl = document.getElementById('member-email');
+  if (emailEl) emailEl.textContent = email || '—';
+
+  /* ── Mobile field ── */
+  var mobileEl = document.getElementById('member-mobile');
+  if (mobileEl) mobileEl.textContent = mob || '—';
+
+  /* ── Inviter line ── */
   if (inviterName) {
     var invLine = document.getElementById('inviter-line');
     var invDisp = document.getElementById('inviter-name-display');
@@ -384,27 +286,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  /* ── Build vault link ── */
-  if (num) {
-    var vaultBase = '/partners/index.html?welcome=1&member=' + encodeURIComponent(num);
-    if (mob)         vaultBase += '&mobile=' + encodeURIComponent(mob);
-    if (partnerName) vaultBase += '&name='   + encodeURIComponent(partnerName);
+  /* ── Build vault link with all member data ── */
+  var vaultBase = '/partners/index.html?welcome=1';
+  if (num)         vaultBase += '&member='  + encodeURIComponent(num);
+  if (mob)         vaultBase += '&mobile='  + encodeURIComponent(mob);
+  if (email)       vaultBase += '&email='   + encodeURIComponent(email);
+  if (partnerName) vaultBase += '&name='    + encodeURIComponent(partnerName);
 
-    var vl = document.getElementById('vault-link');
-    if (vl) vl.href = vaultBase;
+  var vaultEl = document.getElementById('vault-link');
+  if (vaultEl) vaultEl.href = vaultBase;
 
-    document.querySelectorAll('[data-vault-link]').forEach(function(a) {
-      if (!a.id) a.href = vaultBase;
-    });
+  /* ── Invite link also carries member context ── */
+  var inviteEl = document.getElementById('invite-link');
+  if (inviteEl && num) inviteEl.href = vaultBase;
 
-    /* Persist so welcome handoff still works after tab/refresh */
-    try {
-      localStorage.setItem('cogs_snft_member', JSON.stringify({
-        member_number: num, mobile: mob, first_name: partnerName,
-        inviter_name:  inviterName
-      }));
-    } catch(e) {}
-  }
+  /* ── Persist enriched record so vault handoff survives tab/refresh ── */
+  try {
+    localStorage.setItem('cogs_snft_member', JSON.stringify({
+      member_number: num,
+      mobile:        mob,
+      email:         email,
+      first_name:    partnerName,
+      inviter_name:  inviterName
+    }));
+  } catch(e) {}
 
 });
 
