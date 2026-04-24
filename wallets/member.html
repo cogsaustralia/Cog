@@ -1483,12 +1483,12 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
     <!-- ① Bank Transfer — open by default -->
     <div class="pay-acc">
-      <div class="pay-acc-hd" aria-expanded="true" onclick="togglePayAcc(this)">
+      <div class="pay-acc-hd" aria-expanded="false" onclick="togglePayAcc(this)">
         <span class="pay-acc-name">🏦 Bank Transfer &amp; OSKO</span>
         <span style="font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(62,207,110,.12);border:1px solid rgba(62,207,110,.28);color:var(--green)">No fees</span>
         <span class="pay-acc-arr">›</span>
       </div>
-      <div class="pay-acc-body open">
+      <div class="pay-acc-body">
         <div style="padding:10px 12px;background:rgba(232,184,75,.04);border-radius:8px;border:1px solid rgba(232,184,75,.18);margin-bottom:8px">
           <div class="bank-detail-row"><span class="bank-key">BSB</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">182-512</span><button class="copy-btn" onclick="copyVal('182-512',this)">copy</button></div></div>
           <div class="bank-detail-row"><span class="bank-key">Account</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">975 174 624</span><button class="copy-btn" onclick="copyVal('975174624',this)">copy</button></div></div>
@@ -1547,12 +1547,12 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
     <!-- ① Bank Transfer — open by default -->
     <div class="pay-acc">
-      <div class="pay-acc-hd" aria-expanded="true" onclick="togglePayAcc(this)">
+      <div class="pay-acc-hd" aria-expanded="false" onclick="togglePayAcc(this)">
         <span class="pay-acc-name">🏦 Bank Transfer &amp; OSKO</span>
         <span style="font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(62,207,110,.12);border:1px solid rgba(62,207,110,.28);color:var(--green)">No fees</span>
         <span class="pay-acc-arr">›</span>
       </div>
-      <div class="pay-acc-body open">
+      <div class="pay-acc-body">
         <div style="padding:10px 12px;background:rgba(232,184,75,.04);border-radius:8px;border:1px solid rgba(232,184,75,.18);margin-bottom:8px">
           <div class="bank-detail-row"><span class="bank-key">BSB</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">182-512</span><button class="copy-btn" onclick="copyVal('182-512',this)">copy</button></div></div>
           <div class="bank-detail-row"><span class="bank-key">Account</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">975 174 624</span><button class="copy-btn" onclick="copyVal('975174624',this)">copy</button></div></div>
@@ -4920,8 +4920,8 @@ function openOutstandingModal() {
       return '<div style="display:flex;justify-content:space-between;align-items:center;'
         + 'padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);'
         + 'border-radius:8px;font-size:1rem">'
-        + '<span style="color:var(--text)">' + esc(line.label) + '</span>'
-        + '<span style="font-family:var(--mono);color:var(--text);font-weight:600">$'
+        + '<span style="color:var(--text2)">' + esc(line.label) + '</span>'
+        + '<span style="font-family:var(--mono);color:var(--text2);font-weight:400">$'
         + Number(line.amount).toFixed(2) + '</span>'
         + '</div>';
     }).join('');
