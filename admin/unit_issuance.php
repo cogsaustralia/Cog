@@ -404,6 +404,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ── View state ────────────────────────────────────────────────────────────────
+// Resend all failed/pending certificate emails
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'resend_certs') {
+    admin_csrf_verify();
+    try {
+        // Reset failed email_queue rows for certificate template back to pending
+        $pdo->prepare(
+            "UPDATE email_queue SET status = 'pending', last_error = NULL, updated_at = UTC_TIMESTAMP()
+             WHERE template_key = 'unit_certificate' AND status IN ('failed', 'pending')"
+        )->execute();
+        // Clear email_sent_at on certs whose queue row is pending so the UI count updates
+        $pdo->prepare(
+            "UPDATE unitholder_certificates uc
+             INNER JOIN email_queue eq ON eq.id = uc.email_queue_id
+             SET uc.email_sent_at = NULL
+             WHERE eq.template_key = 'unit_certificate' AND eq.status = 'pending'"
+        )->execute();
+        // Process up to 50 certificate emails now
+        $result = processEmailQueue($pdo, 50);
+        $sent = (int)($result['processed'] ?? 0);
+        header('Location: ' . admin_url('unit_issuance.php') . '?tab=certs&resend_result=' . $sent);
+        exit;
+    } catch (Throwable $e) {
+        $error = 'Resend failed: ' . $e->getMessage();
+    }
+}
 $viewTab = in_array($_GET['tab'] ?? '', ['issue','register','certs','issued','issued_bulk'], true) ? $_GET['tab'] : 'issue';
 
 // Success params (populated after PRG redirect)
@@ -768,12 +793,60 @@ if ($issueClass !== '' && isset($defs[$issueClass]) && uir_class_is_open($defs[$
 <?php
 $certRows = rows($pdo,
     "SELECT uc.*, m.full_name, m.member_number,
-            uir.unit_class_name, uir.register_ref, uir.sha256_hash, uir.issue_trigger
+            uir.unit_class_name, uir.register_ref, uir.sha256_hash, uir.issue_trigger,
+            eq.status AS queue_status, eq.last_error AS queue_error
      FROM unitholder_certificates uc
      INNER JOIN members m ON m.id = uc.member_id
      INNER JOIN unit_issuance_register uir ON uir.id = uc.issuance_id
+     LEFT JOIN email_queue eq ON eq.id = uc.email_queue_id
      ORDER BY uc.created_at DESC LIMIT 100");
+
+$failedCount = 0;
+foreach ($certRows as $cr) {
+    if (($cr['queue_status'] ?? '') === 'failed') $failedCount++;
+}
+$resendResult = isset($_GET['resend_result']) ? (int)$_GET['resend_result'] : -1;
 ?>
+
+<?php if ($resendResult >= 0): ?>
+<div style="background:rgba(82,184,122,.12);border:1px solid rgba(82,184,122,.3);border-radius:8px;
+            padding:12px 16px;margin-bottom:16px;font-size:.85rem;color:var(--ok)">
+  ✅ Resend complete — <?= $resendResult ?> certificate email<?= $resendResult !== 1 ? 's' : '' ?> processed.
+  <?php if ($resendResult === 0): ?>
+    <span style="color:var(--sub)">No emails were in the queue — check SMTP configuration if certificates are still not arriving.</span>
+  <?php endif; ?>
+</div>
+<?php endif; ?>
+
+<?php if ($failedCount > 0): ?>
+<div style="background:rgba(192,85,58,.10);border:1px solid rgba(192,85,58,.3);border-radius:8px;
+            padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+  <div style="font-size:.85rem;color:var(--err)">
+    ⚠ <?= $failedCount ?> certificate email<?= $failedCount !== 1 ? 's' : '' ?> failed to deliver.
+    <span style="color:var(--sub);font-size:.78rem;margin-left:6px">SMTP was rejecting at time of issuance — resend now that email is configured correctly.</span>
+  </div>
+  <form method="POST" style="flex-shrink:0">
+    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+    <input type="hidden" name="action" value="resend_certs">
+    <button type="submit" class="btn btn-warn"
+            onclick="return confirm('Resend <?= $failedCount ?> failed certificate email<?= $failedCount !== 1 ? 's' : '' ?>?')">
+      🔁 Resend Failed Certificates
+    </button>
+  </form>
+</div>
+<?php elseif ($pendingEmail > 0): ?>
+<div style="background:rgba(212,178,92,.08);border:1px solid rgba(212,178,92,.25);border-radius:8px;
+            padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+  <div style="font-size:.85rem;color:var(--warn)">
+    ⏳ <?= $pendingEmail ?> certificate email<?= $pendingEmail !== 1 ? 's' : '' ?> pending in queue.
+  </div>
+  <form method="POST" style="flex-shrink:0">
+    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+    <input type="hidden" name="action" value="resend_certs">
+    <button type="submit" class="btn">🔁 Flush Email Queue</button>
+  </form>
+</div>
+<?php endif; ?>
 <div class="card">
   <div class="card-head"><h2>Certificate Register</h2><span class="muted small"><?= h((string)$totalCerts) ?> certificates</span></div>
   <?php if (empty($certRows)): ?>
@@ -808,7 +881,21 @@ $certRows = rows($pdo,
           <td class="mono"><?= h(number_format((float)$c['units'])) ?></td>
           <td class="small"><?= h($c['issue_date']) ?></td>
           <td>
-            <?php if ($c['email_sent_at']): ?>
+            <?php
+            $qs = $c['queue_status'] ?? null;
+            if ($qs === 'sent'): ?>
+              <span class="st st-ok">✅ Sent</span>
+              <div class="muted small"><?= h($c['email_sent_to'] ?? '') ?></div>
+              <?php if ($c['email_sent_at']): ?><div class="muted small"><?= h(substr($c['email_sent_at'], 0, 10)) ?></div><?php endif; ?>
+            <?php elseif ($qs === 'failed'): ?>
+              <span class="st st-err">❌ Failed</span>
+              <?php if ($c['queue_error']): ?>
+                <div class="muted small" style="color:var(--err);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                     title="<?= h($c['queue_error']) ?>"><?= h(substr($c['queue_error'], 0, 60)) ?></div>
+              <?php endif; ?>
+            <?php elseif ($qs === 'pending'): ?>
+              <span class="st st-warn">⏳ Pending</span>
+            <?php elseif ($c['email_sent_at']): ?>
               <span class="st st-ok">✅ <?= h(substr($c['email_sent_at'], 0, 10)) ?></span>
               <div class="muted small"><?= h($c['email_sent_to'] ?? '') ?></div>
             <?php else: ?>
