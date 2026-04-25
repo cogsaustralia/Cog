@@ -266,6 +266,23 @@ foreach ($allRows as $row) {
 }
 $approvalAcceptance = function_exists('ops_member_acceptance_map') ? ops_member_acceptance_map($pdo, array_keys($memberGroups)) : [];
 
+// ── KYC status per member ─────────────────────────────────────────────────────
+$approvalKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array_keys($memberGroups)) : [];
+
+// ── Certificate count per member ──────────────────────────────────────────────
+$approvalCerts = [];
+if (!empty($memberGroups) && ops_has_table($pdo, 'unitholder_certificates')) {
+    try {
+        $mids = array_keys($memberGroups);
+        $ph   = implode(',', array_fill(0, count($mids), '?'));
+        $cs   = $pdo->prepare("SELECT member_id, COUNT(*) AS cert_count FROM unitholder_certificates WHERE member_id IN ($ph) GROUP BY member_id");
+        $cs->execute($mids);
+        foreach ($cs->fetchAll(PDO::FETCH_ASSOC) as $cr) {
+            $approvalCerts[(int)$cr['member_id']] = (int)$cr['cert_count'];
+        }
+    } catch (Throwable $e) {}
+}
+
 // ── Group by Token Class ──────────────────────────────────────────────────────
 $tokenGroups = []; // [classCode => [meta, pending=>[], processed=>[]]]
 foreach ($allRows as $row) {
@@ -578,6 +595,11 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
     $acceptance = $approvalAcceptance[(int)$mid] ?? null;
     $acceptanceLabel = function_exists('ops_acceptance_status_label') ? ops_acceptance_status_label($acceptance) : '—';
     $acceptanceTone = function_exists('ops_acceptance_status_tone') ? ops_acceptance_status_tone($acceptance) : 'warn';
+    $kycData     = $approvalKyc[(int)$mid] ?? null;
+    $kycLabel    = $kycData['status_label'] ?? 'Not submitted';
+    $kycTone     = $kycData['status_tone']  ?? 'bad';
+    $kycChipCol  = $kycTone === 'ok' ? 'rgba(82,184,122,' : ($kycTone === 'warn' ? 'rgba(200,144,26,' : 'rgba(160,160,160,');
+    $certCount   = $approvalCerts[(int)$mid] ?? 0;
   ?>
   <div class="acc-card">
     <div class="acc-header" onclick="toggle('<?=$uid?>')">
@@ -589,6 +611,8 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
         <?=sbadge('Wallet: '.$m['wallet_status'])?>
         <?=sbadge('Payment: '.$m['signup_payment_status'])?>
         <span class="chip" style="border-color:<?= $acceptanceTone==='ok' ? 'rgba(82,184,122,.35)' : ($acceptanceTone==='warn' ? 'rgba(200,144,26,.35)' : 'rgba(196,96,96,.35)') ?>;color:<?= $acceptanceTone==='ok' ? 'var(--ok)' : ($acceptanceTone==='warn' ? 'var(--warn)' : 'var(--bad)') ?>">JVPA <?= ops_admin_help_button('JVPA in approvals', 'Approvals should not outrun the intake evidence trail. This indicator shows whether the backend membership acceptance record is complete, legacy, or missing.') ?>: <?=h($acceptanceLabel)?></span>
+        <span class="chip" style="border-color:<?= $kycChipCol ?>.35);color:<?= $kycChipCol ?>.9)">KYC: <?=h($kycLabel)?></span>
+        <span class="chip" style="border-color:<?= $certCount > 0 ? 'rgba(82,184,122,.35)' : 'rgba(160,160,160,.25)' ?>;color:<?= $certCount > 0 ? 'var(--ok)' : 'var(--sub)' ?>">Certs: <?= $certCount > 0 ? $certCount.' issued' : 'none' ?></span>
       </div>
       <span class="count-badge pending"><?=$pendingCount?> COG$</span>
       <span class="acc-chevron">▼</span>
@@ -619,6 +643,11 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
     $acceptance = $approvalAcceptance[(int)$mid] ?? null;
     $acceptanceLabel = function_exists('ops_acceptance_status_label') ? ops_acceptance_status_label($acceptance) : '—';
     $acceptanceTone = function_exists('ops_acceptance_status_tone') ? ops_acceptance_status_tone($acceptance) : 'warn';
+    $kycData     = $approvalKyc[(int)$mid] ?? null;
+    $kycLabel    = $kycData['status_label'] ?? 'Not submitted';
+    $kycTone     = $kycData['status_tone']  ?? 'bad';
+    $kycChipCol  = $kycTone === 'ok' ? 'rgba(82,184,122,' : ($kycTone === 'warn' ? 'rgba(200,144,26,' : 'rgba(160,160,160,');
+    $certCount   = $approvalCerts[(int)$mid] ?? 0;
   ?>
   <div class="acc-card">
     <div class="acc-header" onclick="toggle('<?=$uid?>')">
@@ -629,6 +658,8 @@ $tokenPagerBase  = 'approvals.php?view=token'  . $filterQsRaw . '&';
       <div class="member-chips">
         <?=sbadge('Wallet: '.$m['wallet_status'])?>
         <?=sbadge('Stewardship: '.$m['stewardship_status'])?>
+        <span class="chip" style="border-color:<?= $kycChipCol ?>.35);color:<?= $kycChipCol ?>.9)">KYC: <?=h($kycLabel)?></span>
+        <span class="chip" style="border-color:<?= $certCount > 0 ? 'rgba(82,184,122,.35)' : 'rgba(160,160,160,.25)' ?>;color:<?= $certCount > 0 ? 'var(--ok)' : 'var(--sub)' ?>">Certs: <?= $certCount > 0 ? $certCount.' issued' : 'none' ?></span>
       </div>
       <span class="count-badge"><?=$processedCount?> COG$</span>
       <span class="acc-chevron">▼</span>
