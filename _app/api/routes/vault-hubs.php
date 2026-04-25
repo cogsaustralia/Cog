@@ -2727,22 +2727,20 @@ function handleHubDocumentServe(): void {
         apiError('Access denied.', 403);
     }
 
-    // Require prior acknowledgement
-    $ackExists = false;
+    // Write audit record (upsert) — JVPA governs member obligations,
+    // no prior acknowledgement gate required. Record is written
+    // unconditionally on every serve so the trail is always complete.
     try {
-        $aStmt = $db->prepare(
-            "SELECT 1 FROM hub_project_document_access
-              WHERE document_id = ? AND member_id = ? LIMIT 1"
+        $auditStmt = $db->prepare(
+            "INSERT IGNORE INTO hub_project_document_access
+               (document_id, member_id, acknowledged_at)
+             VALUES (?, ?, NOW())"
         );
-        $aStmt->execute([$docId, $me['id']]);
-        $ackExists = (bool)$aStmt->fetchColumn();
-    } catch (Throwable) {
-        // Pre-migration: fail open (table not yet created)
-        $ackExists = true;
-    }
-
-    if (!$ackExists) {
-        apiError('Commitment acknowledgement required before document access.', 403);
+        $auditStmt->execute([$docId, $me['id']]);
+    } catch (Throwable $e) {
+        // Log but never block — audit failure must not prevent document access.
+        error_log('[hub-document-serve] audit write failed for doc=' . $docId
+            . ' member=' . $me['id'] . ': ' . $e->getMessage());
     }
 
     // Locate and serve the file
