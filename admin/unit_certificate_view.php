@@ -600,7 +600,7 @@ body {
     /* Fill the A4 page — pushes footer to bottom */
     display: flex !important;
     flex-direction: column !important;
-    min-height: 100vh !important;
+    min-height: 297mm !important;
   }
 
   /* ── Force colour on dark sections ─────────────────────────── */
@@ -620,7 +620,8 @@ body {
   .class-pill       { font-size: 8.5px; padding: 1px 7px; margin-top: 3px; }
 
   /* ── Body ──────────────────────────────────────────────────── */
-  .doc-body         { padding: 9px 18px 7px; flex: 1 !important; }
+  .doc-body         { padding: 9px 18px 7px; }
+  .doc-footer        { margin-top: auto !important; }
 
   /* ── Intro text ─────────────────────────────────────────────── */
   .intro-text       { font-size: 9px; line-height: 1.4; margin-bottom: 7px;
