@@ -1390,43 +1390,47 @@
           <!-- Founding Members stats -->
           <div id="comm-strip" class="ha" style="display:none;margin-top:24px">
             <div style="font-size:.74rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Founding Members Registry — Live</div>
-            <div style="display:flex;flex-wrap:wrap;gap:12px">
+            <!-- ── Tier 1: Real JV Value ─────────────────────────── -->
+            <div style="font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(110,168,216,.55);margin-bottom:6px">Real JV Value</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px">
 
               <!-- Members -->
-              <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,62,.06));border:1.5px solid rgba(240,209,138,.30);min-width:140px;text-align:center">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-1);line-height:1;letter-spacing:-.02em" id="cs-members" data-countup="true">—</div>
-                <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);margin-top:6px">Members</div>
+              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:130px;text-align:center">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-members" data-countup="true">—</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Members</div>
+                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px" id="cs-pending-inline">+ — pending</div>
               </div>
 
-              <!-- Pending Members (temp: members × 3) -->
-              <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(240,209,138,.07),rgba(200,151,62,.03));border:1.5px dashed rgba(240,209,138,.22);min-width:140px;text-align:center">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-2);line-height:1;letter-spacing:-.02em;opacity:.85" id="cs-pending" data-countup="true">—</div>
-                <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);margin-top:6px;opacity:.7">Pending Members</div>
+              <!-- JV Asset Pool -->
+              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:160px">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true">—</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Asset Pool Value</div>
+                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">ASX · Sub-Trust A cash · IP &amp; infra</div>
               </div>
+
+              <!-- Asset Value Per Member -->
+              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:140px">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-per-member" data-countup="true">—</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Value Per Member</div>
+                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">Asset pool ÷ members</div>
+              </div>
+
+            </div>
+
+            <!-- ── Tier 2: Beta-Phase Member Option Values ────────── -->
+            <div style="font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,209,138,.4);margin-bottom:6px">Beta-Phase Member Option Values <span style="font-style:italic;font-weight:400;text-transform:none;letter-spacing:0">— no obligation, editable in your Vault</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px">
 
               <!-- COG$ Reserved -->
-              <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,62,.06));border:1.5px solid rgba(240,209,138,.30);min-width:140px">
+              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(240,209,138,.08),rgba(200,151,62,.04));border:1.5px solid rgba(240,209,138,.22);min-width:130px">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-1);line-height:1;letter-spacing:-.02em" id="cs-cogs" data-countup="true">—</div>
-                <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);margin-top:6px">COG$ Reserved</div>
-                <div style="font-size:.68rem;color:rgba(240,209,138,.5);margin-top:4px;line-height:1.4;font-style:italic">No-obligation Beta-phase Member Option Values — editable in your Vault</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);margin-top:6px">COG$ Reserved</div>
               </div>
 
               <!-- Reservation Value -->
-              <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(126,232,162,.08),rgba(82,184,122,.04));border:1.5px solid rgba(82,184,122,.28);min-width:140px">
+              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(126,232,162,.07),rgba(82,184,122,.03));border:1.5px solid rgba(126,232,162,.20);min-width:130px">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-value" data-countup="true">—</div>
-                <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.7);margin-top:6px">Reservation Value</div>
-                <div style="font-size:.68rem;color:rgba(126,232,162,.38);margin-top:4px;line-height:1.4;font-style:italic">No-obligation Beta-phase Member Option Values — editable in your Vault</div>
-              </div>
-
-              <!-- JV Asset Pool Value -->
-              <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(110,168,216,.09),rgba(70,120,180,.04));border:1.5px solid rgba(110,168,216,.28);min-width:160px">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true">—</div>
-                <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Members JV Asset Pool</div>
-                <div style="font-size:.68rem;color:rgba(110,168,216,.5);margin-top:4px;line-height:1.4">ASX holdings + Sub-Trust A cash + IP &amp; infrastructure</div>
-                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(110,168,216,.15)">
-                  <div style="font-family:var(--serif);font-size:1.1rem;font-weight:600;color:#6ea8d8;line-height:1" id="cs-asset-per-member">—</div>
-                  <div style="font-size:.68rem;color:rgba(110,168,216,.55);margin-top:3px;text-transform:uppercase;letter-spacing:.05em">Per Member</div>
-                </div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.65);margin-top:6px">Reservation Value</div>
               </div>
 
             </div>
@@ -2542,6 +2546,7 @@ async function loadCommunityStats(){
     // Hero strip
     if(el('cs-members')) el('cs-members').textContent = fmt(s.founding_members);
     if(el('cs-pending')) el('cs-pending').textContent = fmt(s.pending_members);
+    if(el('cs-pending-inline')) el('cs-pending-inline').textContent = '+ ' + fmt(s.pending_members) + ' pending';
     if(el('cs-cogs')) el('cs-cogs').textContent = fmt(s.total_cogs);
     if(el('cs-value')) el('cs-value').textContent = fmtM(s.total_value);
     var fmtC = function(cents){ var n=parseFloat(cents||0)/100; return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };

@@ -98,21 +98,33 @@ try {
                   + (int)$btok['b_pif']     + (int)$btok['b_landholder']) * 4.0;
 
     // ── JV Asset Pool ──────────────────────────────────────────────────────────
-    // ASX book value from asx_holdings (total_cost_cents is DECIMAL cents)
+    // Component 1: ASX book value — total_cost_cents is DECIMAL(14,4) cents
     $asx_book_cents = 0;
     try {
         $s = $db->query("SELECT COALESCE(SUM(total_cost_cents),0) FROM asx_holdings");
         $asx_book_cents = (float)$s->fetchColumn();
     } catch (Throwable $e) {}
 
-    // Sub-Trust A cash balance — TODO: wire to stewardship_account_balance
-    // when the DB field is confirmed. Fixed at 0 until then.
+    // Component 2: Sub-Trust A Partners Asset Pool cash balance
+    // Live read from ledger_entries via STA-PARTNERS-POOL account (id=3)
     $sta_cash_cents = 0;
+    try {
+        $s = $db->query(
+            "SELECT COALESCE(SUM(
+                CASE WHEN le.entry_type = 'debit' THEN le.amount_cents
+                     ELSE -le.amount_cents END
+             ), 0)
+             FROM ledger_entries le
+             JOIN stewardship_accounts sa ON sa.id = le.stewardship_account_id
+             WHERE sa.account_key = 'STA-PARTNERS-POOL'"
+        );
+        $sta_cash_cents = (float)$s->fetchColumn();
+    } catch (Throwable $e) {}
 
-    // IP / infrastructure fixed placeholder — $50,000
+    // Component 3: IP & infrastructure — fixed placeholder $10,000
     // TODO: replace with live read from rwa_assets or infrastructure_valuations
-    // when the correct DB table is confirmed.
-    $ip_infra_cents = 5000000; // $50,000.00 in cents
+    // when the correct DB table/row is confirmed.
+    $ip_infra_cents = 1000000; // $10,000.00 in cents
 
     $asset_pool_cents   = $asx_book_cents + $sta_cash_cents + $ip_infra_cents;
     $founding_total     = $members + $businesses;
