@@ -191,12 +191,6 @@
 .ms-pop-stat span{font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;display:block}
 .ms-pop-foot{font-size:.72rem;text-align:center;padding-top:7px;border-top:1px solid rgba(255,255,255,.08)}
 
-/* ── Stats strip ─────────────────────────────────────────────── */
-.ms-strip{display:flex;border-bottom:1px solid var(--border)}
-.ms-strip-cell{flex:1;padding:16px 22px;border-right:1px solid var(--border)}
-.ms-strip-cell:last-child{border-right:none}
-.ms-strip-n{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
-.ms-strip-l{font-size:.7rem;color:rgba(255,255,255,.72);margin-top:5px;text-transform:uppercase;letter-spacing:.06em}
 
 /* ── Content sections ───────────────────────────────────────── */
 .ms-section{margin-bottom:4px;border:1px solid var(--border);border-radius:12px;background:#090909;overflow:hidden}
@@ -534,11 +528,7 @@
   <div class="ms-pop-foot" id="pop-foot">Click to open hub →</div>
 </div>
 
-<!-- Stats strip -->
-<div class="ms-strip" id="ms-strip" style="display:none">
-  <div class="ms-strip-cell"><div class="ms-strip-n" id="mcc-proposals">—</div><div class="ms-strip-l">Open Proposals</div></div>
-  <div class="ms-strip-cell"><div class="ms-strip-n" id="mcc-health">—</div><div class="ms-strip-l">Godley Invariants</div></div>
-</div>
+
 
 <main class="hub-page" style="padding-top:20px">
   <div class="ms-section">
@@ -648,15 +638,7 @@ async function loadAdminActivity(){
   w.innerHTML=rows?'<div class="ms-admin-grid">'+rows+'</div>':'<div class="hub-empty">No activity data available.</div>';
 }
 
-async function loadStats(){
-  var strip=document.getElementById('ms-strip');
-  var data;try{data=await api('vault/hub-mainspring-stats');}catch(e){return;}
   var s=data.stats||{};
-  var pr=document.getElementById('mcc-proposals'),ph=document.getElementById('mcc-health');
-  if(pr)pr.textContent=typeof s.open_proposals!=='undefined'?s.open_proposals:'—';
-  if(ph){var iv=typeof s.invariant_violations!=='undefined'?s.invariant_violations:null;ph.textContent=iv===null?'—':iv===0?'✓ Clear':'⚠ '+iv;if(iv!==null)ph.style.color=iv===0?'var(--green)':'var(--red)';}
-  if(strip)strip.style.display='';
-}
 
 async function boot(){
   try{
@@ -670,7 +652,7 @@ async function boot(){
     else{window.location.replace(ROOT+'partners/index.html?next=vault');}
   }
 }
-document.addEventListener('DOMContentLoaded',function(){boot();loadAdminActivity();loadStats();});
+document.addEventListener('DOMContentLoaded',function(){boot();loadAdminActivity();});
 </script>
 </body>
 </html>
