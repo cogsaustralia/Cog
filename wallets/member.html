@@ -1037,22 +1037,60 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <!-- C: Open polls — only conditional item remaining in Overview -->
       <div id="ov-action-prompts"></div>
 
-      <!-- D: Participation pathways — always visible, all 9 pills open showInfo only -->
-      <div class="ov-path-wrap" id="ov-pathways" style="display:none">
-        <div class="ov-path-hd">
-          <h3 id="ov-path-title">Where you are active</h3>
-          <a href="../partners/index.html?edit_participation=1" id="ov-path-manage" onclick="coinTransition('../partners/index.html?edit_participation=1');return false;">Update participation areas &rarr;</a>
+      <!-- D: COG$ Reservations summary -->
+      <div id="ov-reservations-card" style="margin-bottom:14px">
+        <div class="sec-divider" style="margin-bottom:10px">COG$ Reservations <i class="info-ico" onclick="showInfo('reservations')" style="vertical-align:middle">?</i></div>
+        <div class="card" style="padding:0">
+          <div id="ov-res-rows" style="padding:4px 0"></div>
+          <div style="padding:10px 18px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            <span style="font-size:1.02rem;color:var(--text3)">No obligation · Released after Expansion Day</span>
+            <button class="btn btn-ghost btn-sm" onclick="tab('holdings')">Manage Reservations &rarr;</button>
+          </div>
         </div>
-        <div class="ov-path-grid" id="ov-path-grid"></div>
       </div>
 
-      <!-- E: Invite card — rendered by stag hunt section when paid -->
+      <!-- E: Exchange summary -->
+      <div id="ov-exchange-card" style="margin-bottom:14px">
+        <div class="sec-divider" style="margin-bottom:10px">Community COG$ Exchange <i class="info-ico" onclick="showInfo('exchange')" style="vertical-align:middle">?</i></div>
+        <div class="card">
+          <div class="tr">
+            <div class="hr-sym hr-sym-teal">CC</div>
+            <div class="tr-inf">
+              <div class="tr-name">Community COG$</div>
+              <div class="tr-cls">Class C · Transferable now · Live exchange</div>
+            </div>
+            <div class="tr-val">
+              <div class="tr-amt" id="ov-xch-balance" style="font-size:1.4rem">—</div>
+              <div class="tr-amt-label">available</div>
+            </div>
+          </div>
+          <div style="padding:10px 18px 12px;border-top:1px solid var(--border);text-align:right">
+            <button class="btn btn-ghost btn-sm" onclick="tab('exchange')">Go to Exchange &rarr;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- F: Hubs link -->
+      <div style="margin-bottom:14px">
+        <div class="sec-divider" style="margin-bottom:10px">Management Hubs</div>
+        <div class="card" style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-weight:600;margin-bottom:3px">Mainspring Hub</div>
+            <div style="font-size:1.02rem;color:var(--text3)">Governance, acquisitions, first nations, community projects, and more</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="coinTransition('../hubs/mainspring/')">Open Hubs &rarr;</button>
+        </div>
+      </div>
+
+      <!-- G: Invite card — rendered by stag hunt section when paid -->
       <div id="invite-wrap" style="margin-top:18px"></div>
 
       <!-- ══ HIDDEN STUBS ══
            All identity/invite/kS-NFT management moved to Members Hub.
            IDs preserved here for JS compatibility — nothing visible. -->
       <div id="ov-hidden-stubs" style="display:none">
+        <!-- pathway stubs for JS compatibility -->
+        <div id="ov-pathways"><div id="ov-path-grid"></div><span id="ov-path-title"></span><a id="ov-path-manage"></a></div>
         <div id="ent-list"></div>
         <div id="jvpa-wrap"></div>
         <span id="b-states">—</span>
@@ -4427,8 +4465,30 @@ function renderTabOverview(d){
     // Keep tour pill visible even if business API fails
   });
 
-  /* ── D: Participation pathways ── */
-  try{ renderParticipationPathways(d); }catch(e){}
+  /* ── D: COG$ Reservations summary ── */
+  var resRows = document.getElementById('ov-res-rows');
+  if(resRows){
+    var resConfig = [
+      {key:'investment_tokens', label:'ASX COG$',       code:'Class A', sym:'ASX', symCls:'hr-sym-gold'},
+      {key:'rwa_tokens',        label:'RWA COG$',        code:'Class R', sym:'RWA', symCls:'hr-sym-amber'},
+      {key:'landholder_tokens', label:'Landholder COG$', code:'Class Lh',sym:'Lh',  symCls:'hr-sym-green'},
+    ];
+    resRows.innerHTML = resConfig.map(function(r){
+      var val = parseFloat(d[r.key]||0)||0;
+      return '<div class="tr">'+
+        '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
+        '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation</div></div>'+
+        '<div class="tr-val"><div class="tr-amt" style="font-size:1.2rem">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
+        '</div>';
+    }).join('');
+  }
+
+  /* ── E: Exchange balance ── */
+  var ovXch = document.getElementById('ov-xch-balance');
+  if(ovXch){
+    var ccBal = parseFloat(d.community_transfer_balance!=null?d.community_transfer_balance:d.community_tokens||0)||0;
+    ovXch.textContent = fmtDp(ccBal);
+  }
 
   /* ── C: Open polls only — everything else moved to Members Hub ── */
   var prompts = document.getElementById('ov-action-prompts');
@@ -5247,7 +5307,7 @@ function renderParticipationPathways(d){
 
   // Always show all pathways — section is permanently visible
   wrap.style.display = '';
-  if(title) title.textContent = 'Management Hubs';
+  if(title) title.textContent = 'Hubs';
 
   var esc = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
 
