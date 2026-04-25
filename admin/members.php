@@ -729,6 +729,14 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
       <?php endif; ?>
 
       <?php
+        $kycStatus = $kyc['status'] ?? 'none';
+        $kycLabel  = $kyc['status_label'] ?? 'KYC: Not submitted';
+        $kycTone   = $kyc['status_tone'] ?? 'bad';
+        $kycSfClass = $kycTone === 'ok' ? 'sf-ok' : ($kycTone === 'warn' ? 'sf-warn' : 'sf-dim');
+      ?>
+      <span class="sf <?= $kycSfClass ?>">KYC: <?= h($kycLabel) ?></span>
+
+      <?php
         $wStatus = $r['wallet_status'] ?? 'invited';
         $wClass  = $wStatus === 'active' ? 'sf-ok' : ($wStatus === 'locked' ? 'sf-err' : 'sf-dim');
       ?>
