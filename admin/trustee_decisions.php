@@ -868,6 +868,45 @@ body.cert-open .admin-shell { display: none; }
 </div>
 <?php endif; ?>
 
+<!-- Reference document — NCF Schedule Draft (TDR-20260426-002 only) -->
+<?php if (($decision['decision_ref'] ?? '') === 'TDR-20260426-002'): ?>
+<div class="detail-card">
+  <div class="detail-head"><h3>Reference Document</h3></div>
+  <div class="detail-body">
+    <p style="font-size:.82rem;color:var(--sub);margin-bottom:14px">
+      This Trustee Decision Record adopts the structural pathway to seek DGR endorsement
+      of the Sub-Trust C Gift Fund as a Necessitous Circumstances Fund (item 4.1.3 ITAA
+      1997). The Trustee should review the draft schedule before issuing an execution token.
+    </p>
+    <div style="background:rgba(180,68,68,.10);border:1.5px solid rgba(180,68,68,.40);
+                border-radius:8px;padding:10px 14px;margin-bottom:14px">
+      <p style="font-size:.78rem;color:#d77;margin:0;line-height:1.5">
+        <strong>⚠ DRAFT — FOR TAX ADVISER REVIEW.</strong> The schedule below is not for
+        submission. Lodgement requires a separate, fresh TDR after written tax adviser sign-off.
+      </p>
+    </div>
+    <a href="../docs/NCF_Schedule_Draft.pdf" target="_blank" rel="noopener"
+       style="display:flex;align-items:center;gap:14px;background:rgba(240,209,138,.07);
+              border:1.5px solid rgba(240,209,138,.28);border-radius:12px;
+              padding:14px 16px;text-decoration:none;transition:background .2s,border-color .2s"
+       onmouseover="this.style.background='rgba(240,209,138,.14)';this.style.borderColor='rgba(240,209,138,.50)'"
+       onmouseout="this.style.background='rgba(240,209,138,.07)';this.style.borderColor='rgba(240,209,138,.28)'">
+      <div style="font-size:1.4rem">📄</div>
+      <div style="flex:1">
+        <div style="color:var(--gold);font-weight:600;font-size:.92rem">NCF Schedule — Sub-Trust C Gift Fund (Draft)</div>
+        <div style="color:var(--sub);font-size:.74rem;margin-top:2px">
+          ATO NAT 75720 · Item 4.1.3 ITAA 1997 · Draft answers for adviser review
+        </div>
+      </div>
+      <div style="color:var(--gold);font-size:.78rem;font-weight:600;letter-spacing:.04em">OPEN PDF ↗</div>
+    </a>
+    <p style="font-size:.72rem;color:var(--dim);margin-top:10px;line-height:1.5">
+      SHA-256: <span style="font-family:monospace">3517f0bad01af259864ab38b1ed4ac9da1bda878970fc207121a72b2aa702f7d</span>
+    </p>
+  </div>
+</div>
+<?php endif; ?>
+
 <!-- Issue token / print actions -->
 <?php if (in_array($decision['status'], ['draft','pending_execution'], true)): ?>
 <div class="detail-card">
