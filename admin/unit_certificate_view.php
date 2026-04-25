@@ -565,98 +565,122 @@ body {
 /* ── Print styles ──────────────────────────────────────────── */
 @page {
   size: A4 portrait;
-  margin: 12mm 14mm 10mm 14mm;
+  margin: 0;
 }
 @media print {
-  html, body { background: #fff !important; font-size: 13px; }
-  .admin-bar { display: none !important; }
-  .page-wrap { max-width: 100%; margin: 0; box-shadow: none; background: #fff !important; }
+  /* ── Reset everything that causes whitespace ────────────────── */
+  html {
+    font-size: 12.5px;
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+  }
+  /* Admin bar: zero height, not just hidden — prevents top gap */
+  .admin-bar {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: static !important;
+  }
+  .page-wrap {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    width: 100% !important;
+  }
 
-  /* Force colour on dark sections */
+  /* ── Force colour on dark sections ─────────────────────────── */
   .doc-header, .doc-footer,
   .rights-table tr:nth-child(even),
   .hash-row, .instrument-card, .notice-box, .detail-cell {
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 
-  /* ── Header ── */
-  .doc-header       { padding: 12px 20px 10px; }
-  .org-name         { font-size: 15px; }
-  .org-sub          { font-size: 9px; margin-top: 2px; }
-  .cert-ref-display { font-size: 14px; }
-  .cert-title       { font-size: 9px; margin-bottom: 3px; }
-  .cert-type-badge  { margin-top: 5px; padding: 2px 7px; font-size: 7.5px; }
-  .class-pill       { font-size: 9px; padding: 1px 8px; margin-top: 3px; }
+  /* ── Header — tight but readable ───────────────────────────── */
+  .doc-header       { padding: 10px 18px 9px; }
+  .org-name         { font-size: 14px; }
+  .org-sub          { font-size: 8.5px; margin-top: 2px; }
+  .cert-ref-display { font-size: 13px; letter-spacing: .02em; }
+  .cert-title       { font-size: 8.5px; margin-bottom: 3px; }
+  .cert-type-badge  { margin-top: 4px; padding: 2px 6px; font-size: 7px; }
+  .class-pill       { font-size: 8.5px; padding: 1px 7px; margin-top: 3px; }
 
-  /* ── Body ── */
-  .doc-body         { padding: 10px 20px 8px; }
+  /* ── Body ──────────────────────────────────────────────────── */
+  .doc-body         { padding: 9px 18px 7px; }
 
-  /* ── Intro — compress to essential text ── */
-  .intro-text       { font-size: 9.5px; line-height: 1.45; margin-bottom: 8px;
-                      padding-bottom: 7px; }
+  /* ── Intro text ─────────────────────────────────────────────── */
+  .intro-text       { font-size: 9px; line-height: 1.4; margin-bottom: 7px;
+                      padding-bottom: 6px; }
 
-  /* ── Section headings ── */
-  .section-heading  { font-size: 8.5px; margin: 0 0 6px; padding-bottom: 3px; }
+  /* ── Section headings ───────────────────────────────────────── */
+  .section-heading  { font-size: 8px; margin: 0 0 5px; padding-bottom: 3px; }
 
-  /* ── Details grid ── */
-  .details-grid     { margin-bottom: 8px; }
-  .detail-cell      { padding: 4px 10px; }
-  .detail-label     { font-size: 7px; margin-bottom: 1px; }
-  .detail-value     { font-size: 10.5px; line-height: 1.2; }
-  .detail-value.large { font-size: 11px; }
-  .detail-value.mono  { font-size: 10px; }
+  /* ── Details grid ───────────────────────────────────────────── */
+  .details-grid     { margin-bottom: 7px; }
+  .detail-cell      { padding: 3px 9px; }
+  .detail-label     { font-size: 6.5px; margin-bottom: 1px; }
+  .detail-value     { font-size: 10px; line-height: 1.2; }
+  .detail-value.large { font-size: 10.5px; }
+  .detail-value.mono  { font-size: 9.5px; }
 
-  /* ── Hash row ── */
-  .hash-row         { padding: 5px 10px; margin-bottom: 8px; }
-  .hash-label       { font-size: 7px; margin-bottom: 2px; }
-  .hash-value       { font-size: 8.5px; line-height: 1.3;
+  /* ── Hash row — single line ─────────────────────────────────── */
+  .hash-row         { padding: 4px 9px; margin-bottom: 7px; }
+  .hash-label       { font-size: 6.5px; margin-bottom: 1px; }
+  .hash-value       { font-size: 8px; line-height: 1.2;
                       white-space: nowrap; overflow: hidden;
-                      text-overflow: ellipsis; }
+                      text-overflow: ellipsis; max-width: 100%; }
 
-  /* ── Notice box ── */
-  .notice-box       { padding: 5px 10px; margin-bottom: 7px; }
-  .notice-box p     { font-size: 9px; line-height: 1.4; }
+  /* ── Notice box ─────────────────────────────────────────────── */
+  .notice-box       { padding: 5px 9px; margin-bottom: 6px; }
+  .notice-box p     { font-size: 8.5px; line-height: 1.35; }
 
-  /* ── Rights table — two-column layout ──
-     Each row: label|value in left half, note in right half.
-     Achieved by making the rights section a 2-col CSS grid,
-     with the table taking the left col and notes floated right. */
-  .rights-table     { margin-bottom: 8px; table-layout: fixed; }
-  .rights-table td  { padding: 4px 8px; font-size: 9px; line-height: 1.3; }
+  /* ── Rights table ───────────────────────────────────────────── */
+  .rights-table               { margin-bottom: 7px; table-layout: fixed; }
+  .rights-table td            { padding: 3px 7px; line-height: 1.25; }
   .rights-table td:first-child {
-    width: 22%; font-size: 7.5px; padding-top: 5px; letter-spacing: .04em;
+    width: 20%; font-size: 7px; padding-top: 4px; letter-spacing: .03em;
   }
-  .rights-table td:nth-child(2) { font-size: 9.5px; line-height: 1.25; width: 42%; }
+  .rights-table td:nth-child(2) { font-size: 9px; line-height: 1.2; width: 44%; }
   .rights-table td:last-child   {
-    font-size: 8.5px; line-height: 1.25; width: 36%; padding-left: 8px;
+    font-size: 8px; line-height: 1.2; width: 36%; padding-left: 7px;
   }
 
-  /* Smart contract list — inline comma-separated on print */
-  .smart-contract-list          { display: inline; }
-  .smart-contract-list li       {
-    display: inline; font-size: 9px; line-height: 1.3;
-    padding: 0;
+  /* Smart contract list — inline dot-separated on print */
+  .smart-contract-list        { display: inline; }
+  .smart-contract-list li     {
+    display: inline; font-size: 8.5px; line-height: 1.2; padding: 0;
   }
-  .smart-contract-list li::before { content: "· "; }
+  .smart-contract-list li::before       { content: " · "; }
   .smart-contract-list li:first-child::before { content: ""; }
 
-  /* ── Instruments ── */
-  .instruments-section { padding-top: 8px; }
-  .instruments-grid-5  { gap: 4px; margin-bottom: 8px; }
-  .instrument-card     { padding: 4px 7px; }
-  .instrument-title    { font-size: 7px; margin-bottom: 1px; }
-  .instrument-name     { font-size: 8.5px; line-height: 1.25; }
-  .instrument-note     { font-size: 7.5px; margin-top: 1px; }
+  /* ── Instruments ─────────────────────────────────────────────── */
+  .instruments-section { padding-top: 7px; }
+  .instruments-grid-5  { gap: 4px; margin-bottom: 7px; }
+  .instrument-card     { padding: 3px 6px; }
+  .instrument-title    { font-size: 6.5px; margin-bottom: 1px; }
+  .instrument-name     { font-size: 8px; line-height: 1.2; }
+  .instrument-note     { font-size: 7px; margin-top: 1px; line-height: 1.2; }
 
-  /* ── Footer ── */
-  .doc-footer           { padding: 9px 20px; }
-  .footer-trustee-name  { font-size: 10px; }
-  .footer-trustee-role  { font-size: 8.5px; }
-  .footer-trustee-org   { font-size: 8px; margin-top: 3px; line-height: 1.5; }
-  .seal-circle          { width: 44px; height: 44px; }
-  .seal-text            { font-size: 5.5px; }
+  /* ── Footer ──────────────────────────────────────────────────── */
+  .doc-footer           { padding: 8px 18px; }
+  .footer-trustee-name  { font-size: 9.5px; }
+  .footer-trustee-role  { font-size: 8px; margin-top: 1px; }
+  .footer-trustee-org   { font-size: 7.5px; margin-top: 3px; line-height: 1.4; }
+  .seal-circle          { width: 40px; height: 40px; }
+  .seal-text            { font-size: 5px; }
 
-  a { text-decoration: none; color: inherit; }
+  .print-hide { display: none !important; }
+  a { text-decoration: none !important; color: inherit !important; }
 }
 </style>
 </head>
@@ -710,6 +734,8 @@ body {
       <strong>COGS of Australia Foundation Community Joint Venture Mainspring Hybrid Trust</strong>
       (ABN 61 734 327 831). It constitutes the formal legal record of unit holding for the
       unitholder named below.
+      <span class="print-hide"> The rights, restrictions, and smart contract attributes
+      programmed into the corresponding COG$ Token are set out below and are class-specific only.</span>
     </p>
 
     <!-- Holding details -->
