@@ -123,13 +123,21 @@ try {
 
     $founding_total = $members + $businesses;
 
-    // Component 3: IP & infrastructure — Trustee-adopted valuation formula
+    // Component 3: RWA verified valuations — from v_foundation_rwa_assets_live
+    // Reads the most-recent verified_valuation_cents per active RWA asset (view handles this)
+    $rwa_val_cents = 0;
+    try {
+        $s = $db->query("SELECT COALESCE(SUM(verified_valuation_cents), 0) FROM v_foundation_rwa_assets_live");
+        $rwa_val_cents = (float)$s->fetchColumn();
+    } catch (Throwable $e) {}
+
+    // Component 4: IP & infrastructure — Trustee-adopted valuation formula
     // V = $475,000 + ($250 × N)  [Valuation Report v1.0, §2]
     // Component A (baseline IP replacement): $475,000
     // Component B+C (per-active-member multiplier): $250 per member
     $ip_infra_cents = 47500000 + (25000 * $founding_total); // cents
 
-    $asset_pool_cents = $asx_book_cents + $sta_cash_cents + $ip_infra_cents;
+    $asset_pool_cents = $asx_book_cents + $sta_cash_cents + $rwa_val_cents + $ip_infra_cents;
     $per_member_cents = $founding_total > 0
         ? round($asset_pool_cents / $founding_total, 0)
         : 0;
