@@ -175,7 +175,7 @@ function renderEmailTemplate(string $templateKey, array $p): array {
     $body      = '<div style="padding:1.5rem 1.5rem .5rem;">';
     $footerBar = '</div><div style="background:#0a0806;border-top:1px solid rgba(255,255,255,.08);padding:1rem 1.5rem;">'
                . '<div style="font-size:10px;color:#6b5c44;line-height:1.8;">'
-               . 'The Trustee for COGS of Australia Foundation Hybrid Trust &nbsp;·&nbsp; ABN: 61 734 327 831<br>'
+               . 'The Trustee for COGS of Australia Foundation Hybrid Trust &nbsp;·&nbsp; ABN: 91 341 497 529<br>'
                . 'C/- Drake Village Resource Centre, Drake Village NSW 2469 &nbsp;·&nbsp; members@cogsaustralia.org<br>'
                . $foundingNotice
                . '</div></div>';
@@ -418,7 +418,7 @@ $html = '<!DOCTYPE html>
     <tr><td style="background:' . $dark . ';padding:20px 32px;border-top:2px solid ' . $goldLt . '">
       <div style="font-size:11px;color:#6b5c44;line-height:1.9;font-family:Arial,sans-serif">
         <strong style="color:#9a8a74">COGS of Australia Foundation Hybrid Trust</strong><br>
-        ABN: 61 734 327 831 &nbsp;&#183;&nbsp; Drake Village NSW 2469<br>
+        ABN: 91 341 497 529 &nbsp;&#183;&nbsp; Drake Village NSW 2469<br>
         members@cogsaustralia.org &nbsp;&#183;&nbsp; cogsaustralia.org<br>
         Community joint venture business partnership &#183; Partner operated &#183; Trustee administered
       </div>
@@ -454,7 +454,7 @@ $plain = "You're in, {$firstName}.\n\n"
     . "This is a founding phase confirmation only. Your partnership contribution and Partner number\n"
     . "are real. All other interests recorded are no-obligation and will not activate\n"
     . "subject to any regulatory requirements determined by applicable law.\n\n"
-    . "COGS of Australia Foundation Hybrid Trust | ABN: 61 734 327 831\n"
+    . "COGS of Australia Foundation Hybrid Trust | ABN: 91 341 497 529\n"
     . "Drake Village NSW 2469 | members@cogsaustralia.org\n";
 
 return [$html, $plain];
@@ -655,7 +655,7 @@ $html = '<!DOCTYPE html>
     <tr><td style="background:' . $dark . ';padding:20px 32px;border-top:2px solid ' . $goldLt . '">
       <div style="font-size:11px;color:#6b5c44;line-height:1.9;font-family:Arial,sans-serif">
         <strong style="color:#9a8a74">COGS of Australia Foundation Hybrid Trust</strong><br>
-        ABN: 61 734 327 831 &#183; Drake Village NSW 2469<br>
+        ABN: 91 341 497 529 &#183; Drake Village NSW 2469<br>
         members@cogsaustralia.org &#183; cogsaustralia.org<br>
         Community joint venture business partnership &#183; Partner operated &#183; Trustee administered
       </div>
@@ -741,7 +741,7 @@ $plain = "Your business is in, {$contactName}.
     . "subject to any regulatory requirements determined by applicable law.
 
 "
-    . "COGS of Australia Foundation Hybrid Trust | ABN: 61 734 327 831
+    . "COGS of Australia Foundation Hybrid Trust | ABN: 91 341 497 529
 "
     . "Drake Village NSW 2469 | members@cogsaustralia.org
 ";
@@ -859,7 +859,7 @@ return [$html, $plain];
 <tr><td style="background:' . $dark . ';padding:18px 32px;border-top:2px solid ' . $gold . '">
   <div style="font-size:11px;color:#6b5c44;line-height:1.9;font-family:Arial,sans-serif">
     <strong style="color:#9a8a74">COG$ of Australia Foundation</strong><br>
-    ABN: 61 734 327 831 &nbsp;&#183;&nbsp; Drake Village NSW 2469<br>
+    ABN: 91 341 497 529 &nbsp;&#183;&nbsp; Drake Village NSW 2469<br>
     members@cogsaustralia.org &nbsp;&#183;&nbsp; cogsaustralia.org
   </div>
 </td></tr>
@@ -871,7 +871,7 @@ return [$html, $plain];
                 . "Acceptance range:  {$pct}%\n"
                 . "What you offer:    {$goods}\n\n"
                 . "We will be in touch to discuss a practical pathway.\n\n"
-                . "COG\$ of Australia Foundation | ABN: 61 734 327 831\n"
+                . "COG\$ of Australia Foundation | ABN: 91 341 497 529\n"
                 . "members@cogsaustralia.org\n";
             return [$html, $plain];
         })(),
@@ -970,7 +970,7 @@ return [$html, $plain];
   </table>
 </td></tr>
 <tr><td style="padding:20px 32px;background:' . $dark . ';border-top:2px solid ' . $gold . '">
-  <div style="font-size:11px;color:#6b5c44;line-height:1.9;font-family:Arial,sans-serif">COG$ of Australia Foundation · ABN: 61 734 327 831 · members@cogsaustralia.org</div>
+  <div style="font-size:11px;color:#6b5c44;line-height:1.9;font-family:Arial,sans-serif">COG$ of Australia Foundation · ABN: 91 341 497 529 · members@cogsaustralia.org</div>
 </td></tr>
 </table></td></tr></table></body></html>';
 
@@ -1424,7 +1424,7 @@ return [$html, $plain];
                 . 'Joint Venture Participation Agreement &nbsp;·&nbsp; CJVM Hybrid Trust Declaration &nbsp;·&nbsp; Sub-Trust A Deed<br>'
                 . '<strong style="color:#d4c9b8;">Governing law:</strong> South Australia, Australia<br>'
                 . '<strong style="color:#d4c9b8;">Issued by:</strong> Thomas Boyd Cunliffe, Caretaker Trustee<br>'
-                . 'Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation &nbsp;·&nbsp; ABN 61 734 327 831'
+                . 'Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation &nbsp;·&nbsp; ABN 91 341 497 529'
                 . '</div>';
 
             // ── Assemble HTML ─────────────────────────────────────────────
@@ -1463,7 +1463,7 @@ return [$html, $plain];
                 . "Issuance Gate:         {$gateLabel}\n"
                 . "SHA-256 Hash:          {$hashVal}\n\n"
                 . "This certificate was issued by Thomas Boyd Cunliffe, Caretaker Trustee,\n"
-                . "COGS of Australia Foundation (ABN 61 734 327 831)\n"
+                . "COGS of Australia Foundation (ABN 91 341 497 529)\n"
                 . "Drake Village NSW 2469 | Wahlubal Country, Bundjalung Nation\n\n"
                 . "The rights and smart contract attributes for your unit class are detailed\n"
                 . "in the HTML version of this email and at cogsaustralia.org\n\n"

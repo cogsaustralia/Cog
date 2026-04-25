@@ -92,7 +92,7 @@ ADDITIONAL CONTEXT:
 - Kids S-NFT: $1 per child
 - Business B-NFT: $40 per ABN
 - Contact: members@cogsaustralia.org
-- ABN: 61 734 327 831
+- ABN: 91 341 497 529
 - Trustee: Thomas Boyd Cunliffe
 - Location: Drake Village, NSW 2469
 PROMPT;

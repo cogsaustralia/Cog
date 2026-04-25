@@ -1920,7 +1920,7 @@
         "    </div>",
         '    <div class="footer-contact-block">',
         "      <p>The Trustee for COGS of Australia Foundation Hybrid Trust</p>",
-        "      <p>ABN: 61 734 327 831</p>",
+        "      <p>ABN: 91 341 497 529</p>",
         "      <p>C/- Drake Village Resource Centre, Drake Village NSW 2469</p>",
         '      <p><a href="mailto:hello@cogsaustralia.org">hello@cogsaustralia.org</a></p>',
         "    </div>",

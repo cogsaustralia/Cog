@@ -737,7 +737,7 @@ body {
       <strong>CJVM Hybrid Trust Declaration</strong> and
       <strong>Sub-Trust A Deed</strong> by the Caretaker Trustee of the
       <strong>COGS of Australia Foundation Community Joint Venture Mainspring Hybrid Trust</strong>
-      (ABN 61 734 327 831). It constitutes the formal legal record of unit holding for the
+      (ABN 91 341 497 529). It constitutes the formal legal record of unit holding for the
       unitholder named below.
       <span class="print-hide"> The rights, restrictions, and smart contract attributes
       programmed into the corresponding COG$ Token are set out below and are class-specific only.</span>
@@ -861,7 +861,7 @@ body {
       </div>
       <p style="font-size:10.5px;color:#7a6a4e;line-height:1.6;">
         <strong style="color:#3a2e1a;">Governing law:</strong> South Australia, Australia &nbsp;·&nbsp;
-        <strong style="color:#3a2e1a;">ABN:</strong> 61 734 327 831 &nbsp;·&nbsp;
+        <strong style="color:#3a2e1a;">ABN:</strong> 91 341 497 529 &nbsp;·&nbsp;
         <strong style="color:#3a2e1a;">Registered office:</strong> Drake Village Resource Centre, Drake Village NSW 2469 &nbsp;·&nbsp;
         Wahlubal Country, Bundjalung Nation
       </p>

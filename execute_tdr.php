@@ -139,12 +139,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:10px 14px;font-size:.78rem;color:#92400e">
       This is a cryptographically executed Trustee Decision Record of the COGS of Australia Foundation
-      Community Joint Venture Mainspring Hybrid Trust (ABN 61 734 327 831). This record is not a managed
+      Community Joint Venture Mainspring Hybrid Trust (ABN 91 341 497 529). This record is not a managed
       investment scheme instrument. Retain this email as your confirmation copy.
     </div>
   </div>
   <p style="text-align:center;font-size:.73rem;color:#aaa;margin-top:16px">
-    COGS of Australia Foundation &nbsp;·&nbsp; ABN 61 734 327 831 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation
+    COGS of Australia Foundation &nbsp;·&nbsp; ABN 91 341 497 529 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation
   </p>
 </div>';
 
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     . "CRYPTOGRAPHIC RECORD\n"
                     . "SHA-256: " . $sha256 . "\n\n"
                     . str_repeat('-', 60) . "\n"
-                    . "COGS of Australia Foundation · ABN 61 734 327 831\n"
+                    . "COGS of Australia Foundation · ABN 91 341 497 529\n"
                     . "Wahlubal Country, Bundjalung Nation\n";
 
                 foreach ($recipients as $to) {
@@ -318,7 +318,7 @@ padding:10px 14px;font-family:monospace;font-size:.75rem;color:var(--gold);word-
   <?php endif; ?>
 
   <p style="text-align:center;font-size:.73rem;color:var(--dim);margin-top:24px">
-    COGS of Australia Foundation &nbsp;&middot;&nbsp; ABN 61 734 327 831
+    COGS of Australia Foundation &nbsp;&middot;&nbsp; ABN 91 341 497 529
     &nbsp;&middot;&nbsp; Wahlubal Country, Bundjalung Nation
   </p>
 </div>

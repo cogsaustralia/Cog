@@ -1081,7 +1081,7 @@ function toggleGroup(grpId) {
 ?>
 <div class="cert-wrap" id="tdr-cert">
   <div class="cert-header">
-    <div class="org">COGS of Australia Foundation · ABN 61 734 327 831</div>
+    <div class="org">COGS of Australia Foundation · ABN 91 341 497 529</div>
     <h1>Trustee Decision Record</h1>
     <div class="sub">
       <?= htmlspecialchars($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context'], ENT_QUOTES) ?>
@@ -1140,7 +1140,7 @@ function toggleGroup(grpId) {
 
   <div class="cert-notice">
     This Trustee Decision Record is a sole-trustee administrative minute of the COGS of Australia
-    Foundation Community Joint Venture Mainspring Hybrid Trust (ABN 61 734 327 831). It is executed
+    Foundation Community Joint Venture Mainspring Hybrid Trust (ABN 91 341 497 529). It is executed
     electronically in accordance with the Electronic Transactions Act 1999 (Cth). No wet-ink signature
     or paper counterpart is required or produced. The record is not a managed investment scheme
     instrument (JVPA clause 4.9, Declaration clause 1.1A). The SHA-256 hash above constitutes the

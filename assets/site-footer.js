@@ -37,7 +37,7 @@
       <div>The Trustee for 
         <div class="footer-name">COGS of Australia Foundation Community Joint Venture Mainspring Hybrid Trust</div>
         <div class="footer-detail">
-          ABN: 61 734 327 831<br>
+          ABN: 91 341 497 529<br>
           Community Owned Gold &amp; Silver&#8482; &middot; <br>Community Operated Governance Structure&#8482;<br>
           C/- Drake Village Resource Centre<br>Drake Village NSW 2469<br>
           &copy; 2026 Copyright Protected
