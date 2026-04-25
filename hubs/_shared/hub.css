@@ -454,3 +454,92 @@ button{font-family:inherit;cursor:pointer}
 .hub-tdr-item:hover{background:rgba(212,178,92,.06);border-color:rgba(212,178,92,.2)}
 .hub-livedata-item[onclick]{cursor:pointer;transition:background .15s,border-color .15s}
 .hub-livedata-item[onclick]:hover{background:rgba(212,178,92,.06);border-color:rgba(212,178,92,.2)}
+
+/* ── Phase 3: CRC Project Documents ─────────────────────────────────────────
+   Document cards in the project detail view — planning docs, auth-gated. */
+.hub-doc-list{display:flex;flex-direction:column;gap:10px;padding:0 0 4px}
+.hub-doc-card{
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 16px;
+  transition:border-color .15s
+}
+.hub-doc-card:hover{border-color:rgba(232,184,75,.3)}
+.hub-doc-card-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap
+}
+.hub-doc-type-pill{
+  display:inline-flex;align-items:center;
+  padding:2px 8px;border-radius:99px;
+  font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase
+}
+.hub-doc-type-pill.master{
+  background:rgba(232,184,75,.10);
+  border:1px solid rgba(232,184,75,.25);
+  color:var(--gold)
+}
+.hub-doc-type-pill.programme{
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border);
+  color:var(--text2)
+}
+.hub-doc-version{
+  font-size:.72rem;color:var(--text3);margin-left:auto
+}
+.hub-doc-title{
+  font-size:.95rem;font-weight:600;color:var(--text1);
+  margin-bottom:6px;line-height:1.4
+}
+.hub-doc-desc{
+  font-size:.83rem;color:var(--text2);line-height:1.55;
+  margin-bottom:10px
+}
+.hub-doc-footer{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap
+}
+.hub-doc-meta{
+  font-size:.75rem;color:var(--text4)
+}
+.hub-doc-fl:not(:empty){margin-top:6px}
+
+/* ── Phase 3: Document acknowledgement modal ─────────────────────────────── */
+.hub-doc-ack-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.65);
+  z-index:9000;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px
+}
+.hub-doc-ack-modal{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px 26px;
+  max-width:520px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.5)
+}
+.hub-doc-ack-hd{
+  font-size:1rem;font-weight:700;color:var(--text1);
+  margin-bottom:4px
+}
+.hub-doc-ack-doc-title{
+  font-size:.88rem;font-weight:600;color:var(--gold);
+  margin-bottom:12px;line-height:1.4
+}
+.hub-doc-ack-desc{
+  font-size:.83rem;color:var(--text2);line-height:1.55;
+  margin-bottom:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--border)
+}
+.hub-doc-ack-notice{
+  font-size:.82rem;color:var(--text3);line-height:1.6;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:10px 12px
+}
+@media(max-width:520px){
+  .hub-doc-ack-modal{padding:18px 16px}
+}

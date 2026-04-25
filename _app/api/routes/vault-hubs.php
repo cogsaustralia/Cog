@@ -232,6 +232,12 @@ if ($action === 'hub-ai') {
 if ($action === 'hub-admin-activity') {
     handleHubAdminActivity();
 }
+if ($action === 'hub-document-access') {
+    handleHubDocumentAccess();   // POST — commitment acknowledgement gate
+}
+if ($action === 'hub-document-serve') {
+    handleHubDocumentServe();    // GET — auth-gated PDF file delivery
+}
 
 // =============================================================================
 // Handlers
@@ -724,6 +730,25 @@ function handleHubProject(): void {
     $mlStmt->execute([$id]);
     $milestones = $mlStmt->fetchAll();
 
+    // Project documents — planning docs linked to this project
+    // Has this member already acknowledged each document?
+    $documents = [];
+    try {
+        $docsStmt = $db->prepare(
+            "SELECT d.id, d.doc_type, d.title, d.version_label,
+                    d.description, d.pdf_filename, d.file_size_bytes,
+                    d.sort_order,
+                    CASE WHEN a.member_id IS NOT NULL THEN 1 ELSE 0 END AS already_acknowledged
+               FROM hub_project_documents d
+               LEFT JOIN hub_project_document_access a
+                 ON a.document_id = d.id AND a.member_id = ?
+              WHERE d.project_id = ?
+              ORDER BY d.sort_order ASC"
+        );
+        $docsStmt->execute([$me['id'], $id]);
+        $documents = $docsStmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable) { /* table not yet migrated — degrade gracefully */ }
+
     apiSuccess([
         'project'          => $project,
         'participants'     => $participants,
@@ -733,6 +758,7 @@ function handleHubProject(): void {
         'vote_summary'     => $voteSummary,
         'my_vote'          => $myVote,
         'milestones'       => $milestones,
+        'documents'        => $documents,
     ]);
 }
 
@@ -2551,4 +2577,191 @@ function handleHubAdminActivity(): void
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
+}
+
+/**
+ * POST /vault/hub-document-access
+ * Commitment acknowledgement gate for CRC project documents.
+ *
+ * Member must be a participant (any role) in the owning hub project to access.
+ * On acknowledgement, records a hub_project_document_access row (INSERT IGNORE —
+ * idempotent, so repeat clicks don't error). Returns the doc metadata so the
+ * frontend can immediately trigger the serve request.
+ *
+ * Body: { document_id: int }
+ */
+function handleHubDocumentAccess(): void {
+    requireMethod('POST');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $me        = hubResolveMember($db, $principal);
+    $body      = json_decode(file_get_contents('php://input'), true) ?? [];
+    $docId     = (int)($body['document_id'] ?? 0);
+    if ($docId < 1) apiError('document_id required.');
+
+    // Load document row
+    try {
+        $dStmt = $db->prepare(
+            "SELECT d.*, hp.area_key
+               FROM hub_project_documents d
+               JOIN hub_projects hp ON hp.id = d.project_id
+              WHERE d.id = ? LIMIT 1"
+        );
+        $dStmt->execute([$docId]);
+        $doc = $dStmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        apiError('Document lookup failed.', 500);
+    }
+    if (!$doc) apiError('Document not found.', 404);
+
+    // Authorisation: Member must be a participant in the owning project
+    // OR enrolled in the owner hub area (area enrolment is sufficient for open_for_input phase)
+    $projectId = (int)$doc['project_id'];
+    $areaKey   = (string)$doc['area_key'];
+
+    $isParticipant = false;
+    try {
+        $pCheck = $db->prepare(
+            "SELECT 1 FROM hub_project_participants
+              WHERE project_id = ? AND member_id = ? LIMIT 1"
+        );
+        $pCheck->execute([$projectId, $me['id']]);
+        $isParticipant = (bool)$pCheck->fetchColumn();
+    } catch (Throwable) {}
+
+    $isEnrolledInArea = in_array($areaKey, $me['areas'], true);
+
+    if (!$isParticipant && !$isEnrolledInArea) {
+        apiError('You must be enrolled in this hub or a project participant to access this document.', 403);
+    }
+
+    // Record acknowledgement (INSERT IGNORE — idempotent for repeat access)
+    try {
+        $ip = (string)(
+            $_SERVER['HTTP_CF_CONNECTING_IP']
+            ?? $_SERVER['HTTP_X_FORWARDED_FOR']
+            ?? $_SERVER['REMOTE_ADDR']
+            ?? ''
+        );
+        $ip = trim(explode(',', $ip)[0]);
+        $db->prepare(
+            "INSERT IGNORE INTO hub_project_document_access
+                (document_id, member_id, acknowledged_at, ip_addr)
+             VALUES (?, ?, UTC_TIMESTAMP(), ?)"
+        )->execute([$docId, $me['id'], $ip ?: null]);
+    } catch (Throwable $e) {
+        // Table may not exist on pre-migration env — fail open with a log
+        error_log('[hub-document-access] acknowledgement record failed: ' . $e->getMessage());
+    }
+
+    apiSuccess([
+        'acknowledged' => true,
+        'document_id'  => $docId,
+        'pdf_filename' => (string)$doc['pdf_filename'],
+        'title'        => (string)$doc['title'],
+        'sha256_hash'  => (string)$doc['sha256_hash'],
+    ]);
+}
+
+/**
+ * GET /vault/hub-document-serve?document_id=<id>
+ * Auth-gated PDF file delivery for CRC project documents.
+ *
+ * Requirements:
+ *  · Valid snft session (cookie-based, same as all hub endpoints)
+ *  · Prior acknowledgement in hub_project_document_access for this member + doc
+ *    (i.e. the commitment gate must have been passed first)
+ *  · Member is participant OR enrolled in the owner hub area
+ *
+ * Serves the PDF directly with appropriate headers.
+ * Files must be present at DOCUMENT_ROOT/docs/crc/<filename>.
+ */
+function handleHubDocumentServe(): void {
+    requireMethod('GET');
+    $principal = requireAuth('snft');
+    $db        = getDB();
+    $me        = hubResolveMember($db, $principal);
+    $docId     = (int)($_GET['document_id'] ?? 0);
+    if ($docId < 1) apiError('document_id required.');
+
+    // Load document
+    try {
+        $dStmt = $db->prepare(
+            "SELECT d.*, hp.area_key
+               FROM hub_project_documents d
+               JOIN hub_projects hp ON hp.id = d.project_id
+              WHERE d.id = ? LIMIT 1"
+        );
+        $dStmt->execute([$docId]);
+        $doc = $dStmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        apiError('Document lookup failed.', 500);
+    }
+    if (!$doc) apiError('Document not found.', 404);
+
+    $projectId = (int)$doc['project_id'];
+    $areaKey   = (string)$doc['area_key'];
+
+    // Authorisation: same as access gate
+    $isParticipant = false;
+    try {
+        $pCheck = $db->prepare(
+            "SELECT 1 FROM hub_project_participants
+              WHERE project_id = ? AND member_id = ? LIMIT 1"
+        );
+        $pCheck->execute([$projectId, $me['id']]);
+        $isParticipant = (bool)$pCheck->fetchColumn();
+    } catch (Throwable) {}
+
+    $isEnrolledInArea = in_array($areaKey, $me['areas'], true);
+
+    if (!$isParticipant && !$isEnrolledInArea) {
+        apiError('Access denied.', 403);
+    }
+
+    // Require prior acknowledgement
+    $ackExists = false;
+    try {
+        $aStmt = $db->prepare(
+            "SELECT 1 FROM hub_project_document_access
+              WHERE document_id = ? AND member_id = ? LIMIT 1"
+        );
+        $aStmt->execute([$docId, $me['id']]);
+        $ackExists = (bool)$aStmt->fetchColumn();
+    } catch (Throwable) {
+        // Pre-migration: fail open (table not yet created)
+        $ackExists = true;
+    }
+
+    if (!$ackExists) {
+        apiError('Commitment acknowledgement required before document access.', 403);
+    }
+
+    // Locate and serve the file
+    $filename = basename((string)$doc['pdf_filename']); // sanitise — no path traversal
+    $filePath = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . '/docs/crc/' . $filename;
+
+    if (!file_exists($filePath) || !is_readable($filePath)) {
+        apiError('Document file not available. Please contact the Foundation.', 404);
+    }
+
+    // Integrity check against stored hash
+    $actualHash = hash_file('sha256', $filePath);
+    if ($actualHash !== (string)$doc['sha256_hash']) {
+        error_log('[hub-document-serve] hash mismatch for document_id=' . $docId
+            . ' expected=' . $doc['sha256_hash'] . ' actual=' . $actualHash);
+        apiError('Document integrity check failed. Please contact the Foundation.', 500);
+    }
+
+    // Serve the PDF
+    $title    = preg_replace('/[^A-Za-z0-9_\-. ]/', '', (string)$doc['title']);
+    $safeFile = str_replace(' ', '_', $title) . '_' . $doc['version_label'] . '.pdf';
+
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: inline; filename="' . $safeFile . '"');
+    header('Content-Length: ' . filesize($filePath));
+    header('Cache-Control: private, no-store');
+    header('X-Content-Type-Options: nosniff');
+    readfile($filePath);
+    exit;
 }

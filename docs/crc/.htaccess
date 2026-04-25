@@ -1,0 +1,3 @@
+# CRC planning documents — blocked from direct web access.
+# All downloads are served through vault/hub-document-serve (PHP, auth-gated).
+Deny from all
