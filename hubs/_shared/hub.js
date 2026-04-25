@@ -1014,17 +1014,12 @@ function renderProjectDocuments(docs, enrolledInArea){
     var size = d.file_size_bytes > 0
       ? '<span class="hub-doc-meta">PDF · ' + Math.round(d.file_size_bytes/1024) + ' KB</span>'
       : '';
-    var acked = parseInt(d.already_acknowledged || '0', 10) === 1;
-    var actionBtn = acked
-      ? '<button class="btn btn-gold btn-sm hub-doc-btn"'
-          + ' data-doc-id="'+d.id+'"'
-          + ' data-title="'+esc(d.title)+'"'
-          + ' onclick="openDocument(this)">Open document ↗</button>'
-      : '<button class="btn btn-ghost btn-sm hub-doc-btn"'
-          + ' data-doc-id="'+d.id+'"'
-          + ' data-title="'+esc(d.title)+'"'
-          + ' data-description="'+esc(d.description||'')+'"'
-          + ' onclick="acknowledgeDocument(this)">Read &amp; acknowledge ↗</button>';
+    // Single button regardless of prior acknowledgement.
+    // Silent audit record is written by openDocument() on first access.
+    var actionBtn = '<button class="btn btn-gold btn-sm hub-doc-btn"'
+      + ' data-doc-id="'+d.id+'"'
+      + ' data-title="'+esc(d.title)+'"'
+      + ' onclick="openDocument(this)">Open document ↗</button>';
 
     return '<div class="hub-doc-card">'
       + '<div class="hub-doc-card-head">'
@@ -1050,83 +1045,30 @@ function renderProjectDocuments(docs, enrolledInArea){
 /* Commitment gate modal — shown before first access to a document.
    Member must click "I acknowledge and agree" to proceed.
    Uses data-* attributes read from the button element. */
-function acknowledgeDocument(btnEl){
-  if(!btnEl || !btnEl.dataset) return;
-  var docId    = parseInt(btnEl.dataset.docId || '0', 10);
-  var title    = (btnEl.dataset.title || '').trim();
-  var descRaw  = (btnEl.dataset.description || '').trim();
-  if(!docId) return;
-
-  // Build modal
-  var overlay = document.createElement('div');
-  overlay.id  = 'doc-ack-overlay';
-  overlay.className = 'hub-doc-ack-overlay';
-  overlay.innerHTML =
-    '<div class="hub-doc-ack-modal" role="dialog" aria-modal="true" aria-labelledby="doc-ack-title">'
-    + '<div class="hub-doc-ack-hd" id="doc-ack-title">Access Planning Document</div>'
-    + '<div class="hub-doc-ack-doc-title">'+esc(title)+'</div>'
-    + (descRaw ? '<div class="hub-doc-ack-desc">'+esc(descRaw)+'</div>' : '')
-    + '<div class="hub-doc-ack-notice">'
-      + 'This document is a planning and strategy document of the COG$ of Australia Foundation. '
-      + 'It is provided for the information of Foundation Members only. '
-      + 'By clicking Acknowledge below, you confirm that you are a Foundation Member accessing '
-      + 'this document in that capacity, and that you will treat its contents as Foundation '
-      + 'Member information.'
-    + '</div>'
-    + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">'
-      + '<button class="btn btn-gold" id="doc-ack-confirm" data-doc-id="'+docId+'">I acknowledge and agree</button>'
-      + '<button class="btn btn-ghost" id="doc-ack-cancel">Cancel</button>'
-    + '</div>'
-    + '<div class="flash" id="doc-ack-fl" style="margin-top:8px"></div>'
-    + '</div>';
-
-  document.body.appendChild(overlay);
-
-  document.getElementById('doc-ack-cancel').onclick = function(){
-    overlay.remove();
-  };
-  overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
-
-  document.getElementById('doc-ack-confirm').onclick = async function(){
-    var confirmBtn = this;
-    confirmBtn.disabled = true;
-    confirmBtn.textContent = 'Recording…';
-    try{
-      await api('vault/hub-document-access', {
-        method: 'POST',
-        body: JSON.stringify({ document_id: docId })
-      });
-      overlay.remove();
-      // Re-fetch project data so the button flips to 'Open document'
-      _projectData = await api('vault/hub-project&id=' + _projectId);
-      renderProjectDetail();
-      // Small delay then auto-open the document
-      setTimeout(function(){
-        var newBtn = document.querySelector('.hub-doc-btn[data-doc-id="'+docId+'"]');
-        if(newBtn) newBtn.click();
-      }, 80);
-    }catch(e){
-      var fl = document.getElementById('doc-ack-fl');
-      if(fl){ fl.textContent = e.message || 'Could not record acknowledgement.'; fl.className='flash err'; }
-      confirmBtn.disabled = false;
-      confirmBtn.textContent = 'I acknowledge and agree';
-    }
-  };
-}
-
-/* Opens an already-acknowledged document in a new tab via the auth-gated serve endpoint.
-   The serve endpoint validates the session cookie and the prior acknowledgement record,
-   then streams the PDF directly. */
-function openDocument(btnEl){
+/* Opens a project document. Records a silent audit entry on first access
+   (POST to vault/hub-document-access) then immediately opens the PDF in
+   a new tab. The JVPA already governs member obligations regarding
+   Foundation materials — no modal confirmation is required. */
+async function openDocument(btnEl){
   if(!btnEl || !btnEl.dataset) return;
   var docId = parseInt(btnEl.dataset.docId || '0', 10);
   if(!docId) return;
-  // Use the page-level API variable (set in each hub page's inline script)
-  // which resolves to ROOT + '_app/api/index.php?route='
-  // The session cookie is sent automatically — same origin.
+
+  // Post silent audit record — fire-and-forget, never blocks the open.
+  // The server writes to hub_project_document_access; errors are logged.
+  try{
+    fetch(
+      (typeof API !== 'undefined' ? API : '/_app/api/index.php?route=')
+        + 'vault/hub-document-access',
+      { method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({document_id: docId}) }
+    );
+  }catch(_){}
+
+  // Open the PDF immediately — session cookie sent automatically (same origin).
   var base = (typeof API !== 'undefined' ? API : '/_app/api/index.php?route=');
-  var url = base + 'vault/hub-document-serve&document_id=' + docId;
-  window.open(url, '_blank', 'noopener');
+  window.open(base + 'vault/hub-document-serve&document_id=' + docId, '_blank', 'noopener');
 }
 
 async function joinProject(id){
@@ -1433,7 +1375,6 @@ window.cancelCreateProject = cancelCreateProject;
 window.submitCreateProject = submitCreateProject;
 window.openProject         = openProject;
 window.openReferencedProject = openReferencedProject;
-window.acknowledgeDocument = acknowledgeDocument;
 window.openDocument        = openDocument;
 window.toggleSection       = toggleSection;
 window.expandAndScrollToSection = expandAndScrollToSection;
