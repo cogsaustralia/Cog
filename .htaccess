@@ -109,10 +109,11 @@ form-action 'self'"
     Header set Expires "0"
   </FilesMatch>
 
-  # CSS and JS (minified AND original): cache for 1 month
-  # Browsers will use cached version unless file changes
+  # CSS and JS: cache for 1 hour, must-revalidate.
+  # Query-string versioning (?v=N) is used for cache-busting.
+  # immutable removed — it prevents revalidation even when query string changes.
   <FilesMatch "\.(css|js)$">
-    Header set Cache-Control "public, max-age=2592000, immutable"
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
     Header append Vary "Accept-Encoding"
   </FilesMatch>
 
