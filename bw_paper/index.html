@@ -3,40 +3,635 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COGs of Australia Foundation | Black &amp; White Paper</title>
-  <meta name="description" content="The COGs of Australia Foundation Black and White Paper.">
-  <link rel="stylesheet" href="../assets/frontend.css?v=4">
+  <title>The Black &amp; White Paper | COG$ of Australia Foundation</title>
+  <meta name="description" content="The Black and White Paper for the Australian Community — a public constitutional statement and formal white paper for the COGs of Australia Foundation.">
+  <link rel="icon" type="image/png" href="../assets/logo_webcir.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    .dl-wrap{max-width:520px;margin:2rem auto;text-align:center;padding:2rem 1.5rem}
-    .dl-wrap h1{font-size:1.6rem;margin-bottom:.75rem}
-    .dl-wrap p{color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
-    .dl-wrap .btn-primary{display:inline-block;padding:.85rem 2rem;font-size:.95rem}
+    :root{
+      --bg:#0a0804;
+      --panel:rgba(24,17,8,.86); --panel-2:rgba(36,26,11,.92);
+      --gold-1:#f0d18a; --gold-2:#c9973d; --gold-3:#7a5518;
+      --gold-pale:rgba(240,209,138,.10); --gold-rim:rgba(240,209,138,.20); --gold-rim2:rgba(240,209,138,.42);
+      --text:#fff8e8; --text2:rgba(255,248,232,.93); --muted:rgba(240,225,196,.86);
+      --line:rgba(240,209,138,.13); --line2:rgba(240,209,138,.28);
+      --shadow:0 18px 48px rgba(0,0,0,.58);
+      --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; --r:20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    a{color:inherit}
+    img{max-width:100%;height:auto;display:block}
+
+    .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .bg-img{position:absolute;inset:0;background:url('../assets/cogs_garden.webp') center 28%/cover no-repeat;opacity:.10;filter:sepia(.55) saturate(.85) brightness(.50)}
+    .bg-vignette{position:absolute;inset:0;background:
+      radial-gradient(ellipse 90% 55% at 50% 0%,rgba(10,8,4,.62) 0%,transparent 60%),
+      radial-gradient(ellipse 100% 50% at 50% 100%,rgba(10,8,4,.97) 0%,transparent 70%),
+      radial-gradient(ellipse 35% 100% at 0% 50%,rgba(10,8,4,.68) 0%,transparent 60%),
+      radial-gradient(ellipse 35% 100% at 100% 50%,rgba(10,8,4,.68) 0%,transparent 60%)}
+    .site-shell{position:relative;z-index:1}
+    .container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+    /* HERO */
+    .hero{padding:64px 0 36px}
+    .eyebrow{display:inline-block;font-size:.69rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);border:1px solid var(--gold-rim);padding:6px 16px;border-radius:999px;margin-bottom:22px}
+    h1.title{font-family:var(--serif);font-size:clamp(2.6rem,5.6vw,4.4rem);font-weight:500;line-height:1.04;letter-spacing:-.025em;color:var(--text);margin-bottom:18px;max-width:18ch}
+    h1.title em{font-style:italic;color:var(--gold-1)}
+    .subtitle{font-size:1.05rem;color:var(--text2);line-height:1.74;max-width:680px;margin-bottom:14px}
+    .meta{font-size:.82rem;color:var(--muted);letter-spacing:.04em;margin-bottom:24px}
+    .meta strong{color:var(--gold-1);font-weight:600}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+
+    .btn-primary,.btn-secondary,.btn-ghost{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:999px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:13px 18px;font-size:.84rem;min-width:188px;transition:transform .18s,border-color .2s,background .2s}
+    .btn-primary{border:1px solid rgba(240,209,138,.48);background:linear-gradient(145deg,rgba(66,47,18,.98),rgba(30,21,8,.96));color:var(--text);box-shadow:0 12px 28px rgba(0,0,0,.35)}
+    .btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.72);background:linear-gradient(145deg,rgba(78,56,22,1),rgba(36,25,9,.98))}
+    .btn-secondary{border:1px solid rgba(240,209,138,.28);background:rgba(240,209,138,.08);color:var(--text)}
+    .btn-secondary:hover,.btn-secondary:focus-visible{transform:translateY(-1px);border-color:rgba(240,209,138,.54);background:rgba(240,209,138,.14)}
+    .btn-ghost{min-width:auto;padding:11px 16px;font-size:.78rem;border:1px solid rgba(240,209,138,.22);background:transparent;color:var(--text2)}
+    .btn-ghost:hover{color:var(--gold-1);border-color:var(--gold-rim2);background:var(--gold-pale)}
+
+    .divider{border:none;height:1px;background:linear-gradient(to right,transparent,var(--line2),transparent);margin:0 24px 0}
+
+    /* PROPOSITION BAND */
+    .proposition{padding:36px 0 28px}
+    .quote-band{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:32px 30px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .quote-band .kicker{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:14px}
+    .quote-band blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.4rem,2.6vw,1.95rem);line-height:1.34;color:var(--gold-1);margin-bottom:14px;letter-spacing:-.01em}
+    .quote-band p{font-size:.99rem;color:var(--text2);line-height:1.78;max-width:760px}
+
+    /* TWO-COLUMN LAYOUT WITH STICKY TOC */
+    .doc-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:40px;align-items:start;padding:32px 0 64px}
+    .toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding:18px 16px;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+    .toc h4{font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+    .toc-section{margin-bottom:14px}
+    .toc-section:last-child{margin-bottom:0}
+    .toc-section-title{font-family:var(--serif);font-size:.84rem;font-weight:600;color:var(--gold-1);margin-bottom:6px;padding-left:0}
+    .toc a{display:block;font-size:.81rem;color:var(--text2);line-height:1.45;padding:5px 0 5px 8px;border-left:1px solid transparent;text-decoration:none;transition:color .15s,border-color .15s}
+    .toc a:hover{color:var(--gold-1);border-left-color:var(--gold-rim2)}
+    .toc a.active{color:var(--gold-1);border-left-color:var(--gold-1)}
+
+    .doc-body{min-width:0}
+
+    /* PART HEADERS */
+    .part-marker{display:flex;align-items:center;gap:14px;margin:0 0 10px;padding-top:8px}
+    .part-marker .label{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2)}
+    .part-marker .rule{flex:1;height:1px;background:linear-gradient(to right,var(--gold-rim2),transparent)}
+    h2.part-title{font-family:var(--serif);font-size:clamp(2rem,3.8vw,2.8rem);font-weight:500;line-height:1.08;letter-spacing:-.02em;color:var(--text);margin-bottom:12px}
+    .part-intro{font-size:1rem;color:var(--text2);line-height:1.82;max-width:760px;margin-bottom:28px;font-style:italic}
+    .part-intro strong{color:var(--gold-1);font-weight:600;font-style:normal}
+
+    /* SECTION HEADINGS */
+    h3.section-h{font-family:var(--serif);font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:600;line-height:1.18;color:var(--gold-1);margin:36px 0 14px;letter-spacing:-.005em;scroll-margin-top:28px}
+    h3.section-h:first-of-type{margin-top:8px}
+    h3.section-h .num{display:inline-block;font-family:var(--sans);font-size:.7em;font-weight:700;color:var(--gold-2);margin-right:10px;letter-spacing:.04em}
+
+    h4.subsection{font-family:var(--serif);font-size:1.08rem;font-weight:600;color:var(--text);margin:24px 0 10px;line-height:1.3}
+
+    /* PROSE */
+    .prose p{font-size:1rem;color:var(--text2);line-height:1.85;margin-bottom:16px}
+    .prose p:last-child{margin-bottom:0}
+    .prose em{color:var(--gold-1);font-style:italic}
+    .prose strong{color:var(--text);font-weight:600}
+
+    .pull-quote{font-family:var(--serif);font-style:italic;font-size:1.18rem;line-height:1.45;color:var(--gold-1);border-left:2px solid var(--gold-rim2);padding:6px 0 6px 22px;margin:22px 0;letter-spacing:-.005em}
+
+    .question-pair{margin:22px 0;padding:22px 24px;border:1px solid var(--line);border-radius:16px;background:rgba(36,26,11,.46)}
+    .question-pair .q-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);display:block;margin-bottom:8px}
+    .question-pair p{font-family:var(--serif);font-style:italic;font-size:1.12rem;line-height:1.45;color:var(--gold-1);margin-bottom:14px}
+    .question-pair p:last-child{margin-bottom:0}
+
+    /* COMMITMENTS TABLE */
+    .commit-table-wrap{margin:8px 0 28px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow)}
+    .commit-table{width:100%;border-collapse:collapse;font-size:.92rem}
+    .commit-table thead th{font-family:var(--sans);text-align:left;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);padding:14px 18px;background:rgba(36,26,11,.6);border-bottom:1px solid var(--line2)}
+    .commit-table td{padding:14px 18px;vertical-align:top;border-bottom:1px solid var(--line);line-height:1.65;color:var(--text2)}
+    .commit-table tr:last-child td{border-bottom:none}
+    .commit-table td:first-child{font-weight:600;color:var(--gold-1);width:24%;font-family:var(--serif)}
+    .commit-table td:nth-child(2){width:38%}
+    @media (max-width:760px){
+      .commit-table-wrap{overflow-x:auto}
+      .commit-table{min-width:640px}
+    }
+
+    /* NUMBERED LIST (1-6 inside section) */
+    .numlist{list-style:none;display:grid;gap:14px;margin:14px 0 18px}
+    .numlist li{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(36,26,11,.34)}
+    .numlist .n{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid rgba(240,209,138,.34);background:rgba(240,209,138,.10);font-size:.82rem;font-weight:700;color:var(--gold-1);font-family:var(--sans)}
+    .numlist h5{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.3}
+    .numlist p{font-size:.94rem;color:var(--text2);line-height:1.72;margin:0}
+
+    /* SIGNOFF */
+    .signoff{margin-top:48px;padding:28px 30px;border:1px solid var(--gold-rim2);border-radius:18px;background:linear-gradient(160deg,rgba(34,24,10,.86),rgba(18,13,5,.78));text-align:center}
+    .signoff .kicker{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);display:block;margin-bottom:12px}
+    .signoff h3{font-family:var(--serif);font-size:clamp(1.4rem,2.6vw,1.9rem);font-weight:500;color:var(--text);margin-bottom:12px}
+    .signoff p{font-size:.96rem;color:var(--text2);line-height:1.78;max-width:620px;margin:0 auto 18px}
+    .signoff .cta-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
+
+    /* PROGRESS BAR */
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold-2),var(--gold-1));width:0%;z-index:300;transition:width .15s ease-out;pointer-events:none}
+
+    /* PRINT */
+    @media print{
+      .bg-layer,.toc,.hero-actions,.signoff .cta-actions,#cogs-header,#cogs-footer,.progress,.btn-primary,.btn-secondary,.btn-ghost{display:none !important}
+      body{background:#fff;color:#111}
+      .doc-layout{grid-template-columns:1fr;padding:0}
+      .doc-body{min-width:0}
+      .container{max-width:100%;padding:0 12mm}
+      h1.title,h2.part-title,h3.section-h,h4.subsection{color:#111;page-break-after:avoid}
+      .prose p,.prose em,.prose strong{color:#222}
+      .quote-band,.commit-table-wrap,.signoff,.question-pair,.numlist li{background:#fff;border-color:#ccc;box-shadow:none}
+      .quote-band blockquote,.pull-quote,.question-pair p{color:#333;border-color:#999}
+      .commit-table thead th{background:#f6f1e3;color:#333}
+      .commit-table td:first-child{color:#444}
+    }
+
+    /* RESPONSIVE */
+    @media (max-width:980px){
+      .doc-layout{grid-template-columns:1fr;gap:24px}
+      .toc{position:static;max-height:none;display:none}
+      .toc.mobile-open{display:block}
+      .toc-toggle{display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-1);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:10px 16px;margin-bottom:16px;cursor:pointer}
+    }
+    @media (min-width:981px){
+      .toc-toggle{display:none}
+    }
+    @media (max-width:600px){
+      .hero{padding:40px 0 24px}
+      .quote-band{padding:24px 22px}
+      .signoff{padding:24px 22px}
+      .commit-table td,.commit-table thead th{padding:12px 14px;font-size:.86rem}
+      .doc-layout{padding:24px 0 48px}
+      .question-pair{padding:18px 20px}
+    }
   </style>
 </head>
-<body class="entry-body" data-root="../" data-page="bw_paper">
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-img"></div>
+  <div class="bg-vignette"></div>
+</div>
+
+<div class="progress" id="readingProgress" aria-hidden="true"></div>
+
+<div class="site-shell">
+  <div id="cogs-header"></div>
+  <script src="/assets/site-header.js"></script>
+
   <main>
-    <section class="entry-screen entry-screen-static" role="region" aria-label="Black and White Paper">
-      <div class="entry-background" aria-hidden="true"></div>
-      <div class="entry-content container entry-content-narrow">
-
-        <div class="entry-brand">
-          <img src="../assets/logo_webcir.png" alt="COGs of Australia Foundation logo">
-          <span>COGs of Australia Foundation</span>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <span class="eyebrow">The Black &amp; White Paper · Version 2.0</span>
+        <h1 class="title">A constitutional statement <em>for the Australian community.</em></h1>
+        <p class="subtitle">A public statement and formal white paper for the COGs of Australia Foundation — explaining the structure, safeguards, responsibilities, and national invitation of the Joint Venture Partnership.</p>
+        <p class="meta">Updated to reflect the <strong>Joint Venture Partnership Agreement v5.0</strong> and the current instrument hierarchy of the Foundation.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="../join/index.html">Become a Member — $4</a>
+          <a class="btn-secondary" href="../docs/black-and-white-paper.pdf" target="_blank" rel="noopener">Download PDF ↓</a>
+          <a class="btn-ghost" href="#part-1">Read paper</a>
         </div>
-
-        <div class="dl-wrap">
-          <h1>Black &amp; White Paper</h1>
-          <p>Our founding vision, governance architecture, token economics, and community roadmap — in one document.</p>
-          <a class="btn-primary" href="../docs/black-and-white-paper.pdf" target="_blank" rel="noopener">Download PDF ↓</a>
-        </div>
-
-        <div class="entry-actions" style="margin-top:1.5rem">
-          <a class="btn-secondary" href="../index.html">← Back to home</a>
-        </div>
-
       </div>
     </section>
+
+    <hr class="divider">
+
+    <!-- PROPOSITION -->
+    <section class="proposition">
+      <div class="container">
+        <div class="quote-band">
+          <span class="kicker">The proposition</span>
+          <blockquote>What belongs to the life of the nation should carry the voice of the nation.</blockquote>
+          <p>Not as a slogan. As a structure. As a discipline. As a shared commitment. This paper is an invitation to Australians and to Australian businesses to act together in a calm, lawful, practical way — to build something stronger than our individual reach.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOC LAYOUT WITH TOC -->
+    <div class="container">
+      <div class="doc-layout">
+
+        <!-- TOC -->
+        <button class="toc-toggle" type="button" id="tocToggle" aria-expanded="false" aria-controls="docToc">☰ Contents</button>
+
+        <aside class="toc" id="docToc" aria-label="Table of contents">
+          <h4>Contents</h4>
+          <div class="toc-section">
+            <div class="toc-section-title">Part I — Public Statement</div>
+            <a href="#different-strength">A different kind of strength</a>
+            <a href="#simple-invitation">A simple invitation</a>
+            <a href="#why-now">Why this matters now</a>
+            <a href="#plain-language">The idea in plain language</a>
+            <a href="#business-belongs">Business belongs in this picture</a>
+            <a href="#what-this-does">What this model is trying to do</a>
+            <a href="#value-economy">A value-based economy</a>
+            <a href="#what-this-isnt">What this is not</a>
+            <a href="#humble-claim">A humble claim</a>
+            <a href="#moral-centre">The moral centre</a>
+            <a href="#why-join">Why join</a>
+            <a href="#business-step-in">Why businesses should step in early</a>
+            <a href="#practical-invitation">The practical invitation</a>
+            <a href="#in-black-and-white">In black and white</a>
+            <a href="#coordinator">Message from the Coordinator</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-title">Part II — Formal White Paper</div>
+            <a href="#commitments">Commitments at a glance</a>
+            <a href="#preamble">Preamble</a>
+            <a href="#exec-summary">Executive Summary</a>
+            <a href="#sec-1">1. Constitutional Problem</a>
+            <a href="#sec-2">2. Constitutional Character</a>
+            <a href="#sec-3">3. First Principles</a>
+            <a href="#sec-4">4. The National Promise</a>
+            <a href="#sec-5">5. Institutional Architecture</a>
+            <a href="#sec-6">6. Token Classes</a>
+            <a href="#sec-6a">6A. Business Participation</a>
+            <a href="#sec-7">7. One Nation, Local Standing</a>
+            <a href="#sec-8">8. First Nations Authority</a>
+            <a href="#sec-9">9. In-Ground Value</a>
+            <a href="#sec-10">10. Social Benefit Test</a>
+            <a href="#sec-11">11. Community Benefit</a>
+            <a href="#sec-12">12. Intergenerational Membership</a>
+            <a href="#sec-13">13. Regulatory Discipline</a>
+            <a href="#sec-14">14. What the Foundation Refuses to Be</a>
+            <a href="#sec-15">15. National Invitation</a>
+            <a href="#conclusion">Conclusion</a>
+          </div>
+        </aside>
+
+        <article class="doc-body prose">
+
+          <!-- ════════════════════════════════════════════════════════════════════
+                                       PART I
+              ════════════════════════════════════════════════════════════════════ -->
+
+          <div class="part-marker" id="part-1">
+            <span class="label">Part I</span>
+            <span class="rule"></span>
+          </div>
+          <h2 class="part-title">For the Australian community.</h2>
+          <p class="part-intro">A public-facing statement of intent in plain language, written for households, communities, and businesses considering whether to step in.</p>
+
+          <h3 class="section-h" id="different-strength">A different kind of strength</h3>
+          <p>There is a kind of strength that comes from speed, force, and concentration.</p>
+          <p>And there is another kind of strength that comes from trust, patience, and alignment.</p>
+          <p>This paper is about the second kind.</p>
+          <p>The future of a country is not secured by everyone acting as isolated competitors. It is secured when enough people recognise that shared discipline can produce outcomes that private scrambling never will.</p>
+          <p>When people move alone, they often settle for smaller outcomes because they do not trust others to hold the line. When people move together, with rules they understand and a purpose they believe in, they can reach something larger, steadier, and more human.</p>
+          <p>Australia needs more of that second kind of courage. Not heroic posturing. Steady cooperation. Not perfection. Participation. Not fantasy. A practical agreement to build something stronger than our individual reach.</p>
+
+          <h3 class="section-h" id="simple-invitation">A simple invitation</h3>
+          <p>Australia is a wealthy country. But many Australians do not feel that wealth in their daily lives. Too often, the value beneath the ground flows upward and outward, while ordinary people are left with rising costs, shrinking influence, and little direct say over what happens to the land, the water, the heritage, or the future of their own communities.</p>
+          <p>This paper begins with a simple belief:</p>
+          <p class="pull-quote">What belongs to the life of the nation should carry the voice of the nation.</p>
+          <p>Not as a slogan. As a structure. As a discipline. As a shared commitment.</p>
+          <p>This is an invitation to Australians and to Australian businesses to act together in a calm, lawful, practical way. Not to tear down. To build up. Not to shout louder. To stand closer. Not to chase a quick win alone. To choose a better future together.</p>
+
+          <h3 class="section-h" id="why-now">Why this matters now</h3>
+          <p>For a long time, Australians have been told that major decisions about land, minerals, and long-term value are best left to governments, corporations, financial markets, and specialists. There is truth in expertise. There is value in enterprise. There is a role for law, investment, and industry.</p>
+          <p>But there is also a missing piece. The people who live with the consequences of these decisions should not be an afterthought. The people whose homes, regions, waterways, and futures are affected should not be asked to simply trust distant systems that they do not control. And the First Nations peoples of this country — whose custodianship precedes every company, every licence, and every modern institution — should not be consulted late and lightly. They should be recognised early and properly.</p>
+          <p>A stronger Australia will not be built by pretending these tensions are not real. It will be built by creating a structure that allows people to meet them honestly, patiently, and together.</p>
+
+          <h3 class="section-h" id="plain-language">The idea in plain language</h3>
+          <p>The Australian community can do more together than most of us can do alone. A single person has little influence. A scattered public has weak leverage. A resigned population has no seat at the table. But a community that is organised, patient, and united can become something very different.</p>
+          <p>It can become a lawful steward. It can become a shareholder with a conscience. It can become a voice that cannot be ignored. It can become a builder of long-term public good.</p>
+          <p>That is the purpose behind the COGs of Australia Foundation.</p>
+          <p>The aim is not simply to talk about fairness. The aim is to create a vehicle through which Australians can participate in governance, share in benefits, protect what matters, and help shape the terms on which the country&rsquo;s natural wealth is treated.</p>
+          <p>This is not about resentment. It is about responsibility.</p>
+
+          <h3 class="section-h" id="business-belongs">Business belongs in this picture too</h3>
+          <p>A country is not stewarded by households alone. It is also shaped by the cafes, trades, farms, retailers, manufacturers, professional firms, social enterprises, and local service providers that keep daily life moving.</p>
+          <p>In this model, businesses are not being invited to take over governance. They are being invited to help carry value through the real economy &mdash; accepting COG$ for real goods and services, building reciprocal trade, and strengthening a value-based economy in which exchange reflects relationship, trust, and contribution rather than price alone.</p>
+
+          <h3 class="section-h" id="what-this-does">What this model is trying to do</h3>
+          <p>At its heart, this model seeks to do six things.</p>
+
+          <ol class="numlist">
+            <li><span class="n">1</span><div>
+              <h5>Give ordinary Australians a real place in the room</h5>
+              <p>The founding instruments are built on equal national voice: one Partner, one vote on Foundation-wide decisions. They also provide extra local weighting where people are directly affected by decisions about land, community, or Country. That means this is not a system where bigger money buys a bigger national say. It is built on the belief that citizenship, community, and consequence matter. Some decisions affect everyone. Some decisions affect particular places more than others. A fair system should recognise both.</p>
+            </div></li>
+            <li><span class="n">2</span><div>
+              <h5>Keep participation open, not exclusive</h5>
+              <p>The founding instruments&rsquo; social justice mechanism is simple and powerful: a low-cost membership gateway is intended to open the door to full participation, rather than reserve meaningful involvement for the already wealthy. This matters because a country does not flourish when its important structures become invitation-only clubs. A healthy common life needs broad entry, practical access, and human dignity.</p>
+            </div></li>
+            <li><span class="n">3</span><div>
+              <h5>Treat First Nations partnership as foundational, not decorative</h5>
+              <p>This model does not treat First Nations recognition as branding. It treats it as structure. That means formal recognition of Aboriginal and Torres Strait Islander custodianship, embedded First Nations representation, Free, Prior and Informed Consent, and protections around cultural heritage and Indigenous cultural and intellectual property. This is not charity. It is not symbolism. It is not an optional extra. It is part of what legitimacy looks like in Australia.</p>
+            </div></li>
+            <li><span class="n">4</span><div>
+              <h5>Make community benefit permanent, not occasional</h5>
+              <p>The founding instruments set out a community projects fund so that community benefit is not left to leftover goodwill or one-off promises. It is designed as part of the architecture, alongside Partner distributions and reinvestment. That means the purpose is not only to accumulate. It is also to circulate. Not every gain should terminate in private extraction. Some of it should return to the conditions of flourishing: resilience, wellbeing, capability, belonging, access, and intergenerational strength.</p>
+            </div></li>
+            <li><span class="n">5</span><div>
+              <h5>Change the default assumption</h5>
+              <p>For too long, the default assumption has been that if something can be extracted, it eventually should be. This model rejects that as a lazy rule. The founding instruments explicitly say resources in the ground can hold enduring and even growing value, and that extraction should not be the automatic outcome. It must be justified through community process, social benefit, and consent.</p>
+            </div></li>
+            <li><span class="n">6</span><div>
+              <h5>Invite business participation without governance dilution</h5>
+              <p>The model is designed so that legally recognised Australian businesses can join as Partners in use, service, reporting, and circulation. Business Partners hold a limited governance vote on Trustee-structure matters only &mdash; they do not share in the general national governance of the Foundation. That separation allows the Partnership to welcome enterprise without surrendering its civic centre. Businesses help turn principle into daily practice.</p>
+            </div></li>
+          </ol>
+
+          <div class="question-pair">
+            <span class="q-label">The question changes</span>
+            <p>&ldquo;How quickly can this be turned into profit?&rdquo;</p>
+            <p>&ldquo;What creates the greatest long-term good, with the least harm, under conditions the community can genuinely support?&rdquo;</p>
+          </div>
+
+          <h3 class="section-h" id="value-economy">A value-based economy in plain language</h3>
+          <p>A value-based economy is not one that ignores price. It is one that refuses to treat price as the only thing that matters. It asks whether exchange strengthens loyalty, keeps wealth circulating closer to home, rewards contribution, and reflects the kind of society we say we want.</p>
+          <p>In practical terms, the Foundation&rsquo;s public promise is a dual movement: value can flow from national stewardship into Partner-held participation, and from there into Australian businesses that choose to trade within the community economy. When businesses accept COG$, and when those businesses use it again with suppliers, workers, partners, or community causes inside the network, value stops behaving like a leak and starts behaving like a loop.</p>
+
+          <h3 class="section-h" id="what-this-isnt">What this is not</h3>
+          <p>This is not a promise of effortless wealth. It is not a quick-flip scheme. It is not a culture war project. It is not anti-business. In fact, it depends on good business. It is not anti-development by reflex. And it is not an invitation to anger disguised as reform.</p>
+          <p>The founding instruments are careful on this point. They frame the Personal S-NFT COG$ as a governance membership gateway rather than a financial token, set hard limits against capture, and entrench a no-fiat rule across token classes.</p>
+          <p>So this must be understood clearly: this is a community governance project with an economic engine inside it &mdash; one that needs both households and businesses to make it real. That distinction matters. Because when the order is reversed, communities become marketing material. When the order is kept right, communities remain the point.</p>
+
+          <h3 class="section-h" id="humble-claim">A humble claim</h3>
+          <p>No paper can solve Australia. No structure can remove conflict from public life. No organisation can guarantee wisdom. There will always be trade-offs. There will always be pressures. There will always be mistakes to correct and lessons to learn.</p>
+          <p>So this paper makes no grand claim of perfection. It makes a smaller claim. That Australians are capable of more trust than our systems often ask of us. That we can build institutions that are broader, fairer, steadier, and more anchored in place. That we do not have to choose only between passivity and outrage. That there is another path: common ownership, shared governance, patient participation, and practical benefit. That if enough people step toward one another &mdash; even carefully, even modestly &mdash; the result can be greater than what any one of us would secure by standing apart.</p>
+
+          <h3 class="section-h" id="moral-centre">The moral centre</h3>
+          <p>Every serious project needs a centre. The centre of this one is not profit.</p>
+          <p>Profit may matter. Sustainability matters. Good governance matters. Competence matters. But the centre is human flourishing.</p>
+          <p>The founding instruments make that plain by naming community flourishing, inclusion, belonging, wellbeing, capability, environmental stewardship, and intergenerational strength as part of the Foundation&rsquo;s objects and principles.</p>
+          <p>That is the right centre. Because an economy is not an end in itself. A market is not a moral compass. A nation is not flourishing because numbers rise while trust collapses. A country flourishes when people can live with dignity, exercise agency, belong to place, hand something better to their children, and know that important decisions are not forever beyond their reach.</p>
+
+          <h3 class="section-h" id="why-join">Why join</h3>
+          <p>Join because Australia needs more than commentary. Join because important things drift unless enough people decide to hold them steady. Join because the future should not belong only to those with the biggest chequebook, the closest lobbyist, or the strongest appetite for risk. Join because shared action, when grounded in law and humility, can protect more than isolated complaint ever will. Join because communities deserve a voice before the consequences arrive, not after. Join because First Nations partnership should be part of the foundation, not the footnote. Join because some wealth should remain accountable to the people, the places, and the generations that sustain it. Join because it is still possible to believe that Australians can act in concert without needing to dominate one another. Join because a small step taken together can be worth more than a large step taken alone.</p>
+
+          <h3 class="section-h" id="business-step-in">Why businesses should step in early</h3>
+          <p>If you run a business, you are not being asked to surrender your independence. You are being asked to consider what kind of economy your business helps normalise.</p>
+          <p>Early business participation matters because a value-based economy only becomes real when there are real places to use it. A business that accepts COG$ is not just processing a transaction. It is helping create a network of loyalty, trade, and practical trust around the communities it serves.</p>
+          <p>That is how a public promise becomes a lived economy: Partners hold a voice, businesses provide utility, and value circulates through real goods and services instead of disappearing immediately into extraction and distance.</p>
+
+          <h3 class="section-h" id="practical-invitation">The practical invitation</h3>
+          <p>Read carefully. Ask hard questions. Test the structure. Improve the language. Strengthen the safeguards. Help make it real.</p>
+          <p>Then, if you believe in the direction, step in &mdash; as a Partner, as a household, as a business, as a supporter, or as someone willing to help the culture form early. Not because everything is finished. But because worthy things are often built by people who decide to begin before the work is easy.</p>
+          <p>This is an invitation to Partnership, but more than that, it is an invitation to posture differently toward one another.</p>
+          <p>Less suspicion. More stewardship. Less extraction of every possible advantage. More long-term care. Less waiting for someone else to do it. More willingness to stand with others and do our part.</p>
+
+          <h3 class="section-h" id="in-black-and-white">In black and white</h3>
+          <p>Here is the plain proposition.</p>
+          <p>Australia can continue with systems where distance grows, influence narrows, and communities are expected to accept decisions already made.</p>
+          <p>Or Australians can build a structure that says: we will participate, we will share responsibility, we will protect what matters, we will recognise who was here first, we will not let money alone decide, and we will try &mdash; patiently, honestly, and together &mdash; to leave this country stronger than we found it.</p>
+          <p>That is the offer. That is the work. That is The Black and White Paper for the Australian Community.</p>
+
+          <h3 class="section-h" id="coordinator">Message from the Coordinator</h3>
+          <p>This began with a direct conversation with Chris Byrne, CEO and Managing Director of Legacy Minerals Limited.</p>
+          <p>The idea was simple, but radical: some minerals may be worth more to everyone left where they are, until we find a better way. A way to recognise value, community interest and future possibility without defaulting immediately to extraction.</p>
+          <p>That conversation led to a meeting with Chris and Thomas Wall, Senior Geologist and Director. Around a table, over a beer, we discussed whether real-world asset tokenisation could help create that better way. The answer was not dismissal. It was engagement.</p>
+          <p>Since then, discussions have begun about how such a model might be explored more seriously, including with parliamentarians.</p>
+          <p>That is why this exists. Because the question is no longer whether we can imagine a different ending. The question is whether we are willing to build one together.</p>
+          <p class="pull-quote">Let&rsquo;s all decide how it ends.</p>
+
+          <!-- ════════════════════════════════════════════════════════════════════
+                                       PART II
+              ════════════════════════════════════════════════════════════════════ -->
+
+          <div class="part-marker" id="part-2">
+            <span class="label">Part II — Formal White Paper</span>
+            <span class="rule"></span>
+          </div>
+          <h2 class="part-title">A constitutional companion to the founding instruments.</h2>
+          <p class="part-intro">Written in public language and intended to explain the structure, safeguards, responsibilities, and national invitation of the Joint Venture Partnership.</p>
+
+          <h3 class="section-h" id="commitments">Constitutional Commitments at a Glance</h3>
+          <div class="commit-table-wrap">
+            <table class="commit-table">
+              <thead>
+                <tr>
+                  <th>Commitment</th>
+                  <th>Meaning</th>
+                  <th>Operative effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Equal national voice</td>
+                  <td>Every Partner holds one vote on Foundation-wide decisions.</td>
+                  <td>National governance cannot be purchased.</td>
+                </tr>
+                <tr>
+                  <td>Social accessibility</td>
+                  <td>Low-threshold membership keeps entry open to ordinary Australians.</td>
+                  <td>Participation is not reserved for the already wealthy.</td>
+                </tr>
+                <tr>
+                  <td>Anti-capture</td>
+                  <td>Caps, entrenchment, and a closed-partnership design restrict domination.</td>
+                  <td>The structure is built to resist takeover and drift.</td>
+                </tr>
+                <tr>
+                  <td>Business participation without capture</td>
+                  <td>Businesses may participate in utility, trade, reporting, and a limited vote on Trustee-structure matters &mdash; without acquiring general national governance votes.</td>
+                  <td>The real economy is invited in while civic governance remains protected.</td>
+                </tr>
+                <tr>
+                  <td>First Nations partnership</td>
+                  <td>FNAC, reserved representation, FPIC, ICIP protection, and entrenched minimum allocation of not less than 30% of annual Sub-Trust C distributions to First Nations programs.</td>
+                  <td>Custodianship is embedded as authority, not mere symbolism.</td>
+                </tr>
+                <tr>
+                  <td>Local material standing</td>
+                  <td>Affected communities, landholders, and Traditional Owner communities receive added standing in local decisions.</td>
+                  <td>Consequence and place are recognised structurally.</td>
+                </tr>
+                <tr>
+                  <td>In-ground value</td>
+                  <td>Extraction is not the automatic outcome.</td>
+                  <td>Resources may be deferred, protected, or recognised through non-extractive pathways.</td>
+                </tr>
+                <tr>
+                  <td>Community flourishing</td>
+                  <td>Community benefit is part of the architecture.</td>
+                  <td>The institution exists to strengthen public life, not merely hold assets.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="section-h" id="preamble">Preamble</h3>
+          <p>This is The Black and White Paper for the Australian Community. It is the public constitutional companion to the founding instruments of the COGs of Australia Foundation.</p>
+          <p>The supreme governing instrument of the Foundation is the Joint Venture Partnership Agreement (JVPA v5.0). Beneath the JVPA sit the Hybrid Trust Declaration and the three Sub-Trust Deeds (A, B, and C), which give legal effect to the Partnership in the Australian trust law system. Together these instruments record the constitutional rules under which the Joint Venture Partnership operates.</p>
+          <p>This paper does not replace them. It explains them. Where this paper refers to the founding instruments, the reader should understand the reference as being to that complete suite.</p>
+          <p>This paper&rsquo;s purpose is not to make the structure sound grander than it is. Its purpose is to make the structure understandable, morally legible, and worthy of public trust. Where the founding instruments provide legal architecture, this paper provides civic meaning. Where the founding instruments establish powers, duties, safeguards, and limits, this paper explains the public ethic that should govern their use.</p>
+          <p>Accordingly, this white paper should be read as a constitutional companion to the founding instruments: a statement of first principles, institutional design, and national intent.</p>
+
+          <h3 class="section-h" id="exec-summary">Executive Summary</h3>
+          <p>The COGs of Australia Foundation is proposed as a Community Joint Venture Partnership through which Australians may participate in the stewardship, governance, and benefits of the country&rsquo;s resource wealth. It is not a passive investment scheme and it is not, as a whole, a not-for-profit &mdash; the Foundation is a genuine partnership in which Partners carry on a common enterprise and receive distributions. Its charitable layer &mdash; Sub-Trust C &mdash; is a separately ring-fenced not-for-profit discretionary trust for community projects, First Nations programs, and other public-benefit purposes. Its underlying proposition is simple: communities should not be reduced to spectators while decisions are made over the land, Country, heritage, and long-term value that shape their future.</p>
+          <p>The Foundation&rsquo;s public-interest character is given effect through its constitutional architecture &mdash; the prohibitions on fiat saleability of any COG$ Token class, the mandatory obligation to apply administrative-fund surpluses to the Partners Asset Pool through Sub-Trust A rather than to retain them as profit, the 1,000,000-unit anti-capture cap, and the entrenched protections of the JVPA. Registration of Sub-Trust C with the ACNC as the Foundation&rsquo;s charitable sub-layer, and incorporation of a Company Limited by Guarantee as the Trustee vehicle, are planned steps on the Foundation&rsquo;s regulatory pathway.</p>
+          <p>The founding instruments establish a model that combines equal national Partner voice, direct community stewardship, First Nations partnership, local weighted governance where communities are materially affected, and an economic structure designed to reinvest, distribute, and return value to public purpose. It is designed to prevent capture, prevent simple monetisation of membership, and refuse the assumption that extraction is always the rightful or necessary end point of resource value.</p>
+          <p>The model also anticipates a second layer of participation: Australian businesses may enter the community economy as Business Partners, holding a limited governance vote on Trustee-structure matters and helping convert constitutional principle into practical circulation through real goods, services, reporting, and reciprocal trade. In that sense, the project is not only a governance structure. It is the framework for a value-based economy.</p>
+          <p>This white paper therefore advances six constitutional propositions. First, that broad access matters more than exclusivity. Second, that governance power should not be bought. Third, that First Nations custodianship must be structurally embedded. Fourth, that resources in the ground may carry greater long-term value than resources rushed into extraction. Fifth, that community benefit must be part of the architecture rather than an afterthought. Sixth, that Australians can act together with more patience, restraint, and responsibility than our public systems often assume.</p>
+          <p>The project is ambitious, but its ambition is constitutional rather than theatrical. It seeks to build a durable public structure, not a spectacle.</p>
+
+          <h3 class="section-h" id="sec-1"><span class="num">§1</span>The Constitutional Problem This Paper Addresses</h3>
+          <p>Modern Australia has inherited a deep imbalance. The people most affected by extraction, land-use change, cultural loss, environmental strain, and long-cycle resource governance often have the weakest formal say in the decisions that shape those outcomes. Public consultation may occur, but consultation is not the same thing as power. Symbolic recognition may occur, but symbolism is not the same thing as standing rights inside a governing structure.</p>
+          <p>The founding instruments start from the view that this imbalance is not merely political. It is structural. If the architecture excludes communities from meaningful stewardship, then communities will be offered commentary instead of agency. If agency is reserved for capital, distance, and concentrated institutional power, then ordinary citizens are asked to bear consequences without corresponding authority.</p>
+          <p>This paper rejects that arrangement. It affirms that long-term legitimacy requires participation, that local consequence requires local standing, and that any national structure seeking moral seriousness in Australia must recognise that the governance of land and resources cannot be treated as though First Nations custodianship were external to the matter.</p>
+
+          <h3 class="section-h" id="sec-2"><span class="num">§2</span>Constitutional Character of the Foundation</h3>
+          <p>The Foundation is conceived as a Community Joint Venture Partnership, with a layered trust architecture designed to serve public purpose and a separately ring-fenced charitable sub-trust for community and First Nations programs. In constitutional terms, this design means three things. The structure is meant to be permanent rather than opportunistic. It is meant to be governed rather than owned. And it is meant to serve defined community objects rather than drift toward private capture or speculative convenience.</p>
+          <p>Its legal design matters because legal form shapes moral possibility. A structure that can be captured can be bent. A structure that can be privately sold can be hollowed out. A structure that permits economic contribution to automatically buy governance superiority will eventually cease to be a community institution in any meaningful sense.</p>
+          <p>For that reason, the founding instruments place great weight on anti-capture rules, the prohibition on fiat redemption, equal national voting rights, direct stewardship arrangements, ring-fenced trust functions including a dedicated charitable sub-trust, and entrenched provisions that a future majority cannot casually dismantle. This is constitutional discipline in the literal sense: the structure is restrained so that the mission can endure.</p>
+
+          <h3 class="section-h" id="sec-3"><span class="num">§3</span>First Principles</h3>
+          <p>The first principle is equal national civic dignity. Every Partner enters the national governance space on the same footing. One Partner holds one vote on Foundation-wide decisions. This is not a decorative principle. It is the constitutional centre of the model. Money may alter the scale of economic participation within the permitted framework, but it does not purchase a larger national voice.</p>
+          <p>The second principle is social accessibility. The founding instruments deliberately create a low-threshold entry pathway so that the project does not become an institution open only to the financially secure. This is not a sentimental add-on. It is the practical expression of the belief that a common national structure should be enterable by ordinary people.</p>
+          <p>The third principle is permanence against capture. The project is designed so that no private person, corporation, institution, or government can convert the Foundation into an instrument of disproportionate control. Anti-capture limits, entrenchment, ring-fencing, and the refusal of private ownership are not minor clauses. They are constitutional load-bearing walls.</p>
+          <p>The fourth principle is that community consequence carries governance significance. Partners who live in affected zones, and those with direct custodial or landholding relationships to affected places, are not merely one interest among many. Their material relationship to the place in question gives them an amplified standing in local decisions. This does not cancel equal national voice. It sits alongside it.</p>
+          <p>The fifth principle is that the Foundation exists for flourishing, not merely for throughput. If value is accumulated without strengthening dignity, belonging, stewardship, capability, and intergenerational resilience, the project has missed its own reason for existence.</p>
+
+          <h3 class="section-h" id="sec-4"><span class="num">§4</span>The National Promise</h3>
+          <p>The national promise of the Foundation is that Australians can participate in a common structure without being asked to surrender either humility or seriousness. The project does not ask Partners to pretend that resources, markets, regulation, or risk can be wished away. It asks something more adult: that these realities be governed within a framework that is answerable to people, place, and long-term public good.</p>
+          <p>The promise is therefore not that everyone will agree. The promise is that disagreement will occur within a constitutional form that already honours equal civic standing, local material consequence, and First Nations authority where Country is affected. That is what transforms a collective from a crowd into an institution.</p>
+
+          <h3 class="section-h" id="sec-5"><span class="num">§5</span>Institutional Architecture</h3>
+          <p>The Foundation&rsquo;s founding instruments establish a layered structure designed to make constitutional roles visible and to resist drift. The hierarchy is deliberate. At the top sits the Joint Venture Partnership Agreement &mdash; the supreme governing instrument, entered by every Partner upon joining. Beneath it sit the Hybrid Trust Declaration and the three Sub-Trust Deeds, which give the Partnership legal effect in the Australian trust law system. Beneath the trust instruments sits the Partners&rsquo; own governance and operating system, owned and directed by the Partners themselves.</p>
+          <p>The three Sub-Trusts carry distinct purposes. Sub-Trust A is the stewardship and reinvestment vehicle, holding the Partners Asset Pool permanently. Sub-Trust B is the mandatory distribution channel through which Partner entitlements flow. Sub-Trust C is the community projects and public-benefit vehicle, carrying an entrenched minimum allocation of not less than 30% of annual distributions to First Nations programs. The ring-fencing of these functions is more than administrative neatness. It preserves integrity of purpose. Stewardship capital should not be casually mixed with distribution obligations, and community-benefit funds should not dissolve into general discretion.</p>
+          <p>The result is an architecture intended to align economic process with constitutional purpose: some value is retained and compounded, some is distributed under fixed rules, and some is directed toward community flourishing in a way that is visible, reportable, and structurally protected.</p>
+          <p class="pull-quote">The project is designed to be governed rather than owned, and restrained rather than captured.</p>
+
+          <h3 class="section-h" id="sec-6"><span class="num">§6</span>Token Classes and Their Constitutional Meaning</h3>
+          <p>The token system must be understood in constitutional rather than technical terms. The Foundation uses multiple token classes because a civic structure of this kind has to do several different things at once. It has to confer membership without making membership for sale. It has to recognise the difference between a national voice and a local voice, between an individual Partner and a business Partner, between a landholder whose Country is affected and a donor whose contribution is community-facing. It has to allow value to be invested and stewarded while keeping governance itself off the market. One instrument cannot do all of that without collapsing distinctions the project was built to protect.</p>
+          <p>The architecture therefore separates what must remain separate. Governance membership is separated from economic participation. Identity is separated from investment. National voice is separated from place-based standing. Community contribution is separated from personal return. What holds these separations together is a single entrenched rule: no token of any class may be sold for fiat currency, listed on an exchange, or redeemed for cash. Value generated within the Partnership stays within the Partnership. This is not a restriction imposed on Partners. It is the boundary condition that makes the circulatory economy possible.</p>
+          <p>The constitutional meaning of the token system is therefore restraint. It is a digital architecture designed not to inflate private advantage, but to hold the line around public purpose. The specific class rules &mdash; who may hold which class, on what terms, at what cost, with what distribution entitlements &mdash; are the working detail of the Partnership and are published in full on the Foundation&rsquo;s website at cogsaustralia.org, alongside the founding instruments themselves. Those rules are the operating machinery. This paper is concerned with the civic reasoning behind them.</p>
+
+          <h3 class="section-h" id="sec-6a"><span class="num">§6A</span>Business Participation and the Value-Based Economy</h3>
+          <p>The business layer should be understood as constitutionally bounded participation, not governance dilution. Business Partners are admitted as users, service partners, and circulation partners. They hold a limited governance vote on Trustee-structure matters &mdash; the appointment, removal, or replacement of the Trustee &mdash; but they do not share in the general national governance of the Foundation. That separation allows the Partnership to welcome enterprise without surrendering its civic centre.</p>
+          <p>In public terms, a value-based economy means that exchange is judged not only by price, but by what it helps build. When Partners receive value, when businesses accept it in trade, and when that value can be used again inside the network, the economy begins to reflect reciprocity, loyalty, and long-term local strength rather than mere throughput.</p>
+          <p>This matters because a constitutional project cannot remain abstract if it wants public trust. It must become legible in daily life. The presence of participating businesses gives the model visible utility, practical credibility, and a pathway by which stewardship can move from principle into lived exchange.</p>
+
+          <h3 class="section-h" id="sec-7"><span class="num">§7</span>One Nation, Local Standing</h3>
+          <p>A serious national structure must recognise two truths at once. The first is that every Partner belongs equally in the national polity. The second is that not every decision lands on every place in the same way. The founding instruments therefore adopt a dual logic. National decisions remain anchored in equal Partner voice. Local Decision Votes recognise the added standing of those whose land, home, Country, or immediate community is materially affected.</p>
+          <p>This local weighting should not be misread as a departure from equality. It is a refinement of equality for circumstances of concentrated consequence. A person living inside an affected zone, or a Traditional Owner community whose Country is directly implicated, bears a different burden of risk and relationship than a distant observer. Constitutional seriousness requires that this difference be recognised rather than flattened.</p>
+          <p>In this way the model seeks to combine national solidarity with place-based justice. It does not ask Australians to choose between the two.</p>
+
+          <h3 class="section-h" id="sec-8"><span class="num">§8</span>First Nations Custodianship as Structural Authority</h3>
+          <p>This paper affirms plainly that the Foundation cannot be legitimate if First Nations presence is treated as ceremonial while authority remains elsewhere. The founding instruments instead place First Nations participation inside the structure itself: through the First Nations Advisory Council (FNAC), a reserved Board position, obligations of Free, Prior and Informed Consent, protections for Indigenous Cultural and Intellectual Property, an entrenched minimum allocation of not less than 30% of annual Sub-Trust C distributions to First Nations programs, and automatic zero-cost Landholder COG$ issuance for Local Aboriginal Land Councils and Prescribed Bodies Corporate under the entrenched per-hectare formula.</p>
+          <p>This is not founded only on prudence, though prudence strongly supports it. It is founded first on the recognition that Aboriginal and Torres Strait Islander custodianship is prior, continuing, and inseparable from any credible Australian conversation about land, Country, and resources. The commercial evidence that consent and partnership reduce risk may be persuasive to markets. It is not the moral origin of the principle. The moral origin is that custodianship exists whether or not investors reward it.</p>
+          <p>For that reason, the white paper treats First Nations partnership not as a compliance layer, not as a reputational shield, and not as a consultative afterthought, but as a constitutional authority within the model.</p>
+          <p class="pull-quote">Custodianship is not an optional consultation layer. In this model, it is part of the constitutional structure itself.</p>
+
+          <h3 class="section-h" id="sec-9"><span class="num">§9</span>In-Ground Value and the Reversal of Assumption</h3>
+          <p>One of the most significant constitutional moves in the founding instruments is their reversal of the usual assumption about extraction. Under the dominant model, the question is often when or how extraction will proceed. Under this model, that question is not presumed. Resources in the ground may be held, deferred, protected, or valued through alternative pathways where those choices better serve community good, environmental stewardship, cultural protection, or long-term public value.</p>
+          <p>This does not amount to a refusal of all development. It amounts to the refusal of automaticity. Extraction is not the default. It must be justified. It must pass through community process. It must face a social benefit assessment. It must be weighed against in-ground alternatives. Where Traditional Owner Country is implicated, it must not proceed through this structure against withheld consent.</p>
+          <p>That constitutional reversal is one of the most important contributions of the founding instruments. It replaces inevitability with judgment.</p>
+
+          <h3 class="section-h" id="sec-10"><span class="num">§10</span>The Social Benefit Test</h3>
+          <p>The founding instruments&rsquo; extraction governance framework imposes a demanding public standard. Profit alone is not enough. Even strong commercial return is not enough. The relevant question is whether a proposal produces genuine social benefit beyond profit, whether harms and alternatives have been properly examined, whether the community has been given real standing, and whether applicable First Nations processes have been honoured.</p>
+          <p>A mature nation should welcome such a test. A country confident in its institutions should not fear asking whether a project is good enough, not merely profitable enough. The social benefit test is therefore not an obstacle inserted to delay decisions for the sake of delay. It is an instrument of constitutional seriousness. It ensures that the Foundation cannot speak in favour of extraction simply because extraction pays.</p>
+
+          <h3 class="section-h" id="sec-11"><span class="num">§11</span>Community Benefit as Constitutional Obligation</h3>
+          <p>The community projects fund is a statement about what economic architecture is for. It says that the returns generated through the structure should not terminate entirely in internal accumulation or private distribution. Some portion must flow toward conditions that allow communities to stand more securely: resilience, health, inclusion, capability, stewardship, accessibility, youth opportunity, local infrastructure, and cultural life.</p>
+          <p>This again is not a public-relations feature. It is part of the constitutional answer to the question: what is this institution for? The answer cannot be simply that it exists to hold assets. It exists to strengthen the life of communities.</p>
+
+          <h3 class="section-h" id="sec-12"><span class="num">§12</span>Intergenerational Membership and Civic Continuity</h3>
+          <p>The inclusion of children, inheritance pathways, and long-term Partner participation signals that the project is trying to think in generations rather than quarters. That matters. A constitutional body worthy of public trust should resist the shrinking of time that afflicts so many modern institutions. It should help people imagine that what is built now can still matter later, and that membership is not merely a transaction but an inheritance of responsibility.</p>
+          <p>This intergenerational dimension also reinforces the tone of the paper itself. The invitation is not to seize a moment before someone else does. The invitation is to enter a patient structure and help keep it worthy of those who come after.</p>
+
+          <h3 class="section-h" id="sec-13"><span class="num">§13</span>Regulatory Discipline, Governance Foundation Day, and Expansion Day</h3>
+          <p>The founding instruments do not treat implementation casually. The Foundation&rsquo;s activation is staged across two distinct constitutional milestones. Governance Foundation Day marks the activation of the governance layer &mdash; the first Partners Polls, the Independence Vault Wallets, and the Partner-operated cryptographic governance system. Expansion Day, which follows once the applicable legal and operational pre-conditions have been met, marks the activation of the Foundation&rsquo;s investment and real-world-asset layer and the go-live of Partner-controlled infrastructure. No COG$ Token of any class may be sold for fiat, listed on an exchange, or redeemed for cash.</p>
+          <p>This reflects an important constitutional virtue: restraint before launch. In a public environment crowded with premature promises, staged hype, and unfinished systems presented as destiny, restraint is a mark of seriousness. Legal structure, trust documentation, regulatory engagement, taxation guidance, and operational safeguards are not peripheral matters to be settled later. They are conditions of legitimacy. A lawful institution should be patient enough to become ready before it asks the public for trust.</p>
+
+          <h3 class="section-h" id="sec-14"><span class="num">§14</span>What the Foundation Refuses to Be</h3>
+          <p>The Foundation refuses to be a vehicle for private capture. It refuses to make national governance power proportional to wealth. It refuses to treat community language as marketing cover for ordinary speculative behaviour. It refuses the idea that consent can be presumed, that Country can be abstracted, or that extraction justifies itself. It refuses to flatten the difference between broad consultation and actual structural voice. It refuses the conversion of every public good into a saleable instrument.</p>
+          <p>These refusals matter because constitutions are defined not only by what they empower, but by what they prohibit. The moral credibility of a structure often rests most heavily on the lines it will not cross.</p>
+
+          <h3 class="section-h" id="sec-15"><span class="num">§15</span>A National Invitation in Humble Terms</h3>
+          <p>This white paper does not claim that the Foundation alone can redeem the social contract. It does not pretend that legal architecture dissolves conflict. It does not promise that a new structure will be free from mistakes or strain. Its claim is more modest and more demanding: that Australians can still choose cooperation over passivity, stewardship over drift, and constitutional restraint over opportunism.</p>
+          <p>The invitation, then, is simple. Read the founding instruments. Read this paper. Test the design. Strengthen the safeguards. Ask whether this is a structure that could help ordinary people stand nearer to decisions that have too long been made above them or around them. If the answer is yes, then join not in triumphal spirit, but in service.</p>
+          <p>Join because the country is worth the effort. Join because communities should not always arrive after the fact. Join because some futures can only be secured when people decide that standing together, under rules they can live with, is wiser than waiting separately for someone else to act first.</p>
+
+          <h3 class="section-h" id="conclusion">Conclusion</h3>
+          <p>The Black and White Paper for the Australian Community is, at heart, a constitutional proposition in civic language. It proposes that Australia&rsquo;s resource future should be answerable to community voice, place-based consequence, First Nations custodianship, public benefit, and long-term flourishing. It also proposes that households and businesses can participate in the same value-based economy without collapsing the difference between civic governance and commercial utility.</p>
+          <p>This is the work set down in black and white: to build a structure that cannot be bought into silence, cannot be easily captured, and does not forget who bears the consequence of what is decided. To build patiently. To govern honestly. To hold steady. And to invite Australians, in plain sight and on fair terms, to do that work together.</p>
+
+          <!-- SIGN-OFF / CTA -->
+          <div class="signoff">
+            <span class="kicker">Step in</span>
+            <h3>Read carefully. Test the structure. Then decide.</h3>
+            <p>Read the Joint Venture Partnership Agreement, the Hybrid Trust Declaration, and the three Sub-Trust Deeds in full. If you believe in the direction, step in &mdash; as a Partner, as a household, as a business, or as someone willing to help the culture form early.</p>
+            <div class="cta-actions">
+              <a class="btn-primary" href="../join/index.html">Become a Member — $4</a>
+              <a class="btn-secondary" href="../docs/black-and-white-paper.pdf" target="_blank" rel="noopener">Download PDF ↓</a>
+            </div>
+          </div>
+
+        </article>
+
+      </div>
+    </div>
+
+    <div id="cogs-footer"></div>
+    <script src="/assets/site-footer.js"></script>
   </main>
-  <script src="../assets/frontend.js?v=4" defer></script>
+</div>
+
+<script>
+  // Reading progress bar
+  (function(){
+    var bar = document.getElementById('readingProgress');
+    if(!bar) return;
+    function update(){
+      var h = document.documentElement;
+      var b = document.body;
+      var st = h.scrollTop || b.scrollTop;
+      var sh = (h.scrollHeight || b.scrollHeight) - h.clientHeight;
+      var pct = sh > 0 ? Math.max(0, Math.min(100, (st / sh) * 100)) : 0;
+      bar.style.width = pct + '%';
+    }
+    document.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+  // TOC active section highlight
+  (function(){
+    var links = document.querySelectorAll('.toc a[href^="#"]');
+    if(!links.length) return;
+    var idToLink = {};
+    links.forEach(function(a){
+      var id = a.getAttribute('href').slice(1);
+      idToLink[id] = a;
+    });
+    var headings = document.querySelectorAll('h3.section-h[id]');
+    if(!('IntersectionObserver' in window) || !headings.length) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var l = idToLink[e.target.id];
+          if(l) l.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+    headings.forEach(function(h){ io.observe(h); });
+  })();
+
+  // Mobile TOC toggle
+  (function(){
+    var btn = document.getElementById('tocToggle');
+    var toc = document.getElementById('docToc');
+    if(!btn || !toc) return;
+    btn.addEventListener('click', function(){
+      var open = toc.classList.toggle('mobile-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    // Close mobile TOC when a link inside is clicked
+    toc.addEventListener('click', function(e){
+      if(e.target.tagName === 'A' && window.innerWidth <= 980){
+        toc.classList.remove('mobile-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+</script>
+
 </body>
 </html>
