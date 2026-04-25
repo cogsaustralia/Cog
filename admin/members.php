@@ -337,6 +337,7 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 .member-card { border:1px solid var(--line2); border-radius:10px; margin-bottom:8px;
                overflow:hidden; transition:border-color .15s; }
 .member-card:hover { border-color:rgba(212,178,92,.2); }
+.rsnft-row:hover { background:rgba(212,178,92,.04); }
 .mc-header { display:grid; grid-template-columns:1fr auto auto 28px;
              gap:10px; align-items:center; padding:12px 16px;
              cursor:pointer; background:var(--panel); user-select:none;
@@ -573,8 +574,22 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
         $sAccLabel = function_exists('ops_acceptance_status_label') ? ops_acceptance_status_label($sAcc) : '—';
         $sAccTone  = function_exists('ops_acceptance_status_tone')  ? ops_acceptance_status_tone($sAcc)  : 'warn';
         $wClass = 'ws-' . ($s['wallet_status'] ?? 'invited');
+        $rowId  = 'rsnft-' . (int)($s['id'] ?? 0);
+        $kycStatus = $s['kyc_status'] ?? 'none';
+        $kycLabel  = match($kycStatus) {
+            'verified'     => 'Verified',
+            'pending'      => 'Pending review',
+            'under_review' => 'Under review',
+            'rejected'     => 'Rejected',
+            default        => 'Not submitted',
+        };
+        $kycColor  = match($kycStatus) {
+            'verified'     => 'var(--ok)',
+            'pending','under_review' => 'var(--warn)',
+            default        => 'var(--dim)',
+        };
       ?>
-        <tr>
+        <tr onclick="toggleRsnft('<?= $rowId ?>')" style="cursor:pointer" class="rsnft-row">
           <td>
             <strong style="font-size:.82rem"><?= h($s['full_name'] ?? '') ?></strong>
             <div style="font-size:.7rem;color:var(--sub)"><?= h($s['email'] ?? '') ?></div>
@@ -586,6 +601,39 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
           <td><?= $sIdV  ? '<span class="sf sf-ok">✓</span>' : '<span style="color:var(--dim)">—</span>' ?></td>
           <td><span class="<?= $wClass ?>" style="font-size:.75rem"><?= h($s['wallet_status'] ?? '') ?></span></td>
           <td style="font-size:.72rem;color:var(--dim)"><?= h(substr($s['created_at'] ?? '', 0, 10)) ?></td>
+        </tr>
+        <tr id="<?= $rowId ?>" class="rsnft-detail" style="display:none">
+          <td colspan="8" style="padding:0">
+            <div style="padding:12px 16px;background:var(--panel2);border-top:1px solid var(--line2);display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+              <div style="flex:1;min-width:200px">
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:6px">Identity</div>
+                <div style="font-size:.8rem;color:var(--text);margin-bottom:3px"><?= h($s['full_name'] ?? '') ?></div>
+                <div style="font-size:.75rem;color:var(--sub)"><?= h($s['email'] ?? '') ?></div>
+                <div style="font-family:monospace;font-size:.72rem;color:var(--sub);margin-top:3px"><?= h($s['member_number'] ?? '') ?></div>
+              </div>
+              <div style="min-width:140px">
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:6px">Status</div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <span class="sf sf-<?= $sPaid ? 'ok' : 'warn' ?>" style="width:fit-content"><?= $sPaid ? '✓ $4 paid' : 'Payment pending' ?></span>
+                  <span class="sf sf-<?= $sAccTone === 'ok' ? 'ok' : ($sAccTone === 'warn' ? 'warn' : 'err') ?>" style="width:fit-content">JVPA: <?= h($sAccLabel) ?></span>
+                  <span class="sf sf-<?= $sGnaf ? 'ok' : 'dim' ?>" style="width:fit-content"><?= $sGnaf ? 'G-NAF ✓' : 'No G-NAF' ?></span>
+                </div>
+              </div>
+              <div style="min-width:140px">
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:6px">KYC / Identity</div>
+                <span style="font-size:.78rem;color:<?= $kycColor ?>"><?= h($kycLabel) ?></span>
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin:8px 0 4px">Wallet</div>
+                <span class="<?= $wClass ?>" style="font-size:.75rem"><?= h($s['wallet_status'] ?? '') ?></span>
+              </div>
+              <div style="min-width:120px">
+                <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:6px">Joined</div>
+                <div style="font-size:.78rem;color:var(--text)"><?= h(substr($s['created_at'] ?? '', 0, 10)) ?></div>
+                <div style="margin-top:10px">
+                  <a href="./members.php?type=personal&search=<?= urlencode($s['member_number'] ?? '') ?>" class="btn-mr btn-mr-ghost" style="font-size:.72rem">Full profile →</a>
+                </div>
+              </div>
+            </div>
+          </td>
         </tr>
       <?php endforeach; if (!$recentSnft): ?>
         <tr><td colspan="8" style="text-align:center;color:var(--sub);padding:20px">No personal members yet.</td></tr>
@@ -1086,6 +1134,16 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 </div>
 
 <script>
+function toggleRsnft(id) {
+  var row = document.getElementById(id);
+  if (!row) return;
+  var open = row.style.display !== 'none';
+  row.style.display = open ? 'none' : 'table-row';
+  // toggle highlight on the trigger row
+  var triggerRow = row.previousElementSibling;
+  if (triggerRow) triggerRow.style.background = open ? '' : 'rgba(212,178,92,.04)';
+}
+
 function toggleMember(id) {
   var body = document.getElementById(id);
   var chev = document.getElementById(id + '-chev');
