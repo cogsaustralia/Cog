@@ -6,6 +6,7 @@ require_once __DIR__ . '/includes/ops_workflow.php';
 require_once __DIR__ . '/includes/admin_sidebar.php';
 if (file_exists(__DIR__ . '/includes/LedgerEmitter.php'))   require_once __DIR__ . '/includes/LedgerEmitter.php';
 if (file_exists(__DIR__ . '/includes/AccountingHooks.php')) require_once __DIR__ . '/includes/AccountingHooks.php';
+require_once dirname(__DIR__) . '/_app/api/integrations/mailer.php';
 
 ops_require_admin();
 $pdo = ops_db();
@@ -128,9 +129,21 @@ function uir_preconditions(PDO $pdo, array $member, string $unitClassCode,
                  'note'  => $gateOpen ? 'Open' : 'Not yet reached'];
     if (!$gateOpen) $allPass = false;
 
-    $kycOk = in_array((string)($member['kyc_status'] ?? ''), ['verified','address_verified','manual_verified'], true);
-    $checks[] = ['label' => 'KYC/AML-CTF verified', 'ok' => $kycOk,
-                 'note'  => $kycOk ? 'Recorded' : 'Not verified — issue blocked'];
+    // KYC/AML-CTF: read from snft_memberships (identity KYC table).
+    // Passes if: snft kyc_status='verified' OR members.id_verified=1 OR members.manual_id_verified_at IS NOT NULL.
+    // address_verified (GnafAddressAgent) is NOT identity KYC and does not satisfy this condition.
+    $snftKyc = one($pdo,
+        "SELECT kyc_status, kyc_verified_at FROM snft_memberships WHERE member_number = ? LIMIT 1",
+        [(string)($member['member_number'] ?? '')]);
+    $snftVerified  = !empty($snftKyc) && (string)($snftKyc['kyc_status'] ?? '') === 'verified';
+    $idVerified    = (int)($member['id_verified'] ?? 0) === 1;
+    $manualVerified= !empty($member['manual_id_verified_at']);
+    $kycOk         = $snftVerified || $idVerified || $manualVerified;
+    $kycNote = $kycOk
+        ? ($snftVerified ? 'Medicare KYC verified (' . substr((string)($snftKyc['kyc_verified_at'] ?? ''), 0, 10) . ')'
+            : ($idVerified ? 'ID manually verified' : 'Manual verification recorded'))
+        : 'Identity KYC not completed — Medicare KYC or manual admin verification required';
+    $checks[] = ['label' => 'KYC/AML-CTF identity verified', 'ok' => $kycOk, 'note' => $kycNote];
     if (!$kycOk) $allPass = false;
 
     if ($def['payment_required']) {
@@ -181,6 +194,109 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action        = (string)($_POST['action'] ?? '');
         $memberId      = (int)($_POST['member_id'] ?? 0);
         $unitClassCode = trim((string)($_POST['unit_class_code'] ?? ''));
+
+        // ── Bulk issue all eligible members for a class ──────────────────────
+        if ($action === 'issue_class_all') {
+            if ($unitClassCode === '') throw new RuntimeException('Unit class required.');
+            $defs = uir_class_defs();
+            if (!isset($defs[$unitClassCode])) throw new RuntimeException('Unknown unit class code.');
+            $def = $defs[$unitClassCode];
+            if (!uir_class_is_open($def, $gate2Open)) throw new RuntimeException("Class {$unitClassCode} gate is not yet open.");
+
+            $eligible = uir_eligible_members($pdo, $unitClassCode, $gate2Open, $tablesReady);
+            if (empty($eligible)) throw new RuntimeException('No eligible members found for this class.');
+
+            $issued = []; $skipped = [];
+            foreach ($eligible as $member) {
+                $unitsIssued = ($unitClassCode === 'C')
+                    ? ($member['member_type'] === 'business' ? 10000.0 : 1000.0)
+                    : (float)($def['initial_units'] ?? 1);
+
+                $pre = uir_preconditions($pdo, $member, $unitClassCode, $gate2Open, (int)$unitsIssued, $tablesReady);
+                if (!$pre['pass']) {
+                    $failed = array_filter($pre['checks'], function($c) { return !$c['ok']; });
+                    $skipped[] = $member['full_name'] . ' (' . implode(', ', array_column($failed, 'label')) . ')';
+                    continue;
+                }
+
+                if ($def['payment_required']) {
+                    $tc = one($pdo, "SELECT unit_price_cents, business_unit_price_cents FROM token_classes WHERE unit_class_code = ? LIMIT 1", [$unitClassCode]);
+                    $considerationCents = ($member['member_type'] === 'business' && $tc && $tc['business_unit_price_cents'] !== null)
+                        ? (int)$tc['business_unit_price_cents'] : (int)($tc['unit_price_cents'] ?? 0);
+                } else {
+                    $considerationCents = 0;
+                }
+
+                $issueDate = date('Y-m-d');
+                $unitsStr  = number_format($unitsIssued, 4, '.', '');
+
+                $pdo->beginTransaction();
+                try {
+                    $registerRef = uir_next_ref($pdo, 'UIR-' . strtoupper($unitClassCode), 'unit_issuance_register', 'register_ref');
+                    $certRef     = uir_next_ref($pdo, 'CERT-' . strtoupper($unitClassCode), 'unitholder_certificates', 'cert_ref');
+                    $hash        = uir_build_hash($registerRef, (int)$member['id'], $unitClassCode, $unitsStr, $issueDate, $considerationCents);
+
+                    $pdo->prepare("INSERT INTO unit_issuance_register
+                        (register_ref, member_id, unit_class_code, unit_class_name, cert_type,
+                         units_issued, consideration_cents, issue_date, issue_trigger, gate,
+                         kyc_verified, payment_cleared, anti_cap_checked, gate_satisfied,
+                         sha256_hash, issued_by_admin_id, created_at, updated_at)
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+                        ->execute([$registerRef, (int)$member['id'], $unitClassCode, $def['name'], $def['cert_type'],
+                                   $unitsStr, $considerationCents, $issueDate, $def['issue_trigger'], $def['gate'],
+                                   1, $def['payment_required'] ? 1 : 0, 1, 1,
+                                   $hash, $adminId ?: null, now_dt(), now_dt()]);
+                    $issuanceId = (int)$pdo->lastInsertId();
+
+                    $pdo->prepare("INSERT INTO unitholder_certificates
+                        (cert_ref, issuance_id, member_id, unit_class_code, cert_type, units, issue_date, email_sent_to, created_at)
+                        VALUES (?,?,?,?,?,?,?,?,?)")
+                        ->execute([$certRef, $issuanceId, (int)$member['id'], $unitClassCode, $def['cert_type'],
+                                   $unitsStr, $issueDate, $member['email'], now_dt()]);
+                    $certId = (int)$pdo->lastInsertId();
+
+                    $pdo->prepare("UPDATE unit_issuance_register SET certificate_sent_at = ? WHERE id = ?")
+                        ->execute([now_dt(), $issuanceId]);
+
+                    $emailQueueId = queueEmail($pdo, 'unit_certificate', $issuanceId, (string)$member['email'],
+                        'unitholder_certificate', "COG\$ Certificate of Unit Holding — {$def['name']} — {$certRef}",
+                        ['full_name' => $member['full_name'], 'first_name' => $member['first_name'] ?? '',
+                         'email' => $member['email'], 'member_number' => $member['member_number'],
+                         'unit_class_code' => $unitClassCode, 'unit_class_name' => $def['name'],
+                         'cert_type' => $def['cert_type'], 'units_issued' => $unitsStr,
+                         'issue_date' => $issueDate, 'register_ref' => $registerRef,
+                         'cert_ref' => $certRef, 'sha256_hash' => $hash,
+                         'consideration_cents' => $considerationCents, 'issue_trigger' => $def['issue_trigger'],
+                         'gate' => $def['gate'], 'member_type' => $member['member_type']]);
+                    if ($emailQueueId > 0) {
+                        $pdo->prepare("UPDATE unitholder_certificates SET email_sent_at = ?, email_queue_id = ? WHERE id = ?")
+                            ->execute([now_dt(), $emailQueueId, $certId]);
+                    }
+
+                    $pdo->commit();
+                    $issued[] = ['name' => $member['full_name'], 'register_ref' => $registerRef,
+                                 'cert_ref' => $certRef, 'units' => $unitsStr];
+                } catch (Throwable $ex) {
+                    if ($pdo->inTransaction()) $pdo->rollBack();
+                    $skipped[] = $member['full_name'] . ' (error: ' . $ex->getMessage() . ')';
+                }
+            }
+
+            // Flush email queue for all issued certs
+            if (!empty($issued)) {
+                processEmailQueue($pdo, count($issued));
+            }
+
+            $successUrl = admin_url('unit_issuance.php')
+                . '?tab=issued_bulk'
+                . '&class_code='   . urlencode($unitClassCode)
+                . '&class_name='   . urlencode($def['name'])
+                . '&issued_count=' . urlencode((string)count($issued))
+                . '&skipped_count='. urlencode((string)count($skipped))
+                . '&skipped_list=' . urlencode(implode('|', $skipped));
+            header('Location: ' . $successUrl);
+            exit;
+        }
 
         if ($action === 'issue_unit') {
             if ($memberId <= 0) throw new RuntimeException('Member ID required.');
@@ -247,27 +363,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare("UPDATE unit_issuance_register SET certificate_sent_at = ? WHERE id = ?")
                 ->execute([now_dt(), $issuanceId]);
 
-            $emailQueueId = 0;
-            if (function_exists('queueEmail')) {
-                $emailPayload = [
-                    'full_name' => $member['full_name'], 'first_name' => $member['first_name'] ?? '',
-                    'email' => $member['email'], 'member_number' => $member['member_number'],
-                    'unit_class_code' => $unitClassCode, 'unit_class_name' => $def['name'],
-                    'cert_type' => $def['cert_type'], 'units_issued' => $unitsStr,
-                    'issue_date' => $issueDate, 'register_ref' => $registerRef,
-                    'cert_ref' => $certRef, 'sha256_hash' => $hash,
-                    'consideration_cents' => $considerationCents, 'issue_trigger' => $def['issue_trigger'],
-                    'gate' => $def['gate'], 'member_type' => $member['member_type'],
-                ];
-                $emailQueueId = queueEmail($pdo, 'unit_certificate', $issuanceId, (string)$member['email'],
-                    'unitholder_certificate', "COG\$ Certificate of Unit Holding — {$def['name']} — {$certRef}", $emailPayload);
-                if ($emailQueueId > 0) {
-                    $pdo->prepare("UPDATE unitholder_certificates SET email_sent_at = ?, email_queue_id = ? WHERE id = ?")
-                        ->execute([now_dt(), $emailQueueId, $certId]);
-                }
+            $emailQueueId = queueEmail($pdo, 'unit_certificate', $issuanceId, (string)$member['email'],
+                'unitholder_certificate', "COG\$ Certificate of Unit Holding — {$def['name']} — {$certRef}",
+                ['full_name' => $member['full_name'], 'first_name' => $member['first_name'] ?? '',
+                 'email' => $member['email'], 'member_number' => $member['member_number'],
+                 'unit_class_code' => $unitClassCode, 'unit_class_name' => $def['name'],
+                 'cert_type' => $def['cert_type'], 'units_issued' => $unitsStr,
+                 'issue_date' => $issueDate, 'register_ref' => $registerRef,
+                 'cert_ref' => $certRef, 'sha256_hash' => $hash,
+                 'consideration_cents' => $considerationCents, 'issue_trigger' => $def['issue_trigger'],
+                 'gate' => $def['gate'], 'member_type' => $member['member_type']]);
+            if ($emailQueueId > 0) {
+                $pdo->prepare("UPDATE unitholder_certificates SET email_sent_at = ?, email_queue_id = ? WHERE id = ?")
+                    ->execute([now_dt(), $emailQueueId, $certId]);
             }
 
             $pdo->commit();
+            // Send immediately — do not wait for cron
+            processEmailQueue($pdo, 1);
 
             // PRG — redirect to clean success summary, no GET params that would re-show the issue form
             $successUrl = admin_url('unit_issuance.php')
@@ -290,7 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ── View state ────────────────────────────────────────────────────────────────
-$viewTab = in_array($_GET['tab'] ?? '', ['issue','register','certs','issued'], true) ? $_GET['tab'] : 'issue';
+$viewTab = in_array($_GET['tab'] ?? '', ['issue','register','certs','issued','issued_bulk'], true) ? $_GET['tab'] : 'issue';
 
 // Success params (populated after PRG redirect)
 $successRegRef   = (string)($_GET['register_ref'] ?? '');
@@ -301,6 +414,13 @@ $successMember   = (string)($_GET['member_name']  ?? '');
 $successMemberNum= (string)($_GET['member_num']   ?? '');
 $successUnits    = (string)($_GET['units']        ?? '');
 $successEmailSent= ((string)($_GET['email_sent']  ?? '0')) === '1';
+
+// Bulk success params
+$bulkClass       = (string)($_GET['class_code']    ?? '');
+$bulkClassName   = (string)($_GET['class_name']    ?? '');
+$bulkIssuedCount = (int)($_GET['issued_count']     ?? 0);
+$bulkSkippedCount= (int)($_GET['skipped_count']    ?? 0);
+$bulkSkippedList = array_filter(explode('|', (string)($_GET['skipped_list'] ?? '')));
 
 $totalIssued = $totalCerts = $pendingEmail = 0;
 $classBreakdown = $recentIssuances = [];
@@ -410,7 +530,10 @@ $todayDate = date('Y-m-d');
   <a href="?tab=register" class="<?= $viewTab === 'register' ? 'active' : '' ?>">📚 Issuance Register</a>
   <a href="?tab=certs"    class="<?= $viewTab === 'certs'    ? 'active' : '' ?>">🏅 Certificates</a>
   <?php if ($viewTab === 'issued'): ?>
-  <a href="?tab=issued"   class="active" style="background:rgba(82,184,122,.15);border-color:rgba(82,184,122,.3);color:#7ee0a0;">✅ Issued</a>
+  <a href="?tab=issued"      class="active" style="background:rgba(82,184,122,.15);border-color:rgba(82,184,122,.3);color:#7ee0a0;">✅ Issued</a>
+  <?php endif; ?>
+  <?php if ($viewTab === 'issued_bulk'): ?>
+  <a href="?tab=issued_bulk" class="active" style="background:rgba(82,184,122,.15);border-color:rgba(82,184,122,.3);color:#7ee0a0;">✅ Bulk Issued</a>
   <?php endif; ?>
 </div>
 
@@ -452,6 +575,14 @@ $todayDate = date('Y-m-d');
           <td>
             <?php if ($isOpen): ?>
               <a href="?tab=issue&amp;issue_class=<?= urlencode($code) ?>" class="btn btn-gold btn-sm">Issue <?= h($code) ?></a>
+              <form method="POST" action="?tab=issue" style="display:inline;margin-left:6px;"
+                    onsubmit="return confirm('Issue Class <?= h($code) ?> to ALL eligible members?
+This will issue and send certificates in sequence. Cannot be undone.');">
+                <input type="hidden" name="_csrf" value="<?= $csrf ?>">
+                <input type="hidden" name="action" value="issue_class_all">
+                <input type="hidden" name="unit_class_code" value="<?= h($code) ?>">
+                <button type="submit" class="btn btn-sm" style="background:rgba(82,184,122,.12);border-color:rgba(82,184,122,.3);color:var(--ok);">Issue all</button>
+              </form>
             <?php else: ?>
               <span class="muted small">Locked</span>
             <?php endif; ?>
@@ -754,6 +885,52 @@ $certRows = rows($pdo,
          class="btn">
         🏅 View Certificates
       </a>
+    </div>
+  </div>
+</div>
+
+<?php elseif ($viewTab === 'issued_bulk'): ?>
+<!-- ── BULK ISSUED SUCCESS TAB ──────────────────────────────────────────────── -->
+
+<div class="card" style="border-color:rgba(82,184,122,.3);">
+  <div class="card-head" style="border-color:rgba(82,184,122,.2);">
+    <h2 style="color:#7ee0a0;">✅ Bulk Issuance Complete — Class <?= h($bulkClass) ?></h2>
+    <span class="muted small"><?= h(date('j M Y')) ?></span>
+  </div>
+  <div class="card-body">
+    <table class="sum-table" style="margin-bottom:20px;">
+      <tr><td>Unit class</td><td><?= h($bulkClassName) ?> (Class <?= h($bulkClass) ?>)</td></tr>
+      <tr>
+        <td>Successfully issued</td>
+        <td><span style="color:var(--ok);font-weight:700;font-size:15px;"><?= h((string)$bulkIssuedCount) ?></span>
+            <span class="muted small"> members — certificates queued and sent</span></td>
+      </tr>
+      <?php if ($bulkSkippedCount > 0): ?>
+      <tr>
+        <td>Skipped</td>
+        <td><span style="color:var(--warn);font-weight:700;"><?= h((string)$bulkSkippedCount) ?></span>
+            <span class="muted small"> members did not meet pre-conditions</span></td>
+      </tr>
+      <?php endif; ?>
+    </table>
+
+    <?php if (!empty($bulkSkippedList)): ?>
+    <div style="background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:18px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--sub);margin-bottom:8px;">Skipped — pre-conditions not met</div>
+      <?php foreach ($bulkSkippedList as $skippedItem): ?>
+      <div style="font-size:12px;color:var(--warn);margin-bottom:4px;">⚠ <?= h($skippedItem) ?></div>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <?php if ($bulkSkippedCount > 0): ?>
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=issue&amp;issue_class=<?= urlencode($bulkClass) ?>"
+         class="btn btn-gold">Review skipped members</a>
+      <?php endif; ?>
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=issue" class="btn">📋 Back to Issue Units</a>
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=register" class="btn">📚 View Register</a>
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=certs" class="btn">🏅 View Certificates</a>
     </div>
   </div>
 </div>
