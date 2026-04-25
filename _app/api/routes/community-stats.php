@@ -97,15 +97,45 @@ try {
                   + (int)$btok['b_reserved']+ (int)$btok['b_donation']
                   + (int)$btok['b_pif']     + (int)$btok['b_landholder']) * 4.0;
 
+    // ── JV Asset Pool ──────────────────────────────────────────────────────────
+    // ASX book value from asx_holdings (total_cost_cents is DECIMAL cents)
+    $asx_book_cents = 0;
+    try {
+        $s = $db->query("SELECT COALESCE(SUM(total_cost_cents),0) FROM asx_holdings");
+        $asx_book_cents = (float)$s->fetchColumn();
+    } catch (Throwable $e) {}
+
+    // Sub-Trust A cash balance — TODO: wire to stewardship_account_balance
+    // when the DB field is confirmed. Fixed at 0 until then.
+    $sta_cash_cents = 0;
+
+    // IP / infrastructure fixed placeholder — $50,000
+    // TODO: replace with live read from rwa_assets or infrastructure_valuations
+    // when the correct DB table is confirmed.
+    $ip_infra_cents = 5000000; // $50,000.00 in cents
+
+    $asset_pool_cents   = $asx_book_cents + $sta_cash_cents + $ip_infra_cents;
+    $founding_total     = $members + $businesses;
+    $per_member_cents   = $founding_total > 0
+        ? round($asset_pool_cents / $founding_total, 0)
+        : 0;
+
+    // Pending members — temp placeholder: founding_members × 3
+    // TODO: replace with actual pipeline/pending status query when field confirmed
+    $pending_members = ($members + $businesses) * 3;
+
     $result = [
         'success' => true,
         'data' => [
             'founding_members' => $members + $businesses,
+            'pending_members'  => $pending_members,
             'personal_members' => $members,
             'businesses'       => $businesses,
             'kids_registered'  => (int)$tok['ksnft'],
             'total_cogs'       => $total_cogs,
             'total_value'      => round($total_value, 2),
+            'asset_pool_cents'       => $asset_pool_cents,
+            'asset_pool_per_member_cents' => $per_member_cents,
             'classes' => [
                 'snft'       => (int)$tok['snft'],
                 'ksnft'      => (int)$tok['ksnft'],

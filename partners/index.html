@@ -1391,18 +1391,44 @@
           <div id="comm-strip" class="ha" style="display:none;margin-top:24px">
             <div style="font-size:.74rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Founding Members Registry — Live</div>
             <div style="display:flex;flex-wrap:wrap;gap:12px">
+
+              <!-- Members -->
               <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,62,.06));border:1.5px solid rgba(240,209,138,.30);min-width:140px;text-align:center">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-1);line-height:1;letter-spacing:-.02em" id="cs-members" data-countup="true">—</div>
                 <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);margin-top:6px">Members</div>
               </div>
+
+              <!-- Pending Members (temp: members × 3) -->
+              <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(240,209,138,.07),rgba(200,151,62,.03));border:1.5px dashed rgba(240,209,138,.22);min-width:140px;text-align:center">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-2);line-height:1;letter-spacing:-.02em;opacity:.85" id="cs-pending" data-countup="true">—</div>
+                <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);margin-top:6px;opacity:.7">Pending Members</div>
+              </div>
+
+              <!-- COG$ Reserved -->
               <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(240,209,138,.10),rgba(200,151,62,.06));border:1.5px solid rgba(240,209,138,.30);min-width:140px">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--gold-1);line-height:1;letter-spacing:-.02em" id="cs-cogs" data-countup="true">—</div>
                 <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);margin-top:6px">COG$ Reserved</div>
+                <div style="font-size:.68rem;color:rgba(240,209,138,.5);margin-top:4px;line-height:1.4;font-style:italic">No-obligation Beta-phase Member Option Values — editable in your Vault</div>
               </div>
+
+              <!-- Reservation Value -->
               <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(126,232,162,.08),rgba(82,184,122,.04));border:1.5px solid rgba(82,184,122,.28);min-width:140px">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-value" data-countup="true">—</div>
                 <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.7);margin-top:6px">Reservation Value</div>
+                <div style="font-size:.68rem;color:rgba(126,232,162,.38);margin-top:4px;line-height:1.4;font-style:italic">No-obligation Beta-phase Member Option Values — editable in your Vault</div>
               </div>
+
+              <!-- JV Asset Pool Value -->
+              <div style="padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(110,168,216,.09),rgba(70,120,180,.04));border:1.5px solid rgba(110,168,216,.28);min-width:160px">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true">—</div>
+                <div style="font-size:.80rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Members JV Asset Pool</div>
+                <div style="font-size:.68rem;color:rgba(110,168,216,.5);margin-top:4px;line-height:1.4">ASX holdings + Sub-Trust A cash + IP &amp; infrastructure</div>
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(110,168,216,.15)">
+                  <div style="font-family:var(--serif);font-size:1.1rem;font-weight:600;color:#6ea8d8;line-height:1" id="cs-asset-per-member">—</div>
+                  <div style="font-size:.68rem;color:rgba(110,168,216,.55);margin-top:3px;text-transform:uppercase;letter-spacing:.05em">Per Member</div>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -2515,8 +2541,12 @@ async function loadCommunityStats(){
 
     // Hero strip
     if(el('cs-members')) el('cs-members').textContent = fmt(s.founding_members);
+    if(el('cs-pending')) el('cs-pending').textContent = fmt(s.pending_members);
     if(el('cs-cogs')) el('cs-cogs').textContent = fmt(s.total_cogs);
     if(el('cs-value')) el('cs-value').textContent = fmtM(s.total_value);
+    var fmtC = function(cents){ var n=parseFloat(cents||0)/100; return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+    if(el('cs-asset-pool'))       el('cs-asset-pool').textContent       = fmtC(s.asset_pool_cents);
+    if(el('cs-asset-per-member')) el('cs-asset-per-member').textContent = fmtC(s.asset_pool_per_member_cents);
 
     // Master control — people
     if(el('mc-members')) el('mc-members').textContent = fmt(s.personal_members);
