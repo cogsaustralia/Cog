@@ -128,21 +128,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'issu
         $email = TrusteeDecisionService::getTrusteeEmail($pdo, $decision['sub_trust_context']);
         $link  = 'https://cogsaustralia.org/execute_tdr.php?token=' . urlencode($raw);
 
-        $subj     = '[COG$] Execute Trustee Decision Record — ' . $decision['decision_ref'];
-        $scLabel  = $subTrustLabels[$decision['sub_trust_context']] ?? strtoupper(str_replace('_', '-', $decision['sub_trust_context']));
-        $htmlBody = '<p>Trustee Decision Record Execution</p>'
-            . '<p><strong>Reference:</strong> ' . htmlspecialchars($decision['decision_ref'], ENT_QUOTES) . '<br>'
-            . '<strong>Title:</strong> ' . htmlspecialchars($decision['title'], ENT_QUOTES) . '<br>'
-            . '<strong>Sub-Committee:</strong> ' . htmlspecialchars($scLabel, ENT_QUOTES) . '</p>'
-            . '<p>Your one-time execution link (valid 15 minutes):</p>'
-            . '<p><a href="' . htmlspecialchars($link, ENT_QUOTES) . '">' . htmlspecialchars($link, ENT_QUOTES) . '</a></p>'
-            . '<p>This link is single-use. Do not forward it.</p>';
-        $textBody = "Trustee Decision Record Execution\n\n"
-            . "Reference: {$decision['decision_ref']}\n"
-            . "Title: {$decision['title']}\n"
+        $subj    = 'COGS of Australia Foundation — Trustee Decision Record ' . $decision['decision_ref'] . ' ready for execution';
+        $scLabel = $subTrustLabels[$decision['sub_trust_context']] ?? strtoupper(str_replace('_', '-', $decision['sub_trust_context']));
+        $ref     = htmlspecialchars($decision['decision_ref'], ENT_QUOTES);
+        $title   = htmlspecialchars($decision['title'],        ENT_QUOTES);
+        $sc      = htmlspecialchars($scLabel,                  ENT_QUOTES);
+        $safeLink = htmlspecialchars($link, ENT_QUOTES);
+        $htmlBody =
+            '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff">'
+          . '<div style="background:#1a1a2e;padding:24px 32px">'
+          . '<p style="margin:0;font-size:18px;font-weight:700;color:#d4b25c;letter-spacing:.04em">COGS of Australia Foundation</p>'
+          . '<p style="margin:4px 0 0;font-size:12px;color:#9a8a74">ABN 91 341 497 529 &nbsp;·&nbsp; Drake Village NSW 2469</p>'
+          . '</div>'
+          . '<div style="padding:32px">'
+          . '<p style="font-size:16px;font-weight:700;color:#1a1a2e;margin:0 0 20px">Trustee Decision Record — Action Required</p>'
+          . '<p style="color:#444;line-height:1.6;margin:0 0 16px">A Trustee Decision Record has been prepared for your review and execution. Please review the record details below before proceeding.</p>'
+          . '<table style="width:100%;border-collapse:collapse;margin-bottom:24px">'
+          . '<tr><td style="padding:8px 12px;background:#f5f3ef;font-size:12px;font-weight:700;color:#666;width:140px">Reference</td><td style="padding:8px 12px;border-bottom:1px solid #eee;font-size:13px;color:#1a1a2e">' . $ref . '</td></tr>'
+          . '<tr><td style="padding:8px 12px;background:#f5f3ef;font-size:12px;font-weight:700;color:#666">Title</td><td style="padding:8px 12px;border-bottom:1px solid #eee;font-size:13px;color:#1a1a2e">' . $title . '</td></tr>'
+          . '<tr><td style="padding:8px 12px;background:#f5f3ef;font-size:12px;font-weight:700;color:#666">Sub-Committee</td><td style="padding:8px 12px;font-size:13px;color:#1a1a2e">' . $sc . '</td></tr>'
+          . '</table>'
+          . '<p style="color:#444;line-height:1.6;margin:0 0 24px">To review and execute this record, visit the Foundation administration panel using the button below. The authorisation session is valid for 15 minutes from the time this email was sent.</p>'
+          . '<div style="text-align:center;margin:0 0 28px">'
+          . '<a href="' . $safeLink . '" style="display:inline-block;background:#1a1a2e;color:#d4b25c;font-size:15px;font-weight:700;padding:14px 36px;border-radius:8px;text-decoration:none;letter-spacing:.02em">Review &amp; Execute Record</a>'
+          . '</div>'
+          . '<p style="font-size:12px;color:#999;line-height:1.5;margin:0 0 8px">If the button does not work, copy and paste the following address into your browser:</p>'
+          . '<p style="font-size:11px;color:#bbb;word-break:break-all;margin:0 0 28px">' . $safeLink . '</p>'
+          . '<hr style="border:none;border-top:1px solid #eee;margin:0 0 20px">'
+          . '<p style="font-size:11px;color:#aaa;line-height:1.5;margin:0">This is an administrative notification from the COGS of Australia Foundation, sent to the registered Trustee address. If you believe you have received this message in error, contact <a href="mailto:admin@cogsaustralia.org" style="color:#aaa">admin@cogsaustralia.org</a>.</p>'
+          . '</div>'
+          . '</div>';
+        $textBody = "COGS of Australia Foundation\nABN 91 341 497 529 | Drake Village NSW 2469\n"
+            . "admin@cogsaustralia.org\n\n"
+            . "TRUSTEE DECISION RECORD — ACTION REQUIRED\n\n"
+            . "Reference:     {$decision['decision_ref']}\n"
+            . "Title:         {$decision['title']}\n"
             . "Sub-Committee: {$scLabel}\n\n"
-            . "Your one-time execution link (valid 15 minutes):\n{$link}\n\n"
-            . "This link is single-use. Do not forward it.";
+            . "A Trustee Decision Record has been prepared for your review and execution.\n"
+            . "To proceed, visit the Foundation administration panel at the address below.\n"
+            . "The authorisation session is valid for 15 minutes from when this email was sent.\n\n"
+            . "{$link}\n\n"
+            . "If you believe you have received this message in error, contact admin@cogsaustralia.org.\n"
+            . "COGS of Australia Foundation | cogsaustralia.org";
 
         if (mailerEnabled()) {
             smtpSendEmail($email, $subj, $htmlBody, $textBody);
