@@ -1,36 +1,19 @@
 <?php
 declare(strict_types=1);
 
-// Prevent any caching — proof pages must always execute fresh
-header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-header('Pragma: no-cache');
-header('Expires: 0');
-
-/**
- * admin/_proof/tdr_phase1.php
- * COGS Trustee Records System — Phase 1 Proof
- *
- * Verifies:
- *  1. trustees table has exactly 1 active row (Hybrid Trust Trustee, not per-sub-trust)
- *     with sub_trust_context='all', operational_focus column present,
- *     execution email = sub-trust-a@cogsaustralia.org
- *  2. trustee_decisions table has the seeded TDR-20260422-001 row (fully_executed)
- *  3. evidence_vault_entries ENUM includes all three new values
- *  4. governance_cron_log table exists
- *  5. trustee_decision_execution_records and trustee_decision_attachments tables exist
- *  6. SHA-256 canonical payload is reproducible (deterministic hash)
- *  7. getTrusteeEmail() returns the active Trustee's email without sub_trust filter
- *  8. generateRef() produces sequential refs correctly
- *
- * Must run 100% clean before deploy.
- */
-
 require_once dirname(__DIR__) . '/includes/admin_paths.php';
 require_once dirname(__DIR__) . '/includes/ops_workflow.php';
 require_once dirname(__DIR__) . '/../_app/api/services/TrusteeDecisionService.php';
 
+// Auth first — ops_require_admin starts session and may redirect;
+// both must happen before any header() or output.
 ops_require_admin();
 $pdo = ops_db();
+
+// Cache headers after auth (session already started, no output yet)
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 $pass = 0;
 $fail = 0;
