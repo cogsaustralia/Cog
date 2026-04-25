@@ -86,55 +86,252 @@ $accentHex = match($classCode) {
 };
 
 // ── Rights data per class — document format ───────────────────────────────────
+// Source: JVPA cls.1.2, 1.5, 2.1; Declaration Sch.9 Part A; Sub-Trust A cls.6; Sub-Trust B Sch.4
+// Columns: [label, value, authority/note]
 function ucv_rights(string $code, string $memberType): array {
     $rows = match($code) {
+
         'S' => [
-            ['Governance right',           '1 national vote on all Foundation matters',                            'Entrenched — JVPA cl.35(e)'],
-            ['Beneficial Unit',            '1 Sub-Trust B income unit — proportional share of Beneficiary Distribution Stream', '50% of Members Asset Pool dividends distributed via Sub-Trust B — Declaration cl.21.1A'],
-            ['Token type',                 'Soulbound — non-transferable during lifetime; passes to nominated heir on death only', 'Declaration cl.21.3, 35(i)'],
-            ['Consideration',              '$4.00 AUD (permanently fixed)',                                        'JVPA cl.35(x) — $3.00 Administration · $1.00 Sub-Trust A'],
-            ['Smart contract attributes',  "Soulbound transfer lock\nOne-per-person cap enforcement\n3-of-Board multisig minting\nAnti-capture cap (1,000,000 combined units)\nHeir nomination and inheritance flow", ''],
+            ['Token type',
+             'Non-Fungible Token (NFT) — Personal S-NFT COG$. Soulbound — non-transferable during lifetime under any circumstances. Passes to nominated heir on death only; cancelled if no heir nominated or election not exercised within 12 months.',
+             'JVPA cl.1.5(f)(i); Declaration cls.21.3, 35(i) — entrenched'],
+            ['Governance right',
+             '1 national vote on all Foundation matters. One vote per natural person — equal weight to every other Member.',
+             'JVPA cl.35(e) — entrenched; Declaration cl.21.1'],
+            ['Beneficial Unit (Sub-Trust B)',
+             '1 Sub-Trust B income unit — proportional share of the Beneficiary Distribution Stream. 50% of Members Asset Pool dividends distributed via Sub-Trust B. Member may elect to receive as AUD bonus or as new ASX COG$ tokens.',
+             'Declaration cls.21.1A, 35(q) — entrenched; Sub-Trust B Sch.4 cl.S4.2'],
+            ['Distribution right',
+             'Proportional share of Sub-Trust B distributions, mandatory within 60 days of each dividend period under the Trustee Act 1936 (SA). Failure to distribute is a breach of trust enforceable in the Supreme Court of South Australia.',
+             'Declaration cl.35(g) — entrenched; Sub-Trust B Sch.4 cl.S4.4'],
+            ['Inheritance',
+             'Heir nomination through Members Vault at any time. On death, heir invited to accept, undergo KYC, and activate within 12 months. Irrevocable on acceptance.',
+             'Declaration cl.21.4'],
+            ['Consideration',
+             '$4.00 AUD — permanently fixed. $3.00 applied to Administration; $1.00 applied to Sub-Trust A investment component.',
+             'JVPA cl.35(x) — entrenched; Declaration cl.21.1; Sub-Trust A cl.6.2'],
+            ['Smart contract attributes',
+             "Soulbound transfer lock — no transfer during lifetime\nOne-per-person cap enforcement (natural persons aged 18+ only)\n3-of-Board multisignature required for token minting\nAnti-capture cap check (1,000,000 combined units across all classes)\nSub-Trust B income unit activation on lawful issue\nHeir nomination record and inheritance flow on death\nToken minting may not precede or be simultaneous with unit issue",
+             'Declaration Sch.9 Part A; Sub-Trust A cl.7.1'],
         ],
+
         'B' => [
-            ['Governance right',           '1 limited vote — Trustee appointment, removal, or replacement only', 'Exercised by KYC-verified authorised representative — Declaration cl.26A.2(a)'],
-            ['Beneficial Unit',            '1 Sub-Trust B income unit — proportional share on same per-unit terms as Class S', 'Declaration cl.26A.2(b) — Sub-Trust B Deed cl.6.2'],
-            ['Token type',                 'Entity-bound — non-transferable; cancelled on entity dissolution',     'Declaration cl.35(v)'],
-            ['Consideration',              '$40.00 AUD',                                                           'JVPA cl.35(y) — $30.00 Administration · $10.00 Sub-Trust A'],
-            ['Smart contract attributes',  "Entity-bound transfer lock\nBNFT compliance stack (ABN verified, authorised rep KYC)\n3-of-Board multisig minting\nAnti-capture cap check\nEntity dissolution cancellation trigger", ''],
+            ['Token type',
+             'Non-Fungible Token (NFT) — Business B-NFT COG$ (BNFT). Entity-bound — non-transferable; cancelled automatically on entity dissolution, deregistration, or ABN cancellation.',
+             'JVPA cl.1.5(f)(iii); Declaration cls.26A.1, 35(v)'],
+            ['Governance right',
+             '1 limited vote — exercisable only on Trustee appointment, removal, or replacement. Exercised by the named KYC-verified authorised representative only. No national governance vote on other Foundation matters.',
+             'Declaration cl.26A.2(a)'],
+            ['Beneficial Unit (Sub-Trust B)',
+             '1 Sub-Trust B income unit — proportional share on identical per-unit terms as Class S. Full Beneficiary Distribution Stream participation.',
+             'Declaration cl.26A.2(b); Sub-Trust B Deed cl.6.2; Sub-Trust B Sch.4 cl.S4.2'],
+            ['Distribution right',
+             'Proportional share of Sub-Trust B distributions on same terms as Class S. Mandatory within 60 days under Trustee Act 1936 (SA).',
+             'Declaration cl.35(g) — entrenched; Sub-Trust B Sch.4 cl.S4.4'],
+            ['BNFT compliance stack',
+             'Active ABN/ACN required. Named KYC-verified authorised representative nominated. All compliance conditions must be maintained for the lifetime of the token.',
+             'Declaration cls.26A.3, 35(v); Sub-Trust A cls.6.4, 7.3'],
+            ['Consideration',
+             '$40.00 AUD — may never be reduced below the Class S fee of $4.00 AUD. $30.00 applied to Administration and member set-up; $10.00 applied to Sub-Trust A investment component.',
+             'JVPA cl.35(y) — entrenched; Declaration cl.26A.1; Sub-Trust A cl.6.4'],
+            ['Smart contract attributes',
+             "Entity-bound transfer lock — no transfer during entity lifetime\nBNFT compliance stack flag (ABN verified, authorised rep KYC-verified)\n3-of-Board multisignature required for token minting\nAnti-capture cap check (1,000,000 combined units)\nSub-Trust B income unit activation on lawful issue\nEntity dissolution / ABN cancellation triggers automatic token cancellation\nOne per legal entity with active ABN — enforced before issue",
+             'Declaration Sch.9 Part A; Sub-Trust A cls.6.4, 7.1, 7.3'],
         ],
+
         'kS' => [
-            ['Governance right',           '1 national vote via parent/guardian proxy until age 18; auto-activates on 18th birthday', 'Declaration cl.25.3'],
-            ['Beneficial Unit',            '1 Sub-Trust B income unit — held in trust until age 18; auto-converts to Class S', 'Declaration cl.25.1, 25.4'],
-            ['Token type',                 'Soulbound — non-transferable in all circumstances',                    'Irrevocable; no further consideration payable on conversion'],
-            ['Smart contract attributes',  "Soulbound transfer lock — permanent\nAuto-conversion to Class S at age 18 (date-triggered)\nProxy governance flag (parent/guardian until conversion)\n3-of-Board multisig minting", ''],
+            ['Token type',
+             'Non-Fungible Token (NFT) — Kids S-NFT COG$ (kS-NFT). Soulbound — non-transferable in all circumstances. Auto-converts to Class S on the holder\'s 18th birthday; irrevocable; no further consideration payable on conversion.',
+             'JVPA cl.1.5(f)(ii); Declaration cls.25.1, 25.4'],
+            ['Governance right',
+             '1 national vote exercised by proxy (parent/guardian) until age 18. Auto-activates in the holder\'s own name on 18th birthday.',
+             'Declaration cl.25.3'],
+            ['Beneficial Unit (Sub-Trust B)',
+             '1 Sub-Trust B income unit — held in trust until age 18. Income accumulated in trust; distributions commence on 18th birthday auto-conversion to Class S.',
+             'Declaration cls.25.1, 25.4; Sub-Trust B Sch.4 cl.S4.2'],
+            ['Distribution right',
+             'Distributions held in trust during minority. Released to Member on auto-conversion to Class S at age 18.',
+             'Declaration cls.25.1, 25.4'],
+            ['Consideration',
+             '$1.00 AUD. Acquiring party must be a verified existing Class S holder acting on behalf of the child or grandchild.',
+             'Declaration Sch.9 Part A; Sub-Trust A cl.6.3'],
+            ['Smart contract attributes',
+             "Soulbound transfer lock — permanent, no exceptions\nProxy governance flag (parent/guardian exercises vote until conversion)\nDate-triggered auto-conversion to Class S at age 18\nSub-Trust B income unit held in trust until conversion\n3-of-Board multisignature required for token minting\nNo further consideration payable on conversion",
+             'Declaration Sch.9 Part A; Sub-Trust A cls.6.3, 7.1'],
         ],
+
         'C' => [
-            ['Unit type',                  'Community exchange record — not a financial investment',               'No Sub-Trust B income unit. No yield.'],
-            ['Governance right',           'None by Class C alone — no national governance vote',                  'Declaration cl.23D.1 — Schedule 9 Part A'],
-            ['Beneficial Unit',            'None — Class C carries no income unit and no yield',                   ''],
-            ['Function',                   'Immutable barter and service exchange record between Members. P2P exchange where class rules permit. No fiat sale.',  'Declaration cl.35(w)'],
-            ['Allocation basis',           'Standing Members Poll direction — ' . ($memberType === 'business' ? '10,000 units for Business Members' : '1,000 units for Individual Members'), 'Declaration cl.23D.3 — no purchase fee'],
-            ['Smart contract attributes',  "P2P transfer enforcement (class-rule-gated)\nNo-fiat-sale rule (entrenched cl.35(w))\nSHA-256 hash record (authoritative pre-Expansion Day)\nOn-chain migration at Expansion Day (cl.23D.5)", ''],
+            ['Token type',
+             'Fungible Token — Community COG$ (Class C). Not a non-fungible token. Fungible barter and exchange record within the Foundation ecosystem. No Beneficial Unit. No yield. Not a financial investment.',
+             'JVPA cl.1.5(f)(iv); Declaration cls.23D.1, 23D.2'],
+            ['Governance right',
+             'None by Class C alone — no national governance vote, no local weighted vote.',
+             'Declaration cl.23D.1; Schedule 9 Part A'],
+            ['Beneficial Unit (Sub-Trust B)',
+             'None — Class C carries no Sub-Trust B income unit, no dividend entitlement, and no yield of any kind.',
+             'Declaration cl.23D.2'],
+            ['Function',
+             'Immutable record of barter transactions for goods and services between Members. Allocated as consideration for approved contributed efforts, services, and stewardship activities. P2P exchange between Members where class rules expressly permit. No fiat sale under any circumstances.',
+             'Declaration cls.23D.1, 23D.2, 35(w) — entrenched'],
+            ['Allocation basis',
+             'Initial allocation by standing Members Poll direction under Declaration cl.23D.3. ' . ($memberType === 'business' ? '10,000 units for Business Members.' : '1,000 units for Individual Members.') . ' No purchase fee applies.',
+             'Declaration cl.23D.3; Sub-Trust A cl.6.8'],
+            ['Pre-Expansion Day record',
+             'SHA-256 database record is the authoritative legal record of each allocation until Expansion Day. Migrated on-chain at Expansion Day.',
+             'Declaration cl.23D.5'],
+            ['Smart contract attributes',
+             "Fungible token — class-rule-gated P2P transfer only\nNo-fiat-sale rule (entrenched cl.35(w)) — absolute prohibition\nSHA-256 hash record — authoritative pre-Expansion Day\nAdditional allocations require Members Poll direction (cl.23D.4)\nAnti-capture cap inclusion\nOn-chain migration at Expansion Day (cl.23D.5)",
+             'Declaration Sch.9 Part A; Sub-Trust A cl.6.8'],
         ],
+
         'P' => [
-            ['Purpose',                    'Funds a free Class S membership for a nominated recipient who cannot afford the $4.00 joining fee', 'Donor receives no Beneficial Unit'],
-            ['Governance right (donor)',    'None — Pay It Forward units carry no vote and no Beneficial Unit for the donor', ''],
-            ['Smart contract attributes',  "Non-transferable (donor record)\nRecipient activation triggers Class S issuance\n3-of-Board multisig for recipient Class S minting", ''],
+            ['Token type',
+             'Non-Fungible Token (NFT) — Pay It Forward COG$ (Class P). Non-transferable donor record. Exhausted and cancelled on allocation to recipient; surplus unallocated within 24 months transferred to Sub-Trust C.',
+             'JVPA cl.1.5(f); Declaration cls.26.1, 26.6'],
+            ['Governance right (donor)',
+             'None — Pay It Forward units carry no vote and no Beneficial Unit for the donor before or after allocation.',
+             'Declaration cl.26.1A'],
+            ['Beneficial Unit (Sub-Trust B)',
+             'None for the donor. The funded recipient receives all Class S rights on activation, including 1 Sub-Trust B income unit.',
+             'Declaration cl.26.1'],
+            ['Function',
+             'Funds a free Class S or kS membership for a nominated recipient who cannot meet the joining fee. Donor receives a Pay It Forward record. Annual donor cap of $40,000 AUD applies.',
+             'Declaration cls.26.1, 26.1A; Sub-Trust A cl.6.5'],
+            ['Consideration',
+             '$4.00 AUD per unit (or whole multiple). Applied as $4.00 per funded Class S or kS recipient. Surplus transferred to Sub-Trust C after 24 months.',
+             'Declaration cl.26.6; Sub-Trust A cl.6.5'],
+            ['Smart contract attributes',
+             "Non-transferable donor record\nExcluded from Beneficial Class Unit count and anti-capture cap until allocation\nRecipient activation triggers Class S or kS unit issue to recipient\n3-of-Board multisig required for recipient token minting\n24-month unallocated surplus transferred to Sub-Trust C\nDonor cap enforcement ($40,000 AUD annual)",
+             'Declaration Sch.9 Part A; Sub-Trust A cl.6.5'],
         ],
+
         'D' => [
-            ['Unit type',                  'Donation record — no personal Beneficial Unit for donor',              'Sub-Trust C registered as D Class Beneficial Unit Holder'],
-            ['Funds flow',                 '$4.00 AUD — $2.00 to Sub-Trust C (charitable) · $2.00 to Sub-Trust A asset acquisition', 'Transfer to Sub-Trust C within 2 business days'],
-            ['Beneficial Unit Holder',     'Sub-Trust C — 1 D Class income unit per validly issued Donation COG$', 'Proportional share of Donation Dividend Stream via Sub-Trust B'],
-            ['Smart contract attributes',  "Sub-Trust C auto-registered as Beneficial Unit Holder\n\$2.00 transfer to Sub-Trust C triggered on issuance\nDonation Ledger entry required\n3-of-Board multisig minting", ''],
+            ['Token type',
+             'Non-Fungible Token (NFT) — Donation COG$ (Class D). Non-transferable. No personal Beneficial Unit for the donor. Sub-Trust C is registered as the D Class Beneficial Unit Holder in the Members Vault for each validly issued Class D unit.',
+             'JVPA cl.1.5(f)(v); Declaration cls.24.1, 24.2'],
+            ['Governance right',
+             'None — Donation COG$ carries no governance vote for the donor.',
+             'Declaration cl.24.3'],
+            ['Beneficial Unit Holder',
+             'Sub-Trust C — registered as D Class Beneficial Unit Holder. 1 D Class income unit per validly issued Donation COG$. Sub-Trust C receives its proportional share of the Donation Dividend Stream via Sub-Trust B.',
+             'Declaration cls.24.2, 35(g) — entrenched; Sub-Trust C Deed Recital D; Sub-Trust B Sch.4 cl.S4.2'],
+            ['Funds flow',
+             '$4.00 AUD consideration: $2.00 transferred directly to Sub-Trust C (charitable trust) within 2 business days of issue; $2.00 applied through Sub-Trust A to approved Members Asset Pool assets. Donation Ledger entry created.',
+             'Declaration cls.24.1, 8.1B, 8.1E(b), 35(g); Sub-Trust A cl.6.7'],
+            ['Breach of trust',
+             'Failure to transfer $2.00 to Sub-Trust C within 2 business days of issue is a breach of trust enforceable in the Supreme Court of South Australia.',
+             'Declaration cl.24.3; Sub-Trust A cl.7.4'],
+            ['Smart contract attributes',
+             "Non-transferable — no sale, assignment, or dealing\nSub-Trust C auto-registered as D Class Beneficial Unit Holder on minting\n\$2.00 automatic transfer to Sub-Trust C triggered on issue\nDonation Ledger entry created and anchored\n3-of-Board multisig required for token minting\nDonation Dividend Stream routing enforced via Sub-Trust B",
+             'Declaration Sch.9 Part A; Sub-Trust A cls.6.7, 7.1, 7.4'],
         ],
+
         'Lr' => [
-            ['Unit type',                  'Governance allocation — not a financial instrument',                   'No Beneficial Unit. No yield. No national vote.'],
-            ['Local governance right',     '1,000 weighted local votes per declared Affected Zone',               'Effective 1,001:1 weighting — Declaration cl.23B.2, 35(s)'],
-            ['Auto-lapse conditions',      'Lapses if: Affected Zone declaration expires or is revoked; or residency eligibility ceases to be verified', 'Declaration cl.23B.4'],
-            ['Smart contract attributes',  "Non-transferable\nExcluded from anti-capture cap\nAuto-lapse trigger on zone expiry or residency loss\nWeighted vote enforced at vote time", ''],
+            ['Token type',
+             'Fungible Token — Resident COG$ (Class Lr). Fungible local governance unit. Not a non-fungible token. Non-transferable. No Beneficial Unit. No yield. No national governance vote.',
+             'Declaration cl.23B.1; JVPA cl.1.5(f)(ix)'],
+            ['Local governance right',
+             '1,000 weighted local votes per declared Affected Zone, giving an effective total of 1,001 votes to 1 in any Local Decision Vote relating to that zone. Local weighted vote only — no national governance vote.',
+             'Declaration cls.23B.2, 35(s); Schedule 9 Part A'],
+            ['Beneficial Unit (Sub-Trust B)',
+             'None — Class Lr carries no Sub-Trust B income unit, no Beneficiary Distribution Stream entitlement, and no yield.',
+             'Declaration cl.23B.2'],
+            ['Auto-lapse conditions',
+             'Lapses automatically if: (a) the Affected Zone declaration expires or is revoked; or (b) the member ceases to be a verified resident of that zone. Automatic — no administrative action required.',
+             'Declaration cl.23B.4'],
+            ['Consideration',
+             'Nil — no monetary consideration. Issued automatically by the Members Vault once Affected Zone is declared and residency eligibility is verified.',
+             'Declaration cl.23B.3; Sub-Trust A cl.6.8'],
+            ['Smart contract attributes',
+             "Fungible token — non-transferable\nExcluded from anti-capture cap and Beneficial Class Unit count\nAffected Zone declaration required before issuance\nResidency eligibility verified via geofencing specification\nAuto-lapse trigger on zone expiry or residency loss\nWeighted local vote calculation enforced at vote time\nZone-linked — one allocation per declared Affected Zone",
+             'Declaration Sch.9 Part A; Sub-Trust A cl.6.8; Declaration cl.23B.3'],
         ],
+
+        'A' => [
+            ['Token type',
+             'Fungible Token — ASX COG$ (Class A). Fungible Tier 2 investment token backed by ASX-listed Australian resource company shareholdings in the Members Asset Pool.',
+             'JVPA cl.1.5(f)(vi); Declaration cls.22, 35(j)'],
+            ['Governance right',
+             'No dedicated national governance vote by reason only of Class A. Governance rights arise from co-held Class S or Class B unit.',
+             'Declaration cl.22; Schedule 9 Part A'],
+            ['Beneficial Unit (Sub-Trust B)',
+             '1 Sub-Trust B income unit per validly issued Class A unit — proportional share of the Beneficiary Distribution Stream.',
+             'Sub-Trust B Sch.4 cl.S4.2'],
+            ['Transfer and dealing rules',
+             "Subject to 12-month Lock Period (Stewardship Season) from Expansion Day.\nAfter Lock Period: own-class swap to Landholder (1:1, irrevocable); own-class conversion to Donation (1:1, irrevocable); P2P transfer to KYC-verified Beneficiary Holder as gift or goods and services (no fiat) via Members Vault with 3-of-Board multisig within 5 business days. No fiat sale.",
+             'Declaration cls.22.3, 35(j) — entrenched; Sub-Trust A cl.6.6'],
+            ['Consideration',
+             '$4.00 AUD per unit for eligible Class S holders; $40.00 AUD per unit for eligible Class B holders. Increase by Special Resolution under cl.28A only.',
+             'Declaration cl.22.1; Sub-Trust A cl.6.6'],
+            ['Smart contract attributes',
+             "Fungible investment token — CHESS-backed ASX shareholding\n12-month Lock Period enforced from Expansion Day\nPost-lock: class swap, donation conversion, P2P gift transfer enabled\n3-of-Board multisig for all token dealings post-lock\nNo-fiat-sale rule (entrenched cl.35(w))\nAnti-capture cap check (1,000,000 combined units)\nSub-Trust B income unit activation on issue",
+             'Declaration Sch.9 Part A; Sub-Trust A cl.6.6'],
+        ],
+
+        'Lh' => [
+            ['Token type',
+             'Fungible Token — Landholder COG$ (Class Lh). Fungible Tier 2 token. Issued per hectare to eligible landholders, LALCs, and Prescribed Bodies Corporate. Zero-cost issuance for LALCs and PBCs (entrenched).',
+             'JVPA cl.1.5(f)(vii),(q) — entrenched; Declaration cls.23, 23.4, 35(ab)'],
+            ['Governance right',
+             'Weighted affected-zone governance vote calculated automatically by Members Vault smart contract. No national governance vote by reason of Class Lh alone.',
+             'Declaration cl.23.3; Schedule 9 Part A'],
+            ['Beneficial Unit (Sub-Trust B)',
+             '1 Sub-Trust B income unit per validly issued Class Lh unit. Full Beneficiary Distribution Stream participation. 100% of all consideration applied to Sub-Trust A.',
+             'Declaration cl.23.1; Sub-Trust B Sch.4 cl.S4.2'],
+            ['Transfer and dealing rules',
+             "Own-class swap to ASX Class A (1:1, irrevocable at any time). Own-class conversion to Donation (1:1, irrevocable). P2P transfer to eligible landholder — gift or goods/services only, no fiat, 3-of-Board multisig, 5-business-day window. Property title transfer election within 30 days of land transfer. LALC/PBC transfers subject to Aboriginal Land Rights Act 1983 (NSW) and Native Title Act 1993 (Cth).",
+             'Declaration cls.23.2, 23.4.5; Sub-Trust A cl.6.8'],
+            ['LALC/PBC entitlement',
+             'Automatic zero-cost issuance for LALCs and PBCs. Maximum 1,000 tokens per hectare. FNAC written endorsement required. Entity KYC-verified with named authorised representative.',
+             'Declaration cls.23.4, 35(ab) — entrenched'],
+            ['Smart contract attributes',
+             "Fungible token — class-rule-gated P2P transfer only\nNo-fiat-sale rule (entrenched cl.35(w))\n1,000-per-hectare cap enforced before issue\nLALC/PBC zero-cost pathway enforced\nFNAC endorsement required for LALC/PBC issuance\n3-of-Board multisig for all token dealings\nWeighted local vote calculation enforced at vote time\nProperty title transfer election enforced (30-day window)\nSub-Trust B income unit activation on lawful issue",
+             'Declaration Sch.9 Part A; Sub-Trust A cls.6.8, 7.2'],
+        ],
+
+        'BP' => [
+            ['Token type',
+             'Fungible Token — Business Property COG$ (Class BP). Fungible Tier 2 token for eligible commercial property holders. Members Asset Pool participation unit.',
+             'JVPA cl.1.5(f)(viii); Declaration cls.23C, 35(w)'],
+            ['Governance right',
+             'Weighted affected-zone governance rights only. No national governance vote by reason of Class BP alone.',
+             'Declaration cl.23C.1; Schedule 9 Part A'],
+            ['Beneficial Unit (Sub-Trust B)',
+             '1 Sub-Trust B income unit per validly issued Class BP unit where the Declaration expressly provides. Full proceeds applied to Sub-Trust A.',
+             'Declaration cl.23C.1; Sub-Trust B Sch.4 cl.S4.2'],
+            ['Transfer and dealing rules',
+             'Transferable with property title or P2P to eligible commercial property holder via Members Vault. No fiat sale under any circumstances (entrenched cl.35(w)).',
+             'Declaration cl.23C.2; Sub-Trust A cl.6.8'],
+            ['Smart contract attributes',
+             "Fungible token — class-rule-gated dealing only\nNo-fiat-sale rule (entrenched cl.35(w)) — absolute prohibition\nProperty title transfer mechanics enforced\nWeighted affected-zone vote enforced at vote time\n3-of-Board multisig for token dealings\nSub-Trust B income unit activation on lawful issue",
+             'Declaration Sch.9 Part A; Sub-Trust A cls.6.8, 7.2'],
+        ],
+
+        'R' => [
+            ['Token type',
+             'Non-Fungible Token (NFT) — RWA COG$ (Class R). Tier 2 real-world-asset-backed token. Non-transferable until class-specific dealing rules are expressly adopted under the Declaration.',
+             'JVPA cl.1.5(f)(x); Declaration cls.23A, 23A.4'],
+            ['Governance right',
+             'No national governance vote and no local weighted vote by reason only of Class R issuance.',
+             'Declaration cl.23A.4'],
+            ['Beneficial Unit (Sub-Trust B)',
+             '1 Sub-Trust B income unit per validly issued Class R unit from the moment of issue.',
+             'Declaration cl.23A.3; Sub-Trust B Sch.4 cl.S4.2'],
+            ['Funds flow',
+             '100% of activated Class R unit consideration applied to Sub-Trust A for the relevant approved RWA acquisition, valuation-linked governance framework, or other Board-approved asset-side allocation.',
+             'Declaration cl.23A.3'],
+            ['Transfer and dealing rules',
+             'Non-transferable until class-specific dealing rules are expressly adopted under the Declaration. Any future transfer or reclassification must occur only through the Members Vault in accordance with adopted rules.',
+             'Declaration cl.23A.4'],
+            ['Smart contract attributes',
+             "Non-fungible token — non-transferable until class rules adopted\nBoard resolution required for each RWA acquisition approval\n3-of-Board multisig required for token minting\nFull proceeds to Sub-Trust A on activation\nSub-Trust B income unit activation on lawful issue\nValuation-linked governance framework enforced",
+             'Declaration Sch.9 Part A; Sub-Trust A cl.6'],
+        ],
+
         default => [
-            ['Rights and attributes',      'Defined in CJVM Hybrid Trust Declaration Schedule 9, Part A', 'Refer to the governing instruments for full details of this unit class.'],
+            ['Rights and attributes',
+             'Defined in CJVM Hybrid Trust Declaration Schedule 9, Part A.',
+             'Refer to the governing instruments for full details of this unit class.'],
         ],
     };
     return $rows;
@@ -328,10 +525,17 @@ body {
   border: 1px solid #ddd8ce; border-radius: 4px; padding: 10px 14px;
   background: #faf7f2;
 }
-.instrument-title { font-size: 9.5px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .07em; color: <?= $accentHex ?>; margin-bottom: 4px;
+.instrument-title { font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: <?= $accentHex ?>; margin-bottom: 3px;
   font-family: -apple-system, sans-serif; }
-.instrument-name  { font-size: 11px; color: #1a1208; font-weight: 600; line-height: 1.4; }
+.instrument-title--supreme { color: #8b1a1a; }
+.instrument-name  { font-size: 10.5px; color: #1a1208; font-weight: 600; line-height: 1.3; }
+.instrument-note  { font-size: 9px; color: #7a6a4e; margin-top: 3px; line-height: 1.4;
+  font-family: -apple-system, sans-serif; }
+.instruments-grid-5 {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 8px; margin-bottom: 14px;
+}
 
 /* ── Document footer ──────────────────────────────────────── */
 .doc-footer {
@@ -418,9 +622,11 @@ body {
   /* Compress instruments */
   .instruments-section { padding-top: 12px; }
   .instruments-grid    { gap: 10px; margin-bottom: 12px; }
-  .instrument-card     { padding: 7px 10px; }
-  .instrument-title    { font-size: 8px; margin-bottom: 2px; }
-  .instrument-name     { font-size: 10px; }
+  .instrument-card     { padding: 6px 8px; }
+  .instruments-grid-5  { gap: 5px; margin-bottom: 10px; }
+  .instrument-title    { font-size: 7.5px; margin-bottom: 1px; }
+  .instrument-name     { font-size: 9.5px; }
+  .instrument-note     { font-size: 8px; margin-top: 2px; }
 
   /* Compress footer */
   .doc-footer           { padding: 14px 32px; }
@@ -572,21 +778,34 @@ body {
       </tbody>
     </table>
 
-    <!-- Governing instruments -->
+    <!-- Governing instruments — all five -->
     <div class="instruments-section">
       <p class="section-heading">Governing Instruments</p>
-      <div class="instruments-grid">
+      <div class="instruments-grid-5">
         <div class="instrument-card">
-          <div class="instrument-title">Supreme Instrument</div>
+          <div class="instrument-title instrument-title--supreme">① Supreme</div>
           <div class="instrument-name">Joint Venture Participation Agreement (JVPA)</div>
+          <div class="instrument-note">All other instruments subordinate — cl.1.2(a)</div>
         </div>
         <div class="instrument-card">
-          <div class="instrument-title">Trust Declaration</div>
+          <div class="instrument-title">② Declaration</div>
           <div class="instrument-name">CJVM Hybrid Trust Declaration</div>
+          <div class="instrument-note">Legal trust instrument — governs unit structure</div>
         </div>
         <div class="instrument-card">
-          <div class="instrument-title">Sub-Trust Deed</div>
-          <div class="instrument-name">Sub-Trust A Deed (cl. 7, 11, 13)</div>
+          <div class="instrument-title">③ Sub-Trust A</div>
+          <div class="instrument-name">Members Asset Pool Unit Trust Deed</div>
+          <div class="instrument-note">Unit issuance, funds flow &amp; token recording</div>
+        </div>
+        <div class="instrument-card">
+          <div class="instrument-title">④ Sub-Trust B</div>
+          <div class="instrument-name">Beneficiary Distribution Trust Deed</div>
+          <div class="instrument-note">Distribution stream &amp; Beneficial Unit rights</div>
+        </div>
+        <div class="instrument-card">
+          <div class="instrument-title">⑤ Sub-Trust C</div>
+          <div class="instrument-name">Discretionary Charitable Trust Deed</div>
+          <div class="instrument-note">D Class Beneficial Unit Holder — charitable purposes</div>
         </div>
       </div>
       <p style="font-size:10.5px;color:#7a6a4e;line-height:1.6;">
