@@ -777,6 +777,38 @@ body.cert-open .admin-shell { display: none; }
 </div>
 <?php endif; ?>
 
+<!-- Reference document — Key Management Policy (TDR-20260425-018 only) -->
+<?php if (($decision['decision_ref'] ?? '') === 'TDR-20260425-018'): ?>
+<div class="detail-card">
+  <div class="detail-head"><h3>Reference Document</h3></div>
+  <div class="detail-body">
+    <p style="font-size:.82rem;color:var(--sub);margin-bottom:14px">
+      This Trustee Decision Record provisionally adopts the operational governance policy
+      identified below under Declaration cl.15A.4. The Trustee should review the policy
+      before issuing an execution token.
+    </p>
+    <a href="../docs/Key_Management_Policy.pdf" target="_blank" rel="noopener"
+       style="display:flex;align-items:center;gap:14px;background:rgba(240,209,138,.07);
+              border:1.5px solid rgba(240,209,138,.28);border-radius:12px;
+              padding:14px 16px;text-decoration:none;transition:background .2s,border-color .2s"
+       onmouseover="this.style.background='rgba(240,209,138,.14)';this.style.borderColor='rgba(240,209,138,.50)'"
+       onmouseout="this.style.background='rgba(240,209,138,.07)';this.style.borderColor='rgba(240,209,138,.28)'">
+      <div style="font-size:1.4rem">📄</div>
+      <div style="flex:1">
+        <div style="color:var(--gold);font-weight:600;font-size:.92rem">Key Management Policy</div>
+        <div style="color:var(--sub);font-size:.74rem;margin-top:2px">
+          Operational Governance Policy · Declaration cl.15A.4 · Effective 25 April 2026
+        </div>
+      </div>
+      <div style="color:var(--gold);font-size:.78rem;font-weight:600;letter-spacing:.04em">OPEN PDF ↗</div>
+    </a>
+    <p style="font-size:.72rem;color:var(--dim);margin-top:10px;line-height:1.5">
+      SHA-256: <span style="font-family:monospace">f87464e7a9dec0e1660f9632ef8df73e7fed67c852e825c4aadd7102ce21ace6</span>
+    </p>
+  </div>
+</div>
+<?php endif; ?>
+
 <!-- Issue token / print actions -->
 <?php if (in_array($decision['status'], ['draft','pending_execution'], true)): ?>
 <div class="detail-card">
@@ -829,14 +861,15 @@ $tdrPriority = [
     'TDR-20260425-012'=>11, // DGR Endorsement (STC)
     'TDR-20260425-014'=>12, // Inaugural Meeting timetable
     'TDR-20260425-015'=>13, // Auditor appointment
+    'TDR-20260425-018'=>14, // Key Management Policy (Declaration cl.15A.4 — required before GFD)
     // Tier 3 — Before Expansion Day
-    'TDR-20260425-016'=>14, // Privacy policy
-    'TDR-20260425-017'=>15, // AML/CTF procedure
+    'TDR-20260425-016'=>15, // Privacy policy
+    'TDR-20260425-017'=>16, // AML/CTF procedure
 ];
 $tierDefs = [
     ['min'=>1,  'max'=>7,  'label'=>'Tier 1 — Immediate'],
-    ['min'=>8,  'max'=>13, 'label'=>'Tier 2 — Before Foundation Day'],
-    ['min'=>14, 'max'=>99, 'label'=>'Tier 3 — Before Expansion Day'],
+    ['min'=>8,  'max'=>14, 'label'=>'Tier 2 — Before Foundation Day'],
+    ['min'=>15, 'max'=>99, 'label'=>'Tier 3 — Before Expansion Day'],
 ];
 usort($decisions, function($a, $b) use ($tdrPriority) {
     $pa = $tdrPriority[$a['decision_ref']] ?? 99;
