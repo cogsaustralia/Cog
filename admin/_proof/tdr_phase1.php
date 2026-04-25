@@ -6,13 +6,16 @@ declare(strict_types=1);
  * COGS Trustee Records System — Phase 1 Proof
  *
  * Verifies:
- *  1. trustees table has 3 active rows, one per sub-trust, each with distinct email
- *  2. trustee_decisions table has the seeded TDR-20260422-001 row
+ *  1. trustees table has exactly 1 active row (Hybrid Trust Trustee, not per-sub-trust)
+ *     with sub_trust_context='all', operational_focus column present,
+ *     execution email = sub-trust-a@cogsaustralia.org
+ *  2. trustee_decisions table has the seeded TDR-20260422-001 row (fully_executed)
  *  3. evidence_vault_entries ENUM includes all three new values
  *  4. governance_cron_log table exists
- *  5. TrusteeDecisionService::generateRef() produces sequential refs correctly
+ *  5. trustee_decision_execution_records and trustee_decision_attachments tables exist
  *  6. SHA-256 canonical payload is reproducible (deterministic hash)
- *  7. one_time_tokens can receive a tdr_execution purpose token
+ *  7. getTrusteeEmail() returns the active Trustee's email without sub_trust filter
+ *  8. generateRef() produces sequential refs correctly
  *
  * Must run 100% clean before deploy.
  */
@@ -39,41 +42,53 @@ function proof_check(string $label, bool $result, string $detail = ''): void {
     }
 }
 
-// ── 1. Trustees table: 3 active rows, one per sub-trust ──────────────────────
+// ── 1. Trustees table: single active Trustee of the Hybrid Trust ──────────────
+// Post-remediation: one row, sub_trust_context='all', operational_focus column present
 try {
-    $stmt = $pdo->query("SELECT sub_trust_context, email, status FROM trustees ORDER BY sub_trust_context");
+    $stmt = $pdo->query("SELECT * FROM trustees WHERE status = 'active' ORDER BY id ASC");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $contexts = array_column($rows, 'sub_trust_context');
     proof_check(
-        'Trustees: 3 rows exist',
-        count($rows) === 3,
-        count($rows) . ' rows found'
+        'Trustees: exactly 1 active row (Hybrid Trust Trustee)',
+        count($rows) === 1,
+        count($rows) . ' active row(s) found'
     );
-    proof_check(
-        'Trustees: sub_trust_a row present',
-        in_array('sub_trust_a', $contexts, true),
-        ''
+    if (count($rows) === 1) {
+        $t = $rows[0];
+        proof_check(
+            'Trustees: sub_trust_context = all (Hybrid Trust, not per-sub-trust)',
+            $t['sub_trust_context'] === 'all',
+            $t['sub_trust_context']
+        );
+        proof_check(
+            'Trustees: operational_focus column present',
+            array_key_exists('operational_focus', $t),
+            implode(', ', array_keys($t))
+        );
+        proof_check(
+            'Trustees: execution email = sub-trust-a@cogsaustralia.org',
+            $t['email'] === 'sub-trust-a@cogsaustralia.org',
+            $t['email']
+        );
+        proof_check(
+            'Trustees: trustee_type = caretaker_trustee',
+            $t['trustee_type'] === 'caretaker_trustee',
+            $t['trustee_type']
+        );
+        proof_check(
+            'Trustees: full_name = Thomas Boyd Cunliffe',
+            $t['full_name'] === 'Thomas Boyd Cunliffe',
+            $t['full_name']
+        );
+    }
+    // Verify no stale sub-trust rows remain
+    $staleStmt = $pdo->query(
+        "SELECT COUNT(*) FROM trustees WHERE sub_trust_context IN ('sub_trust_b','sub_trust_c')"
     );
+    $staleCount = (int)$staleStmt->fetchColumn();
     proof_check(
-        'Trustees: sub_trust_b row present',
-        in_array('sub_trust_b', $contexts, true),
-        ''
-    );
-    proof_check(
-        'Trustees: sub_trust_c row present',
-        in_array('sub_trust_c', $contexts, true),
-        ''
-    );
-    $emails = array_column($rows, 'email');
-    proof_check(
-        'Trustees: sub-trust-a@ email present',
-        in_array('sub-trust-a@cogsaustralia.org', $emails, true),
-        ''
-    );
-    proof_check(
-        'Trustees: all 3 rows are active',
-        count(array_filter($rows, fn($r) => $r['status'] === 'active')) === 3,
-        ''
+        'Trustees: no stale sub_trust_b/c rows (remediation complete)',
+        $staleCount === 0,
+        $staleCount . ' stale row(s) remaining'
     );
 } catch (\Throwable $e) {
     proof_check('Trustees: table query', false, $e->getMessage());
@@ -86,7 +101,7 @@ try {
     if ($d) {
         proof_check('Seed TDR: sub_trust_a context', $d['sub_trust_context'] === 'sub_trust_a', $d['sub_trust_context']);
         proof_check('Seed TDR: category = bank_account', $d['decision_category'] === 'bank_account', $d['decision_category']);
-        proof_check('Seed TDR: status = pending_execution', $d['status'] === 'pending_execution', $d['status']);
+        proof_check('Seed TDR: status = fully_executed', $d['status'] === 'fully_executed', $d['status']);
         proof_check('Seed TDR: non_mis_affirmation = 1', (int)$d['non_mis_affirmation'] === 1, (string)$d['non_mis_affirmation']);
         proof_check('Seed TDR: visibility = internal', $d['visibility'] === 'internal', $d['visibility']);
     }
@@ -150,16 +165,24 @@ try {
     proof_check('SHA-256: canonical payload', false, $e->getMessage());
 }
 
-// ── 8. getTrusteeEmail resolves sub_trust_a ───────────────────────────────────
+// ── 8. getTrusteeEmail returns active Trustee's email (no sub_trust filter) ───
+// Post-remediation: method ignores $subTrustContext arg; returns first active row's email
 try {
-    $email = TrusteeDecisionService::getTrusteeEmail($pdo, 'sub_trust_a');
+    $email = TrusteeDecisionService::getTrusteeEmail($pdo);
     proof_check(
-        'getTrusteeEmail: sub_trust_a resolves',
+        'getTrusteeEmail: returns active Trustee email',
         $email === 'sub-trust-a@cogsaustralia.org',
         $email ?? 'null'
     );
+    // Also verify the deprecated sub_trust_context arg is ignored (any value → same result)
+    $emailWithArg = TrusteeDecisionService::getTrusteeEmail($pdo, 'sub_trust_b');
+    proof_check(
+        'getTrusteeEmail: sub_trust_context arg is ignored (same result regardless)',
+        $emailWithArg === $email,
+        "with arg: {$emailWithArg}, without: {$email}"
+    );
 } catch (\Throwable $e) {
-    proof_check('getTrusteeEmail: sub_trust_a', false, $e->getMessage());
+    proof_check('getTrusteeEmail', false, $e->getMessage());
 }
 
 // ── 9. generateRef is sequential ─────────────────────────────────────────────
