@@ -4479,7 +4479,7 @@ function renderTabOverview(d){
       return '<div class="tr">'+
         '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
         '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation</div></div>'+
-        '<div class="tr-val"><div class="tr-amt" style="font-size:1.2rem">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
+        '<div class="tr-val"><div style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--gold);line-height:1;letter-spacing:.02em">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
         '</div>';
     }).join('');
   }
