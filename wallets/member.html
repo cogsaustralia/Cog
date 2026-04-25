@@ -1037,35 +1037,35 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <!-- C: Open polls — only conditional item remaining in Overview -->
       <div id="ov-action-prompts"></div>
 
-      <!-- D: COG$ Reservations summary -->
-      <div id="ov-reservations-card" style="margin-bottom:14px">
-        <div class="sec-divider" style="margin-bottom:10px">COG$ Reservations <i class="info-ico" onclick="showInfo('reservations')" style="vertical-align:middle">?</i></div>
-        <div class="card" style="padding:0">
-          <div id="ov-res-rows" style="padding:4px 0"></div>
-          <div style="padding:10px 18px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-            <span style="font-size:1.02rem;color:var(--text3)">No obligation · Released after Expansion Day</span>
-            <button class="btn btn-ghost btn-sm" onclick="tab('holdings')">Manage Reservations &rarr;</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- E: Exchange summary -->
+      <!-- D: Community COG$ — top card -->
       <div id="ov-exchange-card" style="margin-bottom:14px">
-        <div class="sec-divider" style="margin-bottom:10px">Community COG$ Exchange <i class="info-ico" onclick="showInfo('exchange')" style="vertical-align:middle">?</i></div>
+        <div class="sec-divider" style="margin-bottom:10px">Community COG$ <i class="info-ico" onclick="showInfo('exchange')" style="vertical-align:middle">?</i></div>
         <div class="card">
           <div class="tr">
             <div class="hr-sym hr-sym-teal">CC</div>
             <div class="tr-inf">
               <div class="tr-name">Community COG$</div>
-              <div class="tr-cls">Class C · Transferable now · Live exchange</div>
+              <div class="tr-cls">Class C &middot; Transferable now &middot; Live exchange</div>
             </div>
             <div class="tr-val">
-              <div class="tr-amt" id="ov-xch-balance" style="font-size:1.4rem">—</div>
+              <div id="ov-xch-balance" style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--gold);line-height:1;letter-spacing:.02em">—</div>
               <div class="tr-amt-label">available</div>
             </div>
           </div>
           <div style="padding:10px 18px 12px;border-top:1px solid var(--border);text-align:right">
             <button class="btn btn-ghost btn-sm" onclick="tab('exchange')">Go to Exchange &rarr;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- E: COG$ Reservations summary -->
+      <div id="ov-reservations-card" style="margin-bottom:14px">
+        <div class="sec-divider" style="margin-bottom:10px">COG$ Reservations <i class="info-ico" onclick="showInfo('reservations')" style="vertical-align:middle">?</i></div>
+        <div class="card" style="padding:0">
+          <div id="ov-res-rows" style="padding:4px 0"></div>
+          <div style="padding:10px 18px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            <span style="font-size:1.02rem;color:var(--text3)">No obligation &middot; Released after Expansion Day</span>
+            <button class="btn btn-ghost btn-sm" onclick="tab('holdings')">Manage Reservations &rarr;</button>
           </div>
         </div>
       </div>
