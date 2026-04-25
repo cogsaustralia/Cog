@@ -339,7 +339,9 @@ $rowKyc = function_exists('ops_member_kyc_map') ? ops_member_kyc_map($pdo, array
 .member-card:hover { border-color:rgba(212,178,92,.2); }
 .mc-header { display:grid; grid-template-columns:1fr auto auto 28px;
              gap:10px; align-items:center; padding:12px 16px;
-             cursor:pointer; background:var(--panel); user-select:none; }
+             cursor:pointer; background:var(--panel); user-select:none;
+             transition:background .15s; }
+.mc-header:hover { background:rgba(212,178,92,.04); }
 .mc-identity h4  { font-size:.85rem; font-weight:700; margin:0 0 2px; }
 .mc-identity .mc-sub { font-size:.73rem; color:var(--sub); }
 .mc-status-flags { display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
