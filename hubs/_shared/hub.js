@@ -308,10 +308,13 @@ function scrollToSection(contentId){ expandAndScrollToSection(contentId); }
 
 function renderSummaryStats(){
   var s = _hubData.summary || {};
+  // Count projects from the live array — includes both owned and referenced.
+  // The summary view only counts owned projects so referenced hubs show 0.
+  var projectCount = (_hubData.projects || []).length || s.active_project_count || 0;
   var rows = [
-    {id:'stat-members', n: s.member_count||0, l:'Members', dest:'Roster', target:'hub-roster-wrap'},
-    {id:'stat-threads', n: s.thread_count||0, l:'Threads', dest:'Forum', target:'hub-forum-list'},
-    {id:'stat-projects',n: s.active_project_count||0, l:'Projects', dest:'Projects', target:'hub-projects-wrap'},
+    {id:'stat-members', n: s.member_count||0,  l:'Members',  dest:'Roster',    target:'hub-roster-wrap'},
+    {id:'stat-threads', n: s.thread_count||0,  l:'Threads',  dest:'Forum',     target:'hub-forum-list'},
+    {id:'stat-projects',n: projectCount,        l:'Projects', dest:'Projects',  target:'hub-projects-wrap'},
   ];
   var scrollTargets = {
     'stat-members':  'hub-roster-wrap',
