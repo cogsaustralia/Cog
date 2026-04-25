@@ -9,7 +9,7 @@
 --   certificate template in the mailer send path.
 -- ============================================================
 
-INSERT INTO `email_templates`
+INSERT IGNORE INTO `email_templates`
     (`template_key`, `subject_line`, `body_text`, `is_active`, `created_at`, `updated_at`)
 VALUES
 (
@@ -19,9 +19,6 @@ VALUES
   1,
   NOW(),
   NOW()
-)
-ON DUPLICATE KEY UPDATE
-  `subject_line` = VALUES(`subject_line`),
-  `body_text`    = VALUES(`body_text`),
-  `is_active`    = 1,
-  `updated_at`   = NOW();
+);
+-- Note: INSERT IGNORE used — template_key has no UNIQUE constraint in email_templates.
+-- If row already exists, INSERT is silently skipped. Update via admin Email Templates page.

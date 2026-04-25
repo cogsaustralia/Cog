@@ -88,7 +88,7 @@ function uir_eligible_members(PDO $pdo, string $unitClassCode, bool $gate2Open, 
 
     if ($unitClassCode === 'C') {
         $rows = $tablesReady ? rows($pdo,
-            "SELECT m.id, m.member_number, m.full_name, m.email, m.member_type,
+            "SELECT DISTINCT m.id, m.member_number, m.full_name, m.email, m.member_type,
                     m.kyc_status, m.signup_payment_status
              FROM members m
              INNER JOIN unit_issuance_register uir ON uir.member_id = m.id AND uir.unit_class_code IN ('S','B')

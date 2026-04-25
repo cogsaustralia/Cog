@@ -1410,6 +1410,11 @@ return [$html, $plain];
                     . '• Weighted vote calculation enforced at vote time'
                     . '</div>'
                     . '</div>';
+            } else {
+                // Fallback for future Tier 2 classes (A, Lh, BP, R) not yet isssuable
+                $rightsHtml = '<div style="background:rgba(200,144,26,.08);border:1px solid rgba(200,144,26,.28);border-radius:10px;padding:1rem 1.1rem;margin:.75rem 0;">'
+                    . '<div style="font-size:13px;color:#d4c9b8;">Rights and smart contract attributes for Class ' . $classCode . ' are defined in the CJVM Hybrid Trust Declaration Schedule 9, Part A. Please refer to the governing instruments for full details of this unit class.</div>'
+                    . '</div>';
             }
 
             // ── Governing instruments section ─────────────────────────────
