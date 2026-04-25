@@ -5326,6 +5326,13 @@ window.toggleAcc         = toggleAcc;
 window.saveResNew        = saveResNew;
 window.resetReservations = resetReservations;
 window.trToggle          = trToggle;
+
+/* Auto-open profile drawer when redirected from external nav pill */
+if (window.__openProfileOnLoad) {
+  window.addEventListener('load', function() {
+    setTimeout(openProfileDrawer, 600);
+  });
+}
 window.markOneRead       = markOneRead;
 window.dismissNews       = dismissNews;
 window.fmtDp             = fmtDp;
