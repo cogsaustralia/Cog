@@ -613,30 +613,28 @@ $statusBadge = [
 // Priority map: lower number = higher priority
 $tdrPriority = [
     // Tier 1 — Immediate / blocking
-    'TDR-20260422-001' => 1,  // A-1 Sub-Trust A bank account (executed)
-    'TDR-20260425-002' => 2,  // A-2 CHESS Registration Policy
-    'TDR-20260425-003' => 3,  // A-3 Ratification of LGM holdings
-    'TDR-20260425-004' => 4,  // A-4 Stockbroker appointment
-    'TDR-20260425-006' => 5,  // B-1 Sub-Trust B bank account
-    'TDR-20260425-009' => 6,  // C-1 Sub-Trust C bank account
-    'TDR-20260425-013' => 7,  // X-1 Indemnity & cost allocation policy
-    // Tier 2 — Before Governance Foundation Day (14 May 2026)
-    'TDR-20260425-005' => 8,  // A-5 Non-MIS Sub-Trust A
-    'TDR-20260425-007' => 9,  // B-2 Non-MIS Sub-Trust B
-    'TDR-20260425-008' => 10, // B-3 Beneficial Unit Register
-    'TDR-20260425-010' => 11, // C-2 Non-MIS Sub-Trust C
-    'TDR-20260425-011' => 12, // C-3 ACNC Registration
-    'TDR-20260425-012' => 13, // C-4 DGR Application
-    'TDR-20260425-014' => 14, // X-2 Inaugural Meeting timetable
-    'TDR-20260425-015' => 15, // X-3 Auditor appointment
+    'TDR-20260422-001' => 1,  // Sub-Trust A bank account (executed)
+    'TDR-20260425-002' => 2,  // CHESS Holding Policy (executed)
+    'TDR-20260425-003' => 3,  // Ratification ASX:LGM holdings (executed)
+    'TDR-20260425-004' => 4,  // IG/Citicorp authorisation (executed)
+    'TDR-20260425-006' => 5,  // Sub-Trust B bank account
+    'TDR-20260425-009' => 6,  // Sub-Trust C bank account
+    'TDR-20260425-013' => 7,  // Indemnity & cost allocation policy
+    // Tier 2 — Before Foundation Day (14 May 2026)
+    'TDR-20260425-005' => 8,  // Non-MIS — Hybrid Trust (executed, covers all sub-trusts)
+    'TDR-20260425-008' => 9,  // Beneficial Unit Register (STB)
+    'TDR-20260425-011' => 10, // ACNC Registration (STC)
+    'TDR-20260425-012' => 11, // DGR Endorsement (STC)
+    'TDR-20260425-014' => 12, // Inaugural Meeting timetable
+    'TDR-20260425-015' => 13, // Auditor appointment
     // Tier 3 — Before Expansion Day
-    'TDR-20260425-016' => 16, // X-4 Privacy policy
-    'TDR-20260425-017' => 17, // X-5 AML/CTF procedure
+    'TDR-20260425-016' => 14, // Privacy policy
+    'TDR-20260425-017' => 15, // AML/CTF procedure
 ];
 $tdrTierLabels = [
     1  => '🔴 Tier 1 — Immediate',
     8  => '🟡 Tier 2 — Before Foundation Day',
-    16 => '🟢 Tier 3 — Before Expansion Day',
+    14 => '🟢 Tier 3 — Before Expansion Day',
     99 => '⚪ Tier 4 — Event-triggered',
 ];
 
@@ -735,7 +733,7 @@ $tdrStatusBadge = [
     foreach ($tdrGrouped[$ctx] as $tdr):
       [$tbc, $tbl] = $tdrStatusBadge[$tdr['status']] ?? ['badge-warn', $tdr['status']];
       $pri  = $tdrPriority[$tdr['decision_ref']] ?? 99;
-      $tier = $pri >= 16 ? 16 : ($pri >= 8 ? 8 : 1);
+      $tier = $pri >= 14 ? 14 : ($pri >= 8 ? 8 : 1);
       if ($tier !== $lastTier):
         $tierLabel = $tdrTierLabels[$tier] ?? 'Tier 4';
         $lastTier  = $tier;
