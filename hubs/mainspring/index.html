@@ -572,6 +572,35 @@ function activateCogs(tiles,myAreas){
   var cp=document.getElementById('c-projects');
   if(cp)cp.textContent=totP>0?totP:'—';
 }
+function renderFeed(activity){
+  var w=document.getElementById('ms-feed-wrap');
+  if(!activity.length){w.innerHTML='<div class="hub-empty">No recent activity yet.</div>';return;}
+  w.innerHTML='<div class="ms-activity-feed">'+activity.slice(0,30).map(function(a){
+    return '<div class="ms-feed-item"><span class="ms-feed-dot '+esc(a.event_type||'')+'"></span><div style="flex:1;min-width:0"><div class="ms-feed-title">'+esc(a.title||'Untitled')+'</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap"><span class="ms-feed-area">'+esc((a.area_key||'').replace(/_/g,' '))+'</span><span style="font-size:.76rem;color:var(--text4)">'+esc(a.event_type==='thread'?'Forum thread':'Project')+'</span></div></div><span class="ms-feed-time">'+dts(a.occurred_at)+'</span></div>';
+  }).join('')+'</div>';
+}
+
+async function loadAdminActivity(){
+  var w=document.getElementById('ms-admin-wrap');if(!w)return;
+  var AREAS=['operations_oversight','governance_polls','esg_proxy_voting','first_nations','community_projects','technology_blockchain','financial_oversight','place_based_decisions','education_outreach'];
+  var LABELS={operations_oversight:'Day-to-Day Operations',governance_polls:'Research & Acquisitions',esg_proxy_voting:'ESG & Proxy Voting',first_nations:'First Nations JV',community_projects:'Community Projects',technology_blockchain:'Technology & Blockchain',financial_oversight:'Financial Oversight',place_based_decisions:'Place-Based Decisions',education_outreach:'Education & Outreach'};
+  var res=await Promise.allSettled(AREAS.map(function(a){return fetch(API+'vault/hub-admin-activity&area_key='+a+'&limit=3',{credentials:'include'}).then(function(r){return r.json();});}));
+  var rows='';
+  res.forEach(function(r,i){
+    var area=AREAS[i],label=LABELS[area]||area;
+    var data=(r.status==='fulfilled'&&r.value&&r.value.success)?r.value.data:null;
+    var events=(data&&data.activity)||[],pages=(data&&data.admin_pages)||{primary:[],secondary:[]};
+    var ac=pages.primary.length+pages.secondary.length;
+    rows+='<div class="ms-admin-row"><div class="ms-admin-row-hd"><span class="ms-admin-hub-label">'+esc(label)+'</span>';
+    if(ac)rows+='<span class="ms-admin-page-count">'+ac+' admin function'+(ac!==1?'s':'')+'</span>';
+    rows+='</div>';
+    if(!events.length){rows+='<div class="ms-admin-empty">No recent activity</div>';}
+    else{events.forEach(function(ev){var ts='';try{ts=dts(ev.ts);}catch(e){ts=ev.ts||'';}rows+='<div class="ms-admin-item"><span class="ms-admin-source">'+esc(ev.source||'')+'</span><span class="ms-admin-summary">'+esc(ev.summary||'')+'</span><span class="ms-admin-ts">'+esc(ts)+'</span></div>';});}
+    rows+='</div>';
+  });
+  w.innerHTML=rows?'<div class="ms-admin-grid">'+rows+'</div>':'<div class="hub-empty">No activity data available.</div>';
+}
+
 async function boot(){
   try{
     var d=await api('vault/hub-mainspring');
