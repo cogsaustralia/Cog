@@ -969,12 +969,59 @@ $tierDefs = [
     ['min'=>8,  'max'=>14, 'label'=>'Tier 2 — Before Foundation Day'],
     ['min'=>15, 'max'=>99, 'label'=>'Tier 3 — Before Expansion Day'],
 ];
-usort($decisions, function($a, $b) use ($tdrPriority) {
-    $pa = $tdrPriority[$a['decision_ref']] ?? 99;
-    $pb = $tdrPriority[$b['decision_ref']] ?? 99;
-    return $pa !== $pb ? $pa - $pb : strcmp($a['decision_ref'], $b['decision_ref']);
-});
-$filterStatus = trim((string)($_GET['status'] ?? ''));
+// ---- View mode and category filter (additive — defaults preserve existing behaviour) ----
+$viewMode       = trim((string)($_GET['view'] ?? 'priority'));
+if (!in_array($viewMode, ['priority','date','category'], true)) { $viewMode = 'priority'; }
+$filterCategory = trim((string)($_GET['category'] ?? ''));
+if ($filterCategory !== '' && !isset($categoryLabels[$filterCategory])) { $filterCategory = ''; }
+$filterStatus   = trim((string)($_GET['status'] ?? ''));
+// Note: $filterCategory is read here from $_GET['category'] for the chip-bar UI.
+// The list query at $listFilters['decision_category'] already uses the same
+// $_GET['category'] key, so no change is required at the data-fetch layer.
+
+// Sort decisions according to selected view mode
+if ($viewMode === 'date') {
+    // Newest activity first; for fully_executed use updated_at (= execution time);
+    // for drafts/pending use effective_date as the date anchor; tie-break by ref.
+    usort($decisions, function($a, $b) {
+        $aKey = ($a['status'] === 'fully_executed') ? ($a['updated_at'] ?? $a['effective_date']) : ($a['effective_date'] ?? '');
+        $bKey = ($b['status'] === 'fully_executed') ? ($b['updated_at'] ?? $b['effective_date']) : ($b['effective_date'] ?? '');
+        $cmp = strcmp((string)$bKey, (string)$aKey); // DESC
+        return $cmp !== 0 ? $cmp : strcmp($b['decision_ref'], $a['decision_ref']);
+    });
+} elseif ($viewMode === 'category') {
+    // Group by category, then within category by priority (preserves urgency within group)
+    usort($decisions, function($a, $b) use ($tdrPriority) {
+        $cmp = strcmp($a['decision_category'], $b['decision_category']);
+        if ($cmp !== 0) return $cmp;
+        $pa = $tdrPriority[$a['decision_ref']] ?? 99;
+        $pb = $tdrPriority[$b['decision_ref']] ?? 99;
+        return $pa !== $pb ? $pa - $pb : strcmp($a['decision_ref'], $b['decision_ref']);
+    });
+} else {
+    // priority (default — original behaviour)
+    usort($decisions, function($a, $b) use ($tdrPriority) {
+        $pa = $tdrPriority[$a['decision_ref']] ?? 99;
+        $pb = $tdrPriority[$b['decision_ref']] ?? 99;
+        return $pa !== $pb ? $pa - $pb : strcmp($a['decision_ref'], $b['decision_ref']);
+    });
+}
+
+// Helper: build a query string preserving status/category, swapping in named params
+$buildQS = function(array $overrides = []) use ($filterStatus, $filterCategory, $viewMode) {
+    $params = array_filter([
+        'status'   => $filterStatus,
+        'category' => $filterCategory,
+        'view'     => $viewMode === 'priority' ? '' : $viewMode, // omit default
+    ], fn($v) => $v !== '');
+    foreach ($overrides as $k => $v) {
+        if ($v === '' || $v === null) { unset($params[$k]); }
+        else { $params[$k] = $v; }
+    }
+    return $params ? '?'.http_build_query($params) : '';
+};
+
+// $filterStatus already set above
 ?>
 
 <div class="topbar" style="margin-bottom:16px">
@@ -1000,7 +1047,7 @@ $filterStatus = trim((string)($_GET['status'] ?? ''));
   <span style="font-size:.73rem;color:var(--dim);margin-right:4px">Show:</span>
   <?php foreach ([''=>'All','draft'=>'Draft','pending_execution'=>'Pending Execution','fully_executed'=>'Executed'] as $val=>$lbl):
     $isActive = ($filterStatus === $val); ?>
-    <a href="./trustee_decisions.php<?= $val ? '?status='.urlencode($val) : '' ?>"
+    <a href="./trustee_decisions.php<?= $buildQS(['status'=>$val]) ?>"
        style="font-size:.73rem;font-weight:<?= $isActive?'700':'400' ?>;padding:4px 11px;
               border-radius:20px;text-decoration:none;
               background:<?= $isActive?'rgba(212,178,92,.25)':'var(--panel2)' ?>;
@@ -1022,11 +1069,42 @@ $filterStatus = trim((string)($_GET['status'] ?? ''));
 $pendingCount = count(array_filter($decisions, fn($d) => $d['status'] !== 'fully_executed'));
 $doneCount    = count($decisions) - $pendingCount;
 ?>
+<!-- Row 1: Sort by (view mode) -->
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+  <span style="font-size:.73rem;color:var(--dim);margin-right:4px;min-width:54px">Sort by:</span>
+  <?php foreach (['priority'=>'Priority','date'=>'Date','category'=>'Category'] as $vmKey=>$vmLbl):
+    $isActive = ($viewMode === $vmKey); ?>
+    <a href="./trustee_decisions.php<?= $buildQS(['view'=> $vmKey === 'priority' ? '' : $vmKey]) ?>"
+       style="font-size:.73rem;font-weight:<?= $isActive?'700':'400' ?>;padding:4px 11px;
+              border-radius:20px;text-decoration:none;
+              background:<?= $isActive?'rgba(212,178,92,.25)':'var(--panel2)' ?>;
+              border:1px solid <?= $isActive?'rgba(212,178,92,.5)':'var(--line2)' ?>;
+              color:<?= $isActive?'var(--gold)':'var(--sub)' ?>"><?= td_h($vmLbl) ?></a>
+  <?php endforeach; ?>
+</div>
+
+<!-- Row 2: Category filter -->
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+  <span style="font-size:.73rem;color:var(--dim);margin-right:4px;min-width:54px">Category:</span>
+  <?php
+  $catChips = ['' => 'All'] + $categoryLabels;
+  foreach ($catChips as $catKey => $catLbl):
+    $isActive = ($filterCategory === $catKey); ?>
+    <a href="./trustee_decisions.php<?= $buildQS(['category'=>$catKey]) ?>"
+       style="font-size:.71rem;font-weight:<?= $isActive?'700':'400' ?>;padding:3px 10px;
+              border-radius:20px;text-decoration:none;
+              background:<?= $isActive?'rgba(212,178,92,.25)':'var(--panel2)' ?>;
+              border:1px solid <?= $isActive?'rgba(212,178,92,.5)':'var(--line2)' ?>;
+              color:<?= $isActive?'var(--gold)':'var(--sub)' ?>"><?= td_h($catLbl) ?></a>
+  <?php endforeach; ?>
+</div>
+
+<!-- Row 3: Status filter (existing, refactored to preserve other filters) -->
 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
-  <span style="font-size:.73rem;color:var(--dim);margin-right:4px">Show:</span>
+  <span style="font-size:.73rem;color:var(--dim);margin-right:4px;min-width:54px">Status:</span>
   <?php foreach ([''=>'All','draft'=>'Draft','pending_execution'=>'Pending Execution','fully_executed'=>'Executed'] as $val=>$lbl):
     $isActive = ($filterStatus === $val); ?>
-    <a href="./trustee_decisions.php<?= $val ? '?status='.urlencode($val) : '' ?>"
+    <a href="./trustee_decisions.php<?= $buildQS(['status'=>$val]) ?>"
        style="font-size:.73rem;font-weight:<?= $isActive?'700':'400' ?>;padding:4px 11px;
               border-radius:20px;text-decoration:none;
               background:<?= $isActive?'rgba(212,178,92,.25)':'var(--panel2)' ?>;
@@ -1039,20 +1117,45 @@ $doneCount    = count($decisions) - $pendingCount;
 </div>
 
 <?php
-$lastTier = null;
+$lastGroup = null;
 foreach ($decisions as $d):
   [$bc,$bl] = $statusBadge[$d['status']] ?? ['badge-warn',$d['status']];
   $pri  = $tdrPriority[$d['decision_ref']] ?? 99;
-  $tier = null;
-  foreach ($tierDefs as $td) { if ($pri>=$td['min']&&$pri<=$td['max']) { $tier=$td; break; } }
-  if ($tier && ($lastTier===null||$lastTier['label']!==$tier['label'])):
-    $lastTier=$tier;
+
+  // Compute the group label for the current view mode
+  $groupLabel = null;
+  $groupDot   = 'rgba(212,178,92,.5)';
+  if ($viewMode === 'priority') {
+      foreach ($tierDefs as $td) {
+          if ($pri >= $td['min'] && $pri <= $td['max']) {
+              $groupLabel = $td['label'];
+              $groupDot   = $pri<=7?'rgba(192,85,58,.7)':($pri<=13?'rgba(212,148,74,.7)':'rgba(82,184,122,.6)');
+              break;
+          }
+      }
+  } elseif ($viewMode === 'date') {
+      $dateKey = ($d['status']==='fully_executed')
+                    ? ($d['updated_at'] ?? $d['effective_date'])
+                    : ($d['effective_date'] ?? '');
+      if ($dateKey) {
+          $ts = strtotime((string)$dateKey);
+          if ($ts) {
+              $groupLabel = strtoupper(date('F Y', $ts)) . ($d['status']==='fully_executed' ? '' : ' (drafts/pending)');
+              $groupDot   = $d['status']==='fully_executed' ? 'rgba(82,184,122,.6)' : 'rgba(212,148,74,.7)';
+          }
+      }
+  } elseif ($viewMode === 'category') {
+      $groupLabel = $categoryLabels[$d['decision_category']] ?? $d['decision_category'];
+  }
+
+  if ($groupLabel !== null && $groupLabel !== $lastGroup):
+    $lastGroup = $groupLabel;
 ?>
   <div style="font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;
               color:var(--sub);padding:10px 0 4px;display:flex;align-items:center;gap:8px">
     <span style="display:inline-block;width:7px;height:7px;border-radius:50%;
-                 background:<?= $pri<=7?'rgba(192,85,58,.7)':($pri<=13?'rgba(212,148,74,.7)':'rgba(82,184,122,.6)') ?>"></span>
-    <?= td_h($tier['label']) ?>
+                 background:<?= $groupDot ?>"></span>
+    <?= td_h($groupLabel) ?>
   </div>
 <?php endif; ?>
   <?php
@@ -1062,11 +1165,21 @@ foreach ($decisions as $d):
   $icon   = $isDone ? '✓' : ($isOpen ? '◉' : '○');
   $iconC  = $isDone ? 'var(--ok)' : ($isOpen ? 'var(--warn)' : 'var(--dim)');
   $ctxBadge = $subTrustLabels[$d['sub_trust_context']] ?? $d['sub_trust_context'];
+  // Date to display on row: execution time for executed; effective_date otherwise
+  if ($isDone) {
+      $rowDateRaw = $d['updated_at'] ?? $d['effective_date'] ?? '';
+      $rowDateLbl = $rowDateRaw ? date('d M Y', strtotime((string)$rowDateRaw)) : '';
+      $rowDatePrefix = 'Executed';
+  } else {
+      $rowDateRaw = $d['effective_date'] ?? '';
+      $rowDateLbl = $rowDateRaw ? date('d M Y', strtotime((string)$rowDateRaw)) : '';
+      $rowDatePrefix = 'Effective';
+  }
 ?>
 <div style="border:1px solid var(--line2);border-radius:8px;margin-bottom:5px;overflow:hidden;
             <?= $isDone?'opacity:.65':'' ?>">
   <div onclick="toggleRow('<?= $rowId ?>')" id="<?= $rowId ?>-hdr"
-       style="display:grid;grid-template-columns:18px 92px 1fr auto auto auto;gap:0 12px;
+       style="display:grid;grid-template-columns:18px 92px 1fr auto auto auto auto;gap:0 12px;
               align-items:center;padding:9px 14px;cursor:pointer;user-select:none;
               background:<?= $isOpen?'var(--panel2)':'var(--panel)' ?>">
     <span style="color:<?= $iconC ?>;font-size:.82rem;text-align:center"><?= $icon ?></span>
@@ -1075,6 +1188,8 @@ foreach ($decisions as $d):
     <span style="font-size:.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
       <?= td_h($d['title']) ?></span>
     <span style="font-size:.68rem;color:var(--sub);white-space:nowrap"><?= td_h($ctxBadge) ?></span>
+    <span style="font-size:.68rem;color:var(--dim);white-space:nowrap" title="<?= td_h($rowDatePrefix.': '.$rowDateRaw) ?>">
+      <?php if ($rowDateLbl): ?><?= td_h($rowDatePrefix) ?> <?= td_h($rowDateLbl) ?><?php endif; ?></span>
     <span class="badge <?= $bc ?>" style="white-space:nowrap"><?= $bl ?></span>
     <span id="<?= $rowId ?>-chev" style="color:var(--dim);font-size:.72rem">
       <?= $isOpen?'▲':'▼' ?></span>
