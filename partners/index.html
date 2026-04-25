@@ -265,6 +265,7 @@
       transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;
       box-shadow:0 4px 28px rgba(200,151,62,.32),0 0 0 1px rgba(240,209,138,.12)}
     .vault-btn-hero.visible{display:inline-flex}
+    .hero-pill-pair{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
     .vault-btn-hero:hover{
       transform:translateY(-3px);
       box-shadow:0 10px 40px rgba(200,151,62,.5),0 0 0 1px rgba(240,209,138,.2);
@@ -714,6 +715,7 @@
     @media(max-width:580px){
       .page-hero{padding:28px 0 24px}
       .member-welcome-row{flex-direction:column;align-items:flex-start;gap:12px}
+      .hero-pill-pair{width:100%;flex-direction:column}
       .vault-btn-hero{width:100%;justify-content:flex-start}
       .member-bar{padding:10px 14px;gap:8px}
       .member-bar-left{flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap}
@@ -1357,29 +1359,31 @@
               <a href="#hub-invite-card" onclick="document.getElementById('hub-invite-card').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Invite Member</a>
               <a href="mailto:admin@cogsaustralia.org" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Email Admin</a>
               <a href="tel:+61494578706" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">+61 494 578 706</a>
-              <a href="../hubs/mainspring/" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:#60d4b8;border:1px solid rgba(96,212,184,.3);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s;background:rgba(96,212,184,.05)" onmouseover="this.style.background='rgba(96,212,184,.12)';this.style.borderColor='rgba(96,212,184,.55)'" onmouseout="this.style.background='rgba(96,212,184,.05)';this.style.borderColor='rgba(96,212,184,.3)'">&#9672; Mainspring Management Hub</a>
+
             </div>
           </div>
           <div class="member-welcome-row ha" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
             <h1 class="member-welcome-hd" style="margin-bottom:0">Welcome, <span id="member-first-name">Member</span>.</h1>
-            <a href="../wallets/member.html" id="hero-vault-btn" class="vault-btn-primary vault-btn-hero"
-               onclick="handleVaultEntry(event);return false;">
-              <img src="../assets/cogs_coin_web.png" alt="" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(240,209,138,.5);flex-shrink:0;box-shadow:0 0 16px rgba(240,209,138,.25)">
-              <span>
-                <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em" id="hero-vault-label">Financial Governance Profile</span>
-                <span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em" id="hero-vault-sub">Holdings &middot; Governance &middot; Profile ›</span>
-                <span class="vault-pay-label" id="hero-vault-pay-label">Payment due — tap to pay</span>
-              </span>
-            </a>
-            <a href="../hubs/mainspring/" class="vault-btn-primary vault-btn-hero"
-               style="display:inline-flex;border-color:rgba(96,212,184,.4);background:linear-gradient(135deg,rgba(96,212,184,.08),rgba(60,180,160,.04))"
-               onclick="coinTransition('../hubs/mainspring/');return false;">
-              <img src="../assets/cogs_coin_web.png" alt="" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(96,212,184,.5);flex-shrink:0;box-shadow:0 0 16px rgba(96,212,184,.25)">
-              <span>
-                <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em;color:#60d4b8">Mainspring Management Hub</span>
-                <span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em">Projects and Management ›</span>
-              </span>
-            </a>
+            <div class="hero-pill-pair">
+              <a href="../wallets/member.html" id="hero-vault-btn" class="vault-btn-primary vault-btn-hero"
+                 onclick="handleVaultEntry(event);return false;">
+                <img src="../assets/cogs_coin_web.png" alt="" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(240,209,138,.5);flex-shrink:0;box-shadow:0 0 16px rgba(240,209,138,.25)">
+                <span>
+                  <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em" id="hero-vault-label">Financial Governance Profile</span>
+                  <span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em" id="hero-vault-sub">Holdings &middot; Governance &middot; Profile ›</span>
+                  <span class="vault-pay-label" id="hero-vault-pay-label">Payment due — tap to pay</span>
+                </span>
+              </a>
+              <a href="../hubs/mainspring/" class="vault-btn-primary vault-btn-hero"
+                 style="display:inline-flex;border-color:rgba(96,212,184,.4);background:linear-gradient(135deg,rgba(96,212,184,.08),rgba(60,180,160,.04))"
+                 onclick="coinTransition('../hubs/mainspring/');return false;">
+                <img src="../assets/cogs_coin_web.png" alt="" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(96,212,184,.5);flex-shrink:0;box-shadow:0 0 16px rgba(96,212,184,.25)">
+                <span>
+                  <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em;color:#60d4b8">Mainspring Management Hub</span>
+                  <span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em">Projects and Management ›</span>
+                </span>
+              </a>
+            </div>
           </div>
           <p class="lead ha" style="max-width:62ch;margin-top:0">Your home base — identity, governance, community growth, and everything that matters.</p>
 
