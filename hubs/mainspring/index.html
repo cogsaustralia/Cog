@@ -12,12 +12,12 @@
 <link rel="stylesheet" href="../_shared/hub.css?v=29">
 <style>
 /* ── Mainspring styles ───────────────────────────────────────────────── */
-.ms-hero{padding:24px 20px 18px;background:var(--bg);border-bottom:1px solid var(--border)}
-.ms-hero-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(232,184,75,.55);margin-bottom:6px}
-.ms-hero-title{font-family:var(--serif);font-size:1.9rem;font-weight:600;letter-spacing:-.02em;color:var(--text);line-height:1.1;margin-bottom:5px}
-.ms-hero-sub{font-size:.88rem;color:var(--text3);line-height:1.58;max-width:58ch}
+.ms-hero{padding:28px 24px 22px;background:var(--bg);border-bottom:1px solid var(--border)}
+.ms-hero-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(232,184,75,.7);margin-bottom:8px}
+.ms-hero-title{font-family:var(--serif);font-size:2.2rem;font-weight:600;letter-spacing:-.02em;color:var(--text);line-height:1.05;margin-bottom:8px}
+.ms-hero-sub{font-size:.92rem;color:var(--text2);line-height:1.6;max-width:60ch}
 
-.ms-cog-section{padding:16px 16px 12px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:center}
+.ms-cog-section{padding:20px 16px 16px;background:radial-gradient(ellipse 70% 60% at 50% 45%,rgba(232,184,75,.035) 0%,transparent 70%),var(--bg);border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:center}
 .ms-cog-svg-wrap{width:100%;max-width:700px}
 
 .ms-st-legend{display:flex;justify-content:center;gap:7px;margin-top:10px;flex-wrap:wrap}
@@ -27,36 +27,36 @@
 .ms-st-c{background:rgba(62,207,110,.06);border-color:rgba(62,207,110,.22);color:var(--green)}
 
 /* Popout */
-.ms-pop{position:fixed;background:#1a1710;border:1px solid rgba(232,184,75,.3);border-radius:10px;
-  padding:12px 14px;min-width:190px;max-width:230px;
-  box-shadow:0 16px 48px rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.4);
-  pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s ease;font-family:var(--sans)}
+.ms-pop{position:fixed;background:#1c1a10;border:1px solid rgba(232,184,75,.35);border-radius:12px;
+  padding:14px 16px;min-width:200px;max-width:240px;
+  box-shadow:0 20px 60px rgba(0,0,0,.85),0 0 0 1px rgba(232,184,75,.06);
+  pointer-events:none;z-index:9999;opacity:0;transition:opacity .12s ease;font-family:var(--sans)}
 .ms-pop.visible{opacity:1}
-.ms-pop-name{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.25}
+.ms-pop-name{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.2}
 .ms-pop-sub{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:9px}
 .ms-pop-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:9px}
 .ms-pop-stat{text-align:center}
-.ms-pop-stat strong{display:block;font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--gold);line-height:1}
+.ms-pop-stat strong{display:block;font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--gold);line-height:1}
 .ms-pop-stat span{font-size:.6rem;color:var(--text4);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;display:block}
 .ms-pop-foot{font-size:.7rem;text-align:center;padding-top:7px;border-top:1px solid var(--border)}
 
 /* Strip */
 .ms-strip{display:flex;border-bottom:1px solid var(--border)}
-.ms-strip-cell{flex:1;padding:12px 18px;border-right:1px solid var(--border)}
+.ms-strip-cell{flex:1;padding:16px 22px;border-right:1px solid var(--border)}
 .ms-strip-cell:last-child{border-right:none}
-.ms-strip-n{font-family:var(--mono);font-size:1.25rem;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
-.ms-strip-l{font-size:.62rem;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+.ms-strip-n{font-family:var(--mono);font-size:1.45rem;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
+.ms-strip-l{font-size:.68rem;color:var(--text2);margin-top:5px;text-transform:uppercase;letter-spacing:.06em}
 
 /* Sections */
-.ms-section{margin-bottom:4px;border:1px solid var(--border);border-radius:var(--r);background:#0b0b0b;overflow:hidden}
-.ms-section-hd{display:flex;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border)}
-.ms-section-title{font-size:.88rem;font-weight:700;color:var(--text2);flex:1}
-.ms-section-body{padding:14px 18px}
+.ms-section{margin-bottom:4px;border:1px solid var(--border);border-radius:var(--r);background:#090909;overflow:hidden}
+.ms-section-hd{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.015)}
+.ms-section-title{font-size:.9rem;font-weight:700;color:var(--text);flex:1;letter-spacing:.01em}
+.ms-section-body{padding:16px 20px}
 
 /* Animations */
 @keyframes cogCW  {to{transform:rotate( 360deg)}}
 @keyframes cogCCW {to{transform:rotate(-360deg)}}
-@keyframes glowPulse{0%,100%{opacity:.3}50%{opacity:.85}}
+@keyframes glowPulse{0%,100%{opacity:.25}50%{opacity:1}}
 
 #cog-centre-body{transform-origin:350px 265px;animation:cogCW 38s linear infinite}
 .ms-sat-cog.active .cog-spin{animation:cogCCW 22s linear infinite}
@@ -123,7 +123,7 @@
 </defs>
 
 <!-- ── Connection lines ────────────────────────────────────────────── -->
-<g opacity=".2" stroke-dasharray="5 5" stroke-width="1">
+<g opacity=".3" stroke-dasharray="6 4" stroke-width="1.2">
   <line x1="350" y1="265" x2="124" y2="125" stroke="#e8b84b"/>
   <line x1="350" y1="265" x2="72"  y2="265" stroke="#e8b84b"/>
   <line x1="350" y1="265" x2="124" y2="405" stroke="#e8b84b"/>
@@ -136,7 +136,7 @@
 </g>
 
 <!-- ── CENTRAL COG ─────────────────────────────────────────────────── -->
-<circle cx="350" cy="265" r="162" fill="url(#rg-gold)" opacity=".65"/>
+<circle cx="350" cy="265" r="180" fill="url(#rg-gold)" opacity=".85"/>
 <g id="cog-centre-body">
   <!-- 12 teeth -->
   <g fill="#1c1508" stroke="#e8b84b" stroke-width="1.5">
@@ -156,31 +156,48 @@
   <!-- Outer ring -->
   <circle cx="350" cy="265" r="108" fill="url(#rg-centre)" stroke="#e8b84b" stroke-width="2.2"/>
   <!-- Detail ring -->
-  <circle cx="350" cy="265" r="84" fill="none" stroke="rgba(232,184,75,.14)" stroke-width="1"/>
+  <circle cx="350" cy="265" r="90" fill="none" stroke="rgba(232,184,75,.2)" stroke-width="1.2"/>
   <!-- Spokes -->
   <g stroke="rgba(232,184,75,.1)" stroke-width="1">
-    <line x1="350" y1="186" x2="350" y2="216" transform="rotate(  0,350,265)"/>
-    <line x1="350" y1="186" x2="350" y2="216" transform="rotate( 60,350,265)"/>
-    <line x1="350" y1="186" x2="350" y2="216" transform="rotate(120,350,265)"/>
-    <line x1="350" y1="186" x2="350" y2="216" transform="rotate(180,350,265)"/>
-    <line x1="350" y1="186" x2="350" y2="216" transform="rotate(240,350,265)"/>
-    <line x1="350" y1="186" x2="350" y2="216" transform="rotate(300,350,265)"/>
+    <line x1="350" y1="178" x2="350" y2="214" transform="rotate(  0,350,265)"/>
+    <line x1="350" y1="178" x2="350" y2="214" transform="rotate( 60,350,265)"/>
+    <line x1="350" y1="178" x2="350" y2="214" transform="rotate(120,350,265)"/>
+    <line x1="350" y1="178" x2="350" y2="214" transform="rotate(180,350,265)"/>
+    <line x1="350" y1="178" x2="350" y2="214" transform="rotate(240,350,265)"/>
+    <line x1="350" y1="178" x2="350" y2="214" transform="rotate(300,350,265)"/>
   </g>
   <!-- Bore -->
-  <circle cx="350" cy="265" r="39" fill="#080808" stroke="rgba(232,184,75,.5)" stroke-width="1.8"/>
-  <circle cx="350" cy="265" r="11" fill="rgba(232,184,75,.75)"/>
+  <circle cx="350" cy="265" r="72" fill="#0d0b04" stroke="rgba(232,184,75,.6)" stroke-width="2"/>
+  
 </g>
-<!-- Static text layer (non-rotating) -->
-<text x="350" y="237" text-anchor="middle" font-family="'Cormorant Garamond',serif"
-      font-size="13" font-weight="700" fill="rgba(232,184,75,.88)" letter-spacing="3.5">MAINSPRING</text>
-<text id="c-members" x="350" y="258" text-anchor="middle"
-      font-family="'DM Mono',monospace" font-size="33" font-weight="700" fill="#e8b84b">—</text>
-<text x="350" y="276" text-anchor="middle" font-family="'DM Sans',sans-serif"
-      font-size="12" fill="rgba(232,184,75,.65)" letter-spacing="2">MEMBERS</text>
-<text id="c-projects" x="350" y="298" text-anchor="middle"
-      font-family="'DM Mono',monospace" font-size="20" font-weight="700" fill="rgba(232,184,75,.85)">—</text>
-<text x="350" y="315" text-anchor="middle" font-family="'DM Sans',sans-serif"
-      font-size="11" fill="rgba(232,184,75,.58)" letter-spacing="2">PROJECTS</text>
+<!-- Static text layer (non-rotating) — centred in bore r=72 -->
+<!-- MAINSPRING eyebrow -->
+<text x="350" y="228" text-anchor="middle"
+      font-family="'Cormorant Garamond',serif"
+      font-size="10.5" font-weight="700"
+      fill="rgba(232,184,75,.72)" letter-spacing="4">MAINSPRING</text>
+<!-- Thin gold divider -->
+<line x1="316" y1="233" x2="384" y2="233" stroke="rgba(232,184,75,.25)" stroke-width="0.8"/>
+<!-- Members number — large, bright -->
+<text id="c-members" x="350" y="260" text-anchor="middle"
+      font-family="'DM Mono',monospace"
+      font-size="36" font-weight="700" fill="#e8b84b">—</text>
+<!-- MEMBERS label -->
+<text x="350" y="273" text-anchor="middle"
+      font-family="'DM Sans',sans-serif"
+      font-size="8.5" font-weight="600"
+      fill="rgba(232,184,75,.55)" letter-spacing="2.5">MEMBERS</text>
+<!-- Thin separator -->
+<line x1="328" y1="280" x2="372" y2="280" stroke="rgba(232,184,75,.15)" stroke-width="0.8"/>
+<!-- Projects number -->
+<text id="c-projects" x="350" y="301" text-anchor="middle"
+      font-family="'DM Mono',monospace"
+      font-size="22" font-weight="700" fill="rgba(232,184,75,.9)">—</text>
+<!-- PROJECTS label -->
+<text x="350" y="314" text-anchor="middle"
+      font-family="'DM Sans',sans-serif"
+      font-size="8" font-weight="600"
+      fill="rgba(232,184,75,.48)" letter-spacing="2.5">PROJECTS</text>
 
 <!-- ── SUB-TRUST GROUP LABELS ──────────────────────────────────────── -->
 <text x="72"  y="78" text-anchor="middle" font-family="'DM Mono',monospace"
@@ -203,15 +220,15 @@
    data-key="operations_oversight" data-label="Day-to-Day Operations" data-sub="STA" data-color="#e8b84b" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-gold)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(232,184,75,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(232,184,75,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(232,184,75,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(232,184,75,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(232,184,75,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(232,184,75,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(232,184,75,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(232,184,75,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — above-left -->
   <text x="-8" y="-84" text-anchor="end" font-family="'DM Sans',sans-serif"
@@ -225,15 +242,15 @@
    data-key="financial_oversight" data-label="Financial Oversight" data-sub="STA" data-color="#e8b84b" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-gold)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(232,184,75,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(232,184,75,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(232,184,75,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(232,184,75,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(232,184,75,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(232,184,75,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(232,184,75,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(232,184,75,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — left -->
   <text x="-72" y="-10" text-anchor="end" font-family="'DM Sans',sans-serif"
@@ -247,15 +264,15 @@
    data-key="technology_blockchain" data-label="Technology &amp; Blockchain" data-sub="STA" data-color="#e8b84b" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-gold)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(232,184,75,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(232,184,75,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(232,184,75,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(232,184,75,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(232,184,75,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(232,184,75,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(232,184,75,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(232,184,75,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — below-left -->
   <text x="-8" y="79" text-anchor="end" font-family="'DM Sans',sans-serif"
@@ -269,15 +286,15 @@
    data-key="governance_polls" data-label="Research &amp; Acquisitions" data-sub="STB" data-color="#5ea8ff" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-blue)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(94,168,255,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(94,168,255,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(94,168,255,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(94,168,255,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(94,168,255,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(94,168,255,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(94,168,255,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(94,168,255,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — above-right -->
   <text x="8" y="-84" text-anchor="start" font-family="'DM Sans',sans-serif"
@@ -291,15 +308,15 @@
    data-key="esg_proxy_voting" data-label="ESG &amp; Proxy Voting" data-sub="STB" data-color="#5ea8ff" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-blue)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(94,168,255,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(94,168,255,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(94,168,255,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(94,168,255,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(94,168,255,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(94,168,255,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(94,168,255,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(94,168,255,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — right -->
   <text x="72" y="-10" text-anchor="start" font-family="'DM Sans',sans-serif"
@@ -313,15 +330,15 @@
    data-key="education_outreach" data-label="Education &amp; Outreach" data-sub="STB" data-color="#5ea8ff" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-blue)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(94,168,255,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(94,168,255,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(94,168,255,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(94,168,255,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(94,168,255,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(94,168,255,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(94,168,255,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(94,168,255,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — below-right -->
   <text x="8" y="79" text-anchor="start" font-family="'DM Sans',sans-serif"
@@ -335,15 +352,15 @@
    data-key="first_nations" data-label="First Nations JV" data-sub="STC" data-color="#3ecf6e" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-green)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(62,207,110,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(62,207,110,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(62,207,110,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(62,207,110,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(62,207,110,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(62,207,110,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(62,207,110,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(62,207,110,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — below -->
   <text x="0" y="78" text-anchor="middle" font-family="'DM Sans',sans-serif"
@@ -355,15 +372,15 @@
    data-key="community_projects" data-label="Community Projects" data-sub="STC" data-color="#3ecf6e" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-green)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(62,207,110,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(62,207,110,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(62,207,110,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(62,207,110,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(62,207,110,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(62,207,110,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(62,207,110,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(62,207,110,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — below -->
   <text x="0" y="78" text-anchor="middle" font-family="'DM Sans',sans-serif"
@@ -375,15 +392,15 @@
    data-key="place_based_decisions" data-label="Place-Based Decisions" data-sub="STC" data-color="#3ecf6e" style="cursor:pointer">
   <circle class="cog-glow-el" cx="0" cy="0" r="90" fill="url(#rg-green)" opacity=".0"/>
   <g class="cog-spin" style="transform-origin:0px 0px">
-    <g class="cog-teeth" fill="#111" stroke="rgba(62,207,110,.2)" stroke-width="1.2">
+    <g class="cog-teeth" fill="#111" stroke="rgba(62,207,110,.32)" stroke-width="1.3">
       <rect x="-8.5" y="-66" width="17" height="20" rx="3"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(45)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(90)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(135)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(180)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(225)"/>
       <rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(270)"/><rect x="-8.5" y="-66" width="17" height="20" rx="3" transform="rotate(315)"/>
     </g>
-    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#0e0e0e" stroke="rgba(62,207,110,.2)" stroke-width="1.3"/>
-    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(62,207,110,.18)" stroke-width="1" class="cog-hole"/>
-    <circle cx="0" cy="0" r="5.5" fill="rgba(62,207,110,.3)" class="cog-dot"/>
+    <circle class="cog-ring" cx="0" cy="0" r="54" fill="#141414" stroke="rgba(62,207,110,.28)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="17" fill="#080808" stroke="rgba(62,207,110,.25)" stroke-width="1.2" class="cog-hole"/>
+    <circle cx="0" cy="0" r="5.5" fill="rgba(62,207,110,.55)" class="cog-dot"/>
   </g>
   <!-- Hub label — below -->
   <text x="0" y="78" text-anchor="middle" font-family="'DM Sans',sans-serif"
@@ -462,8 +479,8 @@ function activateCogs(tiles,myAreas){
       var teeth=cog.querySelectorAll('.cog-teeth rect'),dot=cog.querySelector('.cog-dot');
       var hole=cog.querySelector('.cog-hole'),names=cog.querySelectorAll('.cog-name');
       if(glow) glow.setAttribute('opacity','.7');
-      if(ring){ring.setAttribute('stroke','rgba('+rgb+',.88)');ring.setAttribute('stroke-width','2');ring.setAttribute('fill','rgba('+rgb+',.05)');}
-      if(dot)  dot.setAttribute('fill','rgba('+rgb+',.95)');
+      if(ring){ring.setAttribute('stroke','rgba('+rgb+',.95)');ring.setAttribute('stroke-width','2.5');ring.setAttribute('fill','rgba('+rgb+',.08)');}
+      if(dot)  dot.setAttribute('fill',rgb==='232,184,75'?'#e8b84b':rgb==='94,168,255'?'#5ea8ff':'#3ecf6e');
       if(hole) hole.setAttribute('stroke','rgba('+rgb+',.45)');
       teeth.forEach(function(r){r.setAttribute('stroke','rgba('+rgb+',.72)');r.setAttribute('fill','rgba('+rgb+',.06)');});
       names.forEach(function(n){n.setAttribute('fill','rgba(255,255,255,.92)');});
