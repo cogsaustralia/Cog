@@ -21,6 +21,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'rwa_valuations.php') return 'rwa_valuations';
         if ($script === 'governance.php') return 'governance';
         if ($script === 'board_governance.php') return 'board_governance';
+        if ($script === 'tdr_phase1.php') return 'tdr_phase1';
         if ($script === 'operations.php') return 'operations';
         if ($script === 'foundation_day.php') return 'foundation_day';
         if ($script === 'generate_trustee_token.php') return 'generate_trustee_token';
@@ -239,6 +240,7 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'execution_records', 'label' => '📋  Execution Records',      'href' => './execution_records.php'],
                 ['key' => 'trustee_decisions', 'label' => '🧾  Trustee Decisions',       'href' => './trustee_decisions.php'],
                 ['key' => 'trustees_register', 'label' => '👔  Trustees Register',        'href' => './trustees.php'],
+                ['key' => 'tdr_phase1',        'label' => '✓  TDR Phase 1 Proof',        'href' => './_proof/tdr_phase1.php'],
                 ['key' => 'founding_documents', 'label' => '📄  Founding Documents',    'href' => './founding_documents.php'],
                 ['key' => 'generate_trustee_token', 'label' => '🔑  Trustee Token',         'href' => './generate_trustee_token.php'],
                 ['key' => 'generate_declaration_token', 'label' => '📜  Declaration Exec',      'href' => './generate_declaration_token.php'],
