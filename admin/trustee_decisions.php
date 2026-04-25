@@ -956,7 +956,8 @@ foreach ($decisions as $d):
                  background:<?= $pri<=7?'rgba(192,85,58,.7)':($pri<=13?'rgba(212,148,74,.7)':'rgba(82,184,122,.6)') ?>"></span>
     <?= td_h($tier['label']) ?>
   </div>
-<?php endif;
+<?php endif; ?>
+  <?php
   $rowId  = 'row-'.preg_replace('/[^a-z0-9]/','-',strtolower($d['decision_ref']));
   $isOpen = ($d['status']==='pending_execution');
   $isDone = ($d['status']==='fully_executed');
