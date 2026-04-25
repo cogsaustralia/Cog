@@ -762,7 +762,15 @@ function handleHubProject(): void {
         'participants'     => $participants,
         'comments'         => $comments,
         'my_role'          => $myRole ?: null,
-        'enrolled_in_area' => in_array((string)$project['area_key'], $me['areas'], true),
+        // enrolled_in_area: true if the member is enrolled in the project's owner hub,
+        // OR is enrolled in any hub (= active Foundation member) — allows any member
+        // to comment on open-phase projects regardless of which hub they enrolled in,
+        // OR is already a participant/coordinator on this project.
+        'enrolled_in_area' => (
+            in_array((string)$project['area_key'], $me['areas'], true)
+            || !empty($me['areas'])
+            || (bool)$myRole
+        ),
         'vote_summary'     => $voteSummary,
         'my_vote'          => $myVote,
         'milestones'       => $milestones,
@@ -863,7 +871,7 @@ function handleHubProjectLeave(): void {
 
 /**
  * POST /vault/hub-project-comment { project_id, body }
- * Must be enrolled in the project's area to comment.
+ * Any active Foundation member (enrolled in any hub area) may comment.
  */
 function handleHubProjectComment(): void {
     requireMethod('POST');
@@ -883,8 +891,11 @@ function handleHubProjectComment(): void {
     if (!$p) apiError('Project not found.', 404);
 
     $me = hubResolveMember($db, $principal);
-    if (!in_array((string)$p['area_key'], $me['areas'], true)) {
-        apiError('Activate participation in this area before commenting.', 403);
+    // Any active Foundation member (enrolled in at least one hub area) may comment.
+    // This covers cross-hub projects where the member's enrolled area differs
+    // from the project's owner area.
+    if (empty($me['areas'])) {
+        apiError('Activate participation in a hub area before commenting.', 403);
     }
 
     $db->prepare(
