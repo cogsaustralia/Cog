@@ -2018,7 +2018,7 @@ document.addEventListener('DOMContentLoaded', function(){
           var deedUrl = ROOT_TDR + '?deed=' + encodeURIComponent(dr.deed_key);
           html += '<div class="hub-livedata-item" onclick="coinTransition(\''+deedUrl+'\',\'Opening deed record\')" style="cursor:pointer">';
           html += '<div class="hub-livedata-item-inner">';
-          html += '<span class="hub-tdr-ref">' + _esc(dr.deed_key) + '</span>';
+          html += '<span class="hub-tdr-ref">' + _esc(dr.label || dr.deed_key) + '</span>';
           html += '<span class="hub-livedata-summary">' + _esc(dr.title) + '</span>';
           html += '<span class="sev-chip ' + statusClass + '">' + _esc(dr.status.replace(/_/g,' ')) + '</span>';
           html += '</div>';
@@ -2033,7 +2033,7 @@ document.addEventListener('DOMContentLoaded', function(){
         html += '<div class="hub-livedata-subtitle" style="margin-top:12px">Trustee Counterpart Record (JVPA cl. 10.10A)</div>';
         html += '<div class="hub-tdr-tcr-card">';
         html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Caretaker Trustee</span><span class="hub-livedata-val" style="font-size:.9rem">' + _esc(tcr.trustee_name) + '</span></div>';
-        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">JVPA</span><span class="hub-livedata-val" style="font-size:.82rem">' + _esc(tcr.jvpa_version) + ' · executed ' + _esc(tcr.jvpa_date) + '</span></div>';
+        html += '<div class="hub-livedata-row"><span class="hub-livedata-label">JVPA</span><span class="hub-livedata-val" style="font-size:.82rem">Executed ' + _esc(tcr.jvpa_date) + '</span></div>';
         html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Acceptance recorded</span><span class="hub-livedata-val" style="font-size:.82rem">' + _esc(tcr.accepted_date) + '</span></div>';
         html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Record SHA-256</span><span class="hub-livedata-val" style="font-size:.78rem;font-family:monospace">' + _esc(tcr.sha256_prefix) + '…</span></div>';
         html += '<div class="hub-livedata-row"><span class="hub-livedata-label">Status</span><span class="sev-chip inv-pass">Active</span></div>';

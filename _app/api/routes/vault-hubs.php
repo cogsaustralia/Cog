@@ -1784,15 +1784,26 @@ function handleHubAdminActivity(): void
                   ORDER BY d.execution_date DESC"
             );
             $stmt->execute();
+            $deedLabels = [
+                'declaration_v15_1' => 'Declaration',
+                'sub_trust_a'       => 'Sub-Trust A',
+                'sub_trust_b'       => 'Sub-Trust B',
+                'sub_trust_c'       => 'Sub-Trust C',
+                'jvpa'              => 'JVPA',
+            ];
             $hubData['deed_records'] = array_map(
-                fn($r) => [
-                    'deed_key' => (string)$r['deed_key'],
-                    'title'    => (string)$r['deed_title'],
-                    'version'  => (string)$r['deed_version'],
-                    'date'     => (string)$r['execution_date'],
-                    'status'   => (string)$r['status'],
-                    'capacity' => (string)$r['capacity'],
-                ],
+                function($r) use ($deedLabels) {
+                    $key = (string)$r['deed_key'];
+                    return [
+                        'deed_key' => $key,
+                        'label'    => $deedLabels[$key] ?? $key,
+                        'title'    => (string)$r['deed_title'],
+                        'version'  => (string)$r['deed_version'],
+                        'date'     => (string)$r['execution_date'],
+                        'status'   => (string)$r['status'],
+                        'capacity' => (string)$r['capacity'],
+                    ];
+                },
                 $stmt->fetchAll(PDO::FETCH_ASSOC)
             );
         } catch (Throwable) {}
