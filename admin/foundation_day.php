@@ -296,8 +296,17 @@ $fdHash         = ops_setting_get($pdo, 'governance_foundation_day_hash', '');
 // Check 8: Donation COG$ STC direct transfer path wired
 $donationFlowOk = class_exists('AccountingHooks') || file_exists(__DIR__ . '/includes/AccountingHooks.php');
 
-// Check 9: Key Management Policy adopted (setting flag)
-$kmpAdopted = ops_setting_get($pdo, 'key_management_policy_adopted', '') === 'yes';
+// Check 9: Key Management Policy adopted.
+// Auto-detected from TDR-20260425-018 execution status (fully_executed = adopted).
+// Falls back to manual admin_settings flag if TDR record is not found.
+$kmpFromTdr = (bool)fd_val($pdo,
+    "SELECT COUNT(*) FROM trustee_decisions
+     WHERE decision_ref = 'TDR-20260425-018' AND status = 'fully_executed' LIMIT 1");
+$kmpAdopted = $kmpFromTdr || ops_setting_get($pdo, 'key_management_policy_adopted', '') === 'yes';
+if ($kmpFromTdr && ops_setting_get($pdo, 'key_management_policy_adopted', '') !== 'yes') {
+    try { ops_setting_set($pdo, 'key_management_policy_adopted', 'yes', 'flag',
+        'Auto-set from TDR-20260425-018 fully_executed status.'); } catch (\Throwable $e) {}
+}
 
 // Check 10: JVPA executed — verified from cryptographic DB records.
 // Passes when: (a) trustee_counterpart_records has a founding TCR, AND
@@ -362,7 +371,7 @@ $checks = [
     ['label' => 'Active paid Members on platform',       'ok' => $partnersOk,         'detail' => $partnerCount . ' active paid Member(s)'],
     ['label' => 'Community COG$ initial allocation',      'ok' => $communityAllocated, 'detail' => $communityAllocated ? $communityCount . ' Members allocated 1,000 tokens each (' . $communityAllocatedAt . ')' : $communityCount . ' Members allocated — run allocation below'],
     ['label' => 'JVPA executed — Trustee and founding Member', 'ok' => $jvpaExecuted, 'detail' => $jvpaDetail],
-    ['label' => 'Key Management Policy adopted',          'ok' => $kmpAdopted,         'detail' => $kmpAdopted ? 'Adopted — recorded in admin_settings' : 'Set flag after Board adopts KMP'],
+    ['label' => 'Key Management Policy adopted',          'ok' => $kmpAdopted,         'detail' => $kmpAdopted ? 'Adopted — TDR-20260425-018 fully executed' : 'Set flag after Caretaker Trustee executes TDR-20260425-018'],
     ['label' => 'Foundation Day inaugural poll created',  'ok' => $pollCreated,        'detail' => $pollCreated ? ($foundationPoll[0]['title'] ?? '') . ' — status: ' . ($foundationPoll[0]['status'] ?? '') : 'Create poll below'],
     ['label' => 'Foundation Day declared',                'ok' => $fdDeclared,         'detail' => $fdDeclared ? "Declared {$fdDate} — poll {$fdPollKey} — hash " . substr($fdHash, 0, 12) . '…' : 'Declare after poll is closed'],
 ];
