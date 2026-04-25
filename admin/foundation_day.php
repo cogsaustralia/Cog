@@ -299,8 +299,42 @@ $donationFlowOk = class_exists('AccountingHooks') || file_exists(__DIR__ . '/inc
 // Check 9: Key Management Policy adopted (setting flag)
 $kmpAdopted = ops_setting_get($pdo, 'key_management_policy_adopted', '') === 'yes';
 
-// Check 10: JVPA Membership Agreement executed (founding Member signature)
-$jvpaExecuted = ops_setting_get($pdo, 'jvpa_founding_signature_recorded', '') === 'yes';
+// Check 10: JVPA executed — verified from cryptographic DB records.
+// Passes when: (a) trustee_counterpart_records has a founding TCR, AND
+//              (b) evidence_vault_entries has a jvpa_accepted entry for at least one partner.
+// No manual flag required — execution is evidenced in the system.
+$tcrExists = (bool)fd_val($pdo,
+    "SELECT COUNT(*) FROM trustee_counterpart_records WHERE superseded_at IS NULL LIMIT 1");
+$jvpaMemberAccepted = (bool)fd_val($pdo,
+    "SELECT COUNT(*) FROM evidence_vault_entries WHERE entry_type = 'jvpa_accepted' LIMIT 1");
+$jvpaExecuted = $tcrExists && $jvpaMemberAccepted;
+
+// Gather detail for display
+$jvpaDetail = '';
+if ($jvpaExecuted) {
+    $tcrRow = fd_rows($pdo,
+        "SELECT trustee_full_name, jvpa_version, jvpa_execution_date, LEFT(record_sha256, 12) AS hash_prefix
+         FROM trustee_counterpart_records WHERE superseded_at IS NULL LIMIT 1");
+    $memberAcceptRow = fd_rows($pdo,
+        "SELECT ev.subject_ref AS member_number, ev.created_at AS accepted_at
+         FROM evidence_vault_entries ev
+         WHERE ev.entry_type = 'jvpa_accepted'
+         ORDER BY ev.created_at ASC LIMIT 1");
+    if (!empty($tcrRow)) {
+        $tcr = $tcrRow[0];
+        $jvpaDetail = 'TCR: ' . ($tcr['trustee_full_name'] ?? '') .
+                      ' — ' . ($tcr['jvpa_version'] ?? '') .
+                      ' — executed ' . ($tcr['jvpa_execution_date'] ?? '') .
+                      ' — hash ' . ($tcr['hash_prefix'] ?? '') . '…';
+        if (!empty($memberAcceptRow)) {
+            $mar = $memberAcceptRow[0];
+            $jvpaDetail .= ' | Member ' . ($mar['member_number'] ?? '') .
+                           ' accepted ' . substr((string)($mar['accepted_at'] ?? ''), 0, 10);
+        }
+    }
+} else {
+    $jvpaDetail = 'JVPA not yet executed — trustee counterpart record or member acceptance record missing';
+}
 
 // All polls for management
 $allPolls = fd_rows($pdo, "SELECT id, poll_key, title, status, resolution_type, voting_opens_at, voting_closes_at, quorum_required_count, quorum_reached, created_at FROM community_polls ORDER BY id DESC LIMIT 20");
@@ -327,7 +361,7 @@ $checks = [
     ['label' => 'Baseline reconciliation snapshot',       'ok' => $hasBaseline,        'detail' => $hasBaseline ? 'BASELINE snapshot recorded' : 'No baseline snapshot found — run Stage 3 close-out'],
     ['label' => 'Active paid Members on platform',       'ok' => $partnersOk,         'detail' => $partnerCount . ' active paid Member(s)'],
     ['label' => 'Community COG$ initial allocation',      'ok' => $communityAllocated, 'detail' => $communityAllocated ? $communityCount . ' Members allocated 1,000 tokens each (' . $communityAllocatedAt . ')' : $communityCount . ' Members allocated — run allocation below'],
-    ['label' => 'JVPA founding signature recorded',       'ok' => $jvpaExecuted,       'detail' => $jvpaExecuted ? 'Recorded in admin_settings' : 'Set flag after wet-ink signature page is executed'],
+    ['label' => 'JVPA executed — Trustee and founding Member', 'ok' => $jvpaExecuted, 'detail' => $jvpaDetail],
     ['label' => 'Key Management Policy adopted',          'ok' => $kmpAdopted,         'detail' => $kmpAdopted ? 'Adopted — recorded in admin_settings' : 'Set flag after Board adopts KMP'],
     ['label' => 'Foundation Day inaugural poll created',  'ok' => $pollCreated,        'detail' => $pollCreated ? ($foundationPoll[0]['title'] ?? '') . ' — status: ' . ($foundationPoll[0]['status'] ?? '') : 'Create poll below'],
     ['label' => 'Foundation Day declared',                'ok' => $fdDeclared,         'detail' => $fdDeclared ? "Declared {$fdDate} — poll {$fdPollKey} — hash " . substr($fdHash, 0, 12) . '…' : 'Declare after poll is closed'],
@@ -576,14 +610,31 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
 
   <!-- Operational flags -->
   <div class="card">
-    <div class="card-head"><h2>Operational flags<?php echo ops_admin_help_button('Operational flags', 'These flags record that off-system steps have been completed — JVPA wet-ink signature and Key Management Policy adoption. Set them manually after the relevant document or Board action is executed.'); ?></h2></div>
+    <div class="card-head"><h2>Operational flags<?php echo ops_admin_help_button('Operational flags', 'The JVPA execution status is now auto-detected from cryptographic records (Trustee Counterpart Record + evidence_vault_entries jvpa_accepted). The Key Management Policy flag requires manual confirmation after Board adoption.'); ?></h2></div>
     <div class="card-body">
       <?php
       $flags = [
-          ['key' => 'jvpa_founding_signature_recorded', 'label' => 'JVPA founding Member wet-ink signature executed', 'note' => 'Set after the Membership Agreement founding paper copy is signed.'],
-          ['key' => 'key_management_policy_adopted',    'label' => 'Key Management Policy adopted by Board',         'note' => 'Required before Foundation Day per Declaration cl.35.'],
+          ['key' => 'key_management_policy_adopted', 'label' => 'Key Management Policy adopted by Board', 'note' => 'Required before Foundation Day per Declaration cl.35.'],
       ];
-      foreach ($flags as $flag):
+      <?php /* ── JVPA execution — auto-detected from cryptographic records ── */ ?>
+      <div class="flag-row">
+        <div class="flag-label">
+          <div style="font-weight:600;font-size:12.5px">JVPA executed — Trustee and founding Member</div>
+          <div style="font-size:11px;color:var(--dim)">
+            Auto-detected from Trustee Counterpart Record and evidence vault (<code>jvpa_accepted</code>).
+            No manual flag required.
+          </div>
+        </div>
+        <?php if ($jvpaExecuted): ?>
+          <span class="flag-status set">✓ Executed</span>
+          <span style="font-size:11px;color:var(--sub);margin-left:8px;"><?php echo fd_h($jvpaDetail); ?></span>
+        <?php else: ?>
+          <span class="flag-status unset">— Not yet executed</span>
+          <span style="font-size:11px;color:var(--dim);margin-left:8px;">TCR or member acceptance record missing</span>
+        <?php endif; ?>
+      </div>
+
+      <?php foreach ($flags as $flag):
         $isSet = ops_setting_get($pdo, $flag['key'], '') === 'yes';
       ?>
       <div class="flag-row">
