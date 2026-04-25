@@ -28,7 +28,7 @@ declare(strict_types=1);
 function hubAreaKeys(): array {
     return [
         'operations_oversight',
-        'governance_polls',
+        'research_acquisitions',
         'esg_proxy_voting',
         'first_nations',
         'community_projects',
@@ -43,7 +43,7 @@ function hubAreaKeys(): array {
 function hubAreaLabel(string $key): string {
     $map = [
         'operations_oversight'   => 'Day-to-Day Operations',
-        'governance_polls'       => 'Research & Acquisitions',
+        'research_acquisitions'       => 'Research & Acquisitions',
         'esg_proxy_voting'       => 'ESG & Proxy Voting',
         'first_nations'          => 'First Nations Joint Venture',
         'community_projects'     => 'Community Projects',
@@ -1559,7 +1559,7 @@ function handleHubMainspring(): void {
         "SELECT area_key, member_count, thread_count, active_project_count, last_activity_at
            FROM v_hub_mainspring_summary
           ORDER BY FIELD(area_key,
-                         'operations_oversight','governance_polls','esg_proxy_voting',
+                         'operations_oversight','research_acquisitions','esg_proxy_voting',
                          'first_nations','community_projects','technology_blockchain',
                          'financial_oversight','place_based_decisions','education_outreach')"
     );
@@ -1877,7 +1877,7 @@ function handleHubAdminActivity(): void
                 ];
             }
         } catch (Throwable) {}
-            } elseif ($area === 'governance_polls') {
+            } elseif ($area === 'research_acquisitions') {
         // 1. Active vote proposals — titles and close dates (no member data)
         try {
             $stmt = $db->prepare(

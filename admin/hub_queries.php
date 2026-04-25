@@ -18,7 +18,7 @@ function hq_val(PDO $p, string $sql, array $params=[]): int {
 
 $AREA_LABELS = [
     'operations_oversight'  => 'Day-to-Day Operations',
-    'governance_polls'      => 'Research & Acquisitions',
+    'research_acquisitions'      => 'Research & Acquisitions',
     'esg_proxy_voting'      => 'ESG & Proxy Voting',
     'first_nations'         => 'First Nations Joint Venture',
     'community_projects'    => 'Community Projects',

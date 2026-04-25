@@ -9,7 +9,7 @@ $canManage = ops_admin_can($pdo, 'operations.manage') || ops_admin_can($pdo, 'ad
 // ── Area definitions ────────────────────────────────────────────────────────
 $areas = [
     'operations_oversight'   => ['label' => 'Operations Oversight',     'ico' => '⚙',  'desc' => 'General JV operations monitoring, direction, and oversight.'],
-    'governance_polls'       => ['label' => 'Research & Acquisitions',  'ico' => '🔭', 'desc' => 'Members research and identify new acquisition targets — ASX companies, real world assets, resources, and commodities.'],
+    'research_acquisitions'       => ['label' => 'Research & Acquisitions',  'ico' => '🔭', 'desc' => 'Members research and identify new acquisition targets — ASX companies, real world assets, resources, and commodities.'],
     'esg_proxy_voting'       => ['label' => 'ESG & Proxy Voting',       'ico' => '🌱',  'desc' => 'Portfolio company engagement, ESG strategy, and AGM proxy voting.'],
     'first_nations'          => ['label' => 'First Nations Joint Venture', 'ico' => '🤝',  'desc' => 'FNAC, FPIC, ICIP, and Cultural Heritage matters.'],
     'community_projects'     => ['label' => 'Community Projects',        'ico' => '🏘',  'desc' => 'Sub-Trust C grants and community benefit activity.'],

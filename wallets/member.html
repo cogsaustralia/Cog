@@ -2342,7 +2342,7 @@ var _opDrawerArea = null;
 var _opDrawerData = null;
 var _OP_AREA_LABELS = {
   operations_oversight:'Day-to-Day Operations',
-  governance_polls:'Research & Acquisitions',
+  research_acquisitions:'Research & Acquisitions',
   esg_proxy_voting:'ESG & Proxy Voting',
   first_nations:'First Nations Joint Venture',
   community_projects:'Community Projects',
@@ -5189,7 +5189,7 @@ var _PATHWAYS = {
     tip:'Monitor Trustee activity, raise issues, and ensure the Joint Venture runs according to the JVPA. Members are the operators — not the Trustee.\n\nTap to open: COG$ Management tab — proposals, polls, and operational threads.',
     action:function(){ try{ tab('governance'); }catch(e){} }
   },
-  governance_polls: {
+  research_acquisitions: {
     label:'Research & Acquisitions', status:'live',
     tip:'Research and identify new ASX companies, real world assets, and resources as potential acquisition targets for the Members Asset Pool.\n\nTap to open: COG$ Management tab — initiate a Members Poll on any acquisition target.',
     action:function(){ try{ tab('governance'); }catch(e){} }
@@ -5269,7 +5269,7 @@ function pathwaySubLine(key, d){
         ? {text: fmtInt(openProposals)+' open proposal'+(openProposals===1?'':'s'), dotClass:'live'}
         : {text:'Watching the Trustee', dotClass:(stewardship==='active'?'live':null)};
 
-    case 'governance_polls':
+    case 'research_acquisitions':
       return openPolls > 0
         ? {text: fmtInt(openPolls)+' open poll'+(openPolls===1?'':'s')+' \u2013 vote now', dotClass:'live'}
         : {text:'Research & identify acquisition targets', dotClass:'live'};
@@ -5479,7 +5479,7 @@ window.openKycPanel = function(){
       <div class="pg-sub">Select at least one area of the joint venture where you will be particularly engaged. This is not a binding commitment &mdash; it helps the joint venture understand where its active capacity sits.</div>
       <div class="pg-area-grid" id="pg-area-grid">
         <button class="pg-area-btn" data-key="operations_oversight" onclick="pgToggleArea(this)"><span class="pg-area-label">Day-to-Day Operations</span><span class="pg-area-desc">Review trust operations and Trustee activity, raise issues through Members Polls, ensure the joint venture runs according to the JVPA.</span></button>
-        <button class="pg-area-btn" data-key="governance_polls" onclick="pgToggleArea(this)"><span class="pg-area-label">Research &amp; Acquisitions</span><span class="pg-area-desc">Research and identify new ASX companies, real world assets, resources, and commodities as potential acquisition targets for the Joint Venture.</span></button>
+        <button class="pg-area-btn" data-key="research_acquisitions" onclick="pgToggleArea(this)"><span class="pg-area-label">Research &amp; Acquisitions</span><span class="pg-area-desc">Research and identify new ASX companies, real world assets, resources, and commodities as potential acquisition targets for the Joint Venture.</span></button>
         <button class="pg-area-btn" data-key="esg_proxy_voting" onclick="pgToggleArea(this)"><span class="pg-area-label">ESG &amp; Proxy Voting</span><span class="pg-area-desc">Direct how CHESS-registered shares are voted at portfolio company AGMs. Set the ESG engagement strategy.</span></button>
         <button class="pg-area-btn" data-key="first_nations" onclick="pgToggleArea(this)"><span class="pg-area-label">First Nations Joint Venture</span><span class="pg-area-desc">Engage with the FNAC, support FPIC processes and Cultural Heritage protections.</span></button>
         <button class="pg-area-btn" data-key="community_projects" onclick="pgToggleArea(this)"><span class="pg-area-label">Community Projects</span><span class="pg-area-desc">Direct grants and community benefit priorities under Sub-Trust C.</span></button>

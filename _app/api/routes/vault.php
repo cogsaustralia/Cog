@@ -3579,7 +3579,7 @@ function vaultParticipation(): void
     // Validate areas
     $validAreas = [
         'operations_oversight',
-        'governance_polls',
+        'research_acquisitions',
         'esg_proxy_voting',
         'first_nations',
         'community_projects',

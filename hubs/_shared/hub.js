@@ -1261,7 +1261,7 @@ window.hubChipClick = function(btn, targetId){
 /* ── Hub nav dropdown ───────────────────────────────────────────────────────── */
 var _HUB_NAV_ITEMS = [
   {key:'operations_oversight',  label:'Day-to-Day Operations',  path:'../operations_oversight/'},
-  {key:'governance_polls',      label:'Research & Acquisitions', path:'../governance_polls/'},
+  {key:'research_acquisitions',      label:'Research & Acquisitions', path:'../research_acquisitions/'},
   {key:'esg_proxy_voting',      label:'ESG & Proxy Voting',      path:'../esg_proxy_voting/'},
   {key:'first_nations',         label:'First Nations JV',        path:'../first_nations/'},
   {key:'community_projects',    label:'Community Projects',      path:'../community_projects/'},
@@ -1280,7 +1280,7 @@ function renderHubNavDropdown(){
 
   // Two-letter abbreviations for icon squares
   var _ABBR = {
-    operations_oversight:  'OO', governance_polls:      'RA',
+    operations_oversight:  'OO', research_acquisitions:      'RA',
     esg_proxy_voting:      'ES', first_nations:         'FN',
     community_projects:    'CP', technology_blockchain: 'TB',
     financial_oversight:   'FO', place_based_decisions: 'PB',
@@ -1487,7 +1487,7 @@ var _aiOpen    = false;
 // Per-area system prompt context — governance purpose + what the AI should/shouldn't do
 var _AI_AREA_CONTEXT = {
   operations_oversight:  'You are assisting with the Day-to-Day Operations hub. This hub covers monitoring Trustee activity, raising proposals, tracking JVPA compliance, and ensuring the Joint Venture runs according to the Partnership Agreement. Members — not the Trustee — are the operators. You can suggest how to table proposals, what constitutes a governance issue, and how operational threads work.',
-  governance_polls:      'You are assisting with the Research & Acquisitions hub. This hub covers identifying new ASX companies, real world assets, and resources as potential acquisition targets for the Members Asset Pool. You can help members formulate research questions, understand what makes a good acquisition candidate under the JV framework, and how to initiate a Members Poll.',
+  research_acquisitions:      'You are assisting with the Research & Acquisitions hub. This hub covers identifying new ASX companies, real world assets, and resources as potential acquisition targets for the Members Asset Pool. You can help members formulate research questions, understand what makes a good acquisition candidate under the JV framework, and how to initiate a Members Poll.',
   esg_proxy_voting:      'You are assisting with the ESG & Proxy Voting hub. This hub activates at Expansion Day when CHESS-registered shares are held. It covers how Members set the ESG engagement strategy collectively via the Aggregate Unitholder Direction mechanism and direct proxy votes at portfolio company AGMs. You can explain the proxy voting framework and what ESG criteria the community might consider.',
   first_nations:         'You are assisting with the First Nations Joint Venture hub. This hub covers engagement with the FNAC, Free Prior and Informed Consent (FPIC) obligations, Indigenous Cultural and Intellectual Property (ICIP) protections, and the automatic zero-cost Landholder entitlement for Local Aboriginal Land Councils. First Nations custodians are founding governance members. Approach all matters with respect for Country and cultural protocols.',
   community_projects:    'You are assisting with the Community Projects hub. This hub covers directing grants and community benefit priorities funded through Sub-Trust C — environmental stewardship, First Nations programs, social welfare, and community flourishing. You can help members propose projects, understand the Sub-Trust C funding mechanism, and build community impact initiatives.',
@@ -2169,7 +2169,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     // ── 2. Research & Acquisitions ────────────────────────────────────────
-    else if (areaKey === 'governance_polls') {
+    else if (areaKey === 'research_acquisitions') {
       html += '<div class="hub-livedata-section">';
       html += '<div class="hub-livedata-title">Live Research Data</div>';
 

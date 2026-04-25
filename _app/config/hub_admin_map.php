@@ -24,7 +24,7 @@ return [
         'primary'       => ['dashboard', 'approvals', 'operations', 'exceptions', 'monitor', 'errors'],
         'secondary'     => [],
     ],
-    'governance_polls' => [
+    'research_acquisitions' => [
         'label'         => 'Research & Acquisitions',
         'short'         => 'Research',
         'sub_committee' => 'STB',

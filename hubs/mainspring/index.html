@@ -378,8 +378,8 @@
 
     <!-- STB column -->
     <div class="ms-col-stb">
-      <div class="ms-cog-cell" id="cc-governance_polls"
-           data-key="governance_polls" data-label="Research &amp; Acquisitions"
+      <div class="ms-cog-cell" id="cc-research_acquisitions"
+           data-key="research_acquisitions" data-label="Research &amp; Acquisitions"
            data-sub="STB" data-color="#5ea8ff">
         <svg class="ms-cog-svg" viewBox="0 0 88 88">
           <defs><radialGradient id="gg-blue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#5ea8ff" stop-opacity=".28"/><stop offset="100%" stop-color="#5ea8ff" stop-opacity="0"/></radialGradient></defs>
@@ -544,7 +544,7 @@
 <script>
 var ROOT=document.body.dataset.root||'../../';
 var API=ROOT+'_app/api/index.php?route=';
-var HUB_PATHS={operations_oversight:'../operations_oversight/',governance_polls:'../governance_polls/',esg_proxy_voting:'../esg_proxy_voting/',first_nations:'../first_nations/',community_projects:'../community_projects/',technology_blockchain:'../technology_blockchain/',financial_oversight:'../financial_oversight/',place_based_decisions:'../place_based_decisions/',education_outreach:'../education_outreach/'};
+var HUB_PATHS={operations_oversight:'../operations_oversight/',research_acquisitions:'../research_acquisitions/',esg_proxy_voting:'../esg_proxy_voting/',first_nations:'../first_nations/',community_projects:'../community_projects/',technology_blockchain:'../technology_blockchain/',financial_oversight:'../financial_oversight/',place_based_decisions:'../place_based_decisions/',education_outreach:'../education_outreach/'};
 var SUB_LABELS={STA:'Sub-Trust A',STB:'Sub-Trust B',STC:'Sub-Trust C'};
 var _tiles={},_myAreas=[],_pop=document.getElementById('ms-pop');
 
@@ -615,8 +615,8 @@ function renderFeed(activity){
 
 async function loadAdminActivity(){
   var w=document.getElementById('ms-admin-wrap');if(!w)return;
-  var AREAS=['operations_oversight','governance_polls','esg_proxy_voting','first_nations','community_projects','technology_blockchain','financial_oversight','place_based_decisions','education_outreach'];
-  var LABELS={operations_oversight:'Day-to-Day Operations',governance_polls:'Research & Acquisitions',esg_proxy_voting:'ESG & Proxy Voting',first_nations:'First Nations JV',community_projects:'Community Projects',technology_blockchain:'Technology & Blockchain',financial_oversight:'Financial Oversight',place_based_decisions:'Place-Based Decisions',education_outreach:'Education & Outreach'};
+  var AREAS=['operations_oversight','research_acquisitions','esg_proxy_voting','first_nations','community_projects','technology_blockchain','financial_oversight','place_based_decisions','education_outreach'];
+  var LABELS={operations_oversight:'Day-to-Day Operations',research_acquisitions:'Research & Acquisitions',esg_proxy_voting:'ESG & Proxy Voting',first_nations:'First Nations JV',community_projects:'Community Projects',technology_blockchain:'Technology & Blockchain',financial_oversight:'Financial Oversight',place_based_decisions:'Place-Based Decisions',education_outreach:'Education & Outreach'};
   var res=await Promise.allSettled(AREAS.map(function(a){return fetch(API+'vault/hub-admin-activity&area_key='+a+'&limit=3',{credentials:'include'}).then(function(r){return r.json();});}));
   var rows='';
   res.forEach(function(r,i){
