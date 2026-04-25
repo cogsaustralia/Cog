@@ -1021,6 +1021,8 @@ foreach ($decisions as $d):
 <?php endforeach; ?>
 <?php endif; ?>
 
+<?php endif; ?>
+
 </div><!-- .main -->
 </div><!-- .admin-shell -->
 
