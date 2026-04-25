@@ -616,7 +616,8 @@ th { color:var(--dim); font-weight:600; font-size:.72rem; text-transform:upperca
       $flags = [
           ['key' => 'key_management_policy_adopted', 'label' => 'Key Management Policy adopted by Board', 'note' => 'Required before Foundation Day per Declaration cl.35.'],
       ];
-      <?php /* ── JVPA execution — auto-detected from cryptographic records ── */ ?>
+      ?>
+      <!-- JVPA execution — auto-detected from cryptographic records -->
       <div class="flag-row">
         <div class="flag-label">
           <div style="font-weight:600;font-size:12.5px">JVPA executed — Trustee and founding Member</div>
