@@ -207,7 +207,7 @@ body {
 /* ── Document header ──────────────────────────────────────── */
 .doc-header {
   background: #1a1208;
-  padding: 32px 44px 28px;
+  padding: 24px 44px 20px;
   border-bottom: 4px solid <?= $accentHex ?>;
   display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
 }
@@ -239,18 +239,18 @@ body {
 }
 
 /* ── Document body ────────────────────────────────────────── */
-.doc-body { padding: 36px 44px; }
+.doc-body { padding: 28px 44px 20px; }
 
 /* Intro text */
-.intro-text { font-size: 12.5px; line-height: 1.75; color: #3a2e1a; margin-bottom: 28px;
-  border-bottom: 1px solid #ddd8ce; padding-bottom: 22px; }
+.intro-text { font-size: 12px; line-height: 1.65; color: #3a2e1a; margin-bottom: 20px;
+  border-bottom: 1px solid #ddd8ce; padding-bottom: 16px; }
 .intro-text strong { color: #1a1208; }
 
 /* Two-column holding details grid */
 .details-grid {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 0; border: 1.5px solid #c8b99a; border-radius: 4px;
-  overflow: hidden; margin-bottom: 28px;
+  overflow: hidden; margin-bottom: 20px;
 }
 .detail-cell {
   padding: 11px 16px; border-bottom: 1px solid #ddd8ce;
@@ -270,7 +270,7 @@ body {
 /* Hash row */
 .hash-row {
   border: 1px solid #ddd8ce; border-radius: 4px;
-  padding: 10px 16px; margin-bottom: 28px; background: #f5f2ec;
+  padding: 10px 16px; margin-bottom: 20px; background: #f5f2ec;
 }
 .hash-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase;
   letter-spacing: .08em; color: #8b7a5a; margin-bottom: 4px;
@@ -280,14 +280,14 @@ body {
 
 /* Section headings */
 .section-heading {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
-  color: <?= $accentHex ?>; margin: 0 0 14px;
-  padding-bottom: 6px; border-bottom: 2px solid <?= $accentHex ?>40;
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
+  color: <?= $accentHex ?>; margin: 0 0 10px;
+  padding-bottom: 5px; border-bottom: 2px solid <?= $accentHex ?>40;
   font-family: -apple-system, sans-serif;
 }
 
 /* Rights table */
-.rights-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+.rights-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
 .rights-table tr { border-bottom: 1px solid #e8e2d8; }
 .rights-table tr:last-child { border-bottom: none; }
 .rights-table td { padding: 10px 14px; vertical-align: top; font-size: 12px; }
@@ -322,7 +322,7 @@ body {
 }
 .instruments-grid {
   display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px; margin-bottom: 20px;
+  gap: 12px; margin-bottom: 14px;
 }
 .instrument-card {
   border: 1px solid #ddd8ce; border-radius: 4px; padding: 10px 14px;
@@ -336,7 +336,7 @@ body {
 /* ── Document footer ──────────────────────────────────────── */
 .doc-footer {
   background: #1a1208;
-  padding: 22px 44px;
+  padding: 18px 44px;
   border-top: 3px solid <?= $accentHex ?>;
   display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;
 }
@@ -360,22 +360,76 @@ body {
 
 /* ── Print styles ──────────────────────────────────────────── */
 @page {
-  size: A4;
+  size: A4 portrait;
   margin: 0;
 }
 @media print {
-  html, body { background: #fff !important; }
+  html, body { background: #fff !important; font-size: 14px; }
   .admin-bar { display: none !important; }
-  .page-wrap {
-    max-width: 100%; margin: 0; box-shadow: none;
-    /* Force white background for print */
-    background: #fff !important;
+  .page-wrap { max-width: 100%; margin: 0; box-shadow: none; background: #fff !important; }
+
+  /* Force colour on dark sections */
+  .doc-header, .doc-footer {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  /* Ensure dark backgrounds print correctly */
-  .doc-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .doc-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .doc-body    { padding: 28px 36px; }
-  .rights-table tr:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rights-table tr:nth-child(even),
+  .hash-row, .instrument-card, .notice-box, .detail-cell {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* Compress header */
+  .doc-header       { padding: 18px 32px 16px; }
+  .org-name         { font-size: 18px; }
+  .cert-ref-display { font-size: 16px; }
+  .cert-type-badge  { margin-top: 8px; padding: 3px 9px; font-size: 9px; }
+  .class-pill       { font-size: 11px; padding: 2px 10px; margin-top: 5px; }
+
+  /* Compress body */
+  .doc-body         { padding: 18px 32px 12px; }
+  .intro-text       { font-size: 11px; line-height: 1.55; margin-bottom: 14px;
+                      padding-bottom: 12px; }
+  .section-heading  { font-size: 9.5px; margin: 0 0 8px; padding-bottom: 4px; }
+
+  /* Compress details grid */
+  .details-grid     { margin-bottom: 14px; }
+  .detail-cell      { padding: 7px 12px; }
+  .detail-label     { font-size: 8px; margin-bottom: 1px; }
+  .detail-value     { font-size: 12px; }
+  .detail-value.large { font-size: 13px; }
+  .detail-value.mono  { font-size: 11px; }
+
+  /* Compress hash */
+  .hash-row         { padding: 7px 12px; margin-bottom: 14px; }
+  .hash-label       { font-size: 8px; margin-bottom: 2px; }
+  .hash-value       { font-size: 9.5px; line-height: 1.4; }
+
+  /* Compress rights table */
+  .rights-table     { margin-bottom: 14px; }
+  .rights-table td  { padding: 7px 10px; font-size: 10.5px; }
+  .rights-table td:first-child  { font-size: 8px; padding-top: 9px; }
+  .rights-table td:nth-child(2) { font-size: 11px; line-height: 1.3; }
+  .rights-table td:last-child   { font-size: 9.5px; line-height: 1.4; }
+  .smart-contract-list li { font-size: 10.5px; line-height: 1.4; }
+
+  /* Compress notice */
+  .notice-box { padding: 8px 12px; margin-bottom: 12px; }
+  .notice-box p { font-size: 10.5px; line-height: 1.5; }
+
+  /* Compress instruments */
+  .instruments-section { padding-top: 12px; }
+  .instruments-grid    { gap: 10px; margin-bottom: 12px; }
+  .instrument-card     { padding: 7px 10px; }
+  .instrument-title    { font-size: 8px; margin-bottom: 2px; }
+  .instrument-name     { font-size: 10px; }
+
+  /* Compress footer */
+  .doc-footer           { padding: 14px 32px; }
+  .footer-trustee-name  { font-size: 11px; }
+  .footer-trustee-role  { font-size: 9.5px; }
+  .footer-trustee-org   { font-size: 9px; margin-top: 3px; }
+  .seal-circle          { width: 50px; height: 50px; }
+  .seal-text            { font-size: 6px; }
+
   a { text-decoration: none; color: inherit; }
 }
 </style>
