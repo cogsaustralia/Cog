@@ -1328,7 +1328,7 @@
               <div class="welcome-badge">◈ Member community</div>
               <div class="member-chip" id="member-number-display" style="margin-top:4px;font-size:.82rem">—</div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid rgba(240,209,138,.10);margin-bottom:16px">
               <!-- vault-pill-wrap kept for JS payment overlay injection — hidden, moved into identity card -->
               <div class="vault-pill-wrap" id="vault-pill-wrap" style="display:none">
                 <a href="../wallets/member.html" class="vault-btn-primary" id="vault-pill-btn" onclick="handleVaultEntry(event);return false;">
@@ -1348,20 +1348,17 @@
             </button>
             <div class="part-areas-tags" id="participation-areas-tags" style="display:none"></div>
           </div>
-
               <a href="#" class="vault-btn" id="business-vault-btn" onclick="openBusinessVault(event)" style="display:none">Business →</a>
               <button type="button" class="btn-logout" id="logout-btn">Log out</button>
+              <div style="width:1px;height:18px;background:rgba(240,209,138,.15);margin:0 2px;flex-shrink:0"></div>
+              <a href="/" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Home</a>
+              <a href="../wallets/member.html" onclick="coinTransitionAndGo('../wallets/member.html');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Independence Financial Vault</a>
+              <a href="../wallets/member.html" onclick="sessionStorage.setItem('iv_intent','profile');coinTransitionAndGo('../wallets/member.html');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Profile</a>
+              <a href="#hub-invite-card" onclick="document.getElementById('hub-invite-card').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Invite Member</a>
+              <a href="mailto:admin@cogsaustralia.org" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Email Admin</a>
+              <a href="tel:+61494578706" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">+61 494 578 706</a>
+              <a href="../hubs/mainspring/" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-1);border:1px solid var(--gold-rim2);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s;background:rgba(240,209,138,.05)" onmouseover="this.style.background='rgba(240,209,138,.10)'" onmouseout="this.style.background='rgba(240,209,138,.05)'">&#9672; Mainspring Management Hub</a>
             </div>
-          </div>
-          <!-- ── Top navigation bar ── -->
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(240,209,138,.10)">
-            <a href="/" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Home</a>
-            <a href="../wallets/member.html" onclick="coinTransitionAndGo('../wallets/member.html');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Independence Financial Vault</a>
-            <a href="../wallets/member.html" onclick="sessionStorage.setItem('iv_intent','profile');coinTransitionAndGo('../wallets/member.html');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Profile</a>
-            <a href="#hub-invite-card" onclick="document.getElementById('hub-invite-card').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Invite Member</a>
-            <a href="mailto:admin@cogsaustralia.org" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Email Admin</a>
-            <a href="tel:+61494578706" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">+61 494 578 706</a>
-            <a href="../hubs/mainspring/" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-1);border:1px solid var(--gold-rim2);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s;background:rgba(240,209,138,.05)" onmouseover="this.style.background='rgba(240,209,138,.10)'" onmouseout="this.style.background='rgba(240,209,138,.05)'">&#9672; Mainspring Management Hub</a>
           </div>
           <div class="member-welcome-row ha" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
             <h1 class="member-welcome-hd" style="margin-bottom:0">Welcome, <span id="member-first-name">Member</span>.</h1>
@@ -1398,7 +1395,12 @@
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:130px;text-align:center">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-members" data-countup="true">—</div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Members</div>
-                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px" id="cs-pending-inline">+ — pending</div>
+              </div>
+
+              <!-- Pending Members -->
+              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.06),rgba(70,120,180,.03));border:1.5px dashed rgba(110,168,216,.22);min-width:130px;text-align:center">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em;opacity:.7" id="cs-pending" data-countup="true">—</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.6);margin-top:6px">Pending Members</div>
               </div>
 
               <!-- JV Asset Pool -->
@@ -2546,7 +2548,6 @@ async function loadCommunityStats(){
     // Hero strip
     if(el('cs-members')) el('cs-members').textContent = fmt(s.founding_members);
     if(el('cs-pending')) el('cs-pending').textContent = fmt(s.pending_members);
-    if(el('cs-pending-inline')) el('cs-pending-inline').textContent = '+ ' + fmt(s.pending_members) + ' pending';
     if(el('cs-cogs')) el('cs-cogs').textContent = fmt(s.total_cogs);
     if(el('cs-value')) el('cs-value').textContent = fmtM(s.total_value);
     var fmtC = function(cents){ var n=parseFloat(cents||0)/100; return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };
