@@ -555,6 +555,39 @@ function hideSplash(){var s=document.getElementById('splash');if(s){s.classList.
 async function api(r){var res=await fetch(API+r,{credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'}});var txt=await res.text();var j;try{j=JSON.parse(txt);}catch(e){j={success:false,error:txt};}if(!res.ok||j.success===false)throw new Error(j.error||'Request failed ('+res.status+')');return j.data!==undefined?j.data:j;}
 document.getElementById('back-btn').addEventListener('click',function(){coinTransition(ROOT+'wallets/member.html','Returning to Vault');});
 
+function showPop(cell,e){
+  var key=cell.dataset.key,t=_tiles[key]||{},enrolled=_myAreas.indexOf(key)>=0;
+  var color=cell.dataset.color||'#e8b84b',sub=cell.dataset.sub||'';
+  document.getElementById('pop-name').textContent=cell.dataset.label||key;
+  var subEl=document.getElementById('pop-sub');
+  subEl.textContent=(SUB_LABELS[sub]||sub)+(enrolled?' — Active':'');
+  subEl.style.color=enrolled?color:'rgba(255,255,255,.4)';
+  document.getElementById('pop-m').textContent=t.member_count!=null?Number(t.member_count).toLocaleString('en-AU'):'—';
+  document.getElementById('pop-t').textContent=t.thread_count!=null?Number(t.thread_count).toLocaleString('en-AU'):'—';
+  document.getElementById('pop-p').textContent=t.active_project_count!=null?Number(t.active_project_count).toLocaleString('en-AU'):'—';
+  var foot=document.getElementById('pop-foot');
+  foot.textContent=enrolled?'Active — Click to open →':'Click to open hub →';
+  foot.style.color=enrolled?color:'rgba(255,255,255,.4)';
+  posPop(e);_pop.classList.add('on');
+}
+function posPop(e){
+  var vw=window.innerWidth,vh=window.innerHeight,pw=240,ph=148;
+  var l=e.clientX+16,t=e.clientY-20;
+  if(l+pw>vw-8)l=e.clientX-pw-16;
+  if(t+ph>vh-8)t=vh-ph-8;
+  if(t<8)t=8;
+  _pop.style.left=l+'px';_pop.style.top=t+'px';
+}
+function hidePop(){_pop.classList.remove('on');}
+
+document.querySelectorAll('.ms-cog-cell').forEach(function(c){
+  c.addEventListener('mouseenter',function(e){showPop(c,e);});
+  c.addEventListener('mousemove', function(e){posPop(e);});
+  c.addEventListener('mouseleave',hidePop);
+  c.addEventListener('click',function(){coinTransition(HUB_PATHS[c.dataset.key]||('../'+c.dataset.key+'/'),c.dataset.label||'Opening hub');});
+});
+document.addEventListener('scroll',hidePop,{passive:true});
+
 function activateCogs(tiles,myAreas){
   var totP=0;
   tiles.forEach(function(t){
