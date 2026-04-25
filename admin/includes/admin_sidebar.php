@@ -51,6 +51,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'evidence_reviews.php') return 'evidence_reviews';
         if ($script === 'mint_queue.php') return 'mint_queue';
         if ($script === 'mint_batches.php') return 'mint_batches';
+        if ($script === 'unit_issuance.php') return 'unit_issuance';
         if ($script === 'chain_handoff.php') return 'chain_handoff';
         if ($script === 'audit.php') return 'audit';
         if ($script === 'audit_access.php') return 'audit_access';
@@ -216,6 +217,7 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'businesses',        'label' => '🏢  Businesses',               'href' => './businesses.php'],
                 ['key' => 'payments',          'label' => '💳  Payments',                  'href' => './payments.php'],
                 ['key' => 'approvals',         'label' => '✅  Approvals',                 'href' => './approvals.php'],
+                ['key' => 'unit_issuance',     'label' => '🏅  Unit Issuance',             'href' => './unit_issuance.php'],
                 ['key' => 'execution',         'label' => '⛓  Token Execution',           'href' => './execution.php'],
                 ['key' => 'classes',           'label' => '🪙  COG$ Classes',              'href' => './classes.php'],
                 ['key' => 'settings',          'label' => '⚙  Settings',                  'href' => './settings.php'],

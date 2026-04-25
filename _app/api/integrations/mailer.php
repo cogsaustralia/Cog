@@ -1194,6 +1194,281 @@ return [$html, $plain];
             return [$html, $plain];
         })(),
 
+        'unitholder_certificate' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $h3Style, $pStyle, $labelStyle, $valStyle, $boxStyle, $payStyle, $noticeStyle) {
+            $firstName   = htmlspecialchars(explode(' ', trim((string)($p['full_name'] ?? 'Partner')))[0]);
+            $fullName    = htmlspecialchars((string)($p['full_name']       ?? ''));
+            $memberNum   = htmlspecialchars((string)($p['member_number']   ?? ''));
+            $classCode   = htmlspecialchars((string)($p['unit_class_code'] ?? ''));
+            $className   = htmlspecialchars((string)($p['unit_class_name'] ?? ''));
+            $certRef     = htmlspecialchars((string)($p['cert_ref']        ?? ''));
+            $regRef      = htmlspecialchars((string)($p['register_ref']    ?? ''));
+            $unitsRaw    = (float)($p['units_issued'] ?? 0);
+            $units       = $unitsRaw == floor($unitsRaw) ? number_format((int)$unitsRaw) : number_format($unitsRaw, 4);
+            $issueDate   = htmlspecialchars((string)($p['issue_date']      ?? date('Y-m-d')));
+            $hashVal     = htmlspecialchars((string)($p['sha256_hash']     ?? ''));
+            $certType    = (string)($p['cert_type'] ?? 'financial');
+            $memberType  = (string)($p['member_type'] ?? 'personal');
+            $trigger     = htmlspecialchars((string)($p['issue_trigger']   ?? ''));
+            $gate        = (int)($p['gate'] ?? 1);
+            $gateLabel   = $gate === 1 ? 'Gate 1 — Declaration Executed' : ($gate === 2 ? 'Gate 2 — Governance Foundation Day' : 'Gate 3 — Expansion Day');
+
+            // ── Class-specific rights blocks ──────────────────────────────
+            // Built from the Declaration and Sub-Trust A Deed — class-specific only.
+            $rightsHtml = '';
+
+            if ($classCode === 'S') {
+                $rightsHtml = ''
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Governance right</div>'
+                    . '<div style="' . $valStyle . '">1 national vote — all Foundation matters</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Entrenched — Declaration cl.35(e)</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Beneficial unit (Sub-Trust B)</div>'
+                    . '<div style="' . $valStyle . '">1 income unit — proportional share of Beneficiary Distribution Stream</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">50% of Members Asset Pool dividends distributed via Sub-Trust B — Declaration cl.21.1A</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Token type</div>'
+                    . '<div style="' . $valStyle . '">Soulbound — non-transferable during lifetime</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Cannot be sold, transferred, pledged, or dealt with. Passes to nominated heir on death only — Declaration cl.21.3, 35(i)</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Smart contract attributes</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">'
+                    . '• Soulbound transfer lock (no transfer during lifetime)<br>'
+                    . '• One-per-person cap enforcement<br>'
+                    . '• 3-of-Board multisig for token minting<br>'
+                    . '• Anti-capture cap check (1,000,000 combined units)<br>'
+                    . '• Heir nomination and inheritance flow on death'
+                    . '</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Consideration &amp; funds allocation</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">$4.00 AUD (permanently fixed — Declaration cl.35(x))<br>$3.00 → Administration costs &nbsp;·&nbsp; $1.00 → Sub-Trust A investment component</div>'
+                    . '</div>';
+
+            } elseif ($classCode === 'B') {
+                $rightsHtml = ''
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Governance right</div>'
+                    . '<div style="' . $valStyle . '">1 limited vote — Trustee appointment, removal, or replacement only</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Exercised by named KYC-verified authorised representative only — Declaration cl.26A.2(a)</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Beneficial unit (Sub-Trust B)</div>'
+                    . '<div style="' . $valStyle . '">1 income unit — proportional share on same per-unit terms as Class S</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Declaration cl.26A.2(b) — Sub-Trust B Deed cl.6.2</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Token type</div>'
+                    . '<div style="' . $valStyle . '">Entity-bound — non-transferable; cancelled on entity dissolution</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Declaration cl.35(v)</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Smart contract attributes</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">'
+                    . '• Entity-bound transfer lock<br>'
+                    . '• BNFT compliance stack flag (ABN verified, authorised rep KYC-verified)<br>'
+                    . '• 3-of-Board multisig for token minting<br>'
+                    . '• Anti-capture cap check (1,000,000 combined units)<br>'
+                    . '• Entity dissolution cancellation trigger'
+                    . '</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Consideration &amp; funds allocation</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">$40.00 AUD — may not be reduced below Class S fee (Declaration cl.35(y))<br>$30.00 → Administration &amp; member set-up &nbsp;·&nbsp; $10.00 → Sub-Trust A investment component</div>'
+                    . '</div>';
+
+            } elseif ($classCode === 'kS') {
+                $rightsHtml = ''
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Governance right</div>'
+                    . '<div style="' . $valStyle . '">1 national vote — via parent/guardian proxy until age 18</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Auto-activates on 18th birthday — Declaration cl.25.3</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Beneficial unit (Sub-Trust B)</div>'
+                    . '<div style="' . $valStyle . '">1 income unit — held in trust until age 18</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Income held in trust. Auto-converts to Class S on 18th birthday — Declaration cl.25.1</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Token type</div>'
+                    . '<div style="' . $valStyle . '">Soulbound — non-transferable in all circumstances</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Auto-converts to Class S at age 18; irrevocable; no further consideration payable — Declaration cl.25.4</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Smart contract attributes</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">'
+                    . '• Soulbound transfer lock — permanent, no exceptions<br>'
+                    . '• Auto-conversion to Class S at age 18 (date-triggered)<br>'
+                    . '• Proxy governance flag (parent/guardian until conversion)<br>'
+                    . '• 3-of-Board multisig for token minting'
+                    . '</div>'
+                    . '</div>';
+
+            } elseif ($classCode === 'C') {
+                $rightsHtml = ''
+                    . '<div style="background:rgba(90,158,212,.08);border:1px solid rgba(90,158,212,.25);border-radius:10px;padding:1rem 1.1rem;margin:.75rem 0;">'
+                    . '<div style="' . $labelStyle . '">Important — Class C characteristics</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">Community COG$ units carry <strong>no Sub-Trust B income unit</strong> and <strong>no yield</strong>. They are not a financial investment. They function as an immutable record of barter and service exchange between Members within the Foundation ecosystem.</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Governance right</div>'
+                    . '<div style="' . $valStyle . '">None by Class C alone — no national governance vote</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Declaration cl.23D.1 — Schedule 9, Part A</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Beneficial unit (Sub-Trust B)</div>'
+                    . '<div style="' . $valStyle . '">None — Class C carries no income unit and no yield</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Sub-Trust B Deed — Community COG$ definition</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Function</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">Immutable barter record — consideration for approved contributed efforts, services, and stewardship activities. P2P exchange between Members where class rules permit. No fiat sale — Declaration cl.35(w).</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Allocation basis</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">Initial allocation by standing Members Poll direction — Declaration cl.23D.3. No purchase fee applies. ' . ($memberType === 'business' ? '10,000 units for Business Members.' : '1,000 units for Individual Members.') . '</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Smart contract attributes</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">'
+                    . '• P2P transfer enforcement (class-rule-gated)<br>'
+                    . '• No-fiat-sale rule (entrenched cl.35(w))<br>'
+                    . '• SHA-256 hash record (authoritative pre-Expansion Day)<br>'
+                    . '• Anti-capture cap inclusion<br>'
+                    . '• On-chain migration at Expansion Day (cl.23D.5)'
+                    . '</div>'
+                    . '</div>';
+
+            } elseif ($classCode === 'P') {
+                $rightsHtml = ''
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Purpose</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">Funds a free Personal S-NFT COG$ (Class S) membership for a nominated recipient who cannot afford the $4.00 joining fee. The donor receives no Beneficial Unit. The recipient receives all Class S rights on activation.</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Governance right (donor)</div>'
+                    . '<div style="' . $valStyle . '">None — Pay It Forward units carry no vote and no Beneficial Unit for the donor</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Smart contract attributes</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">'
+                    . '• Non-transferable (donor record)<br>'
+                    . '• Recipient activation triggers Class S issuance to recipient<br>'
+                    . '• 3-of-Board multisig for recipient Class S minting'
+                    . '</div>'
+                    . '</div>';
+
+            } elseif ($classCode === 'D') {
+                $rightsHtml = ''
+                    . '<div style="background:rgba(90,158,212,.08);border:1px solid rgba(90,158,212,.25);border-radius:10px;padding:1rem 1.1rem;margin:.75rem 0;">'
+                    . '<div style="' . $labelStyle . '">Important — Class D characteristics</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">Donation COG$ units carry <strong>no personal Beneficial Unit for the donor</strong> and <strong>no yield</strong>. Sub-Trust C is registered as D Class Beneficial Unit Holder for each validly issued Class D Unit.</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Funds flow</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">$4.00 AUD consideration:<br>• $2.00 → Sub-Trust C (charitable trust — within 2 business days)<br>• $2.00 → Sub-Trust A for approved Members Asset Pool asset acquisition</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Beneficial unit holder</div>'
+                    . '<div style="' . $valStyle . '">Sub-Trust C — 1 D Class income unit per validly issued Donation COG$</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Sub-Trust C receives D Class proportional share of Donation Dividend Stream via Sub-Trust B</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Smart contract attributes</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">'
+                    . '• Sub-Trust C auto-registered as D Class Beneficial Unit Holder<br>'
+                    . '• $2.00 direct transfer to Sub-Trust C triggered on issuance<br>'
+                    . '• Donation Ledger entry required<br>'
+                    . '• 3-of-Board multisig for token minting'
+                    . '</div>'
+                    . '</div>';
+
+            } elseif ($classCode === 'Lr') {
+                $rightsHtml = ''
+                    . '<div style="background:rgba(200,144,26,.08);border:1px solid rgba(200,144,26,.28);border-radius:10px;padding:1rem 1.1rem;margin:.75rem 0;">'
+                    . '<div style="' . $labelStyle . '">Governance allocation — not a financial instrument</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">Resident COG$ units carry <strong>no Beneficial Unit, no yield, and no national governance vote</strong>. This is a local governance allocation only.</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Local governance right</div>'
+                    . '<div style="' . $valStyle . '">1,000 weighted local votes per declared Affected Zone</div>'
+                    . '<div style="font-size:12px;color:#9a8a74;margin-top:3px;">Effective 1,001:1 weighting in Local Decision Votes — Declaration cl.23B.2, 35(s)</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Auto-lapse conditions</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">Lapses automatically if: the Affected Zone declaration expires or is revoked; or residency eligibility ceases to be verified — Declaration cl.23B.4</div>'
+                    . '</div>'
+                    . '<div style="' . $boxStyle . '">'
+                    . '<div style="' . $labelStyle . '">Smart contract attributes</div>'
+                    . '<div style="font-size:13px;color:#d4c9b8;line-height:1.7;">'
+                    . '• Non-transferable<br>'
+                    . '• Excluded from anti-capture cap and Beneficial Class Unit count<br>'
+                    . '• Auto-lapse trigger on zone expiry or residency loss<br>'
+                    . '• Weighted vote calculation enforced at vote time'
+                    . '</div>'
+                    . '</div>';
+            }
+
+            // ── Governing instruments section ─────────────────────────────
+            $govHtml = ''
+                . '<div style="font-size:12px;color:#9a8a74;line-height:1.8;margin-top:1rem;">'
+                . '<strong style="color:#d4c9b8;">Governing instruments:</strong> '
+                . 'Joint Venture Participation Agreement &nbsp;·&nbsp; CJVM Hybrid Trust Declaration &nbsp;·&nbsp; Sub-Trust A Deed<br>'
+                . '<strong style="color:#d4c9b8;">Governing law:</strong> South Australia, Australia<br>'
+                . '<strong style="color:#d4c9b8;">Issued by:</strong> Thomas Boyd Cunliffe, Caretaker Trustee<br>'
+                . 'Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation &nbsp;·&nbsp; ABN 61 734 327 831'
+                . '</div>';
+
+            // ── Assemble HTML ─────────────────────────────────────────────
+            $html = $wrapOpen . $headerBar . $body
+                . '<h2 style="' . $h2Style . '">Certificate of Unit Holding</h2>'
+                . '<p style="' . $pStyle . '">Dear ' . $firstName . ',</p>'
+                . '<p style="' . $pStyle . '">The Caretaker Trustee of the COGS of Australia Foundation has lawfully issued units to you under Sub-Trust A of the CJVM Hybrid Trust Declaration. This certificate is your formal record of holding.</p>'
+                . '<div style="' . $payStyle . '">'
+                . '<div style="' . $labelStyle . '">Certificate reference</div>'
+                . '<div style="font-size:18px;font-weight:700;color:#f0b429;letter-spacing:.04em;margin-bottom:.75rem;">' . $certRef . '</div>'
+                . '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem .75rem;">'
+                . '<div><div style="' . $labelStyle . '">Register reference</div><div style="' . $valStyle . '">' . $regRef . '</div></div>'
+                . '<div><div style="' . $labelStyle . '">Issue date</div><div style="' . $valStyle . '">' . $issueDate . '</div></div>'
+                . '<div><div style="' . $labelStyle . '">Unitholder</div><div style="' . $valStyle . '">' . $fullName . '</div></div>'
+                . '<div><div style="' . $labelStyle . '">Member number</div><div style="' . $valStyle . '">' . $memberNum . '</div></div>'
+                . '<div><div style="' . $labelStyle . '">Unit class</div><div style="' . $valStyle . '">' . $className . ' (Class ' . $classCode . ')</div></div>'
+                . '<div><div style="' . $labelStyle . '">Units issued</div><div style="' . $valStyle . '">' . $units . '</div></div>'
+                . '</div>'
+                . '<div style="margin-top:.75rem;"><div style="' . $labelStyle . '">Issuance gate</div><div style="font-size:12px;color:#d4c9b8;">' . $gateLabel . '</div></div>'
+                . '<div style="margin-top:.5rem;word-break:break-all;"><div style="' . $labelStyle . '">Cryptographic record (SHA-256)</div><div style="font-size:11px;color:#9a8a74;font-family:monospace;">' . $hashVal . '</div></div>'
+                . '</div>'
+                . '<h3 style="' . $h3Style . '">Rights and Attributes — Class ' . $classCode . '</h3>'
+                . '<p style="font-size:12px;color:#9a8a74;margin:.25rem 0 .75rem;">The following rights and smart contract attributes apply exclusively to this unit class as defined in the governing instruments. No rights from other classes apply to this certificate.</p>'
+                . $rightsHtml
+                . $govHtml
+                . $footerBar . $wrapClose;
+
+            $plain = "CERTIFICATE OF UNIT HOLDING\n\n"
+                . "Certificate Reference: {$certRef}\n"
+                . "Register Reference:    {$regRef}\n"
+                . "Unitholder:            {$fullName}\n"
+                . "Member Number:         {$memberNum}\n"
+                . "Unit Class:            {$className} (Class {$classCode})\n"
+                . "Units Issued:          {$units}\n"
+                . "Issue Date:            {$issueDate}\n"
+                . "Issuance Gate:         {$gateLabel}\n"
+                . "SHA-256 Hash:          {$hashVal}\n\n"
+                . "This certificate was issued by Thomas Boyd Cunliffe, Caretaker Trustee,\n"
+                . "COGS of Australia Foundation (ABN 61 734 327 831)\n"
+                . "Drake Village NSW 2469 | Wahlubal Country, Bundjalung Nation\n\n"
+                . "The rights and smart contract attributes for your unit class are detailed\n"
+                . "in the HTML version of this email and at cogsaustralia.org\n\n"
+                . "Governing instruments: JVPA | CJVM Hybrid Trust Declaration | Sub-Trust A Deed\n"
+                . "Governing law: South Australia, Australia\n"
+                . "Questions: members@cogsaustralia.org\n";
+
+            return [$html, $plain];
+        })(),
+
         default => throw new RuntimeException('Unknown email template: ' . $templateKey),
     };
 }
