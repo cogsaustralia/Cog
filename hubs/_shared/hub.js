@@ -806,7 +806,9 @@ function renderProjectDetail(){
   var parts = _projectData.participants||[];
   var comments = _projectData.comments||[];
   var myRole = _projectData.my_role;
-  var enrolledInArea = !!_projectData.enrolled_in_area;
+  // enrolledInArea: true if member is enrolled in the owning hub area,
+  // OR is a participant/coordinator in the project (covers referred projects).
+  var enrolledInArea = !!_projectData.enrolled_in_area || !!myRole;
 
   var participantsHtml = parts.map(function(m){
     return '<span class="hub-participant-chip'+(m.role==='coordinator'?' coord':'')+'">'+esc(m.first_name)+(m.role==='coordinator'?' (Coordinator)':'')+'</span>';
@@ -1001,7 +1003,8 @@ function closeProject(){
 
 function renderProjectDocuments(docs, enrolledInArea){
   if(!docs || !docs.length) return '';
-  if(!enrolledInArea) return '';
+  // Note: auth is enforced by the PHP serve endpoint.
+  // We show document cards to any authenticated member viewing the project.
 
   var cards = docs.map(function(d){
     var isMaster = d.doc_type === 'master';
@@ -1118,9 +1121,11 @@ function openDocument(btnEl){
   if(!btnEl || !btnEl.dataset) return;
   var docId = parseInt(btnEl.dataset.docId || '0', 10);
   if(!docId) return;
-  // Build the serve URL — the session cookie is sent automatically by the browser
-  // since vault/ is on the same origin.
-  var url = (window.API_LOCAL || '/_app/api/') + 'vault/hub-document-serve&document_id=' + docId;
+  // Use the page-level API variable (set in each hub page's inline script)
+  // which resolves to ROOT + '_app/api/index.php?route='
+  // The session cookie is sent automatically — same origin.
+  var base = (typeof API !== 'undefined' ? API : '/_app/api/index.php?route=');
+  var url = base + 'vault/hub-document-serve&document_id=' + docId;
   window.open(url, '_blank', 'noopener');
 }
 
