@@ -95,6 +95,13 @@ form-action 'self'"
 # (Updated for minified assets and Vary header for compression)
 <IfModule mod_headers.c>
 
+  # PHP pages: never cache (dynamic content, always execute fresh)
+  <FilesMatch "\.php$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+
   # HTML pages: never cache (always fresh)
   <FilesMatch "\.(html?)$">
     Header set Cache-Control "no-cache, must-revalidate, max-age=3600"
