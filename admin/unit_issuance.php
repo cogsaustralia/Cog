@@ -724,7 +724,12 @@ if ($issueClass !== '' && isset($defs[$issueClass]) && uir_class_is_open($defs[$
           <td>
             <?php if ($row['cert_ref']): ?>
               <div class="mono small"><?= h($row['cert_ref']) ?></div>
-              <div class="muted small"><?= $row['email_sent_at'] ? '✅ ' . h(substr($row['email_sent_at'], 0, 10)) : '⏳ Pending' ?></div>
+              <div class="muted small" style="margin-top:2px;">
+                <?= $row['email_sent_at'] ? '✅ ' . h(substr($row['email_sent_at'], 0, 10)) : '⏳ Pending' ?>
+                &nbsp;
+                <a href="<?= h(admin_url('unit_certificate_view.php')) ?>?cert_ref=<?= urlencode($row['cert_ref']) ?>"
+                   target="_blank" style="color:var(--gold);font-size:10px;font-weight:700;">VIEW</a>
+              </div>
             <?php else: ?>
               <span class="muted small">—</span>
             <?php endif; ?>
@@ -782,7 +787,13 @@ $certRows = rows($pdo,
       <tbody>
         <?php foreach ($certRows as $c): ?>
         <tr>
-          <td class="mono small"><?= h($c['cert_ref']) ?></td>
+          <td class="mono small">
+            <?= h($c['cert_ref']) ?>
+            <div style="margin-top:4px;">
+              <a href="<?= h(admin_url('unit_certificate_view.php')) ?>?cert_ref=<?= urlencode($c['cert_ref']) ?>"
+                 target="_blank" class="btn btn-sm btn-gold" style="font-size:11px;padding:3px 9px;">👁 View</a>
+            </div>
+          </td>
           <td class="mono small"><?= h($c['register_ref']) ?></td>
           <td>
             <div><?= h($c['full_name']) ?></div>
