@@ -12,7 +12,7 @@ declare(strict_types=1);
  *  - DB is authoritative; PDF is a rendering of the DB state
  *  - Immutability after status = fully_executed
  *  - Canonical SHA-256 payload includes all material fields including witness
- *  - OTP routed to sub-trust-specific email (sub-trust-a@, sub-trust-b@, sub-trust-c@)
+ *  - OTP routed to the active Trustee's execution email (single Trustee of the Hybrid Trust)
  *  - Witness is form-captured (name, DOB, occupation, address, JP number, comments)
  *  - non_mis_affirmation must be 1 for normal execution
  *
@@ -293,30 +293,34 @@ class TrusteeDecisionService
     }
 
     /**
-     * Look up the trustee email for a given sub_trust_context.
+     * Look up the active Trustee's execution email.
+     * The Trustee is a single person holding capacity over the entire CJVM Hybrid Trust —
+     * not per-sub-trust. The $subTrustContext parameter is accepted for call-site
+     * compatibility but is not used in the query.
      */
-    public static function getTrusteeEmail(PDO $db, string $subTrustContext): ?string
+    public static function getTrusteeEmail(PDO $db, string $subTrustContext = ''): ?string
     {
         $stmt = $db->prepare(
-            "SELECT email FROM trustees WHERE sub_trust_context = ? AND status = 'active' LIMIT 1"
+            "SELECT email FROM trustees WHERE status = 'active' ORDER BY id ASC LIMIT 1"
         );
-        $stmt->execute([$subTrustContext]);
+        $stmt->execute();
         $email = $stmt->fetchColumn();
         return $email !== false ? (string)$email : null;
     }
 
     /**
-     * Return both OTP email and personal email for a sub-trust trustee.
+     * Return both execution email and personal email for the active Trustee.
      * Used for confirmation email delivery after execution.
      * Returns ['otp_email' => ..., 'personal_email' => ...] — either may be null.
+     * The $subTrustContext parameter is accepted for call-site compatibility but unused.
      */
-    public static function getTrusteeEmails(PDO $db, string $subTrustContext): array
+    public static function getTrusteeEmails(PDO $db, string $subTrustContext = ''): array
     {
         $stmt = $db->prepare(
             "SELECT email, personal_email FROM trustees
-             WHERE sub_trust_context = ? AND status = 'active' LIMIT 1"
+             WHERE status = 'active' ORDER BY id ASC LIMIT 1"
         );
-        $stmt->execute([$subTrustContext]);
+        $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return [
             'otp_email'      => $row ? (string)$row['email']          : null,
@@ -350,21 +354,24 @@ class TrusteeDecisionService
             throw new \RuntimeException("Execution token is invalid, expired, or already used.");
         }
 
-        // Look up trustee row
+        // Look up trustee row — the Trustee holds capacity over the entire Hybrid Trust,
+        // not per-sub-trust. Query by status only; sub_trust_context not used for identity.
         $trusteeStmt = $db->prepare(
-            "SELECT id FROM trustees WHERE sub_trust_context = ? AND status = 'active' LIMIT 1"
+            "SELECT id FROM trustees WHERE status = 'active' ORDER BY id ASC LIMIT 1"
         );
-        $trusteeStmt->execute([$decision['sub_trust_context']]);
+        $trusteeStmt->execute();
         $trusteeId = (int)$trusteeStmt->fetchColumn();
         if (!$trusteeId) {
-            throw new \RuntimeException("No active trustee found for {$decision['sub_trust_context']}.");
+            throw new \RuntimeException('No active Trustee found for the CJVM Hybrid Trust.');
         }
 
-        $execUuid   = self::uuid4();
-        $nowUtc     = gmdate('Y-m-d H:i:s.') . sprintf('%03d', (int)(microtime(true) * 1000) % 1000);
-        $nowDb      = gmdate('Y-m-d H:i:s');
-        $execDate   = gmdate('Y-m-d');
-        $capacityLabel = 'caretaker_trustee_' . $decision['sub_trust_context'];
+        $execUuid      = self::uuid4();
+        $nowUtc        = gmdate('Y-m-d H:i:s.') . sprintf('%03d', (int)(microtime(true) * 1000) % 1000);
+        $nowDb         = gmdate('Y-m-d H:i:s');
+        $execDate      = gmdate('Y-m-d');
+        // Capacity label: Trustee holds one capacity — Caretaker Trustee of the Hybrid Trust.
+        // sub_trust_context classifies the decision topic, not the signatory's capacity.
+        $capacityLabel = 'caretaker_trustee';
 
         $ipData = json_encode([
             'ip_address'      => $ipAddress,
@@ -374,14 +381,13 @@ class TrusteeDecisionService
         $ipHash = hash('sha256', $ipData);
 
         $ackText = sprintf(
-            'I, %s, execute this Trustee Decision Record (%s) as Caretaker Trustee of %s ' .
-            'of the COGS of Australia Foundation Community Joint Venture Mainspring Hybrid Trust. ' .
+            'I, %s, execute this Trustee Decision Record (%s) as Caretaker Trustee of ' .
+            'the COGS of Australia Foundation Community Joint Venture Mainspring Hybrid Trust. ' .
             'I have read and understood this Record and resolve as stated herein. ' .
             '%s ' .
             '%s',
             self::EXECUTOR_NAME,
             $decision['decision_ref'],
-            strtoupper(str_replace('_', '-', $decision['sub_trust_context'])),
             self::EXECUTION_METHOD,
             self::NON_MIS_STATEMENT
         );

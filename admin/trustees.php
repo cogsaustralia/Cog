@@ -90,15 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
         $address       = trim($_POST['address']                    ?? '');
         $otpEmail      = trim($_POST['email']                      ?? '');
         $trusteeType   = trim($_POST['trustee_type']               ?? '');
-        $subTrust      = trim($_POST['sub_trust_context']          ?? '');
+        $opFocus       = trim($_POST['operational_focus']          ?? 'all');
         $apptDate      = trim($_POST['appointment_date']           ?? '');
         $apptRef       = trim($_POST['appointment_instrument_ref'] ?? '');
         $notes         = trim($_POST['notes']                      ?? '');
 
         if ($fullName    === '') throw new \RuntimeException('Full name is required.');
-        if ($otpEmail    === '') throw new \RuntimeException('OTP email is required.');
+        if ($otpEmail    === '') throw new \RuntimeException('Execution email is required.');
         if ($trusteeType === '') throw new \RuntimeException('Trustee type is required.');
-        if ($subTrust    === '') throw new \RuntimeException('Sub-trust context is required.');
         if ($apptDate    === '') throw new \RuntimeException('Appointment date is required.');
         if ($apptRef     === '') throw new \RuntimeException('Appointment instrument reference is required — a TDR or deed must authorise this appointment.');
 
@@ -106,11 +105,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
             throw new \RuntimeException('Invalid date of birth format — use YYYY-MM-DD.');
         }
 
-        // Check for duplicate OTP email within sub-trust
-        $dup = $pdo->prepare('SELECT id FROM trustees WHERE sub_trust_context = ? AND email = ? LIMIT 1');
-        $dup->execute([$subTrust, $otpEmail]);
+        $allowedFocus = ['sub_trust_a','sub_trust_b','sub_trust_c','all','none'];
+        if (!in_array($opFocus, $allowedFocus, true)) $opFocus = 'all';
+
+        // Duplicate detection: prevent the same person being added twice as active Trustee
+        $dup = $pdo->prepare("SELECT id FROM trustees WHERE full_name = ? AND status = 'active' LIMIT 1");
+        $dup->execute([$fullName]);
         if ($dup->fetch()) {
-            throw new \RuntimeException("A trustee with OTP email {$otpEmail} already exists for that sub-trust.");
+            throw new \RuntimeException("An active Trustee named '{$fullName}' already exists. A Trustee is appointed to the entire Hybrid Trust — only one active row per person is permitted.");
         }
 
         $uuid = sprintf('%04x%04x-%04x-4%03x-%04x-%04x%04x%04x',
@@ -120,13 +122,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'add_
 
         $pdo->prepare(
             "INSERT INTO trustees
-               (trustee_uuid, full_name, trustee_type, sub_trust_context,
+               (trustee_uuid, full_name, trustee_type, sub_trust_context, operational_focus,
                 email, personal_email, mobile, date_of_birth, address,
                 appointment_date, appointment_instrument_ref,
                 status, notes, created_at, updated_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())"
+             VALUES (?, ?, ?, 'all', ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, current_timestamp(), current_timestamp())"
         )->execute([
-            $uuid, $fullName, $trusteeType, $subTrust,
+            $uuid, $fullName, $trusteeType, $opFocus,
             $otpEmail,
             $personalEmail !== '' ? $personalEmail : null,
             $mobile        !== '' ? $mobile        : null,
@@ -181,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'chan
 $action          = trim((string)($_GET['action']        ?? ''));
 $statusChangeUuid = trim((string)($_GET['status_change'] ?? ''));
 
-$stmt = $pdo->prepare('SELECT * FROM trustees ORDER BY sub_trust_context, appointment_date, status');
+$stmt = $pdo->prepare('SELECT * FROM trustees ORDER BY status DESC, appointment_date ASC');
 $stmt->execute();
 $trustees = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -193,11 +195,12 @@ $typeLabels = [
     'managing_director'  => 'Managing Director',
     'director'           => 'Director',
 ];
-$subTrustLabels = [
-    'sub_trust_a' => 'Sub-Trust A',
-    'sub_trust_b' => 'Sub-Trust B',
-    'sub_trust_c' => 'Sub-Trust C',
+$opFocusLabels = [
+    'sub_trust_a' => 'Sub-Trust A (operational focus)',
+    'sub_trust_b' => 'Sub-Trust B (operational focus)',
+    'sub_trust_c' => 'Sub-Trust C (operational focus)',
     'all'         => 'All Sub-Trusts',
+    'none'        => 'None specified',
 ];
 $statusOptions = [
     'active'    => 'Active',
@@ -300,8 +303,9 @@ $statusBadge = [
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
     <div>
       <h2>👔 Trustees Register</h2>
-      <p>Full record of all current and former trustees of each sub-trust — names, dates of birth,
-         addresses, appointment dates, and cessation dates. Click <strong>Edit</strong> to update any record.</p>
+      <p>Full record of all current and former Trustees of the COGS of Australia Foundation
+         Community Joint Venture Mainspring Hybrid Trust. Each Trustee holds capacity over
+         the entire Hybrid Trust including all Sub-Trusts. Click <strong>Edit</strong> to update any record.</p>
     </div>
     <?php if ($action !== 'add'): ?>
       <a href="./trustees.php?action=add" class="btn btn-primary">+ Add Trustee</a>
@@ -362,20 +366,22 @@ $statusBadge = [
         </select>
       </div>
       <div class="fg">
-        <label>Sub-Trust Context <span class="required">*</span></label>
-        <select name="sub_trust_context" required>
-          <option value="">— select —</option>
-          <?php foreach ($subTrustLabels as $val => $lbl): ?>
-            <option value="<?= tr_h($val) ?>" <?= (($_POST['sub_trust_context'] ?? '') === $val) ? 'selected' : '' ?>>
+        <label>Operational Focus <span style="color:var(--dim)">(optional annotation)</span></label>
+        <select name="operational_focus">
+          <?php foreach ($opFocusLabels as $val => $lbl): ?>
+            <option value="<?= tr_h($val) ?>" <?= (($_POST['operational_focus'] ?? 'all') === $val) ? 'selected' : '' ?>>
               <?= tr_h($lbl) ?></option>
           <?php endforeach; ?>
         </select>
+        <div style="font-size:.71rem;color:var(--dim);margin-top:3px">
+          A Trustee holds capacity over the entire Hybrid Trust. This field is an internal annotation only.
+        </div>
       </div>
     </div>
     <div class="fg">
-      <label>OTP Email (sub-trust execution address) <span class="required">*</span></label>
+      <label>Execution Email (TDR OTP delivery address) <span class="required">*</span></label>
       <input type="email" name="email" required value="<?= tr_h($_POST['email'] ?? '') ?>"
-             placeholder="sub-trust-x@cogsaustralia.org">
+             placeholder="trustee@cogsaustralia.org">
     </div>
     <div class="fg-row">
       <div class="fg">
@@ -401,18 +407,7 @@ $statusBadge = [
 </div>
 <?php endif; ?>
 
-<?php
-$grouped    = [];
-foreach ($trustees as $t) $grouped[$t['sub_trust_context']][] = $t;
-$groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
-?>
-
-<?php foreach ($groupOrder as $ctx):
-  if (empty($grouped[$ctx])) continue; ?>
-
-<div class="sub-heading"><?= tr_h($subTrustLabels[$ctx] ?? $ctx) ?></div>
-
-<?php foreach ($grouped[$ctx] as $t):
+<?php foreach ($trustees as $t):
   [$bc,$bl] = $statusBadge[$t['status']] ?? ['badge-warn',$t['status']];
   $isEditing = ($editUuid === $t['trustee_uuid']); ?>
 
@@ -422,8 +417,10 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
       <h3><?= tr_h($t['full_name']) ?></h3>
       <div class="sub">
         <?= tr_h($typeLabels[$t['trustee_type']] ?? $t['trustee_type']) ?>
-        &nbsp;·&nbsp;
-        <?= tr_h($subTrustLabels[$t['sub_trust_context']] ?? $t['sub_trust_context']) ?>
+        &nbsp;·&nbsp; CJVM Hybrid Trust (incl. all Sub-Trusts)
+        <?php if (!empty($t['operational_focus']) && $t['operational_focus'] !== 'all' && $t['operational_focus'] !== 'none'): ?>
+          &nbsp;·&nbsp; <?= tr_h($opFocusLabels[$t['operational_focus']] ?? $t['operational_focus']) ?>
+        <?php endif; ?>
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -463,8 +460,11 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
       <span class="dg-l">Address</span>
       <span class="dg-v"><?= !empty($t['address']) ? tr_h($t['address']) : '—' ?></span>
 
-      <span class="dg-l">OTP Email</span>
+      <span class="dg-l">Execution Email</span>
       <span class="dg-v gold"><?= tr_h($t['email']) ?></span>
+
+      <span class="dg-l">Operational Focus</span>
+      <span class="dg-v"><?= tr_h($opFocusLabels[$t['operational_focus'] ?? 'all'] ?? '—') ?></span>
 
       <span class="dg-l">Date Appointed</span>
       <span class="dg-v"><?= tr_h($t['appointment_date']) ?></span>
@@ -602,7 +602,6 @@ $groupOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
 
 </div><!-- .trustee-card -->
 <?php endforeach; ?>
-<?php endforeach; ?>
 
 <?php if (empty($trustees)): ?>
   <p style="color:var(--sub);font-size:.85rem">No trustees found.</p>
@@ -662,6 +661,12 @@ foreach ($allTdrs as $tdr) {
     $tdrGrouped[$tdr['sub_trust_context']][] = $tdr;
 }
 $tdrContextOrder = ['sub_trust_a','sub_trust_b','sub_trust_c','all'];
+$tdrContextLabels = [
+    'sub_trust_a' => 'Sub-Trust A (Members Asset Pool)',
+    'sub_trust_b' => 'Sub-Trust B (Dividend Distribution)',
+    'sub_trust_c' => 'Sub-Trust C (Discretionary Charitable)',
+    'all'         => 'All Sub-Trusts',
+];
 $tdrCategoryLabels = [
     'bank_account'                  => 'Bank Account',
     'investment_instruction'        => 'Investment',
@@ -692,7 +697,7 @@ $tdrStatusBadge = [
 
 <?php foreach ($tdrContextOrder as $ctx):
   if (empty($tdrGrouped[$ctx])) continue;
-  $ctxLabel = $subTrustLabels[$ctx] ?? $ctx; ?>
+  $ctxLabel = $tdrContextLabels[$ctx] ?? $ctx; ?>
 
 <div style="margin-bottom:20px">
   <div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;

@@ -305,8 +305,8 @@ padding:10px 14px;font-family:monospace;font-size:.75rem;color:var(--gold);word-
             <input type="checkbox" name="acceptance_flag" required
                    <?= !empty($_POST['acceptance_flag']) ? 'checked' : '' ?>>
             I, <?= tdr_h(TrusteeDecisionService::EXECUTOR_NAME) ?>, execute Trustee Decision Record
-            <?= tdr_h($decision['decision_ref']) ?> as Caretaker Trustee of <?= tdr_h($subTrustLabel) ?>
-            of the COGS of Australia Foundation Community Joint Venture Mainspring Hybrid Trust.
+            <?= tdr_h($decision['decision_ref']) ?> as Caretaker Trustee of
+            the COGS of Australia Foundation Community Joint Venture Mainspring Hybrid Trust.
             I have read and understood this Record and I resolve as stated.
             <?= tdr_h(TrusteeDecisionService::EXECUTION_METHOD) ?>
           </label>
