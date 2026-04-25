@@ -165,6 +165,12 @@ try {
             'asset_pool_cents'                  => $asset_pool_cents,
             'asset_pool_per_member_cents'       => $per_member_cents,
             'reservation_per_member_cents'      => $reservation_per_member_cents,
+            'asset_pool_components'             => [
+                'asx_book_cents'   => $asx_book_cents,
+                'rwa_val_cents'    => $rwa_val_cents,
+                'sta_cash_cents'   => $sta_cash_cents,
+                'ip_infra_cents'   => $ip_infra_cents,
+            ],
             'classes' => [
                 'snft'       => (int)$tok['snft'],
                 'ksnft'      => (int)$tok['ksnft'],

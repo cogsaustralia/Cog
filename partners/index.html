@@ -1407,10 +1407,24 @@
               </div>
 
               <!-- JV Asset Pool -->
-              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:160px">
+              <div id="cs-asset-pool-card" style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:160px;position:relative;cursor:default" onmouseenter="showAssetBreakdown()" onmouseleave="hideAssetBreakdown()">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true">—</div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Asset Pool Value</div>
-                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">ASX · RWA · Sub-Trust A cash · IP formula<br><a href="../docs/COGS_System_Valuation_Report_v1_0.pdf" target="_blank" rel="noopener" style="color:rgba(110,168,216,.55);text-decoration:none;font-style:italic" onmouseover="this.style.color='rgba(110,168,216,.9)'" onmouseout="this.style.color='rgba(110,168,216,.55)'">↗ Valuation report v1.0</a></div>
+                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">ASX · RWA · Sub-Trust A cash · IP formula</div>
+                <a href="../docs/COGS_System_Valuation_Report_v1_0.pdf" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:5px 10px;border-radius:8px;background:rgba(110,168,216,.15);border:1px solid rgba(110,168,216,.35);color:#6ea8d8;font-size:.68rem;font-weight:600;letter-spacing:.04em;text-decoration:none;transition:background .2s,border-color .2s" onmouseover="this.style.background='rgba(110,168,216,.28)';this.style.borderColor='rgba(110,168,216,.60)'" onmouseout="this.style.background='rgba(110,168,216,.15)';this.style.borderColor='rgba(110,168,216,.35)'">&#x2B07; IP Valuation Report</a>
+                <!-- Hover breakdown panel -->
+                <div id="asset-breakdown-panel" style="display:none;position:absolute;bottom:calc(100% + 8px);left:0;min-width:260px;padding:12px 14px;border-radius:12px;background:rgba(10,16,28,.97);border:1px solid rgba(110,168,216,.30);box-shadow:0 12px 36px rgba(0,0,0,.65);z-index:60;pointer-events:none">
+                  <div style="font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(110,168,216,.55);margin-bottom:8px">Calculation breakdown</div>
+                  <table style="width:100%;border-collapse:collapse;font-size:.72rem;line-height:1.6">
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">ASX book value</td><td id="bp-asx" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">RWA verified valuation</td><td id="bp-rwa" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">Sub-Trust A cash</td><td id="bp-cash" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">IP formula ($475k + $250×N)</td><td id="bp-ip" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
+                    <tr><td colspan="2" style="border-top:1px solid rgba(110,168,216,.20);padding-top:5px;margin-top:3px"></td></tr>
+                    <tr><td style="color:#a0c8f0;font-weight:700;padding:2px 0">Total Asset Pool</td><td id="bp-total" style="text-align:right;color:#a0c8f0;font-family:monospace;font-weight:700">—</td></tr>
+                  </table>
+                  <div style="margin-top:6px;font-size:.60rem;color:rgba(110,168,216,.35);font-style:italic">IP valuation: Trustee-adopted formula v1.0</div>
+                </div>
               </div>
 
               <!-- Asset Value Per Member -->
@@ -2567,6 +2581,14 @@ async function loadCommunityStats(){
     if(el('cs-asset-pool'))               el('cs-asset-pool').textContent               = fmtC(s.asset_pool_cents);
     if(el('cs-asset-per-member'))         el('cs-asset-per-member').textContent         = fmtC(s.asset_pool_per_member_cents);
     if(el('cs-reservation-per-member'))   el('cs-reservation-per-member').textContent   = fmtC(s.reservation_per_member_cents);
+
+    // Populate asset pool breakdown panel (shown on hover)
+    var c = s.asset_pool_components || {};
+    if(el('bp-asx'))   el('bp-asx').textContent   = fmtC(c.asx_book_cents   || 0);
+    if(el('bp-rwa'))   el('bp-rwa').textContent   = fmtC(c.rwa_val_cents    || 0);
+    if(el('bp-cash'))  el('bp-cash').textContent  = fmtC(c.sta_cash_cents   || 0);
+    if(el('bp-ip'))    el('bp-ip').textContent    = fmtC(c.ip_infra_cents   || 0);
+    if(el('bp-total')) el('bp-total').textContent = fmtC(s.asset_pool_cents || 0);
 
     // Master control — people
     if(el('mc-members')) el('mc-members').textContent = fmt(s.personal_members);
@@ -4291,6 +4313,16 @@ document.addEventListener('cogsDataReady', function(e) {
     }
   });
 })();
+
+/* ── Asset Pool hover breakdown ── */
+window.showAssetBreakdown = function() {
+  var panel = document.getElementById('asset-breakdown-panel');
+  if(panel) panel.style.display = 'block';
+};
+window.hideAssetBreakdown = function() {
+  var panel = document.getElementById('asset-breakdown-panel');
+  if(panel) panel.style.display = 'none';
+};
 
 /* ── Share button glow on hover (JS for dynamic colour matching) ── */
 document.querySelectorAll('.share-btn').forEach(function(btn){
