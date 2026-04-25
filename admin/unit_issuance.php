@@ -268,8 +268,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $pdo->commit();
-            $flash = "Unit issued. Register: {$registerRef} | Certificate: {$certRef}" .
-                     ($emailQueueId > 0 ? ' | Certificate email queued.' : ' | Email queue unavailable — record saved.');
+
+            // PRG — redirect to clean success summary, no GET params that would re-show the issue form
+            $successUrl = admin_url('unit_issuance.php')
+                . '?tab=issued'
+                . '&register_ref=' . urlencode($registerRef)
+                . '&cert_ref='     . urlencode($certRef)
+                . '&class_code='   . urlencode($unitClassCode)
+                . '&class_name='   . urlencode($def['name'])
+                . '&member_name='  . urlencode($member['full_name'])
+                . '&member_num='   . urlencode($member['member_number'])
+                . '&units='        . urlencode((string)$unitsIssued)
+                . '&email_sent='   . ($emailQueueId > 0 ? '1' : '0');
+            header('Location: ' . $successUrl);
+            exit;
         }
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
@@ -278,7 +290,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ── View state ────────────────────────────────────────────────────────────────
-$viewTab = in_array($_GET['tab'] ?? '', ['issue','register','certs'], true) ? $_GET['tab'] : 'issue';
+$viewTab = in_array($_GET['tab'] ?? '', ['issue','register','certs','issued'], true) ? $_GET['tab'] : 'issue';
+
+// Success params (populated after PRG redirect)
+$successRegRef   = (string)($_GET['register_ref'] ?? '');
+$successCertRef  = (string)($_GET['cert_ref']     ?? '');
+$successClass    = (string)($_GET['class_code']   ?? '');
+$successName     = (string)($_GET['class_name']   ?? '');
+$successMember   = (string)($_GET['member_name']  ?? '');
+$successMemberNum= (string)($_GET['member_num']   ?? '');
+$successUnits    = (string)($_GET['units']        ?? '');
+$successEmailSent= ((string)($_GET['email_sent']  ?? '0')) === '1';
 
 $totalIssued = $totalCerts = $pendingEmail = 0;
 $classBreakdown = $recentIssuances = [];
@@ -387,6 +409,9 @@ $todayDate = date('Y-m-d');
   <a href="?tab=issue"    class="<?= $viewTab === 'issue'    ? 'active' : '' ?>">📋 Issue Units</a>
   <a href="?tab=register" class="<?= $viewTab === 'register' ? 'active' : '' ?>">📚 Issuance Register</a>
   <a href="?tab=certs"    class="<?= $viewTab === 'certs'    ? 'active' : '' ?>">🏅 Certificates</a>
+  <?php if ($viewTab === 'issued'): ?>
+  <a href="?tab=issued"   class="active" style="background:rgba(82,184,122,.15);border-color:rgba(82,184,122,.3);color:#7ee0a0;">✅ Issued</a>
+  <?php endif; ?>
 </div>
 
 <?php if ($viewTab === 'issue'): ?>
@@ -653,6 +678,84 @@ $certRows = rows($pdo,
     </table>
   </div>
   <?php endif; ?>
+</div>
+
+<?php elseif ($viewTab === 'issued'): ?>
+<!-- ── ISSUED SUCCESS TAB ───────────────────────────────────────────────────── -->
+
+<div class="card" style="border-color:rgba(82,184,122,.3);">
+  <div class="card-head" style="border-color:rgba(82,184,122,.2);">
+    <h2 style="color:#7ee0a0;">✅ Unit Issued Successfully</h2>
+    <span class="muted small"><?= h(date('j M Y')) ?></span>
+  </div>
+  <div class="card-body">
+    <p class="muted" style="margin-bottom:18px;font-size:13px;">
+      The unit has been recorded in the legal register and a Certificate of Unit Holding has been queued for delivery.
+      This record is permanent and cannot be undone.
+    </p>
+
+    <table class="sum-table" style="margin-bottom:20px;">
+      <tr>
+        <td>Register reference</td>
+        <td><span class="mono" style="font-size:14px;color:var(--gold);"><?= h($successRegRef) ?></span></td>
+      </tr>
+      <tr>
+        <td>Certificate reference</td>
+        <td><span class="mono" style="font-size:14px;color:var(--gold);"><?= h($successCertRef) ?></span></td>
+      </tr>
+      <tr>
+        <td>Unitholder</td>
+        <td>
+          <?= h($successMember) ?>
+          <?php if ($successMemberNum !== ''): ?>
+            <span class="muted small" style="margin-left:8px;"><?= h($successMemberNum) ?></span>
+          <?php endif; ?>
+        </td>
+      </tr>
+      <tr>
+        <td>Unit class</td>
+        <td>
+          <?= h($successName) ?>
+          <?php if ($successClass !== ''): ?>
+            <span class="mono small" style="margin-left:8px;color:var(--sub);">(Class <?= h($successClass) ?>)</span>
+          <?php endif; ?>
+        </td>
+      </tr>
+      <tr>
+        <td>Units issued</td>
+        <td class="mono"><?= h(number_format((float)$successUnits)) ?></td>
+      </tr>
+      <tr>
+        <td>Certificate email</td>
+        <td>
+          <?php if ($successEmailSent): ?>
+            <span class="st st-ok">✅ Queued for delivery</span>
+          <?php else: ?>
+            <span class="st st-warn">⏳ Email queue unavailable — register record saved</span>
+          <?php endif; ?>
+        </td>
+      </tr>
+    </table>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=issue&amp;issue_class=<?= urlencode($successClass) ?>"
+         class="btn btn-gold">
+        ＋ Issue another <?= h($successClass) ?> unit
+      </a>
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=issue"
+         class="btn">
+        📋 Back to Issue Units
+      </a>
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=register"
+         class="btn">
+        📚 View Register
+      </a>
+      <a href="<?= h(admin_url('unit_issuance.php')) ?>?tab=certs"
+         class="btn">
+        🏅 View Certificates
+      </a>
+    </div>
+  </div>
 </div>
 
 <?php endif; // viewTab ?>
