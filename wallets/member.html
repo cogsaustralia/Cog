@@ -5327,12 +5327,16 @@ window.saveResNew        = saveResNew;
 window.resetReservations = resetReservations;
 window.trToggle          = trToggle;
 
-/* Auto-open profile drawer when redirected from external nav pill */
-if (window.__openProfileOnLoad) {
-  window.addEventListener('load', function() {
-    setTimeout(openProfileDrawer, 600);
-  });
-}
+/* Auto-open profile drawer when navigated from external nav pill */
+(function(){
+  var intent = sessionStorage.getItem('iv_intent');
+  if (intent === 'profile') {
+    sessionStorage.removeItem('iv_intent');
+    window.addEventListener('load', function() {
+      setTimeout(openProfileDrawer, 800);
+    });
+  }
+})();
 window.markOneRead       = markOneRead;
 window.dismissNews       = dismissNews;
 window.fmtDp             = fmtDp;
