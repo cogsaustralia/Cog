@@ -129,17 +129,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'issu
         $link  = 'https://cogsaustralia.org/execute_tdr.php?token=' . urlencode($raw);
 
         $subj     = '[COG$] Execute Trustee Decision Record — ' . $decision['decision_ref'];
+        $scLabel  = $subTrustLabels[$decision['sub_trust_context']] ?? strtoupper(str_replace('_', '-', $decision['sub_trust_context']));
         $htmlBody = '<p>Trustee Decision Record Execution</p>'
             . '<p><strong>Reference:</strong> ' . htmlspecialchars($decision['decision_ref'], ENT_QUOTES) . '<br>'
             . '<strong>Title:</strong> ' . htmlspecialchars($decision['title'], ENT_QUOTES) . '<br>'
-            . '<strong>Sub-Trust:</strong> ' . strtoupper(str_replace('_', '-', $decision['sub_trust_context'])) . '</p>'
+            . '<strong>Sub-Committee:</strong> ' . htmlspecialchars($scLabel, ENT_QUOTES) . '</p>'
             . '<p>Your one-time execution link (valid 15 minutes):</p>'
             . '<p><a href="' . htmlspecialchars($link, ENT_QUOTES) . '">' . htmlspecialchars($link, ENT_QUOTES) . '</a></p>'
             . '<p>This link is single-use. Do not forward it.</p>';
         $textBody = "Trustee Decision Record Execution\n\n"
             . "Reference: {$decision['decision_ref']}\n"
             . "Title: {$decision['title']}\n"
-            . "Sub-Trust: " . strtoupper(str_replace('_', '-', $decision['sub_trust_context'])) . "\n\n"
+            . "Sub-Committee: {$scLabel}\n\n"
             . "Your one-time execution link (valid 15 minutes):\n{$link}\n\n"
             . "This link is single-use. Do not forward it.";
 
@@ -219,10 +220,17 @@ $categoryLabels = [
     'other'                         => 'Other',
 ];
 $subTrustLabels = [
-    'sub_trust_a' => 'Sub-Trust A',
-    'sub_trust_b' => 'Sub-Trust B',
-    'sub_trust_c' => 'Sub-Trust C',
-    'all'         => 'All Sub-Trusts',
+    'sub_trust_a' => 'STA — Operations, Financial & Technical',
+    'sub_trust_b' => 'STB — Research, ESG & Education',
+    'sub_trust_c' => 'STC — FNAC, Community & Place-Based',
+    'all'         => 'All Sub-Committees',
+];
+// Sub-committee hub membership — for display context in TDR create/edit forms
+$subCommitteeHubs = [
+    'sub_trust_a' => ['Day-to-Day Operations', 'Financial Oversight', 'Technology & Blockchain'],
+    'sub_trust_b' => ['Research & Acquisitions', 'ESG & Proxy Voting', 'Education & Outreach'],
+    'sub_trust_c' => ['First Nations JV', 'Community Projects', 'Place-Based Decisions'],
+    'all'         => ['All nine management hubs'],
 ];
 $statusBadge = [
     'draft'             => ['badge-warn', 'Draft'],
@@ -427,13 +435,13 @@ body.cert-open .admin-shell { display: none; }
   <div class="form-card">
     <h3>Step 1 — Identification</h3>
     <div class="form-group">
-      <label>Sub-Trust Context <span class="required">*</span></label>
+      <label>Sub-Committee / Sub-Trust Context <span class="required">*</span></label>
       <select name="sub_trust_context" required>
         <option value="">— select —</option>
-        <option value="sub_trust_a">Sub-Trust A (Members Asset Pool)</option>
-        <option value="sub_trust_b">Sub-Trust B</option>
-        <option value="sub_trust_c">Sub-Trust C</option>
-        <option value="all">All Sub-Trusts</option>
+        <option value="sub_trust_a">STA — Operations, Financial &amp; Technical (Ops · Finance · Tech/Blockchain)</option>
+        <option value="sub_trust_b">STB — Research, ESG &amp; Education (Research &amp; Acquisitions · ESG · Education &amp; Outreach)</option>
+        <option value="sub_trust_c">STC — FNAC, Community &amp; Place-Based (First Nations · Community Projects · Place-Based)</option>
+        <option value="all">All Sub-Committees — Hybrid Trust-wide</option>
       </select>
     </div>
     <div class="form-group">
@@ -552,7 +560,7 @@ body.cert-open .admin-shell { display: none; }
   <div class="form-card">
     <h3>Step 1 — Identification</h3>
     <div class="form-group">
-      <label>Sub-Trust Context <span class="required">*</span></label>
+      <label>Sub-Committee / Sub-Trust Context <span class="required">*</span></label>
       <select name="sub_trust_context" required>
         <option value="">— select —</option>
         <?php foreach ($subTrustLabels as $val => $lbl): ?>
@@ -560,6 +568,11 @@ body.cert-open .admin-shell { display: none; }
             <?= td_h($lbl) ?></option>
         <?php endforeach; ?>
       </select>
+      <?php $hubs = $subCommitteeHubs[$decision['sub_trust_context']] ?? []; if ($hubs): ?>
+        <div style="font-size:.72rem;color:var(--sub);margin-top:4px">
+          Hubs: <?= td_h(implode(' · ', $hubs)) ?>
+        </div>
+      <?php endif; ?>
     </div>
     <div class="form-group">
       <label>Decision Category <span class="required">*</span></label>
@@ -694,7 +707,7 @@ body.cert-open .admin-shell { display: none; }
     <div class="dg">
       <span class="dg-l">Reference</span><span class="dg-v gold"><?= td_h($decision['decision_ref']) ?></span>
       <span class="dg-l">UUID</span><span class="dg-v mono"><?= td_h($decision['decision_uuid']) ?></span>
-      <span class="dg-l">Sub-Trust</span><span class="dg-v"><?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?></span>
+      <span class="dg-l">Sub-Committee</span><span class="dg-v"><?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?></span>
       <span class="dg-l">Category</span><span class="dg-v"><?= td_h($categoryLabels[$decision['decision_category']] ?? $decision['decision_category']) ?></span>
       <span class="dg-l">Effective Date</span><span class="dg-v"><?= td_h($decision['effective_date']) ?></span>
       <span class="dg-l">Status</span><span class="dg-v"><span class="badge <?= $bc ?>"><?= $bl ?></span></span>
@@ -1049,7 +1062,7 @@ function toggleGroup(grpId) {
     <div class="cert-section-title">Record Identity</div>
     <div class="cert-row"><div class="cert-lbl">Reference</div><div class="cert-val highlight"><?= td_h($decision['decision_ref']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Title</div><div class="cert-val highlight"><?= td_h($decision['title']) ?></div></div>
-    <div class="cert-row"><div class="cert-lbl">Sub-Trust</div><div class="cert-val"><?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?></div></div>
+    <div class="cert-row"><div class="cert-lbl">Sub-Committee</div><div class="cert-val"><?= td_h($subTrustLabels[$decision['sub_trust_context']] ?? $decision['sub_trust_context']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Category</div><div class="cert-val"><?= td_h($categoryLabels[$decision['decision_category']] ?? $decision['decision_category']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Effective Date</div><div class="cert-val"><?= td_h($decision['effective_date']) ?></div></div>
     <div class="cert-row"><div class="cert-lbl">Decision UUID</div><div class="cert-val mono"><?= td_h($decision['decision_uuid']) ?></div></div>

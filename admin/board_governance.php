@@ -488,9 +488,9 @@ details[open] summary { color:var(--text); }
         </select></label>
         <label>Sub-Committee<select name="sub_committee">
           <option value="none">None</option>
-          <option value="STA">STA — Finance &amp; Regulatory</option>
-          <option value="STB">STB — Member Affairs</option>
-          <option value="STC">STC — Charity &amp; Community</option>
+          <option value="STA">STA — Operations, Financial &amp; Technical</option>
+          <option value="STB">STB — Research, ESG &amp; Education</option>
+          <option value="STC">STC — FNAC, Community &amp; Place-Based</option>
         </select></label>
         <label>SC Role<select name="sub_committee_role">
           <option value="none">None</option>
@@ -605,72 +605,129 @@ details[open] summary { color:var(--text); }
 <!-- ── Board Architecture Reference ─────────────────────────────────────── -->
 <div class="card">
   <div class="card-head">
-    <h2>Board Architecture Reference<?php echo ops_admin_help_button('Architecture Reference', 'Board Governance Pack v1.0 — Part 1 architecture. Single unitary Board, 3–9 Directors, three Sub-Trust Sub-Committees (STA/STB/STC), FNAC standing advisory body. Governing clauses: Declaration cl.14.1–14.6, cl.15.1–15.5, cl.15A.4, cl.33A, cl.35(l). JVPA cl.6.1–6.7A.'); ?></h2>
+    <h2>Board Architecture Reference<?php echo ops_admin_help_button('Architecture Reference', 'Board Governance Pack v1.0 — Part 1 architecture. Single unitary Board, 3–9 Directors, three Management Hub Sub-Committees (STA/STB/STC), FNAC standing advisory body. Each sub-committee oversees three of the nine management hub areas. Governing clauses: Declaration cl.14.1–14.6, cl.15.1–15.5, cl.15A.4, cl.33A, cl.35(l). JVPA cl.6.1–6.7A.'); ?></h2>
   </div>
   <div class="card-body" style="font-size:13px">
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
 
+      <!-- STA -->
       <div style="background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:14px">
-        <div style="font-weight:700;color:var(--gold);margin-bottom:8px">📋 STA — Finance, Regulatory &amp; Commercial</div>
-        <ul style="margin:0;padding-left:16px;color:var(--sub);font-size:12px;line-height:1.7">
-          <li>Financial management, treasury, reporting</li>
-          <li>Corporations Act, Trustee Act compliance</li>
-          <li>ASX holdings, portfolio voting, ESG</li>
-          <li>ASIC Innovation Hub engagement</li>
-          <li>Audit and assurance liaison</li>
-          <li>Tier 2 issuance preparatory work</li>
-        </ul>
-        <div style="margin-top:8px;font-size:11px;color:var(--sub)">Chair: cl.14.4(b) Director (recommended)</div>
+        <div style="font-weight:700;color:var(--gold);margin-bottom:4px">📋 STA — Operations, Financial &amp; Technical</div>
+        <div style="font-size:11px;color:rgba(212,178,92,.6);margin-bottom:10px;font-weight:600;letter-spacing:.04em">Sub-Trust A Sub-Committee</div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 1 — Day-to-Day Operations</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>Platform operations, system health, admin oversight</li>
+            <li>Approvals queue, exception management</li>
+            <li>Monitor, error logging, deployment controls</li>
+          </ul>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 2 — Financial Oversight</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>Godley accounting, trust income, distributions</li>
+            <li>Payments, expenses, audit access</li>
+            <li>STB distributions ledger, financial reporting</li>
+          </ul>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 3 — Technology &amp; Blockchain</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>Ledger infrastructure, Hyperledger Besu migration</li>
+            <li>Mint queue, RWA reconciliation, hub queries</li>
+            <li>CHESS register, evidence vault anchoring</li>
+          </ul>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--sub)">Chair: cl.14.4(b) Director — professional expertise (recommended)</div>
       </div>
 
+      <!-- STB -->
       <div style="background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:14px">
-        <div style="font-weight:700;color:var(--gold);margin-bottom:8px">📋 STB — Member Affairs &amp; Compliance</div>
-        <ul style="margin:0;padding-left:16px;color:var(--sub);font-size:12px;line-height:1.7">
-          <li>Member communications, onboarding, education</li>
-          <li>Members Polls facilitation (JVPA Part 6)</li>
-          <li>Independence Vault support</li>
-          <li>KYC/AML, B-NFT verification</li>
-          <li>Dormant Member classification (cl.4.11)</li>
-          <li>Dispute resolution intake</li>
-        </ul>
+        <div style="font-weight:700;color:var(--gold);margin-bottom:4px">📋 STB — Research, ESG &amp; Education</div>
+        <div style="font-size:11px;color:rgba(212,178,92,.6);margin-bottom:10px;font-weight:600;letter-spacing:.04em">Sub-Trust B Sub-Committee</div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 4 — Research &amp; Acquisitions</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>ASX purchase proposals, portfolio research</li>
+            <li>Binding polls for acquisition mandates</li>
+            <li>RWA valuations, business interest register</li>
+          </ul>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 5 — ESG &amp; Proxy Voting</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>ASX holdings register, CHESS proxy voting</li>
+            <li>Aggregate Unitholder Direction (cl.13A)</li>
+            <li>ESG scoring, anti-greenwashing compliance (cl.34A)</li>
+          </ul>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 6 — Education &amp; Outreach</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>Member onboarding, education modules, Kids tokens</li>
+            <li>Partner registry, wallet messages, announcements</li>
+            <li>Email access, outreach campaigns</li>
+          </ul>
+        </div>
         <div style="margin-top:8px;font-size:11px;color:var(--sub)">Chair: Director appointed by Board resolution</div>
       </div>
 
+      <!-- STC -->
       <div style="background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:14px">
-        <div style="font-weight:700;color:var(--gold);margin-bottom:8px">📋 STC — Charity &amp; Community</div>
-        <ul style="margin:0;padding-left:16px;color:var(--sub);font-size:12px;line-height:1.7">
-          <li>Sub-Trust C grant-making (30% First Nations priority)</li>
-          <li>Charity registration, ACNC compliance</li>
-          <li>Seat of Country stewardship (cl.33B)</li>
-          <li>LALC &amp; PBC engagement</li>
-          <li>ICIP compliance review</li>
-          <li>Annual grants report for FNAC endorsement</li>
-        </ul>
-        <div style="margin-top:8px;font-size:11px;color:var(--sub)">Chair: Director appointed by Board resolution</div>
+        <div style="font-weight:700;color:var(--gold);margin-bottom:4px">📋 STC — FNAC, Community &amp; Place-Based</div>
+        <div style="font-size:11px;color:rgba(212,178,92,.6);margin-bottom:10px;font-weight:600;letter-spacing:.04em">Sub-Trust C Sub-Committee</div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 7 — First Nations Joint Venture</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>FNAC engagement, FPIC protocol, ICIP compliance</li>
+            <li>JLALC liaison, evidence reviews, zones management</li>
+            <li>First Nations grants (30% priority, cl.27.3)</li>
+          </ul>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 8 — Community Projects</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>Sub-Trust C grant-making, ACNC/DGR compliance</li>
+            <li>Stewardship responses, trust income allocation</li>
+            <li>Community project pipeline, announcements</li>
+          </ul>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Hub 9 — Place-Based Decisions</div>
+          <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+            <li>Zone management, RWA asset register</li>
+            <li>Seat of Country stewardship (cl.33B)</li>
+            <li>Affected Zone declarations, asset backing</li>
+          </ul>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--sub)">Chair: Director appointed by Board resolution (FNAC nominee cl.14.4(c) recommended)</div>
       </div>
 
+      <!-- FNAC -->
       <div style="background:rgba(100,180,255,.06);border:1px solid rgba(100,180,255,.2);border-radius:10px;padding:14px">
-        <div style="font-weight:700;color:#7cc4ff;margin-bottom:8px">★ FNAC — First Nations Advisory Council</div>
-        <ul style="margin:0;padding-left:16px;color:var(--sub);font-size:12px;line-height:1.7">
-          <li>Standing advisory body — not a sub-committee</li>
-          <li>Entrenched cl.14.4(c) Director nomination</li>
+        <div style="font-weight:700;color:#7cc4ff;margin-bottom:4px">★ FNAC — First Nations Advisory Council</div>
+        <div style="font-size:11px;color:rgba(100,180,255,.5);margin-bottom:10px;font-weight:600;letter-spacing:.04em">Standing Advisory Body — not a sub-committee</div>
+        <ul style="margin:0;padding-left:14px;color:var(--sub);font-size:11px;line-height:1.65">
+          <li>Entrenched cl.14.4(c) Director nomination right</li>
           <li>Endorsement rights under cl.33A.3 and cl.35(l)</li>
-          <li>Primary nominating body: Jubullum LALC</li>
-          <li>Transitional arrangements: cl.33A.1A</li>
-          <li>18-month remediation trigger; 24-month longstop</li>
+          <li>Reviews all STC sub-committee decisions affecting Country</li>
+          <li>Co-designs Voting Weight Rules with the Board</li>
+          <li>Annual endorsement of Sub-Trust C grants report</li>
+          <li>Primary nominating body: Jubullum LALC (transitional: cl.33A.1A)</li>
         </ul>
-        <div style="margin-top:8px;font-size:11px;color:var(--sub)">Contact: Ken Avery (Chair), Priscilla Bell (Deputy)</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--sub)">Contact: Ken Avery (Chair) · Priscilla Bell (Deputy)</div>
       </div>
 
     </div>
 
     <div style="margin-top:16px;padding:12px 16px;background:rgba(212,178,92,.07);border:1px solid rgba(212,178,92,.2);border-radius:10px;font-size:12px;color:var(--sub)">
       <strong style="color:var(--gold)">Board size ramp:</strong>
-      Phase 1 — 3 founding Directors (mandatory seats) →
+      Phase 1 — 3 founding Directors (mandatory seats, one per sub-committee) →
       Phase 2 — +3 Sub-Committee chairs (target: ≤12 months of Inaugural Meeting) →
       Phase 3 — +3 at-large Directors (target: ≤24 months).
       Maximum 9 Directors (cl.14.1). Terms: 2 years, max 3 consecutive (cl.14.3).
       Mandatory composition (cl.14.4) must be maintained at every size.
+      Each sub-committee (STA/STB/STC) maps to three of the nine management hubs.
     </div>
   </div>
 </div>
