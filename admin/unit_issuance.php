@@ -207,6 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $memberId     = (int)($_POST['member_id'] ?? 0);
         $unitClassCode = trim((string)($_POST['unit_class_code'] ?? ''));
 
+        if (!$tablesReady) throw new RuntimeException('SQL migration not yet run. Run both migration files via phpMyAdmin first.');
         if ($action === 'issue_unit') {
             if ($memberId <= 0) throw new RuntimeException('Member ID required.');
             if ($unitClassCode === '') throw new RuntimeException('Unit class required.');
@@ -370,22 +371,30 @@ $filterMember = trim((string)($_GET['member'] ?? ''));
 $viewTab      = in_array($_GET['tab'] ?? '', ['issue', 'register', 'certs'], true)
                 ? $_GET['tab'] : 'issue';
 
-// Stats
-$totalIssued  = (int)(one($pdo, "SELECT COUNT(*) AS n FROM unit_issuance_register")['n'] ?? 0);
-$totalCerts   = (int)(one($pdo, "SELECT COUNT(*) AS n FROM unitholder_certificates")['n'] ?? 0);
-$pendingEmail = (int)(one($pdo, "SELECT COUNT(*) AS n FROM unitholder_certificates WHERE email_sent_at IS NULL")['n'] ?? 0);
-$classBreakdown = rows($pdo,
-    "SELECT unit_class_code, unit_class_name, COUNT(*) AS cnt, SUM(units_issued) AS total_units
-     FROM unit_issuance_register GROUP BY unit_class_code, unit_class_name ORDER BY unit_class_code");
+// Table existence guard — show install notice if SQL migration not yet run
+$tablesReady = ops_has_table($pdo, 'unit_issuance_register') && ops_has_table($pdo, 'unitholder_certificates');
 
-// Recent issuances
-$recentIssuances = rows($pdo,
-    "SELECT uir.*, m.full_name, m.member_number, m.email,
-            uc.cert_ref, uc.email_sent_at
-     FROM unit_issuance_register uir
-     INNER JOIN members m ON m.id = uir.member_id
-     LEFT JOIN unitholder_certificates uc ON uc.issuance_id = uir.id
-     ORDER BY uir.created_at DESC LIMIT 50");
+// Stats
+$totalIssued    = 0;
+$totalCerts     = 0;
+$pendingEmail   = 0;
+$classBreakdown = [];
+$recentIssuances = [];
+if ($tablesReady) {
+    $totalIssued  = (int)(one($pdo, "SELECT COUNT(*) AS n FROM unit_issuance_register")['n'] ?? 0);
+    $totalCerts   = (int)(one($pdo, "SELECT COUNT(*) AS n FROM unitholder_certificates")['n'] ?? 0);
+    $pendingEmail = (int)(one($pdo, "SELECT COUNT(*) AS n FROM unitholder_certificates WHERE email_sent_at IS NULL")['n'] ?? 0);
+    $classBreakdown = rows($pdo,
+        "SELECT unit_class_code, unit_class_name, COUNT(*) AS cnt, SUM(units_issued) AS total_units
+         FROM unit_issuance_register GROUP BY unit_class_code, unit_class_name ORDER BY unit_class_code");
+    $recentIssuances = rows($pdo,
+        "SELECT uir.*, m.full_name, m.member_number, m.email,
+                uc.cert_ref, uc.email_sent_at
+         FROM unit_issuance_register uir
+         INNER JOIN members m ON m.id = uir.member_id
+         LEFT JOIN unitholder_certificates uc ON uc.issuance_id = uir.id
+         ORDER BY uir.created_at DESC LIMIT 50");
+}
 
 $defs      = uir_class_defs();
 $csrf      = h(admin_csrf_token());
@@ -396,6 +405,18 @@ admin_render_header('unit_issuance', 'Unit Issuance Register',
     'Issue units, generate certificates, and maintain the formal unitholder register');
 ?>
 
+<?php if (!$tablesReady): ?>
+<div class="alert alert-err" style="margin-bottom:18px;">
+  <strong>⚠ SQL migration required</strong> — The tables <code>unit_issuance_register</code> and
+  <code>unitholder_certificates</code> do not exist in the database yet.<br>
+  Run both SQL migration files via phpMyAdmin against <code>cogsaust_TRUST</code>:
+  <ol style="margin:.5rem 0 0 1.2rem;line-height:2;">
+    <li><code>2026_04_25_unit_issuance_register.sql</code></li>
+    <li><code>2026_04_25_unitholder_certificate_email_template.sql</code></li>
+  </ol>
+  Then reload this page.
+</div>
+<?php else: ?>
 <?php if ($flash): ?>
 <div class="alert alert-<?= $flashType === 'ok' ? 'ok' : 'err' ?>"><?= h($flash) ?></div>
 <?php endif; ?>
@@ -470,7 +491,7 @@ admin_render_header('unit_issuance', 'Unit Issuance Register',
       <tbody>
         <?php foreach ($defs as $code => $def):
             $isOpen    = uir_class_is_open($def, $gate2Open);
-            $issuedRow = one($pdo, "SELECT COUNT(*) AS cnt FROM unit_issuance_register WHERE unit_class_code = ?", [$code]);
+            $issuedRow = $tablesReady ? one($pdo, "SELECT COUNT(*) AS cnt FROM unit_issuance_register WHERE unit_class_code = ?", [$code]) : null;
             $issuedCnt = (int)($issuedRow['cnt'] ?? 0);
             $gateLabel = $def['gate'] === 1 ? 'Gate 1' : ($def['gate'] === 2 ? 'Gate 2' : 'Gate 3');
             $certLabel = $def['cert_type'] === 'financial' ? 'Financial' :
@@ -722,14 +743,14 @@ if ($issueClass !== '' && isset($defs[$issueClass]) && uir_class_is_open($defs[$
 <!-- ── CERTIFICATES TAB ────────────────────────────────────────────────── -->
 
 <?php
-$certRows = rows($pdo,
+$certRows = $tablesReady ? rows($pdo,
     "SELECT uc.*, m.full_name, m.member_number, m.email,
             uir.unit_class_name, uir.register_ref, uir.sha256_hash,
             uir.consideration_cents, uir.issue_trigger, uir.gate
      FROM unitholder_certificates uc
      INNER JOIN members m ON m.id = uc.member_id
      INNER JOIN unit_issuance_register uir ON uir.id = uc.issuance_id
-     ORDER BY uc.created_at DESC LIMIT 100");
+     ORDER BY uc.created_at DESC LIMIT 100") : [];
 ?>
 <div class="card">
   <div class="card-head">
@@ -787,4 +808,5 @@ $certRows = rows($pdo,
 
 <?php endif; // viewTab ?>
 
+<?php endif; // tablesReady ?>
 <?php admin_render_footer(); ?>
