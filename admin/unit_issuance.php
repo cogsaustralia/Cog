@@ -400,18 +400,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // ── Resend failed certificate emails ─────────────────────────────────
         if ($action === 'resend_certs') {
+            $sent = 0;
+
+            // Case 1: certs where email_queue_id IS NULL — never queued, build payload and send directly
+            $unqueued = $pdo->query(
+                "SELECT uc.id AS cert_id, uc.cert_ref, uc.unit_class_code, uc.cert_type,
+                        uc.units, uc.issue_date, uc.issuance_id,
+                        m.full_name, m.email, m.member_number, m.member_type,
+                        uir.unit_class_name, uir.register_ref, uir.sha256_hash, uir.issue_trigger
+                 FROM unitholder_certificates uc
+                 INNER JOIN members m ON m.id = uc.member_id
+                 INNER JOIN unit_issuance_register uir ON uir.id = uc.issuance_id
+                 WHERE uc.email_queue_id IS NULL"
+            )->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($unqueued as $row) {
+                $defs    = uir_class_defs();
+                $def     = $defs[$row['unit_class_code']] ?? [];
+                $gate    = (int)($def['gate'] ?? 1);
+                $payload = [
+                    'full_name'        => $row['full_name'],
+                    'first_name'       => explode(' ', trim($row['full_name']))[0],
+                    'email'            => $row['email'],
+                    'member_number'    => $row['member_number'],
+                    'member_type'      => $row['member_type'],
+                    'unit_class_code'  => $row['unit_class_code'],
+                    'unit_class_name'  => $row['unit_class_name'],
+                    'cert_type'        => $row['cert_type'],
+                    'units_issued'     => (string)$row['units'],
+                    'issue_date'       => $row['issue_date'],
+                    'register_ref'     => $row['register_ref'],
+                    'cert_ref'         => $row['cert_ref'],
+                    'sha256_hash'      => $row['sha256_hash'],
+                    'issue_trigger'    => $row['issue_trigger'],
+                    'gate'             => $gate,
+                    'consideration_cents' => 0,
+                ];
+                $subject = 'COG$ Certificate of Unit Holding — ' . $row['unit_class_name'] . ' — ' . $row['cert_ref'];
+                $qid = queueEmail($pdo, 'unit_certificate', (int)$row['issuance_id'],
+                    $row['email'], 'unitholder_certificate', $subject, $payload);
+                if ($qid > 0) {
+                    $pdo->prepare("UPDATE unitholder_certificates SET email_queue_id = ? WHERE id = ?")
+                        ->execute([$qid, $row['cert_id']]);
+                }
+            }
+
+            // Case 2: reset any failed/pending queue rows back to pending
             $pdo->prepare(
                 "UPDATE email_queue SET status = 'pending', last_error = NULL, updated_at = UTC_TIMESTAMP()
-                 WHERE template_key = 'unit_certificate' AND status IN ('failed','pending')"
+                 WHERE template_key = 'unitholder_certificate' AND status IN ('failed','pending')"
             )->execute();
-            $pdo->prepare(
-                "UPDATE unitholder_certificates uc
-                 INNER JOIN email_queue eq ON eq.id = uc.email_queue_id
-                 SET uc.email_sent_at = NULL
-                 WHERE eq.template_key = 'unit_certificate' AND eq.status = 'pending'"
-            )->execute();
+
+            // Process up to 50 certificate emails now
             $result = processEmailQueue($pdo, 50);
-            $sent = (int)($result['processed'] ?? 0);
+            $sent   = (int)($result['processed'] ?? 0);
             header('Location: ' . admin_url('unit_issuance.php') . '?tab=certs&resend_result=' . $sent);
             exit;
         }
@@ -797,7 +839,7 @@ $certRows = rows($pdo,
 
 $failedCount = 0;
 foreach ($certRows as $cr) {
-    if (($cr['queue_status'] ?? '') === 'failed') $failedCount++;
+    if (($cr['queue_status'] ?? null) === 'failed' || $cr['email_queue_id'] === null) $failedCount++;
 }
 $resendResult = isset($_GET['resend_result']) ? (int)$_GET['resend_result'] : -1;
 ?>
