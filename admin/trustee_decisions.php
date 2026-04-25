@@ -803,7 +803,7 @@ body.cert-open .admin-shell { display: none; }
       <div style="color:var(--gold);font-size:.78rem;font-weight:600;letter-spacing:.04em">OPEN PDF ↗</div>
     </a>
     <p style="font-size:.72rem;color:var(--dim);margin-top:10px;line-height:1.5">
-      SHA-256: <span style="font-family:monospace">f87464e7a9dec0e1660f9632ef8df73e7fed67c852e825c4aadd7102ce21ace6</span>
+      SHA-256: <span style="font-family:monospace">5d21dbb217b2d5dcfcd71130b22b229241fb756c9968c43cd26318eb80ba14fb</span>
     </p>
   </div>
 </div>
