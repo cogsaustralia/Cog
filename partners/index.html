@@ -1407,14 +1407,14 @@
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:160px">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true">—</div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Asset Pool Value</div>
-                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">ASX · Sub-Trust A cash · IP &amp; infra</div>
+                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">ASX · Sub-Trust A cash · IP &amp; infra<br><span style="font-style:italic">IP: $475k + $250×N (Valuation v1.0)</span></div>
               </div>
 
               <!-- Asset Value Per Member -->
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:140px">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-per-member" data-countup="true">—</div>
-                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Value Per Member</div>
-                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">Asset pool ÷ members</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Avg. Value Per Member</div>
+                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">Asset pool ÷ members<br><span style="font-style:italic">Incl. IP valuation formula</span></div>
               </div>
 
             </div>
@@ -1433,6 +1433,13 @@
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(126,232,162,.07),rgba(82,184,122,.03));border:1.5px solid rgba(126,232,162,.20);min-width:130px">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-value" data-countup="true">—</div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.65);margin-top:6px">Reservation Value</div>
+              </div>
+
+              <!-- Avg Reservation Value Per Member -->
+              <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(126,232,162,.07),rgba(82,184,122,.03));border:1.5px solid rgba(126,232,162,.20);min-width:160px">
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-reservation-per-member" data-countup="true">—</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.65);margin-top:6px">Avg. Reservation Value Per Member</div>
+                <div style="font-size:.67rem;color:rgba(126,232,162,.35);margin-top:3px;line-height:1.4">Reservation value ÷ members</div>
               </div>
 
             </div>
@@ -2551,8 +2558,9 @@ async function loadCommunityStats(){
     if(el('cs-cogs')) el('cs-cogs').textContent = fmt(s.total_cogs);
     if(el('cs-value')) el('cs-value').textContent = fmtM(s.total_value);
     var fmtC = function(cents){ var n=parseFloat(cents||0)/100; return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };
-    if(el('cs-asset-pool'))       el('cs-asset-pool').textContent       = fmtC(s.asset_pool_cents);
-    if(el('cs-asset-per-member')) el('cs-asset-per-member').textContent = fmtC(s.asset_pool_per_member_cents);
+    if(el('cs-asset-pool'))               el('cs-asset-pool').textContent               = fmtC(s.asset_pool_cents);
+    if(el('cs-asset-per-member'))         el('cs-asset-per-member').textContent         = fmtC(s.asset_pool_per_member_cents);
+    if(el('cs-reservation-per-member'))   el('cs-reservation-per-member').textContent   = fmtC(s.reservation_per_member_cents);
 
     // Master control — people
     if(el('mc-members')) el('mc-members').textContent = fmt(s.personal_members);

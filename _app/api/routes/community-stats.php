@@ -121,15 +121,23 @@ try {
         $sta_cash_cents = (float)$s->fetchColumn();
     } catch (Throwable $e) {}
 
-    // Component 3: IP & infrastructure — fixed placeholder $10,000
-    // TODO: replace with live read from rwa_assets or infrastructure_valuations
-    // when the correct DB table/row is confirmed.
-    $ip_infra_cents = 1000000; // $10,000.00 in cents
+    $founding_total = $members + $businesses;
 
-    $asset_pool_cents   = $asx_book_cents + $sta_cash_cents + $ip_infra_cents;
-    $founding_total     = $members + $businesses;
-    $per_member_cents   = $founding_total > 0
+    // Component 3: IP & infrastructure — Trustee-adopted valuation formula
+    // V = $475,000 + ($250 × N)  [Valuation Report v1.0, §2]
+    // Component A (baseline IP replacement): $475,000
+    // Component B+C (per-active-member multiplier): $250 per member
+    $ip_infra_cents = 47500000 + (25000 * $founding_total); // cents
+
+    $asset_pool_cents = $asx_book_cents + $sta_cash_cents + $ip_infra_cents;
+    $per_member_cents = $founding_total > 0
         ? round($asset_pool_cents / $founding_total, 0)
+        : 0;
+
+    // Reservation value per member (beta-phase option values ÷ member count)
+    // total_value is in dollars; convert to cents for consistency
+    $reservation_per_member_cents = $founding_total > 0
+        ? round(($total_value * 100) / $founding_total, 0)
         : 0;
 
     // Pending members — temp placeholder: founding_members × 3
@@ -146,8 +154,9 @@ try {
             'kids_registered'  => (int)$tok['ksnft'],
             'total_cogs'       => $total_cogs,
             'total_value'      => round($total_value, 2),
-            'asset_pool_cents'       => $asset_pool_cents,
-            'asset_pool_per_member_cents' => $per_member_cents,
+            'asset_pool_cents'                  => $asset_pool_cents,
+            'asset_pool_per_member_cents'       => $per_member_cents,
+            'reservation_per_member_cents'      => $reservation_per_member_cents,
             'classes' => [
                 'snft'       => (int)$tok['snft'],
                 'ksnft'      => (int)$tok['ksnft'],
