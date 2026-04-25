@@ -20,6 +20,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         if ($script === 'rwa_assets.php') return 'rwa_assets';
         if ($script === 'rwa_valuations.php') return 'rwa_valuations';
         if ($script === 'governance.php') return 'governance';
+        if ($script === 'board_governance.php') return 'board_governance';
         if ($script === 'operations.php') return 'operations';
         if ($script === 'foundation_day.php') return 'foundation_day';
         if ($script === 'generate_trustee_token.php') return 'generate_trustee_token';
@@ -232,6 +233,7 @@ if (!function_exists('admin_sidebar_render')) {
             ],
             'Governance & Compliance' => [
                 ['key' => 'governance',        'label' => '🗳  Governance',                'href' => './governance.php'],
+                ['key' => 'board_governance',  'label' => '🏛  Board Governance',           'href' => './board_governance.php'],
                 ['key' => 'operations',        'label' => '🤝  Member Operations',        'href' => './operations.php'],
                 ['key' => 'foundation_day',    'label' => '🎉  Foundation Day',            'href' => './foundation_day.php'],
                 ['key' => 'execution_records', 'label' => '📋  Execution Records',      'href' => './execution_records.php'],
