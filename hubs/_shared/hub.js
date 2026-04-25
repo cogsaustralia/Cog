@@ -262,16 +262,49 @@ function renderEnrolBanner(){
 }
 
 /* ── Summary stats ──────────────────────────────────────────────────────────── */
-function scrollToSection(contentId){
+function expandSection(sectionEl){
+  if(!sectionEl) return;
+  var body = sectionEl.querySelector('.hub-section-body');
+  var chev = sectionEl.querySelector('.hub-section-chevron');
+  if(body) body.style.display = '';
+  if(chev) chev.classList.add('open');
+  sectionEl.dataset.open = 'true';
+}
+
+function collapseSection(sectionEl){
+  if(!sectionEl) return;
+  var body = sectionEl.querySelector('.hub-section-body');
+  var chev = sectionEl.querySelector('.hub-section-chevron');
+  if(body) body.style.display = 'none';
+  if(chev) chev.classList.remove('open');
+  delete sectionEl.dataset.open;
+}
+
+function toggleSection(sectionEl){
+  if(!sectionEl) return;
+  var isOpen = sectionEl.dataset.open === 'true';
+  if(isOpen){ collapseSection(sectionEl); } else { expandSection(sectionEl); }
+}
+
+function expandAndScrollToSection(contentId){
   var target = el(contentId);
   if(!target) return;
-  var section = target.closest ? target.closest('.hub-section') : target.parentNode;
+  // Walk up to the .hub-section
+  var section = target;
   while(section && !section.classList.contains('hub-section')) section = section.parentNode;
+  // Expand if collapsed
+  if(section) expandSection(section);
+  // Scroll to it
   var scrollEl = section || target;
   var topbarH = (document.querySelector('.hub-topbar')||{}).offsetHeight || 60;
-  var y = scrollEl.getBoundingClientRect().top + (window.scrollY||window.pageYOffset) - topbarH - 12;
-  window.scrollTo({top: Math.max(0, y), behavior:'smooth'});
+  setTimeout(function(){
+    var y = scrollEl.getBoundingClientRect().top + (window.scrollY||window.pageYOffset) - topbarH - 12;
+    window.scrollTo({top: Math.max(0, y), behavior:'smooth'});
+  }, 30);
 }
+
+/* Keep scrollToSection as alias for any existing callers */
+function scrollToSection(contentId){ expandAndScrollToSection(contentId); }
 
 function renderSummaryStats(){
   var s = _hubData.summary || {};
@@ -1269,7 +1302,7 @@ function renderError(msg){
 window.hubChipClick = function(btn, targetId){
   document.querySelectorAll('.hub-hero-chip').forEach(function(c){ c.classList.remove('active'); });
   btn.classList.add('active');
-  scrollToSection(targetId);
+  expandAndScrollToSection(targetId);
 };
 /* ── Hub nav dropdown ───────────────────────────────────────────────────────── */
 var _HUB_NAV_ITEMS = [
@@ -1390,6 +1423,8 @@ window.openProject         = openProject;
 window.openReferencedProject = openReferencedProject;
 window.acknowledgeDocument = acknowledgeDocument;
 window.openDocument        = openDocument;
+window.toggleSection       = toggleSection;
+window.expandAndScrollToSection = expandAndScrollToSection;
 window.closeProject        = closeProject;
 window.joinProject         = joinProject;
 window.leaveProject        = leaveProject;

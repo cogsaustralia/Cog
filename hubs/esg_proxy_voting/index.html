@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="../../assets/logo_webcir.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../_shared/hub.css?v=25">
+<link rel="stylesheet" href="../_shared/hub.css?v=26">
 </head>
 <body data-root="../../">
 <script>
@@ -63,57 +63,74 @@ window.HUB_TIP      = 'Direct how CHESS-registered shares are voted at portfolio
   <!-- Everything below is conditionally visible -->
   <div id="hub-main-content">
 
-    <!-- Operational Activity — top, under hero -->
-    <div class="hub-section" id="hub-admin-activity-section">
-      <div class="hub-section-hd">
-        <span class="hub-section-title">Operational Activity</span>
+    <!-- Projects — FIRST, starts expanded -->
+    <div class="hub-section" data-section="projects" data-open="true">
+      <div class="hub-section-hd" onclick="toggleSection(this.closest('.hub-section'))">
+        <span class="hub-section-title">Management Projects</span>
+        <span id="hub-projects-hd-action" class="hub-section-hd-actions" onclick="event.stopPropagation()"></span>
+        <span class="hub-section-chevron open" aria-hidden="true"></span>
       </div>
-      <div id="hub-admin-activity"><div class="hub-loading" style="font-size:.82rem">Loading…</div></div>
+      <div class="hub-section-body">
+        <div id="hub-projects-wrap"><div class="hub-loading">Loading projects…</div></div>
+      </div>
+    </div>
+
+    <!-- Operational Activity -->
+    <div class="hub-section" data-section="activity" id="hub-admin-activity-section">
+      <div class="hub-section-hd" onclick="toggleSection(this.closest('.hub-section')); return false;" role="button" tabindex="0">
+        <span class="hub-section-title">Operational Activity</span>
+        <span class="hub-section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="hub-section-body" style="display:none">
+        <div id="hub-admin-activity"><div class="hub-loading" style="font-size:.82rem">Loading…</div></div>
+      </div>
     </div>
 
     <!-- Forum -->
-    <div class="hub-section">
-      <div class="hub-section-hd">
+    <div class="hub-section" data-section="forum">
+      <div class="hub-section-hd" onclick="toggleSection(this.closest('.hub-section')); return false;" role="button" tabindex="0">
         <span class="hub-section-title">
           Discussion Forum
           <span id="hub-unread-badge" style="display:none;background:var(--gold);color:#000;border-radius:99px;font-size:.65rem;font-weight:800;padding:1px 6px;margin-left:4px"></span>
         </span>
+        <span class="hub-section-chevron" aria-hidden="true"></span>
       </div>
-      <div class="hub-tabs">
-        <button class="hub-tab on" data-tab="threads" onclick="switchForumTab('threads')">Threads</button>
-        <button class="hub-tab" data-tab="broadcasts" onclick="switchForumTab('broadcasts')">Broadcasts</button>
+      <div class="hub-section-body" style="display:none">
+        <div class="hub-tabs">
+          <button class="hub-tab on" data-tab="threads" onclick="switchForumTab('threads')">Threads</button>
+          <button class="hub-tab" data-tab="broadcasts" onclick="switchForumTab('broadcasts')">Broadcasts</button>
+        </div>
+        <div id="hub-forum-list"></div>
+        <div id="hub-compose-wrap"></div>
       </div>
-      <div id="hub-forum-list"></div>
-      <div id="hub-compose-wrap"></div>
-    </div>
-
-    <!-- Projects -->
-    <div class="hub-section">
-      <div class="hub-section-hd">
-        <span class="hub-section-title">Management Projects</span>
-        <span id="hub-projects-hd-action"></span>
-      </div>
-      <div id="hub-projects-wrap"><div class="hub-loading">Loading projects…</div></div>
     </div>
 
     <!-- Query section -->
-    <div class="hub-section" id="hub-query-section">
-      <div class="hub-section-hd">
+    <div class="hub-section" data-section="queries" id="hub-query-section">
+      <div class="hub-section-hd" onclick="toggleSection(this.closest('.hub-section')); return false;" role="button" tabindex="0">
         <span class="hub-section-title">Raise a Query</span>
-        <button class="hub-section-action" onclick="showQueryForm()">+ New Query</button>
+        <span class="hub-section-hd-actions">
+          <button class="hub-section-action" onclick="event.stopPropagation();showQueryForm()">+ New Query</button>
+        </span>
+        <span class="hub-section-chevron" aria-hidden="true"></span>
       </div>
-      <div class="flash" id="hub-query-flash" style="margin-bottom:10px"></div>
-      <div id="hub-my-queries"><div class="hub-loading" style="font-size:.82rem">Loading your queries…</div></div>
-      <div id="hub-query-form-wrap"></div>
+      <div class="hub-section-body" style="display:none">
+        <div class="flash" id="hub-query-flash" style="margin-bottom:10px"></div>
+        <div id="hub-my-queries"><div class="hub-loading" style="font-size:.82rem">Loading your queries…</div></div>
+        <div id="hub-query-form-wrap"></div>
+      </div>
     </div>
 
-    <!-- Enrolled Members — bottom -->
-    <div class="hub-section">
-      <div class="hub-section-hd">
+    <!-- Enrolled Members -->
+    <div class="hub-section" data-section="roster">
+      <div class="hub-section-hd" onclick="toggleSection(this.closest('.hub-section')); return false;" role="button" tabindex="0">
         <span class="hub-section-title">Enrolled Members</span>
-        <div id="hub-roster-vis-wrap"></div>
+        <span class="hub-section-hd-actions"><div id="hub-roster-vis-wrap"></div></span>
+        <span class="hub-section-chevron" aria-hidden="true"></span>
       </div>
-      <div id="hub-roster-wrap"><div class="hub-loading">Loading roster…</div></div>
+      <div class="hub-section-body" style="display:none">
+        <div id="hub-roster-wrap"><div class="hub-loading">Loading roster…</div></div>
+      </div>
     </div>
 
   </div><!-- /#hub-main-content -->
@@ -135,7 +152,7 @@ window.HUB_TIP      = 'Direct how CHESS-registered shares are voted at portfolio
 
     <div id="hub-project-detail" style="display:none"></div>
 </main>
-<script src="../_shared/hub.js?v=26"></script>
+<script src="../_shared/hub.js?v=27"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   if(window.loadAdminActivity && window.HUB_AREA_KEY){
