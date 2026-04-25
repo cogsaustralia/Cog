@@ -61,10 +61,8 @@
     <div class="hub-section-hd"><span class="hub-section-title">Management Hubs</span></div>
     <div id="ms-grid-wrap"><div class="hub-loading">Loading hubs…</div></div>
   </div>
-  <!-- Command strip: fast stats pulled from ms-stats-wrap data -->
+  <!-- Command strip: fast stats -->
   <div class="ms-command-strip" id="ms-command-strip" style="display:none">
-    <div class="ms-command-cell"><div class="ms-command-n" id="mcc-partners">—</div><div class="ms-command-l">Active Partners</div></div>
-    <div class="ms-command-cell"><div class="ms-command-n" id="mcc-portfolio">—</div><div class="ms-command-l">Portfolio value</div></div>
     <div class="ms-command-cell"><div class="ms-command-n" id="mcc-proposals">—</div><div class="ms-command-l">Open proposals</div></div>
     <div class="ms-command-cell"><div class="ms-command-n" id="mcc-health">—</div><div class="ms-command-l">Invariants</div></div>
   </div>
@@ -174,21 +172,12 @@ function renderGrid(tiles, myAreas){
     '</div>';
   }
 
-  var myTiles    = tiles.filter(function(t){ return myAreas.indexOf(t.area_key) >= 0; });
-  var otherTiles = tiles.filter(function(t){ return myAreas.indexOf(t.area_key) < 0; });
-  var sectionStyle = 'font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px;margin:0 0 10px';
-  var barStyle = 'display:inline-block;width:3px;height:12px;border-radius:2px;background:var(--gold);flex-shrink:0';
-
-  var html = '';
-  if(myTiles.length){
-    html += '<div style="'+sectionStyle+'"><span style="'+barStyle+'"></span>Your hubs</div>';
-    html += '<div class="ms-grid">' + myTiles.map(function(t){ return tileHtml(t, true); }).join('') + '</div>';
-  }
-  if(otherTiles.length){
-    var sep = myTiles.length ? 'margin-top:24px;' : '';
-    html += '<div style="'+sep+sectionStyle+'"><span style="'+barStyle+'"></span>'+(myTiles.length?'Other hubs':'Management Hubs')+'</div>';
-    html += '<div class="ms-grid">' + otherTiles.map(function(t){ return tileHtml(t, false); }).join('') + '</div>';
-  }
+  var html = '<div class="ms-grid">' +
+    tiles.map(function(t){
+      var enrolled = myAreas.indexOf(t.area_key) >= 0;
+      return tileHtml(t, enrolled);
+    }).join('') +
+  '</div>';
   wrap.innerHTML = html;
 }
 
@@ -285,11 +274,6 @@ async function loadMsStats() {
   }
   var s = data.stats || {};
 
-  // Portfolio value
-  var portVal = typeof s.portfolio_book_cents !== 'undefined'
-    ? '$' + (s.portfolio_book_cents / 100).toLocaleString('en-AU', {minimumFractionDigits:2,maximumFractionDigits:2})
-    : '—';
-
   // Invariant health
   var invViol = typeof s.invariant_violations !== 'undefined' ? s.invariant_violations : null;
   var invHtml = invViol === null ? '—'
@@ -303,15 +287,6 @@ async function loadMsStats() {
     : '<span class="ms-stat-ok">✓ None pending</span>';
 
   var html = '<div class="ms-stats-row">';
-  html += '<div class="ms-stat-card">';
-  html += '<div class="ms-stat-val">' + (typeof s.active_partners !== 'undefined' ? Number(s.active_partners).toLocaleString('en-AU') : '—') + '</div>';
-  html += '<div class="ms-stat-lbl">Active Partners</div></div>';
-
-  html += '<div class="ms-stat-card">';
-  html += '<div class="ms-stat-val">' + portVal + '</div>';
-  html += '<div class="ms-stat-lbl">Portfolio book value';
-  if (typeof s.portfolio_holdings !== 'undefined') html += '<span class="ms-stat-sub"> (' + s.portfolio_holdings + ' holding' + (s.portfolio_holdings !== 1 ? 's' : '') + ')</span>';
-  html += '</div></div>';
 
   html += '<div class="ms-stat-card">';
   html += '<div class="ms-stat-val">' + (typeof s.open_proposals !== 'undefined' ? s.open_proposals : '—') + '</div>';
@@ -328,19 +303,11 @@ async function loadMsStats() {
   html += '</div>';
   wrap.innerHTML = html;
 
-  // Populate command strip from same data
+  // Populate command strip — partners and portfolio removed
   var strip = document.getElementById('ms-command-strip');
   if(strip){
-    var p = document.getElementById('mcc-partners');
-    var pv = document.getElementById('mcc-portfolio');
     var pr = document.getElementById('mcc-proposals');
     var ph = document.getElementById('mcc-health');
-    if(p) p.textContent = typeof s.active_partners !== 'undefined' ? Number(s.active_partners).toLocaleString('en-AU') : '—';
-    if(pv){
-      pv.textContent = typeof s.portfolio_book_cents !== 'undefined'
-        ? '$'+(s.portfolio_book_cents/100).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0})
-        : '—';
-    }
     if(pr) pr.textContent = typeof s.open_proposals !== 'undefined' ? s.open_proposals : '—';
     if(ph){
       var iv = typeof s.invariant_violations !== 'undefined' ? s.invariant_violations : null;
