@@ -300,19 +300,39 @@ function handleHub(): void {
     $projects = [];
     try {
         $pjStmt = $db->prepare(
-            "SELECT id, area_key, title, summary, status, lead_type,
-                    lead_member_id, lead_first_name, lead_state_code,
-                    target_close_at, linked_poll_id, participant_count,
-                    created_at, updated_at
-               FROM v_hub_projects_live
-              WHERE area_key = ?
-              ORDER BY FIELD(status,'active','proposed','paused','completed') ASC,
-                       updated_at DESC
+            "SELECT v.id, v.area_key, v.title, v.summary, v.status, v.lead_type,
+                    v.lead_member_id, v.lead_first_name, v.lead_state_code,
+                    v.target_close_at, v.linked_poll_id, v.participant_count,
+                    v.created_at, v.updated_at,
+                    p.phase_target_end_at
+               FROM v_hub_projects_live v
+               JOIN hub_projects p ON p.id = v.id
+              WHERE v.area_key = ?
+              ORDER BY FIELD(v.status,'open_for_input','deliberation','vote',
+                             'accountability','active','proposed','paused',
+                             'completed','draft') ASC,
+                       v.updated_at DESC
               LIMIT 20"
         );
         $pjStmt->execute([$area]);
         $projects = $pjStmt->fetchAll();
-    } catch (Throwable) { /* hub_projects table not yet migrated */ }
+    } catch (Throwable) {
+        // Fallback: query without phase_target_end_at join
+        try {
+            $pjFbStmt = $db->prepare(
+                "SELECT id, area_key, title, summary, status, lead_type,
+                        lead_member_id, lead_first_name, lead_state_code,
+                        target_close_at, linked_poll_id, participant_count,
+                        created_at, updated_at, NULL AS phase_target_end_at
+                   FROM v_hub_projects_live
+                  WHERE area_key = ?
+                  ORDER BY updated_at DESC
+                  LIMIT 20"
+            );
+            $pjFbStmt->execute([$area]);
+            $projects = $pjFbStmt->fetchAll();
+        } catch (Throwable) { /* hub_projects table not yet migrated */ }
+    }
 
     // Which projects has this member joined?
     $joined = [];
@@ -329,7 +349,6 @@ function handleHub(): void {
 
     // Referenced projects — projects in OTHER hubs that tag this area as an
     // interest area. Read-only in this hub. Capped at 5 to prevent clutter.
-    // Silently degrades to empty if interest_area_keys column not yet migrated.
     $referenced = [];
     try {
         $refStmt = $db->prepare(
@@ -351,7 +370,33 @@ function handleHub(): void {
         );
         $refStmt->execute([$area, $area]);
         $referenced = $refStmt->fetchAll();
-    } catch (Throwable) { /* column not yet migrated */ }
+    } catch (Throwable $refEx) {
+        error_log('[hub-referenced] phase_target_end_at query failed for area=' . $area . ': ' . $refEx->getMessage());
+        // Fallback: query without phase_target_end_at (pre-lifecycle-migration envs)
+        try {
+            $refFbStmt = $db->prepare(
+                "SELECT p.id, p.area_key AS owner_area_key, p.title, p.summary,
+                        p.status, p.lead_type, p.lead_member_id,
+                        lm.first_name AS lead_first_name,
+                        lm.state_code AS lead_state_code,
+                        p.target_close_at, p.linked_poll_id, p.participant_count,
+                        NULL AS phase_target_end_at,
+                        p.created_at, p.updated_at
+                   FROM hub_projects p
+                   LEFT JOIN members lm ON lm.id = p.lead_member_id
+                  WHERE p.area_key != ?
+                    AND p.status NOT IN ('archived')
+                    AND p.interest_area_keys IS NOT NULL
+                    AND FIND_IN_SET(?, p.interest_area_keys) > 0
+                  ORDER BY p.updated_at DESC
+                  LIMIT 5"
+            );
+            $refFbStmt->execute([$area, $area]);
+            $referenced = $refFbStmt->fetchAll();
+        } catch (Throwable $fb2) {
+            error_log('[hub-referenced-fallback] failed for area=' . $area . ': ' . $fb2->getMessage());
+        }
+    }
 
     // Summary counts
     $summary = ['member_count' => 0, 'thread_count' => 0,

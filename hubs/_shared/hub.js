@@ -321,11 +321,15 @@ function renderSummaryStats(){
   rows.forEach(function(r){
     var e = el(r.id);
     if(!e) return;
-    var nDisplay = r.n > 0 ? Number(r.n).toLocaleString('en-AU') : '<span style="opacity:.4">—</span>';
-    e.innerHTML = '<div class="hub-stat-n">'+nDisplay+'</div><div class="hub-stat-l">'+r.l+'</div><div class="hub-stat-dest">↓ '+r.dest+'</div>';
+    var nDisplay = r.n > 0
+      ? '<div class="hub-stat-n">'+Number(r.n).toLocaleString('en-AU')+'</div>'
+      : '<div class="hub-stat-n" style="opacity:.35">—</div>';
+    e.innerHTML = nDisplay
+      + '<div class="hub-stat-l">'+r.l+'</div>'
+      + '<div class="hub-stat-dest">↓ '+r.dest+'</div>';
     e.dataset.scroll = r.target;
     e.title = 'Jump to '+r.dest;
-    (function(tgt){ e.onclick = function(){ scrollToSection(tgt); }; })(r.target);
+    (function(tgt){ e.onclick = function(){ expandAndScrollToSection(tgt); }; })(r.target);
   });
   // Unread badge in topbar
   var unread = ((_hubData.unread_broadcasts||0) + (_hubData.unread_threads||0));
