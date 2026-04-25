@@ -638,8 +638,6 @@ async function loadAdminActivity(){
   w.innerHTML=rows?'<div class="ms-admin-grid">'+rows+'</div>':'<div class="hub-empty">No activity data available.</div>';
 }
 
-  var s=data.stats||{};
-
 async function boot(){
   try{
     var d=await api('vault/hub-mainspring');
