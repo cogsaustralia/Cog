@@ -565,76 +565,96 @@ body {
 /* ── Print styles ──────────────────────────────────────────── */
 @page {
   size: A4 portrait;
-  margin: 0;
+  margin: 12mm 14mm 10mm 14mm;
 }
 @media print {
-  html, body { background: #fff !important; font-size: 14px; }
+  html, body { background: #fff !important; font-size: 13px; }
   .admin-bar { display: none !important; }
   .page-wrap { max-width: 100%; margin: 0; box-shadow: none; background: #fff !important; }
 
   /* Force colour on dark sections */
-  .doc-header, .doc-footer {
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-  }
+  .doc-header, .doc-footer,
   .rights-table tr:nth-child(even),
   .hash-row, .instrument-card, .notice-box, .detail-cell {
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 
-  /* Compress header */
-  .doc-header       { padding: 18px 32px 16px; }
-  .org-name         { font-size: 18px; }
-  .cert-ref-display { font-size: 16px; }
-  .cert-type-badge  { margin-top: 8px; padding: 3px 9px; font-size: 9px; }
-  .class-pill       { font-size: 11px; padding: 2px 10px; margin-top: 5px; }
+  /* ── Header ── */
+  .doc-header       { padding: 12px 20px 10px; }
+  .org-name         { font-size: 15px; }
+  .org-sub          { font-size: 9px; margin-top: 2px; }
+  .cert-ref-display { font-size: 14px; }
+  .cert-title       { font-size: 9px; margin-bottom: 3px; }
+  .cert-type-badge  { margin-top: 5px; padding: 2px 7px; font-size: 7.5px; }
+  .class-pill       { font-size: 9px; padding: 1px 8px; margin-top: 3px; }
 
-  /* Compress body */
-  .doc-body         { padding: 18px 32px 12px; }
-  .intro-text       { font-size: 11px; line-height: 1.55; margin-bottom: 14px;
-                      padding-bottom: 12px; }
-  .section-heading  { font-size: 9.5px; margin: 0 0 8px; padding-bottom: 4px; }
+  /* ── Body ── */
+  .doc-body         { padding: 10px 20px 8px; }
 
-  /* Compress details grid */
-  .details-grid     { margin-bottom: 14px; }
-  .detail-cell      { padding: 7px 12px; }
-  .detail-label     { font-size: 8px; margin-bottom: 1px; }
-  .detail-value     { font-size: 12px; }
-  .detail-value.large { font-size: 13px; }
-  .detail-value.mono  { font-size: 11px; }
+  /* ── Intro — compress to essential text ── */
+  .intro-text       { font-size: 9.5px; line-height: 1.45; margin-bottom: 8px;
+                      padding-bottom: 7px; }
 
-  /* Compress hash */
-  .hash-row         { padding: 7px 12px; margin-bottom: 14px; }
-  .hash-label       { font-size: 8px; margin-bottom: 2px; }
-  .hash-value       { font-size: 9.5px; line-height: 1.4; }
+  /* ── Section headings ── */
+  .section-heading  { font-size: 8.5px; margin: 0 0 6px; padding-bottom: 3px; }
 
-  /* Compress rights table */
-  .rights-table     { margin-bottom: 14px; }
-  .rights-table td  { padding: 7px 10px; font-size: 10.5px; }
-  .rights-table td:first-child  { font-size: 8px; padding-top: 9px; }
-  .rights-table td:nth-child(2) { font-size: 11px; line-height: 1.3; }
-  .rights-table td:last-child   { font-size: 9.5px; line-height: 1.4; }
-  .smart-contract-list li { font-size: 10.5px; line-height: 1.4; }
+  /* ── Details grid ── */
+  .details-grid     { margin-bottom: 8px; }
+  .detail-cell      { padding: 4px 10px; }
+  .detail-label     { font-size: 7px; margin-bottom: 1px; }
+  .detail-value     { font-size: 10.5px; line-height: 1.2; }
+  .detail-value.large { font-size: 11px; }
+  .detail-value.mono  { font-size: 10px; }
 
-  /* Compress notice */
-  .notice-box { padding: 8px 12px; margin-bottom: 12px; }
-  .notice-box p { font-size: 10.5px; line-height: 1.5; }
+  /* ── Hash row ── */
+  .hash-row         { padding: 5px 10px; margin-bottom: 8px; }
+  .hash-label       { font-size: 7px; margin-bottom: 2px; }
+  .hash-value       { font-size: 8.5px; line-height: 1.3;
+                      white-space: nowrap; overflow: hidden;
+                      text-overflow: ellipsis; }
 
-  /* Compress instruments */
-  .instruments-section { padding-top: 12px; }
-  .instruments-grid    { gap: 10px; margin-bottom: 12px; }
-  .instrument-card     { padding: 6px 8px; }
-  .instruments-grid-5  { gap: 5px; margin-bottom: 10px; }
-  .instrument-title    { font-size: 7.5px; margin-bottom: 1px; }
-  .instrument-name     { font-size: 9.5px; }
-  .instrument-note     { font-size: 8px; margin-top: 2px; }
+  /* ── Notice box ── */
+  .notice-box       { padding: 5px 10px; margin-bottom: 7px; }
+  .notice-box p     { font-size: 9px; line-height: 1.4; }
 
-  /* Compress footer */
-  .doc-footer           { padding: 14px 32px; }
-  .footer-trustee-name  { font-size: 11px; }
-  .footer-trustee-role  { font-size: 9.5px; }
-  .footer-trustee-org   { font-size: 9px; margin-top: 3px; }
-  .seal-circle          { width: 50px; height: 50px; }
-  .seal-text            { font-size: 6px; }
+  /* ── Rights table — two-column layout ──
+     Each row: label|value in left half, note in right half.
+     Achieved by making the rights section a 2-col CSS grid,
+     with the table taking the left col and notes floated right. */
+  .rights-table     { margin-bottom: 8px; table-layout: fixed; }
+  .rights-table td  { padding: 4px 8px; font-size: 9px; line-height: 1.3; }
+  .rights-table td:first-child {
+    width: 22%; font-size: 7.5px; padding-top: 5px; letter-spacing: .04em;
+  }
+  .rights-table td:nth-child(2) { font-size: 9.5px; line-height: 1.25; width: 42%; }
+  .rights-table td:last-child   {
+    font-size: 8.5px; line-height: 1.25; width: 36%; padding-left: 8px;
+  }
+
+  /* Smart contract list — inline comma-separated on print */
+  .smart-contract-list          { display: inline; }
+  .smart-contract-list li       {
+    display: inline; font-size: 9px; line-height: 1.3;
+    padding: 0;
+  }
+  .smart-contract-list li::before { content: "· "; }
+  .smart-contract-list li:first-child::before { content: ""; }
+
+  /* ── Instruments ── */
+  .instruments-section { padding-top: 8px; }
+  .instruments-grid-5  { gap: 4px; margin-bottom: 8px; }
+  .instrument-card     { padding: 4px 7px; }
+  .instrument-title    { font-size: 7px; margin-bottom: 1px; }
+  .instrument-name     { font-size: 8.5px; line-height: 1.25; }
+  .instrument-note     { font-size: 7.5px; margin-top: 1px; }
+
+  /* ── Footer ── */
+  .doc-footer           { padding: 9px 20px; }
+  .footer-trustee-name  { font-size: 10px; }
+  .footer-trustee-role  { font-size: 8.5px; }
+  .footer-trustee-org   { font-size: 8px; margin-top: 3px; line-height: 1.5; }
+  .seal-circle          { width: 44px; height: 44px; }
+  .seal-text            { font-size: 5.5px; }
 
   a { text-decoration: none; color: inherit; }
 }
