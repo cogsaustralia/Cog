@@ -6,6 +6,7 @@ require_once __DIR__ . '/includes/ops_workflow.php';
 require_once __DIR__ . '/includes/admin_sidebar.php';
 if (file_exists(__DIR__ . '/includes/LedgerEmitter.php'))   require_once __DIR__ . '/includes/LedgerEmitter.php';
 if (file_exists(__DIR__ . '/includes/AccountingHooks.php')) require_once __DIR__ . '/includes/AccountingHooks.php';
+require_once dirname(__DIR__) . '/_app/api/config/bootstrap.php';
 require_once dirname(__DIR__) . '/_app/api/integrations/mailer.php';
 
 ops_require_admin();
