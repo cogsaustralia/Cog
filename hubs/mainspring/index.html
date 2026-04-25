@@ -579,9 +579,9 @@ async function boot(){
     activateCogs(d.tiles||[],_myAreas);
     renderFeed(d.activity||[]);
     try{
-      var s=await api('vault/hub-mainspring-stats');
+      var ms=await api('community-stats');
       var cm=document.getElementById('c-members');
-      if(cm&&s.stats){var n=parseInt(s.stats.active_partners||0);cm.textContent=n>0?n:'—';}
+      if(cm&&ms.founding_members!=null){cm.textContent=Number(ms.founding_members).toLocaleString('en-AU');}
     }catch(e2){}
   }catch(e){
     hideSplash();var msg=e.message||'';
