@@ -836,6 +836,38 @@ body.cert-open .admin-shell { display: none; }
 </div>
 <?php endif; ?>
 
+<!-- Reference document — Conflict of Interest Policy (TDR-20260426-001 only) -->
+<?php if (($decision['decision_ref'] ?? '') === 'TDR-20260426-001'): ?>
+<div class="detail-card">
+  <div class="detail-head"><h3>Reference Document</h3></div>
+  <div class="detail-body">
+    <p style="font-size:.82rem;color:var(--sub);margin-bottom:14px">
+      This Trustee Decision Record adopts the Conflict of Interest Policy as a Board-adopted
+      operational governance instrument across the whole of the CJVM Hybrid Trust. The
+      Trustee should review the policy before issuing an execution token.
+    </p>
+    <a href="../docs/Conflict_of_Interest_Policy.pdf" target="_blank" rel="noopener"
+       style="display:flex;align-items:center;gap:14px;background:rgba(240,209,138,.07);
+              border:1.5px solid rgba(240,209,138,.28);border-radius:12px;
+              padding:14px 16px;text-decoration:none;transition:background .2s,border-color .2s"
+       onmouseover="this.style.background='rgba(240,209,138,.14)';this.style.borderColor='rgba(240,209,138,.50)'"
+       onmouseout="this.style.background='rgba(240,209,138,.07)';this.style.borderColor='rgba(240,209,138,.28)'">
+      <div style="font-size:1.4rem">📄</div>
+      <div style="flex:1">
+        <div style="color:var(--gold);font-weight:600;font-size:.92rem">Conflict of Interest Policy</div>
+        <div style="color:var(--sub);font-size:.74rem;margin-top:2px">
+          Operational Governance Policy · Whole of CJVM Hybrid Trust · Effective 26 April 2026
+        </div>
+      </div>
+      <div style="color:var(--gold);font-size:.78rem;font-weight:600;letter-spacing:.04em">OPEN PDF ↗</div>
+    </a>
+    <p style="font-size:.72rem;color:var(--dim);margin-top:10px;line-height:1.5">
+      SHA-256: <span style="font-family:monospace">2bd20a5e1f2a67e3ac76e99911fc585d5b39409b402770aca655c14a45af4516</span>
+    </p>
+  </div>
+</div>
+<?php endif; ?>
+
 <!-- Issue token / print actions -->
 <?php if (in_array($decision['status'], ['draft','pending_execution'], true)): ?>
 <div class="detail-card">
