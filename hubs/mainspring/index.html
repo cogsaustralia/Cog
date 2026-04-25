@@ -11,85 +11,214 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_shared/hub.css?v=29">
 <style>
-/* ── Mainspring page ─────────────────────────────────────────────────── */
-.ms-hero{
-  padding:28px 24px 22px;
-  background:var(--bg);
+/* ── Page chrome ─────────────────────────────────────────────── */
+.ms-hero{padding:28px 24px 22px;background:var(--bg);border-bottom:1px solid var(--border)}
+.ms-hero-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(232,184,75,.75);margin-bottom:8px}
+.ms-hero-title{font-family:var(--serif);font-size:2.4rem;font-weight:600;letter-spacing:-.02em;color:#fff;line-height:1.05;margin-bottom:8px}
+.ms-hero-sub{font-size:.95rem;color:rgba(255,255,255,.82);line-height:1.6;max-width:58ch}
+
+/* ── Diagram wrapper ─────────────────────────────────────────── */
+.ms-diagram-section{
+  padding:32px 20px 24px;
+  background:radial-gradient(ellipse 70% 55% at 50% 44%,rgba(232,184,75,.05) 0%,transparent 65%),#080808;
   border-bottom:1px solid var(--border);
 }
-.ms-hero-eyebrow{
-  font-size:.68rem;font-weight:700;letter-spacing:.18em;
-  text-transform:uppercase;color:rgba(232,184,75,.7);margin-bottom:8px;
+
+/* ── CSS Grid layout ─────────────────────────────────────────── */
+/* 3-col grid: STA | CENTRE | STB, then STC row below */
+.ms-grid{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  grid-template-rows:auto auto auto;
+  gap:0;
+  max-width:820px;
+  margin:0 auto;
+  align-items:center;
+  justify-items:center;
 }
-.ms-hero-title{
-  font-family:var(--serif);font-size:2.2rem;font-weight:600;
-  letter-spacing:-.02em;color:var(--text);line-height:1.05;margin-bottom:8px;
+.ms-col-sta{ grid-column:1; grid-row:1/4; display:flex; flex-direction:column; align-items:flex-end; gap:20px; padding-right:24px; }
+.ms-col-ctr{ grid-column:2; grid-row:1/4; }
+.ms-col-stb{ grid-column:3; grid-row:1/4; display:flex; flex-direction:column; align-items:flex-start; gap:20px; padding-left:24px; }
+.ms-row-stc{ display:flex; justify-content:center; gap:32px; margin-top:28px; max-width:820px; margin-left:auto; margin-right:auto; flex-wrap:wrap; }
+
+/* ── Group badge headers ─────────────────────────────────────── */
+.ms-group-hd{
+  font-family:'DM Mono',monospace;
+  font-size:.72rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;margin-bottom:4px;text-align:center;
 }
-.ms-hero-sub{
-  font-size:.92rem;color:var(--text2);line-height:1.6;max-width:60ch;
+.ms-group-hd.gold{color:rgba(232,184,75,.6)}
+.ms-group-hd.blue{color:rgba(94,168,255,.6)}
+.ms-group-hd.green{color:rgba(62,207,110,.6)}
+
+/* ── Satellite cog cell ──────────────────────────────────────── */
+.ms-cog-cell{
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:10px;
+  transition:background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ms-cog-cell:hover{background:rgba(255,255,255,.04)}
+/* STA cells: label on right of cog (cog on left) */
+.ms-col-sta .ms-cog-cell{flex-direction:row-reverse}
+/* STB cells: label on left of cog */
+.ms-col-stb .ms-cog-cell{flex-direction:row}
+/* STC cells: label below cog */
+.ms-row-stc .ms-cog-cell{flex-direction:column;align-items:center;gap:10px}
+
+/* ── Cog label text ─────────────────────────────────────────── */
+.ms-cog-label{
+  font-size:.95rem;
+  font-weight:600;
+  color:rgba(255,255,255,.72);
+  line-height:1.3;
+  transition:color .15s;
+}
+.ms-col-sta .ms-cog-label{text-align:right}
+.ms-col-stb .ms-cog-label{text-align:left}
+.ms-row-stc .ms-cog-label{text-align:center}
+.ms-cog-cell:hover .ms-cog-label,
+.ms-cog-cell.active .ms-cog-label{color:#fff;font-weight:700}
+
+/* ── Satellite SVG cog ──────────────────────────────────────── */
+.ms-cog-svg{
+  width:88px;height:88px;
+  flex-shrink:0;
+  display:block;
 }
 
-/* Diagram section */
-.ms-cog-section{
-  padding:16px 10px 12px;
-  background:radial-gradient(ellipse 65% 55% at 50% 42%,rgba(232,184,75,.04) 0%,transparent 65%),var(--bg);
-  border-bottom:1px solid var(--border);
-  display:flex;flex-direction:column;align-items:center;
-}
-.ms-cog-svg-wrap{width:100%;max-width:820px;}
+/* ── Active cog state ───────────────────────────────────────── */
+.ms-cog-cell.active .cog-ring-el  { stroke-opacity:1 !important; stroke-width:2 !important; }
+.ms-cog-cell.active .cog-body-el  { fill-opacity:0.1 !important; }
+.ms-cog-cell.active .cog-teeth-el { stroke-opacity:0.85 !important; fill-opacity:0.1 !important; }
+.ms-cog-cell.active .cog-dot-el   { opacity:1 !important; }
+.ms-cog-cell.active .cog-glow-el  { opacity:.7 !important; animation:msGlow 2.8s ease-in-out infinite; }
+.ms-cog-cell.active .cog-spin-el  { animation:msCCW 22s linear infinite; }
 
-/* Legend */
-.ms-st-legend{
-  display:flex;justify-content:center;gap:8px;
-  margin-top:10px;flex-wrap:wrap;
-}
-.ms-st-badge{
-  font-size:.65rem;font-weight:700;letter-spacing:.05em;
-  text-transform:uppercase;padding:3px 11px;border-radius:99px;border:1px solid;
-}
-.ms-st-a{background:rgba(232,184,75,.07);border-color:rgba(232,184,75,.25);color:var(--gold)}
-.ms-st-b{background:rgba(94,168,255,.07);border-color:rgba(94,168,255,.25);color:#5ea8ff}
-.ms-st-c{background:rgba(62,207,110,.07);border-color:rgba(62,207,110,.25);color:var(--green)}
+@keyframes msCCW{to{transform:rotate(-360deg)}}
+@keyframes msGlow{0%,100%{opacity:.25}50%{opacity:.85}}
 
-/* Popout */
-.ms-pop{
-  position:fixed;background:#1c1a0f;
-  border:1px solid rgba(232,184,75,.38);border-radius:12px;
-  padding:14px 16px;min-width:200px;max-width:240px;
-  box-shadow:0 20px 60px rgba(0,0,0,.85),0 0 0 1px rgba(232,184,75,.07);
-  pointer-events:none;z-index:9999;opacity:0;
-  transition:opacity .12s ease;font-family:var(--sans);
+/* Centre cog animation */
+#ctr-cog-spin{
+  animation:msCW 38s linear infinite;
+  transform-origin:50% 50%;
 }
-.ms-pop.visible{opacity:1}
-.ms-pop-name{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.2}
-.ms-pop-sub{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:9px}
-.ms-pop-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:9px}
+@keyframes msCW{to{transform:rotate(360deg)}}
+
+/* ── Centre cog cell ─────────────────────────────────────────── */
+.ms-centre-cog{
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.ms-centre-svg{width:200px;height:200px;display:block}
+/* Stats overlay — positioned over SVG centre */
+.ms-centre-stats{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  pointer-events:none;
+  width:120px;
+}
+.ms-centre-eyebrow{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.62rem;font-weight:700;
+  letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(232,184,75,.78);
+  display:block;margin-bottom:4px;
+}
+.ms-centre-divider{
+  width:56px;height:1px;
+  background:rgba(232,184,75,.28);
+  margin:0 auto 6px;
+}
+.ms-centre-n{
+  font-family:'DM Mono',monospace;
+  font-size:2.4rem;font-weight:700;
+  color:#e8b84b;line-height:1;
+  display:block;
+}
+.ms-centre-lbl{
+  font-size:.6rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(232,184,75,.58);
+  display:block;margin-top:3px;margin-bottom:6px;
+}
+.ms-centre-sep{
+  width:36px;height:1px;
+  background:rgba(232,184,75,.15);
+  margin:0 auto 6px;
+}
+.ms-centre-n2{
+  font-family:'DM Mono',monospace;
+  font-size:1.4rem;font-weight:700;
+  color:rgba(232,184,75,.88);
+  display:block;line-height:1;
+}
+.ms-centre-lbl2{
+  font-size:.55rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(232,184,75,.46);
+  display:block;margin-top:3px;
+}
+
+/* ── STC group label ─────────────────────────────────────────── */
+.ms-stc-hd{
+  text-align:center;
+  font-family:'DM Mono',monospace;
+  font-size:.72rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(62,207,110,.6);
+  margin-top:6px;
+}
+
+/* ── Sub-trust legend ───────────────────────────────────────── */
+.ms-legend{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap}
+.ms-badge{font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 12px;border-radius:99px;border:1px solid}
+.ms-badge-a{background:rgba(232,184,75,.07);border-color:rgba(232,184,75,.25);color:var(--gold)}
+.ms-badge-b{background:rgba(94,168,255,.07);border-color:rgba(94,168,255,.25);color:#5ea8ff}
+.ms-badge-c{background:rgba(62,207,110,.07);border-color:rgba(62,207,110,.25);color:var(--green)}
+
+/* ── Popout ─────────────────────────────────────────────────── */
+.ms-pop{position:fixed;background:#1c1a0f;border:1px solid rgba(232,184,75,.38);border-radius:12px;padding:14px 16px;min-width:200px;max-width:240px;box-shadow:0 20px 60px rgba(0,0,0,.88),0 0 0 1px rgba(232,184,75,.07);pointer-events:none;z-index:9999;opacity:0;transition:opacity .12s;font-family:var(--sans)}
+.ms-pop.on{opacity:1}
+.ms-pop-name{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.2}
+.ms-pop-sub{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.ms-pop-row{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:8px}
 .ms-pop-stat{text-align:center}
-.ms-pop-stat strong{display:block;font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--gold);line-height:1}
-.ms-pop-stat span{font-size:.6rem;color:var(--text4);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;display:block}
-.ms-pop-foot{font-size:.7rem;text-align:center;padding-top:7px;border-top:1px solid var(--border)}
+.ms-pop-stat strong{display:block;font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--gold);line-height:1}
+.ms-pop-stat span{font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;display:block}
+.ms-pop-foot{font-size:.72rem;text-align:center;padding-top:7px;border-top:1px solid rgba(255,255,255,.08)}
 
-/* Stats strip */
+/* ── Stats strip ─────────────────────────────────────────────── */
 .ms-strip{display:flex;border-bottom:1px solid var(--border)}
 .ms-strip-cell{flex:1;padding:16px 22px;border-right:1px solid var(--border)}
 .ms-strip-cell:last-child{border-right:none}
-.ms-strip-n{font-family:var(--mono);font-size:1.45rem;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
-.ms-strip-l{font-size:.68rem;color:var(--text2);margin-top:5px;text-transform:uppercase;letter-spacing:.06em}
+.ms-strip-n{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
+.ms-strip-l{font-size:.7rem;color:rgba(255,255,255,.72);margin-top:5px;text-transform:uppercase;letter-spacing:.06em}
 
-/* Content sections */
-.ms-section{margin-bottom:4px;border:1px solid var(--border);border-radius:var(--r);background:#090909;overflow:hidden}
+/* ── Content sections ───────────────────────────────────────── */
+.ms-section{margin-bottom:4px;border:1px solid var(--border);border-radius:12px;background:#090909;overflow:hidden}
 .ms-section-hd{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.015)}
-.ms-section-title{font-size:.9rem;font-weight:700;color:var(--text);flex:1;letter-spacing:.01em}
+.ms-section-title{font-size:.92rem;font-weight:700;color:#fff;flex:1;letter-spacing:.01em}
 .ms-section-body{padding:16px 20px}
 
-/* Animations */
-@keyframes cogCW   {to{transform:rotate( 360deg)}}
-@keyframes cogCCW  {to{transform:rotate(-360deg)}}
-@keyframes glowPop {0%,100%{opacity:.22}50%{opacity:1}}
-
-#ctr-spin{transform-origin:400px 295px;animation:cogCW 40s linear infinite}
-.ms-sat-cog.active .cog-spin{animation:cogCCW 24s linear infinite}
-.ms-sat-cog.active .cog-glow{animation:glowPop 3s ease-in-out infinite}
+/* ── Responsive ─────────────────────────────────────────────── */
+@media(max-width:600px){
+  .ms-cog-svg{width:72px;height:72px}
+  .ms-cog-label{font-size:.82rem}
+  .ms-centre-svg{width:160px;height:160px}
+  .ms-centre-n{font-size:1.9rem}
+  .ms-col-sta{padding-right:12px;gap:12px}
+  .ms-col-stb{padding-left:12px;gap:12px}
+  .ms-row-stc{gap:20px}
+}
+@media(max-width:420px){
+  .ms-grid{grid-template-columns:1fr auto 1fr}
+  .ms-cog-svg{width:60px;height:60px}
+  .ms-cog-label{font-size:.75rem}
+}
 </style>
 </head>
 <body data-root="../../">
@@ -106,7 +235,7 @@
       <span class="sep">/</span>
     </div>
     <div class="hub-live-dot visible" style="display:block"></div>
-    <span class="hub-title" style="font-family:var(--serif);font-weight:600">Mainspring</span>
+    <span class="hub-title" style="font-family:'Cormorant Garamond',serif;font-weight:600">Mainspring</span>
   </div>
   <div class="hub-topbar-right">
     <a class="hub-guide-link" href="../guide/" target="_blank">Guide</a>
@@ -119,326 +248,285 @@
   <div class="ms-hero-sub">All nine management hubs at a glance — live stats, recent activity, and quick access to every governance area.</div>
 </div>
 
-<!-- ── COG DIAGRAM ─────────────────────────────────────────────────── -->
-<div class="ms-cog-section">
-<div class="ms-cog-svg-wrap">
-<svg viewBox="0 0 790 685" xmlns="http://www.w3.org/2000/svg"
-     style="width:100%;display:block">
-<defs>
-  <!-- Radial glows per colour -->
-  <radialGradient id="g-gold"  cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e8b84b" stop-opacity=".28"/><stop offset="100%" stop-color="#e8b84b" stop-opacity="0"/></radialGradient>
-  <radialGradient id="g-blue"  cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#5ea8ff" stop-opacity=".25"/><stop offset="100%" stop-color="#5ea8ff" stop-opacity="0"/></radialGradient>
-  <radialGradient id="g-green" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3ecf6e" stop-opacity=".25"/><stop offset="100%" stop-color="#3ecf6e" stop-opacity="0"/></radialGradient>
-  <!-- Centre cog body fill -->
-  <radialGradient id="g-ctr" cx="50%" cy="50%" r="50%">
-    <stop offset="0%"  stop-color="#231d08"/>
-    <stop offset="60%" stop-color="#16120a"/>
-    <stop offset="100%" stop-color="#0a0a0a"/>
-  </radialGradient>
-  <!-- Centre bore fill -->
-  <radialGradient id="g-bore" cx="50%" cy="50%" r="50%">
-    <stop offset="0%"  stop-color="#0f0d06"/>
-    <stop offset="100%" stop-color="#080808"/>
-  </radialGradient>
-</defs>
+<!-- ── COG DIAGRAM ────────────────────────────────────────────────── -->
+<div class="ms-diagram-section">
 
-<!-- ── DASHED CONNECTION LINES ─────────────────────────────────────── -->
-<!--   Centre (400,295) → each satellite                               -->
-<g stroke-dasharray="6 4" stroke-width="1.2" opacity=".28">
-  <line x1="400" y1="295" x2="190" y2="140" stroke="#e8b84b"/>
-  <line x1="400" y1="295" x2="190" y2="295" stroke="#e8b84b"/>
-  <line x1="400" y1="295" x2="190" y2="450" stroke="#e8b84b"/>
-  <line x1="400" y1="295" x2="610" y2="140" stroke="#5ea8ff"/>
-  <line x1="400" y1="295" x2="610" y2="295" stroke="#5ea8ff"/>
-  <line x1="400" y1="295" x2="610" y2="450" stroke="#5ea8ff"/>
-  <line x1="400" y1="295" x2="210" y2="570" stroke="#3ecf6e"/>
-  <line x1="400" y1="295" x2="400" y2="585" stroke="#3ecf6e"/>
-  <line x1="400" y1="295" x2="590" y2="570" stroke="#3ecf6e"/>
-</g>
+  <!-- STA / STB group labels -->
+  <div style="max-width:820px;margin:0 auto 8px;display:flex;justify-content:space-between;padding:0 8px">
+    <div class="ms-group-hd gold">STA — Sub-Trust A</div>
+    <div class="ms-group-hd blue">STB — Sub-Trust B</div>
+  </div>
 
-<!-- ── CENTRE COG ──────────────────────────────────────────────────── -->
-<!-- Ambient glow -->
-<circle cx="400" cy="295" r="175" fill="url(#g-gold)" opacity=".8"/>
-<!-- Rotating body -->
-<g id="ctr-spin">
-  <!-- 12 teeth — rect centred on x=400, top at y=178 (offset=117 from cy=295) -->
-  <g fill="#1e1809" stroke="#e8b84b" stroke-width="1.6" stroke-linejoin="round">
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(  0,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate( 30,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate( 60,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate( 90,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(120,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(150,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(180,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(210,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(240,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(270,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(300,400,295)"/>
-    <rect x="391" y="178" width="18" height="26" rx="4" transform="rotate(330,400,295)"/>
-  </g>
-  <!-- Outer ring r=105 -->
-  <circle cx="400" cy="295" r="105" fill="url(#g-ctr)" stroke="#e8b84b" stroke-width="2.2"/>
-  <!-- Inner accent ring r=90 -->
-  <circle cx="400" cy="295" r="90" fill="none" stroke="rgba(232,184,75,.18)" stroke-width="1.2"/>
-  <!-- Spoke decorations (6 spokes from r=72 to r=88) -->
-  <g stroke="rgba(232,184,75,.14)" stroke-width="1.2">
-    <line x1="400" y1="207" x2="400" y2="225" transform="rotate(  0,400,295)"/>
-    <line x1="400" y1="207" x2="400" y2="225" transform="rotate( 60,400,295)"/>
-    <line x1="400" y1="207" x2="400" y2="225" transform="rotate(120,400,295)"/>
-    <line x1="400" y1="207" x2="400" y2="225" transform="rotate(180,400,295)"/>
-    <line x1="400" y1="207" x2="400" y2="225" transform="rotate(240,400,295)"/>
-    <line x1="400" y1="207" x2="400" y2="225" transform="rotate(300,400,295)"/>
-  </g>
-  <!-- Bore r=72 — large enough for text -->
-  <circle cx="400" cy="295" r="72" fill="url(#g-bore)" stroke="rgba(232,184,75,.55)" stroke-width="1.8"/>
-</g>
+  <!-- 3-column grid: STA | centre | STB -->
+  <div class="ms-grid">
 
-<!-- ── CENTRE TEXT (non-rotating, always on top) ───────────────────── -->
-<!-- MAINSPRING eyebrow -->
-<text x="400" y="272" text-anchor="middle"
-      font-family="'Cormorant Garamond',serif"
-      font-size="9.5" font-weight="700"
-      fill="rgba(232,184,75,.75)" letter-spacing="4.5">MAINSPRING</text>
-<!-- Separator line -->
-<line x1="366" y1="277" x2="434" y2="277" stroke="rgba(232,184,75,.25)" stroke-width="0.8"/>
-<!-- Members number -->
-<text id="c-members" x="400" y="303" text-anchor="middle"
-      font-family="'DM Mono',monospace"
-      font-size="34" font-weight="700" fill="#e8b84b">—</text>
-<!-- MEMBERS label -->
-<text x="400" y="315" text-anchor="middle"
-      font-family="'DM Sans',sans-serif"
-      font-size="7.5" font-weight="600"
-      fill="rgba(232,184,75,.6)" letter-spacing="2.5">MEMBERS</text>
-<!-- Separator -->
-<line x1="376" y1="320" x2="424" y2="320" stroke="rgba(232,184,75,.15)" stroke-width="0.8"/>
-<!-- Projects number -->
-<text id="c-projects" x="400" y="337" text-anchor="middle"
-      font-family="'DM Mono',monospace"
-      font-size="18" font-weight="700" fill="rgba(232,184,75,.88)">—</text>
-<!-- PROJECTS label -->
-<text x="400" y="349" text-anchor="middle"
-      font-family="'DM Sans',sans-serif"
-      font-size="7" font-weight="600"
-      fill="rgba(232,184,75,.48)" letter-spacing="2.5">PROJECTS</text>
+    <!-- STA column -->
+    <div class="ms-col-sta">
+      <div class="ms-cog-cell" id="cc-operations_oversight"
+           data-key="operations_oversight" data-label="Day-to-Day Operations"
+           data-sub="STA" data-color="#e8b84b">
+        <div class="ms-cog-label">Day-to-Day<br>Operations</div>
+        <svg class="ms-cog-svg" viewBox="0 0 88 88">
+          <defs><radialGradient id="gg-gold" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e8b84b" stop-opacity=".3"/><stop offset="100%" stop-color="#e8b84b" stop-opacity="0"/></radialGradient></defs>
+          <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-gold)" opacity="0"/>
+          <g class="cog-spin-el" style="transform-origin:44px 44px">
+            <g class="cog-teeth-el" fill="#141414" stroke="#e8b84b" stroke-opacity=".35" stroke-width="1.2">
+              <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+            </g>
+            <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#e8b84b" stroke-opacity=".32" stroke-width="1.5"/>
+            <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#e8b84b" stroke-opacity=".22" stroke-width="1" class="cog-hole-el"/>
+            <circle cx="44" cy="44" r="3.5" fill="#e8b84b" opacity=".5" class="cog-dot-el"/>
+          </g>
+        </svg>
+      </div>
 
-<!-- ── GROUP LABELS (positioned outside satellite clusters) ────────── -->
-<text x="82"  y="50"  text-anchor="middle" font-family="'DM Mono',monospace" font-size="9.5" font-weight="700" fill="rgba(232,184,75,.5)"  letter-spacing="3">STA</text>
-<text x="718" y="50"  text-anchor="middle" font-family="'DM Mono',monospace" font-size="9.5" font-weight="700" fill="rgba(94,168,255,.5)"  letter-spacing="3">STB</text>
-<text x="400" y="665" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9.5" font-weight="700" fill="rgba(62,207,110,.5)"  letter-spacing="3">STC</text>
+      <div class="ms-cog-cell" id="cc-financial_oversight"
+           data-key="financial_oversight" data-label="Financial Oversight"
+           data-sub="STA" data-color="#e8b84b">
+        <div class="ms-cog-label">Financial<br>Oversight</div>
+        <svg class="ms-cog-svg" viewBox="0 0 88 88">
+          <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-gold)" opacity="0"/>
+          <g class="cog-spin-el" style="transform-origin:44px 44px">
+            <g class="cog-teeth-el" fill="#141414" stroke="#e8b84b" stroke-opacity=".35" stroke-width="1.2">
+              <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+            </g>
+            <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#e8b84b" stroke-opacity=".32" stroke-width="1.5"/>
+            <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#e8b84b" stroke-opacity=".22" stroke-width="1"/>
+            <circle cx="44" cy="44" r="3.5" fill="#e8b84b" opacity=".5" class="cog-dot-el"/>
+          </g>
+        </svg>
+      </div>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     SATELLITE COGS — 9 hubs
-     Each: glow circle, rotating group (teeth+ring+hole+dot), name label
-     Satellite outer ring r=44, teeth tip at ~54px
-     Positions (in viewBox coords):
-       STA: (190,140) (190,295) (190,450)
-       STB: (610,140) (610,295) (610,450)
-       STC: (210,570) (400,585) (590,570)
-     ═══════════════════════════════════════════════════════════════════ -->
+      <div class="ms-cog-cell" id="cc-technology_blockchain"
+           data-key="technology_blockchain" data-label="Technology &amp; Blockchain"
+           data-sub="STA" data-color="#e8b84b">
+        <div class="ms-cog-label">Technology &amp;<br>Blockchain</div>
+        <svg class="ms-cog-svg" viewBox="0 0 88 88">
+          <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-gold)" opacity="0"/>
+          <g class="cog-spin-el" style="transform-origin:44px 44px">
+            <g class="cog-teeth-el" fill="#141414" stroke="#e8b84b" stroke-opacity=".35" stroke-width="1.2">
+              <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+            </g>
+            <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#e8b84b" stroke-opacity=".32" stroke-width="1.5"/>
+            <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#e8b84b" stroke-opacity=".22" stroke-width="1"/>
+            <circle cx="44" cy="44" r="3.5" fill="#e8b84b" opacity=".5" class="cog-dot-el"/>
+          </g>
+        </svg>
+      </div>
+    </div><!-- /.ms-col-sta -->
 
-<!-- ── STA-1: operations_oversight ──────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-operations_oversight"
-   data-key="operations_oversight" data-label="Day-to-Day Operations"
-   data-sub="STA" data-color="#e8b84b"
-   transform="translate(190,140)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-gold)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(232,184,75,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(232,184,75,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(232,184,75,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(232,184,75,.5)" class="cd"/>
-  </g>
-  <text x="-12" y="-62" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Day-to-Day</text>
-  <text x="-12" y="-44" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Operations</text>
-</g>
+    <!-- Centre cog -->
+    <div class="ms-col-ctr">
+      <div class="ms-centre-cog">
+        <svg class="ms-centre-svg" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="ctr-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e8b84b" stop-opacity=".28"/><stop offset="100%" stop-color="#e8b84b" stop-opacity="0"/></radialGradient>
+            <radialGradient id="ctr-body" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#221c09"/><stop offset="65%" stop-color="#161208"/><stop offset="100%" stop-color="#0a0a0a"/></radialGradient>
+            <radialGradient id="ctr-bore" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#100e06"/><stop offset="100%" stop-color="#080808"/></radialGradient>
+          </defs>
+          <!-- Ambient glow -->
+          <circle cx="100" cy="100" r="96" fill="url(#ctr-glow)" opacity=".9"/>
+          <!-- Spinning group -->
+          <g id="ctr-cog-spin">
+            <!-- 12 teeth -->
+            <g fill="#1d1609" stroke="#e8b84b" stroke-width="1.6">
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(  0,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate( 30,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate( 60,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate( 90,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(120,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(150,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(180,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(210,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(240,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(270,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(300,100,100)"/>
+              <rect x="93" y="17" width="14" height="20" rx="3" transform="rotate(330,100,100)"/>
+            </g>
+            <!-- Outer ring -->
+            <circle cx="100" cy="100" r="70" fill="url(#ctr-body)" stroke="#e8b84b" stroke-width="2.2"/>
+            <!-- Detail ring -->
+            <circle cx="100" cy="100" r="58" fill="none" stroke="rgba(232,184,75,.16)" stroke-width="1.2"/>
+            <!-- Spokes -->
+            <g stroke="rgba(232,184,75,.12)" stroke-width="1.2">
+              <line x1="100" y1="44" x2="100" y2="58" transform="rotate(  0,100,100)"/>
+              <line x1="100" y1="44" x2="100" y2="58" transform="rotate( 60,100,100)"/>
+              <line x1="100" y1="44" x2="100" y2="58" transform="rotate(120,100,100)"/>
+              <line x1="100" y1="44" x2="100" y2="58" transform="rotate(180,100,100)"/>
+              <line x1="100" y1="44" x2="100" y2="58" transform="rotate(240,100,100)"/>
+              <line x1="100" y1="44" x2="100" y2="58" transform="rotate(300,100,100)"/>
+            </g>
+            <!-- Bore -->
+            <circle cx="100" cy="100" r="40" fill="url(#ctr-bore)" stroke="rgba(232,184,75,.55)" stroke-width="1.8"/>
+          </g>
+        </svg>
+        <!-- Stats overlay — HTML text, real px, perfect contrast -->
+        <div class="ms-centre-stats">
+          <span class="ms-centre-eyebrow">Mainspring</span>
+          <div class="ms-centre-divider"></div>
+          <span id="c-members" class="ms-centre-n">—</span>
+          <span class="ms-centre-lbl">Members</span>
+          <div class="ms-centre-sep"></div>
+          <span id="c-projects" class="ms-centre-n2">—</span>
+          <span class="ms-centre-lbl2">Projects</span>
+        </div>
+      </div>
+    </div><!-- /.ms-col-ctr -->
 
-<!-- ── STA-2: financial_oversight ────────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-financial_oversight"
-   data-key="financial_oversight" data-label="Financial Oversight"
-   data-sub="STA" data-color="#e8b84b"
-   transform="translate(190,295)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-gold)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(232,184,75,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(232,184,75,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(232,184,75,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(232,184,75,.5)" class="cd"/>
-  </g>
-  <text x="-58" y="-6" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Financial</text>
-  <text x="-58" y="12" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Oversight</text>
-</g>
+    <!-- STB column -->
+    <div class="ms-col-stb">
+      <div class="ms-cog-cell" id="cc-governance_polls"
+           data-key="governance_polls" data-label="Research &amp; Acquisitions"
+           data-sub="STB" data-color="#5ea8ff">
+        <svg class="ms-cog-svg" viewBox="0 0 88 88">
+          <defs><radialGradient id="gg-blue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#5ea8ff" stop-opacity=".28"/><stop offset="100%" stop-color="#5ea8ff" stop-opacity="0"/></radialGradient></defs>
+          <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-blue)" opacity="0"/>
+          <g class="cog-spin-el" style="transform-origin:44px 44px">
+            <g class="cog-teeth-el" fill="#141414" stroke="#5ea8ff" stroke-opacity=".35" stroke-width="1.2">
+              <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+            </g>
+            <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#5ea8ff" stroke-opacity=".32" stroke-width="1.5"/>
+            <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#5ea8ff" stroke-opacity=".22" stroke-width="1"/>
+            <circle cx="44" cy="44" r="3.5" fill="#5ea8ff" opacity=".5" class="cog-dot-el"/>
+          </g>
+        </svg>
+        <div class="ms-cog-label">Research &amp;<br>Acquisitions</div>
+      </div>
 
-<!-- ── STA-3: technology_blockchain ─────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-technology_blockchain"
-   data-key="technology_blockchain" data-label="Technology &amp; Blockchain"
-   data-sub="STA" data-color="#e8b84b"
-   transform="translate(190,450)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-gold)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(232,184,75,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(232,184,75,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(232,184,75,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(232,184,75,.5)" class="cd"/>
-  </g>
-  <text x="-12" y="62" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Technology &amp;</text>
-  <text x="-12" y="80" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Blockchain</text>
-</g>
+      <div class="ms-cog-cell" id="cc-esg_proxy_voting"
+           data-key="esg_proxy_voting" data-label="ESG &amp; Proxy Voting"
+           data-sub="STB" data-color="#5ea8ff">
+        <svg class="ms-cog-svg" viewBox="0 0 88 88">
+          <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-blue)" opacity="0"/>
+          <g class="cog-spin-el" style="transform-origin:44px 44px">
+            <g class="cog-teeth-el" fill="#141414" stroke="#5ea8ff" stroke-opacity=".35" stroke-width="1.2">
+              <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+            </g>
+            <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#5ea8ff" stroke-opacity=".32" stroke-width="1.5"/>
+            <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#5ea8ff" stroke-opacity=".22" stroke-width="1"/>
+            <circle cx="44" cy="44" r="3.5" fill="#5ea8ff" opacity=".5" class="cog-dot-el"/>
+          </g>
+        </svg>
+        <div class="ms-cog-label">ESG &amp; Proxy<br>Voting</div>
+      </div>
 
-<!-- ── STB-1: governance_polls ───────────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-governance_polls"
-   data-key="governance_polls" data-label="Research &amp; Acquisitions"
-   data-sub="STB" data-color="#5ea8ff"
-   transform="translate(610,140)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-blue)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(94,168,255,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(94,168,255,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(94,168,255,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(94,168,255,.5)" class="cd"/>
-  </g>
-  <text x="12" y="-62" text-anchor="start" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Research &amp;</text>
-  <text x="12" y="-44" text-anchor="start" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Acquisitions</text>
-</g>
+      <div class="ms-cog-cell" id="cc-education_outreach"
+           data-key="education_outreach" data-label="Education &amp; Outreach"
+           data-sub="STB" data-color="#5ea8ff">
+        <svg class="ms-cog-svg" viewBox="0 0 88 88">
+          <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-blue)" opacity="0"/>
+          <g class="cog-spin-el" style="transform-origin:44px 44px">
+            <g class="cog-teeth-el" fill="#141414" stroke="#5ea8ff" stroke-opacity=".35" stroke-width="1.2">
+              <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+              <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+            </g>
+            <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#5ea8ff" stroke-opacity=".32" stroke-width="1.5"/>
+            <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#5ea8ff" stroke-opacity=".22" stroke-width="1"/>
+            <circle cx="44" cy="44" r="3.5" fill="#5ea8ff" opacity=".5" class="cog-dot-el"/>
+          </g>
+        </svg>
+        <div class="ms-cog-label">Education &amp;<br>Outreach</div>
+      </div>
+    </div><!-- /.ms-col-stb -->
+  </div><!-- /.ms-grid -->
 
-<!-- ── STB-2: esg_proxy_voting ───────────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-esg_proxy_voting"
-   data-key="esg_proxy_voting" data-label="ESG &amp; Proxy Voting"
-   data-sub="STB" data-color="#5ea8ff"
-   transform="translate(610,295)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-blue)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(94,168,255,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(94,168,255,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(94,168,255,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(94,168,255,.5)" class="cd"/>
-  </g>
-  <text x="58" y="-6" text-anchor="start" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">ESG &amp; Proxy</text>
-  <text x="58" y="12" text-anchor="start" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Voting</text>
-</g>
+  <!-- STC row -->
+  <div style="max-width:820px;margin:4px auto 0;text-align:center">
+    <div class="ms-group-hd green" style="margin-bottom:6px">STC — Sub-Trust C</div>
+  </div>
+  <div class="ms-row-stc">
+    <div class="ms-cog-cell" id="cc-first_nations"
+         data-key="first_nations" data-label="First Nations JV"
+         data-sub="STC" data-color="#3ecf6e">
+      <svg class="ms-cog-svg" viewBox="0 0 88 88">
+        <defs><radialGradient id="gg-green" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3ecf6e" stop-opacity=".28"/><stop offset="100%" stop-color="#3ecf6e" stop-opacity="0"/></radialGradient></defs>
+        <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-green)" opacity="0"/>
+        <g class="cog-spin-el" style="transform-origin:44px 44px">
+          <g class="cog-teeth-el" fill="#141414" stroke="#3ecf6e" stroke-opacity=".35" stroke-width="1.2">
+            <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+          </g>
+          <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#3ecf6e" stroke-opacity=".32" stroke-width="1.5"/>
+          <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#3ecf6e" stroke-opacity=".22" stroke-width="1"/>
+          <circle cx="44" cy="44" r="3.5" fill="#3ecf6e" opacity=".5" class="cog-dot-el"/>
+        </g>
+      </svg>
+      <div class="ms-cog-label">First Nations JV</div>
+    </div>
 
-<!-- ── STB-3: education_outreach ─────────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-education_outreach"
-   data-key="education_outreach" data-label="Education &amp; Outreach"
-   data-sub="STB" data-color="#5ea8ff"
-   transform="translate(610,450)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-blue)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(94,168,255,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(94,168,255,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(94,168,255,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(94,168,255,.5)" class="cd"/>
-  </g>
-  <text x="12" y="62" text-anchor="start" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Education &amp;</text>
-  <text x="12" y="80" text-anchor="start" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Outreach</text>
-</g>
+    <div class="ms-cog-cell" id="cc-community_projects"
+         data-key="community_projects" data-label="Community Projects"
+         data-sub="STC" data-color="#3ecf6e">
+      <svg class="ms-cog-svg" viewBox="0 0 88 88">
+        <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-green)" opacity="0"/>
+        <g class="cog-spin-el" style="transform-origin:44px 44px">
+          <g class="cog-teeth-el" fill="#141414" stroke="#3ecf6e" stroke-opacity=".35" stroke-width="1.2">
+            <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+          </g>
+          <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#3ecf6e" stroke-opacity=".32" stroke-width="1.5"/>
+          <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#3ecf6e" stroke-opacity=".22" stroke-width="1"/>
+          <circle cx="44" cy="44" r="3.5" fill="#3ecf6e" opacity=".5" class="cog-dot-el"/>
+        </g>
+      </svg>
+      <div class="ms-cog-label">Community Projects</div>
+    </div>
 
-<!-- ── STC-1: first_nations ──────────────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-first_nations"
-   data-key="first_nations" data-label="First Nations JV"
-   data-sub="STC" data-color="#3ecf6e"
-   transform="translate(210,570)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-green)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(62,207,110,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(62,207,110,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(62,207,110,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(62,207,110,.5)" class="cd"/>
-  </g>
-  <text x="0" y="64" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">First Nations JV</text>
-</g>
+    <div class="ms-cog-cell" id="cc-place_based_decisions"
+         data-key="place_based_decisions" data-label="Place-Based Decisions"
+         data-sub="STC" data-color="#3ecf6e">
+      <svg class="ms-cog-svg" viewBox="0 0 88 88">
+        <circle class="cog-glow-el" cx="44" cy="44" r="44" fill="url(#gg-green)" opacity="0"/>
+        <g class="cog-spin-el" style="transform-origin:44px 44px">
+          <g class="cog-teeth-el" fill="#141414" stroke="#3ecf6e" stroke-opacity=".35" stroke-width="1.2">
+            <rect x="40" y="4" width="8" height="11" rx="2"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(45,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(90,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(135,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(180,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(225,44,44)"/>
+            <rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(270,44,44)"/><rect x="40" y="4" width="8" height="11" rx="2" transform="rotate(315,44,44)"/>
+          </g>
+          <circle class="cog-ring-el cog-body-el" cx="44" cy="44" r="32" fill="#161616" fill-opacity="1" stroke="#3ecf6e" stroke-opacity=".32" stroke-width="1.5"/>
+          <circle cx="44" cy="44" r="10" fill="#0a0a0a" stroke="#3ecf6e" stroke-opacity=".22" stroke-width="1"/>
+          <circle cx="44" cy="44" r="3.5" fill="#3ecf6e" opacity=".5" class="cog-dot-el"/>
+        </g>
+      </svg>
+      <div class="ms-cog-label">Place-Based<br>Decisions</div>
+    </div>
+  </div><!-- /.ms-row-stc -->
 
-<!-- ── STC-2: community_projects ────────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-community_projects"
-   data-key="community_projects" data-label="Community Projects"
-   data-sub="STC" data-color="#3ecf6e"
-   transform="translate(400,585)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-green)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(62,207,110,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(62,207,110,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(62,207,110,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(62,207,110,.5)" class="cd"/>
-  </g>
-  <text x="0" y="64" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Community Projects</text>
-</g>
-
-<!-- ── STC-3: place_based_decisions ─────────────────────────────────── -->
-<g class="ms-sat-cog" id="sc-place_based_decisions"
-   data-key="place_based_decisions" data-label="Place-Based Decisions"
-   data-sub="STC" data-color="#3ecf6e"
-   transform="translate(590,570)" style="cursor:pointer">
-  <circle class="cog-glow" cx="0" cy="0" r="80" fill="url(#g-green)" opacity="0"/>
-  <g class="cog-spin" style="transform-origin:0 0">
-    <g class="ct" fill="#131313" stroke="rgba(62,207,110,.32)" stroke-width="1.3">
-      <rect x="-7" y="-52" width="14" height="17" rx="3"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(45)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(90)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(135)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(180)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(225)"/>
-      <rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(270)"/><rect x="-7" y="-52" width="14" height="17" rx="3" transform="rotate(315)"/>
-    </g>
-    <circle class="cr" cx="0" cy="0" r="44" fill="#161616" stroke="rgba(62,207,110,.3)" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="14" fill="#0a0a0a" stroke="rgba(62,207,110,.22)" stroke-width="1.2" class="ch"/>
-    <circle cx="0" cy="0" r="4.5" fill="rgba(62,207,110,.5)" class="cd"/>
-  </g>
-  <text x="0" y="64" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Place-Based</text>
-  <text x="0" y="82" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.72)" class="cn" pointer-events="none">Decisions</text>
-</g>
-
-</svg>
-</div><!-- /.ms-cog-svg-wrap -->
-
-<div class="ms-st-legend">
-  <span class="ms-st-badge ms-st-a">Sub-Trust A — Operations</span>
-  <span class="ms-st-badge ms-st-b">Sub-Trust B — Governance</span>
-  <span class="ms-st-badge ms-st-c">Sub-Trust C — Community</span>
-</div>
-</div><!-- /.ms-cog-section -->
+  <!-- Legend -->
+  <div class="ms-legend">
+    <span class="ms-badge ms-badge-a">Sub-Trust A — Operations</span>
+    <span class="ms-badge ms-badge-b">Sub-Trust B — Governance</span>
+    <span class="ms-badge ms-badge-c">Sub-Trust C — Community</span>
+  </div>
+</div><!-- /.ms-diagram-section -->
 
 <!-- Popout -->
 <div class="ms-pop" id="ms-pop">
   <div class="ms-pop-name" id="pop-name">—</div>
   <div class="ms-pop-sub"  id="pop-sub">—</div>
-  <div class="ms-pop-stats">
+  <div class="ms-pop-row">
     <div class="ms-pop-stat"><strong id="pop-m">—</strong><span>Members</span></div>
     <div class="ms-pop-stat"><strong id="pop-t">—</strong><span>Threads</span></div>
     <div class="ms-pop-stat"><strong id="pop-p">—</strong><span>Projects</span></div>
@@ -483,22 +571,14 @@ function activateCogs(tiles,myAreas){
     _tiles[t.area_key]=t;
     totM+=(parseInt(t.member_count)||0);
     totP+=(parseInt(t.active_project_count)||0);
-    var cog=document.getElementById('sc-'+t.area_key);
-    if(!cog)return;
+    var cell=document.getElementById('cc-'+t.area_key);
+    if(!cell)return;
     var enrolled=myAreas.indexOf(t.area_key)>=0;
-    var color=cog.dataset.color||'#e8b84b';
-    var rgb=color==='#e8b84b'?'232,184,75':color==='#5ea8ff'?'94,168,255':'62,207,110';
     if(enrolled){
-      cog.classList.add('active');
-      var glow=cog.querySelector('.cog-glow'),ring=cog.querySelector('.cr');
-      var teeth=cog.querySelectorAll('.ct rect'),dot=cog.querySelector('.cd');
-      var hole=cog.querySelector('.ch'),names=cog.querySelectorAll('.cn');
-      if(glow)glow.setAttribute('opacity','.75');
-      if(ring){ring.setAttribute('stroke','rgba('+rgb+',.95)');ring.setAttribute('stroke-width','2.5');ring.setAttribute('fill','rgba('+rgb+',.07)');}
-      if(dot)dot.setAttribute('fill',color);
-      if(hole)hole.setAttribute('stroke','rgba('+rgb+',.45)');
-      teeth.forEach(function(r){r.setAttribute('stroke','rgba('+rgb+',.75)');r.setAttribute('fill','rgba('+rgb+',.07)');});
-      names.forEach(function(n){n.setAttribute('fill','rgba(255,255,255,.95)');n.setAttribute('font-weight','700');});
+      cell.classList.add('active');
+      // Brighten the label further via style
+      var lbl=cell.querySelector('.ms-cog-label');
+      if(lbl){lbl.style.color='#fff';lbl.style.fontWeight='700';}
     }
   });
   var cm=document.getElementById('c-members'),cp=document.getElementById('c-projects');
@@ -506,20 +586,20 @@ function activateCogs(tiles,myAreas){
   if(cp)cp.textContent=totP>0?totP:'—';
 }
 
-function showPop(cog,e){
-  var key=cog.dataset.key,t=_tiles[key]||{},enrolled=_myAreas.indexOf(key)>=0;
-  var color=cog.dataset.color||'#e8b84b',sub=cog.dataset.sub||'';
-  document.getElementById('pop-name').textContent=cog.dataset.label||key;
+function showPop(cell,e){
+  var key=cell.dataset.key,t=_tiles[key]||{},enrolled=_myAreas.indexOf(key)>=0;
+  var color=cell.dataset.color||'#e8b84b',sub=cell.dataset.sub||'';
+  document.getElementById('pop-name').textContent=cell.dataset.label||key;
   var subEl=document.getElementById('pop-sub');
   subEl.textContent=(SUB_LABELS[sub]||sub)+(enrolled?' — Active':'');
-  subEl.style.color=enrolled?color:'var(--text4)';
+  subEl.style.color=enrolled?color:'rgba(255,255,255,.4)';
   document.getElementById('pop-m').textContent=t.member_count!=null?Number(t.member_count).toLocaleString('en-AU'):'—';
   document.getElementById('pop-t').textContent=t.thread_count!=null?Number(t.thread_count).toLocaleString('en-AU'):'—';
   document.getElementById('pop-p').textContent=t.active_project_count!=null?Number(t.active_project_count).toLocaleString('en-AU'):'—';
   var foot=document.getElementById('pop-foot');
   foot.textContent=enrolled?'Active — Click to open →':'Click to open hub →';
-  foot.style.color=enrolled?color:'var(--text4)';
-  posPop(e);_pop.classList.add('visible');
+  foot.style.color=enrolled?color:'rgba(255,255,255,.4)';
+  posPop(e);_pop.classList.add('on');
 }
 function posPop(e){
   var vw=window.innerWidth,vh=window.innerHeight,pw=240,ph=148;
@@ -529,13 +609,13 @@ function posPop(e){
   if(t<8)t=8;
   _pop.style.left=l+'px';_pop.style.top=t+'px';
 }
-function hidePop(){_pop.classList.remove('visible');}
+function hidePop(){_pop.classList.remove('on');}
 
-document.querySelectorAll('.ms-sat-cog').forEach(function(c){
+document.querySelectorAll('.ms-cog-cell').forEach(function(c){
   c.addEventListener('mouseenter',function(e){showPop(c,e);});
   c.addEventListener('mousemove', function(e){posPop(e);});
   c.addEventListener('mouseleave',hidePop);
-  c.addEventListener('click',function(){coinTransition(HUB_PATHS[c.dataset.key]||('../'+c.dataset.key+'/'),c.dataset.label);});
+  c.addEventListener('click',function(){coinTransition(HUB_PATHS[c.dataset.key]||('../'+c.dataset.key+'/'),c.dataset.label||'Opening hub');});
 });
 document.addEventListener('scroll',hidePop,{passive:true});
 
