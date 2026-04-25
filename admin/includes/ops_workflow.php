@@ -1364,7 +1364,9 @@ function admin_csrf_verify(): void {
     $expected  = (string)($_SESSION['_admin_csrf'] ?? '');
     if ($expected === '' || !hash_equals($expected, $submitted)) {
         http_response_code(403);
-        echo '<p style="font-family:sans-serif;padding:40px;color:#c00">Invalid or missing security token. Please go back and try again.</p>';
+        echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Error</title></head><body>'
+           . '<p style="font-family:sans-serif;padding:40px;color:#c00">Invalid or missing security token. Please go back and try again.</p>'
+           . '</body></html>';
         exit;
     }
 }

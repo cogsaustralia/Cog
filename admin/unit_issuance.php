@@ -397,6 +397,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: ' . $successUrl);
             exit;
         }
+
+        // ── Resend failed certificate emails ─────────────────────────────────
+        if ($action === 'resend_certs') {
+            $pdo->prepare(
+                "UPDATE email_queue SET status = 'pending', last_error = NULL, updated_at = UTC_TIMESTAMP()
+                 WHERE template_key = 'unit_certificate' AND status IN ('failed','pending')"
+            )->execute();
+            $pdo->prepare(
+                "UPDATE unitholder_certificates uc
+                 INNER JOIN email_queue eq ON eq.id = uc.email_queue_id
+                 SET uc.email_sent_at = NULL
+                 WHERE eq.template_key = 'unit_certificate' AND eq.status = 'pending'"
+            )->execute();
+            $result = processEmailQueue($pdo, 50);
+            $sent = (int)($result['processed'] ?? 0);
+            header('Location: ' . admin_url('unit_issuance.php') . '?tab=certs&resend_result=' . $sent);
+            exit;
+        }
+
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
         $error = $e->getMessage();
@@ -404,31 +423,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ── View state ────────────────────────────────────────────────────────────────
-// Resend all failed/pending certificate emails
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'resend_certs') {
-    admin_csrf_verify();
-    try {
-        // Reset failed email_queue rows for certificate template back to pending
-        $pdo->prepare(
-            "UPDATE email_queue SET status = 'pending', last_error = NULL, updated_at = UTC_TIMESTAMP()
-             WHERE template_key = 'unit_certificate' AND status IN ('failed', 'pending')"
-        )->execute();
-        // Clear email_sent_at on certs whose queue row is pending so the UI count updates
-        $pdo->prepare(
-            "UPDATE unitholder_certificates uc
-             INNER JOIN email_queue eq ON eq.id = uc.email_queue_id
-             SET uc.email_sent_at = NULL
-             WHERE eq.template_key = 'unit_certificate' AND eq.status = 'pending'"
-        )->execute();
-        // Process up to 50 certificate emails now
-        $result = processEmailQueue($pdo, 50);
-        $sent = (int)($result['processed'] ?? 0);
-        header('Location: ' . admin_url('unit_issuance.php') . '?tab=certs&resend_result=' . $sent);
-        exit;
-    } catch (Throwable $e) {
-        $error = 'Resend failed: ' . $e->getMessage();
-    }
-}
 $viewTab = in_array($_GET['tab'] ?? '', ['issue','register','certs','issued','issued_bulk'], true) ? $_GET['tab'] : 'issue';
 
 // Success params (populated after PRG redirect)
@@ -826,7 +820,7 @@ $resendResult = isset($_GET['resend_result']) ? (int)$_GET['resend_result'] : -1
     <span style="color:var(--sub);font-size:.78rem;margin-left:6px">SMTP was rejecting at time of issuance — resend now that email is configured correctly.</span>
   </div>
   <form method="POST" style="flex-shrink:0">
-    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+    <input type="hidden" name="_csrf" value="<?= $csrf ?>">
     <input type="hidden" name="action" value="resend_certs">
     <button type="submit" class="btn btn-warn"
             onclick="return confirm('Resend <?= $failedCount ?> failed certificate email<?= $failedCount !== 1 ? 's' : '' ?>?')">
@@ -841,7 +835,7 @@ $resendResult = isset($_GET['resend_result']) ? (int)$_GET['resend_result'] : -1
     ⏳ <?= $pendingEmail ?> certificate email<?= $pendingEmail !== 1 ? 's' : '' ?> pending in queue.
   </div>
   <form method="POST" style="flex-shrink:0">
-    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+    <input type="hidden" name="_csrf" value="<?= $csrf ?>">
     <input type="hidden" name="action" value="resend_certs">
     <button type="submit" class="btn">🔁 Flush Email Queue</button>
   </form>
