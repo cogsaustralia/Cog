@@ -66,6 +66,31 @@ function activationTokenSecret(): string {
     return hash('sha256', $base . '|' . SITE_URL . '|' . MAIL_FROM_EMAIL);
 }
 
+function buildCertToken(string $certRef, int $ttlSeconds = 2592000): string { // 30 days default
+    $payload = [
+        'c' => $certRef,
+        'x' => time() + max(3600, $ttlSeconds),
+    ];
+    $json = json_encode($payload, JSON_UNESCAPED_SLASHES);
+    $b64  = rtrim(strtr(base64_encode($json), '+/', '-_'), '=');
+    $sig  = hash_hmac('sha256', $b64, activationTokenSecret());
+    return $b64 . '.' . $sig;
+}
+
+function verifyCertToken(string $token): ?string { // returns cert_ref or null
+    $token = trim($token);
+    if ($token === '' || !str_contains($token, '.')) return null;
+    [$b64, $sig] = explode('.', $token, 2);
+    $expected = hash_hmac('sha256', $b64, activationTokenSecret());
+    if (!hash_equals($expected, $sig)) return null;
+    $json = base64_decode(strtr($b64, '-_', '+/'), true);
+    if ($json === false) return null;
+    $payload = json_decode($json, true);
+    if (!is_array($payload) || empty($payload['c']) || empty($payload['x'])) return null;
+    if ((int)$payload['x'] < time()) return null;
+    return (string)$payload['c'];
+}
+
 function buildActivationToken(string $role, string $memberRef, string $email, int $ttlSeconds = 604800): string {
     $payload = [
         'r' => $role,
@@ -1427,6 +1452,12 @@ return [$html, $plain];
                 . 'Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation &nbsp;·&nbsp; ABN 91 341 497 529'
                 . '</div>';
 
+            // ── Certificate download URL (30-day signed token) ────────────
+            $rawCertRef = (string)($p['cert_ref'] ?? '');
+            $certToken  = $rawCertRef !== '' ? buildCertToken($rawCertRef) : '';
+            $certUrl    = $certToken !== '' ? rtrim($site, '/') . '/cert.php?t=' . urlencode($certToken) : '';
+            $certUrlHtml = htmlspecialchars($certUrl);
+
             // ── Assemble HTML ─────────────────────────────────────────────
             $html = $wrapOpen . $headerBar . $body
                 . '<h2 style="' . $h2Style . '">Certificate of Unit Holding</h2>'
@@ -1446,6 +1477,12 @@ return [$html, $plain];
                 . '<div style="margin-top:.75rem;"><div style="' . $labelStyle . '">Issuance gate</div><div style="font-size:12px;color:#d4c9b8;">' . $gateLabel . '</div></div>'
                 . '<div style="margin-top:.5rem;word-break:break-all;"><div style="' . $labelStyle . '">Cryptographic record (SHA-256)</div><div style="font-size:11px;color:#9a8a74;font-family:monospace;">' . $hashVal . '</div></div>'
                 . '</div>'
+                . ($certUrl !== '' ?
+                    '<div style="text-align:center;margin:1.5rem 0;">'
+                  . '<a href="' . $certUrlHtml . '" style="display:inline-block;background:#c8901a;color:#0f0d09;font-size:15px;font-weight:700;padding:14px 36px;border-radius:8px;text-decoration:none;letter-spacing:.02em;">📄 View &amp; Print Certificate</a>'
+                  . '<p style="font-size:11px;color:#9a8a74;margin:10px 0 0;">Opens a print-ready certificate page. Use your browser\'s Print or Save as PDF function to save a copy. Link valid for 30 days.</p>'
+                  . '</div>'
+                  : '')
                 . '<h3 style="' . $h3Style . '">Rights and Attributes — Class ' . $classCode . '</h3>'
                 . '<p style="font-size:12px;color:#9a8a74;margin:.25rem 0 .75rem;">The following rights and smart contract attributes apply exclusively to this unit class as defined in the governing instruments. No rights from other classes apply to this certificate.</p>'
                 . $rightsHtml
@@ -1462,6 +1499,7 @@ return [$html, $plain];
                 . "Issue Date:            {$issueDate}\n"
                 . "Issuance Gate:         {$gateLabel}\n"
                 . "SHA-256 Hash:          {$hashVal}\n\n"
+                . ($certUrl !== '' ? "View & Print Certificate:\n{$certUrl}\n(Link valid 30 days — opens print-ready page)\n\n" : '')
                 . "This certificate was issued by Thomas Boyd Cunliffe, Caretaker Trustee,\n"
                 . "COGS of Australia Foundation (ABN 91 341 497 529)\n"
                 . "Drake Village NSW 2469 | Wahlubal Country, Bundjalung Nation\n\n"
