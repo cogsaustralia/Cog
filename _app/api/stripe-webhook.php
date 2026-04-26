@@ -63,6 +63,38 @@ if (!stripe_verify_signature($rawBody, $sigHeader, $webhookSecret)) {
     exit;
 }
 
+/**
+ * Send the 200 response to Stripe immediately and detach so the rest of
+ * the handler runs server-side without holding the connection. Called
+ * once per handler branch right before $db->beginTransaction(), so all
+ * preceding early-return diagnostic responses (member_not_found,
+ * already_paid, no_abn, etc.) still reach the client in full.
+ *
+ * Safe because:
+ *   - Stripe's retry decision is based on HTTP status code, not body
+ *     content. Once we've sent 200, Stripe will not retry this event.
+ *   - If the post-flush work crashes or times out mid-way, the Stripe
+ *     event_id is already recorded in stripe_processed_events, so any
+ *     manual replay from the dashboard is a safe no-op (duplicate).
+ */
+function stripe_finish_response(string $eventId, string $type): void {
+    echo json_encode([
+        'ok'       => true,
+        'received' => true,
+        'event_id' => $eventId,
+        'type'     => $type,
+    ]);
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } elseif (function_exists('litespeed_finish_request')) {
+        litespeed_finish_request();
+    } else {
+        // Best-effort fallback for non-FPM SAPIs
+        if (ob_get_level() > 0) @ob_end_flush();
+        @flush();
+    }
+}
+
 // ── Parse event ──────────────────────────────────────────────────────────────
 $event = json_decode($rawBody, true);
 if (!is_array($event)) {
@@ -165,6 +197,9 @@ try {
 
     // ── GIFT POOL PURCHASE ───────────────────────────────────────────────────
     if ($purchaseType === 'gift_pool' && $metaItems !== '') {
+        // All early-validation done — release the response to Stripe before
+        // the synchronous DB work + AccountingHooks + email queue.
+        stripe_finish_response($eventId, 'gift_pool');
         $db->beginTransaction();
 
         $classCodeMap = [
@@ -314,6 +349,7 @@ try {
         $bizId = (int)$biz['id'];
         $now = date('Y-m-d H:i:s');
 
+        stripe_finish_response($eventId, 'bnft_signup');
         $db->beginTransaction();
 
         // Mark business paid
@@ -419,6 +455,7 @@ try {
             'pay_it_forward_tokens' => 'pay_it_forward_tokens',
         ];
 
+        stripe_finish_response($eventId, 'bnft_gift_pool');
         $db->beginTransaction();
 
         // Update bnft_memberships token columns directly
@@ -510,6 +547,7 @@ try {
         exit;
     }
 
+    stripe_finish_response($eventId, 'signup_fee');
     $db->beginTransaction();
 
     // ── Mark member paid ──────────────────────────────────────────────────────
