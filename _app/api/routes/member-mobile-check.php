@@ -23,6 +23,12 @@ if (substr($mobile, 0, 1) === '0') {
 }
 
 $db   = getDB();
+
+// Rate limit — same enumeration concern as member-email-check. The response
+// reveals whether a mobile number belongs to a registered SNFT member, so
+// every request counts toward the cap regardless of outcome.
+enforceRateLimit($db, 'check-mobile', 10, 3600, 3600);
+recordAuthFailure($db, 'check-mobile');
 $stmt = $db->prepare(
     'SELECT id, member_number, full_name FROM snft_memberships WHERE mobile = ? OR mobile = ? LIMIT 1'
 );

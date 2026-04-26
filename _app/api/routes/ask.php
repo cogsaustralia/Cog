@@ -29,21 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// ── Rate limiting (simple file-based) ────────────────────────────────────────
-$ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-$rateDir = sys_get_temp_dir() . '/cogs_ask_rate';
-if (!is_dir($rateDir)) @mkdir($rateDir, 0755, true);
-$rateFile = $rateDir . '/' . md5($ip) . '.json';
-$rateData = file_exists($rateFile) ? json_decode((string)file_get_contents($rateFile), true) : [];
-$now = time();
-$rateData = array_filter($rateData ?: [], fn($t) => $t > $now - 60);
-if (count($rateData) >= 10) {
-    http_response_code(429);
-    echo json_encode(['error' => 'Too many requests. Please wait a moment.']);
-    exit;
-}
-$rateData[] = $now;
-file_put_contents($rateFile, json_encode($rateData));
+// ── Rate limiting (DB-backed via auth_rate_limits) ───────────────────────────
+// Migrated from a file-based limiter that wrote to sys_get_temp_dir() — that
+// approach didn't survive shared-host /tmp cleanup, lacked locking on
+// concurrent writes, and was invisible to the admin rate-limit dashboard.
+//
+// Limits: 10 calls per minute per IP, then 1-minute lockout. Each call
+// triggers an Anthropic API call (paid), so this caps cost exposure.
+$db = getDB();
+enforceRateLimit($db, 'ask', 10, 60, 60);
+recordAuthFailure($db, 'ask'); // every request increments — outcome-independent
 
 // ── Parse input ──────────────────────────────────────────────────────────────
 $body = json_decode((string)file_get_contents('php://input'), true);
