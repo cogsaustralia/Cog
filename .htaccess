@@ -69,6 +69,28 @@ ServerSignature Off
   # HSTS — tell browsers to always use HTTPS (1 year)
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 
+  # Strip X-Powered-By if expose_php=on at the host level (defensive — host
+  # may have it on regardless of our php.ini setting). Reduces PHP version
+  # disclosure in response headers.
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
+
+  # Cross-Origin-Opener-Policy — isolate this top-level browsing context
+  # from popups opened on other origins. Prevents window.opener leaks
+  # to attacker-controlled pages and tightens the browser's process model
+  # boundary.
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+
+  # Cross-Origin-Resource-Policy — control who can load our resources
+  # cross-origin. 'same-site' allows our own subdomains (none in use)
+  # without breaking Stripe's iframe loading our redirect URLs.
+  Header always set Cross-Origin-Resource-Policy "same-site"
+
+  # X-Permitted-Cross-Domain-Policies — tell legacy Adobe/PDF plugins
+  # not to honour any crossdomain.xml. Site doesn't use Flash/Acrobat
+  # cross-domain features so 'none' is the correct value.
+  Header always set X-Permitted-Cross-Domain-Policies "none"
+
   # Content Security Policy
   # - default: same origin only
   # - scripts: same origin + cdnjs (QR) + Cloudflare decode + Stripe
