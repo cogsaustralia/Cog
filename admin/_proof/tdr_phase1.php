@@ -5,9 +5,17 @@ declare(strict_types=1);
 // from require_once, session, or fatal errors before we can render.
 ob_start();
 
-// Error reporting — capture all errors as part of output
+// Error reporting — capture all errors as part of output.
+// display_errors is only enabled when COGS_PROOF_MODE=1 is set on the server;
+// otherwise errors are logged via the normal error_log path. This keeps stack
+// traces out of the response body during ordinary admin browsing.
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+if (getenv('COGS_PROOF_MODE') === '1') {
+    ini_set('display_errors', '1');
+} else {
+    ini_set('display_errors', '0');
+    ini_set('log_errors', '1');
+}
 
 $boot_error = null;
 
