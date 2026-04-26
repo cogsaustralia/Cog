@@ -2078,6 +2078,37 @@ function syncTransferReservationLines(PDO $db, string $memberNumber, string $tok
     }
 }
 
+/**
+ * Mirror-only variant of syncTransferReservationLines. Updates only the
+ * denormalised snft_memberships column; skips the primary
+ * member_reservation_lines row update.
+ *
+ * Use this when the caller has already done the authoritative
+ * member_reservation_lines write (e.g. an atomic conditional debit
+ * during a P2P transfer). Avoids double-debiting the line.
+ */
+function syncTransferReservationLinesMirrorOnly(PDO $db, string $memberNumber, string $tokenKey, float $delta): void {
+    if (abs($delta) < 0.00001) return;
+    $membershipColMap = [
+        'community_tokens'  => 'community_tokens',
+        'investment_tokens' => 'investment_tokens',
+        'rwa_tokens'        => 'rwa_tokens',
+        'landholder_tokens' => 'landholder_tokens',
+        'bus_prop_tokens'   => 'bus_prop_tokens',
+    ];
+    $membershipCol = $membershipColMap[$tokenKey] ?? null;
+    if (!$membershipCol) return;
+    try {
+        if (api_column_exists($db, 'snft_memberships', $membershipCol)) {
+            $db->prepare(
+                'UPDATE snft_memberships SET ' . $membershipCol . ' = GREATEST(0, COALESCE(' . $membershipCol . ', 0) + ?), updated_at = UTC_TIMESTAMP() WHERE member_number = ?'
+            )->execute([$delta, $memberNumber]);
+        }
+    } catch (Throwable $e) {
+        error_log('[vault] transfer denorm mirror sync failed: ' . $e->getMessage());
+    }
+}
+
 function memberP2PTransfer(): void {
     requireMethod('POST');
     $principal = requireAuth('snft');
@@ -2142,7 +2173,29 @@ function memberP2PTransfer(): void {
 
     $db->beginTransaction();
     try {
-        syncTransferReservationLines($db, $senderRef, 'community_tokens', -$units);
+        // Atomic conditional debit — closes the SELECT-then-UPDATE race
+        // window. The pre-txn read above is for early-fail UX only;
+        // authoritative enforcement is this conditional UPDATE. If two
+        // requests pass the SELECT simultaneously, only the first one
+        // satisfies requested_units >= ? and rowCount() === 1; the
+        // second sees rowCount() === 0 and aborts.
+        $debit = $db->prepare(
+            'UPDATE member_reservation_lines
+                SET requested_units = requested_units - ?,
+                    updated_at = UTC_TIMESTAMP()
+              WHERE member_id = ?
+                AND token_class_id = ?
+                AND requested_units >= ?'
+        );
+        $debit->execute([$units, $senderMemberId, $tcId, $units]);
+        if ($debit->rowCount() === 0) {
+            $db->rollBack();
+            apiError('Insufficient Community COG$ balance.');
+        }
+        // Trailing membership-column sync for the sender (denormalised
+        // mirror; primary write was the line above). syncTransferReservationLines
+        // for the sender side now skips the line update — see helper.
+        syncTransferReservationLinesMirrorOnly($db, $senderRef, 'community_tokens', -$units);
         syncTransferReservationLines($db, $recipientRef, 'community_tokens', $units);
 
         $senderIdRow = $db->prepare('SELECT id, full_name FROM snft_memberships WHERE member_number = ? LIMIT 1');
@@ -2242,7 +2295,11 @@ function businessP2PTransfer(): void {
     }
     if (!$snftRecip && !$bnftRecip) apiError('Recipient not found.', 404);
 
-    // Verify sender balance
+    // Verify sender balance — atomic check + debit happens inside the
+    // transaction below to close the SELECT-then-UPDATE race window. The
+    // up-front read is kept only for an early-fail UX (so users see
+    // 'Insufficient balance.' before the txn opens). Authoritative
+    // enforcement is the conditional UPDATE.
     $balStmt = $db->prepare('SELECT ' . $tokenKey . ' AS bal FROM bnft_memberships WHERE id = ? LIMIT 1');
     $balStmt->execute([$bizId]);
     $balRow = $balStmt->fetch();
@@ -2250,9 +2307,22 @@ function businessP2PTransfer(): void {
 
     $db->beginTransaction();
     try {
-        // Debit sender (always bnft)
-        $db->prepare('UPDATE bnft_memberships SET ' . $tokenKey . ' = ' . $tokenKey . ' - ?, updated_at = UTC_TIMESTAMP() WHERE id = ?')
-           ->execute([$units, $bizId]);
+        // Atomic conditional debit — column-name interpolation is safe
+        // because $tokenKey is allowlisted at function entry. Guarantees
+        // no double-spend even if two requests pass the SELECT above
+        // simultaneously: only one will satisfy the WHERE clause.
+        $debit = $db->prepare(
+            'UPDATE bnft_memberships
+                SET ' . $tokenKey . ' = ' . $tokenKey . ' - ?,
+                    updated_at = UTC_TIMESTAMP()
+              WHERE id = ?
+                AND ' . $tokenKey . ' >= ?'
+        );
+        $debit->execute([$units, $bizId, $units]);
+        if ($debit->rowCount() === 0) {
+            $db->rollBack();
+            apiError('Insufficient balance.');
+        }
 
         // Credit recipient — snft uses investment_tokens, bnft uses invest_tokens
         if ($snftRecip) {
