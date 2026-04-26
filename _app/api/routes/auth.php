@@ -1,6 +1,26 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * Timing-equalization dummy bcrypt hash.
+ *
+ * password_verify() against a real bcrypt hash takes ~50ms (cost=10).
+ * Returning early on "user not found" without running password_verify
+ * creates a measurable timing oracle that lets an attacker enumerate
+ * registered mobile/email addresses by comparing response times.
+ *
+ * Every login path therefore runs password_verify against either the
+ * real candidate hash (if the user was found) or this dummy (if not).
+ * The dummy is a real bcrypt of a random throwaway string; nobody —
+ * including us — knows the input, so it always returns false. The
+ * computation cost is identical to a real check.
+ *
+ * Regenerate with:
+ *   php -r "echo password_hash('NEVER_AUTH_'.bin2hex(random_bytes(16)),
+ *                              PASSWORD_BCRYPT, ['cost' => 10]);"
+ */
+const COGS_AUTH_DUMMY_BCRYPT = '$2y$10$.gDLJYLbDBBnOZv8PzL8B.Zwn7JLPTLkr/it6SMrVwEGoyqfFaxoe';
+
 $action = $id ?? 'login';
 
 // Admin login hardening: if the host falls through to auth/login but the payload
@@ -83,21 +103,25 @@ function handleLogin(): void {
             $row = $stmt->fetch() ?: null;
         }
 
-        if (!$row) {
-            recordAuthFailure($db, 'login');
-            apiError($mobile !== '' ? 'Mobile number not found.' : 'Email address not found.');
+        // Member-number mismatch is treated as not-found (same opaque
+        // response, same timing) so the error message can't be used to
+        // confirm that a given mobile/email belongs to a specific
+        // member_number.
+        if ($row && $memberNumber !== '' && (string)$row['member_number'] !== $memberNumber) {
+            $row = null;
         }
 
-        if ($memberNumber !== '' && (string)$row['member_number'] !== $memberNumber) {
-            recordAuthFailure($db, 'login');
-            apiError('Member number and mobile do not match.');
-        }
-
-        if ($tokenClaims && ((string)$row['member_number'] !== (string)$tokenClaims['member_ref'])) {
+        // tokenClaims mismatch is a setup-link integrity check (admin-
+        // issued links bound to a specific member). Distinct from
+        // credential disclosure — kept as a separate clear error.
+        if ($row && $tokenClaims && ((string)$row['member_number'] !== (string)$tokenClaims['member_ref'])) {
             apiError('This setup link is not valid for the member record supplied.');
         }
 
-        if (!(string)$row['password_hash']) {
+        // First-time setup branch is preserved as-is. It only fires when
+        // a real member exists and has no password yet — an intentional
+        // UX disclosure for users mid-signup, not a credential check.
+        if ($row && !(string)$row['password_hash']) {
             apiSuccess([
                 'setup_required' => true,
                 'message' => 'First-time setup required.',
@@ -107,9 +131,19 @@ function handleLogin(): void {
             ]);
         }
 
-        if (!password_verify($password, (string)$row['password_hash'])) {
+        // ALWAYS run password_verify — against the real hash if found,
+        // otherwise the dummy. Closes the timing oracle that would
+        // otherwise let an attacker enumerate registered users by
+        // measuring response times (~50ms gap from the bcrypt cost).
+        $candidateHash = $row ? (string)$row['password_hash'] : COGS_AUTH_DUMMY_BCRYPT;
+        $passwordOk    = password_verify($password, $candidateHash);
+
+        if (!$row || !$passwordOk) {
             recordAuthFailure($db, 'login');
-            apiError('Incorrect password.');
+            // Single opaque error — does not differentiate between
+            // unknown account, account/number mismatch, or wrong
+            // password. Closes the user-enumeration vector.
+            apiError('Invalid credentials.');
         }
         clearAuthRateLimit($db, 'login');
 
@@ -242,23 +276,39 @@ function handleLogin(): void {
         $stmt = $db->prepare('SELECT id, abn, legal_name, email, password_hash, wallet_status FROM bnft_memberships WHERE abn = ? LIMIT 1');
         $stmt->execute([$abn]);
         $row = $stmt->fetch();
-        if (!$row || strtolower((string)$row['email']) !== $email) {
-            recordAuthFailure($db, 'login');
-            apiError('ABN and email do not match.');
+
+        // Email mismatch is treated as not-found (same opaque response,
+        // same timing). Closes the enumeration vector that would
+        // otherwise let an attacker confirm a given ABN's contact email.
+        if ($row && strtolower((string)$row['email']) !== $email) {
+            $row = null;
         }
-        if ($tokenClaims && ((string)$row['abn'] !== (string)$tokenClaims['member_ref'] || strtolower((string)$row['email']) !== (string)$tokenClaims['email'])) {
+
+        // tokenClaims mismatch is a setup-link integrity check, not a
+        // credential disclosure — kept as a separate clear error.
+        if ($row && $tokenClaims && ((string)$row['abn'] !== (string)$tokenClaims['member_ref'] || strtolower((string)$row['email']) !== (string)$tokenClaims['email'])) {
             apiError('This setup link is not valid for the business record supplied.');
         }
-        if (!(string)$row['password_hash']) {
+
+        // First-time setup branch preserved as-is — intentional UX
+        // disclosure for businesses mid-signup with admin-issued links.
+        if ($row && !(string)$row['password_hash']) {
             apiSuccess([
                 'setup_required' => true,
                 'message' => 'First-time setup required.',
                 'member_number' => $row['abn'],
             ]);
         }
-        if (!password_verify($password, (string)$row['password_hash'])) {
+
+        // ALWAYS run password_verify — closes the timing oracle.
+        $candidateHash = $row ? (string)$row['password_hash'] : COGS_AUTH_DUMMY_BCRYPT;
+        $passwordOk    = password_verify($password, $candidateHash);
+
+        if (!$row || !$passwordOk) {
             recordAuthFailure($db, 'login');
-            apiError('Incorrect password.');
+            // Single opaque error — does not differentiate between
+            // unknown ABN, ABN/email mismatch, or wrong password.
+            apiError('Invalid credentials.');
         }
         clearAuthRateLimit($db, 'login');
         createSession($db, 'bnft', (int)$row['id'], (string)$row['abn']);
@@ -363,18 +413,20 @@ function handleSetupPassword(): void {
         $stmt = $db->prepare('SELECT id, member_number, email, mobile, password_hash FROM snft_memberships WHERE member_number = ? LIMIT 1');
         $stmt->execute([$memberNumber]);
         $row = $stmt->fetch();
-        if (!$row) {
-            apiError('Member number not found.');
-        }
-        // Verify identity: mobile only for SNFT setup.
-        $mobileMatch = normalizePhone((string)($row['mobile'] ?? '')) === $mobile;
-        if (!$mobileMatch) {
-            apiError('Mobile number does not match the member record.');
+
+        // Member-not-found and mobile-mismatch collapse to the same
+        // opaque error so an attacker can't probe the membership table
+        // by member_number.
+        if (!$row || normalizePhone((string)($row['mobile'] ?? '')) !== $mobile) {
+            apiError('Member number and mobile do not match our records.');
         }
         if ($tokenClaims && ((string)$row['member_number'] !== (string)$tokenClaims['member_ref'] || strtolower((string)$row['email']) !== (string)$tokenClaims['email'])) {
             apiError('This setup link is not valid for the member record supplied.');
         }
         if ((string)($row['password_hash'] ?? '') !== '') {
+            // Actionable UX hint, not credential material — kept as a
+            // distinct message so users aren't confused about which
+            // flow to use.
             apiError('This wallet already has a password. Use password reset instead.');
         }
         $db->prepare('UPDATE snft_memberships SET password_hash = ?, wallet_status = "active", updated_at = UTC_TIMESTAMP() WHERE id = ?')->execute([$hash, (int)$row['id']]);
@@ -390,13 +442,17 @@ function handleSetupPassword(): void {
         $stmt = $db->prepare('SELECT id, abn, email, password_hash FROM bnft_memberships WHERE abn = ? LIMIT 1');
         $stmt->execute([$memberNumber]);
         $row = $stmt->fetch();
+
+        // ABN-not-found and email-mismatch collapse to the same opaque
+        // error to prevent probing the business membership table by ABN.
         if (!$row || strtolower((string)$row['email']) !== $email) {
-            apiError('ABN and email do not match.');
+            apiError('ABN and email do not match our records.');
         }
         if ($tokenClaims && ((string)$row['abn'] !== (string)$tokenClaims['member_ref'] || strtolower((string)$row['email']) !== (string)$tokenClaims['email'])) {
             apiError('This setup link is not valid for the business record supplied.');
         }
         if ((string)($row['password_hash'] ?? '') !== '') {
+            // Actionable UX hint — kept distinct.
             apiError('This business wallet already has a password. Use password reset instead.');
         }
         $db->prepare('UPDATE bnft_memberships SET password_hash = ?, wallet_status = "active", updated_at = UTC_TIMESTAMP() WHERE id = ?')->execute([$hash, (int)$row['id']]);
