@@ -1,0 +1,40 @@
+-- ============================================================
+-- Migration: 2026_04_26_payments_external_reference_unique
+-- Run against: cogsaust_TRUST via phpMyAdmin
+-- Deploy order: SQL only — no PHP changes required.
+-- Prerequisite: none.
+--
+-- Issue (Pass 3 LOW)
+--   payments.external_reference is varchar(255) DEFAULT NULL with no
+--   uniqueness constraint. The stripe_processed_events table (commit
+--   d932009) catches duplicate webhook deliveries, but a duplicate
+--   external_reference could still slip through via:
+--     - admin/payments.php manual entry mistake
+--     - a future code path that doesn't go through the webhook
+--     - data restore from backup mid-flight
+--
+-- Fix
+--   UNIQUE index on external_reference, allowing multiple NULLs (which
+--   MariaDB does by default). 'adjustment' rows that genuinely need a
+--   shared payment_intent ref are not a concern: the live data shows
+--   all 44 rows have unique non-NULL refs (verified pre-migration).
+--
+-- Live data check (run before this migration to confirm):
+--   SELECT external_reference, COUNT(*) AS n
+--   FROM payments
+--   WHERE external_reference IS NOT NULL
+--   GROUP BY external_reference
+--   HAVING n > 1;
+--   -- expect: empty result set (no duplicates)
+--
+-- Verification (after running)
+--   SHOW CREATE TABLE payments;
+--   -- expect to see:
+--   --   UNIQUE KEY `uq_payments_external_reference` (`external_reference`)
+--
+-- Rollback
+--   ALTER TABLE payments DROP INDEX uq_payments_external_reference;
+-- ============================================================
+
+ALTER TABLE `payments`
+  ADD UNIQUE KEY `uq_payments_external_reference` (`external_reference`);
