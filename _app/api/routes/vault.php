@@ -3046,10 +3046,23 @@ function cancelGiftOrder(): void {
     $db->beginTransaction();
 
     try {
+        // Fetch all needed token_classes rows in a single query rather
+        // than one prepare/execute per code in the loop. At max N=3
+        // (donation/pay-it-forward/kids) the saving is small but the
+        // pattern is cleaner and avoids the N+1 cost growing if the
+        // class list expands.
+        $tcMap = [];
+        if (!empty($codes)) {
+            $ph = implode(',', array_fill(0, count($codes), '?'));
+            $tcAllStmt = $db->prepare("SELECT id, class_code, unit_price_cents FROM token_classes WHERE class_code IN ({$ph})");
+            $tcAllStmt->execute(array_values($codes));
+            foreach ($tcAllStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $tcMap[(string)$r['class_code']] = $r;
+            }
+        }
+
         foreach ($codes as $code) {
-            $tcStmt = $db->prepare("SELECT id, unit_price_cents FROM token_classes WHERE class_code = ? LIMIT 1");
-            $tcStmt->execute([$code]);
-            $tc = $tcStmt->fetch();
+            $tc = $tcMap[$code] ?? null;
             $unitCents = (int)($tc['unit_price_cents'] ?? 400);
             $tcId = (int)($tc['id'] ?? 0);
 

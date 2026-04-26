@@ -208,6 +208,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (empty($eligible)) throw new RuntimeException('No eligible members found for this class.');
 
             $issued = []; $skipped = [];
+
+            // Hoist token_classes lookup out of the per-member loop. Both
+            // $unitClassCode and $def['payment_required'] are loop-invariant
+            // so we'd be re-querying the same row N times for N members.
+            // For a batch issue of all eligible members (potentially 100+)
+            // this saved up to N-1 round trips on a hot path.
+            $tcRow = null;
+            if ($def['payment_required']) {
+                $tcRow = one($pdo, "SELECT unit_price_cents, business_unit_price_cents FROM token_classes WHERE unit_class_code = ? LIMIT 1", [$unitClassCode]);
+            }
+
             foreach ($eligible as $member) {
                 $unitsIssued = ($unitClassCode === 'C')
                     ? ($member['member_type'] === 'business' ? 10000.0 : 1000.0)
@@ -221,9 +232,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 if ($def['payment_required']) {
-                    $tc = one($pdo, "SELECT unit_price_cents, business_unit_price_cents FROM token_classes WHERE unit_class_code = ? LIMIT 1", [$unitClassCode]);
-                    $considerationCents = ($member['member_type'] === 'business' && $tc && $tc['business_unit_price_cents'] !== null)
-                        ? (int)$tc['business_unit_price_cents'] : (int)($tc['unit_price_cents'] ?? 0);
+                    $considerationCents = ($member['member_type'] === 'business' && $tcRow && $tcRow['business_unit_price_cents'] !== null)
+                        ? (int)$tcRow['business_unit_price_cents'] : (int)($tcRow['unit_price_cents'] ?? 0);
                 } else {
                     $considerationCents = 0;
                 }
