@@ -102,6 +102,36 @@ if ($clientRef === '' && $customerEmail === '') {
 try {
     $db = getDB();
 
+    // ── Idempotency: refuse to re-process a Stripe event we've already handled.
+    // Stripe retries on connection drop, timeout, or any non-2xx response.
+    // Without this guard the gift_pool path would double-INSERT to `payments`
+    // and `payment_allocations`, double-fire AccountingHooks, and queue
+    // duplicate emails. INSERT IGNORE on a UNIQUE PRIMARY KEY gives atomic
+    // at-most-once semantics: rowCount=1 means we won; rowCount=0 means
+    // another delivery already inserted it (duplicate or concurrent retry).
+    //
+    // Wrapped in try/catch so a missing migration table degrades gracefully
+    // back to the pre-fix behaviour (signup paths still have their own
+    // signup_payment_status idempotency; only gift_pool is exposed).
+    $eventId = (string)($event['id'] ?? '');
+    if ($eventId !== '') {
+        try {
+            $idStmt = $db->prepare(
+                'INSERT IGNORE INTO stripe_processed_events (event_id, event_type, received_at)
+                 VALUES (?, ?, UTC_TIMESTAMP())'
+            );
+            $idStmt->execute([$eventId, $type]);
+            if ($idStmt->rowCount() === 0) {
+                error_log('[stripe-webhook] Duplicate event ignored: ' . $eventId . ' type=' . $type);
+                echo json_encode(['ok' => true, 'handled' => false, 'reason' => 'duplicate_event', 'event_id' => $eventId]);
+                exit;
+            }
+        } catch (Throwable $idemErr) {
+            // Table may not exist yet (pre-migration). Log and proceed.
+            error_log('[stripe-webhook] stripe_processed_events check skipped: ' . $idemErr->getMessage());
+        }
+    }
+
     // ── Find the member ───────────────────────────────────────────────────────
     $member = null;
 
