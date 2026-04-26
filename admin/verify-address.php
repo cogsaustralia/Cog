@@ -55,6 +55,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 requireMethod('POST');
 $body = jsonBody();
 
+// CSRF — token must be sent in the JSON body. No HTML form/UI exists for
+// this endpoint yet (it's a service called by other admin pages), but
+// any future caller must include _csrf from admin_csrf_token() in the body.
+admin_csrf_verify_json($body);
+
 $memberId = (int)($body['member_id'] ?? 0);
 if ($memberId <= 0) {
     apiError('member_id is required.');

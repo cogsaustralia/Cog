@@ -23,6 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
 
     $body = json_decode(file_get_contents('php://input') ?: '{}', true) ?: [];
+
+    // CSRF — token sent in JSON body alongside message/history. Frontend
+    // reads it from the server-rendered window.__csrfToken below.
+    admin_csrf_verify_json($body);
+
     $userMessage = trim((string)($body['message'] ?? ''));
     $history     = is_array($body['history'] ?? null) ? $body['history'] : [];
 
@@ -378,6 +383,13 @@ a { color:inherit; text-decoration:none; }
 </div>
 
 <script>
+  // Server-rendered CSRF token. Sent in every fetch body to satisfy
+  // admin_csrf_verify_json() in the POST handler above. Same per-session
+  // token shared with form-based admin pages.
+  window.__csrfToken = <?= json_encode(admin_csrf_token(), JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?>;
+</script>
+
+<script>
 (function(){
   var thread  = document.getElementById('chatThread');
   var input   = document.getElementById('chatInput');
@@ -427,7 +439,11 @@ a { color:inherit; text-decoration:none; }
     fetch(window.location.pathname, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg, history: history.slice(0, -1) })
+      body: JSON.stringify({
+        _csrf: window.__csrfToken,
+        message: msg,
+        history: history.slice(0, -1)
+      })
     })
     .then(function(r){ return r.json(); })
     .then(function(data){

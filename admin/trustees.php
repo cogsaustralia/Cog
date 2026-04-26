@@ -13,6 +13,13 @@ function tr_h(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-
 $message = '';
 $error   = '';
 
+// CSRF gate — covers all three POST actions below (update_trustee,
+// add_trustee, change_status). Each form embeds a matching _csrf
+// hidden input rendered from admin_csrf_token().
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    admin_csrf_verify();
+}
+
 // ── POST: update trustee record ───────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'update_trustee') {
     $uuid = trim($_POST['trustee_uuid'] ?? '');
@@ -328,6 +335,7 @@ $statusBadge = [
     An executed appointment instrument reference (TDR or deed) is required before a trustee can be added.
   </p>
   <form method="POST">
+    <input type="hidden" name="_csrf" value="<?= tr_h(admin_csrf_token()) ?>">
     <input type="hidden" name="_action" value="add_trustee">
     <div class="fg-row">
       <div class="fg">
@@ -493,6 +501,7 @@ $statusBadge = [
     <div class="status-panel">
       <h4>Change Trustee Status</h4>
       <form method="POST" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
+        <input type="hidden" name="_csrf"         value="<?= tr_h(admin_csrf_token()) ?>">
         <input type="hidden" name="_action"      value="change_status">
         <input type="hidden" name="trustee_uuid" value="<?= tr_h($t['trustee_uuid']) ?>">
         <div class="fg" style="margin:0">
@@ -526,6 +535,7 @@ $statusBadge = [
   <?php else: ?>
   <div class="trustee-body">
     <form method="POST">
+      <input type="hidden" name="_csrf"         value="<?= tr_h(admin_csrf_token()) ?>">
       <input type="hidden" name="_action"      value="update_trustee">
       <input type="hidden" name="trustee_uuid" value="<?= tr_h($t['trustee_uuid']) ?>">
       <div class="edit-form">

@@ -1380,6 +1380,30 @@ function admin_csrf_verify(): void {
     }
 }
 
+/**
+ * JSON-body variant of admin_csrf_verify. For admin endpoints that
+ * receive application/json POST bodies (AJAX chat agents, JSON APIs)
+ * rather than form-encoded POSTs.
+ *
+ * Caller must parse the body first and pass the decoded array. Token
+ * lives at $body['_csrf'] — parallel to the form's hidden _csrf input.
+ *
+ * Same session-stored expected token, same hash_equals comparison,
+ * but emits a JSON 403 instead of HTML so AJAX callers can surface
+ * the error sensibly.
+ */
+function admin_csrf_verify_json(array $body): void {
+    ops_start_admin_php_session();
+    $submitted = (string)($body['_csrf'] ?? '');
+    $expected  = (string)($_SESSION['_admin_csrf'] ?? '');
+    if ($expected === '' || !hash_equals($expected, $submitted)) {
+        http_response_code(403);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Invalid or missing security token.']);
+        exit;
+    }
+}
+
 
 
 // =============================================================================

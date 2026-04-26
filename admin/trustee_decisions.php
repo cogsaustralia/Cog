@@ -19,6 +19,12 @@ $id      = trim((string)($_GET['id']     ?? ''));
 $message = '';
 $error   = '';
 
+// CSRF gate — covers all POST actions below (create_draft, update_draft,
+// issue_token). Each form embeds a matching _csrf hidden input.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    admin_csrf_verify();
+}
+
 // POST: create draft
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_action'] ?? '') === 'create_draft') {
     try {
@@ -457,6 +463,7 @@ body.cert-open .admin-shell { display: none; }
   <p>Create a draft TDR. The record remains in draft until you issue an execution token.</p>
 </div>
 <form method="POST">
+  <input type="hidden" name="_csrf"   value="<?= td_h(admin_csrf_token()) ?>">
   <input type="hidden" name="_action" value="create_draft">
 
   <div class="form-card">
@@ -581,6 +588,7 @@ body.cert-open .admin-shell { display: none; }
   </p>
 </div>
 <form method="POST">
+  <input type="hidden" name="_csrf"   value="<?= td_h(admin_csrf_token()) ?>">
   <input type="hidden" name="_action" value="update_draft">
   <input type="hidden" name="decision_uuid" value="<?= td_h($decision['decision_uuid']) ?>">
 
@@ -921,6 +929,7 @@ body.cert-open .admin-shell { display: none; }
         trustee email address. The Trustee executes the record via that link.
       </p>
       <form method="POST">
+        <input type="hidden" name="_csrf"   value="<?= td_h(admin_csrf_token()) ?>">
         <input type="hidden" name="_action" value="issue_token">
         <input type="hidden" name="decision_uuid" value="<?= td_h($decision['decision_uuid']) ?>">
         <button type="submit" class="btn-primary">Issue Execution Token &amp; Email Trustee</button>
