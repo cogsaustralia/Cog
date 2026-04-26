@@ -224,7 +224,28 @@ if ($showSummary) {
     $snftPaid   =(int)(one($pdo,"SELECT COUNT(*) AS c FROM members WHERE member_type='personal' AND signup_payment_status='paid'")['c']??0);
     $snftPaid   =(int)(one($pdo,"SELECT COUNT(*) AS c FROM members WHERE member_type='personal' AND signup_payment_status='paid'")['c']??0);
     $snftGnaf   =(int)(one($pdo,"SELECT COUNT(*) AS c FROM members WHERE member_type='personal' AND gnaf_pid IS NOT NULL AND gnaf_pid!=''")['c']??0);
-    $snftIdV    =(int)(one($pdo,"SELECT COUNT(*) AS c FROM members WHERE member_type='personal' AND (id_verified=1 OR kyc_status IN ('verified','address_verified'))")['c']??0);
+    // ID Verified = manual admin ID verification (members.id_verified=1) OR
+    // formal Medicare KYC verified via canonical source (snft_memberships.kyc_status='verified').
+    // Do NOT use members.kyc_status — that legacy column includes the value 'address_verified'
+    // which represents G-NAF address verification, NOT identity verification, and inflates the count.
+    if (ops_has_table($pdo, 'snft_memberships')) {
+        $snftIdV = (int)(one($pdo,"
+            SELECT COUNT(*) AS c
+            FROM members m
+            WHERE m.member_type='personal'
+              AND (
+                    m.id_verified = 1
+                    OR EXISTS (
+                        SELECT 1 FROM snft_memberships sm
+                        WHERE sm.member_number = m.member_number
+                          AND sm.kyc_status = 'verified'
+                    )
+                  )
+        ")['c'] ?? 0);
+    } else {
+        // Fallback: snft_memberships not available — count manual ID verification only.
+        $snftIdV = (int)(one($pdo,"SELECT COUNT(*) AS c FROM members WHERE member_type='personal' AND id_verified=1")['c'] ?? 0);
+    }
     $snftActive =(int)(one($pdo,"SELECT COUNT(*) AS c FROM members WHERE member_type='personal' AND wallet_status='active'")['c']??0);
     try{
         if (!$bnftTotal) $bnftTotal  =(int)(one($pdo,"SELECT COUNT(*) AS c FROM bnft_memberships")['c']??0);
