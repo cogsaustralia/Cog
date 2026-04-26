@@ -521,7 +521,11 @@ try {
         $db->prepare('UPDATE snft_memberships SET signup_payment_status = ?, wallet_status = ?, updated_at = ? WHERE member_number = ?')
            ->execute(['paid', 'active', $now, $memberNumber]);
     } catch (Throwable $e) {
-        // Table may not exist — non-fatal
+        // snft_memberships is a compatibility-layer mirror of `members`.
+        // If it's missing or out of sync the primary `members` UPDATE above
+        // is the source of truth, so this is non-fatal — but log it so
+        // we're not blind to drift.
+        error_log('[stripe-webhook] snft_memberships compat UPDATE failed: ' . $e->getMessage());
     }
 
     // ── Mark PERSONAL_SNFT reservation line as paid ───────────────────────────
@@ -570,7 +574,11 @@ try {
             }
         }
     } catch (Throwable $e) {
-        // payments table may not exist yet — non-fatal
+        // Was previously silent ("payments table may not exist yet — non-fatal").
+        // That swallowed the ENUM-violation error that caused 18 days of missing
+        // payments rows for Stripe signups before the 2026_04_26 ENUM migration.
+        // Log loudly so any future schema drift or column issue surfaces immediately.
+        error_log('[stripe-webhook] signup_fee payment record failed: ' . $e->getMessage());
     }
 
     // ── Log to wallet_activity ────────────────────────────────────────────────
