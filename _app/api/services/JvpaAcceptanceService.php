@@ -115,6 +115,25 @@ class JvpaAcceptanceService
                 )->execute(array_values($insertData));
             }
 
+            // Append to immutable history trail. Same transaction so a
+            // failure in either write rolls back both. Graceful no-op
+            // if migration table missing.
+            self::appendHistory(
+                $db,
+                $partnerId,
+                $partnerNumber,
+                'registration',
+                $version['version_label'],
+                $version['version_title'] ?? null,
+                $version['agreement_hash'],
+                $hash,
+                $snftSequenceNo,
+                $acceptedAtDb,
+                $acceptedIp,
+                $acceptedUserAgent,
+                $evidenceVaultId
+            );
+
             if ($startedTxn) $db->commit();
             return $hash;
         } catch (Throwable $e) {
@@ -166,6 +185,72 @@ class JvpaAcceptanceService
             throw new RuntimeException('[JvpaAcceptanceService] jvpa_versions.agreement_hash is still the placeholder value. Compute the real SHA-256 and update the row before accepting new Partners.');
         }
         return $row;
+    }
+
+    /**
+     * Append an immutable row to partner_acceptance_history. Called from
+     * both code paths that record a JVPA acceptance — record() at
+     * registration and vault.php:acceptJvpa() for in-wallet
+     * re-affirmation — so the full trail is preserved even though
+     * partner_entry_records is unique on partner_id and overwrites the
+     * "current" row.
+     *
+     * Gracefully no-ops if the migration table doesn't exist yet, so
+     * the application can be deployed before or after the SQL.
+     *
+     * $source: 'registration' | 'wallet_reaffirmation' | 'admin_correction'
+     */
+    public static function appendHistory(
+        PDO     $db,
+        int     $partnerId,
+        string  $partnerNumber,
+        string  $source,
+        string  $acceptedVersion,
+        ?string $jvpaTitle,
+        string  $agreementHash,
+        string  $acceptanceRecordHash,
+        ?int    $snftSequenceNo,
+        string  $acceptedAtDb,
+        ?string $acceptedIp,
+        ?string $acceptedUserAgent,
+        ?int    $evidenceVaultId = null
+    ): void {
+        if (!self::tableExists($db, 'partner_acceptance_history')) {
+            error_log('[JvpaAcceptanceService] partner_acceptance_history not present — append skipped. Run the 2026_04_26 migration.');
+            return;
+        }
+        $allowedSources = ['registration', 'wallet_reaffirmation', 'admin_correction'];
+        if (!in_array($source, $allowedSources, true)) {
+            $source = 'wallet_reaffirmation';
+        }
+        try {
+            $db->prepare(
+                'INSERT INTO partner_acceptance_history
+                  (partner_id, partner_number, source, accepted_version, jvpa_title,
+                   agreement_hash, acceptance_record_hash, snft_sequence_no,
+                   accepted_at, accepted_ip, accepted_user_agent, evidence_vault_id)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            )->execute([
+                $partnerId,
+                $partnerNumber,
+                $source,
+                $acceptedVersion,
+                $jvpaTitle,
+                $agreementHash,
+                $acceptanceRecordHash,
+                $snftSequenceNo !== null && $snftSequenceNo > 0 ? $snftSequenceNo : null,
+                $acceptedAtDb,
+                $acceptedIp !== '' ? $acceptedIp : null,
+                $acceptedUserAgent !== '' ? $acceptedUserAgent : null,
+                $evidenceVaultId,
+            ]);
+        } catch (Throwable $e) {
+            // Non-fatal: the canonical record in partner_entry_records is
+            // the authoritative source. History append is for audit
+            // completeness; if it fails (transient DB error, schema drift)
+            // the acceptance still stands.
+            error_log('[JvpaAcceptanceService] appendHistory failed for partner ' . $partnerId . ': ' . $e->getMessage());
+        }
     }
 
     private static function insertEvidenceVaultEntry(PDO $db, int $partnerId, string $partnerNumber, string $versionLabel, string $hash, string $acceptedAtDb): ?int

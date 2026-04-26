@@ -833,6 +833,25 @@ function acceptJvpa(): void {
             $db->prepare('UPDATE partner_entry_records SET evidence_vault_id = ?, updated_at = ? WHERE id = ?')->execute([$evidenceId, $acceptedAt, $entryId]);
         }
 
+        // Append to immutable history trail. Same transaction as the
+        // partner_entry_records UPDATE/INSERT, so a failure rolls both
+        // back. Graceful no-op if migration table missing.
+        JvpaAcceptanceService::appendHistory(
+            $db,
+            (int)$partner['id'],
+            (string)$partner['partner_number'],
+            'wallet_reaffirmation',
+            $acceptedVersion,
+            $jvpaTitle,
+            $agreementHash,
+            $acceptanceHash,
+            $snftSequenceNo > 0 ? $snftSequenceNo : null,
+            $acceptedAt,
+            $acceptedIp,
+            $acceptedUa,
+            $evidenceId
+        );
+
         $db->commit();
     } catch (Throwable $e) {
         $db->rollBack();
