@@ -203,7 +203,20 @@ class JvpaAcceptanceService
         return (int)$db->lastInsertId() ?: null;
     }
 
-    private static function computeHash(
+    /**
+     * Canonical JVPA acceptance hash. Both code paths that write to
+     * partner_entry_records.acceptance_record_hash (this service's
+     * record() at registration, and vault.php:acceptJvpa() for in-wallet
+     * re-affirmation) MUST route through this function so the same
+     * partner with the same field values produces the same hash
+     * regardless of code path.
+     *
+     * Inputs all reproducible from the stored row (partner_number,
+     * snft_sequence_no, accepted_version, agreement_hash, accepted_at
+     * as UTC ISO-8601, accepted_ip), so an auditor can re-derive the
+     * hash from data alone.
+     */
+    public static function computeHash(
         string $partnerNumber,
         int    $snftSequenceNo,
         string $jvpaVersion,

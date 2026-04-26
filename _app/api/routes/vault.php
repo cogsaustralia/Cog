@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../services/TrusteeCounterpartService.php';
+require_once __DIR__ . '/../services/JvpaAcceptanceService.php';
 
 $_vaultId = trim((string)($id ?? ''), '/');
 // Split action from optional sub-path: 'proposal-comments/4' → action='proposal-comments', subId='4'
@@ -717,20 +718,37 @@ function acceptJvpa(): void {
     $version = currentJvpaVersionRecord($db);
     if (!$version) apiError('Current JVPA version is not configured.', 500);
 
-    $acceptedAt = gmdate('Y-m-d H:i:s');
+    // Look up snft_sequence_no — needed for the canonical hash payload.
+    // Source of truth is snft_memberships.sequence_no (the S-NFT token ID
+    // per JVPA cl.8.1A(d)(i)). Falls back to 0 if the member predates
+    // sequence assignment, matching JvpaAcceptanceService::record's
+    // null-on-zero behaviour for the DB column.
+    $snftSeqStmt = $db->prepare('SELECT sequence_no FROM snft_memberships WHERE member_number = ? LIMIT 1');
+    $snftSeqStmt->execute([(string)$member['member_number']]);
+    $snftSequenceNo = (int)($snftSeqStmt->fetchColumn() ?: 0);
+
+    $acceptedAt    = gmdate('Y-m-d H:i:s');           // DB storage format
+    $acceptedAtUtc = gmdate('Y-m-d\TH:i:s\Z');        // ISO-8601 UTC for hash payload (matches JvpaAcceptanceService::record)
     $acceptedIp = substr((string)($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45);
     $acceptedUa = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
     $agreementHash = (string)$version['agreement_hash'];
     $acceptedVersion = (string)$version['version_label'];
     $jvpaTitle = (string)$version['version_title'];
-    $acceptanceHash = hash('sha256', implode('|', [
-        'partner',
-        (string)$partner['id'],
+
+    // Canonical hash — same function used by JvpaAcceptanceService::record
+    // at registration, so an in-wallet re-affirmation by the same partner
+    // produces a hash format reproducible from data alone. Closes the
+    // Pass 1 HIGH finding: the previous inline pipe-delimited hash
+    // (partner|id|number|version|hash|accepted_at) diverged from the
+    // service's JSON payload format.
+    $acceptanceHash = JvpaAcceptanceService::computeHash(
         (string)$partner['partner_number'],
+        $snftSequenceNo,
         $acceptedVersion,
         $agreementHash,
-        $acceptedAt,
-    ]));
+        $acceptedAtUtc,
+        $acceptedIp
+    );
 
     $db->beginTransaction();
     try {
