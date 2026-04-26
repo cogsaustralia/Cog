@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cb3         = ($_POST['cb_identity'] ?? '') === '1';
     $postedHash  = trim((string)($_POST['deed_sha256'] ?? ''));
 
-    if ($postedToken !== $rawToken) {
+    if (!hash_equals($rawToken, $postedToken)) {
         $postError = 'Token mismatch. Reload the page and try again.';
     } elseif (!in_array($capacity, ['declarant', 'caretaker_trustee'], true)) {
         $postError = 'Invalid capacity value.';
@@ -119,12 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($d), 4));
         })();
 
-        // Consume token on first capacity only (if not already consumed)
-        if (!$tokenIsUsed) {
-            if (!DeclarationExecutionService::validateOneTimeToken($db, $rawToken, 'declaration_execution')) {
-                de_abort(403, 'Token is no longer valid.');
-            }
-            $tokenIsUsed = true;
+        // Validate token before first capacity, but do not consume it until
+        // persistence succeeds. Matches the SubTrust*ExecutionService pattern.
+        // Previously validateOneTimeToken consumed-on-validate, so a thrown
+        // recordExecution would burn the token and lock the user out.
+        if (!$tokenIsUsed && !DeclarationExecutionService::validateOneTimeToken($db, $rawToken, 'declaration_execution')) {
+            de_abort(403, 'Token is no longer valid.');
         }
 
         try {
@@ -132,6 +132,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db, $capacity, $postedSid, $postedHash,
                 getClientIp(), (string)($_SERVER['HTTP_USER_AGENT'] ?? '')
             );
+            // Persistence succeeded — now atomically consume the token.
+            // Concurrent retry from a duplicate POST: rowCount=0 means
+            // another request already consumed it; we still proceed because
+            // recordExecution succeeded (uq_der_session_capacity prevents
+            // a duplicate row at the DB layer regardless).
+            if (!$tokenIsUsed) {
+                DeclarationExecutionService::consumeOneTimeToken($db, $rawToken, 'declaration_execution');
+                $tokenIsUsed = true;
+            }
             $sessionId = $postedSid;
             $activeSession = DeclarationExecutionService::getSession($db, $sessionId);
             $doneCaps = array_column($activeSession['records'], 'capacity');

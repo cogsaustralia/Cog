@@ -433,6 +433,10 @@ class DeclarationExecutionService
     // -------------------------------------------------------------------------
     public static function validateOneTimeToken(PDO $db, string $rawToken, string $purpose): bool
     {
+        // Read-only validation — does NOT consume the token. Callers must
+        // call consumeOneTimeToken() AFTER persistence succeeds, so a
+        // failed recordExecution doesn't burn the token. Mirrors the
+        // SubTrust*ExecutionService pattern.
         $tokenHash = hash('sha256', $rawToken);
         $stmt = $db->prepare(
             'SELECT id FROM one_time_tokens
@@ -441,11 +445,22 @@ class DeclarationExecutionService
              LIMIT 1'
         );
         $stmt->execute([$tokenHash, $purpose]);
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if (!$row) return false;
-        $db->prepare('UPDATE one_time_tokens SET used_at = UTC_TIMESTAMP() WHERE id = ?')
-           ->execute([(int)$row['id']]);
-        return true;
+        return (bool) $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public static function consumeOneTimeToken(PDO $db, string $rawToken, string $purpose): bool
+    {
+        // Atomic consume — single UPDATE filtered on used_at IS NULL.
+        // Concurrent requests: exactly one gets rowCount=1 (winner),
+        // others get 0 (already consumed). Mirrors SubTrust*ExecutionService.
+        $stmt = $db->prepare(
+            'UPDATE one_time_tokens
+                SET used_at = UTC_TIMESTAMP()
+              WHERE token_hash = ? AND purpose = ?
+                AND used_at IS NULL AND expires_at > UTC_TIMESTAMP()'
+        );
+        $stmt->execute([hash('sha256', $rawToken), $purpose]);
+        return $stmt->rowCount() > 0;
     }
 
     // -------------------------------------------------------------------------

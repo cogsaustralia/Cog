@@ -74,11 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cb2           = ($_POST['cb_document'] ?? '') === '1';
     $cb3           = ($_POST['cb_identity'] ?? '') === '1';
 
-    if ($postedToken !== $rawToken || $postedSession !== $sessionId) {
+    if (!hash_equals($rawToken, $postedToken) || $postedSession !== $sessionId) {
         $postError = 'Token or session mismatch. Reload and try again.';
     } elseif (!$cb1 || !$cb2 || !$cb3) {
         $postError = 'All three attestation confirmations must be actively engaged.';
     } else {
+        // Validate token but do NOT consume yet — only consume after
+        // recordWitnessAttestation succeeds. Previously validateOneTimeToken
+        // consumed-on-validate, so a thrown recordWitnessAttestation would
+        // burn the token and require admin to issue a new one.
         if (!DeclarationExecutionService::validateOneTimeToken($db, $rawToken, 'witness_attestation')) {
             wa_abort(403, 'Token is no longer valid.');
         }
@@ -87,6 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db, $sessionId, $deedSha256,
                 getClientIp(), (string)($_SERVER['HTTP_USER_AGENT'] ?? '')
             );
+            // Persistence succeeded — atomically consume the token.
+            DeclarationExecutionService::consumeOneTimeToken($db, $rawToken, 'witness_attestation');
         } catch (\Throwable $e) {
             $postError = 'Attestation failed: ' . $e->getMessage();
         }
