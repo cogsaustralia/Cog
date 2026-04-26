@@ -206,7 +206,6 @@ $fnPct = $totalGrantsCents > 0 ? round($fnGrantsCents / $totalGrantsCents * 100,
 $csrfToken = function_exists('admin_csrf_token') ? admin_csrf_token() : '';
 
 ob_start();
-<?php
 require_once __DIR__ . '/includes/tdr_gate.php';
 tdr_gate($pdo, [
     'TDR-20260425-009', // Sub-Trust C bank account

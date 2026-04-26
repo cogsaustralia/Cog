@@ -184,14 +184,12 @@ try {
 
 ob_end_clean(); // Discard outer buffer — eliminates any pre-doctype output (notices, whitespace from includes)
 ob_start();     // Inner buffer — captures page body for ops_render_page
-<?php
 require_once __DIR__ . '/includes/tdr_gate.php';
 tdr_gate($pdo, [
     'TDR-20260425-002', // CHESS Registration Policy
     'TDR-20260425-003', // Ratification of existing LGM holdings
     'TDR-20260425-004', // Appointment of stockbroker
 ], 'ASX Purchases');
-?>
 ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_info_panel('ASX Purchase Ledger', 'What this page does', 'Use this page to record actual blocks of ASX shares purchased by the joint venture. These purchase lots drive the live totals for shares held, weighted average price, total book value, and ASX-token capacity.', [

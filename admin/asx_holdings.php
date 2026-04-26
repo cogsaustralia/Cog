@@ -83,13 +83,11 @@ $editTicker = (string)($editRow['asx_code'] ?? $editRow['ticker'] ?? '');
 
 ob_end_clean(); // Discard outer buffer — eliminates any pre-doctype output
 ob_start();     // Inner buffer — captures page body for ops_render_page
-<?php
 require_once __DIR__ . '/includes/tdr_gate.php';
 tdr_gate($pdo, [
     'TDR-20260425-002', // CHESS Registration Policy
     'TDR-20260425-003', // Ratification of existing LGM holdings
 ], 'ASX Holdings');
-?>
 ?>
 <?= ops_admin_collapsible_help('Page guide & workflow', [
   ops_admin_info_panel('ASX Holdings Register', 'What this page does', 'Use this page to create and maintain the live registry of ASX-listed shareholdings held by the joint venture. Each line represents one listed company and becomes the roll-up source for share count, weighted average purchase price, total book value, and token-capacity.', [
