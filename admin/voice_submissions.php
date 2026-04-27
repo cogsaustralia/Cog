@@ -1,471 +1,362 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/includes/admin_bootstrap.php';
-
-$pdo    = admin_get_pdo();
+require_once __DIR__ . '/includes/ops_workflow.php';
+ops_require_admin();
+$pdo    = ops_db();
 $flash  = '';
 $flashT = 'ok';
 
 // ── Filters ───────────────────────────────────────────────────────────────────
 $filterStatus = in_array($_GET['status'] ?? '', ['pending_review','cleared_for_use','rejected','withdrawn'], true)
     ? $_GET['status'] : 'pending_review';
-$filterType   = in_array($_GET['type'] ?? '', ['text','audio','video'], true) ? $_GET['type'] : '';
-$filterState  = trim((string)($_GET['state'] ?? ''));
-$search       = trim((string)($_GET['q'] ?? ''));
-$page         = max(1, (int)($_GET['page'] ?? 1));
-$perPage      = 25;
+$filterType  = in_array($_GET['type'] ?? '', ['text','audio','video'], true) ? $_GET['type'] : '';
+$filterState = trim((string)($_GET['state'] ?? ''));
+$search      = trim((string)($_GET['q'] ?? ''));
+$page        = max(1, (int)($_GET['page'] ?? 1));
+$perPage     = 25;
 
-// ── Build query ───────────────────────────────────────────────────────────────
-$where  = ['mvs.compliance_status = ?'];
-$params = [$filterStatus];
-if ($filterType)  { $where[] = 'mvs.submission_type = ?';  $params[] = $filterType; }
-if ($filterState) { $where[] = 'mvs.display_state = ?';    $params[] = $filterState; }
-if ($search) {
-    $where[]  = '(mvs.text_content LIKE ? OR COALESCE(mvs.display_name_first, m.first_name) LIKE ?)';
-    $params[] = '%' . $search . '%';
-    $params[] = '%' . $search . '%';
-}
-$whereSQL = 'WHERE ' . implode(' AND ', $where);
+// ── Guard: table may not exist yet ────────────────────────────────────────────
+$tableReady = ops_table_exists($pdo, 'member_voice_submissions');
+$items      = [];
+$total      = 0;
+$totalPages = 1;
 
-$joinSQL = "FROM member_voice_submissions mvs
-            JOIN partners p ON p.id = mvs.partner_id
-            JOIN members  m ON m.id = p.member_id";
+if ($tableReady) {
+    $where  = ['mvs.compliance_status = ?'];
+    $params = [$filterStatus];
+    if ($filterType)  { $where[] = 'mvs.submission_type = ?';  $params[] = $filterType; }
+    if ($filterState) { $where[] = 'mvs.display_state = ?';    $params[] = $filterState; }
+    if ($search) {
+        $where[]  = '(mvs.text_content LIKE ? OR COALESCE(mvs.display_name_first, m.first_name) LIKE ?)';
+        $params[] = '%' . $search . '%';
+        $params[] = '%' . $search . '%';
+    }
+    $whereSQL = 'WHERE ' . implode(' AND ', $where);
+    $joinSQL  = 'FROM member_voice_submissions mvs
+                 JOIN partners p ON p.id = mvs.partner_id
+                 JOIN members  m ON m.id = p.member_id';
 
-// Total count
-$cntStmt = $pdo->prepare("SELECT COUNT(*) $joinSQL $whereSQL");
-$cntStmt->execute($params);
-$total      = (int)$cntStmt->fetchColumn();
-$totalPages = max(1, (int)ceil($total / $perPage));
-$page       = min($page, $totalPages);
-$offset     = ($page - 1) * $perPage;
-
-// Items
-$itemStmt = $pdo->prepare(
-    "SELECT mvs.id, mvs.submission_type, mvs.text_content, mvs.file_path,
-            mvs.file_mime_type, mvs.duration_seconds, mvs.compliance_status,
-            mvs.compliance_notes, mvs.rejection_reason_to_member,
-            mvs.used_in_post_url, mvs.created_at, mvs.compliance_reviewed_at,
-            mvs.withdrawn_at,
-            COALESCE(mvs.display_name_first, m.first_name) AS disp_name,
-            COALESCE(mvs.display_state, m.state_code) AS disp_state,
-            m.email AS member_email, mvs.partner_id
-     $joinSQL $whereSQL
-     ORDER BY mvs.created_at ASC
-     LIMIT $perPage OFFSET $offset"
-);
-$itemStmt->execute($params);
-$items = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Pending count for badge
-$pendingCount = (int)($pdo->query("SELECT COUNT(*) FROM member_voice_submissions WHERE compliance_status = 'pending_review'")->fetchColumn() ?: 0);
-
-// Banned-framing terms for reference panel
-$bannedTerms = [
-    'investment', 'returns', 'profit', 'upside', 'gains', 'ROI',
-    'get in early', "don't miss out", 'to the moon', 'presale',
-    'IDO', 'IPO', 'token price', 'token launch', 'worth more later',
-];
-
-// ── Pagination helper ─────────────────────────────────────────────────────────
-function vs_pager(int $page, int $total, int $perPage, string $baseUrl): string {
+    $cnt = $pdo->prepare("SELECT COUNT(*) $joinSQL $whereSQL");
+    $cnt->execute($params);
+    $total      = (int)$cnt->fetchColumn();
     $totalPages = max(1, (int)ceil($total / $perPage));
-    if ($totalPages <= 1) return '';
-    $o = '<div class="vs-pager">';
-    if ($page > 1) $o .= '<a href="' . htmlspecialchars($baseUrl . 'page=' . ($page-1)) . '">‹</a>';
-    $o .= '<span>Page ' . $page . ' of ' . $totalPages . ' (' . number_format($total) . ' total)</span>';
-    if ($page < $totalPages) $o .= '<a href="' . htmlspecialchars($baseUrl . 'page=' . ($page+1)) . '">›</a>';
-    $o .= '</div>';
-    return $o;
+    $page       = min($page, $totalPages);
+    $offset     = ($page - 1) * $perPage;
+
+    $stmt = $pdo->prepare(
+        "SELECT mvs.id, mvs.submission_type, mvs.text_content, mvs.file_mime_type,
+                mvs.duration_seconds, mvs.compliance_status,
+                mvs.rejection_reason_to_member, mvs.used_in_post_url,
+                mvs.created_at,
+                COALESCE(mvs.display_name_first, m.first_name) AS disp_name,
+                COALESCE(mvs.display_state, m.state_code) AS disp_state,
+                m.email AS member_email, mvs.partner_id
+         $joinSQL $whereSQL
+         ORDER BY mvs.created_at ASC
+         LIMIT $perPage OFFSET $offset"
+    );
+    $stmt->execute($params);
+    $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$h     = fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
-$baseQ = '?status=' . urlencode($filterStatus)
-       . ($filterType  ? '&type=' . urlencode($filterType)  : '')
-       . ($filterState ? '&state=' . urlencode($filterState) : '')
-       . ($search      ? '&q=' . urlencode($search)          : '')
-       . '&';
+$pendingCount = $tableReady
+    ? (int)($pdo->query("SELECT COUNT(*) FROM member_voice_submissions WHERE compliance_status='pending_review'")->fetchColumn() ?: 0)
+    : 0;
 
-$statusLabels = [
-    'pending_review'  => ['Pending',  'vs-badge-amber'],
-    'cleared_for_use' => ['Accepted', 'vs-badge-green'],
-    'rejected'        => ['Rejected', 'vs-badge-red'],
-    'withdrawn'       => ['Withdrawn','vs-badge-grey'],
+$banned = ['investment','returns','profit','upside','gains','ROI',
+    'get in early',"don't miss out",'to the moon','presale',
+    'IDO','IPO','token price','token launch','worth more later'];
+
+$sLabels = [
+    'pending_review'  => ['Pending',  'badge-warn'],
+    'cleared_for_use' => ['Accepted', 'badge-ok'],
+    'rejected'        => ['Rejected', 'badge-err'],
+    'withdrawn'       => ['Withdrawn','badge-muted'],
 ];
-$typeIcons = ['text' => '✏️', 'audio' => '🎙️', 'video' => '🎬'];
 
-$apiBase = '/_app/api/index.php?route=admin/voice-submissions/';
-?>
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Voice Submissions — COG$ Admin</title>
-  <link rel="stylesheet" href="/admin/assets/admin.css">
-  <style>
-    .vs-layout{display:grid;grid-template-columns:220px 1fr 320px;gap:0;height:calc(100vh - 120px);overflow:hidden}
-    .vs-sidebar{padding:16px;border-right:1px solid var(--line,#2a2a2a);overflow-y:auto;background:var(--panel,#111)}
-    .vs-queue{overflow-y:auto;border-right:1px solid var(--line,#2a2a2a)}
-    .vs-detail{overflow-y:auto;padding:16px;background:var(--panel,#111)}
-    .vs-sidebar h3{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted,#888);margin:16px 0 6px}
-    .vs-sidebar select,.vs-sidebar input[type=text]{width:100%;padding:6px 8px;margin-bottom:8px;background:var(--bg2,#1a1a1a);border:1px solid var(--line,#333);color:inherit;border-radius:4px;font-size:.85rem}
-    .vs-sidebar button[type=submit]{width:100%;padding:7px;background:var(--gold,#c9973d);border:none;border-radius:4px;color:#000;font-weight:600;cursor:pointer;font-size:.85rem}
-    .vs-item{padding:12px 16px;border-bottom:1px solid var(--line,#1e1e1e);cursor:pointer;transition:background .15s}
-    .vs-item:hover,.vs-item.active{background:rgba(201,151,61,.08)}
-    .vs-item-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:.8rem;color:var(--muted,#888)}
-    .vs-item-preview{font-size:.85rem;color:var(--text,#eee);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .vs-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:.7rem;font-weight:700}
-    .vs-badge-amber{background:rgba(255,193,7,.15);color:#ffc107}
-    .vs-badge-green{background:rgba(82,184,122,.15);color:#52b87a}
-    .vs-badge-red{background:rgba(220,53,69,.15);color:#dc3545}
-    .vs-badge-grey{background:rgba(120,120,120,.15);color:#888}
-    .vs-pager{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:.8rem;border-top:1px solid var(--line,#2a2a2a);color:var(--muted,#888)}
-    .vs-pager a{color:var(--gold,#c9973d);text-decoration:none;padding:2px 8px;border:1px solid var(--line,#333);border-radius:4px}
-    .vs-detail .vs-btn{display:inline-block;padding:7px 14px;border-radius:4px;border:none;cursor:pointer;font-size:.85rem;font-weight:600;margin:4px 4px 4px 0}
-    .vs-btn-approve{background:#52b87a;color:#000}
-    .vs-btn-reject{background:#dc3545;color:#fff}
-    .vs-btn-markused{background:var(--gold,#c9973d);color:#000}
-    .vs-btn-withdraw{background:#6c757d;color:#fff}
-    .vs-detail label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted,#888);margin:14px 0 4px}
-    .vs-detail textarea,.vs-detail input[type=text]{width:100%;padding:7px 9px;background:var(--bg2,#1a1a1a);border:1px solid var(--line,#333);color:inherit;border-radius:4px;font-size:.85rem;resize:vertical}
-    .vs-banned{background:rgba(220,53,69,.06);border:1px solid rgba(220,53,69,.2);border-radius:6px;padding:10px 12px;margin-top:auto}
-    .vs-banned h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#dc3545;margin-bottom:6px}
-    .vs-banned ul{padding-left:14px;font-size:.78rem;color:var(--text2,#ccc)}
-    .vs-empty{padding:32px;text-align:center;color:var(--muted,#888);font-size:.9rem}
-    #vs-player{width:100%;margin-top:8px;border-radius:6px}
-    .vs-flash-ok{background:rgba(82,184,122,.12);border:1px solid rgba(82,184,122,.3);color:#52b87a;padding:8px 12px;border-radius:4px;margin-bottom:12px;font-size:.85rem}
-    .vs-flash-err{background:rgba(220,53,69,.12);border:1px solid rgba(220,53,69,.3);color:#dc3545;padding:8px 12px;border-radius:4px;margin-bottom:12px;font-size:.85rem}
-  </style>
-</head>
-<body class="admin">
-  <?php require_once __DIR__ . '/includes/admin_layout.php'; admin_render_header('dashboard', 'Voice Submissions', 'Member content moderation'); ?>
+$h    = fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$baseQ = '?status='.urlencode($filterStatus)
+       .($filterType  ? '&type='.urlencode($filterType)  : '')
+       .($filterState ? '&state='.urlencode($filterState) : '')
+       .($search      ? '&q='.urlencode($search)          : '').'&';
+$API   = '/_app/api/index.php?route=admin/voice-submissions/';
 
-  <?php if ($flash): ?>
-    <div class="vs-flash-<?= $h($flashT) ?>"><?= $h($flash) ?></div>
-  <?php endif ?>
+ob_start(); ?>
+<style>
+.vs-wrap{display:grid;grid-template-columns:210px 1fr 320px;height:calc(100vh - 130px);overflow:hidden;border:1px solid var(--line,#2a2a2a);border-radius:8px}
+.vs-col{overflow-y:auto}
+.vs-sidebar{padding:14px;border-right:1px solid var(--line,#2a2a2a)}
+.vs-queue{border-right:1px solid var(--line,#2a2a2a)}
+.vs-detail{padding:14px}
+.vs-sidebar h3{font-size:.67rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted,#888);margin:12px 0 4px}
+.vs-sidebar select,.vs-sidebar input[type=text]{width:100%;padding:5px 8px;margin-bottom:6px;background:rgba(255,255,255,.06);border:1px solid var(--line,#333);color:inherit;border-radius:4px;font-size:.81rem}
+.vs-sidebar .btn-apply{width:100%;padding:7px;background:var(--gold,#c9973d);border:none;border-radius:4px;color:#000;font-weight:700;cursor:pointer;font-size:.81rem}
+.vs-row{padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .1s}
+.vs-row:hover,.vs-row.on{background:rgba(201,151,61,.09)}
+.vs-row-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:.75rem;color:var(--muted,#888);margin-bottom:2px}
+.vs-row-preview{font-size:.81rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{display:inline-block;padding:2px 6px;border-radius:99px;font-size:.66rem;font-weight:700}
+.badge-warn{background:rgba(255,193,7,.15);color:#ffc107}
+.badge-ok{background:rgba(82,184,122,.15);color:#52b87a}
+.badge-err{background:rgba(220,53,69,.15);color:#dc3545}
+.badge-muted{background:rgba(150,150,150,.15);color:#999}
+.vs-pager{display:flex;gap:10px;align-items:center;padding:9px 13px;font-size:.75rem;color:var(--muted);border-top:1px solid rgba(255,255,255,.05)}
+.vs-pager a{color:var(--gold,#c9973d);text-decoration:none;padding:1px 7px;border:1px solid var(--line,#333);border-radius:3px}
+.vs-empty{padding:40px;text-align:center;color:var(--muted,#888);font-size:.85rem}
+.vb{display:inline-block;padding:5px 11px;border-radius:4px;border:none;cursor:pointer;font-size:.8rem;font-weight:600;margin:2px 2px 2px 0;text-decoration:none;vertical-align:middle}
+.vb-ok{background:#52b87a;color:#000}
+.vb-err{background:#dc3545;color:#fff}
+.vb-gold{background:var(--gold,#c9973d);color:#000}
+.vb-grey{background:#555;color:#fff}
+.vb-ghost{background:rgba(240,209,138,.08);border:1px solid rgba(240,209,138,.3);color:#f0d18a}
+.vs-detail label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted,#888);margin:10px 0 3px}
+.vs-detail textarea,.vs-detail input[type=text]{width:100%;padding:5px 8px;background:rgba(255,255,255,.05);border:1px solid var(--line,#333);color:inherit;border-radius:4px;font-size:.81rem;resize:vertical}
+#vs-player{width:100%;border-radius:5px;margin-top:5px}
+.vs-banned{background:rgba(220,53,69,.05);border:1px solid rgba(220,53,69,.16);border-radius:5px;padding:8px 10px;margin-top:12px}
+.vs-banned h4{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:#dc3545;margin:0 0 5px}
+.vs-banned ul{padding-left:13px;font-size:.74rem;line-height:1.65;margin:0}
+#vs-toast{display:none;padding:6px 11px;border-radius:4px;font-size:.81rem;margin-bottom:8px}
+.toast-ok{background:rgba(82,184,122,.12);border:1px solid rgba(82,184,122,.3);color:#52b87a}
+.toast-err{background:rgba(220,53,69,.12);border:1px solid rgba(220,53,69,.3);color:#dc3545}
+</style>
 
-  <div id="vs-flash-js" style="display:none;margin:0 24px 8px"></div>
+<div id="vs-toast"></div>
 
-  <div class="vs-layout">
+<?php if (!$tableReady): ?>
+  <div class="alert alert-err">
+    The <code>member_voice_submissions</code> table does not exist yet.
+    Please run <code>phase4_member_voice_submissions_v1.sql</code> in phpMyAdmin against <code>cogsaust_TRUST</code> and reload.
+  </div>
+<?php else: ?>
 
-    <!-- ── Sidebar filters ── -->
-    <aside class="vs-sidebar">
-      <form method="get">
-        <h3>Status</h3>
-        <?php foreach (['pending_review'=>'Pending','cleared_for_use'=>'Accepted','rejected'=>'Rejected','withdrawn'=>'Withdrawn'] as $val => $lbl): ?>
-          <div>
-            <label style="font-size:.85rem;display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer">
-              <input type="radio" name="status" value="<?= $h($val) ?>" <?= $filterStatus===$val?'checked':'' ?>>
-              <?= $h($lbl) ?>
-              <?php if ($val==='pending_review' && $pendingCount > 0): ?>
-                <span class="vs-badge vs-badge-amber"><?= $pendingCount ?></span>
-              <?php endif ?>
-            </label>
-          </div>
+<div class="vs-wrap">
+
+  <!-- Sidebar filters -->
+  <div class="vs-col vs-sidebar">
+    <form method="get">
+      <h3>Status</h3>
+      <?php foreach (['pending_review'=>'Pending','cleared_for_use'=>'Accepted','rejected'=>'Rejected','withdrawn'=>'Withdrawn'] as $v=>$l): ?>
+        <label style="font-size:.81rem;display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer">
+          <input type="radio" name="status" value="<?= $h($v) ?>" <?= $filterStatus===$v?'checked':'' ?>>
+          <?= $h($l) ?>
+          <?php if ($v==='pending_review'&&$pendingCount>0): ?><span class="badge badge-warn" style="margin-left:auto"><?= $pendingCount ?></span><?php endif ?>
+        </label>
+      <?php endforeach ?>
+
+      <h3>Type</h3>
+      <select name="type">
+        <option value="">All types</option>
+        <option value="text"  <?= $filterType==='text' ?'selected':'' ?>>Text</option>
+        <option value="audio" <?= $filterType==='audio'?'selected':'' ?>>Audio</option>
+        <option value="video" <?= $filterType==='video'?'selected':'' ?>>Video</option>
+      </select>
+
+      <h3>State</h3>
+      <select name="state">
+        <option value="">All states</option>
+        <?php foreach (['NSW','QLD','VIC','SA','WA','TAS','ACT','NT'] as $s): ?>
+          <option <?= $filterState===$s?'selected':'' ?>><?= $s ?></option>
         <?php endforeach ?>
+      </select>
 
-        <h3>Type</h3>
-        <select name="type">
-          <option value="">All types</option>
-          <option value="text"  <?= $filterType==='text' ?'selected':'' ?>>✏️ Text</option>
-          <option value="audio" <?= $filterType==='audio'?'selected':'' ?>>🎙️ Audio</option>
-          <option value="video" <?= $filterType==='video'?'selected':'' ?>>🎬 Video</option>
-        </select>
+      <h3>Search</h3>
+      <input type="text" name="q" value="<?= $h($search) ?>" placeholder="Name or text&hellip;">
+      <button type="submit" class="btn-apply">Apply filters</button>
+    </form>
 
-        <h3>State</h3>
-        <select name="state">
-          <option value="">All states</option>
-          <?php foreach (['NSW','QLD','VIC','SA','WA','TAS','ACT','NT'] as $st): ?>
-            <option value="<?= $h($st) ?>" <?= $filterState===$st?'selected':'' ?>><?= $h($st) ?></option>
-          <?php endforeach ?>
-        </select>
+    <div class="vs-banned">
+      <h4>&sect;2 Banned &mdash; never accept</h4>
+      <ul><?php foreach ($banned as $b): ?><li><?= $h($b) ?></li><?php endforeach ?></ul>
+    </div>
+  </div>
 
-        <h3>Search</h3>
-        <input type="text" name="q" value="<?= $h($search) ?>" placeholder="Name or text…">
-        <button type="submit">Apply filters</button>
-      </form>
-
-      <div class="vs-banned" style="margin-top:24px">
-        <h4>§2 Banned framing — never approve</h4>
-        <ul>
-          <?php foreach ($bannedTerms as $t): ?><li><?= $h($t) ?></li><?php endforeach ?>
-        </ul>
-      </div>
-    </aside>
-
-    <!-- ── Queue ── -->
-    <div class="vs-queue" id="vs-queue">
-      <?php if (empty($items)): ?>
-        <div class="vs-empty">No <?= $h($filterStatus === 'pending_review' ? 'pending' : ($filterStatus === 'cleared_for_use' ? 'accepted' : $filterStatus)) ?> submissions<?= $search ? ' matching "' . $h($search) . '"' : '' ?>.</div>
-      <?php else: ?>
-        <?php foreach ($items as $item):
-          [$statusLabel, $statusClass] = $statusLabels[$item['compliance_status']] ?? ['Unknown','vs-badge-grey'];
-          $icon = $typeIcons[$item['submission_type']] ?? '?';
-          $preview = $item['submission_type'] === 'text'
-              ? mb_substr((string)$item['text_content'], 0, 80) . (mb_strlen((string)$item['text_content']) > 80 ? '…' : '')
-              : ucfirst($item['submission_type']) . ' · ' . ($item['duration_seconds'] ? $item['duration_seconds'] . 's' : '?s');
-        ?>
-          <div class="vs-item" data-id="<?= (int)$item['id'] ?>" onclick="vsSelect(<?= (int)$item['id'] ?>)">
-            <div class="vs-item-meta">
-              <span><?= $icon ?></span>
-              <strong style="color:var(--text,#eee)"><?= $h($item['disp_name']) ?>, <?= $h($item['disp_state']) ?></strong>
-              <span class="vs-badge <?= $h($statusClass) ?>"><?= $h($statusLabel) ?></span>
-              <span style="margin-left:auto"><?= $h(substr((string)$item['created_at'], 0, 16)) ?></span>
-            </div>
-            <div class="vs-item-preview"><?= $h($preview) ?></div>
+  <!-- Queue -->
+  <div class="vs-col vs-queue" id="vs-queue">
+    <?php if (empty($items)): ?>
+      <div class="vs-empty">No <?= $h($filterStatus==='cleared_for_use'?'accepted':($filterStatus==='pending_review'?'pending':$filterStatus)) ?> submissions<?= $search?' matching &ldquo;'.$h($search).'&rdquo;':'' ?>.</div>
+    <?php else: ?>
+      <?php foreach ($items as $row):
+        [$sl,$sc] = $sLabels[$row['compliance_status']] ?? ['?','badge-muted'];
+        $ico = ['text'=>'&#x270F;','audio'=>'&#x1F399;','video'=>'&#x1F3AC;'][$row['submission_type']] ?? '';
+        $prev = $row['submission_type']==='text'
+          ? $h(mb_substr((string)$row['text_content'],0,80)).(mb_strlen((string)$row['text_content'])>80?'&hellip;':'')
+          : $h(ucfirst($row['submission_type'])).($row['duration_seconds']?' &middot; '.$row['duration_seconds'].'s':'');
+      ?>
+        <div class="vs-row" data-id="<?= (int)$row['id'] ?>">
+          <div class="vs-row-meta">
+            <span><?= $ico ?></span>
+            <strong style="color:inherit"><?= $h($row['disp_name']) ?>, <?= $h($row['disp_state']) ?></strong>
+            <span class="badge <?= $h($sc) ?>"><?= $h($sl) ?></span>
+            <span style="margin-left:auto"><?= $h(substr((string)$row['created_at'],0,16)) ?></span>
           </div>
-        <?php endforeach ?>
+          <div class="vs-row-preview"><?= $prev ?></div>
+        </div>
+      <?php endforeach ?>
+      <?php if ($totalPages>1): ?>
+        <div class="vs-pager">
+          <?php if ($page>1): ?><a href="<?= $h($baseQ.'page='.($page-1)) ?>">&#8249;</a><?php endif ?>
+          <span>Page <?= $page ?>/<?= $totalPages ?> (<?= number_format($total) ?>)</span>
+          <?php if ($page<$totalPages): ?><a href="<?= $h($baseQ.'page='.($page+1)) ?>">&#8250;</a><?php endif ?>
+        </div>
       <?php endif ?>
-      <?= vs_pager($page, $total, $perPage, $baseQ) ?>
-    </div>
+    <?php endif ?>
+  </div>
 
-    <!-- ── Detail pane ── -->
-    <div class="vs-detail" id="vs-detail">
-      <p style="color:var(--muted,#888);font-size:.85rem;margin-top:32px;text-align:center">
-        Select a submission to review.
-      </p>
-    </div>
+  <!-- Detail -->
+  <div class="vs-col vs-detail" id="vs-detail">
+    <p style="color:var(--muted,#888);font-size:.81rem;text-align:center;margin-top:48px">Select a submission.</p>
+  </div>
 
-  </div><!-- /vs-layout -->
+</div>
 
 <script>
 (function(){
-  'use strict';
+'use strict';
+var API='<?= $apiBase ?>';
+var sel=null;
+var ITEMS=<?= json_encode(array_column($items,null,'id'),JSON_HEX_TAG|JSON_HEX_APOS) ?>;
 
-  var API  = '/_app/api/index.php?route=admin/voice-submissions/';
-  var sel  = null; // currently selected id
+function toast(msg,type){
+  var el=document.getElementById('vs-toast');
+  el.textContent=msg; el.className=type==='err'?'toast-err':'toast-ok';
+  el.style.display='block';
+  setTimeout(function(){el.style.display='none';},4000);
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-  function flash(msg, type) {
-    var el = document.getElementById('vs-flash-js');
-    el.textContent = msg;
-    el.className = 'vs-flash-' + (type || 'ok');
-    el.style.display = 'block';
-    setTimeout(function(){ el.style.display = 'none'; }, 4000);
-  }
+// Row click
+document.querySelectorAll('.vs-row').forEach(function(el){
+  el.addEventListener('click',function(){vsSelect(parseInt(el.dataset.id,10));});
+});
 
-  function h(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function vsSelect(id) {
-    sel = id;
-    document.querySelectorAll('.vs-item').forEach(function(el){
-      el.classList.toggle('active', parseInt(el.dataset.id) === id);
-    });
-    // Use inline PHP data first (avoids round-trip for items on current page)
-    if (ITEMS[id]) {
-      renderDetail(ITEMS[id]);
-      return;
-    }
-    // Fallback fetch for items not on this page
-    fetch(API + id, {credentials:'include'})
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if (!d.success) { flash('Failed to load: ' + (d.error || 'Unknown error'), 'err'); return; }
-        renderDetail(d.data || d);
-      })
-      .catch(function(){ flash('Network error loading submission', 'err'); });
-  }
-
-  // Pre-render from inline PHP data (avoid extra fetch for items already in queue)
-  var ITEMS = <?= json_encode(array_column($items, null, 'id')) ?>;
-
-  document.querySelectorAll('.vs-item').forEach(function(el){
-    el.addEventListener('click', function(){ vsSelect(parseInt(el.dataset.id)); });
+function vsSelect(id){
+  sel=id;
+  document.querySelectorAll('.vs-row').forEach(function(el){
+    el.classList.toggle('on',parseInt(el.dataset.id,10)===id);
   });
+  if(ITEMS[id]){renderDetail(ITEMS[id]);return;}
+  fetch(API+id,{credentials:'include'})
+    .then(function(r){return r.json();})
+    .then(function(d){if(d.success)renderDetail(d.data||d);else toast('Load failed: '+(d.error||'?'),'err');})
+    .catch(function(){toast('Network error','err');});
+}
 
-  function renderDetail(item) {
-    var d   = document.getElementById('vs-detail');
-    var st  = item.compliance_status;
-    var isFile = item.submission_type === 'audio' || item.submission_type === 'video';
-    var fileUrl = isFile ? '/_app/api/index.php?route=admin/voice-submissions/' + item.id + '/file' : '';
-    var statusMap = {pending_review:'Pending',cleared_for_use:'Accepted',rejected:'Rejected',withdrawn:'Withdrawn'};
-    var clsMap    = {pending_review:'vs-badge-amber',cleared_for_use:'vs-badge-green',rejected:'vs-badge-red',withdrawn:'vs-badge-grey'};
+function renderDetail(item){
+  var pane=document.getElementById('vs-detail');
+  var st=item.compliance_status;
+  var isFile=(item.submission_type==='audio'||item.submission_type==='video');
+  var furl=isFile?(API+item.id+'/file'):'';
+  var SM={pending_review:'Pending',cleared_for_use:'Accepted',rejected:'Rejected',withdrawn:'Withdrawn'};
+  var SC={pending_review:'badge-warn',cleared_for_use:'badge-ok',rejected:'badge-err',withdrawn:'badge-muted'};
 
-    var html = '<h3 style="margin:0 0 12px">#' + item.id + ' &nbsp;<span class="vs-badge ' + h(clsMap[st]||'') + '">' + h(statusMap[st]||st) + '</span></h3>';
-    html += '<div style="font-size:.82rem;color:var(--muted,#888);margin-bottom:12px">';
-    html += h((item.disp_name||'') + ', ' + (item.disp_state||'')) + ' · ' + h(item.submission_type||'') + ' · ' + h((item.created_at||'').slice(0,16));
-    html += '</div>';
+  var o='<h3 style="font-size:.93rem;margin:0 0 7px">#'+item.id
+       +' <span class="badge '+(SC[st]||'')+'">'+(SM[st]||st)+'</span></h3>';
+  o+='<p style="font-size:.74rem;color:var(--muted,#888);margin:0 0 10px">'
+    +esc((item.disp_name||'')+', '+(item.disp_state||''))+' &middot; '+esc(item.submission_type||'')
+    +' &middot; '+esc((item.created_at||'').slice(0,16))+'</p>';
 
-    if (item.submission_type === 'text') {
-      html += '<div id="vs-text-body" style="background:rgba(255,255,255,.04);border-radius:6px;padding:12px;font-size:.9rem;line-height:1.6;white-space:pre-wrap;margin-bottom:8px">' + h(item.text_content||'') + '</div>';
-      if (st === 'cleared_for_use') {
-        html += '<button class="vs-btn" style="background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);color:var(--gold-1,#f0d18a);font-size:.78rem" onclick="vsCopyText()">📋 Copy text</button>';
-      }
-    } else if (isFile) {
-      var mime  = item.file_mime_type || '';
-      var isVid = mime.startsWith('video');
-      html += '<' + (isVid?'video':'audio') + ' id="vs-player" controls src="' + h(fileUrl) + '"></' + (isVid?'video':'audio') + '>';
-      if (item.duration_seconds) html += '<div style="font-size:.78rem;color:var(--muted,#888);margin-top:4px">' + h(item.duration_seconds) + 's</div>';
-      if (st === 'cleared_for_use') {
-        var dlUrl = fileUrl + '?download=1';
-        html += '<div style="margin-top:8px"><a class="vs-btn" href="' + h(dlUrl) + '" download style="background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);color:var(--gold-1,#f0d18a);font-size:.78rem;text-decoration:none">⬇ Download file</a></div>';
-      }
-    }
-
-    if (item.used_in_post_url) {
-      html += '<label>Used in post</label><div style="font-size:.8rem;word-break:break-all"><a href="' + h(item.used_in_post_url) + '" target="_blank" rel="noopener">' + h(item.used_in_post_url) + '</a></div>';
-    }
-    if (item.rejection_reason_to_member) {
-      html += '<label>Rejection reason (shown to member)</label><div style="font-size:.82rem;white-space:pre-wrap;background:rgba(220,53,69,.06);padding:8px;border-radius:4px">' + h(item.rejection_reason_to_member) + '</div>';
-    }
-
-    // Action buttons
-    html += '<div style="margin-top:16px">';
-    if (st === 'pending_review') {
-      html += '<button class="vs-btn vs-btn-approve" onclick="vsApprove()">✓ Accept</button>';
-      html += '<button class="vs-btn vs-btn-reject" onclick="vsRejectOpen()">✗ Reject</button>';
-    }
-    if (st === 'cleared_for_use') {
-      html += '<button class="vs-btn vs-btn-markused" onclick="vsMarkUsedOpen()">🔗 Mark as used</button>';
-      html += '<button class="vs-btn vs-btn-withdraw" onclick="vsWithdrawOpen()">Withdraw</button>';
-    }
-    if (st === 'pending_review' || st === 'cleared_for_use') {
-      html += '<button class="vs-btn vs-btn-withdraw" onclick="vsWithdrawOpen()" style="margin-left:4px">Admin withdraw</button>';
-    }
-    html += '</div>';
-
-    // Notes textareas
-    html += '<label>Internal notes (not shown to member)</label>';
-    html += '<textarea id="vs-notes" rows="3" placeholder="Optional internal note…"></textarea>';
-
-    // Rejection form (hidden by default)
-    html += '<div id="vs-reject-form" style="display:none">';
-    html += '<label>Reason shown to member (required for rejection)</label>';
-    html += '<textarea id="vs-reject-reason" rows="4" placeholder="Thanks for sending this through. Could you rephrase to focus on why you joined the community?"></textarea>';
-    html += '<button class="vs-btn vs-btn-reject" style="margin-top:4px" onclick="vsRejectConfirm()">Confirm reject</button>';
-    html += '<button class="vs-btn" style="background:none;border:1px solid #444;color:#ccc" onclick="document.getElementById(\'vs-reject-form\').style.display=\'none\'">Cancel</button>';
-    html += '</div>';
-
-    // Mark as used form (hidden by default)
-    html += '<div id="vs-used-form" style="display:none">';
-    html += '<label>Permalink to the FB or YT post</label>';
-    html += '<input type="text" id="vs-used-url" placeholder="https://facebook.com/…">';
-    html += '<button class="vs-btn vs-btn-markused" style="margin-top:4px" onclick="vsMarkUsedConfirm()">Confirm</button>';
-    html += '<button class="vs-btn" style="background:none;border:1px solid #444;color:#ccc" onclick="document.getElementById(\'vs-used-form\').style.display=\'none\'">Cancel</button>';
-    html += '</div>';
-
-    // Withdraw form
-    html += '<div id="vs-withdraw-form" style="display:none">';
-    html += '<label>Withdrawal reason (internal)</label>';
-    html += '<input type="text" id="vs-withdraw-reason" placeholder="Reason (optional)">';
-    html += '<button class="vs-btn vs-btn-withdraw" style="margin-top:4px" onclick="vsWithdrawConfirm()">Confirm withdraw</button>';
-    html += '<button class="vs-btn" style="background:none;border:1px solid #444;color:#ccc" onclick="document.getElementById(\'vs-withdraw-form\').style.display=\'none\'">Cancel</button>';
-    html += '</div>';
-
-    d.innerHTML = html;
+  if(item.submission_type==='text'){
+    o+='<div id="vs-tb" style="background:rgba(255,255,255,.05);border-radius:5px;padding:10px;font-size:.88rem;line-height:1.6;white-space:pre-wrap;margin-bottom:6px">'+esc(item.text_content||'')+'</div>';
+    if(st==='cleared_for_use') o+='<button class="vb vb-ghost" onclick="vsCopy()" style="font-size:.75rem">&#128203; Copy text</button>';
+  } else if(isFile){
+    var vid=(item.file_mime_type||'').indexOf('video')===0;
+    o+='<'+(vid?'video':'audio')+' id="vs-player" controls src="'+esc(furl)+'"></'+(vid?'video':'audio')+'>';
+    if(item.duration_seconds) o+='<p style="font-size:.73rem;color:var(--muted,#888);margin:3px 0">'+esc(item.duration_seconds)+'s</p>';
+    if(st==='cleared_for_use') o+='<a class="vb vb-ghost" href="'+esc(furl+'?download=1')+'" download style="font-size:.75rem;margin-top:6px;display:inline-block">&#8675; Download file</a>';
   }
 
-  function vsApprove() {
-    if (!sel) return;
-    var notes = (document.getElementById('vs-notes')||{}).value || '';
-    fetch(API + sel + '/approve', {
-      method:'POST', credentials:'include',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({notes: notes})
-    }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.success) { flash('Accepted. Member notified.'); location.href = '?status=cleared_for_use'; }
-      else flash('Error: ' + d.error, 'err');
-    }).catch(function(){ flash('Network error', 'err'); });
-  }
+  if(item.used_in_post_url) o+='<label>Used in post</label><p style="font-size:.76rem;word-break:break-all;margin:0"><a href="'+esc(item.used_in_post_url)+'" target="_blank" rel="noopener">'+esc(item.used_in_post_url)+'</a></p>';
+  if(item.rejection_reason_to_member) o+='<label>Rejection reason (shown to member)</label><p style="font-size:.78rem;white-space:pre-wrap;background:rgba(220,53,69,.06);padding:7px;border-radius:4px;margin:0">'+esc(item.rejection_reason_to_member)+'</p>';
 
-  function vsRejectOpen() {
-    var rf = document.getElementById('vs-reject-form');
-    if (rf) rf.style.display = rf.style.display === 'none' ? 'block' : 'none';
-  }
+  o+='<div style="margin-top:12px">';
+  if(st==='pending_review'){o+='<button class="vb vb-ok" onclick="vsAccept()">&#10003; Accept</button><button class="vb vb-err" onclick="vsRejOpen()">&#10007; Reject</button>';}
+  if(st==='cleared_for_use'){o+='<button class="vb vb-gold" onclick="vsUsedOpen()">&#128279; Mark as used</button>';}
+  if(st==='pending_review'||st==='cleared_for_use'){o+='<button class="vb vb-grey" onclick="vsWdOpen()">Withdraw</button>';}
+  o+='</div>';
 
-  function vsRejectConfirm() {
-    if (!sel) return;
-    var notes  = (document.getElementById('vs-notes')||{}).value || '';
-    var reason = (document.getElementById('vs-reject-reason')||{}).value || '';
-    if (!reason.trim()) { flash('Please write a reason for the member.', 'err'); return; }
-    fetch(API + sel + '/reject', {
-      method:'POST', credentials:'include',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({compliance_notes: notes, rejection_reason_to_member: reason})
-    }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.success) { flash('Rejected. Member notified.'); location.reload(); }
-      else flash('Error: ' + d.error, 'err');
-    }).catch(function(){ flash('Network error', 'err'); });
-  }
+  o+='<label>Internal notes (not shown to member)</label><textarea id="vs-notes" rows="2" placeholder="Optional&hellip;"></textarea>';
 
-  function vsMarkUsedOpen() {
-    var f = document.getElementById('vs-used-form');
-    if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
-  }
+  o+='<div id="vs-rej" style="display:none;margin-top:5px">'
+    +'<label>Reason shown to member <span style="color:#dc3545">*</span></label>'
+    +'<textarea id="vs-rej-r" rows="3" placeholder="Thanks for sending this through. Could you rephrase to focus on why you joined the community?"></textarea>'
+    +'<button class="vb vb-err" style="margin-top:3px" onclick="vsRejDo()">Confirm reject</button> '
+    +'<button class="vb vb-grey" onclick="hide(\'vs-rej\')">Cancel</button></div>';
 
-  function vsMarkUsedConfirm() {
-    if (!sel) return;
-    var url = (document.getElementById('vs-used-url')||{}).value || '';
-    if (!url.trim()) { flash('Please enter the post URL.', 'err'); return; }
-    fetch(API + sel + '/mark-used', {
-      method:'POST', credentials:'include',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({used_in_post_url: url})
-    }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.success) { flash('Marked as used.'); location.reload(); }
-      else flash('Error: ' + d.error, 'err');
-    }).catch(function(){ flash('Network error', 'err'); });
-  }
+  o+='<div id="vs-used" style="display:none;margin-top:5px">'
+    +'<label>Post URL (FB or YT)</label>'
+    +'<input type="text" id="vs-used-u" placeholder="https://&hellip;">'
+    +'<button class="vb vb-gold" style="margin-top:3px" onclick="vsUsedDo()">Confirm</button> '
+    +'<button class="vb vb-grey" onclick="hide(\'vs-used\')">Cancel</button></div>';
 
-  function vsWithdrawOpen() {
-    var f = document.getElementById('vs-withdraw-form');
-    if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
-  }
+  o+='<div id="vs-wd" style="display:none;margin-top:5px">'
+    +'<label>Reason (internal, optional)</label>'
+    +'<input type="text" id="vs-wd-r" placeholder="Reason&hellip;">'
+    +'<button class="vb vb-grey" style="margin-top:3px" onclick="vsWdDo()">Confirm withdraw</button> '
+    +'<button class="vb vb-grey" onclick="hide(\'vs-wd\')">Cancel</button></div>';
 
-  function vsWithdrawConfirm() {
-    if (!sel) return;
-    var reason = (document.getElementById('vs-withdraw-reason')||{}).value || '';
-    fetch(API + sel + '/withdraw', {
-      method:'POST', credentials:'include',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({reason: reason})
-    }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.success) {
-        flash(d.data && d.data.social_removal ? 'Withdrawn. Take down the social post within 24 hours.' : 'Withdrawn.');
-        location.reload();
-      } else flash('Error: ' + d.error, 'err');
-    }).catch(function(){ flash('Network error', 'err'); });
-  }
+  pane.innerHTML=o;
+}
 
-  // Auto-load first item if only one on page
-  if (<?= count($items) ?> === 1) {
-    var firstId = <?= count($items) > 0 ? (int)$items[0]['id'] : 0 ?>;
-    if (firstId) vsSelect(firstId);
-  }
+function hide(id){var e=document.getElementById(id);if(e)e.style.display='none';}
+function tog(id){var e=document.getElementById(id);if(e)e.style.display=e.style.display==='none'?'block':'none';}
+function notes(){return(document.getElementById('vs-notes')||{}).value||'';}
 
-  function vsCopyText() {
-    var el = document.getElementById('vs-text-body');
-    if (!el) return;
-    var text = el.textContent || el.innerText || '';
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function(){ flash('Text copied to clipboard.'); })
-        .catch(function(){ fallbackCopy(text); });
-    } else { fallbackCopy(text); }
-  }
+function post(path,body,cb){
+  fetch(API+path,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json();})
+    .then(function(d){if(d.success)cb(d);else toast('Error: '+(d.error||'unknown'),'err');})
+    .catch(function(){toast('Network error','err');});
+}
 
-  function fallbackCopy(text) {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); flash('Text copied to clipboard.'); }
-    catch(e) { flash('Could not copy — select the text manually.', 'err'); }
-    document.body.removeChild(ta);
-  }
+function vsAccept(){if(!sel)return;post(sel+'/approve',{notes:notes()},function(){toast('Accepted. Member notified.');location.href='?status=cleared_for_use';});}
+function vsRejOpen(){tog('vs-rej');}
+function vsRejDo(){
+  if(!sel)return;
+  var r=(document.getElementById('vs-rej-r')||{}).value||'';
+  if(!r.trim()){toast('Please write a reason for the member.','err');return;}
+  post(sel+'/reject',{compliance_notes:notes(),rejection_reason_to_member:r},function(){toast('Rejected. Member notified.');location.reload();});
+}
+function vsUsedOpen(){tog('vs-used');}
+function vsUsedDo(){
+  if(!sel)return;
+  var u=(document.getElementById('vs-used-u')||{}).value||'';
+  if(!u.trim()){toast('Please enter the post URL.','err');return;}
+  post(sel+'/mark-used',{used_in_post_url:u},function(){toast('Marked as used.');location.reload();});
+}
+function vsWdOpen(){tog('vs-wd');}
+function vsWdDo(){
+  if(!sel)return;
+  var r=(document.getElementById('vs-wd-r')||{}).value||'';
+  post(sel+'/withdraw',{reason:r},function(d){
+    toast(d.data&&d.data.social_removal?'Withdrawn. Take down the social post within 24 hours.':'Withdrawn.');
+    location.reload();
+  });
+}
+function vsCopy(){
+  var el=document.getElementById('vs-tb');
+  var t=el?(el.textContent||el.innerText||''):'';
+  if(!t)return;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){toast('Copied.');}).catch(function(){fbCopy(t);});
+  }else fbCopy(t);
+}
+function fbCopy(t){
+  var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('Copied.');}catch(e){toast('Select text manually.','err');}
+  document.body.removeChild(ta);
+}
 
-  window.vsSelect  = vsSelect;
-  window.vsCopyText = vsCopyText;
-  window.vsApprove = vsApprove;
-  window.vsRejectOpen    = vsRejectOpen;
-  window.vsRejectConfirm = vsRejectConfirm;
-  window.vsMarkUsedOpen    = vsMarkUsedOpen;
-  window.vsMarkUsedConfirm = vsMarkUsedConfirm;
-  window.vsWithdrawOpen    = vsWithdrawOpen;
-  window.vsWithdrawConfirm = vsWithdrawConfirm;
+<?php if(count($items)===1&&!empty($items[0]['id'])): ?>vsSelect(<?=(int)$items[0]['id']?>);<?php endif ?>
 
+window.vsSelect=vsSelect;window.vsAccept=vsAccept;
+window.vsRejOpen=vsRejOpen;window.vsRejDo=vsRejDo;
+window.vsUsedOpen=vsUsedOpen;window.vsUsedDo=vsUsedDo;
+window.vsWdOpen=vsWdOpen;window.vsWdDo=vsWdDo;
+window.vsCopy=vsCopy;
 })();
 </script>
-</body>
-</html>
+<?php endif; ?>
+<?php
+$body = ob_get_clean();
+ops_render_page('Why I Joined', 'voice_submissions', $body, $flash ?: null, $flashT);
