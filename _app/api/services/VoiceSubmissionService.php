@@ -205,10 +205,16 @@ class VoiceSubmissionService
 
         $mime = $row['file_mime_type'] ?: 'application/octet-stream';
         $size = filesize($path);
+        $ext  = pathinfo($path, PATHINFO_EXTENSION) ?: 'bin';
         header('Content-Type: ' . $mime);
         header('Accept-Ranges: bytes');
         header('Content-Length: ' . $size);
         header('Cache-Control: private, no-store');
+        // Add attachment header when ?download=1 is passed (admin download button)
+        if (!empty($_GET['download'])) {
+            $fname = 'cogs-voice-' . $submissionId . '.' . $ext;
+            header('Content-Disposition: attachment; filename="' . $fname . '"');
+        }
         readfile($path);
         exit;
     }

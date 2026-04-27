@@ -288,12 +288,19 @@ $apiBase = '/_app/api/index.php?route=admin/voice-submissions/';
     html += '</div>';
 
     if (item.submission_type === 'text') {
-      html += '<div style="background:rgba(255,255,255,.04);border-radius:6px;padding:12px;font-size:.9rem;line-height:1.6;white-space:pre-wrap">' + h(item.text_content||'') + '</div>';
+      html += '<div id="vs-text-body" style="background:rgba(255,255,255,.04);border-radius:6px;padding:12px;font-size:.9rem;line-height:1.6;white-space:pre-wrap;margin-bottom:8px">' + h(item.text_content||'') + '</div>';
+      if (st === 'cleared_for_use') {
+        html += '<button class="vs-btn" style="background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);color:var(--gold-1,#f0d18a);font-size:.78rem" onclick="vsCopyText()">📋 Copy text</button>';
+      }
     } else if (isFile) {
       var mime  = item.file_mime_type || '';
       var isVid = mime.startsWith('video');
       html += '<' + (isVid?'video':'audio') + ' id="vs-player" controls src="' + h(fileUrl) + '"></' + (isVid?'video':'audio') + '>';
       if (item.duration_seconds) html += '<div style="font-size:.78rem;color:var(--muted,#888);margin-top:4px">' + h(item.duration_seconds) + 's</div>';
+      if (st === 'cleared_for_use') {
+        var dlUrl = fileUrl + '?download=1';
+        html += '<div style="margin-top:8px"><a class="vs-btn" href="' + h(dlUrl) + '" download style="background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);color:var(--gold-1,#f0d18a);font-size:.78rem;text-decoration:none">⬇ Download file</a></div>';
+      }
     }
 
     if (item.used_in_post_url) {
@@ -357,7 +364,7 @@ $apiBase = '/_app/api/index.php?route=admin/voice-submissions/';
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({notes: notes})
     }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.success) { flash('Accepted. Member notified.'); location.reload(); }
+      if (d.success) { flash('Accepted. Member notified.'); location.href = '?status=cleared_for_use'; }
       else flash('Error: ' + d.error, 'err');
     }).catch(function(){ flash('Network error', 'err'); });
   }
@@ -427,7 +434,29 @@ $apiBase = '/_app/api/index.php?route=admin/voice-submissions/';
     if (firstId) vsSelect(firstId);
   }
 
+  function vsCopyText() {
+    var el = document.getElementById('vs-text-body');
+    if (!el) return;
+    var text = el.textContent || el.innerText || '';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ flash('Text copied to clipboard.'); })
+        .catch(function(){ fallbackCopy(text); });
+    } else { fallbackCopy(text); }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); flash('Text copied to clipboard.'); }
+    catch(e) { flash('Could not copy — select the text manually.', 'err'); }
+    document.body.removeChild(ta);
+  }
+
   window.vsSelect  = vsSelect;
+  window.vsCopyText = vsCopyText;
   window.vsApprove = vsApprove;
   window.vsRejectOpen    = vsRejectOpen;
   window.vsRejectConfirm = vsRejectConfirm;
