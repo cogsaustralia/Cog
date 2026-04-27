@@ -5644,28 +5644,67 @@ function renderPassTheCoin() {
   }
 
   var caption = 'I\u2019ve joined the $4 Fair Say Relay \u2014 a community movement asking Australians to have a real say in real-world Australian assets.\n\nJoin me at ' + link + '\n\nThen tag 4 Australians who deserve a fair say.\n\n#FairSayRelay #PassTheCoin #COGSAustralia';
+  var shortCaption = 'I\u2019ve joined the $4 Fair Say Relay. Australia deserves a fair say in real-world Australian assets. Join me: ' + link + ' #FairSayRelay #PassTheCoin #COGSAustralia';
 
-  // Store for copy functions
-  document.getElementById('ptc-section').dataset.link    = link;
-  document.getElementById('ptc-section').dataset.caption = caption;
-  document.getElementById('ptc-section').dataset.code    = code;
+  var sec = document.getElementById('ptc-section');
+  sec.dataset.link    = link;
+  sec.dataset.caption = caption;
+  sec.dataset.code    = code;
+
+  var btnStyle = 'display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .15s;';
+
+  function shareBtn(label, icon, bg, border, color, onclick) {
+    return '<button style="' + btnStyle + 'background:' + bg + ';border-color:' + border + ';color:' + color + '" onclick="' + onclick + '">' + icon + ' ' + label + '</button>';
+  }
 
   content.innerHTML =
-    '<div style="margin-bottom:16px">'
-    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#888);margin-bottom:5px">Your personal relay link</div>'
+    // Link row
+    '<div style="margin-bottom:18px">'
+    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#888);margin-bottom:6px">Your personal relay link</div>'
     + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-    +   '<code style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(240,209,138,.2);border-radius:6px;padding:7px 10px;font-size:.82rem;word-break:break-all;color:var(--gold,#c9973d)">' + link + '</code>'
-    +   '<button onclick="ptcCopyLink()" style="flex-shrink:0;padding:7px 14px;background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);border-radius:6px;color:var(--gold,#c9973d);font-size:.8rem;cursor:pointer;font-weight:600">Copy link</button>'
+    +   '<code style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(240,209,138,.2);border-radius:6px;padding:7px 10px;font-size:.8rem;word-break:break-all;color:var(--gold,#c9973d)">' + link + '</code>'
+    +   '<button onclick="ptcCopyLink()" style="flex-shrink:0;padding:7px 14px;background:rgba(240,209,138,.12);border:1px solid rgba(240,209,138,.35);border-radius:6px;color:var(--gold,#f0d18a);font-size:.8rem;cursor:pointer;font-weight:700">&#128279; Copy link</button>'
     + '</div>'
     + '</div>'
 
-    + '<div style="margin-bottom:16px">'
-    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#888);margin-bottom:5px">Ready-to-paste caption</div>'
-    + '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(240,209,138,.12);border-radius:8px;padding:11px 13px;font-size:.83rem;line-height:1.65;white-space:pre-wrap;color:var(--text2,#ddd);margin-bottom:8px">' + caption.replace(/</g,'&lt;') + '</div>'
-    + '<button onclick="ptcCopyCaption()" style="padding:7px 14px;background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);border-radius:6px;color:var(--gold,#c9973d);font-size:.8rem;cursor:pointer;font-weight:600">Copy caption</button>'
+    // Share buttons
+    + '<div style="margin-bottom:18px">'
+    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#888);margin-bottom:8px">Share directly</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:7px">'
+
+    // WhatsApp
+    + '<button onclick="ptcShare(\'whatsapp\')" style="' + btnStyle + 'background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.35);color:#25d366">&#x1F4AC; WhatsApp</button>'
+
+    // Telegram
+    + '<button onclick="ptcShare(\'telegram\')" style="' + btnStyle + 'background:rgba(42,171,238,.12);border-color:rgba(42,171,238,.35);color:#2aabee">&#x2708; Telegram</button>'
+
+    // X / Twitter
+    + '<button onclick="ptcShare(\'x\')" style="' + btnStyle + 'background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18);color:#e7e9ea">&#x1D54F; X</button>'
+
+    // Threads — copy + open
+    + '<button onclick="ptcShare(\'threads\')" style="' + btnStyle + 'background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:#ccc">&#x29BF; Threads</button>'
+
+    // Instagram — copy + open
+    + '<button onclick="ptcShare(\'instagram\')" style="' + btnStyle + 'background:rgba(193,53,132,.12);border-color:rgba(193,53,132,.35);color:#e1306c">&#x1F4F7; Instagram</button>'
+
+    // SMS
+    + '<button onclick="ptcShare(\'sms\')" style="' + btnStyle + 'background:rgba(96,212,184,.08);border-color:rgba(96,212,184,.25);color:#60d4b8">&#x1F4F1; SMS</button>'
+
+    // Email
+    + '<button onclick="ptcShare(\'email\')" style="' + btnStyle + 'background:rgba(110,168,216,.08);border-color:rgba(110,168,216,.25);color:#6ea8d8">&#x2709; Email</button>'
+
+    + '</div>'
     + '</div>'
 
-    + '<div style="background:rgba(201,151,61,.05);border:1px solid rgba(240,209,138,.12);border-radius:8px;padding:12px 14px;margin-bottom:16px">'
+    // Caption block
+    + '<div style="margin-bottom:18px">'
+    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#888);margin-bottom:6px">Ready-to-paste caption</div>'
+    + '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(240,209,138,.1);border-radius:8px;padding:11px 13px;font-size:.82rem;line-height:1.65;white-space:pre-wrap;color:var(--text2,#ddd);margin-bottom:8px">' + caption.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</div>'
+    + '<button onclick="ptcCopyCaption()" style="padding:7px 14px;background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);border-radius:6px;color:#f0d18a;font-size:.8rem;cursor:pointer;font-weight:700">&#128203; Copy caption</button>'
+    + '</div>'
+
+    // Steps
+    + '<div style="background:rgba(201,151,61,.05);border:1px solid rgba(240,209,138,.1);border-radius:8px;padding:12px 14px;margin-bottom:14px">'
     + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold,#c9973d);margin-bottom:8px">The 5 steps</div>'
     + '<ol style="padding-left:18px;font-size:.82rem;line-height:1.8;margin:0;color:var(--text2,#ddd)">'
     + '<li>Join for $4 at cogsaustralia.org</li>'
@@ -5676,10 +5715,13 @@ function renderPassTheCoin() {
     + '</ol>'
     + '</div>'
 
-    + '<div style="font-size:.78rem;color:var(--muted,#888);line-height:1.6">'
+    + '<div style="font-size:.76rem;color:var(--muted,#888);line-height:1.6">'
     + 'Your badge is on the <a href="/intro/voice-welcome.html" style="color:var(--gold,#c9973d)">Why I Joined</a> page. '
-    + 'Every join through your link strengthens the community\u2019s collective governance weight.'
+    + 'Every join through your link strengthens the collective governance weight.'
     + '</div>';
+
+  // Store short caption for X (character-limited)
+  sec.dataset.shortCaption = shortCaption;
 }
 
 function ptcCopyLink() {
@@ -5693,7 +5735,52 @@ function ptcCopyCaption() {
   var sec = document.getElementById('ptc-section');
   var cap = sec ? sec.dataset.caption : '';
   if (!cap) return;
-  _ptcCopyText(cap, 'Caption copied.');
+  _ptcCopyText(cap, 'Caption copied. Paste it into your post.');
+}
+
+function ptcShare(channel) {
+  var sec = document.getElementById('ptc-section');
+  if (!sec) return;
+  var link    = sec.dataset.link    || '';
+  var caption = sec.dataset.caption || '';
+  var shortCap= sec.dataset.shortCaption || caption;
+  var code    = sec.dataset.code    || '';
+
+  function open(url) {
+    var a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ document.body.removeChild(a); }, 200);
+  }
+
+  switch (channel) {
+    case 'whatsapp':
+      open('https://wa.me/?text=' + encodeURIComponent(caption));
+      break;
+    case 'telegram':
+      open('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent('I\u2019ve joined the $4 Fair Say Relay. Australia deserves a fair say in real-world Australian assets. Tag 4 Australians who deserve a fair say. #FairSayRelay #PassTheCoin'));
+      break;
+    case 'x':
+      open('https://x.com/intent/tweet?text=' + encodeURIComponent(shortCap));
+      break;
+    case 'threads':
+      // Threads web intent (works on mobile; falls back to web on desktop)
+      _ptcCopyText(caption, 'Caption copied \u2014 opening Threads. Paste when you get there.');
+      setTimeout(function(){ open('https://www.threads.net/intent/post?text=' + encodeURIComponent(shortCap)); }, 400);
+      break;
+    case 'instagram':
+      // No web share URL — copy caption and open Instagram
+      _ptcCopyText(caption, 'Caption copied \u2014 opening Instagram. Paste when you get there.');
+      setTimeout(function(){ open('https://www.instagram.com/'); }, 400);
+      break;
+    case 'sms':
+      open('sms:?body=' + encodeURIComponent(caption));
+      break;
+    case 'email':
+      open('mailto:?subject=' + encodeURIComponent('Join me in the COG$ Fair Say Relay') + '&body=' + encodeURIComponent(caption));
+      break;
+  }
 }
 
 function _ptcCopyText(text, msg) {
@@ -5727,6 +5814,7 @@ window.openPassTheCoin  = openPassTheCoin;
 window.renderPassTheCoin = renderPassTheCoin;
 window.ptcCopyLink      = ptcCopyLink;
 window.ptcCopyCaption   = ptcCopyCaption;
+window.ptcShare         = ptcShare;
 
 // Auto-open Pass the Coin panel if arriving via #ptc hash
 (function(){
