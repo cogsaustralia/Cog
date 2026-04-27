@@ -51,6 +51,9 @@ if (preg_match('#^voice-submissions/(\d+)/withdraw$#', $action, $m)) {
 if (preg_match('#^voice-submissions/(\d+)/file$#', $action, $m)) {
     adminVoiceSubmissionStreamFile((int)$m[1]);
 }
+if (preg_match('#^voice-submissions/(\d+)$#', $action, $m)) {
+    adminVoiceSubmissionGet((int)$m[1]);
+}
 apiError('Unknown admin route', 404);
 
 function adminSummary(): void {
@@ -549,4 +552,35 @@ function adminVoiceSubmissionStreamFile(int $id): void {
     require_once __DIR__ . '/../services/VoiceSubmissionService.php';
     $svc = new VoiceSubmissionService(getDB());
     $svc->streamFile(0, true, $id);
+}
+
+function adminVoiceSubmissionGet(int $id): void {
+    requireMethod('GET');
+    requireAdminRole();
+    require_once __DIR__ . '/../services/VoiceSubmissionService.php';
+    $svc = new VoiceSubmissionService(getDB());
+    try {
+        // Re-use adminList but filter to single ID
+        $db = getDB();
+        $stmt = $db->prepare(
+            'SELECT mvs.id, mvs.submission_type, mvs.text_content, mvs.file_path,
+                    mvs.file_mime_type, mvs.duration_seconds, mvs.compliance_status,
+                    mvs.compliance_notes, mvs.rejection_reason_to_member,
+                    mvs.used_in_post_url, mvs.created_at, mvs.compliance_reviewed_at,
+                    mvs.withdrawn_at,
+                    COALESCE(mvs.display_name_first, m.first_name) AS disp_name,
+                    COALESCE(mvs.display_state, m.state_code) AS disp_state,
+                    m.email AS member_email, mvs.partner_id
+             FROM member_voice_submissions mvs
+             JOIN partners p ON p.id = mvs.partner_id
+             JOIN members  m ON m.id = p.member_id
+             WHERE mvs.id = ? LIMIT 1'
+        );
+        $stmt->execute([$id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) { apiError('Submission not found', 404); }
+        apiSuccess($row);
+    } catch (Throwable $e) {
+        apiError('Failed to load submission: ' . $e->getMessage(), 500);
+    }
 }

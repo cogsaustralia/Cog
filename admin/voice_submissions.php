@@ -86,10 +86,10 @@ $baseQ = '?status=' . urlencode($filterStatus)
        . '&';
 
 $statusLabels = [
-    'pending_review'  => ['Pending', 'vs-badge-amber'],
-    'cleared_for_use' => ['Cleared', 'vs-badge-green'],
+    'pending_review'  => ['Pending',  'vs-badge-amber'],
+    'cleared_for_use' => ['Accepted', 'vs-badge-green'],
     'rejected'        => ['Rejected', 'vs-badge-red'],
-    'withdrawn'       => ['Withdrawn', 'vs-badge-grey'],
+    'withdrawn'       => ['Withdrawn','vs-badge-grey'],
 ];
 $typeIcons = ['text' => '✏️', 'audio' => '🎙️', 'video' => '🎬'];
 
@@ -152,7 +152,7 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
     <aside class="vs-sidebar">
       <form method="get">
         <h3>Status</h3>
-        <?php foreach (['pending_review'=>'Pending','cleared_for_use'=>'Cleared','rejected'=>'Rejected','withdrawn'=>'Withdrawn'] as $val => $lbl): ?>
+        <?php foreach (['pending_review'=>'Pending','cleared_for_use'=>'Accepted','rejected'=>'Rejected','withdrawn'=>'Withdrawn'] as $val => $lbl): ?>
           <div>
             <label style="font-size:.85rem;display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer">
               <input type="radio" name="status" value="<?= $h($val) ?>" <?= $filterStatus===$val?'checked':'' ?>>
@@ -196,7 +196,7 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
     <!-- ── Queue ── -->
     <div class="vs-queue" id="vs-queue">
       <?php if (empty($items)): ?>
-        <div class="vs-empty">No <?= $h($filterStatus === 'pending_review' ? 'pending' : $filterStatus) ?> submissions<?= $search ? ' matching "' . $h($search) . '"' : '' ?>.</div>
+        <div class="vs-empty">No <?= $h($filterStatus === 'pending_review' ? 'pending' : ($filterStatus === 'cleared_for_use' ? 'accepted' : $filterStatus)) ?> submissions<?= $search ? ' matching "' . $h($search) . '"' : '' ?>.</div>
       <?php else: ?>
         <?php foreach ($items as $item):
           [$statusLabel, $statusClass] = $statusLabels[$item['compliance_status']] ?? ['Unknown','vs-badge-grey'];
@@ -249,18 +249,22 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
 
   function vsSelect(id) {
     sel = id;
-    // highlight in queue
     document.querySelectorAll('.vs-item').forEach(function(el){
       el.classList.toggle('active', parseInt(el.dataset.id) === id);
     });
-    // load detail
+    // Use inline PHP data first (avoids round-trip for items on current page)
+    if (ITEMS[id]) {
+      renderDetail(ITEMS[id]);
+      return;
+    }
+    // Fallback fetch for items not on this page
     fetch(API + id, {credentials:'include'})
       .then(function(r){ return r.json(); })
       .then(function(d){
-        if (!d.success) { flash('Failed to load: ' + d.error, 'err'); return; }
+        if (!d.success) { flash('Failed to load: ' + (d.error || 'Unknown error'), 'err'); return; }
         renderDetail(d.data || d);
       })
-      .catch(function(e){ flash('Network error', 'err'); });
+      .catch(function(){ flash('Network error loading submission', 'err'); });
   }
 
   // Pre-render from inline PHP data (avoid extra fetch for items already in queue)
@@ -275,7 +279,7 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
     var st  = item.compliance_status;
     var isFile = item.submission_type === 'audio' || item.submission_type === 'video';
     var fileUrl = isFile ? '/_app/api/index.php?route=admin&id=voice-submissions/' + item.id + '/file' : '';
-    var statusMap = {pending_review:'Pending',cleared_for_use:'Cleared',rejected:'Rejected',withdrawn:'Withdrawn'};
+    var statusMap = {pending_review:'Pending',cleared_for_use:'Accepted',rejected:'Rejected',withdrawn:'Withdrawn'};
     var clsMap    = {pending_review:'vs-badge-amber',cleared_for_use:'vs-badge-green',rejected:'vs-badge-red',withdrawn:'vs-badge-grey'};
 
     var html = '<h3 style="margin:0 0 12px">#' + item.id + ' &nbsp;<span class="vs-badge ' + h(clsMap[st]||'') + '">' + h(statusMap[st]||st) + '</span></h3>';
@@ -302,7 +306,7 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
     // Action buttons
     html += '<div style="margin-top:16px">';
     if (st === 'pending_review') {
-      html += '<button class="vs-btn vs-btn-approve" onclick="vsApprove()">✓ Approve</button>';
+      html += '<button class="vs-btn vs-btn-approve" onclick="vsApprove()">✓ Accept</button>';
       html += '<button class="vs-btn vs-btn-reject" onclick="vsRejectOpen()">✗ Reject</button>';
     }
     if (st === 'cleared_for_use') {
@@ -353,7 +357,7 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({notes: notes})
     }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.success) { flash('Approved. Member notified.'); location.reload(); }
+      if (d.success) { flash('Accepted. Member notified.'); location.reload(); }
       else flash('Error: ' + d.error, 'err');
     }).catch(function(){ flash('Network error', 'err'); });
   }
