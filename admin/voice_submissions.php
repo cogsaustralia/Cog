@@ -93,7 +93,7 @@ $statusLabels = [
 ];
 $typeIcons = ['text' => '✏️', 'audio' => '🎙️', 'video' => '🎬'];
 
-$apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
+$apiBase = '/_app/api/index.php?route=admin/voice-submissions/';
 ?>
 <!doctype html>
 <html lang="en">
@@ -232,7 +232,7 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
 (function(){
   'use strict';
 
-  var API  = '/_app/api/index.php?route=admin&id=voice-submissions/';
+  var API  = '/_app/api/index.php?route=admin/voice-submissions/';
   var sel  = null; // currently selected id
 
   function flash(msg, type) {
@@ -278,7 +278,7 @@ $apiBase = '/_app/api/index.php?route=admin&id=voice-submissions/';
     var d   = document.getElementById('vs-detail');
     var st  = item.compliance_status;
     var isFile = item.submission_type === 'audio' || item.submission_type === 'video';
-    var fileUrl = isFile ? '/_app/api/index.php?route=admin&id=voice-submissions/' + item.id + '/file' : '';
+    var fileUrl = isFile ? '/_app/api/index.php?route=admin/voice-submissions/' + item.id + '/file' : '';
     var statusMap = {pending_review:'Pending',cleared_for_use:'Accepted',rejected:'Rejected',withdrawn:'Withdrawn'};
     var clsMap    = {pending_review:'vs-badge-amber',cleared_for_use:'vs-badge-green',rejected:'vs-badge-red',withdrawn:'vs-badge-grey'};
 
