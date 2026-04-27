@@ -1356,6 +1356,7 @@
               <a href="/" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Home</a>
               <a href="../wallets/member.html" onclick="sessionStorage.setItem('iv_intent','profile');coinTransitionAndGo('../wallets/member.html');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Profile</a>
               <a href="../intro/voice-welcome.html" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">My Voice</a>
+              <a href="../wallets/member.html" onclick="coinTransitionAndGo('../wallets/member.html#ptc');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">🪙 Pass the Coin</a>
               <a href="#hub-invite-card" onclick="document.getElementById('hub-invite-card').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Invite Member</a>
               <a href="mailto:admin@cogsaustralia.org" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Email Admin</a>
               <span style="position:relative;display:inline-flex;align-items:center">
@@ -1392,6 +1393,15 @@
                 <span>
                   <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em">Why I Joined</span>
                   <span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em">Add your voice ›</span>
+                </span>
+              </a>
+              <a href="../wallets/member.html" class="vault-btn-primary vault-btn-hero"
+                 style="display:inline-flex;border-color:rgba(255,210,80,.35);background:linear-gradient(135deg,rgba(255,210,80,.08),rgba(240,180,40,.04))"
+                 onclick="coinTransitionAndGo('../wallets/member.html#ptc');return false;">
+                <span style="font-size:1.4rem;flex-shrink:0;width:42px;text-align:center">🪙</span>
+                <span>
+                  <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em">Pass the Coin</span>
+                  <span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em">Share your link ›</span>
                 </span>
               </a>
             </div>

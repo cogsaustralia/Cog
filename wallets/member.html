@@ -5608,6 +5608,142 @@ function withdrawVoicePanel(id) {
 
 window.openVoiceSubmissions  = openVoiceSubmissions;
 window.fetchVoiceSubmissionsPanel = fetchVoiceSubmissionsPanel;
+
+/* ══ Pass the Coin panel — Block 3 ══
+ * Reads invite code from window._vaultData and renders a ready-to-share
+ * package: link + pre-written caption + relay steps.
+ * All window exports defined and exported in this block. */
+
+var _ptcOpen = false;
+
+function openPassTheCoin() {
+  var sec = document.getElementById('ptc-section');
+  if (!sec) return;
+  _ptcOpen = !_ptcOpen;
+  sec.style.display = _ptcOpen ? 'block' : 'none';
+  if (_ptcOpen) renderPassTheCoin();
+}
+
+function renderPassTheCoin() {
+  var content = document.getElementById('ptc-content');
+  if (!content) return;
+
+  var code = '';
+  var link = '';
+  try {
+    var ic = window._vaultData && window._vaultData.invite_code;
+    code = (ic && (ic.public_code || ic.code)) || '';
+    if (code) {
+      link = window.location.origin + '/?invite=' + encodeURIComponent(code);
+    }
+  } catch(e) {}
+
+  if (!code) {
+    content.innerHTML = '<p style="font-size:.85rem;color:var(--muted,#888)">Your invite link will appear here once your vault is fully active. Complete your $4 payment first.</p>';
+    return;
+  }
+
+  var caption = 'I\u2019ve joined the $4 Fair Say Relay \u2014 a community movement asking Australians to have a real say in real-world Australian assets.\n\nJoin me at ' + link + '\n\nThen tag 4 Australians who deserve a fair say.\n\n#FairSayRelay #PassTheCoin #COGSAustralia';
+
+  // Store for copy functions
+  document.getElementById('ptc-section').dataset.link    = link;
+  document.getElementById('ptc-section').dataset.caption = caption;
+  document.getElementById('ptc-section').dataset.code    = code;
+
+  content.innerHTML =
+    '<div style="margin-bottom:16px">'
+    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#888);margin-bottom:5px">Your personal relay link</div>'
+    + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+    +   '<code style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(240,209,138,.2);border-radius:6px;padding:7px 10px;font-size:.82rem;word-break:break-all;color:var(--gold,#c9973d)">' + link + '</code>'
+    +   '<button onclick="ptcCopyLink()" style="flex-shrink:0;padding:7px 14px;background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);border-radius:6px;color:var(--gold,#c9973d);font-size:.8rem;cursor:pointer;font-weight:600">Copy link</button>'
+    + '</div>'
+    + '</div>'
+
+    + '<div style="margin-bottom:16px">'
+    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#888);margin-bottom:5px">Ready-to-paste caption</div>'
+    + '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(240,209,138,.12);border-radius:8px;padding:11px 13px;font-size:.83rem;line-height:1.65;white-space:pre-wrap;color:var(--text2,#ddd);margin-bottom:8px">' + caption.replace(/</g,'&lt;') + '</div>'
+    + '<button onclick="ptcCopyCaption()" style="padding:7px 14px;background:rgba(240,209,138,.1);border:1px solid rgba(240,209,138,.3);border-radius:6px;color:var(--gold,#c9973d);font-size:.8rem;cursor:pointer;font-weight:600">Copy caption</button>'
+    + '</div>'
+
+    + '<div style="background:rgba(201,151,61,.05);border:1px solid rgba(240,209,138,.12);border-radius:8px;padding:12px 14px;margin-bottom:16px">'
+    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold,#c9973d);margin-bottom:8px">The 5 steps</div>'
+    + '<ol style="padding-left:18px;font-size:.82rem;line-height:1.8;margin:0;color:var(--text2,#ddd)">'
+    + '<li>Join for $4 at cogsaustralia.org</li>'
+    + '<li>Tell us in one sentence why you joined</li>'
+    + '<li>Post your \u201cI joined\u201d badge</li>'
+    + '<li>Tag 4 Australians using your link above</li>'
+    + '<li>Be there at 5pm on 14 May for the first community vote</li>'
+    + '</ol>'
+    + '</div>'
+
+    + '<div style="font-size:.78rem;color:var(--muted,#888);line-height:1.6">'
+    + 'Your badge is on the <a href="/intro/voice-welcome.html" style="color:var(--gold,#c9973d)">Why I Joined</a> page. '
+    + 'Every join through your link strengthens the community\u2019s collective governance weight.'
+    + '</div>';
+}
+
+function ptcCopyLink() {
+  var sec = document.getElementById('ptc-section');
+  var link = sec ? sec.dataset.link : '';
+  if (!link) return;
+  _ptcCopyText(link, 'Link copied.');
+}
+
+function ptcCopyCaption() {
+  var sec = document.getElementById('ptc-section');
+  var cap = sec ? sec.dataset.caption : '';
+  if (!cap) return;
+  _ptcCopyText(cap, 'Caption copied.');
+}
+
+function _ptcCopyText(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){
+      _ptcFlash(msg);
+    }).catch(function(){ _ptcFallback(text, msg); });
+  } else {
+    _ptcFallback(text, msg);
+  }
+}
+
+function _ptcFallback(text, msg) {
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); _ptcFlash(msg); }
+  catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function _ptcFlash(msg) {
+  var el = document.getElementById('ptc-flash');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 2500);
+}
+
+window.openPassTheCoin  = openPassTheCoin;
+window.renderPassTheCoin = renderPassTheCoin;
+window.ptcCopyLink      = ptcCopyLink;
+window.ptcCopyCaption   = ptcCopyCaption;
+
+// Auto-open Pass the Coin panel if arriving via #ptc hash
+(function(){
+  if (window.location.hash === '#ptc') {
+    // Wait for vault to open and _vaultData to be populated
+    var attempts = 0;
+    var poll = setInterval(function(){
+      attempts++;
+      if (attempts > 30) { clearInterval(poll); return; }
+      if (window._vaultData && window._vaultData.invite_code) {
+        clearInterval(poll);
+        history.replaceState(null, '', window.location.pathname);
+        if (typeof window.openPassTheCoin === 'function') window.openPassTheCoin();
+      }
+    }, 300);
+  }
+})();
 window.renderVoicePanel      = renderVoicePanel;
 window.withdrawVoicePanel    = withdrawVoicePanel;
 
@@ -5622,6 +5758,26 @@ window.openKycPanel = function(){
 <!-- ══ VOICE SUBMISSIONS PANEL ══ -->
 <div id="vs-panel-wrap" style="position:fixed;bottom:72px;right:16px;z-index:200;display:none">
   <!-- Trigger button injected by JS below into tab nav -->
+</div>
+
+<!-- Pass the Coin panel -->
+<div id="ptc-section" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto;padding:40px 16px" onclick="if(event.target===this)openPassTheCoin()">
+  <div style="max-width:520px;margin:0 auto;background:rgba(18,13,5,.97);border:1px solid rgba(240,209,138,.25);border-radius:20px;padding:32px 28px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div>
+        <h2 style="font-size:1.1rem;font-weight:700;color:#fff8e8;margin:0">Pass the Coin</h2>
+        <p style="font-size:.78rem;color:rgba(240,225,196,.55);margin:3px 0 0">Share your link. Tag 4 Australians. Keep the relay moving.</p>
+      </div>
+      <button onclick="openPassTheCoin()" style="background:none;border:none;color:rgba(240,225,196,.45);font-size:1.3rem;cursor:pointer;padding:0 4px;line-height:1">&times;</button>
+    </div>
+    <div id="ptc-flash" style="display:none;background:rgba(82,184,122,.12);border:1px solid rgba(82,184,122,.3);color:#52b87a;padding:6px 10px;border-radius:6px;font-size:.8rem;margin:10px 0"></div>
+    <div id="ptc-content" style="margin-top:14px">
+      <p style="font-size:.85rem;color:rgba(240,225,196,.55)">Loading&hellip;</p>
+    </div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(240,209,138,.1);font-size:.7rem;color:rgba(240,225,196,.35);line-height:1.5">
+      A community membership invitation. Not financial advice. $4 once only.
+    </div>
+  </div>
 </div>
 
 <!-- Inline voice section inside vault — shown via openVoiceSubmissions() -->
