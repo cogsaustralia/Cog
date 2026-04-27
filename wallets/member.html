@@ -5458,6 +5458,121 @@ function renderKsnftIdentityCard(d){
 }
 window.renderKsnftIdentityCard = renderKsnftIdentityCard;
 
+/* ══ Voice Submissions Panel — Block 3 ══
+ * Fetches and renders the member's voice submissions inside the vault.
+ * Loads on first toggle of #vs-section to avoid blocking vault load.
+ * All window exports defined and exported in this block. */
+
+var _vsLoaded = false;
+
+function openVoiceSubmissions() {
+  var sec = document.getElementById('vs-section');
+  if (!sec) return;
+  var isOpen = sec.style.display !== 'none' && sec.style.display !== '';
+  sec.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen && !_vsLoaded) {
+    _vsLoaded = true;
+    fetchVoiceSubmissionsPanel();
+  }
+}
+
+function fetchVoiceSubmissionsPanel() {
+  var panel = document.getElementById('vs-panel-content');
+  if (!panel) return;
+  panel.innerHTML = '<p style="color:var(--muted,#888);font-size:.85rem;padding:12px 0">Loading\u2026</p>';
+
+  fetch('/_app/api/index.php?route=voice-submissions/me', { credentials: 'include' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d.success) { panel.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Could not load submissions.</p>'; return; }
+      renderVoicePanel(d.data);
+    })
+    .catch(function(){ panel.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Network error.</p>'; });
+}
+
+function renderVoicePanel(items) {
+  var panel = document.getElementById('vs-panel-content');
+  if (!panel) return;
+  var eh = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+  var statusMap = {
+    pending_review: 'In review.',
+    cleared_for_use: 'Cleared \u2714',
+    rejected: 'Returned \u2014 see below.',
+    withdrawn: 'Withdrawn.',
+  };
+  var statusColor = {
+    pending_review: 'var(--gold,#c9973d)',
+    cleared_for_use: 'var(--ok,#52b87a)',
+    rejected: '#e06060',
+    withdrawn: 'var(--muted,#888)',
+  };
+
+  if (!items || !items.length) {
+    panel.innerHTML = '<p style="font-size:.85rem;color:var(--muted,#888)">No submissions yet.</p>'
+      + '<a href="/intro/voice-welcome.html" style="font-size:.82rem;color:var(--gold,#c9973d)">Add your voice &rarr;</a>';
+    return;
+  }
+
+  var html = '<ul style="list-style:none;padding:0;margin:0 0 12px">';
+  items.forEach(function(item){
+    var label = statusMap[item.compliance_status] || item.compliance_status;
+    var color = statusColor[item.compliance_status] || 'inherit';
+    var typeIcon = {text:'✏️',audio:'🎙️',video:'🎬'}[item.submission_type] || '?';
+    var preview = item.submission_type === 'text'
+      ? (item.text_content || '').slice(0, 90) + ((item.text_content||'').length > 90 ? '\u2026' : '')
+      : item.submission_type + ' submission';
+
+    html += '<li style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+    html += '<span>' + typeIcon + '</span>';
+    html += '<span style="font-size:.78rem;font-weight:600;color:' + eh(color) + '">' + eh(label) + '</span>';
+    if (item.used_in_post_url) {
+      html += '<a href="' + eh(item.used_in_post_url) + '" target="_blank" rel="noopener" style="font-size:.75rem;color:var(--gold,#c9973d);margin-left:auto">View post</a>';
+    }
+    html += '</div>';
+    html += '<div style="font-size:.82rem;color:var(--text2,#ccc);margin-bottom:6px">' + eh(preview) + '</div>';
+
+    if (item.compliance_status === 'rejected' && item.rejection_reason_to_member) {
+      html += '<div style="font-size:.78rem;color:#e09060;background:rgba(224,96,96,.07);padding:6px 8px;border-radius:6px;margin-bottom:6px">' + eh(item.rejection_reason_to_member) + '</div>';
+      html += '<a href="/intro/voice-welcome.html" style="font-size:.78rem;color:var(--gold,#c9973d)">Resubmit &rarr;</a> &nbsp;';
+    }
+    if (item.compliance_status !== 'withdrawn') {
+      html += '<button onclick="withdrawVoicePanel(' + parseInt(item.id) + ')" style="background:none;border:none;font-size:.75rem;color:var(--muted,#888);cursor:pointer;padding:0;text-decoration:underline">Withdraw consent</button>';
+    }
+    html += '</li>';
+  });
+  html += '</ul>';
+  html += '<a href="/intro/voice-welcome.html" style="font-size:.82rem;color:var(--gold,#c9973d)">+ Add another submission</a>';
+  panel.innerHTML = html;
+}
+
+function withdrawVoicePanel(id) {
+  if (!confirm('Withdraw this submission? If it has been shared on social media, we will take it down within 24 hours.')) return;
+  fetch('/_app/api/index.php?route=voice-submissions/' + id + '/withdraw', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ withdrawn_reason: 'Member requested withdrawal' }),
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success) {
+        _vsLoaded = false;
+        fetchVoiceSubmissionsPanel();
+        if (d.data && d.data.social_removal) {
+          alert('Withdrawn. We will take down the social post within 24 hours.');
+        }
+      } else {
+        alert('Could not withdraw: ' + (d.error || 'Unknown error.'));
+      }
+    })
+    .catch(function(){ alert('Network error. Please try again.'); });
+}
+
+window.openVoiceSubmissions  = openVoiceSubmissions;
+window.fetchVoiceSubmissionsPanel = fetchVoiceSubmissionsPanel;
+window.renderVoicePanel      = renderVoicePanel;
+window.withdrawVoicePanel    = withdrawVoicePanel;
+
 /* Patch openKycPanel to ensure the kS-NFT card is visible first */
 var _origOpenKycPanel = window.openKycPanel;
 window.openKycPanel = function(){
@@ -5466,6 +5581,27 @@ window.openKycPanel = function(){
   if(typeof _origOpenKycPanel === 'function') _origOpenKycPanel();
 };
 </script>
+<!-- ══ VOICE SUBMISSIONS PANEL ══ -->
+<div id="vs-panel-wrap" style="position:fixed;bottom:72px;right:16px;z-index:200;display:none">
+  <!-- Trigger button injected by JS below into tab nav -->
+</div>
+
+<!-- Inline voice section inside vault — shown via openVoiceSubmissions() -->
+<div id="vs-section" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto;padding:40px 16px" onclick="if(event.target===this)openVoiceSubmissions()">
+  <div style="max-width:480px;margin:0 auto;background:rgba(18,13,5,.97);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:32px 28px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-size:1.1rem;font-weight:500;color:#fff8e8">My voice submissions</h2>
+      <button onclick="openVoiceSubmissions()" style="background:none;border:none;color:rgba(240,225,196,.55);font-size:1.2rem;cursor:pointer;padding:0 4px">&times;</button>
+    </div>
+    <div id="vs-panel-content">
+      <p style="font-size:.85rem;color:rgba(240,225,196,.55)">Loading&hellip;</p>
+    </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(240,209,138,.1);font-size:.72rem;color:rgba(240,225,196,.4);line-height:1.6">
+      A community membership invitation. Not financial advice. Consent can be withdrawn at any time.
+    </div>
+  </div>
+</div>
+
 <!-- ══ PARTICIPATION GATE ══ -->
 <div class="participation-gate" id="participation-gate" style="display:none">
   <div class="pg-card">

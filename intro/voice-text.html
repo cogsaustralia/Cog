@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tell us why — COG$ of Australia</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0804;--panel:rgba(18,13,5,.96);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.22);
+  --text:#fff8e8;--text2:rgba(255,248,232,.85);--muted:rgba(240,225,196,.55);
+  --sans:'DM Sans',system-ui,sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans)}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:var(--panel);border:1px solid var(--gold-rim);border-radius:20px;padding:40px 36px;max-width:520px;width:100%}
+.back{font-size:.8rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-bottom:20px;transition:color .2s}
+.back:hover{color:var(--text2)}
+h1{font-size:1.4rem;font-weight:500;color:var(--text);margin-bottom:8px}
+.sub{font-size:.85rem;color:var(--muted);margin-bottom:20px;line-height:1.6}
+textarea{width:100%;min-height:100px;padding:12px 14px;background:rgba(255,255,255,.05);border:1px solid var(--gold-rim);border-radius:10px;color:var(--text);font-family:var(--sans);font-size:.92rem;line-height:1.65;resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:rgba(240,209,138,.5)}
+.meta{display:flex;justify-content:flex-end;font-size:.75rem;color:var(--muted);margin:5px 0 14px}
+.warning{background:rgba(255,160,50,.08);border:1px solid rgba(255,160,50,.25);border-radius:8px;padding:10px 12px;font-size:.82rem;color:#f0a050;line-height:1.55;display:none;margin-bottom:14px}
+.display-as{font-size:.82rem;color:var(--muted);margin-bottom:14px}
+.display-as strong{color:var(--text2)}
+.consent-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:20px}
+.consent-row input[type=checkbox]{margin-top:2px;flex-shrink:0;accent-color:var(--gold-2);width:15px;height:15px}
+.consent-row label{font-size:.8rem;color:var(--text2);line-height:1.55}
+.actions{display:flex;align-items:center;gap:12px}
+.btn-primary{padding:11px 24px;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));border:none;border-radius:99px;color:#1a0f00;font-weight:600;font-size:.9rem;cursor:pointer;transition:opacity .2s;min-height:44px}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.btn-cancel{font-size:.82rem;color:var(--muted);text-decoration:none;transition:color .2s}
+.btn-cancel:hover{color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <a href="/intro/voice-welcome.html" class="back">← Back</a>
+    <h1>In one sentence, why did you join?</h1>
+    <p class="sub">Text · 280 characters max</p>
+
+    <textarea id="vs-text"
+              maxlength="280"
+              placeholder="I joined because…"
+              aria-label="Your submission"></textarea>
+    <div class="meta">
+      <span id="vs-char-count">0 / 280</span>
+    </div>
+
+    <div id="vs-warning" class="warning" role="alert"></div>
+
+    <div class="display-as">
+      Shown as: <strong id="vs-display-name">your first name, your state</strong>
+      &nbsp;·&nbsp; <a href="#" style="font-size:.78rem;color:var(--gold-2)" id="edit-display-link">Change</a>
+    </div>
+
+    <div id="edit-display-fields" style="display:none;margin-bottom:14px;gap:8px;display:none">
+      <input type="text" id="vs-display-first" placeholder="First name"
+             style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--gold-rim);border-radius:8px;color:var(--text);font-size:.85rem;width:48%">
+      <input type="text" id="vs-display-state" placeholder="State (e.g. NSW)"
+             style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--gold-rim);border-radius:8px;color:var(--text);font-size:.85rem;width:48%">
+    </div>
+
+    <div class="consent-row">
+      <input type="checkbox" id="vs-consent" aria-required="true">
+      <label for="vs-consent">I agree my submission can be used on COG$ social media as a member quote. My first name and state may be shown. I can withdraw consent at any time by emailing info@cogsaustralia.org or from my member dashboard.</label>
+    </div>
+
+    <div class="actions">
+      <button id="vs-submit" class="btn-primary" disabled>Submit</button>
+      <a href="/wallets/member.html" class="btn-cancel">Cancel</a>
+    </div>
+  </div>
+</div>
+<script src="/intro/js/compliance-terms.js"></script>
+<script src="/intro/js/voice-submission.js"></script>
+<script>
+// Read member's name and state from session via meta tags or API (populated server-side by the app)
+// In production the join confirmation page passes these via URL params or the session cookie provides them.
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var firstName = params.get('fn') || '';
+  var state     = params.get('st') || '';
+  var nameEl    = document.getElementById('vs-display-name');
+  var firstEl   = document.getElementById('vs-display-first');
+  var stateEl   = document.getElementById('vs-display-state');
+  if (firstName && nameEl) { nameEl.textContent = firstName + (state ? ', ' + state : ''); }
+  if (firstEl) firstEl.value = firstName;
+  if (stateEl) stateEl.value = state;
+
+  var editLink = document.getElementById('edit-display-link');
+  var editFields = document.getElementById('edit-display-fields');
+  if (editLink && editFields) {
+    editLink.addEventListener('click', function(e){
+      e.preventDefault();
+      editFields.style.display = editFields.style.display === 'none' ? 'flex' : 'none';
+    });
+  }
+
+  // Keep display-name preview updated as user edits
+  if (firstEl) firstEl.addEventListener('input', updatePreview);
+  if (stateEl) stateEl.addEventListener('input', updatePreview);
+  function updatePreview() {
+    if (nameEl) nameEl.textContent = (firstEl.value || 'your first name') + ', ' + (stateEl.value || 'your state');
+  }
+})();
+</script>
+</body>
+</html>

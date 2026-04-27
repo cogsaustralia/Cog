@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Record video — COG$ of Australia</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0804;--panel:rgba(18,13,5,.96);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.22);
+  --text:#fff8e8;--text2:rgba(255,248,232,.85);--muted:rgba(240,225,196,.55);
+  --red:#e05555;--sans:'DM Sans',system-ui,sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans)}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:var(--panel);border:1px solid var(--gold-rim);border-radius:20px;padding:32px 28px;max-width:420px;width:100%;text-align:center}
+.back{font-size:.8rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-bottom:16px;float:left;transition:color .2s}
+.back:hover{color:var(--text2)}
+h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
+.sub{font-size:.82rem;color:var(--muted);margin-bottom:16px;line-height:1.55}
+.preview-wrap{position:relative;background:#000;border-radius:12px;overflow:hidden;margin-bottom:16px;aspect-ratio:9/16;max-height:300px}
+#vs-preview,#vs-playback-vid{width:100%;height:100%;object-fit:cover;display:block}
+.timer{font-size:1.6rem;font-weight:300;letter-spacing:.04em;color:var(--text);margin-bottom:14px;font-variant-numeric:tabular-nums}
+.timer.recording{color:var(--red)}
+.rec-btn{width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;font-size:1.3rem;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.rec-btn.idle{background:rgba(224,85,85,.15);border:2px solid rgba(224,85,85,.4)}
+.rec-btn.idle:hover{transform:scale(1.08)}
+.rec-btn.recording{background:var(--red);border:2px solid var(--red)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;display:none}
+.btn{padding:9px 20px;border-radius:99px;border:none;cursor:pointer;font-size:.85rem;font-weight:500}
+.btn-rerecord{background:rgba(255,255,255,.08);color:var(--text2);border:1px solid var(--gold-rim)}
+.btn-submit{background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#1a0f00;font-weight:600}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.consent-row{display:flex;gap:10px;align-items:flex-start;text-align:left;margin-bottom:16px;display:none}
+.consent-row input{margin-top:2px;flex-shrink:0;accent-color:var(--gold-2);width:15px;height:15px}
+.consent-row label{font-size:.78rem;color:var(--text2);line-height:1.55}
+.warning{background:rgba(255,160,50,.08);border:1px solid rgba(255,160,50,.25);border-radius:8px;padding:10px 12px;font-size:.82rem;color:#f0a050;display:none;margin-bottom:12px;text-align:left}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <a href="/intro/voice-welcome.html" class="back">← Back</a>
+    <h1>Record up to 30 seconds</h1>
+    <p class="sub">Vertical video · Front camera preferred</p>
+
+    <div class="preview-wrap">
+      <video id="vs-preview" muted playsinline autoplay></video>
+      <video id="vs-playback-vid" controls playsinline style="display:none"></video>
+    </div>
+
+    <div class="timer" id="vs-timer">0:30</div>
+    <button class="rec-btn idle" id="vs-rec-btn" onclick="toggleRecord()">🎬</button>
+
+    <div id="vs-warning" class="warning" role="alert"></div>
+
+    <div class="controls" id="vs-controls">
+      <button class="btn btn-rerecord" onclick="resetRecord()">Re-record</button>
+      <button class="btn btn-submit" id="vs-submit" onclick="doSubmit()">Submit video</button>
+    </div>
+
+    <div class="consent-row" id="vs-consent-row">
+      <input type="checkbox" id="vs-consent">
+      <label for="vs-consent">I agree my submission can be used on COG$ social media as a member quote. My first name and state may be shown. I can withdraw consent at any time from my member dashboard.</label>
+    </div>
+
+    <a href="/wallets/member.html" style="font-size:.8rem;color:var(--muted);text-decoration:none">Cancel — go to my dashboard</a>
+  </div>
+</div>
+<script src="/intro/js/compliance-terms.js"></script>
+<script src="/intro/js/voice-submission.js"></script>
+<script>
+(function(){
+  var mediaRecorder = null;
+  var chunks = [];
+  var blob = null;
+  var stream = null;
+  var timerInterval = null;
+  var secondsLeft = 30;
+  var recording = false;
+
+  var recBtn     = document.getElementById('vs-rec-btn');
+  var timerEl    = document.getElementById('vs-timer');
+  var previewEl  = document.getElementById('vs-preview');
+  var playbackEl = document.getElementById('vs-playback-vid');
+  var controls   = document.getElementById('vs-controls');
+  var consentRow = document.getElementById('vs-consent-row');
+
+  // Start camera immediately
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:{ideal:1080}, height:{ideal:1920} }, audio: true })
+      .then(function(s){
+        stream = s;
+        previewEl.srcObject = s;
+      })
+      .catch(function(err){ showWarning('Could not access camera: ' + err.message); });
+  } else {
+    showWarning('Your browser does not support video recording. Please use a modern browser or switch to audio/text mode.');
+  }
+
+  function updateTimer() {
+    timerEl.textContent = '0:' + (secondsLeft < 10 ? '0' : '') + secondsLeft;
+  }
+
+  function toggleRecord() {
+    if (recording) stopRecord(); else startRecord();
+  }
+
+  function startRecord() {
+    if (!stream) { showWarning('Camera not ready. Please wait.'); return; }
+    chunks = []; blob = null;
+    secondsLeft = 30; updateTimer();
+    recording = true;
+    recBtn.className = 'rec-btn recording'; recBtn.textContent = '⏹';
+    timerEl.className = 'timer recording';
+
+    var options = MediaRecorder.isTypeSupported('video/mp4') ? {mimeType:'video/mp4'} :
+                  MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? {mimeType:'video/webm;codecs=vp9,opus'} :
+                  {};
+    mediaRecorder = new MediaRecorder(stream, options);
+    mediaRecorder.ondataavailable = function(e){ if (e.data.size > 0) chunks.push(e.data); };
+    mediaRecorder.onstop = function(){
+      blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'video/webm' });
+      playbackEl.src = URL.createObjectURL(blob);
+      previewEl.style.display = 'none'; playbackEl.style.display = 'block';
+      controls.style.display = 'flex'; consentRow.style.display = 'flex';
+    };
+    mediaRecorder.start();
+    timerInterval = setInterval(function(){ secondsLeft--; updateTimer(); if (secondsLeft <= 0) stopRecord(); }, 1000);
+  }
+
+  function stopRecord() {
+    if (!recording) return;
+    recording = false; clearInterval(timerInterval);
+    recBtn.className = 'rec-btn idle'; recBtn.textContent = '🎬';
+    timerEl.className = 'timer';
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  }
+
+  function resetRecord() {
+    blob = null; chunks = [];
+    secondsLeft = 30; updateTimer();
+    previewEl.style.display = 'block'; playbackEl.style.display = 'none';
+    playbackEl.src = '';
+    controls.style.display = 'none'; consentRow.style.display = 'none';
+    recBtn.className = 'rec-btn idle'; recBtn.textContent = '🎬';
+    timerEl.className = 'timer';
+  }
+
+  function doSubmit() {
+    var consent = document.getElementById('vs-consent');
+    if (!consent || !consent.checked) { showWarning('Please tick the consent box.'); return; }
+    if (!blob) { showWarning('Please record something first.'); return; }
+    var params = new URLSearchParams(window.location.search);
+    window.submitVoiceFile(blob, 'video', params.get('fn') || '', params.get('st') || '');
+  }
+
+  function showWarning(msg) {
+    var w = document.getElementById('vs-warning');
+    if (w) { w.textContent = msg; w.style.display = 'block'; }
+  }
+
+  window.toggleRecord = toggleRecord;
+  window.resetRecord  = resetRecord;
+  window.doSubmit     = doSubmit;
+})();
+</script>
+</body>
+</html>

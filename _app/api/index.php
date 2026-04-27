@@ -81,6 +81,9 @@ try {
         case 'vault':
             require __DIR__ . '/routes/vault.php';
             break;
+        case 'voice-submissions':
+            require __DIR__ . '/routes/voice-submissions.php';
+            break;
         case 'kyc':
             require __DIR__ . '/routes/kyc.php';
             break;

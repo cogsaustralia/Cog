@@ -32,6 +32,25 @@ if (preg_match('#^dispute-status/(\d+)$#', $action, $matches)) {
 if ($action === 'jvpa-funnel') {
     adminJvpaFunnel();
 }
+// ── Voice Submission moderation ───────────────────────────────────────────────
+if ($action === 'voice-submissions') {
+    adminVoiceSubmissionsList();
+}
+if (preg_match('#^voice-submissions/(\d+)/approve$#', $action, $m)) {
+    adminVoiceSubmissionApprove((int)$m[1]);
+}
+if (preg_match('#^voice-submissions/(\d+)/reject$#', $action, $m)) {
+    adminVoiceSubmissionReject((int)$m[1]);
+}
+if (preg_match('#^voice-submissions/(\d+)/mark-used$#', $action, $m)) {
+    adminVoiceSubmissionMarkUsed((int)$m[1]);
+}
+if (preg_match('#^voice-submissions/(\d+)/withdraw$#', $action, $m)) {
+    adminVoiceSubmissionWithdraw((int)$m[1]);
+}
+if (preg_match('#^voice-submissions/(\d+)/file$#', $action, $m)) {
+    adminVoiceSubmissionStreamFile((int)$m[1]);
+}
 apiError('Unknown admin route', 404);
 
 function adminSummary(): void {
@@ -455,4 +474,79 @@ function adminJvpaFunnel(): void {
         'drop_off_7d'        => $dropOff7d,
         'recent_clicks'      => $recentClicks,
     ]);
+}
+
+// ══ VOICE SUBMISSION ADMIN FUNCTIONS ══════════════════════════════════════════
+
+function adminVoiceSubmissionsList(): void {
+    requireMethod('GET');
+    requireAdminRole();
+    require_once __DIR__ . '/../services/VoiceSubmissionService.php';
+    $svc = new VoiceSubmissionService(getDB());
+    apiSuccess($svc->adminList($_GET));
+}
+
+function adminVoiceSubmissionApprove(int $id): void {
+    requireMethod('POST');
+    $admin = requireAdminRole();
+    require_once __DIR__ . '/../services/VoiceSubmissionService.php';
+    $body  = json_decode((string)file_get_contents('php://input'), true) ?: [];
+    $svc   = new VoiceSubmissionService(getDB());
+    try {
+        apiSuccess($svc->adminApprove($id, (int)$admin['id'], (string)($body['notes'] ?? '')));
+    } catch (InvalidArgumentException $e) {
+        apiError($e->getMessage(), 422);
+    }
+}
+
+function adminVoiceSubmissionReject(int $id): void {
+    requireMethod('POST');
+    $admin = requireAdminRole();
+    require_once __DIR__ . '/../services/VoiceSubmissionService.php';
+    $body  = json_decode((string)file_get_contents('php://input'), true) ?: [];
+    $svc   = new VoiceSubmissionService(getDB());
+    try {
+        apiSuccess($svc->adminReject(
+            $id,
+            (int)$admin['id'],
+            (string)($body['compliance_notes'] ?? ''),
+            (string)($body['rejection_reason_to_member'] ?? '')
+        ));
+    } catch (InvalidArgumentException $e) {
+        apiError($e->getMessage(), 422);
+    }
+}
+
+function adminVoiceSubmissionMarkUsed(int $id): void {
+    requireMethod('POST');
+    $admin = requireAdminRole();
+    require_once __DIR__ . '/../services/VoiceSubmissionService.php';
+    $body  = json_decode((string)file_get_contents('php://input'), true) ?: [];
+    $svc   = new VoiceSubmissionService(getDB());
+    try {
+        apiSuccess($svc->adminMarkUsed($id, (int)$admin['id'], (string)($body['used_in_post_url'] ?? '')));
+    } catch (InvalidArgumentException $e) {
+        apiError($e->getMessage(), 422);
+    }
+}
+
+function adminVoiceSubmissionWithdraw(int $id): void {
+    requireMethod('POST');
+    $admin = requireAdminRole();
+    require_once __DIR__ . '/../services/VoiceSubmissionService.php';
+    $body  = json_decode((string)file_get_contents('php://input'), true) ?: [];
+    $svc   = new VoiceSubmissionService(getDB());
+    try {
+        apiSuccess($svc->adminWithdraw($id, (int)$admin['id'], (string)($body['reason'] ?? '')));
+    } catch (InvalidArgumentException $e) {
+        apiError($e->getMessage(), 422);
+    }
+}
+
+function adminVoiceSubmissionStreamFile(int $id): void {
+    requireMethod('GET');
+    $admin = requireAdminRole();
+    require_once __DIR__ . '/../services/VoiceSubmissionService.php';
+    $svc = new VoiceSubmissionService(getDB());
+    $svc->streamFile(0, true, $id);
 }

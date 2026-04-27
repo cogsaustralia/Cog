@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add your voice — COG$ of Australia</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0804;--panel:rgba(18,13,5,.96);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.22);
+  --text:#fff8e8;--text2:rgba(255,248,232,.85);--muted:rgba(240,225,196,.55);
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans)}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:var(--panel);border:1px solid var(--gold-rim);border-radius:20px;padding:40px 36px;max-width:480px;width:100%;text-align:center}
+.eyebrow{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:18px}
+h1{font-family:var(--serif);font-size:1.9rem;font-weight:500;line-height:1.2;color:var(--text);margin-bottom:12px}
+.sub{font-size:.92rem;color:var(--text2);line-height:1.7;margin-bottom:32px}
+.modes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.mode-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(240,209,138,.06);border:1px solid var(--gold-rim);border-radius:14px;color:var(--text);text-decoration:none;font-size:.82rem;transition:background .2s,border-color .2s;cursor:pointer}
+.mode-btn:hover{background:rgba(240,209,138,.12);border-color:rgba(240,209,138,.45)}
+.mode-btn .ico{font-size:1.6rem}
+.mode-btn strong{font-size:.85rem;display:block}
+.mode-btn span{color:var(--muted);font-size:.75rem}
+.skip{display:block;font-size:.8rem;color:var(--muted);text-decoration:none;margin-top:8px;transition:color .2s}
+.skip:hover{color:var(--text2)}
+.notice{font-size:.75rem;color:var(--muted);line-height:1.6;margin-top:20px;padding-top:16px;border-top:1px solid rgba(240,209,138,.1)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="eyebrow">COG$ of Australia</div>
+    <h1>In one sentence, why did you join?</h1>
+    <p class="sub">We use member voices on our Facebook and YouTube channels and at Foundation Day to show Australians what a fair say sounds like. You'll be shown as your first name and state.</p>
+
+    <div class="modes">
+      <a href="/intro/voice-text.html" class="mode-btn">
+        <span class="ico">✏️</span>
+        <strong>Text</strong>
+        <span>Up to 280 chars</span>
+      </a>
+      <a href="/intro/voice-audio.html" class="mode-btn" id="audio-btn">
+        <span class="ico">🎙️</span>
+        <strong>Audio</strong>
+        <span>Up to 30 sec</span>
+      </a>
+      <a href="/intro/voice-video.html" class="mode-btn" id="video-btn">
+        <span class="ico">🎬</span>
+        <strong>Video</strong>
+        <span>Up to 30 sec</span>
+      </a>
+    </div>
+
+    <a href="/wallets/member.html" class="skip">Skip — I'll do this later from my dashboard</a>
+
+    <p class="notice">You can withdraw consent at any time from your member dashboard or by emailing info@cogsaustralia.org. A community membership invitation. Not financial advice.</p>
+  </div>
+</div>
+<script>
+// Phase detection: audio/video disabled until their respective phases deploy.
+// Remove these lines after Phase 2 (audio) and Phase 3 (video) deploy.
+// var audioBtn = document.getElementById('audio-btn');
+// var videoBtn = document.getElementById('video-btn');
+// if (audioBtn) { audioBtn.style.opacity='.4'; audioBtn.style.pointerEvents='none'; audioBtn.title='Coming soon'; }
+// if (videoBtn) { videoBtn.style.opacity='.4'; videoBtn.style.pointerEvents='none'; videoBtn.title='Coming soon'; }
+</script>
+</body>
+</html>
