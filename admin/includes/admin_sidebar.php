@@ -51,6 +51,7 @@ if (!function_exists('admin_sidebar_detect_active')) {
         }
         if ($script === 'businesses.php') return 'businesses';
         if ($script === 'evidence_reviews.php') return 'evidence_reviews';
+        if ($script === 'voice_submissions.php') return 'voice_submissions';
         if ($script === 'mint_queue.php') return 'mint_queue';
         if ($script === 'mint_batches.php') return 'mint_batches';
         if ($script === 'unit_issuance.php') return 'unit_issuance';
@@ -249,6 +250,7 @@ if (!function_exists('admin_sidebar_render')) {
                 ['key' => 'generate_sub_trust_c_token', 'label' => '🅒  Sub-Trust C Exec',     'href' => './generate_sub_trust_c_token.php'],
                 ['key' => 'zones',             'label' => '📍  Geographic Zones',          'href' => './zones.php'],
                 ['key' => 'evidence_reviews',  'label' => '📋  Evidence Reviews',          'href' => './evidence_reviews.php'],
+                ['key' => 'voice_submissions', 'label' => '🎙️  Why I Joined',               'href' => './voice_submissions.php'],
                 ['key' => 'admin_kyc',         'label' => '🪪  KYC Review',               'href' => './admin_kyc.php'],
                 ['key' => 'exceptions',        'label' => '⚠  Exceptions',                'href' => './exceptions.php'],
                 ['key' => 'audit',             'label' => '📜  Audit Log',                 'href' => './audit.php'],
