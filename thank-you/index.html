@@ -62,6 +62,33 @@
     .inviter-line{max-width:520px;margin:-8px auto 20px;text-align:center;font-size:.8rem;color:var(--muted)}
     .inviter-line strong{color:var(--gold-2)}
 
+    /* ── Voice submission panel ── */
+    .vs-ty-panel{max-width:520px;margin:0 auto 28px;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:18px;padding:26px 28px}
+    .vs-ty-panel.hidden{display:none}
+    .vs-ty-panel .vs-kicker{font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px}
+    .vs-ty-panel h3{font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:6px}
+    .vs-ty-panel p{font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:16px}
+    .vs-ty-modes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+    .vs-ty-mode-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(240,209,138,.18);border-radius:10px;cursor:pointer;transition:background .15s,border-color .15s;font-size:.72rem;color:var(--text2)}
+    .vs-ty-mode-btn:hover,.vs-ty-mode-btn.active{background:rgba(240,209,138,.1);border-color:rgba(240,209,138,.4);color:var(--gold-1)}
+    .vs-ty-mode-btn .ico{font-size:1.3rem}
+    #vs-ty-text-area{width:100%;min-height:80px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:10px;color:var(--text);font-family:var(--sans);font-size:.9rem;line-height:1.6;resize:vertical;outline:none;transition:border-color .2s}
+    #vs-ty-text-area:focus{border-color:rgba(240,209,138,.5)}
+    .vs-ty-meta{display:flex;justify-content:flex-end;font-size:.72rem;color:var(--muted);margin:4px 0 10px}
+    .vs-ty-warn{background:rgba(255,160,50,.08);border:1px solid rgba(255,160,50,.25);border-radius:8px;padding:8px 12px;font-size:.78rem;color:#f0a050;display:none;margin-bottom:10px;line-height:1.5}
+    .vs-ty-consent{display:flex;gap:8px;align-items:flex-start;margin-bottom:14px}
+    .vs-ty-consent input{margin-top:2px;flex-shrink:0;accent-color:var(--gold-2)}
+    .vs-ty-consent label{font-size:.75rem;color:var(--text2);line-height:1.5}
+    .vs-ty-actions{display:flex;align-items:center;gap:12px}
+    .vs-ty-submit{padding:9px 20px;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));border:none;border-radius:99px;color:#1a0f00;font-weight:600;font-size:.85rem;cursor:pointer;transition:opacity .2s}
+    .vs-ty-submit:disabled{opacity:.4;cursor:not-allowed}
+    .vs-ty-skip{font-size:.78rem;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;transition:color .2s;text-decoration:underline}
+    .vs-ty-skip:hover{color:var(--text2)}
+    .vs-ty-done{text-align:center;padding:10px 0}
+    .vs-ty-done .check{font-size:1.8rem;margin-bottom:8px}
+    .vs-ty-done p{font-size:.85rem;color:var(--text2);line-height:1.6}
+    .vs-ty-audio-form,.vs-ty-video-form{text-align:center}
+
     /* Vault CTA */
     .vault-cta{background:linear-gradient(135deg,rgba(240,209,138,.1),rgba(200,151,60,.06));border:1px solid var(--gold-rim2);border-radius:20px;padding:32px 30px;text-align:center;margin-bottom:56px;max-width:560px;margin-left:auto;margin-right:auto}
     .vault-cta h2{font-family:var(--serif);font-size:1.7rem;font-weight:500;color:var(--gold-1);margin-bottom:10px}
@@ -157,6 +184,41 @@
         <!-- Inviter line -->
         <div class="inviter-line" id="inviter-line" style="display:none">
           Invited by Member: <strong id="inviter-name-display"></strong>
+        </div>
+
+        <!-- Voice submission panel — Option A: inline on thank-you -->
+        <div class="vs-ty-panel" id="vs-ty-panel">
+          <div class="vs-kicker">Before you open your vault</div>
+          <h3>In one sentence — why did you join?</h3>
+          <p>We share member voices on Facebook and YouTube and at Foundation Day on 14&nbsp;May to show Australians what a fair say sounds like. Your first name may be shown.</p>
+
+          <!-- Mode switcher -->
+          <div class="vs-ty-modes" id="vs-ty-modes">
+            <button class="vs-ty-mode-btn active" id="vs-mode-text" onclick="vstyMode('text')"><span class="ico">✏️</span>Text</button>
+            <a href="/intro/voice-audio.html" class="vs-ty-mode-btn" id="vs-mode-audio"><span class="ico">🎙️</span>Audio</a>
+            <a href="/intro/voice-video.html" class="vs-ty-mode-btn" id="vs-mode-video"><span class="ico">🎬</span>Video</a>
+          </div>
+
+          <!-- Text mode form (default) -->
+          <div id="vs-ty-text-form">
+            <textarea id="vs-ty-text-area" maxlength="280" placeholder="I joined because…" aria-label="Your submission"></textarea>
+            <div class="vs-ty-meta"><span id="vs-ty-char">0 / 280</span></div>
+            <div class="vs-ty-warn" id="vs-ty-warn"></div>
+            <div class="vs-ty-consent">
+              <input type="checkbox" id="vs-ty-consent">
+              <label for="vs-ty-consent">I agree this can be shared on COG$ social media. My first name may be shown. I can withdraw consent at any time from my member dashboard or by emailing info@cogsaustralia.org.</label>
+            </div>
+            <div class="vs-ty-actions">
+              <button class="vs-ty-submit" id="vs-ty-submit" disabled onclick="vstySubmit()">Add my voice</button>
+              <button class="vs-ty-skip" onclick="vstySkip()">Skip for now</button>
+            </div>
+          </div>
+
+          <!-- Done state (replaces form on success or save) -->
+          <div class="vs-ty-done" id="vs-ty-done" style="display:none">
+            <div class="check">✓</div>
+            <p id="vs-ty-done-msg">Your submission is saved and will be reviewed shortly.</p>
+          </div>
         </div>
 
         <!-- Vault CTA — single job -->
@@ -357,6 +419,137 @@ function tyCopy(btn, id) {
     setTimeout(function() { btn.textContent = '⎘'; btn.style.color = ''; }, 1600);
   });
 }
+</script>
+<script>
+/* ── Voice submission panel — thank-you page ──────────────────────────────────
+ * Tries authenticated POST first. If 401 (member not yet logged in to vault),
+ * saves to localStorage as 'cogs_voice_pending' so wallets/member.html
+ * auto-submits it after the member authenticates.
+ * Audio/video modes link to the standalone recorder pages. */
+(function(){
+  'use strict';
+
+  var BANNED = [
+    /\binvestment\b/i,/\breturns?\b/i,/\bprofits?\b/i,/\bupside\b/i,
+    /\bgains?\b/i,/\bROI\b/i,/\bget in early\b/i,/\bdon'?t miss out\b/i,
+    /\bto the moon\b/i,/\bpresale\b/i,/\bIDO\b/i,/\bIPO\b/i,
+    /\btoken\s+(price|launch)\b/i,/\bworth more later\b/i,
+  ];
+
+  function checkBanned(text){
+    for(var i=0;i<BANNED.length;i++){var m=text.match(BANNED[i]);if(m)return m[0];}
+    return null;
+  }
+
+  /* Initialise after DOMContentLoaded so partnerName is already set */
+  document.addEventListener('DOMContentLoaded', function(){
+    var ta      = document.getElementById('vs-ty-text-area');
+    var charEl  = document.getElementById('vs-ty-char');
+    var warnEl  = document.getElementById('vs-ty-warn');
+    var consent = document.getElementById('vs-ty-consent');
+    var submit  = document.getElementById('vs-ty-submit');
+    if(!ta) return;
+
+    var debT;
+    ta.addEventListener('input', function(){
+      clearTimeout(debT);
+      debT = setTimeout(function(){
+        var len = ta.value.length;
+        if(charEl) charEl.textContent = len + ' / 280';
+        var hit = checkBanned(ta.value);
+        if(hit){
+          warnEl.textContent = '\u26a0 The phrase \u201c'+hit+'\u201d sounds like a financial claim. Could you rephrase to focus on why you joined the community?';
+          warnEl.style.display='block';
+        } else { warnEl.style.display='none'; }
+        updateBtn();
+      }, 250);
+    });
+    if(consent) consent.addEventListener('change', updateBtn);
+    function updateBtn(){
+      submit.disabled = !(ta.value.trim().length>0 && consent && consent.checked);
+    }
+  });
+
+  /* Mode switch — text form is inline; audio/video are separate pages */
+  window.vstyMode = function(mode){
+    document.querySelectorAll('.vs-ty-mode-btn').forEach(function(b){b.classList.remove('active');});
+    var btn = document.getElementById('vs-mode-'+mode);
+    if(btn) btn.classList.add('active');
+    // only 'text' shows the inline form; audio/video link away
+  };
+
+  window.vstySubmit = function(){
+    var ta      = document.getElementById('vs-ty-text-area');
+    var consent = document.getElementById('vs-ty-consent');
+    var submit  = document.getElementById('vs-ty-submit');
+    var text    = ta ? ta.value.trim() : '';
+    if(!text){ showWarn('Please write something first.'); return; }
+    if(!consent || !consent.checked){ showWarn('Please tick the consent box.'); return; }
+    submit.disabled = true;
+    submit.textContent = 'Saving\u2026';
+
+    /* Gather first name from the page (already populated by DOMContentLoaded) */
+    var fn = '';
+    try {
+      var ls = JSON.parse(localStorage.getItem('cogs_snft_member')||'{}');
+      fn = ls.first_name || '';
+    } catch(e){}
+
+    var fd = new FormData();
+    fd.append('submission_type','text');
+    fd.append('text_content', text);
+    fd.append('consent_given','1');
+    fd.append('consent_text_version','v1.0');
+    fd.append('display_name_first', fn);
+
+    fetch('/_app/api/index.php?route=voice-submissions',{method:'POST',body:fd,credentials:'include'})
+      .then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};});})
+      .then(function(res){
+        if(res.ok && res.data.success){
+          /* Authenticated and submitted */
+          vstySaved('Your voice is in review. We\u2019ll email you when it\u2019s cleared.');
+        } else if(res.status===401){
+          /* Not yet authenticated — save for vault auto-submit */
+          vstyPendingSave(text, fn);
+        } else {
+          showWarn((res.data && res.data.error) || 'Something went wrong. Please try again.');
+          submit.disabled=false; submit.textContent='Add my voice';
+        }
+      })
+      .catch(function(){
+        /* Network error — save pending */
+        vstyPendingSave(text, fn);
+      });
+  };
+
+  function vstyPendingSave(text, fn){
+    try{
+      localStorage.setItem('cogs_voice_pending', JSON.stringify({
+        text: text, first_name: fn, consent_version: 'v1.0', saved_at: Date.now()
+      }));
+    }catch(e){}
+    vstySaved('Saved. We\u2019ll add your voice when you open your vault.');
+  }
+
+  function vstySaved(msg){
+    var form = document.getElementById('vs-ty-text-form');
+    var done = document.getElementById('vs-ty-done');
+    var msgEl= document.getElementById('vs-ty-done-msg');
+    if(form) form.style.display='none';
+    if(done) done.style.display='block';
+    if(msgEl) msgEl.textContent=msg;
+  }
+
+  window.vstySkip = function(){
+    var panel = document.getElementById('vs-ty-panel');
+    if(panel) panel.classList.add('hidden');
+  };
+
+  function showWarn(msg){
+    var w = document.getElementById('vs-ty-warn');
+    if(w){w.textContent=msg;w.style.display='block';}
+  }
+})();
 </script>
 </body>
 </html>

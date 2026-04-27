@@ -5458,6 +5458,44 @@ function renderKsnftIdentityCard(d){
 }
 window.renderKsnftIdentityCard = renderKsnftIdentityCard;
 
+/* ══ Pending voice submission auto-submit ══
+ * If the member submitted a voice reason on the thank-you page before
+ * authenticating, localStorage holds 'cogs_voice_pending'. Submit it
+ * now that they're authenticated in the vault. */
+(function(){
+  var KEY = 'cogs_voice_pending';
+  var raw;
+  try { raw = localStorage.getItem(KEY); } catch(e) { return; }
+  if (!raw) return;
+  var data;
+  try { data = JSON.parse(raw); } catch(e) { localStorage.removeItem(KEY); return; }
+  if (!data || !data.text) { localStorage.removeItem(KEY); return; }
+  // Don't retry if older than 7 days
+  if (data.saved_at && (Date.now() - data.saved_at) > 7 * 24 * 60 * 60 * 1000) {
+    localStorage.removeItem(KEY); return;
+  }
+  var fd = new FormData();
+  fd.append('submission_type', 'text');
+  fd.append('text_content', data.text);
+  fd.append('consent_given', '1');
+  fd.append('consent_text_version', data.consent_version || 'v1.0');
+  fd.append('display_name_first', data.first_name || '');
+  fetch('/_app/api/index.php?route=voice-submissions', {
+    method: 'POST', body: fd, credentials: 'include'
+  }).then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) {
+        localStorage.removeItem(KEY);
+        // Refresh voice panel if it's already loaded
+        if (typeof window.fetchVoiceSubmissionsPanel === 'function') {
+          window._vsLoaded = false;
+        }
+      }
+      // If still 401, leave it in localStorage and retry next login
+    })
+    .catch(function() {}); // Silent failure — try again next time
+})();
+
 /* ══ Voice Submissions Panel — Block 3 ══
  * Fetches and renders the member's voice submissions inside the vault.
  * Loads on first toggle of #vs-section to avoid blocking vault load.
