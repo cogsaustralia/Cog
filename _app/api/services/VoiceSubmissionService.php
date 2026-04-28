@@ -11,8 +11,8 @@ class VoiceSubmissionService
 {
     private const SECURE_UPLOAD_BASE = '/home4/cogsaust/secure_uploads/voice_submissions';
 
-    private const ALLOWED_AUDIO_MIME = ['audio/mpeg', 'audio/webm', 'audio/wav'];
-    private const ALLOWED_VIDEO_MIME = ['video/mp4', 'video/webm'];
+    private const ALLOWED_AUDIO_MIME = ['audio/mpeg', 'audio/webm', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac'];
+    private const ALLOWED_VIDEO_MIME = ['video/mp4', 'video/webm', 'video/x-matroska'];
     private const AUDIO_MAX_BYTES    = 5 * 1024 * 1024;   // 5 MB
     private const VIDEO_MAX_BYTES    = 50 * 1024 * 1024;  // 50 MB
     private const MAX_DURATION_SEC   = 30;
@@ -420,8 +420,12 @@ class VoiceSubmissionService
             'audio/mpeg'  => 'mp3',
             'audio/webm'  => 'webm',
             'audio/wav'   => 'wav',
+            'audio/ogg'   => 'ogg',
+            'audio/mp4'   => 'm4a',
+            'audio/aac'   => 'aac',
             'video/mp4'   => 'mp4',
             'video/webm'  => 'webm',
+            'video/x-matroska' => 'mkv',
             default       => 'bin',
         };
     }

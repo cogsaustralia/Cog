@@ -119,11 +119,24 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
         recBtn.textContent = '⏹';
         timerEl.className = 'timer recording';
 
-        var options = MediaRecorder.isTypeSupported('audio/webm') ? { mimeType:'audio/webm' } : {};
+        var audioCandidates = [
+          'audio/webm;codecs=opus',
+          'audio/webm',
+          'audio/ogg;codecs=opus',
+          'audio/ogg',
+          'audio/mp4',
+          'audio/mpeg',
+        ];
+        var bestAudioMime = '';
+        for (var i = 0; i < audioCandidates.length; i++) {
+          try { if (MediaRecorder.isTypeSupported(audioCandidates[i])) { bestAudioMime = audioCandidates[i]; break; } } catch(e) {}
+        }
+        var options = bestAudioMime ? { mimeType: bestAudioMime } : {};
         mediaRecorder = new MediaRecorder(stream, options);
         mediaRecorder.ondataavailable = function(e){ if (e.data.size > 0) chunks.push(e.data); };
         mediaRecorder.onstop = function(){
-          blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+          var finalMime = (bestAudioMime || mediaRecorder.mimeType || 'audio/webm').split(';')[0];
+          blob = new Blob(chunks, { type: finalMime });
           audioEl.src = URL.createObjectURL(blob);
           playback.style.display = 'block';
           controls.style.display = 'flex';
