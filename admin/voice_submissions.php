@@ -303,9 +303,19 @@ function notes(){return(document.getElementById('vs-notes')||{}).value||'';}
 
 function post(path,body,cb){
   fetch(API+path,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-    .then(function(r){return r.json();})
-    .then(function(d){if(d.success)cb(d);else toast('Error: '+(d.error||'unknown'),'err');})
-    .catch(function(){toast('Network error','err');});
+    .then(function(r){
+      var status = r.status;
+      return r.text().then(function(text){
+        var d;
+        try { d = JSON.parse(text); } catch(e) {
+          toast('Server error ('+status+'): '+text.slice(0,120),'err');
+          return;
+        }
+        if(d && d.success) cb(d);
+        else toast('Error: '+(d&&d.error?d.error:'unknown — status '+status),'err');
+      });
+    })
+    .catch(function(e){ toast('Network error: '+(e&&e.message?e.message:'connection failed'),'err'); });
 }
 
 function vsAccept(){if(!sel)return;post(sel+'/approve',{notes:notes()},function(){toast('Accepted. Member notified.');location.href='?status=cleared_for_use';});}

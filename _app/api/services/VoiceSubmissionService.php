@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../integrations/mailer.php';
+
 /**
  * VoiceSubmissionService
  * Core business logic for the Member Voice Submission feature.
@@ -289,8 +291,10 @@ class VoiceSubmissionService
              WHERE id = ?'
         )->execute([$adminId, substr($notes, 0, 2000), $submissionId]);
 
-        $this->auditLog($adminId, 'approve_voice_submission', 'submission_id=' . $submissionId);
-        $this->sendMemberEmail($row, 'approved');
+        try { $this->auditLog($adminId, 'approve_voice_submission', 'submission_id=' . $submissionId); } catch (Throwable $e) {}
+        try { $this->sendMemberEmail($row, 'approved'); } catch (Throwable $e) {
+            error_log('adminApprove sendMemberEmail failed: ' . $e->getMessage());
+        }
         return ['submission_id' => $submissionId, 'status' => 'cleared_for_use'];
     }
 
@@ -311,7 +315,9 @@ class VoiceSubmissionService
         )->execute([$adminId, substr($internalNotes, 0, 2000), substr($memberReason, 0, 2000), $submissionId]);
 
         $this->auditLog($adminId, 'reject_voice_submission', 'submission_id=' . $submissionId);
-        $this->sendMemberEmail($row, 'rejected', $memberReason);
+        try { $this->sendMemberEmail($row, 'rejected', $memberReason); } catch (Throwable $e) {
+            error_log('adminReject sendMemberEmail failed: ' . $e->getMessage());
+        }
         return ['submission_id' => $submissionId, 'status' => 'rejected'];
     }
 
@@ -330,7 +336,7 @@ class VoiceSubmissionService
              WHERE id = ?'
         )->execute([substr($postUrl, 0, 500), $adminId, $submissionId]);
 
-        $this->auditLog($adminId, 'mark_voice_submission_used', 'submission_id=' . $submissionId . ' url=' . $postUrl);
+        try { $this->auditLog($adminId, 'mark_voice_submission_used', 'submission_id=' . $submissionId . ' url=' . $postUrl); } catch (Throwable $e) {}
         return ['submission_id' => $submissionId, 'used_in_post_url' => $postUrl];
     }
 
@@ -346,7 +352,7 @@ class VoiceSubmissionService
              WHERE id = ?'
         )->execute([substr('Admin: ' . $reason, 0, 1000), $submissionId]);
 
-        $this->auditLog($adminId, 'withdraw_voice_submission_admin', 'submission_id=' . $submissionId);
+        try { $this->auditLog($adminId, 'withdraw_voice_submission_admin', 'submission_id=' . $submissionId); } catch (Throwable $e) {}
         return ['submission_id' => $submissionId, 'status' => 'withdrawn', 'social_removal' => !empty($row['used_in_post_url'])];
     }
 
