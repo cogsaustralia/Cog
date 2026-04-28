@@ -13,8 +13,8 @@ class VoiceSubmissionService
 {
     private const SECURE_UPLOAD_BASE = '/home4/cogsaust/secure_uploads/voice_submissions';
 
-    private const ALLOWED_AUDIO_MIME = ['audio/mpeg', 'audio/webm', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac'];
-    private const ALLOWED_VIDEO_MIME = ['video/mp4', 'video/webm', 'video/x-matroska'];
+    private const ALLOWED_AUDIO_MIME = ['audio/mpeg', 'audio/webm', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac', 'application/ogg'];
+    private const ALLOWED_VIDEO_MIME = ['video/mp4', 'video/webm', 'video/x-matroska', 'video/ogg'];
     private const AUDIO_MAX_BYTES    = 5 * 1024 * 1024;   // 5 MB
     private const VIDEO_MAX_BYTES    = 50 * 1024 * 1024;  // 50 MB
     private const MAX_DURATION_SEC   = 30;
@@ -72,13 +72,17 @@ class VoiceSubmissionService
 
             // Verify mime by magic bytes
             $finfo    = finfo_open(FILEINFO_MIME_TYPE);
-            $fileMime = finfo_file($finfo, $tmpPath);
+            $fileMime = (string)finfo_file($finfo, $tmpPath);
             finfo_close($finfo);
+            // Strip codec parameters (e.g. "audio/webm; codecs=opus" → "audio/webm")
+            $fileMimeBase = strtolower(trim(explode(';', $fileMime)[0]));
 
             $allowed = $type === 'audio' ? self::ALLOWED_AUDIO_MIME : self::ALLOWED_VIDEO_MIME;
-            if (!in_array($fileMime, $allowed, true)) {
-                throw new InvalidArgumentException("File type not allowed for {$type} submissions.");
+            if (!in_array($fileMimeBase, $allowed, true)) {
+                error_log("VoiceSubmission: rejected {$type} file with finfo mime={$fileMime} base={$fileMimeBase}");
+                throw new InvalidArgumentException("File type not allowed for {$type} submissions (detected: {$fileMimeBase}).");
             }
+            $fileMime = $fileMimeBase; // store the clean base type
 
             $maxBytes = $type === 'audio' ? self::AUDIO_MAX_BYTES : self::VIDEO_MAX_BYTES;
             if ($fileSize > $maxBytes) {

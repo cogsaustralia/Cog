@@ -212,7 +212,7 @@ ob_start(); ?>
 <script>
 (function(){
 'use strict';
-var API='<?= $apiBase ?>';
+var API='<?= $API ?>';
 var sel=null;
 var ITEMS=<?= json_encode(array_column($items,null,'id'),JSON_HEX_TAG|JSON_HEX_APOS) ?>;
 

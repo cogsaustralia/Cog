@@ -116,11 +116,17 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
       'video/webm',
       'video/mp4;codecs=avc1',
       'video/mp4',
+      'video/x-matroska;codecs=avc1,opus',
     ];
-    if (!window.MediaRecorder) return '';
+    if (!window.MediaRecorder) { console.log('[COG$] MediaRecorder not available'); return ''; }
     for (var i = 0; i < candidates.length; i++) {
-      try { if (MediaRecorder.isTypeSupported(candidates[i])) return candidates[i]; } catch(e) {}
+      try {
+        var ok = MediaRecorder.isTypeSupported(candidates[i]);
+        console.log('[COG$] MIME', candidates[i], ok ? 'OK' : 'no');
+        if (ok) return candidates[i];
+      } catch(e) { console.log('[COG$] MIME error', candidates[i], e.message); }
     }
+    console.log('[COG$] No supported MIME found');
     return '';
   }
 
@@ -137,6 +143,7 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
     }).then(function(s){
       stream = s;
       previewEl.srcObject = s;
+      recBtn.style.display = 'flex'; // ensure visible — may have been hidden by a previous error
     }).catch(function(err){
       var msg = '';
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
