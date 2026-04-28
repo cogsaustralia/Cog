@@ -119,7 +119,15 @@
     var warning = document.getElementById('vs-warning');
     if (submit) { submit.disabled = true; submit.textContent = 'Uploading\u2026'; }
 
-    var ext = submissionType === 'audio' ? 'webm' : 'mp4';
+    // Derive extension from blob MIME type rather than hardcoding
+    var mimeType = blob.type || (submissionType === 'audio' ? 'audio/webm' : 'video/webm');
+    var mimeBase = mimeType.split(';')[0].toLowerCase();
+    var extMap = {
+      'audio/webm':'webm','audio/ogg':'ogg','audio/mpeg':'mp3','audio/mp4':'m4a',
+      'audio/wav':'wav','audio/aac':'aac','video/webm':'webm','video/mp4':'mp4',
+      'video/x-matroska':'mkv','video/ogg':'ogv','application/ogg':'ogg',
+    };
+    var ext = extMap[mimeBase] || (submissionType === 'audio' ? 'webm' : 'mp4');
     var fd = new FormData();
     fd.append('submission_type', submissionType);
     fd.append('submission_file', blob, 'recording.' + ext);

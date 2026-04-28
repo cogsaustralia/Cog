@@ -13,7 +13,10 @@ class VoiceSubmissionService
 {
     private const SECURE_UPLOAD_BASE = '/home4/cogsaust/secure_uploads/voice_submissions';
 
-    private const ALLOWED_AUDIO_MIME = ['audio/mpeg', 'audio/webm', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac', 'application/ogg'];
+    // WebM is a container format used for both audio and video.
+    // finfo_file() returns 'video/webm' for all WebM files regardless of content.
+    // A WebM submitted as 'audio' is valid — the tracks determine content, not the container.
+    private const ALLOWED_AUDIO_MIME = ['audio/mpeg', 'audio/webm', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac', 'application/ogg', 'video/webm'];
     private const ALLOWED_VIDEO_MIME = ['video/mp4', 'video/webm', 'video/x-matroska', 'video/ogg'];
     private const AUDIO_MAX_BYTES    = 5 * 1024 * 1024;   // 5 MB
     private const VIDEO_MAX_BYTES    = 50 * 1024 * 1024;  // 50 MB

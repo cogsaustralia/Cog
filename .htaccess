@@ -114,6 +114,20 @@ form-action 'self'"
 
 </IfModule>
 
+# ── VOICE SUBMISSION UPLOAD LIMITS ───────────────────────────────────────────
+# Audio max 5MB, video max 50MB — set PHP limits to 60MB to cover both.
+# LimitRequestBody covers the Apache layer; php_value covers PHP layer.
+<IfModule mod_php.c>
+  php_value upload_max_filesize 60M
+  php_value post_max_size 64M
+</IfModule>
+<IfModule mod_php8.c>
+  php_value upload_max_filesize 60M
+  php_value post_max_size 64M
+</IfModule>
+<LimitRequestBody 67108864>
+</LimitRequestBody>
+
 # ── PHASE 5.2 OPTIMIZATION: ENHANCED CACHE CONTROL ──────────────────────────
 # (Updated for minified assets and Vary header for compression)
 <IfModule mod_headers.c>
