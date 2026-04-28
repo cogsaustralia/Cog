@@ -91,15 +91,45 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
   var consentRow = document.getElementById('vs-consent-row');
 
   // Start camera immediately
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showWarning('Video recording is not supported in this browser. Please use Chrome or Firefox, or switch to text or audio mode.');
+    recBtn.style.display = 'none';
+  } else {
     navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:{ideal:1080}, height:{ideal:1920} }, audio: true })
       .then(function(s){
         stream = s;
         previewEl.srcObject = s;
       })
-      .catch(function(err){ showWarning('Could not access camera: ' + err.message); });
-  } else {
-    showWarning('Your browser does not support video recording. Please use a modern browser or switch to audio/text mode.');
+      .catch(function(err){
+        var msg = 'Could not access camera.';
+        if (err.name === 'NotAllowedError') {
+          msg = 'Camera access was denied. Please allow camera access in your browser settings and reload the page.';
+        } else if (err.name === 'NotFoundError') {
+          msg = 'No camera found on this device.';
+        } else if (err.name === 'NotSupportedError' || err.name === 'SecurityError') {
+          msg = 'Camera access requires a secure connection (HTTPS). Please check your browser settings.';
+        }
+        showWarning(msg + ' Alternatively, switch to text or audio mode.');
+        recBtn.style.display = 'none';
+      });
+  }
+
+  // Detect best supported MIME type — Safari needs specific codec strings
+  function getBestMime() {
+    var candidates = [
+      'video/mp4;codecs=avc1',
+      'video/mp4',
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm',
+    ];
+    if (!window.MediaRecorder) return '';
+    for (var i = 0; i < candidates.length; i++) {
+      try {
+        if (MediaRecorder.isTypeSupported(candidates[i])) return candidates[i];
+      } catch(e) {}
+    }
+    return '';
   }
 
   function updateTimer() {
@@ -111,20 +141,33 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
   }
 
   function startRecord() {
-    if (!stream) { showWarning('Camera not ready. Please wait.'); return; }
+    if (!stream) { showWarning('Camera not ready. Please wait a moment and try again.'); return; }
+    if (!window.MediaRecorder) {
+      showWarning('Video recording is not supported in this browser. Please use Chrome or Firefox, or switch to text or audio mode.');
+      return;
+    }
+    var bestMime = getBestMime();
+    if (!bestMime) {
+      showWarning('Your browser does not support any video recording format. Please open this page in Chrome or Firefox.');
+      return;
+    }
     chunks = []; blob = null;
     secondsLeft = 30; updateTimer();
     recording = true;
-    recBtn.className = 'rec-btn recording'; recBtn.textContent = '⏹';
+    recBtn.className = 'rec-btn recording'; recBtn.textContent = '\u23F9';
     timerEl.className = 'timer recording';
-
-    var options = MediaRecorder.isTypeSupported('video/mp4') ? {mimeType:'video/mp4'} :
-                  MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? {mimeType:'video/webm;codecs=vp9,opus'} :
-                  {};
-    mediaRecorder = new MediaRecorder(stream, options);
+    try {
+      mediaRecorder = new MediaRecorder(stream, { mimeType: bestMime });
+    } catch(e) {
+      showWarning('Could not start recording. Please try Chrome or Firefox.');
+      recording = false;
+      recBtn.className = 'rec-btn idle'; recBtn.textContent = '\uD83C\uDFAC';
+      timerEl.className = 'timer';
+      return;
+    }
     mediaRecorder.ondataavailable = function(e){ if (e.data.size > 0) chunks.push(e.data); };
     mediaRecorder.onstop = function(){
-      blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'video/webm' });
+      blob = new Blob(chunks, { type: bestMime.split(';')[0] });
       playbackEl.src = URL.createObjectURL(blob);
       previewEl.style.display = 'none'; playbackEl.style.display = 'block';
       controls.style.display = 'flex'; consentRow.style.display = 'flex';

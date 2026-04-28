@@ -69,6 +69,24 @@ h1{font-family:var(--serif);font-size:1.9rem;font-weight:500;line-height:1.2;col
 // var videoBtn = document.getElementById('video-btn');
 // if (audioBtn) { audioBtn.style.opacity='.4'; audioBtn.style.pointerEvents='none'; audioBtn.title='Coming soon'; }
 // if (videoBtn) { videoBtn.style.opacity='.4'; videoBtn.style.pointerEvents='none'; videoBtn.title='Coming soon'; }
+
+// Safari compatibility check — MediaRecorder not supported in Safari < 14.3
+// Show a note on the audio/video buttons so Safari users know to use Chrome
+(function(){
+  var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  var hasMediaRecorder = typeof window.MediaRecorder !== 'undefined';
+  if (isSafari && !hasMediaRecorder) {
+    var audioBtn = document.getElementById('audio-btn');
+    var videoBtn = document.getElementById('video-btn');
+    var note = document.createElement('p');
+    note.style.cssText = 'font-size:.72rem;color:rgba(240,225,196,.55);text-align:center;margin-top:8px;line-height:1.5';
+    note.textContent = 'Audio and video recording work best in Chrome or Firefox. Text works in all browsers.';
+    if (audioBtn) { audioBtn.style.opacity = '.5'; audioBtn.title = 'Use Chrome or Firefox for audio recording'; }
+    if (videoBtn) { videoBtn.style.opacity = '.5'; videoBtn.title = 'Use Chrome or Firefox for video recording'; }
+    var modes = document.querySelector('.modes');
+    if (modes && modes.parentNode) modes.parentNode.insertBefore(note, modes.nextSibling);
+  }
+})();
 </script>
 </body>
 </html>
