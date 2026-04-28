@@ -259,6 +259,49 @@ function ops_resolve_api_admin_session(PDO $pdo): ?array {
     }
 }
 
+/**
+ * Require an authenticated admin session for this page.
+ *
+ * IMPORTANT — privilege scoping
+ *
+ * The BARE form `ops_require_admin()` admits ANY active admin user
+ * regardless of role. This is intentional for low-risk read-only
+ * dashboards but is NOT appropriate for state-changing or
+ * sensitive-data pages.
+ *
+ * For role / permission scoping, use one of the following:
+ *
+ *   1. Permission-string form (preferred):
+ *        ops_require_admin($pdo, 'finance.write');
+ *        ops_require_admin($pdo, 'audit.read');
+ *      Permissions are resolved through ops_admin_can() against the
+ *      admin_role_permissions table. New permission keys are added
+ *      by the data layer, not by code changes here.
+ *
+ *   2. In-page conditional gating:
+ *        $canManage = ops_admin_can($pdo, 'infrastructure.manage');
+ *        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canManage) {
+ *            // ... handle write
+ *        }
+ *      Use when a page should be readable by many roles but
+ *      writable by fewer.
+ *
+ *   3. Role-list form on the API side (NOT this function):
+ *        requireAdminRole(['superadmin', 'operations_admin']);
+ *      Defined in _app/api/helpers.php for JSON API endpoints.
+ *      Different signature, same intent.
+ *
+ * Pages that perform financial writes, modify the asset register,
+ * touch trustee records, mutate admin_users, or override governance
+ * approvals SHOULD always pass a permission key — never the bare
+ * form. See admin/audit_access.php for a good worked example.
+ *
+ * @param PDO|null    $pdo                 Optional PDO; falls back to ops_db()
+ * @param string|null $requiredPermission  Permission key (e.g. 'audit.read')
+ *                                         When null, ANY active admin passes.
+ *
+ * @return void  Calls http_response_code(401|403) + exit on failure.
+ */
 function ops_require_admin(?PDO $pdo = null, ?string $requiredPermission = null): void {
     ops_start_admin_php_session();
     $pdo = $pdo instanceof PDO ? $pdo : ops_db();
