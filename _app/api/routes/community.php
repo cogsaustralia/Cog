@@ -7,6 +7,19 @@ if ($action === 'members') {
 }
 
 requireMethod('GET');
+
+// ── Member-only gate ─────────────────────────────────────────────────────────
+// Member counts are not public information. Only consumers are authenticated
+// member/business/admin surfaces. Any unauthenticated request gets 401
+// before any DB work. See _app/api/routes/community-stats.php for the full
+// rationale and assets/site.js for the matching client-side policy.
+$principal = getAuthPrincipal();
+if (!$principal) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Authentication required.']);
+    exit;
+}
+
 $db = getDB();
 
 $snft = (int)($db->query('SELECT COUNT(*) FROM snft_memberships')->fetchColumn() ?: 0);

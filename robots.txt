@@ -1,0 +1,23 @@
+User-agent: *
+
+# API surface — no public content for crawlers, all gated to members anyway.
+Disallow: /_app/api/
+Disallow: /_app/
+
+# Admin surface — auth-gated; nothing for crawlers.
+Disallow: /admin/
+
+# Trustee surface — auth-gated; nothing for crawlers.
+Disallow: /trustee/
+
+# Member-only pages (already noindex meta-tagged; this is belt-and-braces).
+Disallow: /wallets/
+Disallow: /partners/
+Disallow: /hubs/mainspring/
+
+# Internal infrastructure paths.
+Disallow: /_private/
+Disallow: /database/
+
+# Sitemap (when added)
+# Sitemap: https://cogsaustralia.org/sitemap.xml

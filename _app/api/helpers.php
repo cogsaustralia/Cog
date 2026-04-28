@@ -1113,6 +1113,32 @@ function requireAuth(string $userType): array {
     return $principal;
 }
 
+/**
+ * Multi-role variant of requireAuth — accepts a session whose user_type
+ * is in the allowed list. Used by routes consumed by multiple session
+ * roles (e.g. /community is hit by both SNFT members and BNFT
+ * businesses inside the wallet UI).
+ *
+ * Same 2FA enforcement and apiError(401) failure semantics as requireAuth.
+ *
+ * Returns the principal on success; calls apiError(401) on failure.
+ */
+function requireAnyAuth(array $allowedUserTypes): array {
+    $principal = getAuthPrincipal();
+    if (!$principal) {
+        apiError('Authentication required.', 401);
+    }
+    $userType = (string)($principal['user_type'] ?? '');
+    if (!in_array($userType, $allowedUserTypes, true)) {
+        apiError('Authentication required.', 401);
+    }
+    // Enforce 2FA for non-admin sessions, matching requireAuth behaviour.
+    if ($userType !== 'admin' && !(bool)($principal['otp_verified'] ?? true)) {
+        apiError('Two-factor verification required.', 401);
+    }
+    return $principal;
+}
+
 // =============================================================================
 // Rate limiting
 // Protects login, password reset, and admin login against brute force.

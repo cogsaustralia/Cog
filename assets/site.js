@@ -187,26 +187,28 @@
       header.insertAdjacentElement("afterend", banner);
     }
     async function hydratePublicMetrics() {
-      const shell = document.querySelector("[data-public-community-shell]");
-      const liveCountNodes = document.querySelectorAll("[data-live-member-count], [data-public-member-count]");
-      if (!shell && !liveCountNodes.length) return;
-      try {
-        const data = await request("community", { method: "GET" });
-        const snftMembers = Number(data.snft_members || data.snft_count || data.member_count || data.total_members || 0);
-        const bnftBusinesses = Number(data.bnft_businesses || data.business_count || 0);
-        const totalReservationValue = Number(data.total_reservation_value || data.total_value || 0);
-        const foundingUsed = snftMembers + bnftBusinesses;
-        const foundingRemaining = Math.max(0, 100 - foundingUsed);
-        setAllText("[data-live-member-count]", formatInteger(snftMembers));
-        setAllText("[data-public-member-count]", formatInteger(snftMembers));
-        setAllText("[data-public-business-count]", formatInteger(bnftBusinesses));
-        setAllText("[data-public-token-total]", formatInteger(getAllClassTokenTotal(data)));
-        setAllText("[data-public-value-total]", formatMoney(totalReservationValue));
-        setAllText("[data-public-founding-remaining]", formatInteger(foundingRemaining));
-        setAllText("[data-founding-countdown]", formatInteger(foundingRemaining));
-        setAllText("[data-public-value-display]", formatMoney(totalReservationValue));
-      } catch (e) {
-      }
+      // POLICY: NO PUBLIC-FACING MEMBER COUNTS.
+      //
+      // This function used to fetch /community and render member counts
+      // into [data-live-member-count] / [data-public-member-count] /
+      // [data-public-business-count] etc. on any page that included those
+      // attributes. That created a drive-by exposure surface — a future
+      // edit adding one of those attributes to a public page would
+      // silently leak member numbers.
+      //
+      // Member counts are member-only information. They are still
+      // displayed inside authenticated surfaces (wallets/member.html,
+      // partners/index.html, hubs/mainspring/index.html), each of which
+      // calls api('community-stats') directly with the member's session
+      // cookie. The /community-stats and /community endpoints are now
+      // session-gated server-side — see _app/api/routes/community-stats.php
+      // and _app/api/routes/community.php.
+      //
+      // DO NOT re-add a public count fetcher here. If you have a real
+      // need to surface aggregate stats publicly, ship it as a separate
+      // dedicated endpoint with explicit business sign-off, not via
+      // resurrecting this hook.
+      return;
     }
     function startPolling(fn) {
       if (pollHandle) window.clearInterval(pollHandle);

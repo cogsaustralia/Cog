@@ -11,6 +11,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// ── Member-only gate ─────────────────────────────────────────────────────────
+// Member counts are not public information. This endpoint is consumed only by
+// authenticated surfaces — wallets/member.html, partners/index.html, and
+// hubs/mainspring/index.html — which run inside an SNFT member, BNFT business,
+// or admin session. Any role is acceptable here; any unauthenticated request
+// gets 401 before any DB work or cache read.
+//
+// Why getAuthPrincipal() and not requireAuth('snft'): the consumers span all
+// three roles (member/business/admin) and we want a single non-discriminating
+// gate that just checks "is this someone with a valid session". Differentiating
+// by role would lock out BNFT users from their own legitimate stats view.
+$principal = getAuthPrincipal();
+if (!$principal) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Authentication required.']);
+    exit;
+}
+
 // ── Cache layer (5-minute TTL) ────────────────────────────────────────────────
 require_once __DIR__ . '/../services/SimpleCache.php';
 $cache     = new SimpleCache('/tmp/cogs_cache');

@@ -187,26 +187,13 @@
       header.insertAdjacentElement("afterend", banner);
     }
     async function hydratePublicMetrics() {
-      const shell = document.querySelector("[data-public-community-shell]");
-      const liveCountNodes = document.querySelectorAll("[data-live-member-count], [data-public-member-count]");
-      if (!shell && !liveCountNodes.length) return;
-      try {
-        const data = await request("community", { method: "GET" });
-        const snftMembers = Number(data.snft_members || data.snft_count || data.member_count || data.total_members || 0);
-        const bnftBusinesses = Number(data.bnft_businesses || data.business_count || 0);
-        const totalReservationValue = Number(data.total_reservation_value || data.total_value || 0);
-        const foundingUsed = snftMembers + bnftBusinesses;
-        const foundingRemaining = Math.max(0, 100 - foundingUsed);
-        setAllText("[data-live-member-count]", formatInteger(snftMembers));
-        setAllText("[data-public-member-count]", formatInteger(snftMembers));
-        setAllText("[data-public-business-count]", formatInteger(bnftBusinesses));
-        setAllText("[data-public-token-total]", formatInteger(getAllClassTokenTotal(data)));
-        setAllText("[data-public-value-total]", formatMoney(totalReservationValue));
-        setAllText("[data-public-founding-remaining]", formatInteger(foundingRemaining));
-        setAllText("[data-founding-countdown]", formatInteger(foundingRemaining));
-        setAllText("[data-public-value-display]", formatMoney(totalReservationValue));
-      } catch (e) {
-      }
+      // POLICY: NO PUBLIC-FACING MEMBER COUNTS.
+      // See assets/site.js for the full rationale. Member counts are
+      // displayed only inside authenticated surfaces (wallets/member.html,
+      // partners/index.html, hubs/mainspring/index.html). The
+      // /community-stats and /community endpoints are session-gated.
+      // DO NOT re-add a public count fetcher here.
+      return;
     }
     function startPolling(fn) {
       if (pollHandle) window.clearInterval(pollHandle);
