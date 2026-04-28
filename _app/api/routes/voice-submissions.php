@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === '') {
         'SELECT p.id AS partner_id, m.first_name, m.state_code, m.email
          FROM partners p
          JOIN members m ON m.id = p.member_id
-         WHERE m.id = ? AND p.status IN (\'active\',\'pending\')
+         WHERE p.member_id = ?
          ORDER BY p.id ASC LIMIT 1'
     );
     $stmt->execute([(int)$session['principal_id']]);
@@ -51,8 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'me') {
     $session = requireAuth('snft');
     $stmt    = $db->prepare(
         'SELECT p.id AS partner_id FROM partners p
-         JOIN members m ON m.id = p.member_id
-         WHERE m.id = ? AND p.status IN (\'active\',\'pending\')
+         WHERE p.member_id = ?
          ORDER BY p.id ASC LIMIT 1'
     );
     $stmt->execute([(int)$session['principal_id']]);
@@ -68,8 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $actionId > 0 && isset($_parts[1]) 
     $session = requireAuth('snft');
     $stmt    = $db->prepare(
         'SELECT p.id AS partner_id FROM partners p
-         JOIN members m ON m.id = p.member_id
-         WHERE m.id = ? AND p.status IN (\'active\',\'pending\')
+         WHERE p.member_id = ?
          ORDER BY p.id ASC LIMIT 1'
     );
     $stmt->execute([(int)$session['principal_id']]);
@@ -99,8 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $actionId > 0 && isset($_parts[1]) &
     if ($principal) {
         $stmt = $db->prepare(
             'SELECT p.id AS partner_id FROM partners p
-             JOIN members m ON m.id = p.member_id
-             WHERE m.id = ? ORDER BY p.id ASC LIMIT 1'
+             WHERE p.member_id = ? ORDER BY p.id ASC LIMIT 1'
         );
         $stmt->execute([(int)$principal['principal_id']]);
         $p = $stmt->fetch(PDO::FETCH_ASSOC);
