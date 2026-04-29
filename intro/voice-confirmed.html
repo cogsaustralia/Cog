@@ -21,12 +21,20 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .ico{font-size:3rem;margin-bottom:16px}
 h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);margin-bottom:12px}
 .sub{font-size:.92rem;color:var(--text2);line-height:1.7;margin-bottom:28px}
-.actions{display:flex;flex-direction:column;gap:10px;align-items:center}
+.actions{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:24px}
 .btn-primary{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));border-radius:99px;color:#1a0f00;font-weight:600;font-size:.92rem;text-decoration:none;transition:opacity .2s}
 .btn-primary:hover{opacity:.88}
 .btn-secondary{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
 .btn-secondary:hover{color:var(--text2)}
 .notice{font-size:.75rem;color:var(--muted);line-height:1.6;margin-top:24px;padding-top:16px;border-top:1px solid rgba(240,209,138,.1)}
+
+/* PTC styles */
+.ptc-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
+.ptc-empty{background:rgba(255,255,255,.04);border:1.5px dashed rgba(240,209,138,.2);color:rgba(240,209,138,.3)}
+@media(max-width:480px){
+  .ptc-circle{width:30px;height:30px}
+  #ptc-full>div:first-of-type>div:nth-child(even){width:10px}
+}
 </style>
 </head>
 <body>
@@ -36,13 +44,147 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
     <h1>Thank you.</h1>
     <p class="sub">Your submission is in review. We'll email you when it's cleared — most submissions are reviewed within 24 hours. You can manage your submissions and withdraw consent at any time from your member dashboard.</p>
 
+    <!-- Pass the Coin panel -->
+    <div class="ptc-panel" id="ptc-panel" style="max-width:520px;margin:28px auto 0;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:26px 28px;display:none">
+      <!-- Fallback state -->
+      <div id="ptc-fallback" style="display:none">
+        <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:10px">Pass the coin — your link is almost ready</h3>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:16px">Your unique invite link will be in your vault. Share it with 4 Australians after you set up your vault.</p>
+        <a class="btn-primary" href="/wallets/member.html" style="display:inline-flex;padding:10px 20px;font-size:.85rem">Go to dashboard ›</a>
+      </div>
+      
+      <!-- Full state -->
+      <div id="ptc-full" style="display:none">
+        <div style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Pass the coin</div>
+        <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:6px">Now send this to 4 Australians you think deserve a say.</h3>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px">Share your unique link. Every person who joins through it becomes the next link in the chain.</p>
+        
+        <!-- Chain visual -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:20px">
+          <div class="ptc-circle" id="ptc-inviter" style="background:rgba(255,255,255,.04);border:1.5px dashed rgba(240,209,138,.2);color:rgba(240,209,138,.3)">TB</div>
+          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+          <div class="ptc-circle ptc-you" style="background:rgba(240,209,138,.15);border:1.5px solid rgba(240,209,138,.5);color:var(--gold-1);font-weight:600">You</div>
+          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+          <div class="ptc-circle ptc-empty">?</div>
+          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+          <div class="ptc-circle ptc-empty">?</div>
+          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+          <div class="ptc-circle ptc-empty">?</div>
+          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+          <div class="ptc-circle ptc-empty">?</div>
+        </div>
+        
+        <!-- Link box -->
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <span id="ptc-link" style="font-family:monospace;font-size:.82rem;color:var(--text2);word-break:break-all;flex:1"></span>
+          <button onclick="ptcCopy(this)" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:4px 8px;border-radius:4px;white-space:nowrap">Copy</button>
+        </div>
+        
+        <!-- Share buttons -->
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <button onclick="ptcShareFB()" class="btn-primary" style="flex:1;justify-content:center;padding:10px 20px;font-size:.85rem">Share on Facebook</button>
+        </div>
+        
+        <!-- Skip link -->
+        <div style="text-align:center">
+          <button onclick="ptcSkip()" style="font-size:.78rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">I'll share from my dashboard later</button>
+        </div>
+      </div>
+    </div>
+
     <div class="actions">
-      <a href="/wallets/member.html" class="btn-primary">Go to my dashboard</a>
-      <a href="/intro/voice-welcome.html" class="btn-secondary">Add another submission</a>
+      <a href="/wallets/member.html" class="btn-secondary">Go to my dashboard</a>
+      <a href="/intro/voice-welcome.html" class="btn-secondary">Submit another voice</a>
     </div>
 
     <p class="notice">A community membership invitation. Not financial advice. COG$ of Australia Foundation.</p>
   </div>
 </div>
+
+<script>
+/* ── Pass the Coin panel ── */
+(function(){
+  'use strict';
+  
+  document.addEventListener('DOMContentLoaded', function(){
+    var panel = document.getElementById('ptc-panel');
+    if (!panel) return;
+    
+    // Check if already skipped
+    if (localStorage.getItem('cogs_ptc_skipped') === '1') {
+      panel.style.display = 'none';
+      return;
+    }
+    
+    // Show panel
+    panel.style.display = '';
+    
+    // Try to fetch invitation code
+    fetch('/_app/api/index.php?route=invitations/my-code', {
+      credentials: 'include'
+    })
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, status:r.status, data:d}; }); })
+    .then(function(res){
+      if (res.ok && res.data.public_code) {
+        // Show full panel
+        document.getElementById('ptc-full').style.display = '';
+        
+        // Build and display link
+        var inviteUrl = 'https://cogsaustralia.org/intro/?code=' + res.data.public_code;
+        document.getElementById('ptc-link').textContent = inviteUrl;
+        
+        // Store link for dashboard
+        localStorage.setItem('cogs_ptc_link', inviteUrl);
+        
+        // Update chain visual with names
+        try {
+          var member = JSON.parse(localStorage.getItem('cogs_snft_member') || '{}');
+          if (member.first_name) {
+            var initials = member.first_name.charAt(0).toUpperCase();
+            document.querySelector('.ptc-you').textContent = initials;
+          }
+          if (member.inviter_name) {
+            var inviterInitials = member.inviter_name.split(' ').map(function(n){ return n.charAt(0).toUpperCase(); }).join('');
+            document.getElementById('ptc-inviter').textContent = inviterInitials.slice(0,2);
+          }
+        } catch(e){}
+      } else {
+        // Show fallback
+        document.getElementById('ptc-fallback').style.display = '';
+      }
+    })
+    .catch(function(){
+      // Show fallback on error
+      document.getElementById('ptc-fallback').style.display = '';
+    });
+  });
+  
+  window.ptcCopy = function(btn){
+    var link = document.getElementById('ptc-link').textContent;
+    navigator.clipboard.writeText(link).then(function(){
+      btn.textContent = 'Copied!';
+      setTimeout(function(){ btn.textContent = 'Copy'; }, 1600);
+    }).catch(function(){
+      var ta = document.createElement('textarea');
+      ta.value = link; ta.style.cssText = 'position:fixed;top:-9999px';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = 'Copied!';
+      setTimeout(function(){ btn.textContent = 'Copy'; }, 1600);
+    });
+  };
+  
+  window.ptcShareFB = function(){
+    var link = document.getElementById('ptc-link').textContent;
+    var text = 'I joined COG$ of Australia — a $4 community say in our minerals. Join before Foundation Day on 14 May: ' + link + ' Not financial advice.';
+    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(text), '_blank', 'width=600,height=400');
+  };
+  
+  window.ptcSkip = function(){
+    document.getElementById('ptc-panel').style.display = 'none';
+    localStorage.setItem('cogs_ptc_skipped', '1');
+  };
+})();
+</script>
 </body>
 </html>
