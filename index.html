@@ -16,10 +16,7 @@
           var _code = _p.get('partner_code') || _p.get('code') ||
                       _p.get('invite')        || _p.get('ref')  ||
                       _p.get('invite_token');
-          if (_code) {
-            window.location.replace('/intro/' + window.location.search);
-          }
-          // No code — stay on index, let user explore the site.
+          window.location.replace('/intro/' + window.location.search);
         }
       } catch(e) {}
     })();
@@ -431,8 +428,8 @@ setTimeout(function(){
       </div>
 
       <div class="hero-actions">
-        <a class="btn-primary" href="tell-me-more/index.html">Tell me more →</a>
-        <a class="btn-secondary" href="join/index.html">Become a Member — $4</a>
+        <a class="btn-primary" href="join/index.html">Become a Member — $4 →</a>
+        <a class="btn-secondary" href="tell-me-more/index.html">Tell me more</a>
       </div>
 
       
