@@ -748,6 +748,9 @@ function handleRecoverNumber(): void {
 function handleAdminBootstrap(): void {
     requireMethod('POST');
     $db = getDB();
+    
+    // Rate limit bootstrap attempts to prevent brute force
+    enforceRateLimit($db, 'admin_bootstrap', 3, 3600); // 3 attempts per hour
     $body = jsonBody();
 
     if (ADMIN_BOOTSTRAP_TOKEN === '') {

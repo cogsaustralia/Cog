@@ -216,6 +216,19 @@ function ops_columns_for(PDO $pdo, string $table): array {
     static $cache = [];
     $key = spl_object_hash($pdo) . ':' . $table;
     if (isset($cache[$key])) return $cache[$key];
+    
+    // Whitelist of allowed tables for column introspection
+    $allowedTables = [
+        'admins',
+        'admin_users', 
+        'rwa_asset_register',
+        // Add any other tables that need column introspection here
+    ];
+    
+    if (!in_array($table, $allowedTables, true)) {
+        throw new InvalidArgumentException("Table not allowed for column introspection: " . $table);
+    }
+    
     $cols = [];
     if (!ops_table_exists($pdo, $table)) return $cache[$key] = $cols;
     $stmt = $pdo->query("SHOW COLUMNS FROM `$table`");
