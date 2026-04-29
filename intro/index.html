@@ -473,6 +473,10 @@
     .card-deck    { font-size: .92rem; }
     .fact-pill    { font-size: .82rem; }
   }
+  
+  /* New styles for inviter strip and fday chip */
+  #intro-inviter-strip { line-height: 1.5; }
+  @media (max-width: 480px) { #intro-inviter-strip { font-size: .78rem; } #intro-fday-chip span { font-size: .72rem; } }
 </style>
 </head>
 <body>
@@ -506,6 +510,20 @@
     <!-- ══ Card 1 — What is this, and what does it cost ══ -->
     <div class="intro-card active" id="card-0" role="tabpanel" aria-label="Card 1 of 5">
       <div class="card-inner">
+        <!-- Inviter strip -->
+        <div id="intro-inviter-strip" style="background:rgba(82,184,122,.08);border:1px solid rgba(82,184,122,.28);border-radius:10px;padding:9px 14px;margin-bottom:14px;font-size:.82rem;color:#8ddcb0;display:none;align-items:center;gap:10px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(82,184,122,.18);border:1px solid rgba(82,184,122,.35);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#52b87a;flex-shrink:0" id="intro-inviter-avatar"></div>
+          <span id="intro-inviter-text"></span>
+        </div>
+        
+        <!-- Foundation Day countdown chip -->
+        <div id="intro-fday-chip" style="display:none;margin-bottom:14px">
+          <span style="display:inline-flex;align-items:center;gap:7px;padding:5px 12px;background:rgba(240,209,138,.07);border:1px solid rgba(240,209,138,.22);border-radius:99px;font-size:.75rem;color:var(--gold-1)">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--gold-2);flex-shrink:0"></span>
+            <span id="intro-fday-text"></span>
+          </span>
+        </div>
+        
         <div class="card-num">
           <span class="card-num-pip">1</span>
           <span class="card-num-text">What is COG$</span>
@@ -868,6 +886,52 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
   render(0);
   if (cards[0]) cards[0].scrollTop = 0;
 
+})();
+</script>
+
+<script>
+// New elements for card 1
+(function(){
+  'use strict';
+  
+  // Get activeCode from sessionStorage (set by main IIFE)
+  var activeCode = null;
+  try {
+    activeCode = sessionStorage.getItem('cogs_intro_code');
+  } catch(e) {}
+  
+  // Inviter strip logic
+  if (activeCode) {
+    fetch('/_app/api/index.php?route=invitations/validate&code=' + encodeURIComponent(activeCode))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.valid === true && data.inviter_name) {
+          var firstName = data.inviter_name.split(' ')[0];
+          var initial = firstName.charAt(0).toUpperCase();
+          
+          document.getElementById('intro-inviter-avatar').textContent = initial;
+          document.getElementById('intro-inviter-text').textContent = firstName + ' thinks you deserve a say.';
+          
+          try {
+            sessionStorage.setItem('cogs_intro_inviter_first', firstName);
+          } catch(e) {}
+          
+          document.getElementById('intro-inviter-strip').style.display = 'flex';
+        }
+      })
+      .catch(function() {});
+  }
+  
+  // Foundation Day countdown
+  var fday = new Date('2026-05-14T07:00:00Z');
+  var now = new Date();
+  var daysLeft = Math.ceil((fday - now) / (1000 * 60 * 60 * 24));
+  
+  if (daysLeft >= 1 && daysLeft <= 30) {
+    var text = daysLeft === 1 ? '1 day to Foundation Day — 14 May 2026' : daysLeft + ' days to Foundation Day — 14 May 2026';
+    document.getElementById('intro-fday-text').textContent = text;
+    document.getElementById('intro-fday-chip').style.display = '';
+  }
 })();
 </script>
 
