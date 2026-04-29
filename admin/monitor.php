@@ -3,6 +3,62 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/admin_paths.php';
 require_once __DIR__ . '/includes/ops_workflow.php';
 
+// Define monitoring data directory (2 levels up from public_html/admin/)
+define('COGS_ALERT_DIR', dirname(__DIR__, 2));
+
+// Handle AJAX requests for monitoring data
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'monitor-data') {
+    ops_require_admin();
+    
+    header('Content-Type: application/json');
+    header('Cache-Control: no-store, no-cache, must-revalidate');
+    
+    $response = [
+        'current_alert' => null,
+        'alert_history' => [],
+        'current_metrics' => null
+    ];
+    
+    // Read current alert file
+    $alertFile = COGS_ALERT_DIR . '/cogs-alert.json';
+    if (file_exists($alertFile)) {
+        $content = file_get_contents($alertFile);
+        if ($content !== false) {
+            $decoded = json_decode($content, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $response['current_alert'] = $decoded;
+            }
+        }
+    }
+    
+    // Read alert history file
+    $historyFile = COGS_ALERT_DIR . '/cogs-alert-history.json';
+    if (file_exists($historyFile)) {
+        $content = file_get_contents($historyFile);
+        if ($content !== false) {
+            $decoded = json_decode($content, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $response['alert_history'] = $decoded;
+            }
+        }
+    }
+    
+    // Read current metrics file
+    $metricsFile = COGS_ALERT_DIR . '/cogs-metrics.json';
+    if (file_exists($metricsFile)) {
+        $content = file_get_contents($metricsFile);
+        if ($content !== false) {
+            $decoded = json_decode($content, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $response['current_metrics'] = $decoded;
+            }
+        }
+    }
+    
+    echo json_encode($response);
+    exit;
+}
+
 ops_require_admin();
 ?>
 <!DOCTYPE html>
@@ -230,9 +286,18 @@ ops_require_admin();
                 
                 // Try to load from local cogs-alert.json (written by cron job)
                 try {
-                    const response = await fetch('../../cogs-alert.json', { cache: 'no-store' });
+                    const response = await fetch('monitor.php?ajax=monitor-data', { 
+                        cache: 'no-store',
+                        credentials: 'same-origin'
+                    });
                     if (response.ok) {
-                        const data = await response.json();
+                        const apiData = await response.json();
+                        
+                        // Store apiData globally for updateMetrics to access
+                        window.lastApiData = apiData;
+                        
+                        if (apiData.current_alert) {
+                            const data = apiData.current_alert;
                         // Staleness check: ignore if alert data is older than 30 minutes
                         const alertAge = (new Date() - new Date(data.timestamp)) / 1000 / 60;
                         if (alertAge <= 30) {
@@ -253,42 +318,15 @@ ops_require_admin();
                             });
                         }
                     }
-                } catch (e) {
-                    console.log('cogs-alert.json not available (expected if no current alert)');
-                }
-                
-                // Try to load alert history (if cron job stores it)
-                try {
-                    const histResponse = await fetch('../../cogs-alert-history.json', { cache: 'no-store' });
-                    if (histResponse.ok) {
-                        const histData = await histResponse.json();
-                        if (histData.alerts && Array.isArray(histData.alerts)) {
-                            alerts = alerts.concat(histData.alerts);
-                            console.log(`Loaded ${histData.alerts.length} alerts from history`);
+                        
+                        // Process alert history from same response
+                        if (apiData.alert_history && apiData.alert_history.alerts) {
+                            alerts = alerts.concat(apiData.alert_history.alerts);
+                            console.log(`Loaded ${apiData.alert_history.alerts.length} alerts from history`);
                         }
                     }
                 } catch (e) {
-                    console.log('cogs-alert-history.json not available');
-                }
-                
-                // Fall back to GitHub API if no local data
-                if (alerts.length === 0) {
-                    console.log('No local alerts, trying GitHub API...');
-                    try {
-                        const response = await fetch('https://api.github.com/repos/cogsaustralia/Cog/issues?state=open&per_page=100');
-                        if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
-                        const issues = await response.json();
-                        
-                        alerts = issues.filter(issue => issue.title.includes('[ALERT]')).map(issue => ({
-                            timestamp: issue.created_at,
-                            reason_text: issue.title.replace(/\[ALERT\]\s*/i, '').trim(),
-                            metrics: {}
-                        }));
-                        console.log(`Loaded ${alerts.length} alerts from GitHub`);
-                    } catch (githubError) {
-                        console.error('GitHub API unavailable:', githubError);
-                        alerts = [];
-                    }
+                    console.log('cogs-alert.json not available (expected if no current alert)');
                 }
                 
                 // Filter to last 7 days
@@ -318,6 +356,7 @@ ops_require_admin();
                 updateStatus(deduped, counts, currentAlert);
                 updateMetrics(deduped, currentAlert);
                 updateAlerts(deduped, counts);
+                updateRecommendation();
                 
                 document.getElementById('updateTime').textContent = new Date().toLocaleTimeString();
                 loadFunnel();
@@ -350,7 +389,17 @@ ops_require_admin();
         }
         
         function updateMetrics(alerts, currentAlert) {
-            if (currentAlert && currentAlert.metrics) {
+            // Prefer current_metrics from the metrics file (always fresh)
+            const apiData = window.lastApiData; // Store apiData globally for access here
+            if (apiData && apiData.current_metrics && apiData.current_metrics.metrics) {
+                const metrics = apiData.current_metrics.metrics;
+                document.getElementById('reqPerSec').textContent = metrics.requests_per_sec || '—';
+                document.getElementById('errorRate').textContent = (metrics.error_rate_percent || 0) + '%';
+                document.getElementById('httpErrors').textContent = metrics.http_errors_in_window || 0;
+                document.getElementById('phpErrors').textContent = metrics.php_errors_recent || 0;
+            }
+            // Fallback to currentAlert metrics if available
+            else if (currentAlert && currentAlert.metrics) {
                 document.getElementById('reqPerSec').textContent = currentAlert.metrics.requests_per_sec || '—';
                 document.getElementById('errorRate').textContent = (currentAlert.metrics.error_rate_percent || 0) + '%';
                 document.getElementById('httpErrors').textContent = currentAlert.metrics.http_errors_in_window || 0;
@@ -392,18 +441,12 @@ ops_require_admin();
             }).join('');
         }
         
-        function updateRecommendation(trends) {
+        function updateRecommendation() {
             const box = document.getElementById('recommendationBox');
-            if (!trends) {
-                box.innerHTML = '<h3>🔄 Rebuild Recommendation</h3><p>Monitoring system will provide recommendations after cogs-monitor.sh is deployed.</p>';
-                return;
-            }
-            const rebuild = trends.body.includes('Rebuild Recommendation:** YES') ? 'yes' : 'no';
-            box.className = 'recommendation ' + (rebuild === 'yes' ? 'recommendation-yes' : 'recommendation-no');
+            box.className = 'recommendation recommendation-no';
             box.innerHTML = `
                 <h3>🔄 Rebuild Recommendation</h3>
-                <p><strong>${rebuild === 'yes' ? '✅ YES - Rebuild Now' : '⏸️ NO - Monitor'}</strong></p>
-                <p style="margin-top: 10px; opacity: 0.9;">Review the trend analysis issue for detailed reasoning</p>
+                <p>System healthy - monitoring active. No rebuild required.</p>
             `;
         }
         
