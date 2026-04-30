@@ -65,7 +65,7 @@ try {
             UPPER(COALESCE(m.state_code, '')) AS display_state,
             m.created_at
          FROM members m
-         JOIN snft_memberships sm ON sm.member_id = m.id
+         JOIN snft_memberships sm ON sm.member_number = m.member_number
          WHERE sm.signup_payment_status IN ('paid','pending')
            AND m.created_at >= DATE_SUB(NOW(), INTERVAL 48 HOUR)
          ORDER BY m.created_at DESC
