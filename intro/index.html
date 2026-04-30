@@ -905,9 +905,14 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
   
   // Inviter strip logic
   if (activeCode) {
-    fetch('/_app/api/index.php?route=invitations/validate&code=' + encodeURIComponent(activeCode))
+    fetch('/_app/api/index.php?route=invitations/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: activeCode, entry_type: 'personal' })
+    })
       .then(function(r) { return r.json(); })
-      .then(function(data) {
+      .then(function(json) {
+        var data = (json && json.data) ? json.data : json;
         if (data.valid === true && data.inviter_name) {
           var firstName = data.inviter_name.split(' ')[0];
           var initial = firstName.charAt(0).toUpperCase();
