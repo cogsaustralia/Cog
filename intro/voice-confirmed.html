@@ -186,5 +186,105 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
   };
 })();
 </script>
+
+<!-- Canvass prompt — Poor ESG Target designations -->
+<div id="canvass-panel" style="max-width:480px;margin:28px auto 0;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:30px 28px;display:none">
+  <div style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Foundation governance</div>
+  <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--text);margin-bottom:10px;line-height:1.4">Two companies. Your view.</h3>
+  <p style="font-size:.84rem;color:var(--text2);line-height:1.6;margin-bottom:20px">The Foundation has identified Santos Limited (ASX: STO) and Origin Energy Limited (ASX: ORG) as Poor ESG Target candidates under clause 30.3 of the Partnership Agreement. Would you like to share your view on each?</p>
+
+  <div id="canvass-sto" class="canvass-q" data-designation-id="1" data-company="Santos Limited (ASX: STO)">
+    <p style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:8px">Santos Limited (ASX: STO)</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <button class="canvass-opt" data-sentiment="support" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">Support</button>
+      <button class="canvass-opt" data-sentiment="support_with_concerns" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">Support with concerns</button>
+      <button class="canvass-opt" data-sentiment="oppose" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">Oppose</button>
+      <button class="canvass-opt" data-sentiment="no_view" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">No view</button>
+    </div>
+  </div>
+
+  <div id="canvass-org" class="canvass-q" data-designation-id="2" data-company="Origin Energy Limited (ASX: ORG)">
+    <p style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:8px">Origin Energy Limited (ASX: ORG)</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <button class="canvass-opt" data-sentiment="support" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">Support</button>
+      <button class="canvass-opt" data-sentiment="support_with_concerns" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">Support with concerns</button>
+      <button class="canvass-opt" data-sentiment="oppose" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">Oppose</button>
+      <button class="canvass-opt" data-sentiment="no_view" style="padding:9px 8px;font-size:.78rem;background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s">No view</button>
+    </div>
+  </div>
+
+  <div id="canvass-status" style="font-size:.78rem;color:var(--muted);min-height:20px;text-align:center"></div>
+  <button id="canvass-skip" style="display:block;width:100%;margin-top:14px;background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline">Skip — I'll share my view from my dashboard later</button>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var selected = {};
+  var submitted = {};
+  var API = '/_app/api/index.php?route=voice-submissions';
+
+  // Show panel only if member session exists
+  try {
+    var m = JSON.parse(localStorage.getItem('cogs_snft_member') || 'null');
+    if (m && m.partner_id) {
+      document.getElementById('canvass-panel').style.display = '';
+    }
+  } catch(e) {}
+
+  // Option selection
+  document.querySelectorAll('.canvass-q').forEach(function(q) {
+    q.querySelectorAll('.canvass-opt').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var desId = q.dataset.designationId;
+        selected[desId] = btn.dataset.sentiment;
+        // Visual feedback
+        q.querySelectorAll('.canvass-opt').forEach(function(b) {
+          b.style.background = 'rgba(255,255,255,.05)';
+          b.style.borderColor = 'rgba(240,209,138,.2)';
+          b.style.color = 'var(--text)';
+        });
+        btn.style.background = 'rgba(240,209,138,.18)';
+        btn.style.borderColor = 'rgba(240,209,138,.6)';
+        btn.style.color = 'var(--gold-1)';
+        // Auto-submit this designation
+        submitCanvass(desId, btn.dataset.sentiment, q);
+      });
+    });
+  });
+
+  function submitCanvass(designationId, sentiment, qEl) {
+    if (submitted[designationId]) return;
+    submitted[designationId] = true;
+    var status = document.getElementById('canvass-status');
+    fetch('/_app/api/index.php?route=voice-submissions&id=canvass', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        canvass_designation_id: designationId,
+        canvass_sentiment: sentiment
+      }).toString()
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success || d.ok) {
+        if (status) {
+          var company = qEl ? qEl.dataset.company : 'designation';
+          status.textContent = 'View recorded for ' + company + '.';
+        }
+      }
+    })
+    .catch(function() {
+      if (status) status.textContent = 'Could not record — try again from your dashboard.';
+    });
+  }
+
+  document.getElementById('canvass-skip').addEventListener('click', function() {
+    document.getElementById('canvass-panel').style.display = 'none';
+  });
+})();
+</script>
+
 </body>
 </html>

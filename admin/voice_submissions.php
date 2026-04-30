@@ -9,8 +9,9 @@ $flashT = 'ok';
 // ── Filters ───────────────────────────────────────────────────────────────────
 $filterStatus = in_array($_GET['status'] ?? '', ['pending_review','cleared_for_use','rejected','withdrawn'], true)
     ? $_GET['status'] : 'pending_review';
-$filterType  = in_array($_GET['type'] ?? '', ['text','audio','video'], true) ? $_GET['type'] : '';
-$filterState = trim((string)($_GET['state'] ?? ''));
+$filterType    = in_array($_GET['type'] ?? '', ['text','audio','video'], true) ? $_GET['type'] : '';
+$filterState   = trim((string)($_GET['state'] ?? ''));
+$filterCanvass = ($_GET['canvass'] ?? '') === '1';
 $search      = trim((string)($_GET['q'] ?? ''));
 $page        = max(1, (int)($_GET['page'] ?? 1));
 $perPage     = 25;
@@ -24,8 +25,9 @@ $totalPages = 1;
 if ($tableReady) {
     $where  = ['mvs.compliance_status = ?'];
     $params = [$filterStatus];
-    if ($filterType)  { $where[] = 'mvs.submission_type = ?';  $params[] = $filterType; }
-    if ($filterState) { $where[] = 'mvs.display_state = ?';    $params[] = $filterState; }
+    if ($filterType)    { $where[] = 'mvs.submission_type = ?';          $params[] = $filterType; }
+    if ($filterState)   { $where[] = 'mvs.display_state = ?';             $params[] = $filterState; }
+    if ($filterCanvass) { $where[] = 'mvs.canvass_designation_id IS NOT NULL'; }
     if ($search) {
         $where[]  = '(mvs.text_content LIKE ? OR COALESCE(mvs.display_name_first, m.first_name) LIKE ?)';
         $params[] = '%' . $search . '%';
@@ -47,7 +49,7 @@ if ($tableReady) {
         "SELECT mvs.id, mvs.submission_type, mvs.text_content, mvs.file_mime_type,
                 mvs.duration_seconds, mvs.compliance_status,
                 mvs.rejection_reason_to_member, mvs.used_in_post_url,
-                mvs.created_at,
+                mvs.created_at, mvs.canvass_designation_id, mvs.canvass_sentiment,
                 COALESCE(mvs.display_name_first, m.first_name) AS disp_name,
                 COALESCE(mvs.display_state, m.state_code) AS disp_state,
                 m.email AS member_email, mvs.partner_id
@@ -76,9 +78,10 @@ $sLabels = [
 
 $h    = fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 $baseQ = '?status='.urlencode($filterStatus)
-       .($filterType  ? '&type='.urlencode($filterType)  : '')
-       .($filterState ? '&state='.urlencode($filterState) : '')
-       .($search      ? '&q='.urlencode($search)          : '').'&';
+       .($filterType    ? '&type='.urlencode($filterType)    : '')
+       .($filterState   ? '&state='.urlencode($filterState)  : '')
+       .($filterCanvass ? '&canvass=1'                        : '')
+       .($search        ? '&q='.urlencode($search)            : '').'&';
 $API   = '/_app/api/index.php?route=admin/voice-submissions/';
 
 ob_start(); ?>
@@ -159,6 +162,12 @@ ob_start(); ?>
         <?php endforeach ?>
       </select>
 
+      <h3>Canvass</h3>
+      <label style="font-size:.81rem;display:flex;align-items:center;gap:6px;margin-bottom:6px;cursor:pointer">
+        <input type="checkbox" name="canvass" value="1" <?= $filterCanvass?'checked':'' ?>>
+        Canvass only
+      </label>
+
       <h3>Search</h3>
       <input type="text" name="q" value="<?= $h($search) ?>" placeholder="Name or text&hellip;">
       <button type="submit" class="btn-apply">Apply filters</button>
@@ -187,6 +196,7 @@ ob_start(); ?>
             <span><?= $ico ?></span>
             <strong style="color:inherit"><?= $h($row['disp_name']) ?>, <?= $h($row['disp_state']) ?></strong>
             <span class="badge <?= $h($sc) ?>"><?= $h($sl) ?></span>
+            <?php if (!empty($row['canvass_designation_id'])): ?><span class="badge badge-gold">Canvass</span><?php endif ?>
             <span style="margin-left:auto"><?= $h(substr((string)$row['created_at'],0,16)) ?></span>
           </div>
           <div class="vs-row-preview"><?= $prev ?></div>
@@ -265,6 +275,7 @@ function renderDetail(item){
     if(st==='cleared_for_use') o+='<a class="vb vb-ghost" href="'+esc(furl+'?download=1')+'" download style="font-size:.75rem;margin-top:6px;display:inline-block">&#8675; Download file</a>';
   }
 
+  if(item.canvass_designation_id){var csl={support:'Support',support_with_concerns:'Support with concerns',oppose:'Oppose',no_view:'No view'};o+='<p style="font-size:.78rem;margin:0 0 8px;background:rgba(201,151,61,.08);border:1px solid rgba(201,151,61,.2);border-radius:5px;padding:6px 10px"><strong>Canvass response</strong> &mdash; '+(csl[item.canvass_sentiment]||item.canvass_sentiment||'—')+'</p>';}
   if(item.used_in_post_url) o+='<label>Used in post</label><p style="font-size:.76rem;word-break:break-all;margin:0"><a href="'+esc(item.used_in_post_url)+'" target="_blank" rel="noopener">'+esc(item.used_in_post_url)+'</a></p>';
   if(item.rejection_reason_to_member) o+='<label>Rejection reason (shown to member)</label><p style="font-size:.78rem;white-space:pre-wrap;background:rgba(220,53,69,.06);padding:7px;border-radius:4px;margin:0">'+esc(item.rejection_reason_to_member)+'</p>';
 
