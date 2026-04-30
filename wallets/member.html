@@ -5928,6 +5928,50 @@ window.ptcShare         = ptcShare;
     }, 300);
   }
 })();
+
+/* ══ AGM Voting Placeholder — Block 3 ══
+ * Conditionally rendered when member.agm_voting_enabled === true (default false).
+ * Shows upcoming AGM dates for Poor ESG Target designations.
+ * Uses coinTransition() for navigation — never bare <a href> from the IV. */
+
+function openAgmVoting() {
+  var sec = document.getElementById('agm-section');
+  if (!sec) return;
+  var isOpen = sec.style.display !== 'none' && sec.style.display !== '';
+  sec.style.display = isOpen ? 'none' : 'block';
+}
+
+function renderAgmVoting() {
+  var panel = document.getElementById('agm-panel-content');
+  if (!panel) return;
+  var data = window._vaultData || {};
+  var enabled = !!(data.agm_voting_enabled);
+
+  if (!enabled) {
+    panel.innerHTML =
+      '<p style="font-size:.85rem;color:rgba(240,225,196,.55);line-height:1.7;margin-bottom:14px">' +
+      'Available after first acquisition settles. Designation under FNAC review.</p>' +
+      '<div style="margin-bottom:12px;padding:12px 14px;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.14);border-radius:10px">' +
+      '<div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(240,209,138,.5);margin-bottom:6px">Santos Limited (ASX: STO)</div>' +
+      '<div style="font-size:.84rem;color:rgba(255,248,232,.7)">AGM expected: late 2026</div>' +
+      '<div style="font-size:.76rem;color:rgba(240,225,196,.4);margin-top:4px">Voting unlocks after first CHESS acquisition settles</div>' +
+      '</div>' +
+      '<div style="padding:12px 14px;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.14);border-radius:10px">' +
+      '<div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(240,209,138,.5);margin-bottom:6px">Origin Energy Limited (ASX: ORG)</div>' +
+      '<div style="font-size:.84rem;color:rgba(255,248,232,.7)">AGM expected: late 2026</div>' +
+      '<div style="font-size:.76rem;color:rgba(240,225,196,.4);margin-top:4px">Voting unlocks after first CHESS acquisition settles</div>' +
+      '</div>';
+    return;
+  }
+
+  // Active state — future implementation when agm_voting_enabled === true
+  panel.innerHTML =
+    '<p style="font-size:.85rem;color:rgba(255,248,232,.82)">AGM voting is now active. Go to the ESG &amp; Proxy Voting hub to cast your Aggregate Unitholder Direction.</p>' +
+    '<button class="btn btn-gold btn-sm" style="margin-top:12px" onclick="coinTransition('/hubs/mainspring/#esg-proxy')">Open ESG &amp; Proxy Voting hub</button>';
+}
+
+window.openAgmVoting  = openAgmVoting;
+window.renderAgmVoting = renderAgmVoting;
 window.renderVoicePanel      = renderVoicePanel;
 window.withdrawVoicePanel    = withdrawVoicePanel;
 
@@ -5979,6 +6023,22 @@ window.openKycPanel = function(){
     </div>
   </div>
 </div>
+<!-- ══ AGM VOTING PANEL ══ -->
+<div id="agm-section" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto;padding:40px 16px" onclick="if(event.target===this)openAgmVoting()">
+  <div style="max-width:480px;margin:0 auto;background:rgba(18,13,5,.97);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:32px 28px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-size:1.1rem;font-weight:500;color:#fff8e8">AGM Voting</h2>
+      <button onclick="openAgmVoting()" style="background:none;border:none;color:rgba(240,225,196,.55);font-size:1.2rem;cursor:pointer;padding:0 4px">&times;</button>
+    </div>
+    <div id="agm-panel-content">
+      <p style="font-size:.85rem;color:rgba(240,225,196,.55)">Loading&hellip;</p>
+    </div>
+    <p style="font-size:.73rem;color:rgba(240,225,196,.4);margin-top:20px;padding-top:14px;border-top:1px solid rgba(240,209,138,.1);line-height:1.6">
+      The Foundation holds CHESS-registered ASX shares directly in its name as Trustee. AGM attendance and proxy voting rights derive from registered shareholding &mdash; identical to any retail shareholder.
+    </p>
+  </div>
+</div>
+
 
 <!-- ══ PARTICIPATION GATE ══ -->
 <div class="participation-gate" id="participation-gate" style="display:none">
