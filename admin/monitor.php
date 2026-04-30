@@ -296,7 +296,7 @@ ops_require_admin();
                             <td style="font-family:monospace;">${c.session_token || '—'}</td>
                             <td>${c.page_context || 'join'}</td>
                             <td>${c.referrer_code || '<span style="color:#475569">—</span>'}</td>
-                            <td style="color:#94a3b8;">${new Date(c.clicked_at + 'Z').toLocaleString()}</td>
+                            <td style="color:#94a3b8;">${new Date(c.clicked_at).toLocaleString('en-AU')}</td>
                         </tr>
                     `).join('');
                 }
@@ -370,7 +370,7 @@ ops_require_admin();
                             <td>${r.ref_source || '<span style="color:#475569">direct</span>'}</td>
                             <td>${r.partner_code || '<span style="color:#475569">—</span>'}</td>
                             <td>${r.is_mobile ? '📱' : '🖥️'}</td>
-                            <td style="color:#94a3b8;">${new Date(r.visited_at + 'Z').toLocaleString()}</td>
+                            <td style="color:#94a3b8;">${new Date(r.visited_at).toLocaleString('en-AU')}</td>
                         </tr>
                     `).join('');
             } catch (e) {
