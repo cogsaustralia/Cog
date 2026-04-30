@@ -114,4 +114,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $actionId > 0 && isset($_parts[1]) &
     $svc->streamFile($partnerId, $isAdmin, $actionId);
 }
 
+
+// ── POST /canvass (record designation canvass sentiment) ──────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'canvass') {
+    $session = requireAuth('snft');
+    $stmt    = $db->prepare(
+        'SELECT p.id AS partner_id FROM partners p
+         WHERE p.member_id = ?
+         ORDER BY p.id ASC LIMIT 1'
+    );
+    $stmt->execute([(int)$session['principal_id']]);
+    $partner = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$partner) {
+        apiError('Partner record not found.', 403);
+    }
+
+    $designationId = (int)($_POST['canvass_designation_id'] ?? 0);
+    $sentiment     = trim((string)($_POST['canvass_sentiment'] ?? ''));
+    $allowedSentiments = ['support','support_with_concerns','oppose','no_view'];
+
+    if ($designationId <= 0 || !in_array($sentiment, $allowedSentiments, true)) {
+        apiError('Invalid canvass input.', 422);
+    }
+
+    // Verify designation exists and is active
+    $dStmt = $db->prepare(
+        'SELECT id FROM poor_esg_target_designations WHERE id = ? AND is_active = 1'
+    );
+    $dStmt->execute([$designationId]);
+    if (!$dStmt->fetch()) {
+        apiError('Designation not found or not active.', 404);
+    }
+
+    // Insert canvass submission — one row per designation per partner
+    // On duplicate (same partner + designation), update sentiment
+    $db->prepare(
+        'INSERT INTO member_voice_submissions
+           (partner_id, submission_type, consent_text_version, consent_given_at,
+            canvass_designation_id, canvass_sentiment, compliance_status,
+            submission_ip, submission_user_agent)
+         VALUES (?, 'text', 'v1.0-canvass', NOW(), ?, ?, 'pending_review', ?, ?)
+         
+    )->execute([
+        (int)$partner['partner_id'],
+        $designationId,
+        $sentiment,
+        $_SERVER['REMOTE_ADDR'] ?? null,
+        substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255),
+    ]);
+
+    apiSuccess(['recorded' => true, 'designation_id' => $designationId, 'sentiment' => $sentiment], 201);
+}
+
 apiError('Unknown voice-submissions action.', 404);
