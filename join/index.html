@@ -400,6 +400,7 @@
                 <label for="mobile">Mobile number <span style="font-weight:400;font-size:.82em;opacity:.65;text-transform:none;letter-spacing:0">— used for vault login</span></label>
                 <input id="mobile" name="mobile" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx">
               </div>
+              <div id="governance-fields-section">
               <div class="field full">
                 <label>Date of birth</label>
                 <div class="dob-row">
@@ -433,6 +434,11 @@
                 </select>
               </div>
               <div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode" inputmode="numeric" pattern="[0-9]{4}" required placeholder="2000" autocomplete="postal-code"></div>
+            </div>
+            </div>
+            <div id="cold-path-notice" style="display:none;background:rgba(139,105,20,0.08);border:1px solid rgba(139,105,20,0.3);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:0.85em;color:#94a3b8;line-height:1.5;">
+              <strong style="color:#f0ede8;">📋 Address and date of birth not required now.</strong><br>
+              You can complete these in your vault after joining — they are required before the first community vote on 14 May.
             </div>
 
             <!-- Member Invitation Code -->
@@ -556,6 +562,7 @@
 
             <div class="step-nav" style="margin-top:16px">
               <button type="button" class="btn-secondary" onclick="goStep(1)">‹ Back</button>
+              <input type="hidden" id="entry_mode" name="entry_mode" value="invited">
               <button class="btn-primary" type="submit" id="submit-btn" disabled style="opacity:.45;cursor:not-allowed;margin-left:auto">
                 Register as a Member ›
               </button>
@@ -1166,6 +1173,26 @@ document.getElementById('join-form').addEventListener('submit', async function(e
       var el = document.getElementById(id);
       if (el) el.addEventListener('focus', fire);
     });
+})();
+</script>
+<script>
+/* ── Stage 3+4: cold/invited path configuration ── */
+(function(){
+  try {
+    var pathKind = sessionStorage.getItem('cogs_path_kind') || 'invited';
+    var entryModeEl = document.getElementById('entry_mode');
+    if (entryModeEl) entryModeEl.value = pathKind;
+    if (pathKind === 'cold') {
+      var govSection = document.getElementById('governance-fields-section');
+      var coldNotice = document.getElementById('cold-path-notice');
+      if (govSection) govSection.style.display = 'none';
+      if (coldNotice) coldNotice.style.display = 'block';
+      ['street_address','street','suburb','state_code','postcode','dob_day','dob_month','dob_year'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.removeAttribute('required');
+      });
+    }
+  } catch(e) {}
 })();
 </script>
 <!-- ── COG$ visit + funnel beacon (Stage 1) ───────────────────────────────── -->

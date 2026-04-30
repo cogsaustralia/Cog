@@ -9,6 +9,17 @@
     // redirected to /intro/ for the onboarding sequence.
     // Curious browsers with no code land on the index and explore the site.
     // Returning visitors (cogs_intro_seen=1) always pass through.
+    
+    // ── Stage 3+4: stamp cold vs invited path kind ────────────────────────
+    (function(){
+      try {
+        var p = new URLSearchParams(window.location.search);
+        var hasCode = p.get('partner_code') || p.get('code');
+        var pathKind = hasCode ? 'invited' : 'cold';
+        sessionStorage.setItem('cogs_path_kind', pathKind);
+      } catch(e) {}
+    })();
+
     (function(){
       try {
         if (localStorage.getItem('cogs_intro_seen') !== '1') {

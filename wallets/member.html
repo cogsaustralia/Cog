@@ -967,6 +967,45 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- ── Main content area ── -->
   <div class="vault-content">
 
+  <div id="governance-banner" style="display:none;background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #8b6914;border-radius:10px;padding:20px 24px;margin-bottom:20px;">
+    <p style="margin:0 0 4px 0;font-size:0.78em;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;">Action required</p>
+    <p style="margin:0 0 14px 0;font-size:1em;color:#f0ede8;font-weight:600;">Complete your governance record to vote on 14 May</p>
+    <div id="gov-form-container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">Street address</label>
+          <input id="gov-street" type="text" placeholder="123 Main Street" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">Suburb</label>
+          <input id="gov-suburb" type="text" placeholder="Suburb" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div>
+          <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">State</label>
+          <select id="gov-state" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;">
+            <option value="">— State —</option>
+            <option>NSW</option><option>VIC</option><option>QLD</option>
+            <option>SA</option><option>WA</option><option>TAS</option>
+            <option>NT</option><option>ACT</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">Date of birth</label>
+          <input id="gov-dob" type="date" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button id="gov-submit-btn" onclick="submitGovernanceRecord()" style="width:100%;background:#8b6914;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-weight:700;font-size:0.85em;cursor:pointer;">
+            Save &amp; complete →
+          </button>
+        </div>
+      </div>
+      <p id="gov-error" style="display:none;color:#f87171;font-size:0.82em;margin:0;"></p>
+    </div>
+    <p id="gov-success" style="display:none;color:#4ade80;font-size:0.9em;margin:0;font-weight:600;">✓ Governance record complete. You can now vote on Foundation Day.</p>
+  </div>
+
   <!-- Topbar -->
   <header class="topbar">
     <a class="tb-brand" href="../wallets/index.html">
@@ -1788,6 +1827,9 @@ function openVault(d){
     return; // halt — vault dashboard not shown
   }
 
+  /* ── Stage 3+4: show governance banner if incomplete ── */
+  try { checkGovernanceBanner(d); } catch(_) {}
+
   el('vault').style.display = 'block';
   el('auth-gate').classList.remove('show');
 
@@ -1903,6 +1945,53 @@ function openVault(d){
       }, 1200);
     }
   })();
+</script>
+<script>
+/* ── Stage 3+4: governance banner ── */
+function checkGovernanceBanner(memberData) {
+  try {
+    if (memberData && memberData.governance_record_complete === false) {
+      var banner = document.getElementById('governance-banner');
+      if (banner) banner.style.display = 'block';
+    }
+  } catch(e) {}
+}
+
+async function submitGovernanceRecord() {
+  var btn = document.getElementById('gov-submit-btn');
+  var errEl = document.getElementById('gov-error');
+  var successEl = document.getElementById('gov-success');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  if (errEl) errEl.style.display = 'none';
+  var body = {
+    street_address: (document.getElementById('gov-street') || {}).value || '',
+    suburb:         (document.getElementById('gov-suburb') || {}).value || '',
+    state_code:     (document.getElementById('gov-state')  || {}).value || '',
+    date_of_birth:  (document.getElementById('gov-dob')    || {}).value || ''
+  };
+  try {
+    var res = await fetch('/_app/api/index.php?route=vault/governance-complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    var json = await res.json();
+    if (json.success || (json.data && json.data.governance_record_complete)) {
+      var fc = document.getElementById('gov-form-container');
+      if (fc) fc.style.display = 'none';
+      if (successEl) successEl.style.display = 'block';
+      try { if (window.__cogsTrack) window.__cogsTrack('vault_governance_completed'); } catch(_) {}
+    } else {
+      var msg = json.message || json.error || 'Could not save. Please check your entries.';
+      if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Save & complete →'; }
+    }
+  } catch(e) {
+    if (errEl) { errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Save & complete →'; }
+  }
+}
 
   // Auto-open sections that need attention
   if((d.open_polls||0) > 0 || (d.open_poll_initiations||0) > 0){
