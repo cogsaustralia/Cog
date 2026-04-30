@@ -831,12 +831,14 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
 
   // ── 7. Complete ──
   function complete() {
+    try { if (window.__cogsTrack) window.__cogsTrack('intro_completed'); } catch(_) {}
     try { localStorage.setItem('cogs_intro_seen', '1'); } catch (e) {}
     window.location.href = destination();
   }
 
   // ── 8. Skip ──
   function skip() {
+    try { if (window.__cogsTrack) window.__cogsTrack('intro_skipped'); } catch(_) {}
     try { localStorage.setItem('cogs_intro_seen', '1'); } catch (e) {}
     window.location.href = destination();
   }
@@ -853,6 +855,7 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
 
   var questionsBtn = document.getElementById('questions-btn');
   if(questionsBtn) questionsBtn.addEventListener('click', function(){
+    try { if (window.__cogsTrack) window.__cogsTrack('questions_clicked'); } catch(_) {}
     // Goes to Skeptic's Guide without setting intro_seen — user can return via back button
     window.location.href = '../skeptic/index.html';
   });
@@ -935,5 +938,35 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
 })();
 </script>
 
+<!-- ── COG$ visit + funnel beacon (Stage 1) ───────────────────────────────── -->
+<script>
+(function(){
+  try {
+    var path = "intro";
+    var p    = new URLSearchParams(location.search);
+    var refRaw = (p.get('ref') || '').toLowerCase();
+    var allowedRefs = ['fb','yt','ig','tw','li','email','sms','direct','qr','other'];
+    var ref = allowedRefs.indexOf(refRaw) >= 0 ? refRaw : '';
+    var qs = 'p=' + encodeURIComponent(path);
+    if (ref) qs += '&ref=' + encodeURIComponent(ref);
+    var utmC = p.get('utm_campaign'); if (utmC) qs += '&utm_campaign=' + encodeURIComponent(utmC.slice(0,64));
+    var utmO = p.get('utm_content');  if (utmO) qs += '&utm_content='  + encodeURIComponent(utmO.slice(0,64));
+    var code = (p.get('partner_code') || p.get('code') || '').toUpperCase();
+    if (/^COGS-[A-Z0-9]{4,10}$/.test(code)) qs += '&partner_code=' + encodeURIComponent(code);
+    var img = new Image(1,1);
+    img.referrerPolicy = 'origin';
+    img.src = '/_app/api/index.php?route=track/visit&' + qs + '&t=' + Date.now();
+    window.__cogsTrack = function(event, metadata){
+      try {
+        var url = '/_app/api/index.php?route=track/event&e=' + encodeURIComponent(event) + '&p=' + encodeURIComponent(path);
+        if (metadata) url += '&m=' + encodeURIComponent(String(metadata).slice(0,255));
+        if (navigator.sendBeacon) navigator.sendBeacon(url);
+        else { var i = new Image(1,1); i.src = url + '&t=' + Date.now(); }
+      } catch(_) {}
+    };
+  } catch(_) {}
+})();
+</script>
+<!-- ── END beacon ─────────────────────────────────────────────────────────── -->
 </body>
 </html>

@@ -1858,6 +1858,14 @@ function openVault(d){
   (function(){
     var _pm = new URLSearchParams(window.location.search).get('payment');
     if(!_pm) return;
+    /* ── Stage 1: fire payment_received (self-contained, no beacon dep) ── */
+    if (_pm === 'success') {
+      try {
+        var _trkUrl = '/_app/api/index.php?route=track/event&e=payment_received&p=thank-you';
+        if (navigator.sendBeacon) navigator.sendBeacon(_trkUrl);
+        else { var _i = new Image(1,1); _i.src = _trkUrl + '&t=' + Date.now(); }
+      } catch(_) {}
+    }
     // Clean param immediately so refresh doesn't re-trigger
     try{
       var _u2 = new URL(window.location.href);

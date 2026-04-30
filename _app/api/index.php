@@ -111,6 +111,9 @@ try {
         case 'jvpa-click':
             require __DIR__ . '/routes/jvpa-click.php';
             break;
+        case 'track':
+            require __DIR__ . '/routes/track.php';
+            break;
         case 'health':
         case 'status':
             apiSuccess([

@@ -32,6 +32,9 @@ if (preg_match('#^dispute-status/(\d+)$#', $action, $matches)) {
 if ($action === 'jvpa-funnel') {
     adminJvpaFunnel();
 }
+if ($action === 'visit-funnel') {
+    adminVisitFunnel();
+}
 // ── Voice Submission moderation ───────────────────────────────────────────────
 if ($action === 'voice-submissions') {
     adminVoiceSubmissionsList();
@@ -476,6 +479,125 @@ function adminJvpaFunnel(): void {
         'submissions_7d'     => $submissions7d,
         'drop_off_7d'        => $dropOff7d,
         'recent_clicks'      => $recentClicks,
+    ]);
+}
+
+// ══ CONVERSION FUNNEL (page_visits + funnel_events) ═══════════════════════════
+
+function adminVisitFunnel(): void {
+    requireMethod('GET');
+    requireAdminRole();
+    $db = getDB();
+
+    $pvExists = (bool)$db->query(
+        "SELECT COUNT(*) FROM information_schema.tables
+         WHERE table_schema = DATABASE() AND table_name = 'page_visits'"
+    )->fetchColumn();
+    $feExists = (bool)$db->query(
+        "SELECT COUNT(*) FROM information_schema.tables
+         WHERE table_schema = DATABASE() AND table_name = 'funnel_events'"
+    )->fetchColumn();
+
+    if (!$pvExists || !$feExists) {
+        apiSuccess([
+            'tables_ready'      => false,
+            'window_days'       => 7,
+            'visits_total'      => 0,
+            'visits_by_path'    => [],
+            'visits_by_source'  => [],
+            'funnel'            => [],
+            'recent_visits'     => [],
+        ]);
+        return;
+    }
+
+    $visitsTotal = (int)$db->query(
+        "SELECT COUNT(*) FROM page_visits WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY"
+    )->fetchColumn();
+
+    $visitsByPath = $db->query(
+        "SELECT path, COUNT(*) AS n
+         FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY
+         GROUP BY path
+         ORDER BY n DESC
+         LIMIT 20"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    $visitsBySource = $db->query(
+        "SELECT COALESCE(ref_source,'direct') AS ref_source, COUNT(*) AS n
+         FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY
+         GROUP BY ref_source
+         ORDER BY n DESC
+         LIMIT 10"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    $sessionsLanded = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY"
+    )->fetchColumn();
+
+    $sessionsIntro = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'intro'"
+    )->fetchColumn();
+
+    $sessionsJoin = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'join'"
+    )->fetchColumn();
+
+    $joinStarted = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM funnel_events
+         WHERE occurred_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND event = 'join_started'"
+    )->fetchColumn();
+
+    $joinSubmitted = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM funnel_events
+         WHERE occurred_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND event = 'join_submitted'"
+    )->fetchColumn();
+
+    $stripeClicked = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM funnel_events
+         WHERE occurred_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND event = 'stripe_clicked'"
+    )->fetchColumn();
+
+    $paymentReceived = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM funnel_events
+         WHERE occurred_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND event = 'payment_received'"
+    )->fetchColumn();
+
+    $funnel = [
+        ['stage' => 'Landed',          'sessions' => $sessionsLanded],
+        ['stage' => 'Saw intro',       'sessions' => $sessionsIntro],
+        ['stage' => 'Hit join page',   'sessions' => $sessionsJoin],
+        ['stage' => 'Started join',    'sessions' => $joinStarted],
+        ['stage' => 'Submitted form',  'sessions' => $joinSubmitted],
+        ['stage' => 'Clicked Stripe',  'sessions' => $stripeClicked],
+        ['stage' => 'Paid',            'sessions' => $paymentReceived],
+    ];
+
+    $recent = $db->query(
+        "SELECT id, session_token, path, ref_source, partner_code, is_mobile, visited_at
+         FROM page_visits
+         ORDER BY visited_at DESC
+         LIMIT 25"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($recent as &$row) {
+        $row['session_token'] = substr((string)$row['session_token'], 0, 8) . '…';
+    }
+    unset($row);
+
+    apiSuccess([
+        'tables_ready'     => true,
+        'window_days'      => 7,
+        'visits_total'     => $visitsTotal,
+        'visits_by_path'   => $visitsByPath,
+        'visits_by_source' => $visitsBySource,
+        'funnel'           => $funnel,
+        'recent_visits'    => $recent,
     ]);
 }
 

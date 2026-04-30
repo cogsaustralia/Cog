@@ -463,6 +463,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function tyCopy(btn, id) {
   var el = document.getElementById(id);
   if (!el) return;
+  try {
+  if (window.__cogsTrack && (id === 'ty-payid' || id === 'ty-bsb' || id === 'ty-acct')) {
+  window.__cogsTrack('payid_clicked', id);
+  }
+  } catch(_) {}
   var text = el.textContent.replace(/ /g, '').trim();
   navigator.clipboard.writeText(text).then(function() {
     btn.textContent = '✓'; btn.style.color = '#52b87a';
@@ -683,6 +688,42 @@ function tyCopy(btn, id) {
     localStorage.setItem('cogs_ptc_skipped', '1');
   };
 })();
+</script>
+<!-- ── COG$ visit + funnel beacon (Stage 1) ───────────────────────────────── -->
+<script>
+(function(){
+  try {
+    var path = "thank-you";
+    var p    = new URLSearchParams(location.search);
+    var refRaw = (p.get('ref') || '').toLowerCase();
+    var allowedRefs = ['fb','yt','ig','tw','li','email','sms','direct','qr','other'];
+    var ref = allowedRefs.indexOf(refRaw) >= 0 ? refRaw : '';
+    var qs = 'p=' + encodeURIComponent(path);
+    if (ref) qs += '&ref=' + encodeURIComponent(ref);
+    var utmC = p.get('utm_campaign'); if (utmC) qs += '&utm_campaign=' + encodeURIComponent(utmC.slice(0,64));
+    var utmO = p.get('utm_content');  if (utmO) qs += '&utm_content='  + encodeURIComponent(utmO.slice(0,64));
+    var code = (p.get('partner_code') || p.get('code') || '').toUpperCase();
+    if (/^COGS-[A-Z0-9]{4,10}$/.test(code)) qs += '&partner_code=' + encodeURIComponent(code);
+    var img = new Image(1,1);
+    img.referrerPolicy = 'origin';
+    img.src = '/_app/api/index.php?route=track/visit&' + qs + '&t=' + Date.now();
+    window.__cogsTrack = function(event, metadata){
+      try {
+        var url = '/_app/api/index.php?route=track/event&e=' + encodeURIComponent(event) + '&p=' + encodeURIComponent(path);
+        if (metadata) url += '&m=' + encodeURIComponent(String(metadata).slice(0,255));
+        if (navigator.sendBeacon) navigator.sendBeacon(url);
+        else { var i = new Image(1,1); i.src = url + '&t=' + Date.now(); }
+      } catch(_) {}
+    };
+  } catch(_) {}
+})();
+</script>
+<!-- ── END beacon ─────────────────────────────────────────────────────────── -->
+<script>
+/* ── Stage 1: thank-you page seen ── */
+document.addEventListener('DOMContentLoaded', function(){
+  try { if (window.__cogsTrack) window.__cogsTrack('thankyou_seen'); } catch(_) {}
+});
 </script>
 </body>
 </html>
