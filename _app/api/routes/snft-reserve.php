@@ -421,6 +421,11 @@ try {
         if (isset($memberCols[$col])) $memberData[$col] = $val;
     }
 
+    /* ── Stage 3+4: entry_mode governs governance_record_complete ── */
+    $entryMode = strtolower(trim((string)($body['entry_mode'] ?? 'invited')));
+    if (!in_array($entryMode, ['cold', 'invited'], true)) $entryMode = 'invited';
+    $memberData['governance_record_complete'] = ($entryMode === 'cold') ? 0 : 1;
+
     $names = array_keys($memberData);
     $marks = implode(',', array_fill(0, count($names), '?'));
     $sql = 'INSERT INTO members (' . implode(',', array_map(fn($n) => "`$n`", $names)) . ') VALUES (' . $marks . ')';

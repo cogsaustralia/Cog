@@ -19,6 +19,13 @@ function castVote(): void {
     $db = getDB();
     $body = jsonBody();
 
+    /* ── Stage 3+4: governance record must be complete to vote ── */
+    $govStmt = $db->prepare('SELECT governance_record_complete FROM members WHERE id = ? LIMIT 1');
+    $govStmt->execute([(int)$principal['principal_id']]);
+    if (!(bool)$govStmt->fetchColumn()) {
+        apiError('Your governance record is incomplete. Please complete your address and date of birth in your vault before voting.', 403);
+    }
+
     $proposalId = (int)($body['proposal_id'] ?? 0);
     $choice = sanitize($body['choice'] ?? '');
     $note   = trim((string)($body['note'] ?? ''));

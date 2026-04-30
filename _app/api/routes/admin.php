@@ -35,6 +35,9 @@ if ($action === 'jvpa-funnel') {
 if ($action === 'visit-funnel') {
     adminVisitFunnel();
 }
+if ($action === 'governance-reminders') {
+    adminGovernanceReminders();
+}
 // ── Voice Submission moderation ───────────────────────────────────────────────
 if ($action === 'voice-submissions') {
     adminVoiceSubmissionsList();
@@ -598,6 +601,62 @@ function adminVisitFunnel(): void {
         'visits_by_source' => $visitsBySource,
         'funnel'           => $funnel,
         'recent_visits'    => $recent,
+    ]);
+}
+
+// ══ GOVERNANCE COMPLETION REMINDERS ═══════════════════════════════════════════
+
+function adminGovernanceReminders(): void {
+    requireMethod('POST');
+    requireAdminRole();
+    $db = getDB();
+
+    // Members with incomplete governance records, paid, not yet reminded in last 24h
+    $stmt = $db->query(
+        "SELECT m.id, m.member_number, m.first_name, m.email
+         FROM members m
+         WHERE m.governance_record_complete = 0
+           AND m.signup_payment_status = 'paid'
+           AND m.is_active = 1
+           AND (m.governance_reminder_sent_at IS NULL
+                OR m.governance_reminder_sent_at < UTC_TIMESTAMP() - INTERVAL 24 HOUR)
+         ORDER BY m.created_at ASC
+         LIMIT 50"
+    );
+    $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($members)) {
+        apiSuccess(['sent' => 0, 'message' => 'No eligible members found.']);
+        return;
+    }
+
+    $sent = 0;
+    $errors = [];
+    foreach ($members as $member) {
+        try {
+            queueEmail(
+                $db,
+                'snft_member',
+                (int)$member['id'],
+                (string)$member['email'],
+                'governance_completion_reminder',
+                'Action needed: Complete your governance record before Foundation Day',
+                ['first_name' => $member['first_name']]
+            );
+            $db->prepare(
+                'UPDATE members SET governance_reminder_sent_at = UTC_TIMESTAMP() WHERE id = ?'
+            )->execute([(int)$member['id']]);
+            $sent++;
+        } catch (Throwable $e) {
+            $errors[] = $member['member_number'] . ': ' . $e->getMessage();
+            error_log('[governance-reminders] ' . $e->getMessage());
+        }
+    }
+
+    apiSuccess([
+        'sent'   => $sent,
+        'errors' => $errors,
+        'total_eligible' => count($members),
     ]);
 }
 

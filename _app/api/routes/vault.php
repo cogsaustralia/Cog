@@ -54,6 +54,80 @@ if ($action === 'cancel-gift-order') {
 if ($action === 'update-email') {
     updateMemberEmail();
 }
+// ── governance-complete — save deferred cold-path fields + set flag ──────────
+if ($action === 'governance-complete') {
+    requireMethod('POST');
+    $auth = requireAuth('snft');
+    $memberId = (int)$auth['id'];
+
+    $db = getDB();
+    $body = json_decode((string)file_get_contents('php://input'), true) ?? [];
+
+    $streetAddress = trim((string)($body['street_address'] ?? ''));
+    $suburb        = trim((string)($body['suburb']         ?? ''));
+    $stateCode     = strtoupper(trim((string)($body['state_code'] ?? '')));
+    $dob           = trim((string)($body['date_of_birth']  ?? ''));
+
+    $errors = [];
+    if ($streetAddress === '') $errors[] = 'Street address is required.';
+    if ($suburb === '')        $errors[] = 'Suburb is required.';
+    if (!in_array($stateCode, ['NSW','VIC','QLD','SA','WA','TAS','NT','ACT'], true)) {
+        $errors[] = 'Valid state/territory is required.';
+    }
+    if ($dob !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+        $errors[] = 'Date of birth must be in YYYY-MM-DD format.';
+    }
+
+    if (!empty($errors)) {
+        apiError(implode(' ', $errors), 422);
+    }
+
+    try {
+        $db->beginTransaction();
+
+        $update = $db->prepare(
+            'UPDATE members SET
+               street_address = ?,
+               suburb = ?,
+               state_code = ?,
+               date_of_birth = NULLIF(?, \'\'),
+               governance_record_complete = 1,
+               updated_at = UTC_TIMESTAMP()
+             WHERE id = ?'
+        );
+        $update->execute([$streetAddress, $suburb, $stateCode, $dob, $memberId]);
+
+        // Mirror to snft_memberships if columns exist
+        $smCols = trust_cols($db, 'snft_memberships');
+        $smData = [];
+        if (isset($smCols['street_address'])) $smData['street_address'] = $streetAddress;
+        if (isset($smCols['suburb']))         $smData['suburb']         = $suburb;
+        if (isset($smCols['state_code']))     $smData['state_code']     = $stateCode;
+        if ($dob !== '' && isset($smCols['date_of_birth'])) $smData['date_of_birth'] = $dob;
+        if (!empty($smData)) {
+            $sets  = implode(', ', array_map(fn($c) => "`$c` = ?", array_keys($smData)));
+            $vals  = array_values($smData);
+            $vals[] = $memberId;
+            $db->prepare("UPDATE snft_memberships SET $sets WHERE id = (SELECT id FROM (SELECT id FROM snft_memberships WHERE member_number = (SELECT member_number FROM members WHERE id = ? LIMIT 1) LIMIT 1) t2)")
+               ->execute([...$vals, $memberId]);
+        }
+
+        $db->commit();
+
+        /* ── Stage 1 funnel event ── */
+        try {
+            $db->prepare('INSERT INTO funnel_events (session_token, event, path) VALUES (?,?,?)')
+               ->execute([($_COOKIE['cogs_st'] ?? 'vault'), 'vault_governance_completed', 'vault']);
+        } catch (Throwable $ignored) {}
+
+        apiSuccess(['governance_record_complete' => true]);
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        error_log('[vault/governance-complete] ' . $e->getMessage());
+        apiError('Could not save governance record. Please try again.', 500);
+    }
+    return;
+}
 if ($action === 'change-request') {
     submitChangeRequest();
 }
