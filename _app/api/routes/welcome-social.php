@@ -14,7 +14,7 @@ if (!headers_sent()) {
 
 require_once __DIR__ . '/../services/SimpleCache.php';
 $cache    = new SimpleCache('/tmp/cogs_cache');
-$cacheKey = 'welcome_social_proof_v2';
+$cacheKey = 'welcome_social_proof_v3';
 $cached   = $cache->get($cacheKey);
 if ($cached !== null) {
     echo json_encode($cached);
