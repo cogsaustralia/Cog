@@ -8,8 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
-header('Content-Type: application/json');
-header('Cache-Control: public, max-age=300');
+// Content-Type only — do not re-set Cache-Control here as index.php controls CORS headers
+if (!headers_sent()) {
+    header('Content-Type: application/json');
+}
 
 require_once __DIR__ . '/../services/SimpleCache.php';
 $cache    = new SimpleCache('/tmp/cogs_cache');

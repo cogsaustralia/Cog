@@ -46,7 +46,15 @@ body::before {
 .voice-section { padding:72px 0 60px; text-align:center; }
 .voice-eyebrow { font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-2); margin-bottom:18px; }
 .voice-headline { font-family:var(--serif); font-size:clamp(1.7rem,4vw,2.4rem); font-style:italic; color:var(--gold-1); line-height:1.25; margin-bottom:14px; }
-.voice-sub { font-size:.95rem; color:var(--muted); margin-bottom:36px; max-width:480px; margin-left:auto; margin-right:auto; }
+.voice-sub { font-size:.95rem; color:var(--muted); margin-bottom:20px; max-width:480px; margin-left:auto; margin-right:auto; }
+.voice-teaser {
+  background:rgba(240,209,138,.06); border-left:3px solid var(--gold-2);
+  border-radius:0 10px 10px 0; padding:10px 16px;
+  margin:0 auto 24px; max-width:520px; text-align:left;
+  display:none;
+}
+.voice-teaser-text { font-family:var(--serif); font-style:italic; font-size:.95rem; color:var(--gold-1); line-height:1.5; }
+.voice-teaser-attr { font-size:.75rem; color:var(--muted); margin-top:4px; }
 .voice-box { position:relative; background:rgba(240,209,138,.05); border:1.5px solid var(--gold-rim2); border-radius:var(--r); padding:4px; margin-bottom:12px; }
 #voice-input { width:100%; min-height:120px; background:transparent; border:none; outline:none; color:var(--text); font-family:var(--sans); font-size:1rem; line-height:1.65; padding:16px 18px; resize:vertical; }
 #voice-input::placeholder { color:var(--muted); }
@@ -155,6 +163,10 @@ body::before {
       <p class="voice-eyebrow anim-1">Your Fair Say</p>
       <h1 class="voice-headline anim-2">&#x201C;What does a fair say<br>mean to you?&#x201D;</h1>
       <p class="voice-sub anim-3">Tell us in your words. No account needed. No commitment required.</p>
+      <div class="voice-teaser anim-3" id="voice-teaser">
+        <p class="voice-teaser-text" id="voice-teaser-text"></p>
+        <p class="voice-teaser-attr" id="voice-teaser-attr"></p>
+      </div>
       <div class="voice-box anim-4">
         <textarea id="voice-input" maxlength="280" placeholder="Type your thoughts here&#x2026;" aria-label="Your voice submission"></textarea>
         <div class="char-row"><span id="char-count">0</span>/280</div>
@@ -214,8 +226,7 @@ body::before {
         <p class="founding-card-title">Founding partners on Country</p>
         <p class="founding-card-body">
           The COG$ of Australia Foundation is based at <strong>Drake Village Resource Centre</strong>,
-          Drake Village NSW 2469, on <strong>Wahlubal Country</strong> of the Bundjalung Nation &#x2014;
-          with Jubullum Local Aboriginal Land Council as founding governance partner.
+          Drake Village NSW 2469, on <strong>Wahlubal Country</strong> of the Bundjalung Nation.
         </p>
       </div>
     </div>
@@ -328,8 +339,21 @@ body::before {
         if (!json.success) return;
         renderQuotes(json.data.quotes||[]);
         renderTicker(json.data.joiners||[]);
+        renderTeaser(json.data.quotes||[]);
       })
       .catch(function(){});
+
+    function renderTeaser(quotes){
+      if (!quotes.length) return;
+      var q = quotes[0];
+      var tEl = document.getElementById('voice-teaser');
+      var tText = document.getElementById('voice-teaser-text');
+      var tAttr = document.getElementById('voice-teaser-attr');
+      if (!tEl || !tText || !tAttr) return;
+      tText.textContent = '\u201C' + (q.text_content || '') + '\u201D';
+      tAttr.textContent = '\u2014\u202F' + esc(q.display_name) + (q.display_state ? ', ' + esc(q.display_state) : '');
+      tEl.style.display = 'block';
+    }
 
     function renderQuotes(quotes){
       var el=document.getElementById('quote-rotator');

@@ -4,3 +4,7 @@ downloads
 docs/cogs-docs
 .claw/
 .claw/
+
+LIVE_DB_ACCESS.md
+*.zip
+_app.zip
