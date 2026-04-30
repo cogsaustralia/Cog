@@ -288,8 +288,25 @@
             </a>
             <a class="btn-secondary" href="../faq/index.html#faq-vault">What is the vault?</a>
           </div>
-          <div class="payment-note">Your $4 payment is completed inside the vault — nothing is charged now.</div>
         </div>
+
+        <!-- ── Stage 2: Stripe primary payment CTA ─────────────────────────── -->
+        <div class="card stripe-pay-card" id="stripe-pay-card" style="margin-bottom:16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:1px solid #8b6914;border-radius:12px;padding:24px;text-align:center;">
+          <p style="margin:0 0 6px 0;font-size:0.85em;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;">Complete your membership</p>
+          <p style="margin:0 0 20px 0;font-size:1.1em;color:#f0ede8;font-weight:600;">$4.40 by card — processed securely via Stripe</p>
+          <a id="stripe-pay-btn" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener"
+             style="display:inline-block;background:#8b6914;color:#fff;font-weight:700;font-size:1rem;padding:14px 36px;border-radius:8px;text-decoration:none;letter-spacing:0.04em;transition:background 0.2s;"
+             onmouseover="this.style.background='#a07820'" onmouseout="this.style.background='#8b6914'">
+            Pay $4.40 by card →
+          </a>
+          <p style="margin:12px 0 0 0;font-size:0.78em;color:#64748b;">Card payment is $4.40 (includes 40¢ Stripe processing fee). Prefer fee-free? Use bank transfer below.</p>
+        </div>
+        <details style="margin-bottom:16px;">
+          <summary style="cursor:pointer;color:#64748b;font-size:0.85em;padding:8px 0;list-style:none;user-select:none;">
+            ▸ Pay by bank transfer instead (fee-free, $4.00)
+          </summary>
+          <div style="padding:12px 0 0 0;">
+        <!-- ── END Stage 2 Stripe wrapper — bank transfer details follow ────── -->
 
         <!-- Pay now convenience card -->
         <div style="margin-top:20px;padding:18px 20px;background:rgba(232,184,75,.05);border:1.5px solid rgba(232,184,75,.22);border-radius:16px">
@@ -304,6 +321,8 @@
           </div>
           <p style="font-size:.8rem;color:var(--text2);margin-top:10px;line-height:1.5">Fee-free · Instant via OSKO · Your vault updates after payment arrives. Your payment reference code is shown in your vault payment options.</p>
         </div>
+          </div>
+        </details>
 
       </div>
     </section>
@@ -406,6 +425,19 @@ document.addEventListener('DOMContentLoaded', function() {
   /* ── Email field ── */
   var emailEl = document.getElementById('member-email');
   if (emailEl) emailEl.textContent = email || '—';
+
+  /* ── Stage 2: append client_reference_id to Stripe link ── */
+  var stripeBtn = document.getElementById('stripe-pay-btn');
+  if (stripeBtn && num) {
+    var stripeBase = 'https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00';
+    stripeBtn.href = stripeBase + '?client_reference_id=' + encodeURIComponent(num);
+  }
+  /* ── Stage 2: fire stripe_clicked funnel event ── */
+  if (stripeBtn) {
+    stripeBtn.addEventListener('click', function() {
+      try { if (window.__cogsTrack) window.__cogsTrack('stripe_clicked'); } catch(_) {}
+    });
+  }
 
   /* ── Mobile field ── */
   var mobileEl = document.getElementById('member-mobile');
