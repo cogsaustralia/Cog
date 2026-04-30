@@ -4,283 +4,191 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FNAC Review Timeline — COG$ of Australia</title>
-<meta name="description" content="Public transparency record tracking the Foundation's compliance with the clause 30.3 Poor ESG Target review process.">
+<meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0804;--surface:rgba(18,13,5,.97);--surface2:rgba(28,20,8,.9);
-  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.18);--gold-dim:rgba(240,209,138,.08);
+  --bg:#0a0804;--panel:rgba(18,13,5,.97);--panel2:rgba(28,20,8,.9);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.18);--gold-dim:rgba(240,209,138,.07);
   --text:#fff8e8;--text2:rgba(255,248,232,.82);--muted:rgba(240,225,196,.5);
   --ok:#52b87a;--warn:#f0b429;--err:#e05c5c;--info:#6baed6;
-  --serif:'Playfair Display',Georgia,serif;
-  --sans:'DM Sans',system-ui,sans-serif;
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;
   --line:rgba(240,209,138,.12);
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
 
-/* ── Nav ── */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,8,4,.95);backdrop-filter:blur(8px);z-index:100}
-.nav-logo{font-family:var(--serif);font-size:1.05rem;color:var(--gold-1);text-decoration:none;letter-spacing:.02em}
-.nav-links{display:flex;gap:24px;list-style:none}
-.nav-links a{font-size:.8rem;color:var(--muted);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
-.nav-links a:hover{color:var(--gold-1)}
+.wrap{max-width:720px;margin:0 auto;padding:48px 24px 64px}
 
-/* ── Hero ── */
-.hero{padding:72px 32px 48px;max-width:860px;margin:0 auto;text-align:center}
-.hero-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);margin-bottom:20px}
-.hero h1{font-family:var(--serif);font-size:clamp(1.9rem,4vw,2.8rem);font-weight:500;line-height:1.2;color:var(--text);margin-bottom:18px}
-.hero h1 em{font-style:italic;color:var(--gold-1)}
-.hero-sub{font-size:.95rem;color:var(--text2);line-height:1.75;max-width:640px;margin:0 auto 32px}
-.hero-clause{display:inline-block;padding:10px 20px;background:var(--gold-dim);border:1px solid var(--gold-rim);border-radius:8px;font-size:.8rem;color:var(--gold-1);letter-spacing:.04em}
+.wordmark{display:block;font-family:var(--serif);font-size:.9rem;color:var(--gold-2);text-decoration:none;letter-spacing:.04em;margin-bottom:48px}
+.wordmark:hover{color:var(--gold-1)}
 
-/* ── Explainer ── */
-.explainer{max-width:800px;margin:0 auto;padding:0 32px 56px}
-.explainer-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
-@media(max-width:600px){.explainer-grid{grid-template-columns:1fr}}
-.explainer-card{background:var(--surface2);border:1px solid var(--gold-rim);border-radius:14px;padding:22px 24px}
-.explainer-card h3{font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin-bottom:8px}
-.explainer-card p{font-size:.84rem;color:var(--text2);line-height:1.7}
+.eyebrow{font-size:.67rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);margin-bottom:16px}
+h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.4rem);font-weight:500;line-height:1.2;color:var(--text);margin-bottom:16px}
+h1 em{font-style:italic;color:var(--gold-1)}
+.lead{font-size:.93rem;color:var(--text2);line-height:1.8;margin-bottom:32px}
 
-/* ── Section heading ── */
-.section{max-width:900px;margin:0 auto;padding:0 32px 64px}
-.section-label{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);margin-bottom:28px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.clause-pill{display:inline-block;padding:8px 16px;background:var(--gold-dim);border:1px solid var(--gold-rim);border-radius:6px;font-size:.75rem;color:var(--gold-1);letter-spacing:.04em;margin-bottom:48px}
 
-/* ── Designation block ── */
-.designation{margin-bottom:48px}
-.designation-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.designation-icon{width:44px;height:44px;border-radius:10px;background:var(--gold-dim);border:1px solid var(--gold-rim);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.designation-name{font-family:var(--serif);font-size:1.3rem;font-weight:500;color:var(--text)}
-.designation-code{font-size:.78rem;color:var(--muted);margin-top:2px;font-family:monospace;letter-spacing:.06em}
-.designation-status-pill{margin-left:auto;padding:4px 12px;border-radius:99px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
-.pill-pending{background:rgba(240,180,41,.12);color:var(--warn);border:1px solid rgba(240,180,41,.25)}
-.pill-active{background:rgba(82,184,122,.12);color:var(--ok);border:1px solid rgba(82,184,122,.25)}
-.pill-fnac{background:rgba(107,174,214,.12);color:var(--info);border:1px solid rgba(107,174,214,.25)}
+.divider{height:1px;background:var(--line);margin:40px 0}
 
-/* ── Milestone timeline ── */
-.milestones{position:relative;padding-left:28px}
-.milestones::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:1px;background:var(--line)}
-.milestone{position:relative;margin-bottom:16px;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;transition:border-color .2s}
-.milestone:hover{border-color:var(--gold-rim)}
-.milestone::before{content:'';position:absolute;left:-23px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;border:2px solid var(--line);background:var(--bg)}
-.milestone.complete::before{background:var(--ok);border-color:var(--ok)}
-.milestone.in_progress::before{background:var(--warn);border-color:var(--warn)}
-.milestone.blocked::before{background:var(--err);border-color:var(--err)}
-.milestone.pending::before{background:var(--bg);border-color:var(--muted)}
-.milestone-row{display:flex;align-items:flex-start;gap:12px}
-.milestone-label{font-size:.87rem;font-weight:500;color:var(--text);flex:1}
-.milestone-badge{flex-shrink:0;padding:2px 9px;border-radius:99px;font-size:.67rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-.badge-complete{background:rgba(82,184,122,.15);color:var(--ok)}
-.badge-in_progress{background:rgba(240,180,41,.15);color:var(--warn)}
-.badge-blocked{background:rgba(224,92,92,.15);color:var(--err)}
-.badge-pending{background:rgba(150,150,150,.12);color:var(--muted)}
-.milestone-meta{font-size:.75rem;color:var(--muted);margin-top:4px;line-height:1.5}
-.milestone-date{font-size:.73rem;color:var(--gold-2);margin-top:3px}
+.explainer-head{font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);margin-bottom:14px}
+.explainer-body{font-size:.87rem;color:var(--text2);line-height:1.8;margin-bottom:14px}
 
-/* ── Loading / error states ── */
-.state-msg{text-align:center;padding:48px 24px;color:var(--muted);font-size:.88rem}
-.state-msg .ico{font-size:2rem;display:block;margin-bottom:12px}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--gold-2);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0 40px}
+@media(max-width:520px){.cards{grid-template-columns:1fr}}
+.card{background:var(--panel2);border:1px solid var(--gold-rim);border-radius:12px;padding:20px}
+.card h3{font-family:var(--serif);font-size:.95rem;font-weight:500;color:var(--gold-1);margin-bottom:8px}
+.card p{font-size:.82rem;color:var(--text2);line-height:1.7}
+
+/* ── Designations ── */
+.designation{margin-bottom:40px}
+.des-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.des-name{font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--text)}
+.des-code{font-size:.76rem;color:var(--muted);margin-top:3px;letter-spacing:.05em}
+.des-pill{padding:3px 11px;border-radius:99px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:4px;align-self:flex-start}
+.pill-pending{background:rgba(240,180,41,.12);color:var(--warn);border:1px solid rgba(240,180,41,.22)}
+.pill-fnac{background:rgba(107,174,214,.12);color:var(--info);border:1px solid rgba(107,174,214,.22)}
+.pill-active{background:rgba(82,184,122,.12);color:var(--ok);border:1px solid rgba(82,184,122,.22)}
+
+/* ── Milestones ── */
+.milestones{padding-left:24px;position:relative}
+.milestones::before{content:'';position:absolute;left:7px;top:10px;bottom:10px;width:1px;background:var(--line)}
+.ms{position:relative;margin-bottom:12px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.ms::before{content:'';position:absolute;left:-19px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--bg);border:2px solid var(--muted)}
+.ms.complete::before{background:var(--ok);border-color:var(--ok)}
+.ms.in_progress::before{background:var(--warn);border-color:var(--warn)}
+.ms.blocked::before{background:var(--err);border-color:var(--err)}
+.ms-row{display:flex;align-items:center;gap:10px}
+.ms-label{font-size:.85rem;color:var(--text);flex:1}
+.ms-badge{padding:2px 8px;border-radius:99px;font-size:.64rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
+.b-complete{background:rgba(82,184,122,.15);color:var(--ok)}
+.b-in_progress{background:rgba(240,180,41,.15);color:var(--warn)}
+.b-blocked{background:rgba(224,92,92,.15);color:var(--err)}
+.b-pending{background:rgba(150,150,150,.1);color:var(--muted)}
+.ms-note{font-size:.74rem;color:var(--muted);margin-top:4px;line-height:1.5}
+.ms-date{font-size:.71rem;color:var(--gold-2);margin-top:2px}
+
+/* ── States ── */
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:.85rem}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--gold-2);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Transparency notice ── */
-.transparency{max-width:800px;margin:0 auto;padding:0 32px 56px}
-.transparency-card{background:var(--gold-dim);border:1px solid var(--gold-rim);border-radius:14px;padding:24px 28px;display:flex;gap:18px;align-items:flex-start}
-.transparency-card .ico{font-size:1.4rem;flex-shrink:0;margin-top:2px}
-.transparency-card p{font-size:.84rem;color:var(--text2);line-height:1.7}
-.transparency-card strong{color:var(--gold-1)}
+/* ── Transparency note ── */
+.transparency{background:var(--gold-dim);border:1px solid var(--gold-rim);border-radius:10px;padding:18px 20px;font-size:.81rem;color:var(--text2);line-height:1.7;margin-top:40px}
+.transparency strong{color:var(--gold-1)}
 
-/* ── Footer ── */
-.footer{border-top:1px solid var(--line);padding:28px 32px;text-align:center;font-size:.75rem;color:var(--muted);line-height:1.8}
-.footer a{color:var(--gold-2);text-decoration:none}
-.footer a:hover{color:var(--gold-1)}
-
-@media(max-width:640px){
-  .nav{padding:14px 18px}
-  .hero{padding:48px 18px 32px}
-  .section,.explainer,.transparency{padding-left:18px;padding-right:18px}
-  .designation-header{flex-wrap:wrap}
-  .designation-status-pill{margin-left:0}
-}
+.notice{font-size:.73rem;color:var(--muted);line-height:1.6;margin-top:48px;padding-top:20px;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<nav class="nav">
-  <a href="/" class="nav-logo">COG$ of Australia</a>
-  <ul class="nav-links">
-    <li><a href="/docs/strategy/dual-target/">Strategy</a></li>
-    <li><a href="/wallets/member.html">My Vault</a></li>
-  </ul>
-</nav>
+  <a href="/" class="wordmark">COG$ of Australia</a>
 
-<header class="hero">
-  <div class="hero-eyebrow">Governance transparency</div>
-  <h1>FNAC Review<br><em>Timeline</em></h1>
-  <p class="hero-sub">The Foundation publishes this page as a standing record of its compliance with the entrenched clause 30.3 process. It updates as each milestone is reached.</p>
-  <span class="hero-clause">JVPA Clause 30.3 — Poor ESG Target Designation Framework</span>
-</header>
+  <div class="eyebrow">Governance transparency</div>
+  <h1>FNAC Review <em>Timeline</em></h1>
+  <p class="lead">The Foundation publishes this page as a standing record of its compliance with the entrenched clause 30.3 process. It updates as each milestone is reached.</p>
+  <span class="clause-pill">JVPA Clause 30.3 — Poor ESG Target Designation Framework</span>
 
-<div class="explainer">
-  <div class="section-label">What is clause 30.3?</div>
-  <p style="font-size:.88rem;color:var(--text2);line-height:1.8">Clause 30.3 of the Joint Venture Participation Agreement establishes the mandatory process the Foundation must follow before acquiring shares in any company designated as a Poor ESG Target. The process is entrenched — it cannot be bypassed by the Caretaker Trustee or any governance body without member and FNAC consent.</p>
-  <p style="font-size:.88rem;color:var(--text2);line-height:1.8;margin-top:12px">The <strong style="color:var(--gold-1)">First Nations Advisory Committee (FNAC)</strong> is a governance body constituted under the JVPA. Its members are nominated by the Foundation's First Nations governance partners. No acquisition mandate may be issued until the FNAC has completed its review of the designation.</p>
-  <div class="explainer-grid">
-    <div class="explainer-card">
+  <div class="explainer-head">What is clause 30.3?</div>
+  <p class="explainer-body">Clause 30.3 of the Joint Venture Participation Agreement establishes the mandatory process the Foundation must follow before acquiring shares in any company designated as a Poor ESG Target. The process is entrenched — it cannot be bypassed by the Caretaker Trustee or any governance body without member and FNAC consent.</p>
+  <p class="explainer-body">The <strong style="color:var(--gold-1)">First Nations Advisory Committee (FNAC)</strong> is constituted under the JVPA. Its members are nominated by the Foundation's First Nations governance partners. No acquisition mandate may be issued until the FNAC has completed its review.</p>
+
+  <div class="cards">
+    <div class="card">
       <h3>Why publish this?</h3>
-      <p>Pre-publication is a structural accountability measure. If the Foundation does not follow the process, this page is public evidence. Members and observers can verify every milestone as it is reached.</p>
+      <p>Pre-publication is a structural accountability measure. Members and observers can verify every milestone as it is reached.</p>
     </div>
-    <div class="explainer-card">
+    <div class="card">
       <h3>What happens at the end?</h3>
-      <p>Once all seven milestones are complete for a designation, the Foundation is authorised to issue a first acquisition mandate — to begin acquiring shares in that company on the CHESS register.</p>
+      <p>Once all seven milestones are complete, the Foundation is authorised to issue a first acquisition mandate for that company.</p>
     </div>
   </div>
-</div>
 
-<div class="section">
-  <div class="section-label">Designation status</div>
+  <div class="divider"></div>
+
+  <div class="eyebrow" style="margin-bottom:24px">Designation status</div>
   <div id="designations-container">
-    <div class="state-msg">
-      <span class="ico">⏳</span>
-      <span class="spinner"></span> Loading designation status…
-    </div>
+    <div class="loading"><span class="spinner"></span>Loading…</div>
   </div>
-</div>
 
-<div class="transparency">
-  <div class="transparency-card">
-    <div class="ico">📋</div>
-    <p><strong>This page updates as each milestone is reached.</strong> The Foundation commits to updating milestone status within 5 business days of each event occurring. If you believe a milestone has been reached and this page has not been updated, email <a href="mailto:info@cogsaustralia.org" style="color:var(--gold-2)">info@cogsaustralia.org</a>. Source of truth: <code style="font-size:.78rem;color:var(--gold-1)">designation_milestones</code> table, <code style="font-size:.78rem;color:var(--gold-1)">cogsaust_TRUST</code> database.</p>
+  <div class="transparency">
+    <strong>This page updates as each milestone is reached.</strong> The Foundation commits to updating milestone status within 5 business days of each event. If you believe a milestone has been reached and this page has not been updated, email <a href="mailto:info@cogsaustralia.org" style="color:var(--gold-2)">info@cogsaustralia.org</a>.
   </div>
-</div>
 
-<footer class="footer">
-  <p>COG$ of Australia Foundation &nbsp;·&nbsp; ABN 91 341 497 529 &nbsp;·&nbsp; Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation</p>
-  <p style="margin-top:6px"><a href="/docs/strategy/dual-target/">Strategy page</a> &nbsp;·&nbsp; <a href="/principles/">Framing principles</a> &nbsp;·&nbsp; <a href="/the-fifty-years/">The fifty years</a> &nbsp;·&nbsp; <a href="/">Home</a></p>
-  <p style="margin-top:10px">A community membership. Not financial advice. Not a managed investment scheme.</p>
-</footer>
+  <p class="notice">COG$ of Australia Foundation &nbsp;·&nbsp; ABN 91 341 497 529 &nbsp;·&nbsp; Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation<br>A community membership. Not financial advice. Not a managed investment scheme.</p>
+
+</div>
 
 <script>
 (function(){
 'use strict';
 
-var STATUS_LABEL = {
-  pending_consultation: 'Pending Consultation',
-  fnac_review:          'FNAC Review',
-  board_identified:     'Board Identified',
-  acquisition_ready:    'Acquisition Ready',
-  active_engagement:    'Active Engagement'
-};
-var STATUS_PILL = {
-  pending_consultation: 'pill-pending',
-  fnac_review:          'pill-fnac',
-  board_identified:     'pill-fnac',
-  acquisition_ready:    'pill-active',
-  active_engagement:    'pill-active'
-};
-var MS_LABEL = {
-  pending:     'Pending',
-  in_progress: 'In Progress',
-  complete:    'Complete',
-  blocked:     'Blocked'
-};
+var MS_LABEL={pending:'Pending',in_progress:'In Progress',complete:'Complete',blocked:'Blocked'};
+var MS_BADGE={pending:'b-pending',in_progress:'b-in_progress',complete:'b-complete',blocked:'b-blocked'};
+var DS_LABEL={pending_consultation:'Pending Consultation',fnac_review:'FNAC Review',board_identified:'Board Identified',acquisition_ready:'Acquisition Ready',active_engagement:'Active Engagement'};
+var DS_PILL={pending_consultation:'pill-pending',fnac_review:'pill-fnac',board_identified:'pill-fnac',acquisition_ready:'pill-active',active_engagement:'pill-active'};
 
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function renderDesignations(data){
-  var container = document.getElementById('designations-container');
-  if (!data || !data.length){
-    container.innerHTML = '<div class="state-msg"><span class="ico">📭</span>No designations found.</div>';
-    return;
-  }
-  var html = '';
+function render(data){
+  var c=document.getElementById('designations-container');
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--muted);font-size:.85rem">No designations found.</p>';return;}
+  var html='';
   data.forEach(function(d){
-    var pillClass = STATUS_PILL[d.designation_status] || 'pill-pending';
-    var statusLabel = STATUS_LABEL[d.designation_status] || esc(d.designation_status);
-    html += '<div class="designation">';
-    html += '<div class="designation-header">';
-    html += '<div class="designation-icon">🏭</div>';
-    html += '<div>';
-    html += '<div class="designation-name">'+esc(d.company_name)+'</div>';
-    html += '<div class="designation-code">ASX: '+esc(d.asx_code)+' &nbsp;·&nbsp; Strategy '+esc(d.strategy_version)+' &nbsp;·&nbsp; Issued '+esc(d.strategy_issued_date)+'</div>';
-    html += '</div>';
-    html += '<div class="designation-status-pill '+pillClass+'">'+esc(statusLabel)+'</div>';
-    html += '</div>';
-
-    if (d.milestones && d.milestones.length){
-      html += '<div class="milestones">';
+    html+='<div class="designation">';
+    html+='<div class="des-header">';
+    html+='<div><div class="des-name">'+esc(d.company_name)+'</div>';
+    html+='<div class="des-code">ASX: '+esc(d.asx_code)+' &nbsp;·&nbsp; Strategy '+esc(d.strategy_version)+' &nbsp;·&nbsp; Issued '+esc(d.strategy_issued_date)+'</div></div>';
+    html+='<span class="des-pill '+(DS_PILL[d.designation_status]||'pill-pending')+'">'+esc(DS_LABEL[d.designation_status]||d.designation_status)+'</span>';
+    html+='</div>';
+    if(d.milestones&&d.milestones.length){
+      html+='<div class="milestones">';
       d.milestones.forEach(function(m){
-        var badgeClass = 'badge-'+m.milestone_status;
-        var msLabel = MS_LABEL[m.milestone_status] || esc(m.milestone_status);
-        html += '<div class="milestone '+esc(m.milestone_status)+'">';
-        html += '<div class="milestone-row">';
-        html += '<div class="milestone-label">'+esc(m.milestone_label)+'</div>';
-        html += '<span class="milestone-badge '+badgeClass+'">'+esc(msLabel)+'</span>';
-        html += '</div>';
-        if (m.status_note){
-          html += '<div class="milestone-meta">'+esc(m.status_note)+'</div>';
-        }
-        if (m.completed_date){
-          html += '<div class="milestone-date">Completed '+esc(m.completed_date)+'</div>';
-        }
-        html += '</div>';
+        html+='<div class="ms '+esc(m.milestone_status)+'">';
+        html+='<div class="ms-row"><span class="ms-label">'+esc(m.milestone_label)+'</span>';
+        html+='<span class="ms-badge '+(MS_BADGE[m.milestone_status]||'b-pending')+'">'+esc(MS_LABEL[m.milestone_status]||m.milestone_status)+'</span></div>';
+        if(m.status_note)html+='<div class="ms-note">'+esc(m.status_note)+'</div>';
+        if(m.completed_date)html+='<div class="ms-date">Completed '+esc(m.completed_date)+'</div>';
+        html+='</div>';
       });
-      html += '</div>';
-    } else {
-      html += '<div class="milestone-meta" style="padding-left:28px;color:var(--muted)">No milestones loaded.</div>';
+      html+='</div>';
     }
-    html += '</div>';
+    html+='</div>';
   });
-  container.innerHTML = html;
+  c.innerHTML=html;
 }
 
-function loadDesignations(){
-  fetch('/_app/api/index.php?route=designations/public', {credentials:'include'})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d.success && d.data){ renderDesignations(d.data); }
-      else { loadFallback(); }
-    })
-    .catch(function(){ loadFallback(); });
-}
-
-function loadFallback(){
-  // Static fallback — hardcoded initial state matching DB seed
-  renderDesignations([
-    {
-      company_name:'Santos Limited', asx_code:'STO',
-      designation_status:'pending_consultation',
-      strategy_version:'v1.1', strategy_issued_date:'2026-04-30',
-      milestones:[
-        {milestone_label:'Strategy issued',                       milestone_status:'complete',    completed_date:'2026-04-30', status_note:''},
-        {milestone_label:'JLALC consultation',                    milestone_status:'in_progress', completed_date:null,         status_note:'In-person consultation underway'},
-        {milestone_label:'FNAC formation',                        milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'FNAC review',                           milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'Board member identified for nomination', milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'First acquisition mandate issued',       milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'First AGM attendance',                  milestone_status:'pending',     completed_date:null,         status_note:''}
-      ]
-    },
-    {
-      company_name:'Origin Energy Limited', asx_code:'ORG',
-      designation_status:'pending_consultation',
-      strategy_version:'v1.1', strategy_issued_date:'2026-04-30',
-      milestones:[
-        {milestone_label:'Strategy issued',                       milestone_status:'complete',    completed_date:'2026-04-30', status_note:''},
-        {milestone_label:'JLALC consultation',                    milestone_status:'in_progress', completed_date:null,         status_note:'In-person consultation underway'},
-        {milestone_label:'FNAC formation',                        milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'FNAC review',                           milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'Board member identified for nomination', milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'First acquisition mandate issued',       milestone_status:'pending',     completed_date:null,         status_note:''},
-        {milestone_label:'First AGM attendance',                  milestone_status:'pending',     completed_date:null,         status_note:''}
-      ]
-    }
+function fallback(){
+  render([
+    {company_name:'Santos Limited',asx_code:'STO',designation_status:'pending_consultation',strategy_version:'v1.1',strategy_issued_date:'2026-04-30',milestones:[
+      {milestone_label:'Strategy issued',milestone_status:'complete',completed_date:'2026-04-30',status_note:''},
+      {milestone_label:'JLALC consultation',milestone_status:'in_progress',completed_date:null,status_note:'In-person consultation underway'},
+      {milestone_label:'FNAC formation',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'FNAC review',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'Board member identified for nomination',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'First acquisition mandate issued',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'First AGM attendance',milestone_status:'pending',completed_date:null,status_note:''}
+    ]},
+    {company_name:'Origin Energy Limited',asx_code:'ORG',designation_status:'pending_consultation',strategy_version:'v1.1',strategy_issued_date:'2026-04-30',milestones:[
+      {milestone_label:'Strategy issued',milestone_status:'complete',completed_date:'2026-04-30',status_note:''},
+      {milestone_label:'JLALC consultation',milestone_status:'in_progress',completed_date:null,status_note:'In-person consultation underway'},
+      {milestone_label:'FNAC formation',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'FNAC review',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'Board member identified for nomination',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'First acquisition mandate issued',milestone_status:'pending',completed_date:null,status_note:''},
+      {milestone_label:'First AGM attendance',milestone_status:'pending',completed_date:null,status_note:''}
+    ]}
   ]);
 }
 
-loadDesignations();
+fetch('/_app/api/index.php?route=designations/public',{credentials:'include'})
+  .then(function(r){return r.json();})
+  .then(function(d){if(d.success&&d.data){render(d.data);}else{fallback();}})
+  .catch(function(){fallback();});
 })();
 </script>
 </body>
