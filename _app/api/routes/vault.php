@@ -2590,10 +2590,10 @@ function createPaymentIntent(): void {
     }
 
     // Queue thank-you / payment-instructions email to member
-    $bankName    = (string)env('BANK_NAME',    'COG$ Foundation Account');
-    $bankBSB     = (string)env('BANK_BSB',     'BSB on request');
-    $bankAccount = (string)env('BANK_ACCOUNT', 'Account on request');
-    $payId       = (string)env('BANK_PAYID',   'members@cogsaustralia.org');
+    $bankName    = (string)env('BANK_NAME',    'Thomas Cunliffe as trustee for COGS of Australia Foundation');
+    $bankBSB     = (string)env('BANK_BSB',     '182-182');
+    $bankAccount = (string)env('BANK_ACCOUNT', '035249275');
+    $payId       = (string)env('BANK_PAYID',   '0494578706');
 
     $payload = [
         'full_name'      => $member['full_name'],
@@ -3869,10 +3869,10 @@ function createKidsOrder(): void {
     }
 
     // Queue payment instructions email
-    $payId       = (string)env('BANK_PAYID',    'members@cogsaustralia.org');
-    $bankName    = (string)env('BANK_NAME',     'COG$ Foundation Account');
-    $bankBSB     = (string)env('BANK_BSB',      'BSB on request');
-    $bankAccount = (string)env('BANK_ACCOUNT',  'Account on request');
+    $payId       = (string)env('BANK_PAYID',    '0494578706');
+    $bankName    = (string)env('BANK_NAME',     'Thomas Cunliffe as trustee for COGS of Australia Foundation');
+    $bankBSB     = (string)env('BANK_BSB',      '182-182');
+    $bankAccount = (string)env('BANK_ACCOUNT',  '035249275');
     try {
         queueEmail($db, 'snft_member', (int)$member['id'], $member['email'],
             'payment_intent_member',

@@ -409,10 +409,10 @@ try {
                 'units'         => 1,
                 'amount'        => number_format($amountTotal / 100, 2),
                 'reference'     => $sessionId,
-                'pay_id'        => '0494 578 706',
-                'bank_name'     => 'The Trustee for COGS of Australia Foundation Hybrid Trust',
+                'pay_id'        => '0494578706',
+                'bank_name'     => 'Thomas Cunliffe as trustee for COGS of Australia Foundation',
                 'bank_bsb'      => '182-182',
-                'bank_account'  => '035 249 275',
+                'bank_account'  => '035249275',
             ];
             if (!empty($biz['email'])) {
                 queueEmail($db, 'bnft_business', $bizId, (string)$biz['email'], 'payment_intent_member',
@@ -515,10 +515,10 @@ try {
                 'units'         => 0,
                 'amount'        => number_format($amountTotal / 100, 2),
                 'reference'     => $sessionId,
-                'pay_id'        => '0494 578 706',
-                'bank_name'     => 'The Trustee for COGS of Australia Foundation Hybrid Trust',
+                'pay_id'        => '0494578706',
+                'bank_name'     => 'Thomas Cunliffe as trustee for COGS of Australia Foundation',
                 'bank_bsb'      => '182-182',
-                'bank_account'  => '035 249 275',
+                'bank_account'  => '035249275',
             ];
             if (!empty($biz['email'])) {
                 queueEmail($db, 'bnft_business', $bizId, (string)$biz['email'], 'payment_intent_member',
