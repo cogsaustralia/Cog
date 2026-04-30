@@ -147,6 +147,9 @@ try {
         case 'welcome-social':
             require __DIR__ . '/routes/welcome-social.php';
             break;
+        case 'welcome-media':
+            require __DIR__ . '/routes/welcome-media.php';
+            break;
         default:
             apiError('Route not found', 404);
             break;
