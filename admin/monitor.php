@@ -393,14 +393,14 @@ ops_require_admin();
             const apiData = window.lastApiData; // Store apiData globally for access here
             if (apiData && apiData.current_metrics && apiData.current_metrics.metrics) {
                 const metrics = apiData.current_metrics.metrics;
-                document.getElementById('reqPerSec').textContent = metrics.requests_per_sec || '—';
+                document.getElementById('reqPerSec').textContent = metrics.requests_per_sec ?? '—';
                 document.getElementById('errorRate').textContent = (metrics.error_rate_percent || 0) + '%';
                 document.getElementById('httpErrors').textContent = metrics.http_errors_in_window || 0;
                 document.getElementById('phpErrors').textContent = metrics.php_errors_recent || 0;
             }
             // Fallback to currentAlert metrics if available
             else if (currentAlert && currentAlert.metrics) {
-                document.getElementById('reqPerSec').textContent = currentAlert.metrics.requests_per_sec || '—';
+                document.getElementById('reqPerSec').textContent = currentAlert.metrics.requests_per_sec ?? '—';
                 document.getElementById('errorRate').textContent = (currentAlert.metrics.error_rate_percent || 0) + '%';
                 document.getElementById('httpErrors').textContent = currentAlert.metrics.http_errors_in_window || 0;
                 document.getElementById('phpErrors').textContent = currentAlert.metrics.php_errors_recent || 0;
