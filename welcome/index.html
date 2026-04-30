@@ -110,6 +110,9 @@ body::before {
 .quote-dot { width:6px; height:6px; border-radius:50%; background:var(--gold-rim2); transition:background .3s; }
 .quote-dot.active { background:var(--gold-2); }
 .quote-placeholder { color:var(--muted); font-size:.88rem; font-style:italic; text-align:center; padding:10px 0; }
+.quote-media { width:100%; border-radius:10px; max-height:280px; background:#000; display:block; margin-bottom:10px; }
+audio.quote-media { max-height:unset; background:transparent; }
+.quote-media-label { font-size:.78rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
 .ticker-list { display:flex; flex-direction:column; gap:10px; }
 .ticker-item { display:flex; align-items:center; gap:12px; background:var(--gold-pale); border:1px solid var(--gold-rim); border-radius:10px; padding:12px 16px; font-size:.88rem; animation:fadeSlideIn .4s var(--ease) both; }
 .ticker-dot { width:8px; height:8px; border-radius:50%; background:var(--ok); flex-shrink:0; box-shadow:0 0 6px rgba(82,184,122,.5); }
@@ -336,16 +339,20 @@ body::before {
     fetch(apiBase + 'welcome-social')
       .then(function(r){ return r.json(); })
       .then(function(json){
-        if (!json.success) return;
+        if (!json.success) {
+          console.error('[welcome-social] API error:', json.error, json.detail||'');
+          return;
+        }
         renderQuotes(json.data.quotes||[]);
         renderTicker(json.data.joiners||[]);
         renderTeaser(json.data.quotes||[]);
       })
-      .catch(function(){});
+      .catch(function(err){ console.error('[welcome-social] fetch failed:', err); });
 
     function renderTeaser(quotes){
-      if (!quotes.length) return;
-      var q = quotes[0];
+      var textQ = quotes.filter(function(q){ return q.type === 'text' && q.text_content; });
+      if (!textQ.length) return;
+      var q = textQ[0];
       var tEl = document.getElementById('voice-teaser');
       var tText = document.getElementById('voice-teaser-text');
       var tAttr = document.getElementById('voice-teaser-attr');
@@ -363,9 +370,23 @@ body::before {
       function render(i){
         var q=quotes[i];
         var dots=quotes.map(function(_,j){ return '<span class="quote-dot'+(j===i?' active':'')+'"></span>'; }).join('');
-        el.innerHTML='<p class="quote-text">\u201C'+esc(q.text_content)+'\u201D</p>'+
-          '<p class="quote-attr">\u2014\u202F'+esc(q.display_name)+(q.display_state?',\u202F'+esc(q.display_state):'')+
-          '</p><div class="quote-dots">'+dots+'</div>';
+        var inner='';
+        if (q.type==='video'){
+          inner='<p class="quote-media-label">\uD83C\uDF9E\uFE0F Video message</p>'+
+            '<video class="quote-media" controls preload="none" src="'+esc(q.media_url||'')+'"></video>'+
+            '<p class="quote-attr">\u2014\u202F'+esc(q.display_name)+(q.display_state?',\u202F'+esc(q.display_state):'')+
+            '</p><div class="quote-dots">'+dots+'</div>';
+        } else if (q.type==='audio'){
+          inner='<p class="quote-media-label">\uD83C\uDF99\uFE0F Voice message</p>'+
+            '<audio class="quote-media" controls preload="none" src="'+esc(q.media_url||'')+'"></audio>'+
+            '<p class="quote-attr">\u2014\u202F'+esc(q.display_name)+(q.display_state?',\u202F'+esc(q.display_state):'')+
+            '</p><div class="quote-dots">'+dots+'</div>';
+        } else {
+          inner='<p class="quote-text">\u201C'+esc(q.text_content||'')+'\u201D</p>'+
+            '<p class="quote-attr">\u2014\u202F'+esc(q.display_name)+(q.display_state?',\u202F'+esc(q.display_state):'')+
+            '</p><div class="quote-dots">'+dots+'</div>';
+        }
+        el.innerHTML=inner;
       }
       render(0);
       if (quotes.length>1){ setInterval(function(){ idx=(idx+1)%quotes.length; render(idx); },8000); }
