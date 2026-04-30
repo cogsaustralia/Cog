@@ -61,7 +61,11 @@ try {
 
     $joinRows = $db->query(
         "SELECT
-            m.first_name AS display_name,
+            CONCAT(
+              UPPER(LEFT(COALESCE(m.first_name, '?'), 1)), '.',
+              CASE WHEN m.last_name IS NOT NULL AND m.last_name != ''
+                   THEN CONCAT(UPPER(LEFT(m.last_name, 1)), '.') ELSE '' END
+            ) AS display_name,
             UPPER(COALESCE(m.state_code, '')) AS display_state,
             m.created_at
          FROM members m
