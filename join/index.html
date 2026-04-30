@@ -454,6 +454,7 @@
               <p class="invite-admin-note" id="invite-admin-note">No code? <a href="mailto:hello@cogsaustralia.org?subject=Invitation+Request" style="color:var(--gold-2)">Contact administration</a> to request an invitation.</p>
             </div>
             <input type="hidden" id="invite_code_used" name="invite_code_used">
+            <input type="hidden" id="voice_session_token" name="voice_session_token">
             <input type="hidden" id="invite_validation_status" name="invite_validation_status" value="missing">
             <input type="hidden" id="invited_by_partner_id" name="invited_by_partner_id">
             <input type="hidden" id="invite_verified_at" name="invite_verified_at">
@@ -732,6 +733,17 @@ var _inviterPartnerId = '';
       params.get('partner_code')
     );
   }
+
+  // Read voice session token from ?vt= URL param (set by /welcome/ on join click)
+  (function(){
+    try {
+      var vt = new URLSearchParams(window.location.search).get('vt') || '';
+      if (vt.length >= 20 && vt.length <= 64) {
+        var el = document.getElementById('voice_session_token');
+        if (el) el.value = vt;
+      }
+    } catch(e) {}
+  })();
 
   function readStoredInvite(){
     try{

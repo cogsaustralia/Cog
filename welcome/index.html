@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Fair Say — COG$ of Australia Foundation</title>
+<meta name="description" content="What does a fair say mean to you? Join the COG$ of Australia Foundation — community joint venture membership for $4.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0a0804; --panel:rgba(18,13,5,.96);
+  --gold-1:#f0d18a; --gold-2:#c9973d; --gold-3:#7a5518;
+  --gold-rim:rgba(240,209,138,.18); --gold-rim2:rgba(240,209,138,.42); --gold-pale:rgba(240,209,138,.07);
+  --text:#fff8e8; --text2:rgba(255,248,232,.88); --muted:rgba(240,225,196,.60);
+  --ok:#52b87a; --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1); --r:16px;
+}
+html { scroll-behavior: smooth; }
+body { font-family:var(--sans); background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%,rgba(240,209,138,.09) 0%,transparent 65%),
+    radial-gradient(ellipse 55% 45% at 8% 95%,rgba(201,151,61,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 35% at 92% 78%,rgba(240,209,138,.05) 0%,transparent 55%);
+}
+.page-wrap { position:relative; z-index:1; }
+.site-header {
+  padding:18px 24px; border-bottom:1px solid var(--gold-rim);
+  background:rgba(10,8,4,.85); backdrop-filter:blur(8px);
+  position:sticky; top:0; z-index:100;
+}
+.nav-row { max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.brand { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.brand-logo { width:38px; height:38px; border-radius:50%; }
+.brand-copy { display:flex; flex-direction:column; line-height:1.25; }
+.brand-name { font-family:var(--serif); font-size:.9rem; color:var(--gold-1); }
+.brand-sub { font-size:.68rem; color:var(--muted); }
+.nav-links { display:flex; gap:20px; }
+.nav-links a { font-size:.82rem; color:var(--muted); text-decoration:none; transition:color .2s; }
+.nav-links a:hover { color:var(--gold-1); }
+.container { max-width:680px; margin:0 auto; padding:0 24px; }
+.voice-section { padding:72px 0 60px; text-align:center; }
+.voice-eyebrow { font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-2); margin-bottom:18px; }
+.voice-headline { font-family:var(--serif); font-size:clamp(1.7rem,4vw,2.4rem); font-style:italic; color:var(--gold-1); line-height:1.25; margin-bottom:14px; }
+.voice-sub { font-size:.95rem; color:var(--muted); margin-bottom:36px; max-width:480px; margin-left:auto; margin-right:auto; }
+.voice-box { position:relative; background:rgba(240,209,138,.05); border:1.5px solid var(--gold-rim2); border-radius:var(--r); padding:4px; margin-bottom:12px; }
+#voice-input { width:100%; min-height:120px; background:transparent; border:none; outline:none; color:var(--text); font-family:var(--sans); font-size:1rem; line-height:1.65; padding:16px 18px; resize:vertical; }
+#voice-input::placeholder { color:var(--muted); }
+.char-row { display:flex; justify-content:flex-end; padding:4px 12px 10px; font-size:.78rem; color:var(--muted); }
+.char-row span { transition:color .2s; }
+.char-row span.near { color:var(--gold-2); }
+.char-row span.limit { color:#e07070; }
+.btn-primary {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  background:linear-gradient(135deg,var(--gold-2),var(--gold-3));
+  color:#1a0e00; font-family:var(--sans); font-weight:500; font-size:1rem;
+  padding:14px 32px; border-radius:50px; border:none; cursor:pointer;
+  text-decoration:none; transition:opacity .2s,transform .15s; min-width:220px;
+}
+.btn-primary:hover { opacity:.9; transform:translateY(-1px); }
+.btn-primary:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+.btn-primary.btn-lg { font-size:1.1rem; padding:17px 38px; }
+#voice-status { margin-top:14px; font-size:.88rem; min-height:22px; color:var(--muted); }
+#voice-status.error { color:#e07070; }
+.cta-section { padding:64px 0 56px; text-align:center; display:none; }
+.cta-section.visible { display:block; }
+.submitted-badge {
+  display:inline-block; background:rgba(82,184,122,.15); border:1px solid rgba(82,184,122,.4);
+  color:var(--ok); border-radius:50px; padding:6px 18px; font-size:.82rem; letter-spacing:.06em; margin-bottom:24px;
+}
+.submitted-quote {
+  font-family:var(--serif); font-style:italic; font-size:1.05rem; color:var(--gold-1);
+  border-left:3px solid var(--gold-2); text-align:left; padding:12px 20px;
+  background:var(--gold-pale); border-radius:0 var(--r) var(--r) 0;
+  margin:0 auto 32px; max-width:520px;
+}
+.cta-headline { font-family:var(--serif); font-size:clamp(1.4rem,3.5vw,2rem); color:var(--text); line-height:1.3; margin-bottom:10px; }
+.cta-sub { font-size:.95rem; color:var(--muted); margin-bottom:30px; }
+.reassure { font-size:.8rem; color:var(--muted); margin-top:12px; }
+.divider { border:none; border-top:1px solid var(--gold-rim); margin:0; }
+.countdown-band { padding:48px 0; text-align:center; }
+.cd-eyebrow { font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-2); margin-bottom:14px; }
+.cd-grid { display:flex; justify-content:center; gap:6px; margin:0 auto 14px; max-width:380px; }
+.cd-cell { display:flex; flex-direction:column; align-items:center; background:var(--gold-pale); border:1px solid var(--gold-rim); border-radius:10px; padding:12px 16px; min-width:64px; }
+.cd-days { background:var(--gold-pale); border:1px solid var(--gold-rim2); border-radius:10px; padding:12px 20px; text-align:center; }
+.cd-days-val { font-family:var(--serif); font-size:2.4rem; color:var(--gold-1); line-height:1; }
+.cd-days-lbl { font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; margin-top:4px; }
+.cd-hval { font-family:var(--serif); font-size:1.7rem; color:var(--text); line-height:1; }
+.cd-hlbl { font-size:.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
+.cd-date { font-size:.8rem; color:var(--muted); }
+.cd-expired { font-family:var(--serif); font-size:1.1rem; color:var(--gold-1); display:none; }
+.social-section { padding:48px 0; }
+.section-label { font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-2); text-align:center; margin-bottom:28px; }
+.quote-rotator { background:var(--panel); border:1px solid var(--gold-rim); border-radius:var(--r); padding:28px 30px; min-height:100px; position:relative; margin-bottom:20px; }
+.quote-text { font-family:var(--serif); font-style:italic; font-size:1.05rem; color:var(--gold-1); line-height:1.55; margin-bottom:10px; }
+.quote-attr { font-size:.8rem; color:var(--muted); }
+.quote-dots { display:flex; gap:6px; justify-content:center; margin-top:18px; }
+.quote-dot { width:6px; height:6px; border-radius:50%; background:var(--gold-rim2); transition:background .3s; }
+.quote-dot.active { background:var(--gold-2); }
+.quote-placeholder { color:var(--muted); font-size:.88rem; font-style:italic; text-align:center; padding:10px 0; }
+.ticker-list { display:flex; flex-direction:column; gap:10px; }
+.ticker-item { display:flex; align-items:center; gap:12px; background:var(--gold-pale); border:1px solid var(--gold-rim); border-radius:10px; padding:12px 16px; font-size:.88rem; animation:fadeSlideIn .4s var(--ease) both; }
+.ticker-dot { width:8px; height:8px; border-radius:50%; background:var(--ok); flex-shrink:0; box-shadow:0 0 6px rgba(82,184,122,.5); }
+.ticker-name { color:var(--text); font-weight:500; }
+.ticker-state { color:var(--muted); }
+.ticker-ago { margin-left:auto; color:var(--muted); font-size:.8rem; }
+.ticker-empty { color:var(--muted); font-size:.85rem; font-style:italic; text-align:center; padding:14px 0; }
+.founding-card { background:var(--panel); border:1px solid var(--gold-rim); border-radius:var(--r); padding:26px 28px; text-align:center; margin-top:20px; }
+.founding-card-title { font-family:var(--serif); font-size:1rem; color:var(--gold-1); margin-bottom:8px; }
+.founding-card-body { font-size:.85rem; color:var(--muted); line-height:1.6; }
+.founding-card-body strong { color:var(--text2); }
+.site-footer { border-top:1px solid var(--gold-rim); padding:32px 24px; text-align:center; font-size:.8rem; color:var(--muted); line-height:1.8; }
+.site-footer a { color:var(--gold-2); text-decoration:none; }
+.site-footer a:hover { text-decoration:underline; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeSlideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+.anim-1{animation:fadeUp .6s .05s both} .anim-2{animation:fadeUp .6s .15s both}
+.anim-3{animation:fadeUp .6s .25s both} .anim-4{animation:fadeUp .6s .35s both}
+.anim-5{animation:fadeUp .6s .45s both}
+@media(max-width:560px){
+  .voice-headline{font-size:1.5rem} .cta-headline{font-size:1.3rem}
+  .btn-primary{min-width:unset;width:100%} .nav-links{display:none}
+  .cd-grid{gap:4px} .cd-cell{padding:10px 10px;min-width:52px}
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<header class="site-header">
+  <div class="nav-row">
+    <a class="brand" href="../index.html">
+      <img class="brand-logo" src="../assets/logo_webcir.png" alt="COG$ of Australia Foundation">
+      <div class="brand-copy">
+        <span class="brand-name">COG$ of Australia Foundation</span>
+        <span class="brand-sub">Community Owned Gold &amp; Silver&#x2122;</span>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="../tell-me-more/index.html">About</a>
+      <a href="../faq/index.html">FAQ</a>
+      <a href="../join/index.html">Join</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="voice-section" id="voice-section">
+    <div class="container">
+      <p class="voice-eyebrow anim-1">Your Fair Say</p>
+      <h1 class="voice-headline anim-2">&#x201C;What does a fair say<br>mean to you?&#x201D;</h1>
+      <p class="voice-sub anim-3">Tell us in your words. No account needed. No commitment required.</p>
+      <div class="voice-box anim-4">
+        <textarea id="voice-input" maxlength="280" placeholder="Type your thoughts here&#x2026;" aria-label="Your voice submission"></textarea>
+        <div class="char-row"><span id="char-count">0</span>/280</div>
+      </div>
+      <div class="anim-5">
+        <button id="voice-submit" class="btn-primary" disabled>Share your voice &#x2192;</button>
+        <div id="voice-status" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" id="cta-section">
+    <div class="container">
+      <div class="submitted-badge">&#x2713; Your voice is in the queue</div>
+      <blockquote class="submitted-quote" id="submitted-quote-display"></blockquote>
+      <h2 class="cta-headline">The relay starts when 4 Australians<br>like you join.</h2>
+      <p class="cta-sub">Will you be one?</p>
+      <a id="join-cta-btn" href="../join/" class="btn-primary btn-lg">Join the Foundation &#x2014; $4 once only &#x2192;</a>
+      <p class="reassure">One payment. No subscriptions. No lock-in.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="countdown-band">
+    <div class="container">
+      <p class="cd-eyebrow">Governance Foundation Day</p>
+      <div id="cd-wrap">
+        <div id="cd-expired" class="cd-expired">Governance Foundation Day &#x2014; 14 May 2026</div>
+        <div class="cd-grid" id="cd-grid">
+          <div class="cd-days">
+            <div class="cd-days-val" id="cdD">--</div>
+            <div class="cd-days-lbl">Days</div>
+          </div>
+          <div class="cd-cell"><span class="cd-hval" id="cdH">--</span><span class="cd-hlbl">Hours</span></div>
+          <div class="cd-cell"><span class="cd-hval" id="cdM">--</span><span class="cd-hlbl">Mins</span></div>
+          <div class="cd-cell"><span class="cd-hval" id="cdS">--</span><span class="cd-hlbl">Secs</span></div>
+        </div>
+      </div>
+      <p class="cd-date">14 May 2026 &middot; 5 pm AEST &middot; Drake Village NSW &middot; Wahlubal Country</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="social-section">
+    <div class="container">
+      <p class="section-label">Voices from the community</p>
+      <div class="quote-rotator" id="quote-rotator">
+        <div class="quote-placeholder">Loading voices&#x2026;</div>
+      </div>
+      <p class="section-label" style="margin-top:36px">Joining now</p>
+      <div class="ticker-list" id="ticker-list">
+        <div class="ticker-empty">Checking recent activity&#x2026;</div>
+      </div>
+      <div class="founding-card" style="margin-top:36px">
+        <p class="founding-card-title">Founding partners on Country</p>
+        <p class="founding-card-body">
+          The COG$ of Australia Foundation is based at <strong>Drake Village Resource Centre</strong>,
+          Drake Village NSW 2469, on <strong>Wahlubal Country</strong> of the Bundjalung Nation &#x2014;
+          with Jubullum Local Aboriginal Land Council as founding governance partner.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>COG$ of Australia Foundation &middot; ABN 91 341 497 529 &middot; Drake Village NSW 2469 &middot; Wahlubal Country, Bundjalung Nation</p>
+  <p style="margin-top:6px">
+    <a href="../terms/index.html">Terms</a> &middot;
+    <a href="../privacy/index.html">Privacy</a> &middot;
+    <a href="../tell-me-more/index.html">About</a> &middot;
+    <a href="../join/index.html">Join</a>
+  </p>
+</footer>
+
+</div>
+<script>
+(function(){
+  'use strict';
+  var SESSION_KEY = 'cogs_voice_token';
+  var token = '';
+  try {
+    token = sessionStorage.getItem(SESSION_KEY) || '';
+    if (!token || token.length < 20) {
+      var arr = new Uint8Array(20);
+      crypto.getRandomValues(arr);
+      token = Array.from(arr, function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+      sessionStorage.setItem(SESSION_KEY, token);
+    }
+  } catch(e) { token = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); }
+
+  var refSource = '';
+  try { refSource = new URLSearchParams(window.location.search).get('ref') || ''; } catch(e) {}
+
+  var textarea  = document.getElementById('voice-input');
+  var charCount = document.getElementById('char-count');
+  var submitBtn = document.getElementById('voice-submit');
+  var statusEl  = document.getElementById('voice-status');
+
+  textarea.addEventListener('input', function(){
+    var len = textarea.value.length;
+    charCount.textContent = len;
+    charCount.className = len >= 270 ? 'limit' : len >= 240 ? 'near' : '';
+    submitBtn.disabled = len < 3;
+  });
+
+  submitBtn.addEventListener('click', function(){
+    var text = textarea.value.trim();
+    if (text.length < 3) return;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sharing\u2026';
+    statusEl.className = ''; statusEl.textContent = '';
+    var apiBase = window.location.pathname.replace(/\/welcome\/?.*$/, '') + '/_app/api/';
+    fetch(apiBase + 'welcome-voice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text_content: text, session_token: token, ref_source: refSource })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      if (!json.success) throw new Error(json.error || 'Could not save submission.');
+      showCta(text);
+    })
+    .catch(function(err){
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Share your voice \u2192';
+      statusEl.className = 'error';
+      statusEl.textContent = err.message || 'Something went wrong. Please try again.';
+    });
+  });
+
+  function showCta(submittedText){
+    document.getElementById('voice-section').style.display = 'none';
+    var ctaSection = document.getElementById('cta-section');
+    ctaSection.classList.add('visible');
+    document.getElementById('submitted-quote-display').textContent = '\u201C' + submittedText + '\u201D';
+    var qs = ['vt=' + encodeURIComponent(token)];
+    if (refSource) qs.push('ref=' + encodeURIComponent(refSource));
+    document.getElementById('join-cta-btn').href = '../join/?' + qs.join('&');
+    ctaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  (function(){
+    var targetMs = Date.UTC(2026,4,14,7,0,0),
+        grid=document.getElementById('cd-grid'), expired=document.getElementById('cd-expired'),
+        dEl=document.getElementById('cdD'), hEl=document.getElementById('cdH'),
+        mEl=document.getElementById('cdM'), sEl=document.getElementById('cdS');
+    if (!grid||!expired) return;
+    function p(n){ return String(n).padStart(2,'0'); }
+    function tick(){
+      var diff=targetMs-Date.now();
+      if (diff<=0){ grid.style.display='none'; expired.style.display='block'; return; }
+      expired.style.display='none'; grid.style.display='flex';
+      var t=Math.floor(diff/1000);
+      dEl.textContent=String(Math.floor(t/86400));
+      hEl.textContent=p(Math.floor((t%86400)/3600));
+      mEl.textContent=p(Math.floor((t%3600)/60));
+      sEl.textContent=p(t%60);
+    }
+    tick(); setInterval(tick,1000);
+  })();
+
+  (function(){
+    var apiBase = window.location.pathname.replace(/\/welcome\/?.*$/, '') + '/_app/api/';
+    fetch(apiBase + 'welcome-social')
+      .then(function(r){ return r.json(); })
+      .then(function(json){
+        if (!json.success) return;
+        renderQuotes(json.data.quotes||[]);
+        renderTicker(json.data.joiners||[]);
+      })
+      .catch(function(){});
+
+    function renderQuotes(quotes){
+      var el=document.getElementById('quote-rotator');
+      if (!el) return;
+      if (!quotes.length){ el.innerHTML='<p class="quote-placeholder">Be among the first to share your voice.</p>'; return; }
+      var idx=0;
+      function render(i){
+        var q=quotes[i];
+        var dots=quotes.map(function(_,j){ return '<span class="quote-dot'+(j===i?' active':'')+'"></span>'; }).join('');
+        el.innerHTML='<p class="quote-text">\u201C'+esc(q.text_content)+'\u201D</p>'+
+          '<p class="quote-attr">\u2014\u202F'+esc(q.display_name)+(q.display_state?',\u202F'+esc(q.display_state):'')+
+          '</p><div class="quote-dots">'+dots+'</div>';
+      }
+      render(0);
+      if (quotes.length>1){ setInterval(function(){ idx=(idx+1)%quotes.length; render(idx); },8000); }
+    }
+
+    function renderTicker(joiners){
+      var el=document.getElementById('ticker-list');
+      if (!el) return;
+      if (!joiners.length){ el.innerHTML='<p class="ticker-empty">Members are joining \u2014 be next.</p>'; return; }
+      el.innerHTML=joiners.map(function(j,i){
+        return '<div class="ticker-item" style="animation-delay:'+(i*0.08)+'s">'+
+          '<span class="ticker-dot"></span>'+
+          '<span class="ticker-name">'+esc(j.display_name)+'</span>'+
+          (j.display_state?'<span class="ticker-state">\u00B7\u202F'+esc(j.display_state)+'</span>':'')+
+          '<span class="ticker-ago">'+esc(j.joined_ago)+'</span></div>';
+      }).join('');
+    }
+
+    function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  })();
+})();
+</script>
+</body>
+</html>

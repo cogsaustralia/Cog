@@ -25,9 +25,14 @@
         if (localStorage.getItem('cogs_intro_seen') !== '1') {
           var _p = new URLSearchParams(window.location.search);
           var _code = _p.get('partner_code') || _p.get('code') ||
-                      _p.get('invite')        || _p.get('ref')  ||
+                      _p.get('invite')        ||
                       _p.get('invite_token');
-          window.location.replace('/intro/' + window.location.search);
+          if (_code) {
+            window.location.replace('/intro/' + window.location.search);
+          } else {
+            var _qs = window.location.search;
+            window.location.replace('/welcome/' + (_qs ? _qs : ''));
+          }
         }
       } catch(e) {}
     })();

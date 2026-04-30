@@ -673,6 +673,25 @@ try {
         'trace_line' => 'Trace: snft_member#' . $memberId . ' | ' . $memberNumber . ' | ' . $acceptedAt,
     ]);
 
+    // ── Stage 5: claim pending voice submission (non-fatal) ──────────────────
+    // If the visitor submitted a voice on /welcome/ before joining, link it to
+    // their new partner record so it appears in the admin moderation queue.
+    $voiceSessionToken = trim((string)($body['voice_session_token'] ?? ''));
+    if ($voiceSessionToken !== '' && $partnerId > 0) {
+        try {
+            $db->prepare(
+                'UPDATE pending_voice_submissions
+                 SET linked_partner_id = ?, linked_at = NOW()
+                 WHERE session_token = ?
+                   AND linked_partner_id IS NULL
+                 LIMIT 1'
+            )->execute([$partnerId, $voiceSessionToken]);
+        } catch (Throwable $vsEx) {
+            error_log('[snft-reserve] voice claim failed: ' . $vsEx->getMessage());
+            // Non-fatal — registration proceeds regardless
+        }
+    }
+
     $db->commit();
 } catch (Throwable $e) {
     if ($db->inTransaction()) {

@@ -141,6 +141,12 @@ try {
         case 'parcel-verify':
             require __DIR__ . '/routes/parcel-verify.php';
             break;
+        case 'welcome-voice':
+            require __DIR__ . '/routes/welcome-voice.php';
+            break;
+        case 'welcome-social':
+            require __DIR__ . '/routes/welcome-social.php';
+            break;
         default:
             apiError('Route not found', 404);
             break;
