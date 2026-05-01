@@ -5964,14 +5964,11 @@ function renderAgmVoting() {
     return;
   }
 
-  // Active state — future implementation when agm_voting_enabled === true
-  panel.innerHTML =
-    '<p style="font-size:.85rem;color:rgba(255,248,232,.82)">AGM voting is now active. Go to the ESG &amp; Proxy Voting hub to cast your Aggregate Unitholder Direction.</p>\' +
-    \'<button class="btn btn-gold btn-sm" style="margin-top:12px" id="agm-hub-btn">Open ESG &amp; Proxy Voting hub</button>\';
-  var agmHubBtn = document.getElementById(\'agm-hub-btn\');
-  if (agmHubBtn) agmHubBtn.addEventListener(\'click\', function(){ coinTransition(\'/hubs/mainspring/\'); });
+  // Active state — placeholder until agm_voting_enabled === true
+  panel.innerHTML = '<p style="font-size:.85rem;color:rgba(255,248,232,.82)">AGM voting is now active. Open the Management Hub to cast your direction.</p>';
+  var agmHubBtn2 = panel.querySelector('button');
+  if (agmHubBtn2) { agmHubBtn2.addEventListener('click', function(){ coinTransition('/hubs/mainspring/'); }); }
 }
-
 
 window.openAgmVoting  = openAgmVoting;
 window.renderAgmVoting = renderAgmVoting;
