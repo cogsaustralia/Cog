@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fifty Years — COG$ of Australia</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0804;--panel:rgba(18,13,5,.97);--panel2:rgba(28,20,8,.88);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.18);--gold-dim:rgba(240,209,138,.07);
+  --text:#fff8e8;--text2:rgba(255,248,232,.82);--muted:rgba(240,225,196,.5);
+  --err:rgba(224,92,92,.85);
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;
+  --line:rgba(240,209,138,.12);
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+.wrap{max-width:740px;margin:0 auto;padding:48px 24px 72px}
+
+.wordmark{display:block;font-family:var(--serif);font-size:.9rem;color:var(--gold-2);text-decoration:none;letter-spacing:.04em;margin-bottom:48px}
+.wordmark:hover{color:var(--gold-1)}
+
+.eyebrow{font-size:.67rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);margin-bottom:16px}
+h1{font-family:var(--serif);font-size:clamp(1.9rem,4vw,2.7rem);font-weight:500;line-height:1.15;color:var(--text);margin-bottom:8px}
+h1 em{font-style:italic;color:var(--gold-1)}
+.lead{font-size:.92rem;color:var(--text2);line-height:1.82;margin-bottom:16px}
+.lead-note{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:48px;font-style:italic}
+
+/* ── Timeline ── */
+.timeline{position:relative;margin-bottom:56px}
+.timeline::before{content:'';position:absolute;left:46px;top:0;bottom:0;width:1px;background:var(--line)}
+
+.ep{display:flex;gap:0;margin-bottom:28px;align-items:flex-start}
+.ep-year-col{width:92px;flex-shrink:0;text-align:right;padding-right:22px;padding-top:16px;position:relative}
+.ep-year-col::after{content:'';position:absolute;right:-5px;top:22px;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--gold-2)}
+.ep.ongoing .ep-year-col::after{border-color:var(--gold-1);background:rgba(240,209,138,.2)}
+.ep-year{font-family:var(--serif);font-size:1.55rem;font-weight:500;color:var(--gold-2);line-height:1}
+.ep-pm{font-size:.68rem;color:var(--muted);margin-top:4px;line-height:1.4}
+
+.ep-body{flex:1;background:var(--panel2);border:1px solid var(--gold-rim);border-radius:12px;padding:18px 22px;margin-left:20px}
+.ep-instrument{font-family:var(--serif);font-size:1.05rem;font-weight:500;color:var(--gold-1);margin-bottom:6px;line-height:1.3}
+.ep-what{font-size:.85rem;color:var(--text2);line-height:1.75;margin-bottom:12px}
+.ep-defeat-head{font-size:.67rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--err);margin-bottom:5px}
+.ep-defeat{font-size:.83rem;color:rgba(255,248,232,.65);line-height:1.72;padding-top:10px;border-top:1px solid var(--line)}
+.ep-ongoing-badge{display:inline-block;padding:2px 9px;background:rgba(240,209,138,.1);border:1px solid var(--gold-rim);border-radius:99px;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-1);margin-bottom:8px}
+
+/* ── Pattern block ── */
+.pattern{background:var(--gold-dim);border:1px solid var(--gold-rim);border-radius:12px;padding:24px 26px;margin-bottom:40px}
+.pattern-label{font-size:.67rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);margin-bottom:12px}
+.pattern p{font-size:.87rem;color:var(--text2);line-height:1.8;margin-bottom:10px}
+.pattern p:last-child{margin-bottom:0}
+
+/* ── What's different ── */
+.different{margin-bottom:48px}
+.different h2{font-family:var(--serif);font-size:1.4rem;font-weight:500;color:var(--text);margin-bottom:18px;line-height:1.3}
+.diff-item{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.diff-item:last-child{border-bottom:none}
+.diff-tick{color:var(--gold-2);font-size:.9rem;flex-shrink:0;margin-top:1px;font-weight:700}
+.diff-text{font-size:.86rem;color:var(--text2);line-height:1.7}
+.diff-text strong{color:var(--gold-1)}
+
+/* ── Link cards ── */
+.link-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:48px}
+@media(max-width:480px){.link-cards{grid-template-columns:1fr}}
+.link-card{display:block;padding:18px 20px;background:var(--panel2);border:1px solid var(--gold-rim);border-radius:12px;text-decoration:none;transition:border-color .2s}
+.link-card:hover{border-color:var(--gold-2)}
+.link-card-label{font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:6px}
+.link-card-title{font-size:.9rem;color:var(--text2);line-height:1.5}
+
+.notice{font-size:.73rem;color:var(--muted);line-height:1.6;margin-top:16px;padding-top:20px;border-top:1px solid var(--line)}
+
+@media(max-width:540px){
+  .timeline::before{left:0;display:none}
+  .ep{flex-direction:column;gap:8px}
+  .ep-year-col{width:auto;text-align:left;padding-right:0;padding-top:0}
+  .ep-year-col::after{display:none}
+  .ep-body{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a href="/" class="wordmark">COG$ of Australia</a>
+
+  <div class="eyebrow">The public record</div>
+  <h1>Five PMs. Three Premiers.<br><em>The fifty years.</em></h1>
+  <p class="lead">Australia has not failed to try to capture the community's share of its own resource value. Australia has tried — earnestly, repeatedly, and from across the political spectrum — and Australia has been defeated. The defeat is not the result of a single bad policy decision. It is the result of a structural mismatch between the political instruments used and the corporate machinery deployed to defend against them.</p>
+  <p class="lead-note">The Foundation presents this record not as political commentary, but as the technical basis for explaining what the COG$ instrument does that previous instruments could not. Source material: primary-source Hansard, ATO and Treasury records, High Court decisions, Senate committee transcripts, and published annual reports.</p>
+
+  <div class="timeline">
+
+    <!-- 1970 -->
+    <div class="ep">
+      <div class="ep-year-col">
+        <div class="ep-year">1970</div>
+        <div class="ep-pm">Gorton<br>Liberal</div>
+      </div>
+      <div class="ep-body">
+        <div class="ep-instrument">Australian Industry Development Corporation (AIDC)</div>
+        <div class="ep-what">Liberal PM John Gorton and Country Party leader John McEwen establish a national investment fund to take equity stakes in Australian resource development, alongside — not against — private extraction. Gorton's January 1970 Cabinet submission used a single bauxite shipment to demonstrate that exporting unprocessed minerals robbed Australia of multiples of the value retained in-country.</div>
+        <div class="ep-defeat">
+          <div class="ep-defeat-head">How it was defeated</div>
+          Gorton was deposed by his own Liberal Party in a tied confidence vote on 10 March 1971, partly precipitated by his offshore minerals legislation. McMahon scaled the AIDC back. Over subsequent decades the AIDC drifted away from its founding purpose and was privatised by the Hawke and Howard governments.
+        </div>
+      </div>
+    </div>
+
+    <!-- 1973 -->
+    <div class="ep">
+      <div class="ep-year-col">
+        <div class="ep-year">1973</div>
+        <div class="ep-pm">Whitlam<br>Labor</div>
+      </div>
+      <div class="ep-body">
+        <div class="ep-instrument">Petroleum and Minerals Authority (PMA)</div>
+        <div class="ep-what">Labor PM Gough Whitlam, with Rex Connor as Minister for Minerals and Energy, establishes a government-owned and controlled minerals and resources company with power to explore, lend, take equity stakes, and develop petroleum and mineral resources. Bob Hawke would later describe this as one of the most consequential resource-nationalist initiatives in Australian history.</div>
+        <div class="ep-defeat">
+          <div class="ep-defeat-head">How it was defeated</div>
+          Bill blocked twice in the Senate. Passed by unprecedented joint sitting of both Houses on 7 August 1974. Struck down by the High Court (Barwick CJ and four Liberal-appointed judges) on a procedural Section 57 timing point. The Whitlam government was dismissed by the Governor-General on 11 November 1975. Loans Affair, Senate supply blockade, US State Department documented intervention.
+        </div>
+      </div>
+    </div>
+
+    <!-- 1987 -->
+    <div class="ep">
+      <div class="ep-year-col">
+        <div class="ep-year">1987</div>
+        <div class="ep-pm">Hawke / Keating<br>Labor</div>
+      </div>
+      <div class="ep-body">
+        <div class="ep-instrument">Petroleum Resource Rent Tax (PRRT)</div>
+        <div class="ep-what">Labor PM Bob Hawke and Treasurer Paul Keating introduce a 40 per cent windfall-profits tax on offshore petroleum projects, to capture the community's share of resource rents from offshore oil and gas.</div>
+        <div class="ep-defeat">
+          <div class="ep-defeat-head">How it was defeated</div>
+          Industry-funded multi-decade campaign of deductions accumulation. Compounding deductions grew faster than offshore revenue for years. Treasury confirmed in evidence to the Senate that no new offshore gas project has paid meaningful PRRT to date. The instrument remains on the books; the rents do not arrive.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2010 -->
+    <div class="ep">
+      <div class="ep-year-col">
+        <div class="ep-year">2010</div>
+        <div class="ep-pm">Rudd<br>Labor</div>
+      </div>
+      <div class="ep-body">
+        <div class="ep-instrument">Resource Super Profits Tax (RSPT)</div>
+        <div class="ep-what">Labor PM Kevin Rudd proposes a 40 per cent profits-based tax on mining super-profits, structured to target windfall returns above $50 million while preserving small-mining-operation viability.</div>
+        <div class="ep-defeat">
+          <div class="ep-defeat-head">How it was defeated</div>
+          $100 million-plus mining-industry advertising and political-pressure campaign within weeks of the announcement. Rudd was deposed by his own Labor Party on 24 June 2010. Successor Julia Gillard weakened the tax to a Minerals Resource Rent Tax that raised approximately $300 million instead of the projected $50 billion. The Abbott government repealed even that residual.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2022 -->
+    <div class="ep">
+      <div class="ep-year-col">
+        <div class="ep-year">2022</div>
+        <div class="ep-pm">Miles<br>Qld Labor</div>
+      </div>
+      <div class="ep-body">
+        <div class="ep-instrument">Queensland Coal Royalty Tier Increase</div>
+        <div class="ep-what">Queensland Labor Premier Steven Miles introduces progressive coal-royalty tiers, using the receipts to deliver electricity-bill rebates and 50-cent public-transport fares to Queenslanders.</div>
+        <div class="ep-defeat">
+          <div class="ep-defeat-head">How it was defeated</div>
+          Industry-funded media campaign focused on a 'youth crime wave' — notwithstanding declining youth crime statistics under the same government — shifted electoral framing. Miles's Labor government lost the October 2024 Queensland state election. Mining industry groups publicly congratulated the incoming LNP government on the change of administration.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026 -->
+    <div class="ep ongoing">
+      <div class="ep-year-col">
+        <div class="ep-year">2026</div>
+        <div class="ep-pm">Senate<br>Cross-bench</div>
+      </div>
+      <div class="ep-body">
+        <div class="ep-ongoing-badge">Ongoing</div>
+        <div class="ep-instrument">Senate Inquiry — 25% Gas Export Tax Proposal</div>
+        <div class="ep-what">Senate Standing Committees on Economics inquiry, public hearing 21 April 2026. Australia Institute and Punters Politics testimony advocating a 25 per cent gas export tax replacing or supplementing the failed PRRT. Federal Budget 13 May 2026 will indicate the political reception.</div>
+        <div class="ep-defeat">
+          <div class="ep-defeat-head">Status</div>
+          Outcome pending. Industry advertising response launched within days of the Senate hearing. The same defensive machinery that defeated each of the prior five instruments is operational.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <div class="pattern">
+    <div class="pattern-label">The pattern</div>
+    <p>Each of the instruments above was a political-arena instrument. Each operated through legislation or regulation that a government could pass and a successor government could repeal. Each depended on the standing of a Minister, a Cabinet, or a Treasury.</p>
+    <p>Those defensive mechanisms — lobbying, political donations, captured media, hostile crossbench arrangements, electoral retaliation, judicial overturning, and in extreme cases foreign intervention — were calibrated by the affected industries over five decades to defeat exactly this kind of instrument. They are extraordinarily effective. The historical record makes that effectiveness unambiguous.</p>
+    <p>It would be naive to pursue a sixth political-arena instrument and expect a different outcome. It would also be unnecessary. There is a different arena — the shareholder-registry arena — in which the same defensive machinery is structurally inapplicable.</p>
+  </div>
+
+  <div class="different">
+    <h2>What the COG$ instrument does that none of the previous instruments could</h2>
+    <div class="diff-item">
+      <span class="diff-tick">&#10003;</span>
+      <span class="diff-text"><strong>No Cabinet to depose.</strong> The Foundation is community-owned. Its standing as a shareholder of Santos and Origin, once established, is enforceable under the Corporations Act 2001 and the ASX Settlement Operating Rules. No election can revoke it.</span>
+    </div>
+    <div class="diff-item">
+      <span class="diff-tick">&#10003;</span>
+      <span class="diff-text"><strong>Non-disposable by design.</strong> Once a share enters the Members Asset Pool under Sub-Trust A, the Trustee has no power of sale. The defensive mechanism that defeated the AIDC by progressive privatisation is structurally unavailable.</span>
+    </div>
+    <div class="diff-item">
+      <span class="diff-tick">&#10003;</span>
+      <span class="diff-text"><strong>Funded directly by Australians.</strong> No foreign capital to withhold. No Treasury borrowing to cancel. No offshore credit market to refuse. The Loans Affair architecture cannot recur because there are no loans.</span>
+    </div>
+    <div class="diff-item">
+      <span class="diff-tick">&#10003;</span>
+      <span class="diff-text"><strong>Electorally invisible.</strong> The Foundation is not on the ballot. A Liberal government cannot repeal it. A Labor government cannot repeal it. The crossbench cannot defeat it. The Foundation operates outside the arena where electoral defeat is the operative weapon.</span>
+    </div>
+  </div>
+
+  <div class="link-cards">
+    <a href="/docs/strategy/dual-target/" class="link-card">
+      <div class="link-card-label">Read next</div>
+      <div class="link-card-title">Dual Poor ESG Target Acquisition Strategy</div>
+    </a>
+    <a href="/governance/fnac-review/" class="link-card">
+      <div class="link-card-label">Governance transparency</div>
+      <div class="link-card-title">FNAC Review Timeline</div>
+    </a>
+  </div>
+
+  <p class="notice">COG$ of Australia Foundation &nbsp;&#183;&nbsp; ABN 91 341 497 529 &nbsp;&#183;&nbsp; Drake Village NSW 2469 &nbsp;&#183;&nbsp; Wahlubal Country, Bundjalung Nation<br>A community membership. Not financial advice. Not a managed investment scheme.</p>
+
+</div>
+</body>
+</html>
