@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundation Day — 14 May 2026 — COG$ of Australia</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0804;--panel:rgba(18,13,5,.97);--panel2:rgba(28,20,8,.88);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.18);--gold-dim:rgba(240,209,138,.07);
+  --text:#fff8e8;--text2:rgba(255,248,232,.82);--muted:rgba(240,225,196,.5);
+  --ok:#52b87a;--warn:#f0b429;
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;
+  --line:rgba(240,209,138,.12);
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;padding:48px 24px 72px}
+
+.wordmark{display:block;font-family:var(--serif);font-size:.9rem;color:var(--gold-2);text-decoration:none;letter-spacing:.04em;margin-bottom:48px}
+.wordmark:hover{color:var(--gold-1)}
+
+/* ── Hero ── */
+.eyebrow{font-size:.67rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);margin-bottom:16px}
+h1{font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);font-weight:500;line-height:1.1;color:var(--text);margin-bottom:6px}
+h1 em{font-style:italic;color:var(--gold-1)}
+.hero-date{font-size:.92rem;color:var(--muted);margin-bottom:32px;letter-spacing:.04em}
+
+/* ── Countdown ── */
+.countdown{display:flex;gap:16px;margin-bottom:48px;flex-wrap:wrap}
+.cd-unit{text-align:center;background:var(--panel2);border:1px solid var(--gold-rim);border-radius:12px;padding:16px 20px;min-width:72px;flex:1}
+.cd-num{font-family:var(--serif);font-size:2.2rem;font-weight:500;color:var(--gold-1);line-height:1;display:block}
+.cd-label{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block}
+.cd-live{text-align:center;padding:12px 20px;background:rgba(82,184,122,.08);border:1px solid rgba(82,184,122,.2);border-radius:10px;font-size:.84rem;color:var(--ok);margin-bottom:48px;display:none}
+
+/* ── What is Foundation Day ── */
+.divider{height:1px;background:var(--line);margin:40px 0}
+.section-label{font-size:.67rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);margin-bottom:14px}
+p{font-size:.88rem;color:var(--text2);line-height:1.82;margin-bottom:12px}
+
+/* ── Announcement cards ── */
+.announce-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+@media(max-width:500px){.announce-grid{grid-template-columns:1fr}}
+.announce-card{background:var(--panel2);border:1px solid var(--gold-rim);border-radius:12px;padding:18px 20px}
+.announce-asx{font-size:.67rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);font-family:monospace;margin-bottom:5px}
+.announce-name{font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin-bottom:8px;line-height:1.25}
+.announce-body{font-size:.81rem;color:var(--text2);line-height:1.7}
+.announce-status{display:inline-block;margin-top:10px;padding:2px 9px;border-radius:99px;font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.22);color:var(--warn)}
+
+/* ── Programme ── */
+.programme{margin:20px 0}
+.prog-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.prog-item:last-child{border-bottom:none}
+.prog-time{flex-shrink:0;width:72px;font-size:.78rem;color:var(--gold-2);font-weight:600;padding-top:2px}
+.prog-text{font-size:.85rem;color:var(--text2);line-height:1.65}
+.prog-text strong{color:var(--text)}
+
+/* ── JLALC note ── */
+.fn-note{background:var(--gold-dim);border:1px solid var(--gold-rim);border-radius:10px;padding:16px 20px;font-size:.82rem;color:var(--text2);line-height:1.72;margin:20px 0}
+.fn-note strong{color:var(--gold-1)}
+
+/* ── Link cards ── */
+.link-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+@media(max-width:480px){.link-cards{grid-template-columns:1fr}}
+.link-card{display:block;padding:16px 18px;background:var(--panel2);border:1px solid var(--gold-rim);border-radius:12px;text-decoration:none;transition:border-color .2s}
+.link-card:hover{border-color:var(--gold-2)}
+.link-card-label{font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:5px}
+.link-card-title{font-size:.88rem;color:var(--text2);line-height:1.5}
+
+/* ── Join CTA ── */
+.cta{text-align:center;padding:32px 24px;background:var(--panel2);border:1px solid var(--gold-rim);border-radius:16px;margin:32px 0}
+.cta h2{font-family:var(--serif);font-size:1.4rem;font-weight:500;color:var(--text);margin-bottom:8px}
+.cta p{font-size:.86rem;color:var(--text2);line-height:1.7;margin-bottom:20px;max-width:40ch;margin-left:auto;margin-right:auto}
+.cta-btn{display:inline-block;padding:13px 32px;background:var(--gold-2);border-radius:8px;color:#000;font-weight:700;font-size:.9rem;text-decoration:none;letter-spacing:.03em;transition:background .15s}
+.cta-btn:hover{background:var(--gold-1)}
+.cta-disclaimer{font-size:.73rem;color:var(--muted);margin-top:12px}
+
+.notice{font-size:.73rem;color:var(--muted);line-height:1.6;margin-top:16px;padding-top:20px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a href="/" class="wordmark">COG$ of Australia</a>
+
+  <div class="eyebrow">Save the date</div>
+  <h1>Foundation<br><em>Day</em></h1>
+  <div class="hero-date">Thursday 14 May 2026 &nbsp;&#183;&nbsp; 5:00pm AEST &nbsp;&#183;&nbsp; Livestream</div>
+
+  <!-- Countdown -->
+  <div class="countdown" id="countdown">
+    <div class="cd-unit"><span class="cd-num" id="cd-days">—</span><span class="cd-label">Days</span></div>
+    <div class="cd-unit"><span class="cd-num" id="cd-hours">—</span><span class="cd-label">Hours</span></div>
+    <div class="cd-unit"><span class="cd-num" id="cd-mins">—</span><span class="cd-label">Minutes</span></div>
+    <div class="cd-unit"><span class="cd-num" id="cd-secs">—</span><span class="cd-label">Seconds</span></div>
+  </div>
+  <div class="cd-live" id="cd-live">&#9679; Foundation Day is live now — watch the livestream</div>
+
+  <!-- What is Foundation Day -->
+  <div class="section-label">What is Foundation Day?</div>
+  <p>Foundation Day is the Foundation's first public governance event. At 5:00pm AEST on Thursday 14 May 2026, the Caretaker Trustee will broadcast a live address from Drake Village, on Wahlubal Country, in northern New South Wales.</p>
+  <p>The address will announce the Foundation's dual Poor ESG Target designation — the identification of two ASX-listed Australian energy companies as candidates for permanent Members Asset Pool inclusion under clause 30.3 of the governing Declaration — and disclose the FNAC review timeline that must be completed before any acquisition occurs.</p>
+  <p>The first community governance vote of the COG$ Joint Venture will be held live during the broadcast.</p>
+
+  <div class="divider"></div>
+
+  <!-- The announcement -->
+  <div class="section-label">The designation — subject to FNAC review</div>
+  <p>The Foundation intends to identify the following two companies as Poor ESG Targets under clause 30.3, subject to completion of the First Nations Advisory Council review. No acquisition occurs until the FNAC review is complete.</p>
+
+  <div class="announce-grid">
+    <div class="announce-card">
+      <div class="announce-asx">ASX: STO</div>
+      <div class="announce-name">Santos Limited</div>
+      <div class="announce-body">FY25 dividend 100% unfranked. Active First Nations litigation: Narrabri (Gomeroi), Barossa (Tiwi Islanders), Cooper Basin (Yandruwandha Yawarrawarrka). Upstream extraction — community voice target.</div>
+      <span class="announce-status">Pending FNAC Review</span>
+    </div>
+    <div class="announce-card">
+      <div class="announce-asx">ASX: ORG</div>
+      <div class="announce-name">Origin Energy Limited</div>
+      <div class="announce-body">27.5% of Australia Pacific LNG. One of Australia's three largest retail energy price-setters. Downstream and retail engagement — constructive transition target.</div>
+      <span class="announce-status">Pending FNAC Review</span>
+    </div>
+  </div>
+
+  <div class="fn-note">
+    <strong>First Nations governance partner.</strong> The Jubullum Local Aboriginal Land Council is the Foundation's primary First Nations governance partner. The Foundation Day announcement is contingent on JLALC having received and considered the Dual Poor ESG Target Acquisition Strategy. The Acknowledgement of Country wording for the broadcast is subject to written confirmation with Chairperson Ken Avery and Deputy Chairperson Priscilla Bell, with CEO Kevin as continuing operational contact.
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Programme -->
+  <div class="section-label">Programme — 5:00pm AEST</div>
+  <div class="programme">
+    <div class="prog-item">
+      <div class="prog-time">5:00pm</div>
+      <div class="prog-text"><strong>Acknowledgement of Country</strong> — wording confirmed with JLALC</div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">5:02pm</div>
+      <div class="prog-text"><strong>Welcome and the moment we are in</strong> — version selected on the morning of 14 May based on Federal Budget outcome the previous evening</div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">5:05pm</div>
+      <div class="prog-text"><strong>The Fifty Years</strong> — what's been tried before and why this instrument is different</div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">5:10pm</div>
+      <div class="prog-text"><strong>What COG$ is and why this is different</strong> — Civic Synergy, Community Cohesion, Australian Community Fellowship</div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">5:13pm</div>
+      <div class="prog-text"><strong>Dual designation announcement</strong> — Santos (STO) and Origin (ORG) as Poor ESG Target candidates; FNAC review timeline disclosed publicly</div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">5:15pm</div>
+      <div class="prog-text"><strong>First community vote and member voices</strong> — result displayed live; foundation-stage members acknowledged; close</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Read more -->
+  <div class="section-label">Read the strategy and governance documents</div>
+  <div class="link-cards">
+    <a href="/docs/strategy/dual-target/" class="link-card">
+      <div class="link-card-label">Strategy</div>
+      <div class="link-card-title">Dual Poor ESG Target Acquisition Strategy v1.1</div>
+    </a>
+    <a href="/governance/fnac-review/" class="link-card">
+      <div class="link-card-label">Governance transparency</div>
+      <div class="link-card-title">FNAC Review Timeline — live milestone status</div>
+    </a>
+    <a href="/the-fifty-years/" class="link-card">
+      <div class="link-card-label">The public record</div>
+      <div class="link-card-title">The Fifty Years — five decades of defeated attempts</div>
+    </a>
+    <a href="/principles/" class="link-card">
+      <div class="link-card-label">Foundation doctrine</div>
+      <div class="link-card-title">Framing Principles — Civic Synergy, Cohesion, Fellowship</div>
+    </a>
+  </div>
+
+  <!-- Join CTA -->
+  <div class="cta">
+    <h2>Join before Foundation Day</h2>
+    <p>$4 once only. Your membership is permanent and non-disposable — you cannot be removed.</p>
+    <a href="/intro/" class="cta-btn">Become a member</a>
+    <div class="cta-disclaimer">A community membership invitation. Not financial advice.</div>
+  </div>
+
+  <p class="notice">COG$ of Australia Foundation &nbsp;&#183;&nbsp; ABN 91 341 497 529 &nbsp;&#183;&nbsp; Drake Village NSW 2469 &nbsp;&#183;&nbsp; Wahlubal Country, Bundjalung Nation<br>A community membership. Not financial advice. Not a managed investment scheme.</p>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var TARGET = new Date('2026-05-14T07:00:00.000Z'); // 5pm AEST = UTC+10
+
+  function pad(n){ return n < 10 ? '0' + n : String(n); }
+
+  function tick(){
+    var now = new Date();
+    var diff = TARGET - now;
+
+    if (diff <= 0) {
+      // Foundation Day is live or past
+      document.getElementById('countdown').style.display = 'none';
+      document.getElementById('cd-live').style.display = 'block';
+      return;
+    }
+
+    var days  = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    var mins  = Math.floor((diff % 3600000) / 60000);
+    var secs  = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('cd-days').textContent  = days;
+    document.getElementById('cd-hours').textContent = pad(hours);
+    document.getElementById('cd-mins').textContent  = pad(mins);
+    document.getElementById('cd-secs').textContent  = pad(secs);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
