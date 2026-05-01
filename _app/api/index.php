@@ -150,6 +150,9 @@ try {
         case 'welcome-media':
             require __DIR__ . '/routes/welcome-media.php';
             break;
+        case 'designations':
+            require __DIR__ . '/routes/designations.php';
+            break;
         default:
             apiError('Route not found', 404);
             break;
