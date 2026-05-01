@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fair Say Relay — Member Briefing — COG$ of Australia</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0804;--panel:rgba(18,13,5,.97);--panel2:rgba(28,20,8,.88);
+  --gold-1:#f0d18a;--gold-2:#c9973d;--gold-rim:rgba(240,209,138,.18);--gold-dim:rgba(240,209,138,.07);
+  --text:#fff8e8;--text2:rgba(255,248,232,.82);--muted:rgba(240,225,196,.5);
+  --ok:#52b87a;--warn:#f0b429;--info:#6baed6;
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;
+  --line:rgba(240,209,138,.12);
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+
+/* ── Auth gate ── */
+#auth-gate{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:24px}
+#auth-gate.show{display:flex}
+.gate-card{max-width:380px;width:100%;background:var(--panel);border:1px solid var(--gold-rim);border-radius:20px;padding:36px 28px;text-align:center}
+.gate-card h2{font-family:var(--serif);font-size:1.3rem;font-weight:500;color:var(--gold-1);margin-bottom:10px}
+.gate-card p{font-size:.86rem;color:var(--text2);line-height:1.7;margin-bottom:22px}
+.gate-btn{display:inline-block;padding:12px 28px;background:var(--gold-2);border-radius:8px;color:#000;font-weight:700;font-size:.88rem;text-decoration:none;letter-spacing:.03em}
+
+/* ── Main content (hidden until auth confirmed) ── */
+#main-content{display:none}
+#main-content.show{display:block}
+
+.wrap{max-width:720px;margin:0 auto;padding:48px 24px 72px}
+
+.wordmark{display:block;font-family:var(--serif);font-size:.9rem;color:var(--gold-2);text-decoration:none;letter-spacing:.04em;margin-bottom:12px}
+.wordmark:hover{color:var(--gold-1)}
+.member-chip{display:inline-block;font-size:.7rem;color:var(--muted);background:rgba(240,209,138,.06);border:1px solid var(--gold-rim);border-radius:99px;padding:2px 10px;margin-bottom:36px;letter-spacing:.06em}
+
+.eyebrow{font-size:.67rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);margin-bottom:16px}
+h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.4rem);font-weight:500;line-height:1.18;color:var(--text);margin-bottom:10px}
+h1 em{font-style:italic;color:var(--gold-1)}
+.lead{font-size:.92rem;color:var(--text2);line-height:1.82;margin-bottom:10px}
+
+/* ── Briefing notice ── */
+.briefing-note{background:var(--gold-dim);border:1px solid var(--gold-rim);border-radius:10px;padding:14px 18px;font-size:.82rem;color:var(--text2);line-height:1.7;margin-bottom:40px}
+.briefing-note strong{color:var(--gold-1)}
+
+.divider{height:1px;background:var(--line);margin:36px 0}
+.section-label{font-size:.67rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);margin-bottom:18px}
+
+/* ── Version selector ── */
+.version-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px}
+@media(max-width:500px){.version-grid{grid-template-columns:1fr}}
+.version-card{background:var(--panel2);border:1px solid var(--gold-rim);border-radius:12px;padding:18px 20px}
+.version-tag{font-size:.67rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);margin-bottom:6px}
+.version-title{font-family:var(--serif);font-size:.95rem;font-weight:500;color:var(--gold-1);margin-bottom:8px}
+.version-trigger{font-size:.8rem;color:var(--text2);line-height:1.65}
+.version-trigger strong{color:var(--text)}
+
+/* ── Caption cards ── */
+.caption-card{background:var(--panel2);border:1px solid var(--gold-rim);border-radius:14px;padding:22px 24px;margin-bottom:16px}
+.caption-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.caption-code{font-family:monospace;font-size:.75rem;font-weight:700;color:var(--gold-2);background:rgba(240,209,138,.08);border:1px solid var(--gold-rim);border-radius:5px;padding:3px 8px;flex-shrink:0}
+.caption-title{font-family:var(--serif);font-size:.95rem;font-weight:500;color:var(--gold-1);line-height:1.3;flex:1}
+.caption-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.caption-tag{font-size:.65rem;padding:2px 8px;border-radius:99px;letter-spacing:.04em;white-space:nowrap}
+.tag-reel{background:rgba(107,174,214,.1);color:var(--info);border:1px solid rgba(107,174,214,.2)}
+.tag-text{background:rgba(82,184,122,.1);color:var(--ok);border:1px solid rgba(82,184,122,.2)}
+.tag-badge{background:rgba(240,180,41,.1);color:var(--warn);border:1px solid rgba(240,180,41,.2)}
+.caption-date{font-size:.72rem;color:var(--muted);margin-left:auto}
+.caption-body{font-size:.85rem;color:var(--text2);line-height:1.82;white-space:pre-line;border-top:1px solid var(--line);padding-top:12px}
+.caption-disclaimer{font-size:.74rem;color:var(--muted);margin-top:10px;font-style:italic}
+
+/* ── Compliance rails ── */
+.compliance{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+.compliance-label{font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px}
+.compliance ul{list-style:none;padding:0}
+.compliance ul li{font-size:.82rem;color:var(--text2);line-height:1.7;padding:4px 0;display:flex;gap:10px}
+.compliance ul li::before{content:'✓';color:var(--gold-2);font-weight:700;flex-shrink:0}
+
+/* ── Response protocol ── */
+.protocol{margin-bottom:16px}
+.protocol-item{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.protocol-item:last-child{border-bottom:none}
+.protocol-num{flex-shrink:0;font-size:.72rem;font-weight:700;color:var(--gold-2);width:20px;margin-top:2px}
+.protocol-text{font-size:.84rem;color:var(--text2);line-height:1.7}
+.protocol-text strong{color:var(--text)}
+
+.notice{font-size:.73rem;color:var(--muted);line-height:1.6;margin-top:16px;padding-top:20px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<!-- Auth gate -->
+<div id="auth-gate">
+  <div class="gate-card">
+    <h2>Members only</h2>
+    <p>This briefing is available to Foundation members. Join to access the Fair Say Relay working documents and Foundation transparency materials.</p>
+    <a href="/intro/" class="gate-btn">Join the Foundation</a>
+  </div>
+</div>
+
+<!-- Main content -->
+<div id="main-content">
+<div class="wrap">
+
+  <a href="/wallets/member.html" class="wordmark">COG$ of Australia</a>
+  <div class="member-chip" id="member-chip">Member briefing</div>
+
+  <div class="eyebrow">Member briefing — campaign transparency</div>
+  <h1>Fair Say Relay<br><em>Working Documents</em></h1>
+  <p class="lead">This is the Foundation's working. The caption family, the run-sheet, the compliance rails, and the version selection logic — published to members before they drop publicly. This is what transparency looks like from the inside.</p>
+
+  <div class="briefing-note">
+    <strong>Why members see this first.</strong> The Foundation publishes everything that can be published, to the people it is meant for. Captions dropping publicly on the run-sheet dates below are pre-released here so members understand the mechanics before they see them in the relay. There are no surprises in how COGS operates.
+  </div>
+
+  <!-- Foundation Day version selection -->
+  <div class="section-label">Foundation Day — version selection (14 May 2026)</div>
+  <p style="font-size:.86rem;color:var(--text2);line-height:1.8;margin-bottom:18px">The Foundation Day script exists in two versions, selected on the morning of 14 May based on the Federal Budget outcome the previous evening. Members should know this logic exists.</p>
+  <div class="version-grid">
+    <div class="version-card">
+      <div class="version-tag">Version A</div>
+      <div class="version-title">"Walking Together"</div>
+      <div class="version-trigger">Used if: <strong>budget delivers material gas-tax reform</strong> — a gas export tax, PRRT replacement, or 40% cashflow levy. Tone: reform is in motion; community ownership operates alongside it across decades.</div>
+    </div>
+    <div class="version-card">
+      <div class="version-tag">Version B</div>
+      <div class="version-title">"The New Instrument"</div>
+      <div class="version-trigger">Used if: <strong>budget delivers no material reform; status quo retained.</strong> Tone: five decades of reform have been defeated. The new instrument is here. Australians own this one.</div>
+    </div>
+  </div>
+  <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:8px">If JLALC's view is unresolved by Foundation Day, the dual designation announcement is replaced with a disclosure that the Strategy is with our First Nations governance partner pending consultation — and the identifications are withheld until consultation is complete.</p>
+
+  <div class="divider"></div>
+
+  <!-- Compliance rails -->
+  <div class="section-label">Compliance rails — all captions</div>
+  <div class="compliance">
+    <div class="compliance-label">Every caption must pass before publication</div>
+    <ul>
+      <li>Passes §2 banned-framing soft pre-check</li>
+      <li>No financial promotion language inconsistent with the no-paid-promotion rule</li>
+      <li>Does not name, co-brand with, or imply endorsement from any party, candidate, journalist, podcast, or commentator — historical PM/Minister references are by public-record name only</li>
+      <li>Closes with the disclaimer where required: <em>A community membership invitation. Not financial advice.</em></li>
+      <li>References cogsaustralia.org as the authoritative source</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Caption family -->
+  <div class="section-label">Caption family — D.Q through D.X (new in v1.1)</div>
+  <p style="font-size:.84rem;color:var(--text2);line-height:1.8;margin-bottom:24px">Captions D.I through D.P were issued in v1.0 and remain in production unchanged. The eight captions below are new in v1.1, covering Civic Synergy, the historical reform record, the new-instrument framing, and the anticipated lobbyist response.</p>
+
+  <!-- D.Q -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.Q</span>
+      <div class="caption-title">Civic Synergy explainer</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-reel">FB Reel + YT Short</span>
+      <span class="caption-date">D&#8209;4 &nbsp;·&nbsp; Sat 10 May &nbsp;·&nbsp; 12:30pm AEST</span>
+    </div>
+    <div class="caption-body">Four dollars on its own, you might say, doesn't do much.
+
+Four dollars from a million Australians, in a community pool that never gets sold, is a four million dollar shareholding in the companies that take our resources out of the ground.
+
+That's voting power at every AGM. That's dividend flow back into the community pool. That's a permanent voice for ordinary Australians on what gets done with our country.
+
+That's Civic Synergy. Small commitments combining into something no individual could build alone.
+
+$4 once only. Foundation Day Thursday at 5. cogsaustralia.org.</div>
+    <div class="caption-disclaimer">A community membership invitation. Not financial advice. &nbsp;·&nbsp; #FairSayRelay #CivicSynergy #COGSAustralia</div>
+  </div>
+
+  <!-- D.R -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.R</span>
+      <div class="caption-title">Fifty Years explainer</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-text">FB Page text post + YT Community</span>
+      <span class="caption-date">D&#8209;2 &nbsp;·&nbsp; Mon 12 May &nbsp;·&nbsp; 6:00pm AEST</span>
+    </div>
+    <div class="caption-body">Fifty years of Australian history every working Australian should know.
+
+1970. John Gorton — Liberal Prime Minister — establishes a national fund to take a public stake in resources. His own party deposes him.
+
+1973. Gough Whitlam and Rex Connor establish the Petroleum and Minerals Authority. The Senate blocks it. Joint sitting passes it. High Court strikes it down. Whitlam government dismissed.
+
+1987. Bob Hawke brings in the Petroleum Resource Rent Tax. Forty years later, no offshore gas project has paid meaningful PRRT.
+
+2010. Kevin Rudd proposes the Resource Super Profits Tax. Mining industry spends $100 million attacking it in weeks. Rudd is deposed by his own party.
+
+2024. Steven Miles taxes coal in Queensland to give working families cheap electricity. Industry-funded media campaign reframes him as soft on a non-existent youth crime wave. His government loses.
+
+Five PMs. Three Premiers. Liberal, Labor, both. Every one tried. Every one was defeated by the same machinery.
+
+That's why protests don't work. That's why voting at elections doesn't change it. That's why complaining online does nothing.
+
+The arena is rigged. Tonight at 5pm AEST, COGS opens a different arena.
+
+cogsaustralia.org. $4 once only.</div>
+    <div class="caption-disclaimer">A community membership invitation. Not financial advice.</div>
+  </div>
+
+  <!-- D.S -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.S</span>
+      <div class="caption-title">What lobbyists can't do</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-reel">FB Reel + YT Short</span>
+      <span class="caption-date">D+2 &nbsp;·&nbsp; Sat 16 May &nbsp;·&nbsp; 12:30pm AEST</span>
+    </div>
+    <div class="caption-body">Foreign corporations have spent fifty years perfecting the art of defeating Australian governments.
+
+They lobby Parliament. They fund election campaigns. They run national ad blitzes. They get hostile MPs into the crossbench. They captured the press a long time ago. In one case they got the entire elected federal government dismissed.
+
+Here's what they cannot do.
+
+They cannot lobby a deed of trust. They cannot run an ad campaign that overrides a CHESS registration. They cannot defund a community pool that is already paid for. They cannot defeat the Foundation in an election because the Foundation is not on a ballot. They cannot lobby Australian people directly, because Australian people are not for sale.
+
+That's the asymmetry. That's why this is the new instrument.
+
+$4 once only. cogsaustralia.org.</div>
+    <div class="caption-disclaimer">A community membership invitation. Not financial advice.</div>
+  </div>
+
+  <!-- D.T -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.T</span>
+      <div class="caption-title">What they will say next — pre-emptive response</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-text">FB Page text + YT Community</span>
+      <span class="caption-date">D+4 &nbsp;·&nbsp; Mon 18 May &nbsp;·&nbsp; 7:00am AEST</span>
+    </div>
+    <div class="caption-body">Right now, somewhere in a Sydney media-strategy meeting, someone is being paid to attack COGS.
+
+Here's the playbook they're working from. We've published it before they run it, because that's how COGS does things — open, on the record, before the fight.
+
+Attack 1: "It's an unregistered investment scheme." — No. It's a $4 community membership in a Joint Venture under a deed of trust. ASIC engagement on the MIS exclusion is documented and active.
+
+Attack 2: "It's a foreign-funded NGO front." — No. Membership is Australian only. Banking is Australian. CHESS is Australian. Audit trail is published.
+
+Attack 3: "They'll damage shareholder value." — A non-disposable shareholder cannot benefit from short-term value destruction. We're the longest-term shareholders these companies will ever have.
+
+Attack 4: "They're a political project." — No party. No candidate. No election. Pre-political. Australian Community Fellowship is the framing principle.
+
+If you see a different attack we haven't pre-published, send it to us. We'll add it to the public list. cogsaustralia.org.
+
+$4 once only.</div>
+    <div class="caption-disclaimer">A community membership invitation. Not financial advice.</div>
+  </div>
+
+  <!-- D.U -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.U</span>
+      <div class="caption-title">Community Cohesion — relational framing</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-text">FB Page + YT Community</span>
+      <span class="caption-date">D+5 &nbsp;·&nbsp; Tue 19 May &nbsp;·&nbsp; 7:00am AEST</span>
+    </div>
+    <div class="caption-body">A member of COGS is not an investor.
+
+We're not selling shares. We're not promising returns. We're not running a fund.
+
+A COGS member is a participant in a community joint venture under a deed of trust, who shares in the dividends, the voice, and the stewardship outcomes that the Foundation pursues across decades.
+
+That's Community Cohesion. Durable trust between members, between the Trustee and members, and between the Foundation and our First Nations governance partners. It's what makes long-horizon community ownership possible.
+
+It's the antonym of transactional self-interest. It's why the lobbyists' tools don't work on us.
+
+Welcome to the fellowship. cogsaustralia.org. $4 once only.</div>
+    <div class="caption-disclaimer">A community membership invitation. Not financial advice.</div>
+  </div>
+
+  <!-- D.V -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.V</span>
+      <div class="caption-title">Australian Community Fellowship — the framing principle</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-text">FB Page + YT Community</span>
+      <span class="caption-date">D+6 &nbsp;·&nbsp; Wed 20 May &nbsp;·&nbsp; 7:00am AEST</span>
+    </div>
+    <div class="caption-body">Australians, taken together as a community of place, country, and people, possess agency that is structurally different from voters, taxpayers, consumers, or constituents of any party.
+
+That's Australian Community Fellowship. It's pre-political. It's not a Liberal thing or a Labor thing or a teal thing. It's not about who's in office or which side won the last election.
+
+Fellowship is what enables a community to act together for decades, regardless of who holds office, regardless of how the news cycle frames an issue, regardless of what offshore corporate strategy is being run.
+
+This is the relational ground COGS is built on. People. Country. Communities.
+
+$4 once only. cogsaustralia.org.</div>
+    <div class="caption-disclaimer">A community membership invitation. Not financial advice.</div>
+  </div>
+
+  <!-- D.W -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.W</span>
+      <div class="caption-title">Doing for Australians what foreign corporations have done for themselves</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-reel">FB Reel + YT Short</span>
+      <span class="caption-date">D+7 &nbsp;·&nbsp; Thu 21 May &nbsp;·&nbsp; 12:30pm AEST</span>
+    </div>
+    <div class="caption-body">Foreign corporations and offshore institutional shareholders have been pooling their capital for decades to take ownership stakes in Australian resource companies.
+
+They did this by combining individual investments into structural shareholding power. They did it across long horizons. They did it through trust and pooling vehicles. They did it without asking the Australian community for permission.
+
+They were right to do it. It worked.
+
+COGS does for Australians, on a community basis, what they have been doing for themselves on a corporate basis. Same mechanism. Same horizon. Same legal framework. Just for Australians.
+
+If they could pool their resources to own a piece of our country, we can pool our resources to own a piece of theirs. That's the simple version.
+
+$4 once only. cogsaustralia.org.</div>
+    <div class="caption-disclaimer">A community membership invitation. Not financial advice.</div>
+  </div>
+
+  <!-- D.X -->
+  <div class="caption-card">
+    <div class="caption-header">
+      <span class="caption-code">D.X</span>
+      <div class="caption-title">Civic Synergy badge — community pledge variant</div>
+    </div>
+    <div class="caption-meta">
+      <span class="caption-tag tag-badge">Badge rotation</span>
+      <span class="caption-date">D+8 onward &nbsp;·&nbsp; Fri 22 May+</span>
+    </div>
+    <div class="caption-body">I joined COGS of Australia because {reason}.
+
+Because protests haven't worked. Voting at elections hasn't changed it. Complaining about it does nothing.
+
+Because Civic Synergy works — small commitments combining into structural capability.
+
+$4 once only. cogsaustralia.org. Tag four Australians who deserve a fair say.</div>
+    <div class="caption-disclaimer">#FairSayRelay &nbsp;·&nbsp; #CivicSynergy &nbsp;·&nbsp; #CommunityCohesion &nbsp;·&nbsp; #AustralianCommunityFellowship</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Adversarial response protocol -->
+  <div class="section-label">If an attack comes — response protocol</div>
+  <p style="font-size:.84rem;color:var(--text2);line-height:1.8;margin-bottom:18px">The Foundation does not respond to adversarial actions with counter-advertising or counter-attack. The protocol is calm, on the record, at the Foundation's cadence.</p>
+  <div class="protocol">
+    <div class="protocol-item">
+      <div class="protocol-num">1</div>
+      <div class="protocol-text"><strong>Industry advertising, op-ed, or podcast attack:</strong> A single dedicated response caption added to the relay within 48 hours. Addresses the substantive claim with primary-source evidence. No naming of the attacking entity. No counter-attack tone.</div>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-num">2</div>
+      <div class="protocol-text"><strong>Regulatory complaint (ASIC, ATO, ACNC):</strong> Acknowledge publicly that the complaint exists. Note that compliance documentation is at cogsaustralia.org. Substantive response goes to the regulator, on the record, in the regulator's preferred form.</div>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-num">3</div>
+      <div class="protocol-text"><strong>Personal attack on Trustee, FNAC nominees, or member voices:</strong> Single statement on cogsaustralia.org and one relay caption. Reiterate that all governance is documented in Trustee Decision Records. The instrument operates on documents, not personalities.</div>
+    </div>
+  </div>
+
+  <p class="notice">COG$ of Australia Foundation &nbsp;·&nbsp; ABN 91 341 497 529 &nbsp;·&nbsp; Drake Village NSW 2469 &nbsp;·&nbsp; Wahlubal Country, Bundjalung Nation<br>Member briefing — Fair Say Relay caption family v1.1 issued 30 April 2026. A community membership. Not financial advice.</p>
+
+</div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var gate = document.getElementById('auth-gate');
+  var main = document.getElementById('main-content');
+  var chip = document.getElementById('member-chip');
+
+  try {
+    var m = JSON.parse(localStorage.getItem('cogs_snft_member') || 'null');
+    if (m && m.partner_id) {
+      main.classList.add('show');
+      if (chip && m.first_name) {
+        chip.textContent = 'Member briefing — ' + m.first_name;
+      }
+    } else {
+      gate.classList.add('show');
+    }
+  } catch(e) {
+    gate.classList.add('show');
+  }
+})();
+</script>
+</body>
+</html>
