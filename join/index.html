@@ -1343,6 +1343,47 @@ document.getElementById('join-form').addEventListener('submit', async function(e
 })();
 </script>
 <script>
+/* ── Caretaker default invite for cold visitors ── */
+(function() {
+  try {
+    // Only auto-validate if no partner code already in URL
+    var params      = new URLSearchParams(window.location.search);
+    var hasCode     = !!(params.get('partner_code') || params.get('code') || params.get('c'));
+    if (hasCode) return;
+
+    // Only on cold path (no cogs_intro_seen) or explicit cold pathKind
+    var introDone   = localStorage.getItem('cogs_intro_seen') === '1';
+    var pathKind    = sessionStorage.getItem('cogs_path_kind') || '';
+    var isWarm      = introDone && pathKind === 'invited';
+    if (isWarm) return;
+
+    // Wait for DOM + validateInviteCode to be defined
+    window.addEventListener('load', function() {
+      try {
+        var inp = document.getElementById('invite_code_input');
+        if (!inp) return;
+
+        // Check invite not already validated
+        var status = document.getElementById('invite_validation_status');
+        if (status && status.value === 'valid') return;
+
+        // Pre-fill and silently validate
+        inp.value = 'COGS-FUHT2L';
+
+        // Hide the invite section visually — user does not need to see this
+        var wrap = document.getElementById('invite-wrap');
+        if (wrap) wrap.style.display = 'none';
+
+        // Call existing validate function
+        if (typeof validateInviteCode === 'function') {
+          validateInviteCode();
+        }
+      } catch(_e) {}
+    });
+  } catch(_e) {}
+})();
+</script>
+<script>
 /* ── Stage 3+4: cold/invited path configuration ── */
 (function(){
   try {
