@@ -552,14 +552,6 @@
                   <span id="cs-invite-name" style="display:block;font-size:.88rem;color:var(--text2)">—</span>
                 </div>
               </div>
-              <!-- Address row -->
-              <div class="confirm-row">
-                <div class="confirm-ico">📍</div>
-                <div>
-                  <strong>Address</strong>
-                  <span id="cs-address" style="color:var(--muted);font-size:.88rem;">You will add this after joining.</span>
-                </div>
-              </div>
               <div class="confirm-row">
                 <div class="confirm-ico">$</div>
                 <div>
@@ -1025,15 +1017,6 @@ function populateConfirm() {
   document.getElementById('cs-name').textContent    = fn + ' ' + ln;
   document.getElementById('cs-contact').textContent = [em, mob].filter(Boolean).join(' \u00b7 ');
   var dobVal = (document.getElementById('dob')||{}).value||'';
-  var dobEl  = document.getElementById('cs-dob');
-  if (dobEl) dobEl.textContent = dobVal
-    ? 'DOB: ' + new Date(dobVal+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})
-    : '';
-  var sub   = (document.getElementById('suburb')||{}).value||'';
-  var state = (document.getElementById('state')||{}).value||'';
-  var pc    = (document.getElementById('postcode')||{}).value||'';
-  var str   = (document.getElementById('street')||{}).value||'';
-  document.getElementById('cs-address').textContent = [str,sub,state,pc].filter(Boolean).join(', ') || '(not provided)';
   /* Show inviter row if validated */
   var inviteRow  = document.getElementById('cs-invite-row');
   var inviteName = document.getElementById('cs-invite-name');
