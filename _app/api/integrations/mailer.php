@@ -1545,6 +1545,87 @@ return [$html, $plain];
             return [$html, $plain];
         })(),
 
+        'voice_submission_ack' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $pStyle, $boxStyle, $btnStyle, $site): array {
+            $firstName = htmlspecialchars((string)($p['first_name'] ?? 'Member'));
+            $subId     = (int)($p['submission_id'] ?? 0);
+            $vaultUrl  = $site . '/partners/';
+            $html = $wrapOpen . $headerBar . $body
+                . '<h2 style="' . $h2Style . '">Thanks, ' . $firstName . '. Your voice is in review.</h2>'
+                . '<p style="' . $pStyle . '">We received your submission and it is being reviewed by the COG$ team. Most submissions are cleared within 24&nbsp;hours.</p>'
+                . '<div style="' . $boxStyle . '">'
+                . '<div style="font-size:11px;color:#9a8a74;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Submission reference</div>'
+                . '<div style="font-size:18px;font-weight:700;color:#f0e8d6;">#' . $subId . '</div>'
+                . '</div>'
+                . '<p style="' . $pStyle . '">Once cleared, your voice may be shared on COG$ social media and at Foundation Day on 14&nbsp;May 2026, with your first name shown. You can withdraw consent any time from your vault.</p>'
+                . '<a href="' . $vaultUrl . '" style="' . $btnStyle . '">Open my vault ›</a>'
+                . $footerBar . $wrapClose;
+            $plain = "Thanks, {$firstName}. Your COG\$ voice submission is in review.\n\n"
+                . "Submission reference: #{$subId}\n\n"
+                . "Most submissions are cleared within 24 hours. Once cleared, your voice may be shared on COG\$ social media and at Foundation Day on 14 May 2026, with your first name shown.\n\n"
+                . "You can withdraw consent any time from your vault: {$vaultUrl}\n\n"
+                . "— COG\$ of Australia Foundation\n";
+            return [$html, $plain];
+        })(),
+
+        'voice_submission_operator_alert' => (function() use ($p, $site): array {
+            $subId     = (int)($p['submission_id'] ?? 0);
+            $partnerId = (int)($p['partner_id'] ?? 0);
+            $adminUrl  = $site . '/hubs/mainspring/';
+            $html = '<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;background:#0f0d09;color:#f0e8d6;padding:24px;border-radius:10px">'
+                . '<h2 style="color:#c8901a;margin:0 0 12px">New Voice Submission — Review Required</h2>'
+                . '<p style="font-size:13px;color:#d4c9b8;line-height:1.6;margin:0 0 16px">A Member has submitted a voice entry. It is pending compliance review before publication.</p>'
+                . '<table style="width:100%;font-size:13px;border-collapse:collapse">'
+                . '<tr><td style="color:#9a8a74;padding:4px 0;width:40%">Submission ID</td><td style="font-weight:700;font-family:monospace">#' . $subId . '</td></tr>'
+                . '<tr><td style="color:#9a8a74;padding:4px 0">Partner ID</td><td style="font-family:monospace">' . $partnerId . '</td></tr>'
+                . '</table>'
+                . '<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)">'
+                . '<p style="font-size:12px;color:#9a8a74;margin:0">Review in <strong style="color:#f0e8d6">Mainspring → Voice Submissions</strong> to approve or reject.</p>'
+                . '</div></div>';
+            $plain = "[COG\$] New voice submission #{$subId} is pending review.\n"
+                . "Partner ID: {$partnerId}\n\n"
+                . "Review at: {$adminUrl}\n";
+            return [$html, $plain];
+        })(),
+
+        'voice_submission_approved' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $pStyle, $boxStyle, $btnStyle, $site): array {
+            $firstName = htmlspecialchars((string)($p['first_name'] ?? 'Member'));
+            $subId     = (int)($p['submission_id'] ?? 0);
+            $vaultUrl  = $site . '/partners/';
+            $html = $wrapOpen . $headerBar . $body
+                . '<h2 style="' . $h2Style . '">Your voice is cleared, ' . $firstName . '.</h2>'
+                . '<p style="' . $pStyle . '">Your submission (#' . $subId . ') has passed compliance review and is cleared for publication. It may now appear on COG$ social media and at Foundation Day on 14&nbsp;May 2026, with your first name shown.</p>'
+                . '<p style="' . $pStyle . '">You can withdraw consent at any time from your vault.</p>'
+                . '<a href="' . $vaultUrl . '" style="' . $btnStyle . '">Open my vault ›</a>'
+                . $footerBar . $wrapClose;
+            $plain = "Hi {$firstName},\n\n"
+                . "Your COG\$ voice submission (#{$subId}) has been cleared for publication.\n\n"
+                . "It may now appear on COG\$ social media and at Foundation Day on 14 May 2026, with your first name shown.\n\n"
+                . "You can withdraw consent any time from your vault: {$vaultUrl}\n\n"
+                . "— COG\$ of Australia Foundation\n";
+            return [$html, $plain];
+        })(),
+
+        'voice_submission_rejected' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $pStyle, $boxStyle, $site): array {
+            $firstName = htmlspecialchars((string)($p['first_name'] ?? 'Member'));
+            $subId     = (int)($p['submission_id'] ?? 0);
+            $reason    = htmlspecialchars((string)($p['reason'] ?? ''));
+            $vaultUrl  = $site . '/partners/';
+            $html = $wrapOpen . $headerBar . $body
+                . '<h2 style="' . $h2Style . '">About your COG$ submission, ' . $firstName . '.</h2>'
+                . '<p style="' . $pStyle . '">Unfortunately, submission #' . $subId . ' could not be cleared for publication. This is usually because the content touches on financial return language, which COG$ cannot publish under its compliance guidelines.</p>'
+                . ($reason !== '' ? '<div style="' . $boxStyle . '"><div style="font-size:11px;color:#9a8a74;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Reviewer note</div><div style="font-size:14px;color:#f0e8d6;">' . $reason . '</div></div>' : '')
+                . '<p style="' . $pStyle . '">You are welcome to submit a revised version from your vault. Focus on why you joined the community rather than any expected financial outcome.</p>'
+                . '<a href="' . $vaultUrl . '" style="' . $btnStyle . '">Open my vault ›</a>'
+                . $footerBar . $wrapClose;
+            $plain = "Hi {$firstName},\n\n"
+                . "Your COG\$ voice submission (#{$subId}) could not be cleared for publication.\n\n"
+                . ($reason !== '' ? "Reviewer note: {$reason}\n\n" : '')
+                . "You are welcome to submit a revised version from your vault. Focus on why you joined the community rather than any expected financial outcome.\n\n"
+                . "Vault: {$vaultUrl}\n\n"
+                . "— COG\$ of Australia Foundation\n";
+            return [$html, $plain];
+        })(),
+
         default => throw new RuntimeException('Unknown email template: ' . $templateKey),
     };
 }
