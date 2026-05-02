@@ -62,10 +62,14 @@ $tokenInputs = [
 if ($fullName === '') apiError('Full name is required.');
 if (!validateEmail($email)) apiError('A valid email is required.');
 if ($mobile === '') apiError('Mobile is required.');
-if ($dob === '') apiError('Date of birth is required.');
-if ($street === '') apiError('Street address is required.');
-if ($suburb === '') apiError('Suburb is required.');
-if (!validatePostcode($postcode)) apiError('A valid 4 digit postcode is required.');
+// Date of birth collected in vault post-registration
+// if ($dob === '') apiError('Date of birth is required.');
+// Street address collected in vault post-registration
+// if ($street === '') apiError('Street address is required.');
+// Suburb collected in vault post-registration
+// if ($suburb === '') apiError('Suburb is required.');
+// Postcode collected in vault post-registration
+// if (!validatePostcode($postcode)) apiError('A valid 4 digit postcode is required.');
 if (!$noticeAccepted) apiError('You must accept the beta reservation notice before continuing.');
 if ($noticeVersion === '') apiError('Reservation notice version is required.');
 
@@ -106,11 +110,13 @@ function trust_get_setting(PDO $db, string $key, ?string $default = null): ?stri
 }
 function trust_invite_mode(PDO $db): string {
     $raw = strtolower(trim((string)(trust_get_setting($db, 'partner_invitation_mode', trust_get_setting($db, 'invite_program_mode', 'required')) ?? 'required')));
-    return match ($raw) {
-        'required', 'on_required', 'enforced' => 'required',
-        'disabled', 'off', 'inactive' => 'disabled',
-        default => 'required',
-    };
+    if (in_array($raw, ['required', 'on_required', 'enforced'])) {
+        return 'required';
+    } elseif (in_array($raw, ['disabled', 'off', 'inactive'])) {
+        return 'disabled';
+    } else {
+        return 'required';
+    }
 }
 function trust_validate_partner_invite(PDO $db, string $publicCode, string $entryType = 'personal'): array {
     $result = [
@@ -186,7 +192,7 @@ function trust_log_partner_invitation_acceptance(PDO $db, array $inviteState, st
     if ($data) {
         $names = array_keys($data);
         $marks = implode(',', array_fill(0, count($names), '?'));
-        $sql = 'INSERT INTO partner_invitations (' . implode(',', array_map(fn($n) => "`$n`", $names)) . ') VALUES (' . $marks . ')';
+        $sql = 'INSERT INTO partner_invitations (' . implode(',', array_map(function($n) { return "`$n`"; }, $names)) . ') VALUES (' . $marks . ')';
         $db->prepare($sql)->execute(array_values($data));
     }
     try {
@@ -263,7 +269,7 @@ function trust_create_approval_request(PDO $db, int $memberId, int $tokenClassId
     if (!$data) return;
     $names = array_keys($data);
     $marks = implode(',', array_fill(0, count($names), '?'));
-    $sql = 'INSERT INTO approval_requests (' . implode(',', array_map(fn($n) => "`$n`", $names)) . ') VALUES (' . $marks . ')';
+    $sql = 'INSERT INTO approval_requests (' . implode(',', array_map(function($n) { return "`$n`"; }, $names)) . ') VALUES (' . $marks . ')';
     $db->prepare($sql)->execute(array_values($data));
 }
 function trust_log_activity(PDO $db, int $memberId, ?int $tokenClassId, string $actionType, array $payload = []): void {
@@ -283,7 +289,7 @@ function trust_log_activity(PDO $db, int $memberId, ?int $tokenClassId, string $
     if (!$data) return;
     $names = array_keys($data);
     $marks = implode(',', array_fill(0, count($names), '?'));
-    $sql = 'INSERT INTO wallet_activity (' . implode(',', array_map(fn($n) => "`$n`", $names)) . ') VALUES (' . $marks . ')';
+    $sql = 'INSERT INTO wallet_activity (' . implode(',', array_map(function($n) { return "`$n`"; }, $names)) . ') VALUES (' . $marks . ')';
     $db->prepare($sql)->execute(array_values($data));
 }
 
@@ -378,7 +384,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 }
 
 $requiredCodes = ['PERSONAL_SNFT','KIDS_SNFT','LANDHOLDER_COG','ASX_INVESTMENT_COG','PAY_IT_FORWARD_COG','DONATION_COG','RWA_COG','LR_COG'];
-$missingCodes = array_values(array_filter($requiredCodes, fn($code) => !isset($classRows[$code])));
+$missingCodes = array_values(array_filter($requiredCodes, function($code) use ($classRows) { return !isset($classRows[$code]); }));
 if ($missingCodes) {
     apiError('Missing token classes: ' . implode(', ', $missingCodes), 500);
 }
@@ -428,7 +434,7 @@ try {
 
     $names = array_keys($memberData);
     $marks = implode(',', array_fill(0, count($names), '?'));
-    $sql = 'INSERT INTO members (' . implode(',', array_map(fn($n) => "`$n`", $names)) . ') VALUES (' . $marks . ')';
+    $sql = 'INSERT INTO members (' . implode(',', array_map(function($n) { return "`$n`"; }, $names)) . ') VALUES (' . $marks . ')';
     $db->prepare($sql)->execute(array_values($memberData));
     $memberId = (int)$db->lastInsertId();
 
@@ -494,7 +500,7 @@ try {
         if ($snftData) {
             $names = array_keys($snftData);
             $marks = implode(',', array_fill(0, count($names), '?'));
-            $sql = 'INSERT INTO snft_memberships (' . implode(',', array_map(fn($n) => "`$n`", $names)) . ') VALUES (' . $marks . ')';
+            $sql = 'INSERT INTO snft_memberships (' . implode(',', array_map(function($n) { return "`$n`"; }, $names)) . ') VALUES (' . $marks . ')';
             $db->prepare($sql)->execute(array_values($snftData));
         }
     }
@@ -575,7 +581,7 @@ try {
             $marks = implode(',', array_fill(0, count($names), '?'));
             $db->prepare(
                 'INSERT INTO partners ('
-                . implode(',', array_map(fn($n) => "`{$n}`", $names))
+                . implode(',', array_map(function($n) { return "`{$n}`"; }, $names))
                 . ') VALUES (' . $marks . ')'
             )->execute(array_values($partnerData));
             $partnerId = (int)$db->lastInsertId();
@@ -600,7 +606,7 @@ try {
             $marks = implode(',', array_fill(0, count($names), '?'));
             $db->prepare(
                 'INSERT INTO partner_wallet_access ('
-                . implode(',', array_map(fn($n) => "`{$n}`", $names))
+                . implode(',', array_map(function($n) { return "`{$n}`"; }, $names))
                 . ') VALUES (' . $marks . ')'
             )->execute(array_values($pwaData));
         }
