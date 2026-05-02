@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COGS Cold Funnel — UX Audit</title>
+<style>
+  :root{
+    --paper:#faf7f2;
+    --ink:#171513;
+    --ink-2:#3a342e;
+    --ink-3:#6b6157;
+    --rule:#e6dfd4;
+    --rule-2:#d6cdbf;
+    --warm:#f4eee2;
+    --hi: oklch(0.62 0.14 38);   /* terracotta accent */
+    --hi-soft: oklch(0.94 0.04 38);
+    --crit: oklch(0.55 0.16 28);
+    --crit-soft: oklch(0.94 0.05 28);
+    --ok: oklch(0.55 0.10 145);
+    --ok-soft: oklch(0.94 0.04 145);
+    --serif: ui-serif, "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:15.5px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:64px 32px 96px}
+  header.doc-hd{
+    border-bottom:1px solid var(--rule);
+    padding-bottom:28px; margin-bottom:40px;
+    display:grid; grid-template-columns:1fr auto; gap:24px; align-items:end;
+  }
+  .doc-mark{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3);
+  }
+  h1{
+    font-family:var(--serif); font-weight:500; font-style:italic;
+    font-size:38px; line-height:1.1; letter-spacing:-.01em;
+    margin-top:8px; max-width:18ch;
+  }
+  .doc-meta{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    text-align:right; line-height:1.7;
+  }
+  .doc-meta b{color:var(--ink); font-weight:500}
+  .lede{
+    font-size:17px; line-height:1.6; color:var(--ink-2);
+    max-width:64ch; margin-top:24px;
+  }
+  /* TOC */
+  .toc{
+    background:var(--warm); border:1px solid var(--rule-2);
+    padding:18px 22px; margin:36px 0 48px;
+    display:grid; grid-template-columns:auto 1fr; gap:12px 22px;
+    font-size:13.5px;
+  }
+  .toc dt{
+    font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); padding-top:1px;
+  }
+  .toc dd a{color:var(--ink); text-decoration:none; border-bottom:1px solid var(--rule-2)}
+  .toc dd a:hover{border-bottom-color:var(--ink)}
+
+  /* Section heads */
+  section{margin:56px 0}
+  .section-num{
+    font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:8px;
+  }
+  h2{
+    font-family:var(--serif); font-weight:500;
+    font-size:26px; line-height:1.2; letter-spacing:-.005em;
+    margin-bottom:18px; padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+  }
+  h3{
+    font-family:var(--sans); font-weight:600; font-size:15px;
+    letter-spacing:-.005em; margin:0 0 6px;
+  }
+  p{margin:0 0 12px; color:var(--ink-2); max-width:64ch}
+  p.tight{margin-bottom:6px}
+  code{
+    font-family:var(--mono); font-size:.86em;
+    background:var(--warm); padding:1px 5px; border-radius:3px;
+    color:var(--ink);
+  }
+
+  /* Above-the-fold callout */
+  .atf-callout{
+    background:var(--warm); border-left:3px solid var(--hi);
+    padding:18px 22px; margin:0 0 36px;
+  }
+  .atf-callout .lbl{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--hi); margin-bottom:6px;
+  }
+
+  /* Findings table — page heading rows + finding rows */
+  .findings{
+    border-top:1px solid var(--ink);
+    margin-top:8px;
+  }
+  .finding{
+    display:grid;
+    grid-template-columns: 36px 88px 1fr 90px;
+    gap:18px;
+    padding:18px 0 18px;
+    border-bottom:1px solid var(--rule);
+    align-items:start;
+  }
+  .finding .num{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    padding-top:3px; letter-spacing:.04em;
+  }
+  .finding .sev{padding-top:2px}
+  .pill{
+    display:inline-block; font-family:var(--mono);
+    font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    padding:2px 8px; border:1px solid; border-radius:99px;
+    line-height:1.5;
+  }
+  .pill.crit{color:var(--crit); border-color:var(--crit); background:var(--crit-soft)}
+  .pill.high{color:var(--hi); border-color:var(--hi); background:var(--hi-soft)}
+  .pill.med{color:var(--ink-2); border-color:var(--rule-2); background:var(--warm)}
+  .pill.nit{color:var(--ink-3); border-color:var(--rule-2); background:transparent}
+  .finding .body h3{margin-bottom:4px}
+  .finding .body p{margin:4px 0 0; font-size:14px}
+  .finding .body .ev{
+    font-size:12.5px; color:var(--ink-3); margin-top:8px;
+    font-family:var(--mono); line-height:1.55;
+  }
+  .finding .fix{
+    font-size:12.5px; color:var(--ink-2); padding-top:3px;
+    line-height:1.5;
+  }
+  .finding .fix b{
+    display:block; font-family:var(--mono);
+    font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:500; margin-bottom:3px;
+  }
+
+  /* Page banner row */
+  .page-row{
+    display:grid; grid-template-columns:36px 1fr auto;
+    gap:18px; align-items:baseline;
+    padding:22px 0 10px;
+    border-bottom:2px solid var(--ink);
+    margin-top:12px;
+  }
+  .page-row .num{
+    font-family:var(--serif); font-style:italic; font-size:22px; color:var(--ink);
+  }
+  .page-row .ttl{
+    font-family:var(--serif); font-size:22px; font-weight:500; letter-spacing:-.005em;
+  }
+  .page-row .url{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+  }
+
+  /* Priority list */
+  .priority-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+    margin-top:20px;
+  }
+  .pcard{
+    border:1px solid var(--rule-2); padding:18px 20px;
+    background:var(--paper);
+  }
+  .pcard.now{border-left:3px solid var(--crit)}
+  .pcard.next{border-left:3px solid var(--hi)}
+  .pcard.later{border-left:3px solid var(--rule-2)}
+  .pcard .h{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:10px;
+  }
+  .pcard ol{margin:0 0 0 18px; padding:0}
+  .pcard li{font-size:13.5px; color:var(--ink-2); margin-bottom:8px; line-height:1.5}
+  .pcard li b{color:var(--ink); font-weight:600}
+
+  /* Funnel diagram */
+  .funnel{
+    display:grid; grid-template-columns:repeat(4, 1fr);
+    gap:0; margin:28px 0 12px;
+    border:1px solid var(--rule-2);
+  }
+  .fn-step{
+    padding:14px 16px; border-right:1px solid var(--rule-2);
+    background:var(--paper);
+  }
+  .fn-step:last-child{border-right:none}
+  .fn-step .nm{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:6px;
+  }
+  .fn-step .ttl{
+    font-family:var(--serif); font-size:15px; font-weight:500; margin-bottom:4px;
+  }
+  .fn-step .ask{font-size:12px; color:var(--ink-2); line-height:1.45}
+  .fn-step .leak{
+    margin-top:10px; font-family:var(--mono); font-size:10.5px;
+    color:var(--crit); letter-spacing:.04em;
+  }
+
+  footer.doc-ft{
+    margin-top:64px; padding-top:24px;
+    border-top:1px solid var(--rule);
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+
+  @media (max-width:680px){
+    .wrap{padding:40px 20px 64px}
+    h1{font-size:30px}
+    header.doc-hd{grid-template-columns:1fr}
+    .doc-meta{text-align:left}
+    .finding{grid-template-columns:24px 1fr; row-gap:8px}
+    .finding .sev{grid-column:2}
+    .finding .body{grid-column:1 / -1}
+    .finding .fix{grid-column:1 / -1; padding-top:0}
+    .priority-grid{grid-template-columns:1fr}
+    .funnel{grid-template-columns:1fr; }
+    .fn-step{border-right:none; border-bottom:1px solid var(--rule-2)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc-hd">
+  <div>
+    <div class="doc-mark">UX Audit · Cold visitor funnel</div>
+    <h1>One share, four pages, many places to lose them.</h1>
+  </div>
+  <div class="doc-meta">
+    <b>COGS of Australia</b><br>
+    seat → inside → join → thank-you<br>
+    May 2026 · Internal review
+  </div>
+</header>
+
+<p class="lede">A cold Australian lands on <code>/seat/</code> from a paid post or an SMS, gets a free guide, is asked for a mobile number, then for $4, then is handed off to set up a vault. Below is what works, what breaks trust, and what is most likely killing the conversion — read top to bottom, or jump to a page.</p>
+
+<dl class="toc">
+  <dt>01</dt><dd><a href="#summary">Headline read &amp; funnel shape</a></dd>
+  <dt>02</dt><dd><a href="#priorities">Top priorities (fix-now, fix-next, fix-later)</a></dd>
+  <dt>03</dt><dd><a href="#seat">Page 1 — <code>/seat/</code> · the cold landing</a></dd>
+  <dt>04</dt><dd><a href="#inside">Page 2 — <code>/seat/inside/</code> · the guide + SMS gate</a></dd>
+  <dt>05</dt><dd><a href="#join">Page 3 — <code>/join/</code> · the $4 form</a></dd>
+  <dt>06</dt><dd><a href="#thanks">Page 4 — <code>/thank-you/</code> · the handoff</a></dd>
+  <dt>07</dt><dd><a href="#cross">Cross-cutting issues (trust, brand, legal)</a></dd>
+</dl>
+
+<!-- ─────────────── SUMMARY ─────────────── -->
+<section id="summary">
+  <div class="section-num">01 — Summary</div>
+  <h2>The funnel reads as a community pitch but behaves like a fintech.</h2>
+
+  <p>Every page is dark, gold, italic-serif, and emotionally charged. That tone is fine for a manifesto. The problem is the <i>asks</i> sitting underneath the manifesto are a financial-product sequence: email → mobile → personal details → $4 → invitation code → bank-transfer details → a "vault" with 2FA → a Joint Venture Agreement. A cold Australian who has heard of COGS for the first time five minutes ago is being asked to do something that looks materially like buying a security from a stranger overseas, on a brand they do not recognise, with no proof of organisation behind it.</p>
+
+  <p>The single highest-leverage change is not visual. It is making the <b>$4 ask honest about what it is</b> on the page that asks for it, and making the <b>identity of the receiving entity</b> obvious before the form. Everything else is downstream of that.</p>
+
+  <div class="funnel" aria-label="Funnel shape">
+    <div class="fn-step">
+      <div class="nm">Step 1 · Seat</div>
+      <div class="ttl">Get the guide</div>
+      <div class="ask">Email only · soft ask</div>
+      <div class="leak">Leaks: weak proof, no logo, claim-density high</div>
+    </div>
+    <div class="fn-step">
+      <div class="nm">Step 2 · Inside</div>
+      <div class="ttl">Read + give mobile</div>
+      <div class="ask">Long-form guide · phone capture · $4 CTA</div>
+      <div class="leak">Leaks: SMS ask before value paid off</div>
+    </div>
+    <div class="fn-step">
+      <div class="nm">Step 3 · Join</div>
+      <div class="ttl">Pay $4</div>
+      <div class="ask">Name, email, mobile · invite code · "register"</div>
+      <div class="leak">Leaks: hidden caretaker code; no payment yet</div>
+    </div>
+    <div class="fn-step">
+      <div class="nm">Step 4 · Thank-you</div>
+      <div class="ttl">Set up vault &amp; pay</div>
+      <div class="ask">Open vault · Stripe $4.40 · or bank transfer $4</div>
+      <div class="leak">Leaks: surprise fee, second sign-up, JVPA later</div>
+    </div>
+  </div>
+  <p style="font-size:12.5px; color:var(--ink-3); margin-top:6px"><i>The user is told the price is $4 four times before page 4, then on page 4 sees $4.40. They are told it is "one step" on page 1, and end up doing a multi-stage signup with a vault password and 2FA.</i></p>
+</section>
+
+<!-- ─────────────── PRIORITIES ─────────────── -->
+<section id="priorities">
+  <div class="section-num">02 — Priorities</div>
+  <h2>If you only fix three things this week.</h2>
+
+  <div class="priority-grid">
+    <div class="pcard now">
+      <div class="h">Fix now · Conversion-critical</div>
+      <ol>
+        <li><b>Reconcile the price.</b> Do not advertise $4 and then charge $4.40. Either eat the Stripe fee, advertise "$4 + 40c card fee" everywhere, or default to bank transfer with card as a clearly-labelled alternative.</li>
+        <li><b>Move payment into <code>/join/</code>.</b> Submitting the form should either take payment or clearly say "no money yet — payment is on the next screen, takes 30 seconds." Right now you collect identity then send the user to a separate "vault setup" before payment.</li>
+        <li><b>Stop the silent invite-code injection.</b> A hidden <code>COGS-FUHT2L</code> caretaker code is auto-applied for cold visitors. Either make the cold path truly cold-friendly with no code field, or show the field and explain why it is pre-filled.</li>
+      </ol>
+    </div>
+    <div class="pcard next">
+      <div class="h">Fix next · Trust-critical</div>
+      <ol>
+        <li><b>Above the fold of <code>/seat/</code>: identity proof.</b> Add the registered entity name, ABN/ACN, and a 1-line plain-English statement of what COGS is. Currently the only proof is "Drake Village NSW" in tiny footer text.</li>
+        <li><b>Show JVPA before the form, not after.</b> Asking for legal acceptance after the user has paid is a dark pattern in spirit even if technically legal. Surface a 4-bullet plain-English summary on <code>/join/</code> with a link to the full document.</li>
+        <li><b>Drop the second mobile-capture on <code>/seat/inside/</code></b> — you already have the email; asking for SMS halfway through reading the guide reads as bait-and-switch on "just your email."</li>
+      </ol>
+    </div>
+    <div class="pcard later">
+      <div class="h">Fix later · Polish &amp; risk</div>
+      <ol>
+        <li>Tone down the dark-gold "wealth product" aesthetic — it actively conflicts with "ordinary Australians, $4."</li>
+        <li>Replace <code>scrollIntoView</code> with explicit scroll to avoid layout shift; remove the unused 6-step field-stepper that pretends to be a multi-screen form.</li>
+        <li>Add an exit-intent / soft-save on <code>/join/</code> step 1 so a half-completed form is not lost.</li>
+        <li>Audit copy for unverified-sounding claims ("five thousand Members", "First Nations Advisory Council with binding authority") — either evidence them on-page or soften.</li>
+      </ol>
+    </div>
+    <div class="pcard later">
+      <div class="h">Fix later · Accessibility</div>
+      <ol>
+        <li>Gold-on-near-black body copy is around 4.5:1 at best on key surfaces and below on muted text. Lift <code>--text2</code> and <code>--muted</code>, or darken behind them.</li>
+        <li>Form errors are signalled only with red border colour. Add inline text errors with an icon and an aria-live region on every field, not just one global status.</li>
+        <li>The auto-validating invite code (and silent caretaker code) creates a status change with no announced text — add <code>aria-live</code>.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── PAGE 1 ─────────────── -->
+<section id="seat">
+  <div class="page-row">
+    <div class="num">1</div>
+    <div class="ttl">The cold landing</div>
+    <div class="url">/seat/index.html</div>
+  </div>
+
+  <div class="atf-callout">
+    <div class="lbl">Above-the-fold first impression</div>
+    <p class="tight">Headline is strong (<i>"How one share makes the boss listen."</i>) and the single-field email form is right. But on first contact with a cold Australian:</p>
+    <p class="tight">— There is <b>no logo, no entity name, no organisational proof</b> in the visible viewport. The header is the wordmark <code>COG$</code> at 1.05rem. That is not enough trust currency for the claim being made.</p>
+    <p class="tight">— The dollar-sign brand mark <code>COG$</code> is the strongest visual signal on the page and it reads as <i>money product</i>, which fights the message "no money, just your email."</p>
+    <p>— "Free guide" eyebrow lands but is buried; the trust statement <i>"No spam. No subscription. One email."</i> below the input is the most important reassurance and should be louder.</p>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">1.1</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>No identifiable organisation above the fold</h3>
+        <p>A cold visitor cannot answer "who is this?" without scrolling. The byline <i>"I am Thomas"</i> appears below the fold; the entity "COG$ of Australia Foundation" appears only in the footer.</p>
+        <div class="ev">evidence: <code>seat/index.html:127</code> footer-only entity ref</div>
+      </div>
+      <div class="fix"><b>Fix</b>Add a small logo + "COGS of Australia Foundation · ABN xxx" line to the header. Optionally a 1-line <i>"A community Foundation registered in NSW"</i> under the headline.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">1.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Claim density without evidence</h3>
+        <p>Three big legal claims appear below the fold ("three legal tools", "real say", "shareholders inside the meeting") with zero linked source, citation, or social proof. A skeptical reader has no anchor for trust.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Add at least one anchor: a Corporations Act citation, a press mention, an ASIC company link, or a screenshot of a regulator filing.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">1.3</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>The dollar-sign mark fights the message</h3>
+        <p><code>COG$</code> rendered in italic gold serif reads as a luxury financial product. The page text says the opposite ("no money, no catch"). The visual identity is undermining the copy.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Either commit to "ordinary Australians, $4" with a humbler palette/wordmark, or commit to "real shareholder power" with a more institutional palette. The split-brain is hurting both.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">1.4</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Foundation Day "14 May 2026" is a ticking clock that no one has seen yet</h3>
+        <p>Below the fold a band announces "The first community vote." Without context this reads as an ICO/launch date, which triggers the same skeptical pattern as crypto presale pages.</p>
+      </div>
+      <div class="fix"><b>Fix</b>One sentence: <i>"This is when registered Members vote on the first governance resolution. Not a token launch."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">1.5</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>Two visit-tracking beacons fire on every load</h3>
+        <p>The seat page fires a <code>track/visit</code> pixel with <code>p=seat</code>; <code>/join/</code> and <code>/thank-you/</code> each have a second beacon block. Harmless functionally but worth consolidating.</p>
+        <div class="ev">evidence: <code>seat/index.html:152</code></div>
+      </div>
+      <div class="fix"><b>Fix</b>One shared <code>cogs-track.js</code>; cleaner privacy posture too.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── PAGE 2 ─────────────── -->
+<section id="inside">
+  <div class="page-row">
+    <div class="num">2</div>
+    <div class="ttl">The guide + SMS gate</div>
+    <div class="url">/seat/inside/index.html</div>
+  </div>
+
+  <div class="atf-callout">
+    <div class="lbl">Above-the-fold first impression</div>
+    <p class="tight">The user just gave their email. They expect "the guide." Instead the page opens with a confirmation band, then a long-form essay (<i>"Seat at the Table"</i>), and partway down the page asks for a <b>mobile number</b> to "send one text on Foundation Day."</p>
+    <p>This violates the page-1 promise of <i>"One email."</i> The SMS section is reasonably worded — but its existence on this page, before any value-exchange beyond "you are reading the guide", is the single biggest credibility break in the funnel for a skeptical Australian.</p>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">2.1</div>
+      <div class="sev"><span class="pill crit">Crit</span></div>
+      <div class="body">
+        <h3>Mobile capture contradicts the landing-page promise</h3>
+        <p>Page 1 says: <i>"No subscription. One email."</i> Page 2 asks for a phone number for an SMS. Even though it is opt-in and bounded ("one message"), users will read this as the bait. Trust loss compounds for the rest of the funnel.</p>
+        <div class="ev">evidence: <code>seat/inside/index.html:54</code> phone-section</div>
+      </div>
+      <div class="fix"><b>Fix</b>Remove this from the cold flow entirely. Move the SMS opt-in into the <code>/join/</code> page or the post-join vault, where the user has already chosen to engage. Replace this section with a calendar add-to-cal for 14 May.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The guide reads like a manifesto, not a reference</h3>
+        <p>Four numbered sections ("You get a vote at the AGM", "ESG laws put money on your voice"...) with no ToC, no scannable summary, italic pull-quotes every 200 words. A cold visitor on mobile will not finish.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Add a 4-bullet TL;DR at the top, collapse each section behind a clickable summary, and put the join CTA inside the page (sticky bottom bar) instead of only at the end.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"First Nations Advisory Council with binding authority" is a strong claim with no proof on page</h3>
+        <p>This is a powerful differentiator if true, and a serious problem if it is overstated. Currently it is asserted in section 4 without naming the Council members, the governing-document clause, or the date of constitution.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Either link to the Council page with named members + the specific clause of the governing document, or remove "binding" until that page exists. Soft-claim ("a permanent advisory seat") is safer.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2.4</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>The CTA at the bottom says "Join for $4 on Foundation Day"</h3>
+        <p>That phrasing implies the user must wait until 14 May to join. Then the button takes them to <code>/join/</code> right now, which works today. The mismatch is small but each one reads as carelessness, and this funnel cannot afford carelessness.</p>
+        <div class="ev">evidence: <code>seat/inside/index.html:68</code></div>
+      </div>
+      <div class="fix"><b>Fix</b>"Reserve your seat for $4 — Foundation Day is 14 May 2026." Make the date a date, not a gate.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2.5</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Substack link in the cold flow leaks the user out</h3>
+        <p>A <i>"Read the CEO Power Cheat Sheet"</i> Substack link sits next to the join CTA. A cold visitor who is half-convinced will tap the lower-commitment option (Substack), not the $4 button.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Move the Substack link to the footer or remove from the cold path. Reading material belongs after a yes, not as a competitor to it.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── PAGE 3 ─────────────── -->
+<section id="join">
+  <div class="page-row">
+    <div class="num">3</div>
+    <div class="ttl">The $4 form</div>
+    <div class="url">/join/index.html</div>
+  </div>
+
+  <div class="atf-callout">
+    <div class="lbl">Above-the-fold first impression</div>
+    <p class="tight">Strongest page in the funnel by structure: a clear two-pane layout, a "what you get" trust box, a 2-step progress indicator. But the conversion-critical issues are <i>inside</i> the form, not at the top.</p>
+    <p class="tight">— The hero says <i>"Your $4. Your voice. Your vault."</i> This is the first time the word <b>vault</b> appears in the funnel. A cold visitor does not know what a vault is, and the trust box uses jargon ("Independence Vault", "Member Polls", "cryptographic management system").</p>
+    <p>— The "Become a Member. $4" button works, but the price reassurance ($4 once only · no subscription · no hidden fees) should be one line under the button, not buried in the trust card.</p>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">3.1</div>
+      <div class="sev"><span class="pill crit">Crit</span></div>
+      <div class="body">
+        <h3>Hidden caretaker invite code auto-applied for cold visitors</h3>
+        <p>An end-of-page script silently sets <code>invite_code_input.value = 'COGS-FUHT2L'</code>, hides the entire invite section, and validates it. If discovered (curl, view-source, a refunded user), this looks deceptive. If the audit team finds it, it looks like a hard-coded backdoor.</p>
+        <div class="ev">evidence: <code>join/index.html:1188</code> caretaker default invite</div>
+      </div>
+      <div class="fix"><b>Fix</b>For cold visitors, do not show the invite section at all <i>and</i> do not silently inject. The server should accept "no code" for the cold path and assign attribution server-side. If a code must exist, it should be issued per-session with an audit trail, not hard-coded in HTML.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.2</div>
+      <div class="sev"><span class="pill crit">Crit</span></div>
+      <div class="body">
+        <h3>Price changes between this page and the next</h3>
+        <p>The form is titled "Amount due today: $4.00." The thank-you page leads with "Pay $4.40 by card — processed securely via Stripe." A user who clicked because of $4 and lands on $4.40 will bounce, screenshot, and post.</p>
+        <div class="ev">evidence: <code>thank-you/index.html:498</code> Stripe CTA</div>
+      </div>
+      <div class="fix"><b>Fix</b>One of: (a) absorb the 40c, (b) write "$4 + 40c card fee, or $4 fee-free by bank transfer" on every page from <code>/seat/</code> onward, (c) make bank transfer the default and card the secondary option. Do not surprise.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.3</div>
+      <div class="sev"><span class="pill crit">Crit</span></div>
+      <div class="body">
+        <h3>"Register as a Member" submits without taking payment</h3>
+        <p>The submit button creates a Member record and routes to thank-you. Payment ($4 / $4.40) is collected on the <i>next</i> page via Stripe link or bank transfer. The user has been led to believe submitting <i>is</i> joining; in fact they have to do a second separate action to actually be a Member.</p>
+        <div class="ev">evidence: <code>thank-you/index.html</code> "complete your $4 payment"</div>
+      </div>
+      <div class="fix"><b>Fix</b>Move payment into the form. The button on step 2 should be "Pay $4 and join" with the Stripe element inline, or a clear two-stage button: "Reserve free now, pay $4 next." Do not leave the user thinking "did I just join, or did I just give my data?"</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>JVPA acceptance was moved out of the form</h3>
+        <p>Comments in the source ("JVPA acceptance moved to vault post-login") confirm the user is being asked to accept a Joint Venture Partner Agreement <i>after</i> they have submitted personal details and paid. That is the wrong order legally and ethically.</p>
+        <div class="ev">evidence: <code>join/index.html:649</code></div>
+      </div>
+      <div class="fix"><b>Fix</b>Show the JVPA summary on the form. Three plain-English bullets (what you are joining, what your $4 is, what you can do later), one checkbox <i>"I have read the Joint Venture Partner Agreement"</i> with a real link to the PDF, and a "read full document" expander.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.5</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The 6-step "field stepper" is ceremony, not progress</h3>
+        <p>First name → Middle name → Last name → Email → Mobile, one-at-a-time, with Next/Back. A cold visitor does <i>not</i> need a five-screen flow for five short fields they can see at a glance. It feels like a gamified onboarding for an app, on a page asking for $4.</p>
+        <div class="ev">evidence: <code>join/index.html:546</code> field-stepper</div>
+      </div>
+      <div class="fix"><b>Fix</b>Show all five fields at once. The 2-step (details → confirm) outer progress is fine; the inner stepper should go.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.6</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Independence Vault" is undefined jargon at the moment of decision</h3>
+        <p>The word "vault" carries every connotation the user is anxious about (crypto, custody, password recovery, "where my money is locked"). It is used four times above the fold without ever being defined. The FAQ link <i>"What is the vault?"</i> exists in the side panel — that means the team knows.</p>
+      </div>
+      <div class="fix"><b>Fix</b>First mention should be: <i>"Your Member dashboard (we call it the Independence Vault)"</i>. After that, "your dashboard" is fine. Save "vault" branding for inside the product.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.7</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Long progress simulator looks like a stall</h3>
+        <p>On submit the status cycles "Lodging your registration" → "Creating your Member record" → "Securing your reservation" → "Almost there" over ~3 seconds, regardless of actual response time.</p>
+        <div class="ev">evidence: <code>join/index.html:986</code> _pMsgs sequence</div>
+      </div>
+      <div class="fix"><b>Fix</b>Show one neutral spinner. Theatrical multi-stage progress on a 200ms request reads as fake, and on a real 5s slow request, as broken.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.8</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Hidden "stewardship_module" answers are auto-filled at submit</h3>
+        <p>The submit handler attaches a <code>stewardship_module</code> object with five hard-coded answers (<i>"agree_understand", "long_term_stewardship", "fifty_fifty_split", "veto_extraction", "acknowledge_risk"</i>) the user never saw. If these answers are referenced elsewhere as "Member-attested", that is a misrepresentation.</p>
+        <div class="ev">evidence: <code>join/index.html:1024</code></div>
+      </div>
+      <div class="fix"><b>Fix</b>Either show the five questions on-screen (radio cards) and capture the actual answer, or remove the object entirely. Do not pre-attest.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.9</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3><code>scrollIntoView</code> is fragile and used in three places on submit/error</h3>
+        <p>The starter docs warn against this; on smaller viewports it can scroll the page into a half-state.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use <code>window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth' })</code>.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.10</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>Confirm step says "Pay by bank transfer (no fee) or card (40c Stripe fee applies)"</h3>
+        <p>Good — but this is the <i>first</i> mention of card fees in the funnel and it's inside a confirm row, two clicks past the headline price.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Promote this line to the cost row directly under the price.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── PAGE 4 ─────────────── -->
+<section id="thanks">
+  <div class="page-row">
+    <div class="num">4</div>
+    <div class="ttl">The handoff</div>
+    <div class="url">/thank-you/index.html</div>
+  </div>
+
+  <div class="atf-callout">
+    <div class="lbl">Above-the-fold first impression</div>
+    <p class="tight">"You're in" headline + member card is a strong post-conversion moment. But the page does <b>five different jobs</b> stacked vertically: confirm, ask for a public-facing voice statement, prompt invite-link sharing, set up vault, pay $4.40 (or $4 by bank), and read three "while you're here" cards. The user does not know which is required and which is optional.</p>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">4.1</div>
+      <div class="sev"><span class="pill crit">Crit</span></div>
+      <div class="body">
+        <h3>Required-vs-optional steps are not visually distinguished</h3>
+        <p>The user has just been told (on page 3) "Almost there. Hit submit. Your vault opens straight away." Then on this page they encounter (in order): confirmation card; a public-voice form; a "pass the coin" share panel; a vault CTA; a Stripe pay button; a bank-transfer accordion; three more cards. Nothing says <i>"to actually be a Member, you must do step X."</i></p>
+      </div>
+      <div class="fix"><b>Fix</b>One required action at the top: <i>Pay $4 to activate your membership.</i> Everything else collapsed below. The voice submission, invite-share, and "while you're here" all belong on a follow-up page or post-pay screen.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.2</div>
+      <div class="sev"><span class="pill crit">Crit</span></div>
+      <div class="body">
+        <h3>Voice submission asks for public sharing immediately after registration</h3>
+        <p>"In one sentence — why did you join?" with a checkbox: <i>"I agree this can be shared on COG$ social media. My first name may be shown."</i> The user has been a Member for ten seconds. Asking for a public-facing testimonial in the registration flow is dark-pattern-adjacent.</p>
+        <div class="ev">evidence: <code>thank-you/index.html:312</code> vs-ty-panel</div>
+      </div>
+      <div class="fix"><b>Fix</b>Move into the dashboard. If you want it on this page, gate it behind "Your $4 is paid" and make the share-permission opt-in, not bundled with submission.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Stripe CTA uses a different visual language than the rest of the site</h3>
+        <p>Background <code>linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)</code> and a different button style. It looks like an injected third-party widget — exactly the moment when the user needs the brand to feel cohesive.</p>
+        <div class="ev">evidence: <code>thank-you/index.html:498</code></div>
+      </div>
+      <div class="fix"><b>Fix</b>Restyle the Stripe block to match the gold/dark glass-card system. Same border, same radius, same button.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Bank transfer details are accordion-hidden behind a thin grey "▸" link</h3>
+        <p>The cheaper, fee-free option is a collapsed details summary at <code>color:#64748b</code>. The more expensive Stripe option is the default. This is the wrong way around for a Foundation that just promised "no surprise charges."</p>
+      </div>
+      <div class="fix"><b>Fix</b>Default to bank transfer (with PayID highlighted), put Stripe as "Prefer to pay by card? +40c fee."</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.5</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Open my vault" before "Pay $4" creates orphan members</h3>
+        <p>If a user clicks the gold primary CTA, they go to <code>/partners/?welcome=1</code> to set a password and 2FA. They have not paid. The funnel-tracking code expects payment to follow registration; the UI lets the user wander off.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Make the primary CTA <i>"Pay $4 to activate"</i> and the secondary <i>"Set up vault later"</i>. Or merge: pay first, then immediately set vault password on the same screen.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.6</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Member number renders as "Loading…" then sometimes "Check your email"</h3>
+        <p>If the API response or URL params do not carry <code>member_number</code>, the most prominent piece of social proof on the screen becomes a fallback message. A user who has just paid £4 of trust capital will read this as "something failed."</p>
+      </div>
+      <div class="fix"><b>Fix</b>Server-render the member number into the redirect URL deterministically; show a dignified fallback like <i>"Your Member ID is being generated — we'll email it within 60 seconds."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.7</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Banned-phrase voice-submission filter could trigger false positives</h3>
+        <p>The filter blocks <code>investment</code>, <code>profit</code>, <code>ROI</code>, <code>presale</code>, etc. Sensible. But a user writing <i>"I joined because I want a return to community decision-making"</i> will trip on <code>returns?</code>.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Tighten the regex with word-boundary context (<code>\binvestment\s+returns?\b</code>) and show the warning as soft (yellow), not block.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── CROSS ─────────────── -->
+<section id="cross">
+  <div class="section-num">07 — Cross-cutting</div>
+  <h2>Issues that show up on every page.</h2>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">X.1</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Brand vs. message dissonance</h3>
+        <p>Every page uses the same dark gold + Playfair italic combination that is the visual grammar of premium financial services. The product is "$4, ordinary Australians, community governance." Either one of those has to bend.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Test a humbler typographic system on a B-variant of <code>/seat/</code>: warm paper, dark ink, a sans body font, gold reserved for one accent. See if cold-visitor → guide conversion lifts.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">X.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Privacy posture is implicit</h3>
+        <p>No page links to a privacy policy in a visible place; the seat page captures email, the inside page captures phone, the join page captures full name + DOB + address (hidden but populated). For a $4 community Foundation this is more data than the value exchange justifies.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Visible privacy link in every footer; on <code>/seat/</code> a one-liner <i>"We won't share your email. <a>Privacy</a>."</i> next to the input.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">X.3</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Acknowledgement of Country is a static footer line</h3>
+        <p>"Wahlubal Country, Bundjalung Nation" appears in the footer of every page. Combined with the strong claim that First Nations Custodians have binding governance authority, this should be more than a sign-off line in 11px gold.</p>
+      </div>
+      <div class="fix"><b>Fix</b>One dedicated card on <code>/seat/</code> below the fold that names the Council and links to a page explaining how the binding authority is enacted.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">X.4</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>Inconsistent terminology across pages</h3>
+        <p>Member / Partner / S-NFT holder / Joint Venture Partner / Foundation Member appear interchangeably across the four files. The submit endpoint is <code>snft-reserve</code>; the form is "Become a Member"; the API returns "partner_id"; the next page is <code>/partners/</code>; the welcome heading says "Welcome, Member."</p>
+      </div>
+      <div class="fix"><b>Fix</b>Pick one user-facing word ("Member") and never expose the others. Rename the public route from <code>/partners/</code> to <code>/members/</code>; keep "snft", "partner_id", "JVP" as internal-only.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">X.5</div>
+      <div class="sev"><span class="pill med">Med</span></div>
+      <div class="body">
+        <h3>No exit / abandonment recovery</h3>
+        <p>Email is captured on page 1 and stored in <code>localStorage</code> as <code>cogs_lead</code>. There is no system that emails a user who got to <code>/join/</code> and did not submit, or submitted but did not pay.</p>
+      </div>
+      <div class="fix"><b>Fix</b>One-shot recovery email at +24h to anyone with a <code>cogs_lead</code> who never converted. Same content as <code>/seat/inside/</code>'s TL;DR + a single CTA.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">X.6</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>Mobile breakpoints partial</h3>
+        <p>On <code>/join/</code>, the trust-box stacks below the form on narrow viewports — fine. But on <code>/thank-you/</code> the involve-grid drops to 1 column at 560px while the member-card stays at 520px max-width, creating an awkward in-between zone around 640–760px.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Add a 640px breakpoint that stacks the involve-grid earlier.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="doc-ft">
+  <div>COGS UX audit — cold visitor funnel</div>
+  <div>Findings: 30 · Critical: 5 · High: 11 · Med: 11 · Nit: 3</div>
+</footer>
+
+</div>
+</body>
+</html>

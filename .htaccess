@@ -18,7 +18,7 @@ ServerSignature Off
   RewriteRule ^_app/api/ - [L]
 
   # ── Block direct access to private directories ────────────────────────────
-  RewriteRule ^(_app|_private|database|inc)(/|$) - [F,L]
+  RewriteRule ^(_app|_private|_design|database|inc)(/|$) - [F,L]
 
   # ── Block .env (belt and braces — also covered by FilesMatch below) ───────
   RewriteRule ^\.env$ - [F,L]
