@@ -214,23 +214,43 @@ ops_require_admin();
         </div>
 
         <div class="card" style="margin-bottom:20px;">
-            <h2>🎯 Conversion Funnel <span style="font-size:0.7em;color:#64748b;font-weight:400;">(last 7 days · cold + warm traffic)</span></h2>
+            <h2>🎯 Conversion Funnels <span style="font-size:0.7em;color:#64748b;font-weight:400;">(last 7 days)</span></h2>
             <div id="cfLoading" style="color:#64748b;font-size:0.85em;padding:16px 0;">Loading conversion funnel…</div>
             <div id="cfContent" style="display:none;">
-                <div id="cfStages" style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;"></div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                    <div>
-                        <h3 style="font-size:0.82em;color:#94a3b8;font-weight:500;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.05em;">Visits by source</h3>
-                        <table class="click-table"><tbody id="cfSourcesBody"></tbody></table>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+                    <div style="background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:14px 16px;">
+                        <div id="cfLeads" style="font-size:1.6rem;font-weight:700;color:#f0d18a;">—</div>
+                        <div style="font-size:0.78em;color:#94a3b8;margin-top:2px;">Emails captured (7d)</div>
                     </div>
-                    <div>
-                        <h3 style="font-size:0.82em;color:#94a3b8;font-weight:500;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.05em;">Visits by page</h3>
-                        <table class="click-table"><tbody id="cfPathsBody"></tbody></table>
+                    <div style="background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:14px 16px;">
+                        <div id="cfPaid" style="font-size:1.6rem;font-weight:700;color:#52b87a;">—</div>
+                        <div style="font-size:0.78em;color:#94a3b8;margin-top:2px;">Paid members (7d)</div>
+                    </div>
+                    <div style="background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:14px 16px;">
+                        <div id="cfLandedKpi" style="font-size:1.6rem;font-weight:700;color:#e2e8f0;">—</div>
+                        <div style="font-size:0.78em;color:#94a3b8;margin-top:2px;">Total sessions (7d)</div>
                     </div>
                 </div>
-                <h3 style="font-size:0.82em;color:#94a3b8;font-weight:500;margin:16px 0 8px 0;text-transform:uppercase;letter-spacing:0.05em;">Last 25 visits</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+                    <div>
+                        <h3 style="font-size:0.78em;color:#f0d18a;font-weight:700;margin:0 0 10px 0;text-transform:uppercase;letter-spacing:0.07em;">🧲 Cold path — /seat/</h3>
+                        <div id="cfColdStages" style="display:flex;flex-direction:column;gap:5px;"></div>
+                    </div>
+                    <div>
+                        <h3 style="font-size:0.78em;color:#7dd3fc;font-weight:700;margin:0 0 10px 0;text-transform:uppercase;letter-spacing:0.07em;">🤝 Warm path — invited</h3>
+                        <div id="cfWarmStages" style="display:flex;flex-direction:column;gap:5px;"></div>
+                    </div>
+                </div>
+                <h3 style="font-size:0.82em;color:#94a3b8;font-weight:500;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.05em;">Pages by source (7d)</h3>
+                <div style="overflow-x:auto;margin-bottom:20px;">
+                    <table class="click-table" id="cfSourceMatrix">
+                        <thead><tr id="cfMatrixHead"></tr></thead>
+                        <tbody id="cfMatrixBody"></tbody>
+                    </table>
+                </div>
+                <h3 style="font-size:0.82em;color:#94a3b8;font-weight:500;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.05em;">Last 25 visits</h3>
                 <table class="click-table">
-                    <thead><tr><th>#</th><th>Session</th><th>Page</th><th>Source</th><th>Code</th><th>Mobile</th><th>Visited</th></tr></thead>
+                    <thead><tr><th>#</th><th>Session</th><th>Page</th><th>Source</th><th>Code</th><th>Device</th><th>Visited</th></tr></thead>
                     <tbody id="cfRecentBody"></tbody>
                 </table>
             </div>
@@ -308,8 +328,7 @@ ops_require_admin();
         async function loadConversionFunnel() {
             try {
                 const res = await fetch('/_app/api/index.php?route=admin/visit-funnel', {
-                    credentials: 'include',
-                    cache: 'no-store'
+                    credentials: 'include', cache: 'no-store'
                 });
                 if (!res.ok) {
                     document.getElementById('cfLoading').textContent = 'Conversion funnel unavailable (not logged in as admin).';
@@ -317,63 +336,78 @@ ops_require_admin();
                 }
                 const json = await res.json();
                 const d = json.data || json;
-
                 document.getElementById('cfLoading').style.display = 'none';
-
                 if (!d.tables_ready) {
                     document.getElementById('cfNotReady').style.display = 'block';
                     return;
                 }
-
                 document.getElementById('cfContent').style.display = 'block';
 
-                const stages = d.funnel || [];
-                const peak   = Math.max(1, ...stages.map(s => s.sessions || 0));
-                const stagesEl = document.getElementById('cfStages');
-                stagesEl.innerHTML = stages.map((s, i) => {
-                    const pct  = Math.max(2, Math.round(((s.sessions || 0) / peak) * 100));
-                    const prev = i > 0 ? (stages[i - 1].sessions || 0) : null;
-                    let drop = '';
-                    if (prev !== null && prev > 0) {
-                        const dropPct = Math.round(((prev - (s.sessions || 0)) / prev) * 100);
-                        drop = dropPct > 0 ? `<span style="color:#f59e0b;font-size:0.78em;margin-left:8px;">−${dropPct}%</span>` : '';
-                    }
-                    return `
-                        <div style="display:flex;align-items:center;gap:10px;font-size:0.85em;">
-                            <div style="flex:0 0 130px;color:#cbd5e1;">${s.stage}${drop}</div>
-                            <div style="flex:1;background:#1e293b;border-radius:4px;height:18px;position:relative;overflow:hidden;">
-                                <div style="position:absolute;inset:0 auto 0 0;width:${pct}%;background:linear-gradient(90deg,#0ea5e9,#10b981);border-radius:4px;"></div>
+                document.getElementById('cfLeads').textContent     = d.leads_captures ?? '—';
+                document.getElementById('cfPaid').textContent      = (d.warm_funnel||[]).find(s=>s.stage==='Paid')?.sessions ?? '—';
+                document.getElementById('cfLandedKpi').textContent = d.visits_total ?? '—';
+
+                function renderFunnel(containerId, stages, colour) {
+                    const el   = document.getElementById(containerId);
+                    const peak = Math.max(1, ...stages.map(s=>s.sessions||0));
+                    el.innerHTML = stages.map((s,i) => {
+                        const pct  = Math.max(2, Math.round(((s.sessions||0)/peak)*100));
+                        const prev = i>0 ? (stages[i-1].sessions||0) : null;
+                        let drop = '';
+                        if (prev !== null && prev > 0) {
+                            const dp = Math.round(((prev-(s.sessions||0))/prev)*100);
+                            drop = dp > 0 ? `<span style="color:#f59e0b;font-size:0.75em;margin-left:6px;">-${dp}%</span>` : '';
+                        }
+                        return `<div style="display:flex;align-items:center;gap:8px;font-size:0.82em;">
+                            <div style="flex:0 0 120px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.stage}${drop}</div>
+                            <div style="flex:1;background:#1e293b;border-radius:3px;height:14px;position:relative;overflow:hidden;">
+                                <div style="position:absolute;inset:0 auto 0 0;width:${pct}%;background:${colour};border-radius:3px;"></div>
                             </div>
-                            <div style="flex:0 0 60px;text-align:right;font-weight:600;color:#e2e8f0;">${s.sessions || 0}</div>
-                        </div>
-                    `;
+                            <div style="flex:0 0 36px;text-align:right;font-weight:600;color:#e2e8f0;">${s.sessions||0}</div>
+                        </div>`;
+                    }).join('');
+                }
+
+                renderFunnel('cfColdStages', d.cold_funnel||[], 'linear-gradient(90deg,#f0d18a,#c9973d)');
+                renderFunnel('cfWarmStages', d.warm_funnel||[], 'linear-gradient(90deg,#38bdf8,#10b981)');
+
+                const spp   = d.source_per_path||[];
+                const pages = [...new Set(spp.map(r=>r.path))].sort();
+                const srcs  = [...new Set(spp.map(r=>r.src))].sort();
+                const icons = {fb:'🟦 fb',yt:'🔴 yt',ig:'📸 ig',tw:'🐦 tw',li:'💼 li',email:'📧 email',sms:'💬 sms',direct:'🔗 direct',qr:'📷 qr',other:'🔘 other'};
+
+                document.getElementById('cfMatrixHead').innerHTML =
+                    '<th>Page</th>' + srcs.map(s=>`<th style="text-align:right;">${icons[s]||s}</th>`).join('') + '<th style="text-align:right;">Total</th>';
+
+                const lk = {};
+                spp.forEach(r=>{ lk[r.path+'|'+r.src]=r.n; });
+
+                document.getElementById('cfMatrixBody').innerHTML = pages.map(pg => {
+                    const tot   = srcs.reduce((a,s)=>a+(parseInt(lk[pg+'|'+s])||0),0);
+                    const cells = srcs.map(s=>{
+                        const v=parseInt(lk[pg+'|'+s])||0;
+                        return `<td style="text-align:right;color:${v>0?'#e2e8f0':'#334155'};">${v||'—'}</td>`;
+                    }).join('');
+                    return `<tr><td style="color:#94a3b8;">${pg}</td>${cells}<td style="text-align:right;font-weight:600;color:#f0d18a;">${tot}</td></tr>`;
                 }).join('');
 
-                const sources = d.visits_by_source || [];
-                document.getElementById('cfSourcesBody').innerHTML = sources.length === 0
-                    ? '<tr><td colspan="2" style="color:#64748b;text-align:center;">No data yet</td></tr>'
-                    : sources.map(s => `<tr><td>${s.ref_source}</td><td style="text-align:right;font-weight:600;">${s.n}</td></tr>`).join('');
-
-                const paths = d.visits_by_path || [];
-                document.getElementById('cfPathsBody').innerHTML = paths.length === 0
-                    ? '<tr><td colspan="2" style="color:#64748b;text-align:center;">No data yet</td></tr>'
-                    : paths.map(p => `<tr><td>${p.path}</td><td style="text-align:right;font-weight:600;">${p.n}</td></tr>`).join('');
-
-                const recent = d.recent_visits || [];
-                document.getElementById('cfRecentBody').innerHTML = recent.length === 0
+                const recent = d.recent_visits||[];
+                document.getElementById('cfRecentBody').innerHTML = recent.length===0
                     ? '<tr><td colspan="7" style="color:#64748b;text-align:center;">No visits recorded yet</td></tr>'
-                    : recent.map((r, i) => `
-                        <tr>
-                            <td style="color:#64748b;">${i + 1}</td>
-                            <td style="font-family:monospace;">${r.session_token || '—'}</td>
-                            <td>${r.path || '—'}</td>
-                            <td>${r.ref_source || '<span style="color:#475569">direct</span>'}</td>
-                            <td>${r.partner_code || '<span style="color:#475569">—</span>'}</td>
-                            <td>${r.is_mobile ? '📱' : '🖥️'}</td>
-                            <td style="color:#94a3b8;">${new Date(r.visited_at).toLocaleString('en-AU')}</td>
-                        </tr>
-                    `).join('');
-            } catch (e) {
+                    : recent.map((r,i)=>{
+                        const si = icons[r.ref_source]||(r.ref_source||'<span style="color:#475569">direct</span>');
+                        return `<tr>
+                            <td style="color:#64748b;">${i+1}</td>
+                            <td style="font-family:monospace;font-size:0.82em;">${r.session_token||'—'}</td>
+                            <td>${r.path||'—'}</td>
+                            <td>${si}</td>
+                            <td>${r.partner_code||'<span style="color:#475569">—</span>'}</td>
+                            <td>${r.is_mobile?'📱':'🖥️'}</td>
+                            <td style="color:#94a3b8;font-size:0.82em;">${new Date(r.visited_at).toLocaleString('en-AU')}</td>
+                        </tr>`;
+                    }).join('');
+
+            } catch(e) {
                 document.getElementById('cfLoading').textContent = 'Conversion funnel unavailable.';
             }
         }
