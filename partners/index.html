@@ -3002,8 +3002,6 @@ setTimeout(dismissSplash, 4000);
           em    = em || stored.email||'';
         }catch(ex){}
       }
-      // Store email for recovery use
-      if(em){ try{ sessionStorage.setItem('cogs_welcome_email', em); }catch(ex){} }
       // Flag this session as a new-member welcome flow
       try{ sessionStorage.setItem('cogs_welcome_new', '1'); }catch(ex){}
 

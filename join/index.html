@@ -1207,9 +1207,10 @@ document.getElementById('join-form').addEventListener('submit', async function(e
 /* ── Caretaker default invite for cold visitors ── */
 (function() {
   try {
-    // Only auto-validate if no partner code already in URL
+    // Only auto-validate if no partner/invite code already in URL or input
     var params      = new URLSearchParams(window.location.search);
-    var hasCode     = !!(params.get('partner_code') || params.get('code') || params.get('c'));
+    var hasCode     = !!(params.get('partner_code') || params.get('code') || params.get('c') ||
+                        params.get('invite') || params.get('invite_token') || params.get('ref'));
     if (hasCode) return;
 
     // DOM and all scripts are ready at this point (inline script at body end)
