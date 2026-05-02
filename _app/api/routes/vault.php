@@ -58,7 +58,7 @@ if ($action === 'update-email') {
 if ($action === 'governance-complete') {
     requireMethod('POST');
     $auth = requireAuth('snft');
-    $memberId = (int)$auth['id'];
+    $memberId = (int)$auth['principal_id'];  // sessions.principal_id = members.id
 
     $db = getDB();
     $body = json_decode((string)file_get_contents('php://input'), true) ?? [];
@@ -66,13 +66,19 @@ if ($action === 'governance-complete') {
     $streetAddress = trim((string)($body['street_address'] ?? ''));
     $suburb        = trim((string)($body['suburb']         ?? ''));
     $stateCode     = strtoupper(trim((string)($body['state_code'] ?? '')));
+    $postcode      = trim((string)($body['postcode']       ?? ''));
     $dob           = trim((string)($body['date_of_birth']  ?? ''));
 
+    // Determine update mode: full address or DOB-only
+    $hasAddress = $streetAddress !== '' || $suburb !== '' || $stateCode !== '';
+
     $errors = [];
-    if ($streetAddress === '') $errors[] = 'Street address is required.';
-    if ($suburb === '')        $errors[] = 'Suburb is required.';
-    if (!in_array($stateCode, ['NSW','VIC','QLD','SA','WA','TAS','NT','ACT'], true)) {
-        $errors[] = 'Valid state/territory is required.';
+    if ($hasAddress) {
+        if ($streetAddress === '') $errors[] = 'Street address is required.';
+        if ($suburb === '')        $errors[] = 'Suburb is required.';
+        if (!in_array($stateCode, ['NSW','VIC','QLD','SA','WA','TAS','NT','ACT'], true)) {
+            $errors[] = 'Valid state/territory is required.';
+        }
     }
     if ($dob !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
         $errors[] = 'Date of birth must be in YYYY-MM-DD format.';
@@ -85,24 +91,34 @@ if ($action === 'governance-complete') {
     try {
         $db->beginTransaction();
 
-        $update = $db->prepare(
-            'UPDATE members SET
-               street_address = ?,
-               suburb = ?,
-               state_code = ?,
-               date_of_birth = NULLIF(?, \'\'),
-               governance_record_complete = 1,
-               updated_at = UTC_TIMESTAMP()
-             WHERE id = ?'
-        );
-        $update->execute([$streetAddress, $suburb, $stateCode, $dob, $memberId]);
+        if ($hasAddress) {
+            $db->prepare(
+                'UPDATE members SET
+                   street_address = ?,
+                   suburb = ?,
+                   state_code = ?,
+                   postcode = ?,
+                   date_of_birth = NULLIF(?, \'\'),
+                   governance_record_complete = 1,
+                   updated_at = UTC_TIMESTAMP()
+                 WHERE id = ?'
+            )->execute([$streetAddress, $suburb, $stateCode, $postcode, $dob, $memberId]);
+        } elseif ($dob !== '') {
+            // DOB-only update — address already on record
+            $db->prepare(
+                'UPDATE members SET date_of_birth = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?'
+            )->execute([$dob, $memberId]);
+        }
 
         // Mirror to snft_memberships if columns exist
         $smCols = trust_cols($db, 'snft_memberships');
         $smData = [];
-        if (isset($smCols['street_address'])) $smData['street_address'] = $streetAddress;
-        if (isset($smCols['suburb']))         $smData['suburb']         = $suburb;
-        if (isset($smCols['state_code']))     $smData['state_code']     = $stateCode;
+        if ($hasAddress) {
+            if (isset($smCols['street_address'])) $smData['street_address'] = $streetAddress;
+            if (isset($smCols['suburb']))         $smData['suburb']         = $suburb;
+            if (isset($smCols['state_code']))     $smData['state_code']     = $stateCode;
+            if (isset($smCols['postcode']))       $smData['postcode']       = $postcode;
+        }
         if ($dob !== '' && isset($smCols['date_of_birth'])) $smData['date_of_birth'] = $dob;
         if (!empty($smData)) {
             $sets  = implode(', ', array_map(fn($c) => "`$c` = ?", array_keys($smData)));

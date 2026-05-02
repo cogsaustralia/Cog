@@ -4327,7 +4327,21 @@ function _setJvpaEnabled(enabled) {
       } else if (key === 'dob') {
         var dobVal = (obEl('ob-dob-input') || {}).value || '';
         if (dobVal) _obDob = dobVal;
-        // DOB saved with address on last step — just advance
+        // If DOB is the last step (no address step follows), save now with existing address data
+        var isLastStep = (_obIndex === _obSteps.length - 1);
+        if (isLastStep && _obDob) {
+          await window.api('vault/governance-complete', {
+            method: 'POST',
+            body: JSON.stringify({
+              street_address: _obData.street  || '',
+              suburb:         _obData.suburb  || '',
+              state_code:     _obData.state   || '',
+              postcode:       _obData.postcode || '',
+              date_of_birth:  _obDob
+            })
+          });
+          if (window._vaultData) window._vaultData.governance_record_complete = true;
+        }
 
       } else if (key === 'address') {
         var street  = ((obEl('ob-street')   || {}).value || '').trim();
