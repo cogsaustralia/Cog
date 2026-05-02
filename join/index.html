@@ -662,6 +662,7 @@
 
 /* ── Invitation code state ── */
 var _inviteValid = false;
+var _inviteChecking = false;
 var _inviterName = '';
 var _inviterPartnerId = '';
 
@@ -771,6 +772,8 @@ async function validateInviteCode() {
     return;
   }
 
+  _inviteChecking = true;
+  checkSubmit();
   btn.disabled = true; btn.textContent = 'Checking\u2026';
   st.className = 'invite-status loading';
   st.textContent = 'Verifying invitation code\u2026';
@@ -826,6 +829,7 @@ async function validateInviteCode() {
   }
 
   btn.disabled = false; btn.textContent = 'Verify code';
+  _inviteChecking = false;
   checkSubmit();
 }
 
@@ -1042,10 +1046,18 @@ function populateConfirm() {
 /* ── Invite validation enables submit ── */
 function checkSubmit() {
   var btn = document.getElementById('submit-btn');
+  if (_inviteChecking && !_inviteValid) {
+    btn.disabled      = true;
+    btn.style.opacity = '.7';
+    btn.style.cursor  = 'not-allowed';
+    btn.textContent   = 'Verifying\u2026';
+    return;
+  }
   var canSubmit = _inviteValid;
   btn.disabled      = !canSubmit;
   btn.style.opacity = canSubmit ? '1' : '.45';
   btn.style.cursor  = canSubmit ? 'pointer' : 'not-allowed';
+  if (canSubmit) btn.textContent = 'Register as a Member \u203a';
   var nudge = document.getElementById('submit-nudge');
   if (nudge) {
     nudge.style.display = canSubmit ? 'none' : '';
@@ -1259,29 +1271,25 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     var hasCode     = !!(params.get('partner_code') || params.get('code') || params.get('c'));
     if (hasCode) return;
 
-    // Wait for DOM + validateInviteCode to be defined
-    window.addEventListener('load', function() {
-      try {
-        var inp = document.getElementById('invite_code_input');
-        if (!inp) return;
+    // DOM and all scripts are ready at this point (inline script at body end)
+    var inp = document.getElementById('invite_code_input');
+    if (!inp) return;
 
-        // Check invite not already validated
-        var status = document.getElementById('invite_validation_status');
-        if (status && status.value === 'valid') return;
+    // Check invite not already validated
+    var status = document.getElementById('invite_validation_status');
+    if (status && status.value === 'valid') return;
 
-        // Pre-fill and silently validate
-        inp.value = 'COGS-FUHT2L';
+    // Pre-fill and silently validate
+    inp.value = 'COGS-FUHT2L';
 
-        // Hide the invite section visually — user does not need to see this
-        var wrap = document.getElementById('invite-wrap');
-        if (wrap) wrap.style.display = 'none';
+    // Hide the invite section visually — user does not need to see this
+    var wrap = document.getElementById('invite-wrap');
+    if (wrap) wrap.style.display = 'none';
 
-        // Call existing validate function — checkSubmit() handles button state
-        if (typeof validateInviteCode === 'function') {
-          validateInviteCode();
-        }
-      } catch(_e) {}
-    });
+    // Call existing validate function — checkSubmit() handles button state
+    if (typeof validateInviteCode === 'function') {
+      validateInviteCode();
+    }
   } catch(_e) {}
 })();
 </script>
