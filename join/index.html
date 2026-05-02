@@ -914,6 +914,129 @@ function escText(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+/* ── Field stepper ── */
+(function() {
+  var ORDER = ['fs-first','fs-middle','fs-last','fs-email','fs-mobile','fs-done'];
+  var REQUIRED = { 'fs-first': 'first_name', 'fs-last': 'last_name', 'fs-email': 'email', 'fs-mobile': 'mobile' };
+  var INPUT_MAP = { 'fs-first': 'first_name', 'fs-middle': 'middle_name', 'fs-last': 'last_name', 'fs-email': 'email', 'fs-mobile': 'mobile' };
+
+  function showStep(id) {
+    ORDER.forEach(function(s) {
+      var el = document.getElementById(s);
+      if (el) el.classList.remove('active');
+    });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      var inp = target.querySelector('input');
+      if (inp) setTimeout(function() { inp.focus(); }, 80);
+    }
+    if (id === 'fs-done') buildSummary();
+  }
+
+  function validateCurrent(id) {
+    var reqId = REQUIRED[id];
+    if (!reqId) return true;
+    var el = document.getElementById(reqId);
+    if (!el) return true;
+    if (!el.value.trim()) {
+      el.style.borderColor = '#f0857a';
+      el.addEventListener('input', function() { el.style.borderColor = ''; }, { once: true });
+      el.focus();
+      return false;
+    }
+    if (reqId === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())) {
+      el.style.borderColor = '#f0857a';
+      el.addEventListener('input', function() { el.style.borderColor = ''; }, { once: true });
+      el.focus();
+      return false;
+    }
+    return true;
+  }
+
+  function buildSummary() {
+    var fn  = (document.getElementById('first_name').value||'').trim();
+    var mn  = (document.getElementById('middle_name') ? (document.getElementById('middle_name').value||'').trim() : '');
+    var ln  = (document.getElementById('last_name').value||'').trim();
+    var em  = (document.getElementById('email').value||'').trim();
+    var mob = (document.getElementById('mobile').value||'').trim();
+    var name = [fn, mn, ln].filter(Boolean).join(' ');
+    var el = document.getElementById('fs-summary-text');
+    if (el) el.textContent = name + ' · ' + em + ' · ' + mob;
+    // Show pill + cost + proceed button once on fs-done
+    var pill = document.querySelector('.membership-pill');
+    var cost = document.querySelector('.cost-row');
+    var nav  = document.querySelector('.step-nav');
+    if (pill) pill.style.display = '';
+    if (cost) cost.style.display = '';
+    if (nav)  nav.style.display  = '';
+  }
+
+  // Wire next buttons
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.fs-next');
+    if (!btn) return;
+    var parentStep = btn.closest('.field-step');
+    if (!parentStep) return;
+    if (!validateCurrent(parentStep.id)) return;
+    var next = btn.dataset.next;
+    if (next) showStep(next);
+  });
+
+  // Wire back buttons
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.fs-back');
+    if (!btn) return;
+    var back = btn.dataset.back;
+    if (back) showStep(back);
+  });
+
+  // Allow Enter key to advance
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    var active = document.querySelector('.field-step.active');
+    if (!active) return;
+    var inp = active.querySelector('input');
+    if (document.activeElement !== inp) return;
+    e.preventDefault();
+    var nextBtn = active.querySelector('.fs-next');
+    if (nextBtn) nextBtn.click();
+  });
+
+  // Prefill from cogs_lead localStorage
+  (function() {
+    try {
+      var raw = localStorage.getItem('cogs_lead');
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (!d || !d.stored_at) return;
+      var age = (Date.now() - new Date(d.stored_at).getTime()) / 86400000;
+      if (age > 28) { localStorage.removeItem('cogs_lead'); return; }
+      if (d.email) {
+        var em = document.getElementById('email');
+        if (em && !em.value) {
+          em.value = d.email;
+        }
+      }
+      if (d.phone) {
+        var mob = document.getElementById('mobile');
+        if (mob && !mob.value) mob.value = d.phone;
+      }
+    } catch(_e) {}
+  })();
+
+  // Hide pill/cost/proceed until fs-done
+  (function() {
+    var pill = document.querySelector('.membership-pill');
+    var cost = document.querySelector('.cost-row');
+    var nav  = document.querySelector('.step-nav');
+    if (pill) pill.style.display = 'none';
+    if (cost) cost.style.display = 'none';
+    if (nav)  nav.style.display  = 'none';
+  })();
+
+})();
+
 /* ── Step navigation ── */
 var currentStep = 1;
 function goStep(n) {
@@ -947,7 +1070,7 @@ function goStep(n) {
 
 /* ── Step 1 validation ── */
 function validateStep1() {
-  var req = ['first_name','last_name','email','mobile','dob'];
+  var req = ['first_name','last_name','email','mobile'];
   var ok = true;
   req.forEach(function(id) {
     var el = document.getElementById(id);
@@ -961,24 +1084,7 @@ function validateStep1() {
     emailEl.style.borderColor = '#f0857a'; ok = false;
     emailEl.addEventListener('input', function(){ emailEl.style.borderColor = ''; }, {once:true});
   }
-  var addrEmpty = false;
-  ['street','suburb','state','postcode'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el && !el.value.trim()) { addrEmpty = true; }
-  });
-  if (addrEmpty) {
-    ['street','suburb','state','postcode'].forEach(function(id){
-      var el = document.getElementById(id);
-      if (el && !el.value.trim()) {
-        ok = false;
-        // For <select> elements borderColor is unreliable cross-browser — highlight the wrapper
-        var target = (el.tagName === 'SELECT') ? (el.closest('.field') || el) : el;
-        target.style.borderColor = '#f0857a';
-        el.addEventListener('change', function(){ target.style.borderColor = ''; }, {once:true});
-        el.addEventListener('input',  function(){ target.style.borderColor = ''; }, {once:true});
-      }
-    });
-  }
+  // Address deferred to vault — not required at join time.
   /* Gate on invite validation */
   if (!_inviteValid) {
     var wrap = document.getElementById('invite-wrap');
@@ -1056,9 +1162,10 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     return;
   }
 
-  document.getElementById('full_name').value =
-    (document.getElementById('first_name').value||'').trim() + ' ' +
-    (document.getElementById('last_name').value||'').trim();
+  var _fn = (document.getElementById('first_name').value||'').trim();
+  var _mn = (document.getElementById('middle_name') ? (document.getElementById('middle_name').value||'').trim() : '');
+  var _ln = (document.getElementById('last_name').value||'').trim();
+  document.getElementById('full_name').value = [_fn, _mn, _ln].filter(Boolean).join(' ');
 
   btn.disabled = true; btn.textContent = 'Registering\u2026';
   status.className = 'form-status loading';
