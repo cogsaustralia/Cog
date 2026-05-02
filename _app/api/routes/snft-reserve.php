@@ -33,7 +33,7 @@ if (function_exists('normalizePhone')) {
 $dob = sanitize($body['dob'] ?? $body['date_of_birth'] ?? '');
 $street = sanitize($body['street'] ?? '');
 $suburb = sanitize($body['suburb'] ?? '');
-$state = sanitize($body['state'] ?? '');
+$state = sanitize($body['state'] ?? '') ?: 'NSW'; // address deferred to vault — default NSW for member number generation
 $postcode = sanitize($body['postcode'] ?? '');
 $referralCode = strtoupper(substr(sanitize($body['referral_code'] ?? ''), 0, 16));
 
