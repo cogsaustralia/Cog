@@ -67,21 +67,24 @@ try {
         $uaHash,
     ]);
 
-    // rowCount() = 1 → fresh insert. rowCount() = 2 → duplicate updated.
-    // Only send confirmation on first capture.
-    if ($stmt->rowCount() === 1) {
+    // Fetch the lead id explicitly — lastInsertId() unreliable after ON DUPLICATE KEY UPDATE.
+    $leadRow = $db->prepare('SELECT id FROM lead_captures WHERE email = ? LIMIT 1');
+    $leadRow->execute([$email]);
+    $leadId = (int)($leadRow->fetchColumn() ?: 0);
+
+    // Only send confirmation on first capture (fresh insert = rowCount 1).
+    if ($stmt->rowCount() === 1 && $leadId > 0) {
         require_once __DIR__ . '/../../integrations/mailer.php';
-        $leadId = (int)$db->lastInsertId();
         queueEmail(
             $db,
             'lead_capture',
             $leadId,
             $email,
             'lead_magnet_confirmation',
-            'Your free guide — a seat at the table',
+            'Your free guide - a seat at the table',
             [
-                'email'        => $email,
-                'guide_url'    => 'https://cogsaustralia.org/seat/inside/',
+                'email'    => $email,
+                'guide_url'=> 'https://cogsaustralia.org/seat/inside/',
             ]
         );
     }
