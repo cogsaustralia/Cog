@@ -1053,9 +1053,8 @@ function populateConfirm() {
 }
 
 
-/* ── Terms checkbox enables submit ── */
+/* ── Invite validation enables submit ── */
 function checkSubmit() {
-  var cb  = document.getElementById('terms-cb');
   var btn = document.getElementById('submit-btn');
   var canSubmit = _inviteValid;
   btn.disabled      = !canSubmit;
@@ -1072,7 +1071,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
   e.preventDefault();
   var btn    = document.getElementById('submit-btn');
   var status = document.getElementById('formStatus');
-  if (!document.getElementById('terms-cb').checked) return;
+  // JVPA acceptance moved to vault — checkbox removed.
   try { if (window.__cogsTrack) window.__cogsTrack('join_submitted'); } catch(_) {}
   /* Hard gate — must have valid invite or admin override */
   var inviteStatus = document.getElementById('invite_validation_status').value;
