@@ -218,6 +218,7 @@ body::before {
     })
     .then(function (data) {
       if (data && data.success) {
+        try { localStorage.setItem('cogs_lead', JSON.stringify({ email: email, phone: '', stored_at: new Date().toISOString() })); } catch(_e) {}
         window.location.href = '/seat/inside/?e=' + encodeURIComponent(email);
       } else {
         setStatus((data && data.error) || 'Could not send. Please try again.', 'err');
