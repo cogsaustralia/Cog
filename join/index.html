@@ -882,10 +882,10 @@ function escText(str) {
     var name = [fn, mn, ln].filter(Boolean).join(' ');
     var el = document.getElementById('fs-summary-text');
     if (el) el.textContent = name + ' · ' + em + ' · ' + mob;
-    // Show pill + cost + proceed button once on fs-done
-    var pill = document.querySelector('.membership-pill');
-    var cost = document.querySelector('.cost-row');
-    var nav  = document.querySelector('.step-nav');
+    // Show pill + cost + step-1 proceed nav once on fs-done
+    var pill = document.getElementById('step-1') ? document.getElementById('step-1').querySelector('.membership-pill') : null;
+    var cost = document.getElementById('step-1') ? document.getElementById('step-1').querySelector('.cost-row') : null;
+    var nav  = document.getElementById('step-1') ? document.getElementById('step-1').querySelector('.step-nav') : null;
     if (pill) pill.style.display = '';
     if (cost) cost.style.display = '';
     if (nav)  nav.style.display  = '';
