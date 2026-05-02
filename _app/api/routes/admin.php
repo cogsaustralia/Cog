@@ -208,11 +208,13 @@ function adminVotePush(): void {
         $closesAt = null;
     }
     // Map legacy 'audience' to v4 audience_scope enum
-    $audienceScope = match($audience) {
-        'snft'  => 'personal',
-        'bnft'  => 'business',
-        default => 'all',
-    };
+    if ($audience === 'snft') {
+        $audienceScope = 'personal';
+    } elseif ($audience === 'bnft') {
+        $audienceScope = 'business';
+    } else {
+        $audienceScope = 'all';
+    }
     $proposalKey = 'vote-' . gmdate('YmdHis') . '-' . substr(md5(uniqid('', true)), 0, 6);
 
     // v4 schema: proposal_key, audience_scope — removed options_json, tally_status, dispute_window_closes_at
@@ -326,7 +328,7 @@ function fetchVoteDashboard(PDO $db, int $limit = 20): array {
     if (!$items) {
         return [];
     }
-    $ids = array_map(static fn(array $item): int => (int)$item['id'], $items);
+    $ids = array_map(function(array $item) { return (int)$item['id']; }, $items);
     $tallies = voteTalliesByProposal($db, $ids);
     $disputes = voteDisputesByProposal($db, $ids);
 
@@ -546,6 +548,11 @@ function adminVisitFunnel(): void {
          WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'intro'"
     )->fetchColumn();
 
+    $sessionsWelcome = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'welcome'"
+    )->fetchColumn();
+
     $sessionsSeat = (int)$db->query(
         "SELECT COUNT(DISTINCT session_token) FROM page_visits
          WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'seat'"
@@ -560,6 +567,16 @@ function adminVisitFunnel(): void {
         "SELECT COUNT(*) FROM lead_captures
          WHERE created_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY"
     )->fetchColumn();
+
+    $sourcePerPath = $db->query(
+        "SELECT path,
+                COALESCE(ref_source, 'direct') AS src,
+                COUNT(DISTINCT session_token) AS n
+         FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY
+         GROUP BY path, src
+         ORDER BY path ASC, n DESC"
+    )->fetchAll(PDO::FETCH_ASSOC);
 
     $sessionsJoin = (int)$db->query(
         "SELECT COUNT(DISTINCT session_token) FROM page_visits
@@ -586,17 +603,23 @@ function adminVisitFunnel(): void {
          WHERE occurred_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND event = 'payment_received'"
     )->fetchColumn();
 
-    $funnel = [
-        ['stage' => 'Landed',          'sessions' => $sessionsLanded],
-        ['stage' => 'Saw intro',       'sessions' => $sessionsIntro],
-        ['stage' => 'Saw seat',        'sessions' => $sessionsSeat],
-        ['stage' => 'Saw seat inside', 'sessions' => $sessionsSeatInside],
-        ['stage' => 'Lead captured',   'sessions' => $leadsCaptures],
-        ['stage' => 'Hit join page',   'sessions' => $sessionsJoin],
-        ['stage' => 'Started join',    'sessions' => $joinStarted],
-        ['stage' => 'Submitted form',  'sessions' => $joinSubmitted],
-        ['stage' => 'Clicked Stripe',  'sessions' => $stripeClicked],
-        ['stage' => 'Paid',            'sessions' => $paymentReceived],
+    $coldFunnel = [
+        ['stage' => 'Saw /seat/',       'sessions' => $sessionsSeat],
+        ['stage' => 'Read guide',       'sessions' => $sessionsSeatInside],
+        ['stage' => 'Email captured',   'sessions' => $leadsCaptures],
+        ['stage' => 'Hit join page',    'sessions' => $sessionsJoin],
+        ['stage' => 'Submitted form',   'sessions' => $joinSubmitted],
+        ['stage' => 'Paid',             'sessions' => $paymentReceived],
+    ];
+
+    $warmFunnel = [
+        ['stage' => 'Landed (all)',     'sessions' => $sessionsLanded],
+        ['stage' => 'Saw /welcome/',    'sessions' => $sessionsWelcome],
+        ['stage' => 'Saw /intro/',      'sessions' => $sessionsIntro],
+        ['stage' => 'Hit join page',    'sessions' => $sessionsJoin],
+        ['stage' => 'Started join',     'sessions' => $joinStarted],
+        ['stage' => 'Submitted form',   'sessions' => $joinSubmitted],
+        ['stage' => 'Paid',             'sessions' => $paymentReceived],
     ];
 
     $recent = $db->query(
@@ -617,7 +640,13 @@ function adminVisitFunnel(): void {
         'visits_total'     => $visitsTotal,
         'visits_by_path'   => $visitsByPath,
         'visits_by_source' => $visitsBySource,
-        'funnel'           => $funnel,
+        'cold_funnel'      => $coldFunnel,
+        'warm_funnel'      => $warmFunnel,
+        'source_per_path'  => $sourcePerPath,
+        'leads_captures'   => $leadsCaptures,
+        'sessions_welcome' => $sessionsWelcome,
+        'sessions_seat'        => $sessionsSeat,
+        'sessions_seat_inside' => $sessionsSeatInside,
         'recent_visits'    => $recent,
     ]);
 }
