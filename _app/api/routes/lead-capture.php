@@ -67,6 +67,25 @@ try {
         $uaHash,
     ]);
 
+    // rowCount() = 1 → fresh insert. rowCount() = 2 → duplicate updated.
+    // Only send confirmation on first capture.
+    if ($stmt->rowCount() === 1) {
+        require_once __DIR__ . '/../../integrations/mailer.php';
+        $leadId = (int)$db->lastInsertId();
+        queueEmail(
+            $db,
+            'lead_capture',
+            $leadId,
+            $email,
+            'lead_magnet_confirmation',
+            'Your free guide — a seat at the table',
+            [
+                'email'        => $email,
+                'guide_url'    => 'https://cogsaustralia.org/seat/inside/',
+            ]
+        );
+    }
+
     echo json_encode(['success' => true, 'data' => ['captured' => true]]);
 } catch (Throwable $e) {
     error_log('[lead-capture] ' . $e->getMessage());
