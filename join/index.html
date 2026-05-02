@@ -1188,6 +1188,21 @@ document.getElementById('join-form').addEventListener('submit', async function(e
 })();
 </script>
 <script>
+/* ── Lead magnet prefill ── */
+(function() {
+  try {
+    var raw = localStorage.getItem('cogs_lead');
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d || !d.stored_at) return;
+    var age = (Date.now() - new Date(d.stored_at).getTime()) / 86400000;
+    if (age > 28) { localStorage.removeItem('cogs_lead'); return; }
+    if (d.email) { var el = document.getElementById('email'); if (el && !el.value) el.value = d.email; }
+    if (d.phone) { var mob = document.getElementById('mobile'); if (mob && !mob.value) mob.value = d.phone; }
+  } catch(_e) {}
+})();
+</script>
+<script>
 /* ── Stage 3+4: cold/invited path configuration ── */
 (function(){
   try {
