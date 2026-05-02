@@ -173,8 +173,8 @@ try {
             $__area = substr(trim((string)($_GET['area'] ?? '')), 0, 60);
             // Best-effort member_id from auth principal (no exception if unauthenticated)
             try {
-                if (!empty($_COOKIE) && function_exists('requireAuth')) {
-                    $__pr  = requireAuth('snft');
+                if (!empty($_COOKIE) && function_exists('getAuthPrincipal')) {
+                    $__pr  = getAuthPrincipal();
                     $__mem = (int)($__pr['principal_id'] ?? 0) ?: null;
                 }
             } catch (Throwable) {}
