@@ -113,6 +113,15 @@ body { font-family:var(--sans); background:var(--bg); color:var(--text); min-hei
       localStorage.setItem(LEAD_KEY, JSON.stringify(merged));
     } catch(_e) {}
   }
+  // Visit tracking beacon
+  (function() {
+    try {
+      var _p = new URLSearchParams(window.location.search);
+      var _ref = (_p.get('utm_source') || _p.get('s') || _p.get('ref') || '').slice(0, 20);
+      var _src = 'p=seat_inside' + (_ref ? '&ref=' + encodeURIComponent(_ref) : '') + '&t=' + Date.now();
+      new Image(1,1).src = '/_app/api/index.php?route=track/visit&' + _src;
+    } catch(_e) {}
+  })();
   (function() {
     try {
       var params = new URLSearchParams(window.location.search);

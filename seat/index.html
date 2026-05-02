@@ -187,6 +187,16 @@ body::before {
   var statusEl = document.getElementById('status-msg');
   if (!form || !emailEl || !btn || !statusEl) return;
 
+  // Visit tracking beacon
+  (function() {
+    try {
+      var _p = new URLSearchParams(window.location.search);
+      var _ref = (_p.get('utm_source') || _p.get('s') || _p.get('ref') || '').slice(0, 20);
+      var _src = 'p=seat' + (_ref ? '&ref=' + encodeURIComponent(_ref) : '') + '&t=' + Date.now();
+      new Image(1,1).src = '/_app/api/index.php?route=track/visit&' + _src;
+    } catch(_e) {}
+  })();
+
   var params = new URLSearchParams(window.location.search);
   var source = params.get('utm_source') || params.get('s') || '';
 

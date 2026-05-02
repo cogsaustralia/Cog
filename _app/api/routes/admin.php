@@ -546,6 +546,21 @@ function adminVisitFunnel(): void {
          WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'intro'"
     )->fetchColumn();
 
+    $sessionsSeat = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'seat'"
+    )->fetchColumn();
+
+    $sessionsSeatInside = (int)$db->query(
+        "SELECT COUNT(DISTINCT session_token) FROM page_visits
+         WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'seat_inside'"
+    )->fetchColumn();
+
+    $leadsCaptures = (int)$db->query(
+        "SELECT COUNT(*) FROM lead_captures
+         WHERE created_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY"
+    )->fetchColumn();
+
     $sessionsJoin = (int)$db->query(
         "SELECT COUNT(DISTINCT session_token) FROM page_visits
          WHERE visited_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY AND path = 'join'"
@@ -574,6 +589,9 @@ function adminVisitFunnel(): void {
     $funnel = [
         ['stage' => 'Landed',          'sessions' => $sessionsLanded],
         ['stage' => 'Saw intro',       'sessions' => $sessionsIntro],
+        ['stage' => 'Saw seat',        'sessions' => $sessionsSeat],
+        ['stage' => 'Saw seat inside', 'sessions' => $sessionsSeatInside],
+        ['stage' => 'Lead captured',   'sessions' => $leadsCaptures],
         ['stage' => 'Hit join page',   'sessions' => $sessionsJoin],
         ['stage' => 'Started join',    'sessions' => $joinStarted],
         ['stage' => 'Submitted form',  'sessions' => $joinSubmitted],
