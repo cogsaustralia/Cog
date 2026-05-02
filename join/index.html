@@ -468,7 +468,7 @@
             <input type="hidden" id="street" name="street" value="">
             <input type="hidden" id="street2" name="street2" value="">
             <input type="hidden" id="suburb" name="suburb" value="">
-            <input type="hidden" id="state_code" name="state_code" value="">
+            <input type="hidden" id="state_code" name="state" value="">
             <input type="hidden" id="postcode" name="postcode" value="">
             <input type="hidden" id="dob_day" name="dob_day" value="">
             <input type="hidden" id="dob_month" name="dob_month" value="">
@@ -622,34 +622,6 @@
       if(hero) hero.classList.add('compact');
     }
   }catch(e){}
-})();
-
-/* ── DOB select population ── */
-(function() {
-  var dayEl = document.getElementById('dob_day');
-  var yearEl = document.getElementById('dob_year');
-  for (var d = 1; d <= 31; d++) {
-    var o = document.createElement('option');
-    o.value = String(d).padStart(2, '0');
-    o.textContent = d;
-    dayEl.appendChild(o);
-  }
-  var curYear = new Date().getFullYear();
-  for (var y = curYear - 16; y >= curYear - 100; y--) {
-    var o2 = document.createElement('option');
-    o2.value = y;
-    o2.textContent = y;
-    yearEl.appendChild(o2);
-  }
-  function syncDob() {
-    var d = document.getElementById('dob_day').value;
-    var m = document.getElementById('dob_month').value;
-    var y = document.getElementById('dob_year').value;
-    document.getElementById('dob').value = (d && m && y) ? y + '-' + m + '-' + d : '';
-  }
-  ['dob_day','dob_month','dob_year'].forEach(function(id) {
-    document.getElementById(id).addEventListener('change', syncDob);
-  });
 })();
 
 /* ── Invitation code state ── */
@@ -1016,7 +988,6 @@ function populateConfirm() {
   var mob = (document.getElementById('mobile').value||'').trim();
   document.getElementById('cs-name').textContent    = fn + ' ' + ln;
   document.getElementById('cs-contact').textContent = [em, mob].filter(Boolean).join(' \u00b7 ');
-  var dobVal = (document.getElementById('dob')||{}).value||'';
   /* Show inviter row if validated */
   var inviteRow  = document.getElementById('cs-invite-row');
   var inviteName = document.getElementById('cs-invite-name');
@@ -1123,9 +1094,10 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     var mn  = d.member_number || '';
     var mob = d.mobile        || '';
     var fn  = d.first_name    || '';
+    var em  = d.email         || (document.getElementById('email') ? document.getElementById('email').value.trim() : '');
 
     var payload = JSON.stringify({ member_number: mn, mobile: mob, first_name: fn,
-                                   inviter_name: _inviterName || '' });
+                                   email: em, inviter_name: _inviterName || '' });
     try { localStorage.setItem('cogs_snft_member', payload); } catch(ex) {}
     try { sessionStorage.setItem('cogs_snft_thankyou', payload); } catch(ex) {}
     try { localStorage.removeItem('cogs_partner_invite_v1'); } catch(ex) {}
@@ -1135,6 +1107,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     if (mn)  dest += (dest.includes('?') ? '&' : '?') + 'member=' + encodeURIComponent(mn);
     if (mob) dest += '&mobile=' + encodeURIComponent(mob);
     if (fn)  dest += '&name='   + encodeURIComponent(fn);
+    if (em)  dest += '&email='  + encodeURIComponent(em);
     setTimeout(function(){ window.location.href = dest; }, 800);
 
   } catch(err) {
@@ -1228,21 +1201,6 @@ document.getElementById('join-form').addEventListener('submit', async function(e
       var el = document.getElementById(id);
       if (el) el.addEventListener('focus', fire);
     });
-})();
-</script>
-<script>
-/* ── Lead magnet prefill ── */
-(function() {
-  try {
-    var raw = localStorage.getItem('cogs_lead');
-    if (!raw) return;
-    var d = JSON.parse(raw);
-    if (!d || !d.stored_at) return;
-    var age = (Date.now() - new Date(d.stored_at).getTime()) / 86400000;
-    if (age > 28) { localStorage.removeItem('cogs_lead'); return; }
-    if (d.email) { var el = document.getElementById('email'); if (el && !el.value) el.value = d.email; }
-    if (d.phone) { var mob = document.getElementById('mobile'); if (mob && !mob.value) mob.value = d.phone; }
-  } catch(_e) {}
 })();
 </script>
 <script>
