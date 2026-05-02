@@ -249,6 +249,14 @@
     .field-group-hd span{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-2);white-space:nowrap}
     .field-group-hd::after{content:'';flex:1;height:1px;background:var(--line)}
 
+    /* ── Field stepper ── */
+    .field-step { display:none; animation: fsIn .22s ease; }
+    .field-step.active { display:block; }
+    @keyframes fsIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+    .fs-nav { display:flex; gap:12px; margin-top:16px; justify-content:flex-end; }
+    .field-opt { font-size:.8em; font-weight:400; opacity:.6; text-transform:none; letter-spacing:0; margin-left:6px; }
+    .fs-summary { font-size:.95rem; color:var(--text2); margin-bottom:12px; line-height:1.7; }
+
     /* DOB selects */
     .dob-row{display:grid;grid-template-columns:2fr 3fr 2fr;gap:10px}
     .dob-row select{width:100%;background:rgba(255,255,255,.10);border:1.5px solid var(--line2);border-radius:10px;padding:13px 16px;color:var(--text);font-family:var(--sans);font-size:1rem;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none;min-height:50px;cursor:pointer}
@@ -377,69 +385,94 @@
             <div class="step-hd">
               <div class="step-num-badge">1</div>
               <div>
-                <h2>Your details</h2>
-                <p>This creates your Member record and sets up your Independence Vault. Takes about two minutes.</p>
+                <h2>Tell us your name</h2>
+                <p>Six quick steps. Done in under a minute.</p>
               </div>
             </div>
 
-            <div class="form-grid">
-              <div class="field">
-                <label for="first_name">First name</label>
-                <input id="first_name" name="first_name" autocomplete="given-name" required placeholder="Jane">
-              </div>
-              <div class="field">
-                <label for="last_name">Last name</label>
-                <input id="last_name" name="last_name" autocomplete="family-name" required placeholder="Smith">
-              </div>
-              <input type="hidden" id="full_name" name="full_name">
-              <div class="field full">
-                <label for="email">Email address</label>
-                <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
-              </div>
-              <div class="field full">
-                <label for="mobile">Mobile number <span style="font-weight:400;font-size:.82em;opacity:.65;text-transform:none;letter-spacing:0">— used for vault login</span></label>
-                <input id="mobile" name="mobile" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx">
-              </div>
-              <div id="governance-fields-section">
-              <div class="field full">
-                <label>Date of birth</label>
-                <div class="dob-row">
-                  <select id="dob_day" name="dob_day" aria-label="Day">
-                    <option value="">Day</option>
-                  </select>
-                  <select id="dob_month" name="dob_month" aria-label="Month">
-                    <option value="">Month</option>
-                    <option value="01">January</option><option value="02">February</option><option value="03">March</option>
-                    <option value="04">April</option><option value="05">May</option><option value="06">June</option>
-                    <option value="07">July</option><option value="08">August</option><option value="09">September</option>
-                    <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-                  </select>
-                  <select id="dob_year" name="dob_year" aria-label="Year">
-                    <option value="">Year</option>
-                  </select>
+            <!-- ══ Field stepper — one field at a time ══ -->
+            <div id="field-stepper">
+
+              <!-- fs-1: First name -->
+              <div class="field-step active" id="fs-first">
+                <div class="field full">
+                  <label for="first_name">First name</label>
+                  <input id="first_name" name="first_name" autocomplete="given-name" required placeholder="Jane" autofocus>
                 </div>
-                <input type="hidden" id="dob" name="date_of_birth">
+                <div class="fs-nav">
+                  <button type="button" class="btn-primary fs-next" data-next="fs-middle">Next →</button>
+                </div>
               </div>
-            </div>
 
-            <!-- Address section -->
-            <div class="field-group-hd"><span>Your address</span></div>
-            <div class="form-grid" id="addr-manual">
-              <div class="field full"><label for="street">Street address</label><input id="street" name="street" placeholder="123 Main Street" autocomplete="street-address"></div>
-              <div class="field full"><label for="street2">Line 2 <span style="font-weight:400;opacity:.55;text-transform:none;letter-spacing:0;font-size:.9em">optional</span></label><input id="street2" name="street2" placeholder="Unit / suite / PO Box" autocomplete="address-line2"></div>
-              <div class="field"><label for="suburb">Suburb</label><input id="suburb" name="suburb" placeholder="Suburb" autocomplete="address-level2"></div>
-              <div class="field"><label for="state">State</label>
-                <select id="state" name="state" autocomplete="address-level1">
-                  <option value="">Select</option><option>NSW</option><option>VIC</option><option>QLD</option><option>WA</option><option>SA</option><option>TAS</option><option>ACT</option><option>NT</option>
-                </select>
+              <!-- fs-2: Middle name (optional) -->
+              <div class="field-step" id="fs-middle">
+                <div class="field full">
+                  <label for="middle_name">Middle name <span class="field-opt">optional</span></label>
+                  <input id="middle_name" name="middle_name" autocomplete="additional-name" placeholder="Leave blank to skip">
+                </div>
+                <div class="fs-nav">
+                  <button type="button" class="btn-secondary fs-back" data-back="fs-first">← Back</button>
+                  <button type="button" class="btn-primary fs-next" data-next="fs-last">Next →</button>
+                </div>
               </div>
-              <div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode" inputmode="numeric" pattern="[0-9]{4}" required placeholder="2000" autocomplete="postal-code"></div>
-            </div>
-            </div>
-            <div id="cold-path-notice" style="display:none;background:rgba(139,105,20,0.08);border:1px solid rgba(139,105,20,0.3);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:0.85em;color:#94a3b8;line-height:1.5;">
-              <strong style="color:#f0ede8;">📋 Address and date of birth not required now.</strong><br>
-              You can complete these in your vault after joining — they are required before the first community vote on 14 May.
-            </div>
+
+              <!-- fs-3: Last name -->
+              <div class="field-step" id="fs-last">
+                <div class="field full">
+                  <label for="last_name">Last name</label>
+                  <input id="last_name" name="last_name" autocomplete="family-name" required placeholder="Smith">
+                </div>
+                <div class="fs-nav">
+                  <button type="button" class="btn-secondary fs-back" data-back="fs-middle">← Back</button>
+                  <button type="button" class="btn-primary fs-next" data-next="fs-email">Next →</button>
+                </div>
+              </div>
+
+              <!-- fs-4: Email -->
+              <div class="field-step" id="fs-email">
+                <div class="field full">
+                  <label for="email">Email address</label>
+                  <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+                </div>
+                <div class="fs-nav">
+                  <button type="button" class="btn-secondary fs-back" data-back="fs-last">← Back</button>
+                  <button type="button" class="btn-primary fs-next" data-next="fs-mobile">Next →</button>
+                </div>
+              </div>
+
+              <!-- fs-5: Mobile -->
+              <div class="field-step" id="fs-mobile">
+                <div class="field full">
+                  <label for="mobile">Mobile number</label>
+                  <input id="mobile" name="mobile" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx">
+                </div>
+                <div class="fs-nav">
+                  <button type="button" class="btn-secondary fs-back" data-back="fs-email">← Back</button>
+                  <button type="button" class="btn-primary fs-next" data-next="fs-done">Next →</button>
+                </div>
+              </div>
+
+              <!-- fs-6: Done — show pill + cost + proceed -->
+              <div class="field-step" id="fs-done">
+                <p class="fs-summary" id="fs-summary-text"></p>
+                <div class="fs-nav">
+                  <button type="button" class="btn-secondary fs-back" data-back="fs-mobile">← Back</button>
+                </div>
+              </div>
+
+            </div><!-- /field-stepper -->
+
+            <!-- Hidden fields passed to backend -->
+            <input type="hidden" id="full_name" name="full_name">
+            <input type="hidden" id="dob" name="date_of_birth" value="">
+            <input type="hidden" id="street" name="street" value="">
+            <input type="hidden" id="street2" name="street2" value="">
+            <input type="hidden" id="suburb" name="suburb" value="">
+            <input type="hidden" id="state_code" name="state_code" value="">
+            <input type="hidden" id="postcode" name="postcode" value="">
+            <input type="hidden" id="dob_day" name="dob_day" value="">
+            <input type="hidden" id="dob_month" name="dob_month" value="">
+            <input type="hidden" id="dob_year" name="dob_year" value="">
 
             <!-- Member Invitation Code -->
             <div class="field-group-hd" style="margin-top:22px"><span>Invitation</span></div>
@@ -496,8 +529,8 @@
             <div class="step-hd">
               <div class="step-num-badge">2</div>
               <div>
-                <h2>Almost there — you're joining something real.</h2>
-                <p>Review your details, tick the confirmation box, and submit.</p>
+                <h2>Almost there. Check your details and confirm.</h2>
+                <p>Tick the box and hit submit. That is it.</p>
               </div>
             </div>
 
