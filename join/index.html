@@ -530,7 +530,7 @@
               <div class="step-num-badge">2</div>
               <div>
                 <h2>Almost there. Check your details and confirm.</h2>
-                <p>Tick the box and hit submit. That is it.</p>
+                <p>Hit submit. Your vault opens straight away.</p>
               </div>
             </div>
 
@@ -557,7 +557,7 @@
                 <div class="confirm-ico">📍</div>
                 <div>
                   <strong>Address</strong>
-                  <span id="cs-address">—</span>
+                  <span id="cs-address" style="color:var(--muted);font-size:.88rem;">You will add this after joining.</span>
                 </div>
               </div>
               <div class="confirm-row">
@@ -576,23 +576,7 @@
               </div>
             </div>
 
-            <!-- Acceptance checkbox — IMMEDIATELY AFTER SUMMARY -->
-            <div class="terms-box" style="margin-top:18px">
-              <div class="terms-prompt">Tick to confirm and submit</div>
-              <div class="accept-cb-wrap">
-                <input class="accept-cb-input" type="checkbox" id="terms-cb" name="terms_accepted" required onchange="checkSubmit()">
-                <label class="accept-cb-label" for="terms-cb">
-                  <span class="accept-cb-box">
-                    <span class="accept-cb-check">✓</span>
-                  </span>
-                  <span class="accept-cb-copy">
-                    <span class="accept-cb-title">I have read and accept the <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2);text-decoration:underline">Joint Venture Membership Agreement</a>.</span>
-                    <span class="accept-cb-text">I understand I am joining a community joint venture, not investing in a managed fund.</span>
-                  </span>
-                </label>
-              </div>
-              <div class="accept-cb-note" id="submit-nudge" style="margin-top:10px;font-size:.84rem;color:var(--muted)">Tick the box above to enable the Submit button. <a href="../terms/index.html" style="color:var(--gold-2)">Terms</a> · <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)" id="jvpa-download-link">Download JVPA (PDF)</a></div>
-            </div>
+            <!-- JVPA acceptance moved to vault post-login -->
 
             <div class="step-nav" style="margin-top:16px">
               <button type="button" class="btn-secondary" onclick="goStep(1)">‹ Back</button>
@@ -603,72 +587,7 @@
             </div>
             <div class="form-status" id="formStatus"></div>
 
-            <!-- Legal notice — available for reading below the action -->
-            <div class="legal-note" style="margin-top:24px">
-              <strong>Membership notice</strong>
-              <p>Your $4 membership contribution establishes your Member record, your Foundation S-NFT blockchain reservation record, and your Independence Vault. <strong style="font-size:inherit;letter-spacing:normal;text-transform:none;color:var(--text2)">It is not a payment for a financial product.</strong></p>
-              <p>The CJVM Hybrid Trust operates as a community joint venture. The Foundation's self-assessed position is that the CJVM does not constitute a managed investment scheme under section 9 of the Corporations Act 2001 (Cth), because Members exercise day-to-day control over the trust's operations through their proprietary governance system. If applicable law later requires a specific authorisation or disclosure for a particular activity, the Trustee will obtain or provide what is required.</p>
-              <p>The <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)">Joint Venture Membership Agreement Version 1.0</a> is the supreme governing instrument. By proceeding, you accept that Agreement and the entrenched founding principles of the CJVM Hybrid Trust.</p>
-
-              <!-- Summary disclosure — JVPA cl.8.1A(b)(iii) -->
-              <details style="margin-top:14px;border-top:1px solid rgba(240,209,138,.18);padding-top:14px">
-                <summary style="cursor:pointer;font-size:.84rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-2);list-style:none;display:flex;align-items:center;gap:8px;user-select:none">
-                  <span style="font-size:.9rem">&#9654;</span> Key rights and obligations — summary disclosure (JVPA cl.8.1A)
-                </summary>
-                <div style="margin-top:14px;display:flex;flex-direction:column;gap:14px;font-size:.88rem;line-height:1.7;color:var(--text2)">
-                  <div>
-                    <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">Entrenched rules that protect you — cannot be changed by any resolution (JVPA cl.1.5)</div>
-                    <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;padding:0">
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> $4 entry contribution is permanently fixed — no resolution may increase it</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> No COG$ Token may be sold for fiat currency or listed on any exchange</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> One Member, one vote — governance cannot be purchased</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Anti-capture cap: no person or entity may hold more than 1,000,000 Units across all classes</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Sub-Trust B income distributions are mandatory and non-discretionary — within 60 days of receipt</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Members Asset Pool cannot be sold or distributed to private persons</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> First Nations Advisory Council cannot be removed or sidelined without 75% Special Resolution</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--ok);flex-shrink:0">&#10003;</span> Minimum 30% of Sub-Trust C distributions to First Nations programs every financial year</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">What you are entitled to as a Member</div>
-                    <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;padding:0">
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> One equal governance vote on all Foundation-wide decisions — wealth does not change this (JVPA cl.1.5(d))</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> One Sub-Trust B income unit — proportional dividend participation once lawfully distributable (cl.1.5(n))</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> Your Independence Vault Wallet — operated by you autonomously, without Trustee involvement (cl.4.1A)</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> The right to submit governance proposals, cast votes, and participate in Members Polls (cl.4.1A(b))</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> The right to nominate an heir — the sole exception to the non-transfer rule (cl.8.4)</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> The right to remove the Trustee by 75% Special Resolution at any time (cl.1.5(y))</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">What you are committing to as a Member (JVPA cl.4.11)</div>
-                    <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;padding:0">
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> Access the System at least once in any rolling 12-month period</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> Engage with Members Polls and governance proposals to the extent reasonably practicable</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> Contribute to monitoring of the Members Asset Pool through the System</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--gold-2);flex-shrink:0">&#9672;</span> Comply with the operational rules of the Joint Venture as set by Members</li>
-                    </ul>
-                  </div>
-
-                  <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:12px 14px;border:1px solid rgba(240,209,138,.14)">
-                    <div style="font-weight:600;color:var(--gold-1);margin-bottom:6px">What this is not</div>
-                    <ul style="list-style:none;display:flex;flex-direction:column;gap:4px;padding:0">
-                      <li style="display:flex;gap:8px"><span style="color:var(--muted);flex-shrink:0">—</span> This is not an investment in a managed fund</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--muted);flex-shrink:0">—</span> Your $4 membership contribution is not refundable — it funds your permanent Member record</li>
-                      <li style="display:flex;gap:8px"><span style="color:var(--muted);flex-shrink:0">—</span> COG$ Tokens cannot be redeemed for cash under any circumstances</li>
-                    </ul>
-                  </div>
-
-                  <p style="font-size:.82rem;color:var(--muted)">
-
-                  This is a summary only. The full agreement is the <a href="../docs/COGS_JVPA.pdf" target="_blank" style="color:var(--gold-2)">Joint Venture Membership Agreement Version 1.0 (PDF)</a>. In the event of any inconsistency between this summary and the Agreement, the Agreement prevails.</p>
-                </div>
-              </details>
-
-              <p style="color:var(--muted);font-size:.78rem;margin-top:14px">Governed by the laws of South Australia, Australia. &nbsp;<a href="../privacy/index.html" style="color:var(--gold-2)">Privacy policy</a> · <a href="../terms/index.html" style="color:var(--gold-2)">Terms</a>.</p>
-            </div>
+            <!-- Legal notice displayed in vault after login -->
 
           </div>
 
@@ -1138,7 +1057,7 @@ function populateConfirm() {
 function checkSubmit() {
   var cb  = document.getElementById('terms-cb');
   var btn = document.getElementById('submit-btn');
-  var canSubmit = cb && cb.checked && _inviteValid;
+  var canSubmit = _inviteValid;
   btn.disabled      = !canSubmit;
   btn.style.opacity = canSubmit ? '1' : '.45';
   btn.style.cursor  = canSubmit ? 'pointer' : 'not-allowed';
