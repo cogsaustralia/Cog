@@ -1296,16 +1296,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
         var wrap = document.getElementById('invite-wrap');
         if (wrap) wrap.style.display = 'none';
 
-        // Disable submit button during auto-validation
-        var submitBtn = document.getElementById('submit-btn');
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Checking...';
-          submitBtn.style.opacity = '.45';
-          submitBtn.style.cursor = 'not-allowed';
-        }
-
-        // Call existing validate function
+        // Call existing validate function — checkSubmit() handles button state
         if (typeof validateInviteCode === 'function') {
           validateInviteCode();
         }
