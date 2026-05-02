@@ -33,7 +33,7 @@ if (function_exists('normalizePhone')) {
 $dob = sanitize($body['dob'] ?? $body['date_of_birth'] ?? '');
 $street = sanitize($body['street'] ?? '');
 $suburb = sanitize($body['suburb'] ?? '');
-$state = sanitize($body['state'] ?? '') ?: 'NSW'; // address deferred to vault — default NSW for member number generation
+$state = sanitize($body['state'] ?? '');
 $postcode = sanitize($body['postcode'] ?? '');
 $referralCode = strtoupper(substr(sanitize($body['referral_code'] ?? ''), 0, 16));
 
@@ -353,7 +353,7 @@ if ($inviteCodeRaw !== '' && empty($inviteState['ok'])) {
     apiError('The Member invitation code could not be verified. Please check the code and try again.');
 }
 
-$stateCode = stateCode($state);
+$stateCode = $state !== '' ? stateCode($state) : '';
 $generatedMember = function_exists('generateSnftMemberNumber') ? generateSnftMemberNumber($db, $stateCode) : ['member_number' => trust_generate_personal_member_number($db), 'sequence_no' => null, 'state_code' => $stateCode];
 $memberNumber = (string)$generatedMember['member_number'];
 $acceptedAt = $noticeAcceptedAtRaw !== '' ? gmdate('Y-m-d H:i:s', strtotime($noticeAcceptedAtRaw) ?: time()) : nowUtc();

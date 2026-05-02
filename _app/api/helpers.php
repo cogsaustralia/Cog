@@ -166,8 +166,8 @@ function luhnCheckDigit(string $numberWithoutCheck): string {
     return (string)((10 - ($sum % 10)) % 10);
 }
 
-function generateSnftMemberNumber(PDO $db, string $state): array {
-    $state = stateCode($state);
+function generateSnftMemberNumber(PDO $db, string $state = ''): array {
+    $state = $state !== '' ? stateCode($state) : '';
 
     // Use the member_number_sequence auto-increment table for race-safe generation.
     // MySQL AUTO_INCREMENT is atomic — two concurrent inserts always get distinct IDs,
