@@ -1830,6 +1830,11 @@ function openVault(d){
   /* ── Stage 3+4: show governance banner if incomplete ── */
   try { checkGovernanceBanner(d); } catch(_) {}
 
+  // Post-login onboarding: JVPA → DOB → Address (shown before vault renders if any step needed)
+  if (typeof window.startOnboarding === 'function') {
+    window.startOnboarding(d);
+  }
+
   el('vault').style.display = 'block';
   el('auth-gate').classList.remove('show');
 
@@ -4189,6 +4194,211 @@ function _setJvpaEnabled(enabled) {
   }
 })();
 
+/* ── Post-login onboarding stepper: JVPA → DOB → Address ── */
+(function() {
+  'use strict';
+
+  var _obSteps   = [];   // array of step keys to show: 'jvpa','dob','address'
+  var _obIndex   = 0;
+  var _obDob     = '';   // holds DOB across steps so we can submit with address
+  var _obData    = {};   // vault data snapshot
+
+  function obEl(id) { return document.getElementById(id); }
+
+  function obFlash(msg, ok) {
+    var el = obEl('ob-flash');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = ok ? '#52b87a' : '#f0857a';
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  function obProgress(idx, total) {
+    var bar = obEl('ob-progress');
+    if (bar) bar.style.width = Math.round(((idx + 1) / (total || 1)) * 100) + '%';
+  }
+
+  function obRenderStep(idx) {
+    var key = _obSteps[idx];
+    obProgress(idx, _obSteps.length);
+    obFlash('');
+
+    var label = obEl('ob-step-label');
+    var title = obEl('ob-title');
+    var body  = obEl('ob-body');
+    var next  = obEl('ob-next');
+    var skip  = obEl('ob-skip');
+    var isLast = idx === _obSteps.length - 1;
+
+    if (label) label.textContent = 'Step ' + (idx + 1) + ' of ' + _obSteps.length;
+    if (next)  next.textContent  = isLast ? 'Complete setup →' : 'Continue →';
+
+    if (key === 'jvpa') {
+      var d   = _obData;
+      var ver = (d.jvpa_acceptance && d.jvpa_acceptance.current_version_title) || 'COG$ of Australia Foundation Joint Venture Participation Agreement';
+      if (title) title.textContent = 'Accept the Partnership Agreement';
+      if (skip)  skip.style.display = 'none';  // JVPA is not skippable
+      body.innerHTML = ''
+        + '<p style="font-size:.88rem;color:rgba(220,196,148,.85);line-height:1.65;margin:0 0 16px">'
+        + 'As a Member of the COG$ of Australia Foundation, you join as a Joint Venture Partner. '
+        + 'Please read and accept the Participation Agreement before accessing your vault.</p>'
+        + '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(240,209,138,.18);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">'
+        + '<span style="font-size:.9rem;color:#f0e8d6;font-weight:500">' + esc(ver) + '</span>'
+        + '<a href="../docs/COGS_JVPA.pdf" target="_blank" rel="noopener" style="flex-shrink:0;font-size:.78rem;color:#c9973d;text-decoration:underline;white-space:nowrap" id="ob-jvpa-link">Read PDF ↗</a>'
+        + '</div>'
+        + '<label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:14px 16px;border:1.5px solid rgba(240,209,138,.22);border-radius:12px;background:rgba(240,209,138,.04);transition:border-color .2s">'
+        + '<input type="checkbox" id="ob-jvpa-cb" style="margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:#c9973d">'
+        + '<span style="font-size:.87rem;color:rgba(220,196,148,.9);line-height:1.6">I have read and accept this Agreement on equal terms with all existing Members. I understand this is a binding commitment as a Joint Venture Partner.</span>'
+        + '</label>';
+      // enable/disable next on checkbox change
+      setTimeout(function() {
+        var cb  = obEl('ob-jvpa-cb');
+        var btn = obEl('ob-next');
+        if (cb && btn) {
+          btn.style.opacity = '.45'; btn.style.pointerEvents = 'none';
+          cb.addEventListener('change', function() {
+            btn.style.opacity = cb.checked ? '1' : '.45';
+            btn.style.pointerEvents = cb.checked ? '' : 'none';
+          });
+        }
+        // Track PDF view
+        var link = obEl('ob-jvpa-link');
+        if (link) link.addEventListener('click', function() { window._obJvpaRead = true; });
+      }, 0);
+
+    } else if (key === 'dob') {
+      if (title) title.textContent = 'Your date of birth';
+      if (skip)  skip.style.display = '';
+      body.innerHTML = ''
+        + '<p style="font-size:.88rem;color:rgba(220,196,148,.85);line-height:1.65;margin:0 0 18px">'
+        + 'Your date of birth is used for identity verification and is held securely. It is not shared publicly.</p>'
+        + '<div style="max-width:220px">'
+        + '<label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:8px">Date of birth</label>'
+        + '<input type="date" id="ob-dob-input" style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:1rem;font-family:inherit;outline:none" '
+        + 'max="' + (new Date().getFullYear() - 16) + '-12-31" '
+        + 'value="' + (_obDob || '') + '">'
+        + '</div>';
+
+    } else if (key === 'address') {
+      if (title) title.textContent = 'Your address';
+      if (skip)  skip.style.display = '';
+      body.innerHTML = ''
+        + '<p style="font-size:.88rem;color:rgba(220,196,148,.85);line-height:1.65;margin:0 0 18px">'
+        + 'Your address is used for electoral zone mapping and is held securely. It is not shared publicly.</p>'
+        + '<div style="display:flex;flex-direction:column;gap:12px">'
+        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">Street address</label>'
+        + '<input type="text" id="ob-street" placeholder="123 Main Street" autocomplete="street-address" '
+        + 'style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none;box-sizing:border-box">'
+        + '</div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">Suburb</label>'
+        + '<input type="text" id="ob-suburb" placeholder="Suburb" autocomplete="address-level2" '
+        + 'style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none;box-sizing:border-box">'
+        + '</div>'
+        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">State</label>'
+        + '<select id="ob-state" style="width:100%;background:rgba(20,14,4,.95);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none;appearance:none">'
+        + '<option value="">— State —</option>'
+        + '<option>NSW</option><option>VIC</option><option>QLD</option><option>SA</option>'
+        + '<option>WA</option><option>TAS</option><option>NT</option><option>ACT</option>'
+        + '</select></div></div>'
+        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">Postcode</label>'
+        + '<input type="text" id="ob-postcode" placeholder="0000" maxlength="4" inputmode="numeric" '
+        + 'style="width:100px;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none">'
+        + '</div></div>';
+    }
+  }
+
+  window.obNextStep = async function obNextStep() {
+    var key = _obSteps[_obIndex];
+    var btn = obEl('ob-next');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+    obFlash('');
+
+    try {
+      if (key === 'jvpa') {
+        var cb = obEl('ob-jvpa-cb');
+        if (!cb || !cb.checked) { obFlash('Please tick the checkbox to confirm you have read the agreement.'); if (btn) { btn.disabled=false; btn.textContent='Continue →'; } return; }
+        await window.api('vault/accept-jvpa', { method:'POST', body: JSON.stringify({ viewed_document: true }) });
+        if (window._vaultData && window._vaultData.jvpa_acceptance) {
+          window._vaultData.jvpa_acceptance.needs_signing = false;
+          window._vaultData.jvpa_acceptance.verified = true;
+        }
+
+      } else if (key === 'dob') {
+        var dobVal = (obEl('ob-dob-input') || {}).value || '';
+        if (dobVal) _obDob = dobVal;
+        // DOB saved with address on last step — just advance
+
+      } else if (key === 'address') {
+        var street  = ((obEl('ob-street')   || {}).value || '').trim();
+        var suburb  = ((obEl('ob-suburb')   || {}).value || '').trim();
+        var state   = ((obEl('ob-state')    || {}).value || '').trim();
+        var postcode= ((obEl('ob-postcode') || {}).value || '').trim();
+        var dob     = _obDob || '';
+        await window.api('vault/governance-complete', {
+          method: 'POST',
+          body: JSON.stringify({ street_address: street, suburb: suburb, state_code: state, postcode: postcode, date_of_birth: dob })
+        });
+        if (window._vaultData) {
+          window._vaultData.street = street;
+          window._vaultData.suburb = suburb;
+          window._vaultData.governance_record_complete = true;
+        }
+      }
+
+      _obIndex++;
+      if (_obIndex >= _obSteps.length) {
+        obClose();
+        // Re-render identity chip so JVPA reflects
+        if (typeof window.renderIdentity === 'function' && window._vaultData) window.renderIdentity(window._vaultData);
+        // Hide governance banner if shown
+        var gb = obEl('governance-banner'); if (gb) gb.style.display = 'none';
+      } else {
+        if (btn) { btn.disabled = false; btn.textContent = (_obIndex === _obSteps.length - 1) ? 'Complete setup →' : 'Continue →'; }
+        obRenderStep(_obIndex);
+      }
+    } catch(err) {
+      obFlash(err.message || 'Could not save. Please try again.');
+      if (btn) { btn.disabled = false; btn.textContent = (_obIndex === _obSteps.length - 1) ? 'Complete setup →' : 'Continue →'; }
+    }
+  };
+
+  window.obSkipStep = function obSkipStep() {
+    _obIndex++;
+    if (_obIndex >= _obSteps.length) {
+      obClose();
+    } else {
+      obRenderStep(_obIndex);
+    }
+  };
+
+  function obClose() {
+    var modal = obEl('onboarding-modal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  window.startOnboarding = function startOnboarding(d) {
+    _obData  = d;
+    _obSteps = [];
+    _obDob   = (d.date_of_birth || '').replace('T00:00:00', '').substring(0,10);
+
+    var needsJvpa    = !!(d.jvpa_acceptance && d.jvpa_acceptance.needs_signing);
+    var needsDob     = !d.date_of_birth;
+    var needsAddress = !d.street;
+
+    if (needsJvpa)    _obSteps.push('jvpa');
+    if (needsDob)     _obSteps.push('dob');
+    if (needsAddress) _obSteps.push('address');
+
+    if (_obSteps.length === 0) return;  // nothing to do
+
+    _obIndex = 0;
+    var modal = obEl('onboarding-modal');
+    if (modal) { modal.style.display = 'flex'; }
+    obRenderStep(0);
+  };
+})();
+
 window.submitJvpaAcceptance = async function submitJvpaAcceptance() {
   var cb = document.getElementById('jvpa-checkbox');
   if (!cb || !cb.checked) {
@@ -6253,6 +6463,29 @@ function updateTourPill(){
     <div class="info-panel-body" id="info-panel-body"></div>
   </div>
 </div>
+<!-- Post-login onboarding stepper: JVPA → DOB → Address -->
+<div id="onboarding-modal" style="display:none;position:fixed;inset:0;z-index:9200;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:16px">
+  <div style="width:100%;max-width:520px;background:linear-gradient(160deg,rgba(22,16,6,.99),rgba(12,9,3,1));border:1.5px solid rgba(240,209,138,.30);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;max-height:92dvh">
+    <!-- Progress bar -->
+    <div style="height:3px;background:rgba(240,209,138,.12)">
+      <div id="ob-progress" style="height:100%;background:linear-gradient(90deg,#c9973d,#f0d18a);transition:width .4s ease;width:0%"></div>
+    </div>
+    <!-- Header -->
+    <div style="padding:20px 24px 14px;border-bottom:1px solid rgba(240,209,138,.12);flex-shrink:0">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(201,151,61,.85);margin-bottom:5px" id="ob-step-label">Setting up your vault</div>
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:1.25rem;font-weight:500;color:#f0e8d6;line-height:1.25" id="ob-title">—</div>
+    </div>
+    <!-- Body -->
+    <div style="padding:22px 24px;overflow-y:auto;flex:1" id="ob-body"></div>
+    <!-- Footer -->
+    <div style="padding:14px 24px 18px;border-top:1px solid rgba(240,209,138,.10);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <button id="ob-skip" style="background:none;border:none;cursor:pointer;font-size:.82rem;color:rgba(220,196,148,.5);padding:6px 0;text-decoration:underline;text-underline-offset:3px" onclick="obSkipStep()">Skip for now</button>
+      <button id="ob-next" style="background:linear-gradient(135deg,#f0d18a,#c9973d);border:none;border-radius:99px;color:#1a0f00;font-weight:700;font-size:.9rem;padding:11px 26px;cursor:pointer;transition:opacity .2s" onclick="obNextStep()">Continue →</button>
+    </div>
+    <div id="ob-flash" style="padding:0 24px 12px;font-size:.84rem;min-height:18px;display:none"></div>
+  </div>
+</div>
+
 <!-- JVPA signing modal -->
 <div id="jvpa-modal" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.82);align-items:center;justify-content:center;padding:16px">
   <div style="width:100%;max-width:640px;background:linear-gradient(160deg,rgba(22,16,6,.98),rgba(12,9,3,.99));border:1.5px solid rgba(240,209,138,.28);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;max-height:90dvh">
