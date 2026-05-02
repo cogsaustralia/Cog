@@ -1076,7 +1076,11 @@ document.getElementById('join-form').addEventListener('submit', async function(e
   /* Hard gate — must have valid invite or admin override */
   var inviteStatus = document.getElementById('invite_validation_status').value;
   if (inviteStatus !== 'valid' && inviteStatus !== 'override_approved') {
-      document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
+    status.className = 'form-status error';
+    status.textContent = 'A valid invitation code is required. Please contact your inviter.';
+    btn.disabled = false;
+    btn.textContent = 'Register as a Member ›';
+    document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
 
@@ -1291,6 +1295,15 @@ document.getElementById('join-form').addEventListener('submit', async function(e
         // Hide the invite section visually — user does not need to see this
         var wrap = document.getElementById('invite-wrap');
         if (wrap) wrap.style.display = 'none';
+
+        // Disable submit button during auto-validation
+        var submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Checking...';
+          submitBtn.style.opacity = '.45';
+          submitBtn.style.cursor = 'not-allowed';
+        }
 
         // Call existing validate function
         if (typeof validateInviteCode === 'function') {
