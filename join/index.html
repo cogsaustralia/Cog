@@ -1004,21 +1004,7 @@ function validateStep1() {
     emailEl.addEventListener('input', function(){ emailEl.style.borderColor = ''; }, {once:true});
   }
   // Address deferred to vault — not required at join time.
-  /* Gate on invite validation */
-  if (!_inviteValid) {
-    var wrap = document.getElementById('invite-wrap');
-    if (wrap) {
-      wrap.style.outline = '2px solid #f0857a';
-      wrap.style.borderRadius = '14px';
-      setTimeout(function(){ wrap.style.outline = ''; }, 2000);
-    }
-    var st = document.getElementById('invite-status');
-    if (st && !st.textContent.trim()) {
-      st.className = 'invite-status err';
-      st.textContent = 'Please verify your Member invitation code before continuing.';
-    }
-    ok = false;
-  }
+  /* Invite validation handled by submit handler — not required at step 1 */
   if (!ok) {
     var first = document.querySelector('#step-1 [style*="f0857a"]');
     if (first) first.scrollIntoView({behavior:'smooth',block:'center'});
