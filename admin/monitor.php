@@ -402,7 +402,7 @@ ops_require_admin();
                             <td>${r.path||'—'}</td>
                             <td>${si}</td>
                             <td>${r.partner_code||'<span style="color:#475569">—</span>'}</td>
-                            <td>${r.is_mobile?'📱':'🖥️'}</td>
+                            <td>${+r.is_mobile?'📱':'🖥️'}</td>
                             <td style="color:#94a3b8;font-size:0.82em;">${new Date(r.visited_at).toLocaleString('en-AU')}</td>
                         </tr>`;
                     }).join('');
