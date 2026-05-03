@@ -895,8 +895,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 <!-- ══ SPLASH ══ -->
 <div id="splash">
   <img src="../assets/cogs_coin_web.png" alt="" class="splash-coin">
-  <div class="splash-line1">Member Vault</div>
-  <div class="splash-line2">You are entering your Member Vault</div>
+  <div class="splash-line1">Your COGS account</div>
+  <div class="splash-line2">Welcome to your COGS account.</div>
 </div>
 
 <!-- ══ AUTH GATE — removed: Members Hub is the sole entry point ══ -->
@@ -958,9 +958,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
     <div class="rail-foot">
       <div class="rail-foot-chain">
-        <span class="rail-foot-dot"></span> Cryptographic DB · Active
+        <span class="rail-foot-dot"></span> Tamper-evident records · Active
       </div>
-      <div>Foundation Day 14 May 2026</div>
+      <div>First COGS vote — 14 May 2026</div>
     </div>
   </aside>
 
@@ -1030,12 +1030,12 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- Tab nav -->
   <nav class="tab-nav" role="tablist">
     <button class="tnb on" data-tab="overview" onclick="tab('overview')"><span class="tnb-ico">◈</span><span class="tnb-lbl"> Overview</span> <span id="s-identity-chip"></span></button>
-    <button class="tnb" data-tab="governance" onclick="tab('governance')"><span class="tnb-ico">✦</span><span class="tnb-lbl"> COG$ Management</span> <span class="tnb-badge" id="polls-badge"></span> <span id="s-polls-chip" style="display:none"></span></button>
-    <button class="tnb" data-tab="news" onclick="tab('news')"><span class="tnb-ico">◉</span><span class="tnb-lbl"> COG$ News</span> <span class="tnb-badge" id="news-badge"></span> <span id="s-news-chip" style="display:none"></span></button>
-    <button class="tnb" data-tab="holdings" onclick="tab('holdings')"><span class="tnb-ico">◇</span><span class="tnb-lbl"> COG$ Reservations</span> <span id="s-holdings-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="governance" onclick="tab('governance')"><span class="tnb-ico">✦</span><span class="tnb-lbl"> Polls</span> <span class="tnb-badge" id="polls-badge"></span> <span id="s-polls-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="news" onclick="tab('news')"><span class="tnb-ico">◉</span><span class="tnb-lbl"> Updates</span> <span class="tnb-badge" id="news-badge"></span> <span id="s-news-chip" style="display:none"></span></button>
+    <button class="tnb" data-tab="holdings" onclick="tab('holdings')"><span class="tnb-ico">◇</span><span class="tnb-lbl"> My tokens</span> <span id="s-holdings-chip" style="display:none"></span></button>
     <button class="tnb" data-tab="give" onclick="tab('give')"><span class="tnb-ico">♡</span><span class="tnb-lbl"> Give</span></button>
-    <button class="tnb" data-tab="exchange" onclick="tab('exchange')"><span class="tnb-ico">⇄</span><span class="tnb-lbl"> Exchange</span></button>
-    <button class="tnb" data-tab="activity" onclick="tab('activity')"><span class="tnb-ico">◈</span><span class="tnb-lbl"> Activity</span></button>
+    <button class="tnb" data-tab="exchange" onclick="tab('exchange')"><span class="tnb-ico">⇄</span><span class="tnb-lbl"> Send &amp; receive</span></button>
+    <button class="tnb" data-tab="activity" onclick="tab('activity')"><span class="tnb-ico">◈</span><span class="tnb-lbl"> History</span></button>
   </nav>
 
   <!-- Header spacer (topbar 54 + beta ~30 + tabs 46 + pay banner hidden) -->
@@ -1084,7 +1084,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
             <div class="hr-sym hr-sym-teal">CC</div>
             <div class="tr-inf">
               <div class="tr-name">Community COG$</div>
-              <div class="tr-cls">Class C &middot; Transferable now &middot; Live exchange</div>
+              <div class="tr-cls">You can send these to other members today.</div>
             </div>
             <div class="tr-val">
               <div id="ov-xch-balance" style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--gold);line-height:1;letter-spacing:.02em">—</div>
@@ -1103,7 +1103,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div class="card" style="padding:0">
           <div id="ov-res-rows" style="padding:4px 0"></div>
           <div style="padding:10px 18px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-            <span style="font-size:1.02rem;color:var(--text3)">No obligation &middot; Released after Expansion Day</span>
+            <span style="font-size:1.02rem;color:var(--text3)">No obligation &middot; Released after Expansion Day (the day COGS is approved by ASIC — date TBC)</span>
             <button class="btn btn-ghost btn-sm" onclick="tab('holdings')">Manage Reservations &rarr;</button>
           </div>
         </div>
@@ -1114,7 +1114,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div class="sec-divider" style="margin-bottom:10px">Management Hubs <i class="info-ico" onclick="showInfo('hubs')" style="vertical-align:middle">?</i></div>
         <div class="card" style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div>
-            <div style="font-weight:600;margin-bottom:3px">Mainspring Hub</div>
+            <div style="font-weight:600;margin-bottom:3px">Community work</div>
             <div style="font-size:1.02rem;color:var(--text3)">Governance, acquisitions, first nations, community projects, and more</div>
           </div>
           <button class="btn btn-ghost btn-sm" onclick="coinTransition('../hubs/mainspring/')">Open Hubs &rarr;</button>
@@ -1162,14 +1162,14 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <div class="pg">
 
       <!-- MEMBERSHIP -->
-      <div class="sec-divider">Membership — Soulbound <i class="info-ico" onclick="showInfo('snft-token')">?</i></div>
+      <div class="sec-divider">Membership — can't be sold or transferred <i class="info-ico" onclick="showInfo('snft-token')">?</i></div>
       <div class="card" style="margin-bottom:12px">
         <!-- Personal S-NFT -->
         <div class="tr">
           <div class="hr-sym hr-sym-gold">S</div>
           <div class="tr-inf">
             <div class="tr-name">Personal S-NFT</div>
-            <div class="tr-cls">Class S &middot; Soulbound &middot; One equal national governance vote</div>
+            <div class="tr-cls">This gives you 1 equal vote in Australia. You can't sell it.</div>
           </div>
           <div class="tr-val">
             <div class="tr-amt" style="font-size:1.2rem">1</div>
@@ -1183,7 +1183,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
             <div class="hr-sym hr-sym-amber">kS</div>
             <div class="tr-inf">
               <div class="tr-name">Kids S-NFT <i class="info-ico" onclick="showInfo('ksnft-guardian')" style="vertical-align:middle;margin-left:4px">?</i> <span style="font-size:1rem;font-weight:400;color:var(--text3)">&mdash; managed in Overview</span></div>
-              <div class="tr-cls">Class kS &middot; Guardian-held soulbound token &middot; converts to Class S on child&apos;s 18th birthday</div>
+              <div class="tr-cls">Class kS &middot; Guardian-held, can't be sold or transferred &middot; converts to Class S on child&apos;s 18th birthday</div>
             </div>
             <div class="tr-val">
               <div class="tr-amt" id="hd-ksnft-count" style="font-size:1.2rem">0</div>
@@ -1194,7 +1194,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       </div>
 
       <!-- RESERVATIONS -->
-      <div class="sec-divider">Reservations — No Obligation</div>
+      <div class="sec-divider">Future COG$ — your interest list (no money, no commitment).</div>
       <div class="card" style="margin-bottom:4px">
         <div class="card-hd">
           <h3>COG$ Reservations</h3><button class="info-btn" onclick="showInfo('reservations')">How this works</button>
@@ -1205,7 +1205,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div style="padding:16px 18px"><div class="sk" style="height:40px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:40px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:40px;border-radius:8px"></div></div>
         </div>
         <div style="padding:10px 18px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <button class="iedit-save" id="hd-save-btn" onclick="saveResNew()" style="padding:7px 18px">Update My Options</button>
+          <button class="iedit-save" id="hd-save-btn" onclick="saveResNew()" style="padding:7px 18px">Save my reservations</button>
           <button class="btn btn-ghost btn-sm" onclick="resetReservations()">Reset</button>
           <span style="font-size:1.02rem;color:var(--text3);flex:1;line-height:1.5">Edit freely — no obligation, no payment required. Released after Expansion Day.</span>
         </div>
@@ -1220,7 +1220,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
             <div class="hr-sym hr-sym-teal">Lr</div>
             <div class="tr-inf">
               <div class="tr-name">Resident COG$</div>
-              <div class="tr-cls">Class Lr · Address-bound · Admin-activated via GNAF zone verification</div>
+              <div class="tr-cls">Given to people who live in an area where COGS is helping. We use the address on your profile to check.</div>
             </div>
             <div class="tr-val">
               <div class="tr-amt" id="hd-lr-val">—</div>
@@ -1253,7 +1253,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <!-- Hero: all-time giving total -->
       <div class="give-hero">
         <div class="give-hero-val" id="give-hero-val">$0.00</div>
-        <div class="give-hero-lbl">All-time community contribution <i class="info-ico" onclick="showInfo('give-total')" style="vertical-align:middle">?</i></div>
+        <div class="give-hero-lbl">What you have given so far. <i class="info-ico" onclick="showInfo('give-total')" style="vertical-align:middle">?</i></div>
         <div class="give-stat-row">
           <span class="give-stat" id="give-stat-don">0 Donation COG$</span>
           <span class="give-stat" id="give-stat-pif">0 Pay It Forward</span>
@@ -1264,7 +1264,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="card">
         <div class="card-hd"><h3>Give to the community</h3><button class="info-btn" onclick="showInfo('donation-pif')">How this works</button><span style="font-size:1rem;color:var(--text3)">$4 per unit</span></div>
         <div class="card-bd">
-          <p style="font-size:1rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Donation COG$ funds Sub-Trust C — First Nations programs, environmental stewardship, and community initiatives. Pay It Forward sponsors another Member's $4 entry who cannot afford it.</p>
+          <p style="font-size:1rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Donation COG$ pay for First Nations programs, the environment, and community work. Pay It Forward sponsors another Member's $4 entry who cannot afford it.</p>
           <div class="give-stepper-row">
             <div>
               <div class="give-stepper-lbl">Donation COG$ (Class D)<button class="iq-btn" data-tip="$4 each. $2.00 goes directly to Sub-Trust C (the community projects fund) at the time of issue. $2.00 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
@@ -1273,7 +1273,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
                 <input class="stepper-input" id="char-don" type="number" min="0" value="0" oninput="updateCharityTotal()">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-don',1)">+</button>
               </div>
-              <div class="give-price-note" style="margin-top:5px">$2 direct to Sub-Trust C · $2 invested via Sub-Trust A</div>
+              <div class="give-price-note" style="margin-top:5px">$2 direct to Community Projects Fund · $2 invested via Members Asset Pool</div>
             </div>
             <div>
               <div class="give-stepper-lbl">Pay It Forward (Class PIF)<button class="iq-btn" data-tip="$4 each. Funds the $4 joining contribution for another person who cannot afford it. That person joins as a full Member on exactly equal terms — same governance vote, same Sub-Trust B income unit. No personal financial benefit to you as donor. This is a community access mechanism, not a charitable deduction." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
@@ -1357,7 +1357,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- Receive panel -->
       <div class="xch-panel on card" id="xch-panel-receive">
-        <div class="card-hd"><h3>Your Community COG$ receive address</h3><button class="iq-btn" data-tip="This is your unique COG$ wallet address — share it with another Member so they can send you Community COG$. It starts with COGS-CC- and is cryptographically bound to your Membership. You can have multiple receive addresses." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
+        <div class="card-hd"><h3>Your address — share this with friends so they can send you Community COG$.</h3><button class="iq-btn" data-tip="This is your unique COG$ wallet address — share it with another Member so they can send you Community COG$. It starts with COGS-CC- and is cryptographically bound to your Membership. You can have multiple receive addresses." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
         <div class="card-bd">
           <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.6">Share this hash address with the sender. It is unique to your Membership and cryptographically bound to your member number.</p>
           <div id="my-wallet-addrs">
@@ -1375,7 +1375,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <button class="info-btn" onclick="showInfo('community-cogs')">What is CC?</button>
         </div>
         <div class="card-bd">
-          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Enter the recipient's Community COG$ hash address (COGS-CC-...) and the amount to transfer. Only Community COG$ can move Member-to-Member before Expansion Day.</p>
+          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Type the member's number, or paste their Community COG$ address. Right now, only Community COG$ can be sent to other members.</p>
           <div id="transfer-available-board" style="display:none"></div>
           <div id="transfer-lock-board" style="display:none"></div>
 
@@ -1445,7 +1445,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="propose-wrap" style="margin-top:16px">
         <button class="propose-hd" onclick="togglePropose()">
           <span style="color:var(--gold)">＋</span>
-          <span style="flex:1">Initiate a Members Poll <i class="info-ico" onclick="showInfo('poll-initiation')" style="vertical-align:middle">?</i></span>
+          <span style="flex:1">Start a vote <i class="info-ico" onclick="showInfo('poll-initiation')" style="vertical-align:middle">?</i></span>
           <span id="propose-chevron" style="color:var(--text3);font-size:1rem">▼</span>
         </button>
         <div class="propose-body" id="propose-body">
@@ -1454,7 +1454,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="prop-body" placeholder="Explain the purpose, context, and what a Yes / No vote means."></textarea></div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <button class="btn btn-gold btn-sm" id="prop-btn" onclick="submitProposal()">Create initiation draft</button>
-            <span style="font-size:1rem;color:var(--text3)">Threshold: lesser of 10 Members or 1% of active Members</span>
+            <span style="font-size:1rem;color:var(--text3)">You need 10 other members to back your vote before it goes live.</span>
           </div>
           <div class="flash" id="prop-fl"></div>
         </div>
@@ -1463,7 +1463,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <!-- Past polls -->
       <div class="acc-section" id="past-polls-section" style="margin-top:14px;display:none">
         <div class="acc-hd" onclick="toggleAcc('past-polls-section')">
-          <h4>Past Members Polls</h4>
+          <h4>Past votes</h4>
           <span class="acc-chev">▼</span>
         </div>
         <div class="acc-body">
@@ -1473,8 +1473,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- Voting integrity notice -->
       <div style="margin-top:20px;padding:14px 16px;background:rgba(255,255,255,.02);border-radius:var(--r2);border:1px solid var(--border);font-size:1.02rem;color:var(--text3);line-height:1.6">
-        <strong style="color:var(--text);display:block;margin-bottom:6px">⬡ Voting integrity <i class="info-ico" onclick="showInfo('voting-integrity')" style="vertical-align:middle">?</i></strong>
-        Responses are cryptographically receipted. Tallies show counts only — your identity and choice are never exposed. One equal vote per Member regardless of holdings, location, or wealth. While a poll is open you can update your response.
+        <strong style="color:var(--text);display:block;margin-bottom:6px">⬡ How we keep votes honest. <i class="info-ico" onclick="showInfo('voting-integrity')" style="vertical-align:middle">?</i></strong>
+        Responses are securely logged with a one-way receipt. Tallies show counts only — your identity and choice are never exposed. One equal vote per Member regardless of holdings, location, or wealth. While a poll is open you can update your response.
       </div>
 
     </div>
@@ -1500,8 +1500,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- ══ ACTIVITY TAB ══ -->
   <div class="panel" id="tab-activity">
     <div class="pg">
-      <div style="font-family:var(--serif);font-size:2.8rem;font-weight:400;color:var(--text);margin-bottom:4px">Member action log <i class="info-ico" onclick="showInfo('activity-log')" style="vertical-align:middle">?</i></div>
-      <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px">Every action against your Membership — read-only and unalterable.</p>
+      <div style="font-family:var(--serif);font-size:2.8rem;font-weight:400;color:var(--text);margin-bottom:4px">Your history <i class="info-ico" onclick="showInfo('activity-log')" style="vertical-align:middle">?</i></div>
+      <p style="font-size:1.02rem;color:var(--text3);margin-bottom:16px">Everything you have done in your account, in order. Cannot be changed.</p>
       <div class="card">
         <div class="card-bd" style="padding:0 18px" id="event-log">
           <div class="sk" style="height:14px;border-radius:4px;margin:16px 0 10px"></div>
@@ -1539,7 +1539,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     </div>
 
     <div class="profile-section">
-      <div class="profile-section-title">Distribution election <i class="info-ico" onclick="showInfo('distribution-election')" style="vertical-align:middle">?</i></div>
+      <div class="profile-section-title">How you'd like to be paid (choose later) <i class="info-ico" onclick="showInfo('distribution-election')" style="vertical-align:middle">?</i></div>
       <p style="font-size:1.02rem;color:var(--text3);margin-bottom:12px;line-height:1.6">When dividend distributions are active (post-Expansion Day), choose how you receive your share.</p>
       <div style="display:flex;gap:8px">
         <button class="btn btn-ghost btn-sm" id="elect-aud" onclick="setElection('aud')">AUD bank transfer</button>
@@ -1557,7 +1557,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
     <div class="profile-section">
       <div class="profile-section-title">Request mobile or address change <i class="info-ico" onclick="showInfo('contact-change')" style="vertical-align:middle">?</i></div>
-      <p style="font-size:1.02rem;color:var(--text3);margin-bottom:12px;line-height:1.6">Mobile and address changes are reviewed by the Foundation team — they are used for identity verification and cannot be self-served.</p>
+      <p style="font-size:1.02rem;color:var(--text3);margin-bottom:12px;line-height:1.6">To change your phone or address, send us a request. We check it by hand to keep your account safe.</p>
       <div class="form-group"><label class="form-label">Field to change</label>
         <select class="form-input" id="chg-field" style="cursor:pointer">
           <option value="mobile">Mobile number</option>
@@ -2036,7 +2036,7 @@ function renderIdentity(d){
       ? 'Class S Unit — <span style="color:var(--green)">SECURED</span>'
       : 'Class S Unit — <span style="color:var(--pay-gold)">$4 payment due</span>',
     desc: paid
-      ? 'Issued under Sub-Trust A. Personal S-NFT COG$ token — your permanent, inheritable, soulbound Membership token.'
+      ? 'Issued under Sub-Trust A. Personal S-NFT COG$ token — your permanent, inheritable Membership token. Can\'t be sold or transferred.'
       : 'Your Class S Unit is reserved. Complete the $4 membership contribution to issue it. ' + (paid ? '' : '<button class="btn btn-gold btn-sm" style="margin-top:6px" onclick="window.openPayModal()">Pay $4 now ›</button>')
   });
 
@@ -2929,7 +2929,7 @@ function renderHoldings(d){
   };
 
   const statusChipFor = function(status){
-    var iqS   = infoQ(`Your Class S Unit is issued and secured. Permanent, soulbound, carries your equal governance vote and Sub-Trust B income unit.`);
+    var iqS   = infoQ(`Your Class S Unit is issued and secured. Permanent, can't be sold or transferred, carries your equal governance vote and Sub-Trust B income unit.`);
     var iqPR  = infoQ(`Your $4 membership contribution is outstanding. Complete it to issue your Class S Unit and activate your equal governance vote.`);
     var iqLck = infoQ(`This token class is locked until Expansion Day. That is when Members activate the Foundation's own blockchain node. No payment is due now — this is a no-obligation reservation you can change at any time.`);
     var iqCC  = infoQ(`Donation COG$ and Pay It Forward are community and charity pathway tokens — separate from the no-obligation reservation classes. $4 per unit, with $2 going directly to Sub-Trust C.`);
@@ -4573,7 +4573,7 @@ window.castVote = castVote;
 /* ══ Info popup system ══ */
 var _INFO = {
   'member-rights':{title:'What your Membership gives you',body:'<p>As a CJVM Member you hold real enforceable rights in the community joint venture. Here is what each entitlement means:</p><ul><li><strong>Class S Unit</strong> — your permanent beneficial interest in Sub-Trust A. Cannot be taken away, sold by the Foundation, or reduced. Yours for life and inheritable.</li><li><strong>Sub-Trust B income unit</strong> — when companies pay dividends, 50% flows through Sub-Trust B and is distributed proportionally to every income unit holder within 60 days. Mandatory under the Declaration.</li><li><strong>One equal governance vote</strong> — one Member, one vote. No Member has more votes based on wealth, location, or seniority. This is entrenched and cannot be changed.</li><li><strong>Identity verification</strong> — required to register Kids S-NFTs for children under 18.</li></ul><p>All of these are entrenched in the Declaration — no board decision or majority vote can remove them.</p>'},
-  'snft-token':{title:'Personal S-NFT — your soulbound Member token',body:'<p>S-NFT stands for <strong>Soulbound Non-Fungible Token</strong>. Soulbound means it is permanently attached to you — it cannot be sold, transferred, or traded.</p><p>Your S-NFT is the on-chain record of your Membership. It stores your acceptance of the Joint Venture Agreement, your Member number, and your governance rights — all embedded in the token metadata at the moment it is minted.</p><p>It is your equal national governance vote. One Member, one vote — regardless of how many COG$ you hold, where you live, or how long you have been a member.</p><p>The $4 you paid is your once-only contribution to the Foundation management infrastructure. It is entrenched at $4 forever.</p>'},
+  'snft-token':{title:'Personal S-NFT — your permanent Member token',body:'<p>S-NFT is a Non-Fungible Token that cannot be sold or transferred. It is permanently attached to you.</p><p>Your S-NFT is the on-chain record of your Membership. It stores your acceptance of the Joint Venture Agreement, your Member number, and your governance rights — all embedded in the token metadata at the moment it is minted.</p><p>It is your equal national governance vote. One Member, one vote — regardless of how many COG$ you hold, where you live, or how long you have been a member.</p><p>The $4 you paid is your once-only contribution to the Foundation management infrastructure. It is entrenched at $4 forever.</p>'},
   'subtrust-b':{title:'Sub-Trust B — your income unit',body:'<p>Sub-Trust B is a distribution vehicle. It holds no assets — it receives income from Sub-Trust A and passes it to Members.</p><p>When ASX-listed companies pay dividends, the income flows:</p><ul><li>50% reinvested back into the Members Asset Pool — the compounding engine</li><li>50% goes to Sub-Trust B and is distributed proportionally to all income unit holders within 60 days</li></ul><p>This distribution is <strong>non-discretionary and mandatory</strong>. The Trustee has no power to withhold or delay it. The formula is set in the Declaration and cannot be changed by any board decision.</p>'},
   'governance-vote':{title:'Research & Acquisitions',body:'<p>Members in this area research and identify new acquisition targets for the Joint Venture. This is the primary intelligence and origination function of the community.</p><p><strong>What Members in this area do:</strong></p><ul><li>Research ASX-listed companies that align with the Foundation\'s resource governance mandate</li><li>Identify real world assets — land, infrastructure, mineral rights, and other tangible resources</li><li>Surface commodities and emerging resource opportunities for community consideration</li><li>Post findings and analysis to the area feed for peer review</li><li>Initiate Members Polls to bring strong candidates to a formal community vote</li></ul><p>Any target identified here that reaches 10 supporting Members becomes eligible for a formal Members Poll on acquisition.</p>'},
   'kyc-identity':{title:'Identity verification',body:'<p>KYC stands for Know Your Customer — verifying that you are who you say you are.</p><p>The Foundation uses Medicare card verification for Phase 1. Your details are encrypted under AES-256 and stored in compliance with the AML/CTF Act 2006.</p><p><strong>Why it matters:</strong></p><ul><li>Required before registering Kids S-NFTs for children under 18</li><li>Strengthens the Foundation compliance position under AML/CTF legislation</li><li>Ensures the governance record is linked to a verified real person</li></ul><p>Your Medicare details are used only for identity verification — never shared, never sold.</p>'},
@@ -4584,15 +4584,15 @@ var _INFO = {
   'asset-pool':{title:'The Members Asset Pool — Sub-Trust A',body:'<p>Sub-Trust A holds every ASX share and Real World Asset the community owns — registered directly on the ASX CHESS Register in the Foundation name as Trustee.</p><p><strong>Key rules — all entrenched:</strong></p><ul><li><strong>No power of sale</strong> — the Members Asset Pool can never be sold, wound up, or distributed. It only grows.</li><li><strong>Direct CHESS registration</strong> — no fund manager, no ETF, no intermediary. You can independently verify the Foundation shareholdings.</li><li><strong>Permanent</strong> — the only exceptions are compulsory government acquisition and mandatory corporate actions. All proceeds must be reinvested.</li><li><strong>Poor ESG mandate</strong> — the Foundation targets companies with poor ESG records, builds a minimum 5% CHESS position, and uses AGM voting rights to drive change from within.</li></ul>'},
   'governance-tab':{title:'Polls — Members direct the joint venture',body:'<p>This tab is your primary operational control interface. The CJVM Joint Venture Agreement is explicit: Members exercise day-to-day control. The Trustee holds the legal keys. You and every other Member decide what happens inside.</p><p><strong>Members Polls:</strong> Formal binding votes. Open polls show here with Yes/No voting. Your vote is cryptographically receipted — anonymous tally, verifiable receipt.</p><p><strong>Initiation:</strong> Any 10 Members (or 1% of active Members) can start a poll. Others join the initiation group until the threshold is met, then it becomes a formal poll.</p><p><strong>What gets decided here:</strong> ASX acquisitions, AGM proxy voting, ESG engagement strategy, operational rule amendments, Trustee appointment or removal (75% Special Resolution).</p>'},
   'news-tab':{title:'News and Notices',body:'<p>This is your inbox for Foundation communications. The Foundation is required to publish certain notices to Members under the Declaration.</p><p><strong>Types of notices:</strong></p><ul><li><strong>Announcements</strong> — Foundation news, milestones, acquisition updates</li><li><strong>Governance</strong> — poll results, resolutions, tally certifications</li><li><strong>Payment</strong> — distribution confirmations, fee updates</li><li><strong>System</strong> — security alerts, vault updates, status changes</li></ul><p>The Foundation will never ask for your password or financial details via inbox message.</p>'},
-  'ksnft-guardian':{title:'Kids S-NFT — for parents, grandparents and guardians',body:'<p>The Kids S-NFT (Class kS) is designed for any Member who has responsibility for a child under 18 — parents, grandparents, step-parents, legal guardians, and carers alike.</p><p>Each kS-NFT gives the child:</p><ul><li>A permanent, unique Member number in their own name</li><li>A soulbound kS-NFT token held by you as guardian until they turn 18</li><li>A proportional Sub-Trust B income unit — a share of future dividend distributions equal to every other Member</li><li>A proxy governance vote exercised by you as guardian until they come of age</li></ul><p>On the child\'s 18th birthday, the kS-NFT automatically converts to a full Class S Personal S-NFT, activating their own independent governance vote and full adult Membership rights.</p><p><strong>Cost:</strong> $1 per child — a once-only contribution. There is no ongoing fee.</p><p><strong>Who can register:</strong> Any verified Member. Medicare card verification is required first to confirm your identity as guardian before children can be added.</p><p><strong>Grandparents and extended family:</strong> You do not need to be the legal parent. Any Member who takes responsibility for a child\'s participation in the Foundation may register that child\'s kS-NFT.</p>'},
+  'ksnft-guardian':{title:'Kids S-NFT — for parents, grandparents and guardians',body:'<p>The Kids S-NFT (Class kS) is designed for any Member who has responsibility for a child under 18 — parents, grandparents, step-parents, legal guardians, and carers alike.</p><p>Each kS-NFT gives the child:</p><ul><li>A permanent, unique Member number in their own name</li><li>A kS-NFT token held by you as guardian until they turn 18 (can't be sold or transferred)</li><li>A proportional Sub-Trust B income unit — a share of future dividend distributions equal to every other Member</li><li>A proxy governance vote exercised by you as guardian until they come of age</li></ul><p>On the child\'s 18th birthday, the kS-NFT automatically converts to a full Class S Personal S-NFT, activating their own independent governance vote and full adult Membership rights.</p><p><strong>Cost:</strong> $1 per child — a once-only contribution. There is no ongoing fee.</p><p><strong>Who can register:</strong> Any verified Member. Medicare card verification is required first to confirm your identity as guardian before children can be added.</p><p><strong>Grandparents and extended family:</strong> You do not need to be the legal parent. Any Member who takes responsibility for a child\'s participation in the Foundation may register that child\'s kS-NFT.</p>'},
   'hubs':{title:'Management Hubs',body:'<p>The Foundation operates through nine governance hubs — each one a focused area where Members research, propose, debate, and decide. The Mainspring Hub is the command centre that shows all nine at a glance.</p><p><strong>The nine hubs:</strong></p><ul><li><strong>Day-to-Day Operations</strong> — oversight of Trustee activity and Foundation operations</li><li><strong>Research &amp; Acquisitions</strong> — identify new ASX companies and real world assets to acquire</li><li><strong>ESG &amp; Proxy Voting</strong> — direct how CHESS-registered shares are voted at company AGMs</li><li><strong>First Nations Joint Venture</strong> — FNAC engagement, FPIC obligations, ICIP protections</li><li><strong>Community Projects</strong> — direct grants and community benefit priorities under Sub-Trust C</li><li><strong>Technology &amp; Blockchain</strong> — smart contract governance and infrastructure decisions</li><li><strong>Financial Oversight</strong> — monitor trust accounts, distributions, and dividend strategy</li><li><strong>Place-Based Decisions</strong> — Affected Zone declarations and land-impact assessments</li><li><strong>Education &amp; Outreach</strong> — grow the governance base and help new Members understand their role</li></ul>'},
-  'resident-cogs':{title:'Resident COG$ — Class Lr',body:'<p>Resident COG$ (Class Lr) are allocated automatically to Members who live within a declared Affected Zone.</p><p><strong>How it works:</strong></p><ul><li>Your address is verified against the GNAF database — the official Australian address register</li><li>If your verified address falls within a declared Affected Zone boundary, Resident COG$ are allocated to you automatically — no application needed</li></ul><p><strong>Key rules:</strong></p><ul><li>Address-bound — cannot be transferred or sold</li><li>Non-editable — administered by the Foundation, not the Member</li><li>Carry weighted affected-zone governance rights for place-based decisions</li></ul><p><em>The first Affected Zone — Drake Village (AZ-DRAKE-001) — is seeded as a draft polygon awaiting community endorsement.</em></p>'},
+  'resident-cogs':{title:'Resident COG$ — Class Lr',body:'<p>Resident COG$ (Class Lr) are allocated automatically to Members who live within a declared Affected Zone.</p><p><strong>How it works:</strong></p><ul><li>Your address is checked against the official Australian address register</li><li>If your verified address falls within a declared Affected Zone boundary, Resident COG$ are allocated to you automatically — no application needed</li></ul><p><strong>Key rules:</strong></p><ul><li>Address-bound — cannot be transferred or sold</li><li>Non-editable — administered by the Foundation, not the Member</li><li>Carry weighted affected-zone governance rights for place-based decisions</li></ul><p><em>The first Affected Zone — Drake Village (AZ-DRAKE-001) — is seeded as a draft polygon awaiting community endorsement.</em></p>'},
   'give-total':{title:'Your all-time community contribution',body:'<p>This total adds up every dollar you have contributed through Donation COG$ and Pay It Forward tokens — at $4 per unit.</p><p><strong>Donation COG$ (Class D):</strong> $2 goes directly to Sub-Trust C (First Nations programs, environmental stewardship, community initiatives). $2 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream for Sub-Trust C.</p><p><strong>Pay It Forward (Class PIF):</strong> Funds the $4 joining contribution for another person who cannot afford it — they join as a full Member on equal terms, same governance vote, same income unit.</p><p>This total grows with every contribution and is your permanent community footprint inside the Foundation.</p>'},
   'poll-initiation':{title:'Initiating a Members Poll',body:'<p>Any Member can start a poll initiation. The legal threshold is <strong>10 Members, or 1% of all active Members</strong> — whichever is fewer.</p><p><strong>How it works:</strong></p><ol><li>You draft a proposal — title and description explaining context and what Yes/No means</li><li>Other Members join your initiation until the threshold is reached</li><li>Once the threshold is met, the initiation automatically becomes a formal open Members Poll</li><li>All active Members can then vote Yes, No, or Maybe</li></ol><p><strong>What can be polled:</strong> ASX acquisitions, AGM proxy voting positions, ESG strategy, operational rule changes, and Trustee removal (which requires a 75% Special Resolution).</p>'},
   'voting-integrity':{title:'Voting integrity',body:'<p>Every vote cast is cryptographically receipted using SHA-256 hashing.</p><ul><li><strong>Your vote is verifiable</strong> — you receive a receipt proving your participation without revealing your choice to others</li><li><strong>Tallies are anonymous</strong> — the public count shows Yes/No/Maybe numbers only, never individual identities</li><li><strong>One equal vote per Member</strong> — regardless of holdings, wealth, location, or seniority. Entrenched in the Declaration and cannot be changed by any majority vote</li><li><strong>Updatable while open</strong> — you can change your response any time before a poll closes</li></ul><p>The Foundation cannot alter, suppress, or recount votes. The cryptographic record is the authoritative tally.</p>'},
   'activity-log':{title:'Member action log',body:'<p>Every action taken against your Membership is recorded here — read-only and append-only. Nothing can be deleted or altered, by you or by the Foundation.</p><p><strong>What is logged:</strong></p><ul><li>JVPA acceptance and cryptographic signing events</li><li>Token issuances — S-NFT, kS-NFT, Community COG$, Donation COG$, Pay It Forward</li><li>Reservation updates — ASX, RWA, Landholder COG$</li><li>Community COG$ transfers sent and received</li><li>Poll votes cast</li><li>Profile changes — email, election preference</li><li>KYC submission and verification events</li></ul><p>This is your permanent personal audit trail inside the Foundation.</p>'},
   'distribution-election':{title:'Distribution election',body:'<p>When dividend distributions are active (after Expansion Day), the Foundation distributes 50% of all dividend income proportionally to every Sub-Trust B income unit holder within 60 days. This is mandatory under the Declaration — the Trustee has no discretion to withhold or delay it.</p><p><strong>Choose how you receive your share:</strong></p><ul><li><strong>AUD bank transfer</strong> — paid directly to your registered bank account in Australian dollars</li><li><strong>New ASX COG$</strong> — reinvested to purchase additional ASX COG$ on your behalf, compounding your position in the Members Asset Pool</li></ul><p>You can change your election at any time. The election in place at each distribution date is the one applied.</p>'},
-  'contact-change':{title:'Requesting a mobile or address change',body:'<p>Your mobile number and postal address are identity-linked fields used during registration and tied to your Membership record.</p><p><strong>Why changes require review:</strong></p><ul><li>Mobile numbers are used for authentication — an unverified change creates a security risk</li><li>Addresses are used for GNAF zone verification and Resident COG$ allocation</li><li>Review protects against account takeover and preserves the integrity of the Membership register</li></ul><p>Submit your request here and the Foundation team will contact you to verify your identity before applying the change. Typical turnaround is 1–2 business days.</p>'}
+  'contact-change':{title:'Requesting a mobile or address change',body:'<p>Your mobile number and postal address are identity-linked fields used during registration and tied to your Membership record.</p><p><strong>Why changes require review:</strong></p><ul><li>Mobile numbers are used for authentication — an unverified change creates a security risk</li><li>Addresses are used for zone verification and Resident COG$ allocation</li><li>Review protects against account takeover and preserves the integrity of the Membership register</li></ul><p>Submit your request here and the Foundation team will contact you to verify your identity before applying the change. Typical turnaround is 1–2 business days.</p>'}
 };
 
 function showInfo(key){
@@ -4633,7 +4633,7 @@ window.addEventListener('load', function(){
     var items=[
       {ico:paid?'◈':'○',col:paid?'gold':'amber',key:'snft-token',
        title:paid?'Personal S-NFT &mdash; <span style="color:var(--green)">Secured</span>':'Personal S-NFT &mdash; <span style="color:var(--amber)">$4 payment required</span>',
-       desc:paid?'Your soulbound Member token. Permanent, inheritable, one equal national governance vote.':'Reserved. Complete the $4 contribution to issue your Class S Unit and activate your governance vote.'},
+       desc:paid?'Your Member token. Permanent, inheritable, can\'t be sold or transferred. One equal national governance vote.':'Reserved. Complete the $4 contribution to issue your Class S Unit and activate your governance vote.'},
       {ico:'&#x2144;',col:'green',key:'subtrust-b',
        title:'1 Sub-Trust B income unit &mdash; <span style="color:var(--green)">Active</span>',
        desc:'When portfolio companies pay dividends, 50% flows proportionally to all income unit holders within 60 days. Mandatory, not discretionary.'},
@@ -4749,7 +4749,7 @@ function renderTabOverview(d){
   /* ── A: Status strip pill ── */
   var pill = document.getElementById('ov-status-pill');
   if(pill){
-    var iqSecured = infoQ(`Your Class S Unit is issued and secured. This is your permanent, soulbound Member token — it cannot be transferred, sold, or taken away. It carries your equal national governance vote and your Sub-Trust B income unit.`);
+    var iqSecured = infoQ(`Your Class S Unit is issued and secured. This is your permanent Member token — it cannot be transferred, sold, or taken away. It carries your equal national governance vote and your Sub-Trust B income unit.`);
     var iqPayReq  = infoQ(`Your Class S Unit is reserved but not yet issued. Complete the $4 once-only membership contribution to activate your Membership, issue your token, and unlock your equal governance vote.`);
     pill.innerHTML = paid
       ? '<span class="chip chip-green"><span class="chip-dot"></span>Class S Unit Secured</span>' + iqSecured
@@ -5559,7 +5559,7 @@ var _PATHWAYS = {
   if(!_I['first-nations']) _I['first-nations'] = {title:'First Nations Joint Venture',body:'<p>First Nations custodians are founding governance members &mdash; not stakeholders consulted after the fact. Joint Venture engagement covers the First Nations Advisory Council (FNAC), Free Prior and Informed Consent (FPIC) obligations, Indigenous Cultural and Intellectual Property (ICIP) protections, and the automatic zero-cost Landholder COG$ entitlement for Local Aboriginal Land Councils and Prescribed Bodies Corporate (Declaration clause 35(aa)).</p>'};
   if(!_I['technology-blockchain']) _I['technology-blockchain'] = {title:'Technology & Blockchain',body:'<p>The Members own, build, and operate the proprietary cryptographic governance system. Initial implementation is a secure online database with SHA-256 hash records; the Approved Ledger Infrastructure migrates to a permissioned Hyperledger Besu blockchain as rollout progresses.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>Audit schedule and infrastructure decisions are made by Members Poll.</em></p>'};
   if(!_I['financial-oversight']) _I['financial-oversight'] = {title:'Financial Oversight',body:'<p>Members monitor trust accounts, distribution accuracy, and dividend strategy through the quarterly operational activity log and annual audited accounts published by the Trustee. The Godley-style ledger on this platform shows trust income, expenses, and distribution calculations in real time.</p>'};
-  if(!_I['place-based']) _I['place-based'] = {title:'Place-Based Decisions',body:'<p>Affected Zone declarations and land-impact assessments for specific regions. Residents of a declared Affected Zone receive Resident COG$ (Class Lr) automatically, allocated by the Foundation based on verified GNAF address within the zone boundary.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>First Affected Zone &mdash; Drake Village (AZ-DRAKE-001) &mdash; is seeded as a draft polygon awaiting community endorsement.</em></p>'};
+  if(!_I['place-based']) _I['place-based'] = {title:'Place-Based Decisions',body:'<p>Affected Zone declarations and land-impact assessments for specific regions. Residents of a declared Affected Zone receive Resident COG$ (Class Lr) automatically, allocated by the Foundation based on your verified address within the zone boundary.</p><p style="color:var(--text3);font-size:1rem;margin-top:10px"><em>First Affected Zone &mdash; Drake Village (AZ-DRAKE-001) &mdash; is seeded as a draft polygon awaiting community endorsement.</em></p>'};
   window._INFO = _I;
 })();
 
@@ -6298,11 +6298,11 @@ window.openKycPanel = function(){
     <button class="tour-close" onclick="closeTour()" title="Close tour">&times;</button>
     <div class="tour-step" data-s="1">
       <h3>Your vault &mdash; your membership.</h3>
-      <p>This is your Independence Vault &mdash; your operational interface to the CJVM Joint Venture. Your S-NFT Member token is your key. Everything here belongs to you and your Members collectively. The Trustee holds the legal safe. You and every other Member run what is inside it.</p>
+      <p>This is your COGS account &mdash; your operational interface to the CJVM Joint Venture. Your S-NFT Member token is your key. Everything here belongs to you and your Members collectively. The Trustee holds the legal safe. You and every other Member run what is inside it.</p>
     </div>
     <div class="tour-step" data-s="2">
       <h3>Your Member token.</h3>
-      <p>Your Personal S-NFT COG$ gives you one equal vote on all Membership-wide decisions. No Member has more votes than you &mdash; not based on wealth, location, or seniority. Your token is soulbound &mdash; permanently yours, it cannot be sold or transferred.</p>
+      <p>Your Personal S-NFT COG$ gives you one equal vote on all Membership-wide decisions. No Member has more votes than you &mdash; not based on wealth, location, or seniority. Your token is permanently yours. It cannot be sold or transferred.</p>
     </div>
     <div class="tour-step" data-s="3">
       <h3>The Members Asset Pool.</h3>
