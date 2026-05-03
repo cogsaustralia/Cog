@@ -1,4 +1,4 @@
-<\!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -95,9 +95,9 @@ body { font-family:var(--sans); background:var(--bg); color:var(--text); min-hei
   function readLead() {
     try {
       var raw = localStorage.getItem(LEAD_KEY);
-      if (\!raw) return null;
+      if (!raw) return null;
       var d = JSON.parse(raw);
-      if (\!d || \!d.stored_at) return null;
+      if (!d || !d.stored_at) return null;
       var age = (Date.now() - new Date(d.stored_at).getTime()) / 86400000;
       if (age > EXPIRY_DAYS) { localStorage.removeItem(LEAD_KEY); return null; }
       return d;
@@ -133,14 +133,14 @@ body { font-family:var(--sans); background:var(--bg); color:var(--text); min-hei
   var field = document.getElementById('phone-field');
   var btn   = document.getElementById('phone-btn');
   var msg   = document.getElementById('phone-msg');
-  if (\!form) return;
+  if (!form) return;
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     var phone = (field.value || '').trim();
-    if (\!phone) { msg.textContent = 'Enter your mobile number to continue.'; return; }
+    if (!phone) { msg.textContent = 'Enter your mobile number to continue.'; return; }
     var lead = readLead();
     var email = (lead && lead.email) ? lead.email : '';
-    if (\!email) { msg.textContent = 'We could not find your email. Please go back and enter it again.'; return; }
+    if (!email) { msg.textContent = 'We could not find your email. Please go back and enter it again.'; return; }
     btn.disabled = true;
     btn.textContent = 'Saving...';
     msg.textContent = '';
