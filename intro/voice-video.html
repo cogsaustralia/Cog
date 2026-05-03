@@ -54,6 +54,9 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
     <h1>Record up to 30 seconds</h1>
     <p class="sub">Vertical video · Front camera preferred</p>
 
+    <button class="btn btn-submit" id="start-camera-btn" onclick="initCamera(); this.style.display='none'; document.getElementById('vs-camera-ui').style.display='block'" style="margin:16px auto 20px;display:block">Allow camera and start recording</button>
+
+    <div id="vs-camera-ui" style="display:none">
     <div class="preview-wrap">
       <video id="vs-preview" muted playsinline autoplay></video>
       <video id="vs-playback-vid" controls playsinline style="display:none"></video>
@@ -61,6 +64,7 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
 
     <div class="timer" id="vs-timer">0:30</div>
     <button class="rec-btn idle" id="vs-rec-btn" onclick="toggleRecord()">🎬</button>
+    </div>
 
     <div id="vs-warning" class="warning" role="alert"></div>
 
@@ -160,8 +164,6 @@ h1{font-size:1.3rem;font-weight:500;margin-bottom:6px;clear:both}
       recBtn.style.display = 'none';
     });
   }
-
-  initCamera();
 
   function updateTimer() {
     timerEl.textContent = '0:' + (secondsLeft < 10 ? '0' : '') + secondsLeft;

@@ -77,8 +77,9 @@
     var displayState = '';
     var dpEl = document.getElementById('vs-display-first');
     var dsEl = document.getElementById('vs-display-state');
+    var includeStateChk = document.getElementById('vs-include-state');
     if (dpEl) displayFirst = dpEl.value || dpEl.textContent || '';
-    if (dsEl) displayState = dsEl.value || dsEl.textContent || '';
+    if (dsEl && includeStateChk && includeStateChk.checked) displayState = dsEl.value || dsEl.textContent || '';
 
     var fd = new FormData();
     fd.append('submission_type', 'text');

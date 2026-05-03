@@ -94,7 +94,6 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
 
     <div class="actions">
       <a href="/wallets/member.html#ptc" class="btn-secondary">Pass the Coin</a>
-      <a href="/intro/voice-welcome.html" class="btn-secondary">Submit another voice</a>
     </div>
 
     <p class="notice">A community membership invitation. Not financial advice. COG$ of Australia Foundation.</p>
@@ -188,7 +187,10 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
 </script>
 
 <!-- Canvass prompt — Poor ESG Target designations -->
-<div id="canvass-panel" style="max-width:480px;margin:28px auto 0;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:30px 28px;display:none">
+<div style="max-width:480px;margin:60px auto 0;text-align:center">
+  <p style="font-size:.82rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">One more thing (optional) -- 30 seconds</p>
+</div>
+<div id="canvass-panel" style="max-width:480px;margin:12px auto 40px;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:30px 28px;display:none">
   <div style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Foundation governance</div>
   <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--text);margin-bottom:10px;line-height:1.4">What does a fair say and a fair share mean to you?</h3>
   <p style="font-size:.84rem;color:var(--text2);line-height:1.6;margin-bottom:20px">The Foundation has identified Santos Limited (ASX: STO) and Origin Energy Limited (ASX: ORG) as Poor ESG Target candidates under clause 30.3 of the Partnership Agreement. What does a fair say and a fair share mean to you — for each company?</p>
@@ -214,7 +216,8 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
   </div>
 
   <div id="canvass-status" style="font-size:.78rem;color:var(--muted);min-height:20px;text-align:center"></div>
-  <button id="canvass-skip" style="display:block;width:100%;margin-top:14px;background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline">Skip — I'll share my view from my dashboard later</button>
+  <button id="canvass-submit" style="display:block;width:100%;margin-top:14px;padding:11px 24px;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));border:none;border-radius:99px;color:#1a0f00;font-weight:600;font-size:.9rem;cursor:pointer">Send my view &#8250;</button>
+  <button id="canvass-skip" style="display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline">Skip -- I'll share my view from my dashboard later</button>
 </div>
 
 <script>
@@ -247,9 +250,21 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
         btn.style.background = 'rgba(240,209,138,.18)';
         btn.style.borderColor = 'rgba(240,209,138,.6)';
         btn.style.color = 'var(--gold-1)';
-        // Auto-submit this designation
-        submitCanvass(desId, btn.dataset.sentiment, q);
       });
+    });
+  });
+
+  // Explicit submit button
+  document.getElementById('canvass-submit').addEventListener('click', function() {
+    var keys = Object.keys(selected);
+    if (keys.length === 0) {
+      var status = document.getElementById('canvass-status');
+      if (status) status.textContent = 'Please choose a view for at least one company first.';
+      return;
+    }
+    keys.forEach(function(desId) {
+      var q = document.querySelector('[data-designation-id="' + desId + '"]');
+      submitCanvass(desId, selected[desId], q);
     });
   });
 

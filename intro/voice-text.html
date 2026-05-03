@@ -52,12 +52,19 @@ textarea:focus{border-color:rgba(240,209,138,.5)}
     <div class="meta">
       <span id="vs-char-count">0 / 280</span>
     </div>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:6px;margin-bottom:14px;line-height:1.55">One sentence is enough. Something like: I joined because I want my community to have a say.</p>
 
     <div id="vs-warning" class="warning" role="alert"></div>
 
     <div class="display-as">
-      Shown as: <strong id="vs-display-name">your first name, your state</strong>
+      Shown as: <strong id="vs-display-name">your first name</strong>
       &nbsp;·&nbsp; <a href="#" style="font-size:.78rem;color:var(--gold-2)" id="edit-display-link">Change</a>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:.8rem;color:var(--text2);display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="vs-include-state" style="accent-color:var(--gold-2);width:15px;height:15px;flex-shrink:0">
+        Include my state (e.g. NSW) -- helps show COG$ is national
+      </label>
     </div>
 
     <div id="edit-display-fields" style="display:none;margin-bottom:14px;gap:8px;display:none">
@@ -90,7 +97,7 @@ textarea:focus{border-color:rgba(240,209,138,.5)}
   var nameEl    = document.getElementById('vs-display-name');
   var firstEl   = document.getElementById('vs-display-first');
   var stateEl   = document.getElementById('vs-display-state');
-  if (firstName && nameEl) { nameEl.textContent = firstName + (state ? ', ' + state : ''); }
+  if (firstName && nameEl) { nameEl.textContent = firstName; }
   if (firstEl) firstEl.value = firstName;
   if (stateEl) stateEl.value = state;
 
@@ -103,11 +110,13 @@ textarea:focus{border-color:rgba(240,209,138,.5)}
     });
   }
 
-  // Keep display-name preview updated as user edits
+  var includeStateChk = document.getElementById('vs-include-state');
   if (firstEl) firstEl.addEventListener('input', updatePreview);
   if (stateEl) stateEl.addEventListener('input', updatePreview);
+  if (includeStateChk) includeStateChk.addEventListener('change', updatePreview);
   function updatePreview() {
-    if (nameEl) nameEl.textContent = (firstEl.value || 'your first name') + ', ' + (stateEl.value || 'your state');
+    var showState = includeStateChk && includeStateChk.checked;
+    if (nameEl) nameEl.textContent = (firstEl && firstEl.value ? firstEl.value : 'your first name') + (showState ? ', ' + (stateEl && stateEl.value ? stateEl.value : 'your state') : '');
   }
 })();
 </script>
