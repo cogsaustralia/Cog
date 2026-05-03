@@ -286,6 +286,23 @@
       .step-pip em{display:none}
         }
   
+    .sw-card{background:var(--panel);border:1px solid var(--line2);border-radius:12px;
+      padding:18px 20px;margin-bottom:12px}
+    .sw-q-text{font-size:.92rem;color:var(--text);line-height:1.65;margin-bottom:14px;font-weight:500}
+    .sw-options{display:flex;flex-direction:column;gap:8px}
+    .sw-option{display:flex;align-items:center;gap:12px;padding:11px 14px;
+      border:1.5px solid var(--line2);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s}
+    .sw-option:hover{border-color:var(--gold-rim)}
+    .sw-option input[type=radio]{flex-shrink:0;accent-color:var(--gold-2);width:16px;height:16px}
+    .sw-option label{font-size:.88rem;color:var(--text2);cursor:pointer;line-height:1.4}
+    .sw-option.selected-agree{border-color:var(--ok);background:var(--okb)}
+    .sw-option.selected-agree label{color:var(--ok)}
+    .sw-option.selected-more{border-color:var(--gold-rim)}
+    .sw-expand{font-size:.84rem;color:var(--text2);line-height:1.6;
+      background:rgba(240,209,138,.05);border:1px solid var(--line);
+      border-radius:8px;padding:12px 14px;margin-top:8px;display:none}
+    .sw-expand.open{display:block}
+
     /* ── Site footer — matches site-footer.js injected structure ── */
     .site-footer{border-top:1px solid var(--line);padding:36px 28px 38px;background:rgba(8,6,2,1)}
     .footer-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:32px;align-items:start}
@@ -343,7 +360,7 @@
           <div class="trust-item">
             <div class="trust-ico">⬡</div>
             <div>
-              <strong>Your Independence Vault</strong>
+              <strong>Your member dashboard (we call it the Independence Vault)</strong>
               <p>Your operational dashboard for governance direction, Member Polls, token record, and Membership communications.</p>
             </div>
           </div>
@@ -386,81 +403,37 @@
               <div class="step-num-badge">1</div>
               <div>
                 <h2>Tell us your name</h2>
-                <p>Six quick steps. Done in under a minute.</p>
+                <p>Fill in your details below.</p>
               </div>
             </div>
 
-            <!-- ══ Field stepper — one field at a time ══ -->
-            <div id="field-stepper">
-
-              <!-- fs-1: First name -->
-              <div class="field-step active" id="fs-first">
-                <div class="field full">
-                  <label for="first_name">First name</label>
-                  <input id="first_name" name="first_name" autocomplete="given-name" required placeholder="Jane" autofocus>
-                </div>
-                <div class="fs-nav">
-                  <button type="button" class="btn-primary fs-next" data-next="fs-middle">Next →</button>
-                </div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="first_name">First name</label>
+                <input id="first_name" name="first_name" type="text" autocomplete="given-name"
+                       required placeholder="Jane" autofocus>
               </div>
-
-              <!-- fs-2: Middle name (optional) -->
-              <div class="field-step" id="fs-middle">
-                <div class="field full">
-                  <label for="middle_name">Middle name <span class="field-opt">optional</span></label>
-                  <input id="middle_name" name="middle_name" autocomplete="additional-name" placeholder="Leave blank to skip">
-                </div>
-                <div class="fs-nav">
-                  <button type="button" class="btn-secondary fs-back" data-back="fs-first">← Back</button>
-                  <button type="button" class="btn-primary fs-next" data-next="fs-last">Next →</button>
-                </div>
+              <div class="field">
+                <label for="middle_name">Middle name <span class="field-opt">optional</span></label>
+                <input id="middle_name" name="middle_name" type="text" autocomplete="additional-name"
+                       placeholder="Leave blank to skip">
               </div>
-
-              <!-- fs-3: Last name -->
-              <div class="field-step" id="fs-last">
-                <div class="field full">
-                  <label for="last_name">Last name</label>
-                  <input id="last_name" name="last_name" autocomplete="family-name" required placeholder="Smith">
-                </div>
-                <div class="fs-nav">
-                  <button type="button" class="btn-secondary fs-back" data-back="fs-middle">← Back</button>
-                  <button type="button" class="btn-primary fs-next" data-next="fs-email">Next →</button>
-                </div>
+              <div class="field full">
+                <label for="last_name">Last name</label>
+                <input id="last_name" name="last_name" type="text" autocomplete="family-name"
+                       required placeholder="Smith">
               </div>
-
-              <!-- fs-4: Email -->
-              <div class="field-step" id="fs-email">
-                <div class="field full">
-                  <label for="email">Email address</label>
-                  <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
-                </div>
-                <div class="fs-nav">
-                  <button type="button" class="btn-secondary fs-back" data-back="fs-last">← Back</button>
-                  <button type="button" class="btn-primary fs-next" data-next="fs-mobile">Next →</button>
-                </div>
+              <div class="field full">
+                <label for="email">Email address</label>
+                <input id="email" name="email" type="email" autocomplete="email"
+                       required placeholder="you@example.com">
               </div>
-
-              <!-- fs-5: Mobile -->
-              <div class="field-step" id="fs-mobile">
-                <div class="field full">
-                  <label for="mobile">Mobile number</label>
-                  <input id="mobile" name="mobile" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx">
-                </div>
-                <div class="fs-nav">
-                  <button type="button" class="btn-secondary fs-back" data-back="fs-email">← Back</button>
-                  <button type="button" class="btn-primary fs-next" data-next="fs-done">Next →</button>
-                </div>
+              <div class="field full">
+                <label for="mobile">Mobile number</label>
+                <input id="mobile" name="mobile" type="tel" autocomplete="tel"
+                       required placeholder="04xx xxx xxx">
               </div>
-
-              <!-- fs-6: Done — show pill + cost + proceed -->
-              <div class="field-step" id="fs-done">
-                <p class="fs-summary" id="fs-summary-text"></p>
-                <div class="fs-nav">
-                  <button type="button" class="btn-secondary fs-back" data-back="fs-mobile">← Back</button>
-                </div>
-              </div>
-
-            </div><!-- /field-stepper -->
+            </div>
 
             <!-- Hidden fields passed to backend -->
             <input type="hidden" id="full_name" name="full_name">
@@ -513,6 +486,7 @@
               <div>
                 <div class="cost-label">Amount due today</div>
                 <div class="cost-note">Once only. Not refundable.</div>
+                <div class="cost-note">Pay by bank transfer (no fee) or card (+40c Stripe fee).</div>
               </div>
               <div class="cost-val">$4.00</div>
             </div>
@@ -532,6 +506,17 @@
                 <h2>Almost there. Check your details and confirm.</h2>
                 <p>Hit submit. Your vault opens straight away.</p>
               </div>
+            </div>
+
+            <div class="sw-section" id="sw-section">
+              <div class="step-hd" style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line2)">
+                <div class="step-num-badge" style="background:rgba(240,209,138,.15);color:var(--gold-1)">✦</div>
+                <div>
+                  <h2 style="font-family:var(--serif);font-size:1.25rem;color:var(--text)">5 quick questions</h2>
+                  <p style="font-size:.88rem;color:var(--text2)">Your answers are recorded with your membership.</p>
+                </div>
+              </div>
+              <div class="sw-questions" id="sw-questions"></div>
             </div>
 
             <!-- Confirm summary — populated by JS — LEADS THE PAGE -->
@@ -591,7 +576,7 @@
           <ul>
             <li>Your Member record is created and your registration is lodged</li>
             <li>You go to the Member area with your membership information and next steps</li>
-            <li>You set up your vault password and 2FA from there</li>
+            <li>You set up your member dashboard password and 2FA from there</li>
             <li>Your $4 payment options appear in your Member area. Bank transfer (fee-free) or card via Stripe</li>
             <li>Once payment is confirmed your Member record is fully activated</li>
           </ul>
@@ -801,128 +786,33 @@ function escText(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ── Field stepper ── */
+/* ── Prefill from cogs_lead localStorage ── */
 (function() {
-  var ORDER = ['fs-first','fs-middle','fs-last','fs-email','fs-mobile','fs-done'];
-  var REQUIRED = { 'fs-first': 'first_name', 'fs-last': 'last_name', 'fs-email': 'email', 'fs-mobile': 'mobile' };
-  var INPUT_MAP = { 'fs-first': 'first_name', 'fs-middle': 'middle_name', 'fs-last': 'last_name', 'fs-email': 'email', 'fs-mobile': 'mobile' };
-
-  function showStep(id) {
-    ORDER.forEach(function(s) {
-      var el = document.getElementById(s);
-      if (el) el.classList.remove('active');
-    });
-    var target = document.getElementById(id);
-    if (target) {
-      target.classList.add('active');
-      var inp = target.querySelector('input');
-      if (inp) setTimeout(function() { inp.focus(); }, 80);
+  try {
+    var raw = localStorage.getItem('cogs_lead');
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d || !d.stored_at) return;
+    var age = (Date.now() - new Date(d.stored_at).getTime()) / 86400000;
+    if (age > 28) { localStorage.removeItem('cogs_lead'); return; }
+    if (d.email) {
+      var em = document.getElementById('email');
+      if (em && !em.value) em.value = d.email;
     }
-    if (id === 'fs-done') buildSummary();
-  }
-
-  function validateCurrent(id) {
-    var reqId = REQUIRED[id];
-    if (!reqId) return true;
-    var el = document.getElementById(reqId);
-    if (!el) return true;
-    if (!el.value.trim()) {
-      el.style.borderColor = '#f0857a';
-      el.addEventListener('input', function() { el.style.borderColor = ''; }, { once: true });
-      el.focus();
-      return false;
+    if (d.phone) {
+      var mob = document.getElementById('mobile');
+      if (mob && !mob.value) mob.value = d.phone;
     }
-    if (reqId === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())) {
-      el.style.borderColor = '#f0857a';
-      el.addEventListener('input', function() { el.style.borderColor = ''; }, { once: true });
-      el.focus();
-      return false;
-    }
-    return true;
-  }
-
-  function buildSummary() {
-    var fn  = (document.getElementById('first_name').value||'').trim();
-    var mn  = (document.getElementById('middle_name') ? (document.getElementById('middle_name').value||'').trim() : '');
-    var ln  = (document.getElementById('last_name').value||'').trim();
-    var em  = (document.getElementById('email').value||'').trim();
-    var mob = (document.getElementById('mobile').value||'').trim();
-    var name = [fn, mn, ln].filter(Boolean).join(' ');
-    var el = document.getElementById('fs-summary-text');
-    if (el) el.textContent = name + ' · ' + em + ' · ' + mob;
-    // Show pill + cost + step-1 proceed nav once on fs-done
-    var pill = document.getElementById('step-1') ? document.getElementById('step-1').querySelector('.membership-pill') : null;
-    var cost = document.getElementById('step-1') ? document.getElementById('step-1').querySelector('.cost-row') : null;
-    var nav  = document.getElementById('step-1') ? document.getElementById('step-1').querySelector('.step-nav') : null;
-    if (pill) pill.style.display = '';
-    if (cost) cost.style.display = '';
-    if (nav)  nav.style.display  = '';
-  }
-
-  // Wire next buttons
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('.fs-next');
-    if (!btn) return;
-    var parentStep = btn.closest('.field-step');
-    if (!parentStep) return;
-    if (!validateCurrent(parentStep.id)) return;
-    var next = btn.dataset.next;
-    if (next) showStep(next);
-  });
-
-  // Wire back buttons
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('.fs-back');
-    if (!btn) return;
-    var back = btn.dataset.back;
-    if (back) showStep(back);
-  });
-
-  // Allow Enter key to advance
-  document.addEventListener('keydown', function(e) {
-    if (e.key !== 'Enter') return;
-    var active = document.querySelector('.field-step.active');
-    if (!active) return;
-    var inp = active.querySelector('input');
-    if (document.activeElement !== inp) return;
-    e.preventDefault();
-    var nextBtn = active.querySelector('.fs-next');
-    if (nextBtn) nextBtn.click();
-  });
-
-  // Prefill from cogs_lead localStorage
-  (function() {
-    try {
-      var raw = localStorage.getItem('cogs_lead');
-      if (!raw) return;
-      var d = JSON.parse(raw);
-      if (!d || !d.stored_at) return;
-      var age = (Date.now() - new Date(d.stored_at).getTime()) / 86400000;
-      if (age > 28) { localStorage.removeItem('cogs_lead'); return; }
-      if (d.email) {
-        var em = document.getElementById('email');
-        if (em && !em.value) {
-          em.value = d.email;
-        }
-      }
-      if (d.phone) {
-        var mob = document.getElementById('mobile');
-        if (mob && !mob.value) mob.value = d.phone;
-      }
-    } catch(_e) {}
-  })();
-
-  // Hide pill/cost/proceed until fs-done
-  (function() {
-    var pill = document.querySelector('.membership-pill');
-    var cost = document.querySelector('.cost-row');
-    var nav  = document.querySelector('.step-nav');
-    if (pill) pill.style.display = 'none';
-    if (cost) cost.style.display = 'none';
-    if (nav)  nav.style.display  = 'none';
-  })();
-
+  } catch(_e) {}
 })();
+
+function safeScroll(el, offset) {
+  if (!el) return;
+  window.scrollTo({
+    top: el.getBoundingClientRect().top + window.scrollY - (offset || 80),
+    behavior: 'smooth'
+  });
+}
 
 /* ── Step navigation ── */
 var currentStep = 1;
@@ -952,7 +842,7 @@ function goStep(n) {
   var nextPip = document.querySelector('[data-step="'+n+'"]');
   if (nextPip) { nextPip.classList.add('active'); nextPip.classList.remove('done'); }
   if (n === 2) populateConfirm();
-  document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
+  safeScroll(document.getElementById('form'), 80);
 }
 
 /* ── Step 1 validation ── */
@@ -975,7 +865,7 @@ function validateStep1() {
   /* Invite validation handled by submit handler — not required at step 1 */
   if (!ok) {
     var first = document.querySelector('#step-1 [style*="f0857a"]');
-    if (first) first.scrollIntoView({behavior:'smooth',block:'center'});
+    if (first) safeScroll(first, 80);
   }
   return ok;
 }
@@ -1007,7 +897,11 @@ function checkSubmit() {
     btn.textContent   = 'Verifying\u2026';
     return;
   }
-  var canSubmit = _inviteValid;
+  var swDone = ['sw_q1','sw_q2','sw_q3','sw_q4','sw_q5'].every(function(n){
+    var c = document.querySelector('input[name="'+n+'"]:checked');
+    return c && c.value === 'agree';
+  });
+  var canSubmit = _inviteValid && swDone;
   btn.disabled      = !canSubmit;
   btn.style.opacity = canSubmit ? '1' : '.45';
   btn.style.cursor  = canSubmit ? 'pointer' : 'not-allowed';
@@ -1032,7 +926,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     status.textContent = 'A valid invitation code is required. Please contact your inviter.';
     btn.disabled = false;
     btn.textContent = 'Register as a Member ›';
-    document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
+    safeScroll(document.getElementById('form'), 80);
     return;
   }
 
@@ -1043,19 +937,7 @@ document.getElementById('join-form').addEventListener('submit', async function(e
 
   btn.disabled = true; btn.textContent = 'Registering\u2026';
   status.className = 'form-status loading';
-  status.textContent = 'Lodging your registration\u2026';
-
-  // Progress sequence
-  var _pMsgs = [
-    { t: 900,  m: 'Creating your Member record\u2026' },
-    { t: 1900, m: 'Securing your reservation\u2026' },
-    { t: 3000, m: 'Almost there\u2026' },
-  ];
-  var _pTimers = _pMsgs.map(function(msg){
-    return setTimeout(function(){
-      if(status.className === 'form-status loading') status.textContent = msg.m;
-    }, msg.t);
-  });
+  status.textContent = 'Lodging your registration...';
 
   try {
     var data = Object.fromEntries(new FormData(this));
@@ -1065,14 +947,19 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     data['jvpa_version_accepted']          = 'jvpa-v1.0';
     data['jvpa_accepted_at']               = new Date().toISOString();
     data['stewardship_module'] = {
-      module_name:  'stewardship_awareness',
+      module_name: 'stewardship_awareness',
       completed_at: new Date().toISOString(),
       answers: {
-        q11: 'agree_understand',
-        q12: 'long_term_stewardship',
-        q21: 'fifty_fifty_split',
-        q31: 'veto_extraction',
-        q41: 'acknowledge_risk'
+        q1: document.querySelector('input[name="sw_q1"]:checked') ?
+            document.querySelector('input[name="sw_q1"]:checked').value : '',
+        q2: document.querySelector('input[name="sw_q2"]:checked') ?
+            document.querySelector('input[name="sw_q2"]:checked').value : '',
+        q3: document.querySelector('input[name="sw_q3"]:checked') ?
+            document.querySelector('input[name="sw_q3"]:checked').value : '',
+        q4: document.querySelector('input[name="sw_q4"]:checked') ?
+            document.querySelector('input[name="sw_q4"]:checked').value : '',
+        q5: document.querySelector('input[name="sw_q5"]:checked') ?
+            document.querySelector('input[name="sw_q5"]:checked').value : ''
       }
     };
 
@@ -1087,7 +974,6 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     var d = (json && json.data) ? json.data : json;
     if (!res.ok) throw new Error(d.message || d.error || json.error || 'Registration failed.');
 
-    _pTimers.forEach(clearTimeout);
     status.className = 'form-status success';
     status.textContent = 'Registration complete. Welcome to COG$\u2026';
 
@@ -1111,8 +997,6 @@ document.getElementById('join-form').addEventListener('submit', async function(e
     setTimeout(function(){ window.location.href = dest; }, 800);
 
   } catch(err) {
-    _pTimers.forEach(clearTimeout);
-    _pTimers.forEach(clearTimeout);
     status.className = 'form-status error';
     status.textContent = err.message || 'Something went wrong. Please try again.';
     btn.disabled = false;
@@ -1187,6 +1071,92 @@ document.getElementById('join-form').addEventListener('submit', async function(e
   });
 })();
 </script>
+<script>
+(function(){
+  var SW_DATA = [
+    { name:'sw_q1',
+      q:"COG$ is a community joint venture, not an investment product. My $4 is a one-time membership fee. There is no guaranteed return and no way to get my $4 back.",
+      agree:"Yes, I get that",
+      more:"Tell me more",
+      expand:"Your $4 pays for your Member record and governance vote. It cannot be refunded. COG$ is not a bank, a fund, or a financial adviser."
+    },
+    { name:'sw_q2',
+      q:"I am joining to have a say in how Australia's resources are managed. My vote counts the same as every other Member, regardless of when I joined.",
+      agree:"Yes, that's why I'm joining",
+      more:"How does voting work?",
+      expand:"Every Member gets one vote. No one gets extra votes for joining early or paying more. Votes are cast through your member dashboard."
+    },
+    { name:'sw_q3',
+      q:"When the Foundation earns income from its shareholdings, half goes back to all Members equally. The other half buys more ASX shares to grow what the Foundation owns and increase everyone's governance weight over time.",
+      agree:"I get how the money works",
+      more:"Tell me more",
+      expand:"The split is fixed in the Foundation rules and cannot be changed without a Member vote. You do not need to do anything — it happens automatically."
+    },
+    { name:'sw_q4',
+      q:"Traditional Custodians of Country have binding authority over extraction decisions on their land. This is written into the Foundation rules and cannot be changed without their agreement.",
+      agree:"I respect that",
+      more:"Why does this matter?",
+      expand:"COG$ operates on Country across Australia. First Nations Custodians have a binding authority over resource extraction on their land. This is a legal rule in the Foundation's governing documents, not a courtesy."
+    },
+    { name:'sw_q5',
+      q:"COG$ is new. There is no guaranteed return and no government protection. I am joining because I believe in what COG$ is trying to do.",
+      agree:"I understand the risk and I'm in",
+      more:"What are the risks?",
+      expand:"COG$ may not achieve its goals. The Foundation could fail. You could lose your $4. No government scheme protects this membership. Join only if you support the community purpose."
+    }
+  ];
+
+  window._swReady = false;
+
+  function buildSwQuestions(){
+    var container = document.getElementById('sw-questions');
+    if(!container) return;
+    if(container.children.length > 0) return;
+    SW_DATA.forEach(function(d, i){
+      var num = i+1;
+      var card = document.createElement('div');
+      card.className = 'sw-card';
+      card.innerHTML =
+        '<div class="sw-q-text">'+num+'. '+escText(d.q)+'</div>'+
+        '<div class="sw-options">'+
+          '<div class="sw-option" id="sw-opt-agree-'+num+'">'+
+            '<input type="radio" id="sw-'+num+'-agree" name="'+d.name+'" value="agree">'+
+            '<label for="sw-'+num+'-agree">'+escText(d.agree)+'</label>'+
+          '</div>'+
+          '<div class="sw-option" id="sw-opt-more-'+num+'">'+
+            '<input type="radio" id="sw-'+num+'-more" name="'+d.name+'" value="more">'+
+            '<label for="sw-'+num+'-more">'+escText(d.more)+'</label>'+
+          '</div>'+
+        '</div>'+
+        '<div class="sw-expand" id="sw-expand-'+num+'">'+escText(d.expand)+'</div>';
+      container.appendChild(card);
+
+      var agreeOpt = card.querySelector('#sw-opt-agree-'+num);
+      var moreOpt  = card.querySelector('#sw-opt-more-'+num);
+      var expandEl = card.querySelector('#sw-expand-'+num);
+      var agreeIn  = card.querySelector('#sw-'+num+'-agree');
+      var moreIn   = card.querySelector('#sw-'+num+'-more');
+
+      function updateCard(){
+        agreeOpt.classList.toggle('selected-agree', agreeIn.checked);
+        moreOpt.classList.toggle('selected-more', moreIn.checked);
+        expandEl.classList.toggle('open', moreIn.checked);
+        if(typeof checkSubmit === 'function') checkSubmit();
+      }
+      agreeIn.addEventListener('change', updateCard);
+      moreIn.addEventListener('change', updateCard);
+      agreeOpt.addEventListener('click', function(){ agreeIn.checked=true; updateCard(); });
+      moreOpt.addEventListener('click', function(){ moreIn.checked=true; updateCard(); });
+    });
+  }
+
+  var origGoStep = window.goStep;
+  window.goStep = function(n){
+    if(n === 2) buildSwQuestions();
+    if(origGoStep) origGoStep(n);
+  };
+})();
+</script>
 <script src="/assets/ask-widget.js"></script>
 <script>
 /* ── Stage 1: fire join_started once on first field interaction ── */
@@ -1207,31 +1177,14 @@ document.getElementById('join-form').addEventListener('submit', async function(e
 /* ── Caretaker default invite for cold visitors ── */
 (function() {
   try {
-    // Only auto-validate if no partner/invite code already in URL or input
-    var params      = new URLSearchParams(window.location.search);
-    var hasCode     = !!(params.get('partner_code') || params.get('code') || params.get('c') ||
-                        params.get('invite') || params.get('invite_token') || params.get('ref'));
+    var params = new URLSearchParams(window.location.search);
+    var hasCode = !!(params.get('partner_code') || params.get('code') || params.get('c') ||
+                   params.get('invite') || params.get('invite_token') || params.get('ref'));
     if (hasCode) return;
-
-    // DOM and all scripts are ready at this point (inline script at body end)
-    var inp = document.getElementById('invite_code_input');
-    if (!inp) return;
-
-    // Check invite not already validated
-    var status = document.getElementById('invite_validation_status');
-    if (status && status.value === 'valid') return;
-
-    // Pre-fill and silently validate
-    inp.value = 'COGS-FUHT2L';
-
-    // Hide the invite section visually — user does not need to see this
     var wrap = document.getElementById('invite-wrap');
     if (wrap) wrap.style.display = 'none';
-
-    // Call existing validate function — checkSubmit() handles button state
-    if (typeof validateInviteCode === 'function') {
-      validateInviteCode();
-    }
+    _inviteValid = true;
+    checkSubmit();
   } catch(_e) {}
 })();
 </script>
