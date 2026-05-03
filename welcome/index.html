@@ -144,7 +144,7 @@ audio.quote-media { max-height:unset; background:transparent; }
 
 <header class="site-header">
   <div class="nav-row">
-    <a class="brand" href="../index.html">
+    <a class="brand" href="/intro/">
       <img class="brand-logo" src="../assets/logo_webcir.png" alt="COG$ of Australia Foundation">
       <div class="brand-copy">
         <span class="brand-name">COG$ of Australia Foundation</span>
@@ -157,26 +157,68 @@ audio.quote-media { max-height:unset; background:transparent; }
       <a href="../join/index.html">Join</a>
     </nav>
   </div>
+  <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px">
+    COG$ of Australia Foundation &middot; ABN 91 341 497 529 &middot; Drake Village NSW
+  </div>
 </header>
 
 <main>
 
   <section class="voice-section" id="voice-section">
     <div class="container">
+      <div class="cogs-explainer" style="max-width:520px;margin:0 auto 32px;text-align:center">
+        <p style="font-size:1rem;color:var(--text2);line-height:1.7;margin-bottom:10px">
+          COG$ is an Australian community that owns real shares in mining companies together
+          and votes on what happens to the land. Joining costs $4, once.
+          We don't take it until you say yes.
+        </p>
+        <a href="/intro/" style="font-size:.88rem;color:var(--gold-2);text-decoration:none;
+          font-weight:600">Want the longer version? Read the 5-card intro &#x203A;</a>
+      </div>
       <p class="voice-eyebrow anim-1">Welcome -- first time here?</p>
       <h1 class="voice-headline anim-2">What would a fair say for everyday Australians look like to you?</h1>
       <p class="voice-sub anim-3">Tell us in your own words -- it's optional. After you submit, we'll show you how to join for $4 if you'd like to.</p>
-      <div class="voice-teaser anim-3" id="voice-teaser">
-        <p class="voice-teaser-text" id="voice-teaser-text"></p>
-        <p class="voice-teaser-attr" id="voice-teaser-attr"></p>
+      <div style="margin-bottom:28px">
+        <a href="/intro/" class="btn-gold" style="display:inline-block;padding:14px 28px;
+          font-weight:700;font-size:.95rem;border-radius:99px;text-decoration:none;
+          background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#1a0f00">
+          See how it works &#x203A;
+        </a>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:8px">
+          5-card intro -- takes 2 minutes
+        </p>
       </div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:16px">
+        Or share your thoughts first:
+      </p>
       <div class="voice-box anim-4">
         <textarea id="voice-input" maxlength="280" placeholder="e.g. A fair say means everyone has the same vote, no matter their bank balance." aria-label="Your voice submission"></textarea>
         <div class="char-row"><span id="char-count">0</span>/280</div>
+        <div id="char-hint" style="font-size:.75rem;color:var(--muted);margin-top:4px;min-height:16px;padding:0 12px 8px"></div>
       </div>
       <div class="anim-5">
         <button id="voice-submit" class="btn-primary" disabled>Send my message &#x2192;</button>
+        <p id="length-hint" style="font-size:.78rem;color:var(--muted);margin-top:6px;display:none">A sentence or two works well. We'd love a real thought.</p>
         <div id="voice-status" role="status" aria-live="polite"></div>
+        <div class="voice-consent" style="margin-top:14px;text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:.84rem;color:var(--text2);line-height:1.5">
+            <input type="checkbox" id="consent-social" name="consent_social"
+                   style="margin-top:3px;flex-shrink:0;accent-color:var(--gold-2)">
+            <span>I'm OK with COG$ sharing this on social media.
+              If unticked, your message is stored but not posted.</span>
+          </label>
+          <p style="font-size:.78rem;color:var(--muted);margin-top:8px;line-height:1.5">
+            We'll show your first name only. Email
+            <a href="mailto:info@cogsaustralia.org" style="color:var(--gold-2)">info@cogsaustralia.org</a>
+            any time to remove your message.
+            <a href="/privacy/#voices" style="color:var(--gold-2)">How we use voice messages &#x203A;</a>
+          </p>
+        </div>
+        <div class="voice-teaser" id="voice-teaser" style="display:none;margin-top:20px;text-align:left">
+          <p style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">What other members have said:</p>
+          <p class="voice-teaser-text" id="voice-teaser-text"></p>
+          <p class="voice-teaser-attr" id="voice-teaser-attr"></p>
+        </div>
       </div>
     </div>
   </section>
@@ -274,12 +316,20 @@ audio.quote-media { max-height:unset; background:transparent; }
     var len = textarea.value.length;
     charCount.textContent = len;
     charCount.className = len >= 270 ? 'limit' : len >= 240 ? 'near' : '';
-    submitBtn.disabled = len < 3;
+    submitBtn.disabled = len < 30;
+    var hint = document.getElementById('char-hint');
+    if(hint){
+      if(len >= 280) hint.textContent = "You've used the full 280 characters.";
+      else if(len >= 270) hint.textContent = "You're nearly out of room -- short is good!";
+      else hint.textContent = '';
+    }
+    var lhint = document.getElementById('length-hint');
+    if(lhint) lhint.style.display = (len > 0 && len < 30) ? '' : 'none';
   });
 
   submitBtn.addEventListener('click', function(){
     var text = textarea.value.trim();
-    if (text.length < 3) return;
+    if (text.length < 30) return;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sharing\u2026';
     statusEl.className = ''; statusEl.textContent = '';
@@ -287,7 +337,7 @@ audio.quote-media { max-height:unset; background:transparent; }
     fetch(apiBase + 'welcome-voice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text_content: text, session_token: token, ref_source: refSource })
+      body: JSON.stringify({ text_content: text, session_token: token, ref_source: refSource, consent_social: (function(){ var el=document.getElementById('consent-social'); return el ? el.checked : false; })() })
     })
     .then(function(r){ return r.json(); })
     .then(function(json){
@@ -303,7 +353,17 @@ audio.quote-media { max-height:unset; background:transparent; }
   });
 
   function showCta(submittedText){
-    document.getElementById('voice-section').style.display = 'none';
+    var vs = document.getElementById('voice-section');
+    if(vs){
+      vs.querySelector('textarea') && (vs.querySelector('textarea').readOnly = true);
+      vs.querySelector('textarea') && (vs.querySelector('textarea').style.opacity = '0.6');
+      var submitBtnEl = vs.querySelector('#voice-submit');
+      if(submitBtnEl) submitBtnEl.style.display = 'none';
+      var vsLabel = document.createElement('p');
+      vsLabel.style.cssText = 'font-size:.75rem;color:var(--muted);margin-top:8px;text-align:center';
+      vsLabel.textContent = 'You wrote this.';
+      vs.appendChild(vsLabel);
+    }
     var ctaSection = document.getElementById('cta-section');
     ctaSection.classList.add('visible');
     document.getElementById('submitted-quote-display').textContent = '\u201C' + submittedText + '\u201D';
