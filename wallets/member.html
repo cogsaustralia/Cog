@@ -971,35 +971,36 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <p style="margin:0 0 4px 0;font-size:0.78em;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Finish setting up your profile</p>
     <p style="margin:0 0 14px 0;font-size:1em;color:var(--text);font-weight:600;">We need your date of birth and address to activate your vote for Foundation Day. Takes 30 seconds. We explain why we ask.</p>
     <div id="gov-form-container">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div>
-          <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">Street address</label>
-          <input id="gov-street" type="text" placeholder="123 Main Street" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">Suburb</label>
-          <input id="gov-suburb" type="text" placeholder="Suburb" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
-        </div>
+      <p style="font-size:.82rem;color:rgba(220,196,148,.7);line-height:1.6;margin:0 0 6px">
+        Start typing your address. Select from the list to confirm it.
+      </p>
+      <div style="position:relative;margin-bottom:12px">
+        <input type="text" id="gov-address-search" placeholder="Start typing your address..."
+          autocomplete="off"
+          style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;
+          padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
+        <ul id="gov-address-suggestions"
+          style="display:none;position:absolute;top:100%;left:0;right:0;z-index:200;
+          background:#0f172a;border:1px solid #334155;border-radius:0 0 6px 6px;
+          list-style:none;margin:0;padding:0;max-height:200px;overflow-y:auto"></ul>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
-        <div>
-          <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">State</label>
-          <select id="gov-state" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;">
-            <option value="">— State —</option>
-            <option>NSW</option><option>VIC</option><option>QLD</option>
-            <option>SA</option><option>WA</option><option>TAS</option>
-            <option>NT</option><option>ACT</option>
-          </select>
-        </div>
+      <p id="gov-address-confirmed" style="display:none;font-size:.82rem;color:#4ade80;margin:0 0 12px;font-weight:600">Address confirmed.</p>
+      <input type="hidden" id="gov-street">
+      <input type="hidden" id="gov-suburb">
+      <input type="hidden" id="gov-state">
+      <input type="hidden" id="gov-postcode">
+      <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:flex-end;margin-bottom:12px">
         <div>
           <label style="font-size:0.78em;color:#94a3b8;display:block;margin-bottom:4px;">Date of birth</label>
-          <input id="gov-dob" type="date" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
+          <input id="gov-dob" type="date"
+            style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;
+            padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
         </div>
-        <div style="display:flex;align-items:flex-end;">
-          <button id="gov-submit-btn" onclick="submitGovernanceRecord()" style="width:100%;background:var(--gold-1,#8b6914);color:#fff;border:none;border-radius:6px;padding:9px 12px;font-weight:700;font-size:0.85em;cursor:pointer;">
-            Set up now
-          </button>
-        </div>
+        <button id="gov-submit-btn" onclick="submitGovernanceRecord()"
+          style="background:var(--gold-1,#8b6914);color:#fff;border:none;border-radius:6px;
+          padding:9px 16px;font-weight:700;font-size:0.85em;cursor:pointer;white-space:nowrap">
+          Save
+        </button>
       </div>
       <p id="gov-error" style="display:none;color:#f87171;font-size:0.82em;margin:0;"></p>
     </div>
@@ -1939,11 +1940,71 @@ function openVault(d){
   })();
 
 /* ── Stage 3+4: governance banner ── */
+function initGovAddressSearch() {
+  var searchInput = document.getElementById('gov-address-search');
+  var suggList    = document.getElementById('gov-address-suggestions');
+  var confirmedLbl= document.getElementById('gov-address-confirmed');
+  if (!searchInput || !suggList) return;
+  var _debounce;
+  searchInput.addEventListener('input', function() {
+    clearTimeout(_debounce);
+    if (confirmedLbl) confirmedLbl.style.display = 'none';
+    var q = (searchInput.value || '').trim();
+    if (q.length < 4) { suggList.style.display = 'none'; suggList.innerHTML = ''; return; }
+    _debounce = setTimeout(function() {
+      fetch('https://api.addressr.io/addresses?q=' + encodeURIComponent(q) + '&max=6')
+        .then(function(r) { return r.json(); })
+        .then(function(results) {
+          suggList.innerHTML = '';
+          if (!results || !results.length) { suggList.style.display = 'none'; return; }
+          results.forEach(function(item) {
+            var li = document.createElement('li');
+            li.textContent = item.sla || item.formattedAddress || '';
+            li.style.cssText = 'padding:9px 12px;cursor:pointer;font-size:.88rem;color:#f0ede8;border-bottom:1px solid rgba(255,255,255,.06)';
+            li.addEventListener('mouseenter', function() { li.style.background = 'rgba(255,255,255,.06)'; });
+            li.addEventListener('mouseleave', function() { li.style.background = ''; });
+            li.addEventListener('click', function() {
+              var addr = item.structured || {};
+              var street   = ((addr.number || '') + ' ' + (addr.street || '')).trim() || (item.sla || '').split(',')[0] || '';
+              var suburb   = addr.locality || '';
+              var state    = addr.state    || '';
+              var postcode = addr.postcode || '';
+              if (!suburb && item.sla) {
+                var parts = item.sla.split(',');
+                if (parts.length >= 2) suburb = parts[1].trim().split(' ')[0];
+                if (parts.length >= 2) {
+                  var last = parts[parts.length - 1].trim().split(' ');
+                  if (last.length >= 2) { state = last[last.length - 2]; postcode = last[last.length - 1]; }
+                }
+              }
+              document.getElementById('gov-street').value   = street;
+              document.getElementById('gov-suburb').value   = suburb;
+              document.getElementById('gov-state').value    = state;
+              document.getElementById('gov-postcode').value = postcode;
+              searchInput.value = item.sla || item.formattedAddress || '';
+              suggList.style.display = 'none';
+              if (confirmedLbl) confirmedLbl.style.display = 'block';
+            });
+            suggList.appendChild(li);
+          });
+          suggList.style.display = 'block';
+        })
+        .catch(function() { suggList.style.display = 'none'; });
+    }, 300);
+  });
+  document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !suggList.contains(e.target)) {
+      suggList.style.display = 'none';
+    }
+  });
+}
+
 function checkGovernanceBanner(memberData) {
   try {
     if (memberData && memberData.governance_record_complete === false) {
       var banner = document.getElementById('governance-banner');
       if (banner) banner.style.display = 'block';
+      initGovAddressSearch();
     }
   } catch(e) {}
 }
@@ -4258,8 +4319,11 @@ function _setJvpaEnabled(enabled) {
       if (title) title.textContent = 'Your date of birth';
       if (skip)  skip.style.display = '';
       body.innerHTML = ''
-        + '<p style="font-size:.88rem;color:rgba(220,196,148,.85);line-height:1.65;margin:0 0 18px">'
-        + 'Your date of birth is used for identity verification and is held securely. It is not shared publicly.</p>'
+        + '<p style="font-size:.88rem;color:rgba(220,196,148,.85);line-height:1.65;margin:0 0 8px">'
+        + 'This business partnership requires every member to be a real person.'
+        + ' Your date of birth is one of the checks we use to confirm that.</p>'
+        + '<p style="font-size:.82rem;color:rgba(220,196,148,.6);line-height:1.55;margin:0 0 18px">'
+        + 'It is stored securely, never shown to other members, and only used for identity purposes inside the Foundation.</p>'
         + '<div style="max-width:220px">'
         + '<label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:8px">Date of birth</label>'
         + '<input type="date" id="ob-dob-input" style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:1rem;font-family:inherit;outline:none" '
@@ -4271,28 +4335,94 @@ function _setJvpaEnabled(enabled) {
       if (title) title.textContent = 'Your address';
       if (skip)  skip.style.display = '';
       body.innerHTML = ''
-        + '<p style="font-size:.88rem;color:rgba(220,196,148,.85);line-height:1.65;margin:0 0 18px">'
-        + 'Your address is used for electoral zone mapping and is held securely. It is not shared publicly.</p>'
-        + '<div style="display:flex;flex-direction:column;gap:12px">'
-        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">Street address</label>'
-        + '<input type="text" id="ob-street" placeholder="123 Main Street" autocomplete="street-address" '
-        + 'style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none;box-sizing:border-box">'
+        + '<p style="font-size:.88rem;color:rgba(220,196,148,.85);line-height:1.65;margin:0 0 6px">'
+        + 'We need your home address to work out which mining and energy projects are near you.'
+        + ' That decides your governance zone and your vote weight on local issues.'
+        + ' Your address is stored securely and never shown publicly.</p>'
+        + '<p style="font-size:.82rem;color:rgba(220,196,148,.6);line-height:1.55;margin:0 0 16px">'
+        + 'Start typing your address below. Select your address from the list to confirm it.</p>'
+        + '<div style="position:relative">'
+        + '<input type="text" id="ob-address-search" placeholder="Start typing your address..." autocomplete="off" '
+        + 'style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;'
+        + 'padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none;box-sizing:border-box">'
+        + '<ul id="ob-address-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:200;'
+        + 'background:#1a1206;border:1px solid rgba(240,209,138,.25);border-radius:0 0 10px 10px;'
+        + 'list-style:none;margin:0;padding:0;max-height:220px;overflow-y:auto"></ul>'
         + '</div>'
-        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">Suburb</label>'
-        + '<input type="text" id="ob-suburb" placeholder="Suburb" autocomplete="address-level2" '
-        + 'style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none;box-sizing:border-box">'
-        + '</div>'
-        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">State</label>'
-        + '<select id="ob-state" style="width:100%;background:rgba(20,14,4,.95);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none;appearance:none">'
-        + '<option value="">— State —</option>'
-        + '<option>NSW</option><option>VIC</option><option>QLD</option><option>SA</option>'
-        + '<option>WA</option><option>TAS</option><option>NT</option><option>ACT</option>'
-        + '</select></div></div>'
-        + '<div><label style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(220,196,148,.7);display:block;margin-bottom:6px">Postcode</label>'
-        + '<input type="text" id="ob-postcode" placeholder="0000" maxlength="4" inputmode="numeric" '
-        + 'style="width:100px;background:rgba(255,255,255,.08);border:1.5px solid rgba(240,209,138,.25);border-radius:10px;padding:11px 14px;color:#f0e8d6;font-size:.95rem;font-family:inherit;outline:none">'
-        + '</div></div>';
+        + '<p id="ob-address-selected" style="display:none;font-size:.82rem;color:#4ade80;margin:8px 0 0;font-weight:600"></p>'
+        + '<input type="hidden" id="ob-street">'
+        + '<input type="hidden" id="ob-suburb">'
+        + '<input type="hidden" id="ob-state">'
+        + '<input type="hidden" id="ob-postcode">';
+
+      setTimeout(function() {
+        var searchInput = document.getElementById('ob-address-search');
+        var suggList    = document.getElementById('ob-address-suggestions');
+        var selectedLbl = document.getElementById('ob-address-selected');
+        var nextBtn     = document.getElementById('ob-next');
+        var _debounce;
+        var _selected   = false;
+
+        if (nextBtn) { nextBtn.style.opacity = '.45'; nextBtn.style.pointerEvents = 'none'; }
+
+        searchInput.addEventListener('input', function() {
+          _selected = false;
+          if (nextBtn) { nextBtn.style.opacity = '.45'; nextBtn.style.pointerEvents = 'none'; }
+          selectedLbl.style.display = 'none';
+          clearTimeout(_debounce);
+          var q = (searchInput.value || '').trim();
+          if (q.length < 4) { suggList.style.display = 'none'; suggList.innerHTML = ''; return; }
+          _debounce = setTimeout(function() {
+            fetch('https://api.addressr.io/addresses?q=' + encodeURIComponent(q) + '&max=6')
+              .then(function(r) { return r.json(); })
+              .then(function(results) {
+                suggList.innerHTML = '';
+                if (!results || !results.length) { suggList.style.display = 'none'; return; }
+                results.forEach(function(item) {
+                  var li = document.createElement('li');
+                  li.textContent = item.sla || item.formattedAddress || '';
+                  li.style.cssText = 'padding:10px 14px;cursor:pointer;font-size:.88rem;color:#f0e8d6;border-bottom:1px solid rgba(255,255,255,.06)';
+                  li.addEventListener('mouseenter', function() { li.style.background = 'rgba(240,209,138,.08)'; });
+                  li.addEventListener('mouseleave', function() { li.style.background = ''; });
+                  li.addEventListener('click', function() {
+                    var addr = item.structured || {};
+                    var street   = ((addr.number || '') + ' ' + (addr.street || '')).trim() || (item.sla || '').split(',')[0] || '';
+                    var suburb   = addr.locality || '';
+                    var state    = addr.state    || '';
+                    var postcode = addr.postcode || '';
+                    if (!suburb && item.sla) {
+                      var parts = item.sla.split(',');
+                      if (parts.length >= 2) suburb = parts[1].trim().split(' ')[0];
+                      if (parts.length >= 2) {
+                        var last = parts[parts.length - 1].trim().split(' ');
+                        if (last.length >= 2) { state = last[last.length - 2]; postcode = last[last.length - 1]; }
+                      }
+                    }
+                    document.getElementById('ob-street').value   = street;
+                    document.getElementById('ob-suburb').value   = suburb;
+                    document.getElementById('ob-state').value    = state;
+                    document.getElementById('ob-postcode').value = postcode;
+                    searchInput.value = item.sla || item.formattedAddress || '';
+                    suggList.style.display = 'none';
+                    _selected = true;
+                    selectedLbl.textContent = 'Address confirmed.';
+                    selectedLbl.style.display = 'block';
+                    if (nextBtn) { nextBtn.style.opacity = '1'; nextBtn.style.pointerEvents = ''; }
+                  });
+                  suggList.appendChild(li);
+                });
+                suggList.style.display = 'block';
+              })
+              .catch(function() { suggList.style.display = 'none'; });
+          }, 300);
+        });
+
+        document.addEventListener('click', function onOutside(e) {
+          if (!searchInput.contains(e.target) && !suggList.contains(e.target)) {
+            suggList.style.display = 'none';
+          }
+        });
+      }, 0);
     }
   }
 
