@@ -278,7 +278,7 @@ function memberVault(): void {
     $state = (string)($meta['state'] ?? ($legacy['state_code'] ?? ''));
     $suburb = (string)($meta['suburb'] ?? ($legacy['suburb'] ?? ''));
     $postcode = (string)($meta['postcode'] ?? ($legacy['postcode'] ?? ''));
-    $street = (string)($meta['street_address'] ?? ($legacy['street'] ?? ''));
+    $street = (string)($member['street_address'] ?? ($meta['street_address'] ?? ($legacy['street'] ?? '')));
     $walletStatus = (string)($member['wallet_status'] ?? ($legacy['wallet_status'] ?? 'invited'));
     $intentStatus = (string)($legacy['intent_status'] ?? 'proposed');
     $entitlementStatus = (string)($member['stewardship_status'] ?? ($legacy['entitlement_status'] ?? 'inactive'));
@@ -675,8 +675,8 @@ function memberVault(): void {
         'street' => $street,
         'suburb' => $suburb,
         'postcode' => $postcode,
-        'date_of_birth' => (string)($legacy['date_of_birth'] ?? ($member['date_of_birth'] ?? '')),
-        'governance_record_complete' => ($street !== '' && !empty($legacy['date_of_birth'] ?? ($member['date_of_birth'] ?? ''))),
+        'date_of_birth' => (string)($member['date_of_birth'] ?? ($legacy['date_of_birth'] ?? '')),
+        'governance_record_complete' => ($street !== '' && !empty($member['date_of_birth'] ?? ($legacy['date_of_birth'] ?? ''))),
         'email' => $email,
         'mobile' => $mobile,
         'beta_tokens_total' => calculateReservedClassTokenTotal((int)$breakdown['investment_tokens'], (int)$breakdown['donation_tokens'], (int)$breakdown['pay_it_forward_tokens'], (int)$breakdown['landholder_tokens']),
