@@ -111,7 +111,7 @@
     height: 100%;
     background: linear-gradient(90deg, var(--gold-2), var(--gold-1));
     border-radius: 2px;
-    transition: width .5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: width .5s cubic-bezier(.4,0,.2,1);
     width: 20%; /* card 1 of 5 */
   }
 
@@ -788,7 +788,7 @@
 
     // Next button label
     if (idx === TOTAL - 1) {
-      nextBtn.innerHTML = "Join for $4 ›";
+      nextBtn.innerHTML = 'Pay $4 and join →';
       nextBtn.setAttribute('aria-label', 'Complete and proceed to join');
       var nextSub = document.getElementById('next-sub');
       if (nextSub) nextSub.style.display = '';
@@ -871,7 +871,7 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      if (current === TOTAL - 1) complete(); else goTo(current + 1, 'forward');
+      if (current === TOTAL - 1) { nextBtn.focus(); nextBtn.scrollIntoView({block:'nearest'}); } else { goTo(current + 1, 'forward'); }
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       goTo(current - 1, 'back');
     }
@@ -887,7 +887,7 @@
     if (touchStartX === null) return;
     var dx = e.changedTouches[0].clientX - touchStartX;
     var dy = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 48) {
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 96) {
       if (dx < 0) { if (current === TOTAL - 1) complete(); else goTo(current + 1, 'forward'); }
       else goTo(current - 1, 'back');
     }
