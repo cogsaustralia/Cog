@@ -935,7 +935,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <span class="rail-ico">&#9671;</span> COG$ Reservations
     </button>
     <button class="rail-item" data-rail="exchange" onclick="tab('exchange')">
-      <span class="rail-ico">&#8644;</span> Exchange
+      <span class="rail-ico">&#8644;</span> Send &amp; receive
     </button>
 
     <div class="rail-section">COGS Governance</div>
@@ -1118,7 +1118,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div class="card" style="padding:0">
           <div id="ov-res-rows" style="padding:4px 0"></div>
           <div style="padding:10px 18px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-            <span style="font-size:1.02rem;color:var(--text3)">No obligation &middot; Released after Expansion Day (the day COGS is approved by ASIC — date TBC)</span>
+            <span style="font-size:1.02rem;color:var(--text3)">No obligation &middot; Becomes available when COGS is approved by ASIC. We will email you when this happens.</span>
             <button class="btn btn-ghost btn-sm" onclick="tab('holdings')">Manage Reservations &rarr;</button>
           </div>
         </div>
@@ -1176,6 +1176,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="panel" id="tab-holdings">
     <div class="pg">
 
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:20px 0 10px">What you have today</div>
+
       <!-- MEMBERSHIP -->
       <div class="sec-divider">Membership — can't be sold or transferred <i class="info-ico" onclick="showInfo('snft-token')">?</i></div>
       <div class="card" style="margin-bottom:12px">
@@ -1198,7 +1200,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
             <div class="hr-sym hr-sym-amber">kS</div>
             <div class="tr-inf">
               <div class="tr-name">Kids S-NFT <i class="info-ico" onclick="showInfo('ksnft-guardian')" style="vertical-align:middle;margin-left:4px">?</i> <span style="font-size:1rem;font-weight:400;color:var(--text3)">&mdash; managed in Overview</span></div>
-              <div class="tr-cls">Class kS &middot; Guardian-held, can't be sold or transferred &middot; converts to Class S on child&apos;s 18th birthday</div>
+              <div class="tr-cls">Held by you for your child. On their 18th birthday it becomes their own Member token with one equal vote. Can't be sold or transferred.</div>
             </div>
             <div class="tr-val">
               <div class="tr-amt" id="hd-ksnft-count" style="font-size:1.2rem">0</div>
@@ -1208,12 +1210,15 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         </div>
       </div>
 
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:20px 0 10px">Your interest list</div>
+      <div style="font-size:.88rem;color:var(--text3);margin:-6px 0 10px">No money, no commitment — just your interest.</div>
+
       <!-- RESERVATIONS -->
       <div class="sec-divider">Future COG$ — your interest list (no money, no commitment).</div>
       <div class="card" style="margin-bottom:4px">
         <div class="card-hd">
           <h3>COG$ Reservations</h3><button class="info-btn" onclick="showInfo('reservations')">How this works</button>
-          <span class="chip chip-amber"><span class="chip-dot"></span>Released after Expansion Day</span><button class="iq-btn" data-tip="ASX COG$, RWA COG$, and Landholder COG$ are Tier 2 classes. They activate on Expansion Day — when the Foundation's blockchain infrastructure goes live and any applicable regulatory requirements under ASIC are satisfied. Your reservations here are no-obligation intentions only." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
+          <span class="chip chip-amber"><span class="chip-dot"></span>Becomes available when COGS is approved by ASIC</span><button class="iq-btn" data-tip="ASX COG$, RWA COG$, and Landholder COG$ are Tier 2 classes. They activate on Expansion Day — when the Foundation's blockchain infrastructure goes live and any applicable regulatory requirements under ASIC are satisfied. Your reservations here are no-obligation intentions only." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
         </div>
         <div id="hd-res-rows">
           <!-- populated by renderTabHoldings -->
@@ -1222,7 +1227,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div style="padding:10px 18px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <button class="iedit-save" id="hd-save-btn" onclick="saveResNew()" style="padding:7px 18px">Save my reservations</button>
           <button class="btn btn-ghost btn-sm" onclick="resetReservations()">Reset</button>
-          <span style="font-size:1.02rem;color:var(--text3);flex:1;line-height:1.5">Edit freely — no obligation, no payment required. Released after Expansion Day.</span>
+          <span style="font-size:1.02rem;color:var(--text3);flex:1;line-height:1.5">Edit freely — no obligation, no payment required. Becomes available when COGS is approved by ASIC. We will email you when this happens.</span>
         </div>
         <div class="flash" id="reserve-fl" style="margin:0 18px 12px"></div>
       </div>
@@ -1235,7 +1240,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
             <div class="hr-sym hr-sym-teal">Lr</div>
             <div class="tr-inf">
               <div class="tr-name">Resident COG$</div>
-              <div class="tr-cls">Given to people who live in an area where COGS is helping. We use the address on your profile to check.</div>
+              <div class="tr-cls">Resident COG$ are given to people who live in areas where COGS is running a project. We check using the address on your profile.</div>
             </div>
             <div class="tr-val">
               <div class="tr-amt" id="hd-lr-val">—</div>
@@ -1285,7 +1290,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
               <div class="give-stepper-lbl">Donation COG$ (Class D)<button class="iq-btn" data-tip="$4 each. $2.00 goes directly to Sub-Trust C (the community projects fund) at the time of issue. $2.00 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
               <div class="give-stepper-ctrl">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-don',-1)">−</button>
-                <input class="stepper-input" id="char-don" type="number" min="0" value="0" oninput="updateCharityTotal()">
+                <input class="stepper-input" id="char-don" type="number" min="0" value="1" oninput="updateCharityTotal()">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-don',1)">+</button>
               </div>
               <div class="give-price-note" style="margin-top:5px">$2 direct to Community Projects Fund · $2 invested via Members Asset Pool</div>
@@ -1302,7 +1307,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border);gap:10px;flex-wrap:wrap">
             <div style="font-size:1rem;color:var(--text3)">Total: <strong id="char-total" style="color:var(--text);margin-left:6px;font-size:1rem">$0.00</strong></div>
-            <button class="btn btn-gold btn-sm" id="char-order-btn" onclick="submitCharityOrders()" disabled>Place order</button>
+            <button class="btn btn-gold btn-sm" id="char-order-btn" onclick="submitCharityOrders()">Place order</button>
+            <span id="char-order-hint" style="display:none;font-size:.9rem;color:var(--text3)">Add at least one to continue.</span>
           </div>
           <div id="char-pending-actions" style="display:none;margin-top:10px;padding:10px 0;border-top:1px solid var(--border)">
             <div style="font-size:1.02rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Pending — awaiting payment</div>
@@ -1465,7 +1471,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <span id="propose-chevron" style="color:var(--text3);font-size:1rem">▼</span>
         </button>
         <div class="propose-body" id="propose-body">
-          <p style="font-size:1.02rem;color:var(--text3);margin-bottom:14px;line-height:1.6">Any 10 Members, or 1% of all active Members (whichever is fewer), may initiate a Members Poll. The initiation group is the legal threshold — no separate seconding step.</p>
+          <div style="font-size:.88rem;color:var(--text3);line-height:1.6;margin-bottom:16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px">Polls need 10 supporters before they go to a vote. Save a draft first, then share it with members you know. Once 10 members support it, it goes live.</div>
           <div class="form-group"><label class="form-label">Poll title</label><input class="form-input" id="prop-title" placeholder="A clear, one-line question or resolution"></div>
           <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="prop-body" placeholder="Explain the purpose, context, and what a Yes / No vote means."></textarea></div>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -3218,6 +3224,7 @@ function updateCharityTotal(){
   const total = (don + pif) * 4;
   if(el('char-total')) el('char-total').textContent = '$' + total.toFixed(2);
   if(el('char-order-btn')) el('char-order-btn').disabled = total < 4;
+  if(el('char-order-hint')) el('char-order-hint').style.display = total < 4 ? '' : 'none';
 }
 
 async function submitKidsOrder(){
@@ -4595,7 +4602,7 @@ var _INFO = {
   'kyc-identity':{title:'Identity verification',body:'<p>KYC stands for Know Your Customer — verifying that you are who you say you are.</p><p>The Foundation uses Medicare card verification for Phase 1. Your details are encrypted under AES-256 and stored in compliance with the AML/CTF Act 2006.</p><p><strong>Why it matters:</strong></p><ul><li>Required before registering Kids S-NFTs for children under 18</li><li>Strengthens the Foundation compliance position under AML/CTF legislation</li><li>Ensures the governance record is linked to a verified real person</li></ul><p>Your Medicare details are used only for identity verification — never shared, never sold.</p>'},
   'exchange':{title:'Community COG$ Exchange',body:'<p>Community COG$ (Class C) is the only token class that transfers Member-to-Member right now, before Expansion Day.</p><p>Use the <strong>Exchange tab</strong> to send Community COG$ to any other Member using their hash address (COGS-CC-…). Transfers are immediate and SHA-256 receipted.</p><p>Community COG$ is a <strong>closed-loop community currency</strong> — there is no cash-out mechanism. Value circulates within the community rather than leaking out.</p><p>Every new Member receives a starting allocation of Community COG$ on Governance Foundation Day (14 May 2026).</p>'},
   'community-cogs':{title:'Community COG$ — the live exchange class',body:'<p>Community COG$ (Class C) is the only token class that can move Member-to-Member right now, before Expansion Day.</p><p>It is designed as a <strong>closed-loop community exchange currency</strong>. No cash-out mechanism exists. This removes speculative incentive and replaces it with velocity — how quickly value moves through the community.</p><p>Every new personal Member receives a starting allocation of Community COG$ on Governance Foundation Day. You can send it to any other Member using their hash address (COGS-CC-…). Transfers are immediate and SHA-256 hashed.</p>'},
-  'reservations':{title:'COG$ Reservations — no obligation',body:'<p>ASX COG$, RWA COG$, and Landholder COG$ are <strong>reservation-only</strong> right now:</p><ul><li>No payment required</li><li>No financial commitment created</li><li>Change the numbers freely at any time</li><li>They are intentions only — your expressed interest in these classes</li></ul><p>These are Released after Expansion Day — when the Foundation AFSL and MIS registration are in place and the first Members Consensus Network Node goes live.</p><p><strong>What they represent:</strong></p><ul><li><strong>ASX COG$</strong> — backed by CHESS-registered shares in ASX resource companies</li><li><strong>RWA COG$</strong> — backed by blockchain-verified in-ground mineral value</li><li><strong>Landholder COG$</strong> — issued to landholders at up to 1,000 COG$ per verified hectare</li></ul>'},
+  'reservations':{title:'COG$ Reservations — no obligation',body:'<p>ASX COG$, RWA COG$, and Landholder COG$ are <strong>reservation-only</strong> right now:</p><ul><li>No payment required</li><li>No financial commitment created</li><li>Change the numbers freely at any time</li><li>They are intentions only — your expressed interest in these classes</li></ul><p>Becomes available when COGS is approved by ASIC. We will email you when this happens.</p><p><strong>What they represent:</strong></p><ul><li><strong>ASX COG$</strong> — backed by CHESS-registered shares in ASX resource companies</li><li><strong>RWA COG$</strong> — backed by blockchain-verified in-ground mineral value</li><li><strong>Landholder COG$</strong> — issued to landholders at up to 1,000 COG$ per verified hectare</li></ul>'},
   'donation-pif':{title:'Donation COG$ and Pay It Forward',body:'<p><strong>Donation COG$ (Class D) — $4 each:</strong></p><ul><li>$2.00 goes directly to Sub-Trust C at purchase</li><li>$2.00 is invested through Sub-Trust A into the Members Asset Pool</li><li>Sub-Trust C funds First Nations programs, environmental stewardship, and community initiatives on Country</li><li>Sub-Trust C holds a D Class income unit for each Donation COG$ issued — a permanent share of future distributions</li></ul><p><strong>Pay It Forward (Class PIF) — $4 each:</strong></p><ul><li>Sponsors another person $4 entry contribution</li><li>Enables someone who cannot afford the $4 to become a Member on equal terms</li></ul><p>Your all-time giving total is shown prominently in the Give tab.</p>'},
   'asset-pool':{title:'The Members Asset Pool — Sub-Trust A',body:'<p>Sub-Trust A holds every ASX share and Real World Asset the community owns — registered directly on the ASX CHESS Register in the Foundation name as Trustee.</p><p><strong>Key rules — all entrenched:</strong></p><ul><li><strong>No power of sale</strong> — the Members Asset Pool can never be sold, wound up, or distributed. It only grows.</li><li><strong>Direct CHESS registration</strong> — no fund manager, no ETF, no intermediary. You can independently verify the Foundation shareholdings.</li><li><strong>Permanent</strong> — the only exceptions are compulsory government acquisition and mandatory corporate actions. All proceeds must be reinvested.</li><li><strong>Poor ESG mandate</strong> — the Foundation targets companies with poor ESG records, builds a minimum 5% CHESS position, and uses AGM voting rights to drive change from within.</li></ul>'},
   'governance-tab':{title:'Polls — Members direct the joint venture',body:'<p>This tab is your primary operational control interface. The CJVM Joint Venture Agreement is explicit: Members exercise day-to-day control. The Trustee holds the legal keys. You and every other Member decide what happens inside.</p><p><strong>Members Polls:</strong> Formal binding votes. Open polls show here with Yes/No voting. Your vote is securely logged with a one-way receipt — anonymous tally, verifiable receipt.</p><p><strong>Initiation:</strong> Any 10 Members (or 1% of active Members) can start a poll. Others join the initiation group until the threshold is met, then it becomes a formal poll.</p><p><strong>What gets decided here:</strong> ASX acquisitions, AGM proxy voting, ESG engagement strategy, operational rule amendments, Trustee appointment or removal (75% Special Resolution).</p>'},
@@ -4883,7 +4890,7 @@ function renderTabHoldings(d){
     var val = parseFloat(d[r.key]||0)||0;
     return '<div class="tr">'+
       '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
-      '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation · Released after Expansion Day</div></div>'+
+      '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation · Becomes available when COGS is approved by ASIC. We will email you when this happens.</div></div>'+
       '<div class="tr-val"><div class="tr-amt">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
       '<button class="tr-edit" onclick="trToggle(\'hd-iedit-'+r.key+'\')">Edit</button>'+
       '</div>'+
