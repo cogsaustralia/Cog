@@ -691,10 +691,6 @@
 //  COG$ INTRO — onboarding sequence
 // ═══════════════════════════════════════════════════
 
-// ── FOUNDER FALLBACK CODE — REMOVE AFTER 72 HOURS ──
-var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
-// ── END REMOVE BLOCK ──
-
 (function () {
   'use strict';
 
@@ -708,7 +704,7 @@ var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';
     }
   } catch (e) {}
 
-  var activeCode = urlCode || (typeof FOUNDER_FALLBACK_CODE !== 'undefined' ? FOUNDER_FALLBACK_CODE : null);
+  var activeCode = urlCode;
   if (activeCode) {
     try { sessionStorage.setItem('cogs_intro_code', activeCode); } catch (e) {}
   }
