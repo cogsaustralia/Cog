@@ -139,6 +139,9 @@
       .fday-date{text-align:left}
       .involve-grid{grid-template-columns:1fr 1fr}
     }
+    @media(max-width:760px){
+      .involve-grid{grid-template-columns:1fr 1fr}
+    }
     @media(max-width:560px){
       .involve-grid{grid-template-columns:1fr}
       .member-fields{grid-template-columns:1fr}
@@ -186,7 +189,109 @@
           Invited by Member: <strong id="inviter-name-display"></strong>
         </div>
 
-        <!-- Voice submission panel — Option A: inline on thank-you -->
+        <!-- Pass the Coin panel -->
+        <div class="ptc-panel" id="ptc-panel" style="max-width:520px;margin:0 auto 28px;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:26px 28px;display:none">
+          <!-- Fallback state -->
+          <div id="ptc-fallback" style="display:none">
+            <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:10px">Pass the coin — your link is almost ready</h3>
+            <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:16px">Your unique invite link will be in your vault. Share it with 4 Australians after you set up your vault.</p>
+            <a class="btn-primary" href="../partners/index.html?welcome=1" style="display:inline-flex;padding:10px 20px;font-size:.85rem">Open my vault ›</a>
+          </div>
+
+          <!-- Full state -->
+          <div id="ptc-full" style="display:none">
+            <div style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Pass the coin</div>
+            <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:6px">Now send this to 4 Australians you think deserve a say.</h3>
+            <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px">Share your unique link. Every person who joins through it becomes the next link in the chain.</p>
+
+            <!-- Chain visual -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:20px">
+              <div class="ptc-circle" id="ptc-inviter" style="background:rgba(255,255,255,.04);border:1.5px dashed rgba(240,209,138,.2);color:rgba(240,209,138,.3)">TB</div>
+              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+              <div class="ptc-circle ptc-you" style="background:rgba(240,209,138,.15);border:1.5px solid rgba(240,209,138,.5);color:var(--gold-1);font-weight:600">You</div>
+              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+              <div class="ptc-circle ptc-empty">?</div>
+              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+              <div class="ptc-circle ptc-empty">?</div>
+              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+              <div class="ptc-circle ptc-empty">?</div>
+              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
+              <div class="ptc-circle ptc-empty">?</div>
+            </div>
+
+            <!-- Link box -->
+            <div style="background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span id="ptc-link" style="font-family:monospace;font-size:.82rem;color:var(--text2);word-break:break-all;flex:1"></span>
+              <button onclick="ptcCopy(this)" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:4px 8px;border-radius:4px;white-space:nowrap">Copy</button>
+            </div>
+
+            <!-- Share buttons -->
+            <div style="display:flex;gap:10px;margin-bottom:12px">
+              <button onclick="ptcShareFB()" class="btn-primary" style="flex:1;justify-content:center;padding:10px 20px;font-size:.85rem">Share on Facebook</button>
+            </div>
+
+            <!-- Skip link -->
+            <div style="text-align:center">
+              <button onclick="ptcSkip()" style="font-size:.78rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">I'll share from my dashboard later</button>
+            </div>
+          </div>
+        </div>
+
+        <style>
+          .ptc-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
+          .ptc-empty{background:rgba(255,255,255,.04);border:1.5px dashed rgba(240,209,138,.2);color:rgba(240,209,138,.3)}
+          @media(max-width:480px){
+            .ptc-circle{width:30px;height:30px}
+            #ptc-full>div:first-of-type>div:nth-child(even){width:10px}
+          }
+        </style>
+
+        <!-- Bank transfer — default payment, always visible -->
+        <div style="max-width:520px;margin:0 auto 16px;padding:18px 20px;background:rgba(232,184,75,.05);border:1.5px solid rgba(232,184,75,.22);border-radius:16px">
+          <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Pay $4 by bank transfer — no fee</div>
+          <div style="display:flex;flex-direction:column;gap:2px;font-size:.88rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">PayID / OSKO</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-payid" style="color:var(--gold-1);font-family:monospace">0494 578 706</strong><button onclick="tyCopy(this,'ty-payid')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">BSB</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-bsb" style="font-family:monospace">182-512</strong><button onclick="tyCopy(this,'ty-bsb')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Account</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-acct" style="font-family:monospace">975 174 624</strong><button onclick="tyCopy(this,'ty-acct')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Account name</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-aname" style="font-size:.85rem">The Trustee for the CJVM Sub-Trust A</strong><button onclick="tyCopy(this,'ty-aname')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Reference</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-bsb-ref" style="font-family:monospace;font-size:.85rem">See vault</strong><button onclick="tyCopy(this,'ty-bsb-ref')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0"><span style="color:var(--text2)">Amount</span><strong>$4.00</strong></div>
+          </div>
+          <p style="font-size:.8rem;color:var(--text2);margin-top:10px;line-height:1.5">Fee-free · Instant via OSKO · Your vault updates after payment arrives. Your payment reference code is shown in your vault payment options.</p>
+        </div>
+
+        <!-- Card payment — inside details -->
+        <details style="max-width:520px;margin:0 auto 28px;">
+          <summary style="cursor:pointer;font-size:.85rem;color:var(--text2);padding:8px 0;list-style:none;user-select:none;">
+            Prefer to pay by card? +40c fee ($4.40 total)
+          </summary>
+          <div style="padding:12px 0 0 0;">
+            <div class="stripe-pay-card" id="stripe-pay-card" style="background:var(--panel);border:1px solid var(--gold-rim2);border-radius:var(--r,20px);padding:26px 28px;text-align:center;">
+              <p style="margin:0 0 6px 0;font-size:.85rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;">Card payment via Stripe</p>
+              <p style="margin:0 0 20px 0;font-size:1rem;color:var(--text);font-weight:600;">$4.40 — processed securely via Stripe</p>
+              <a id="stripe-pay-btn" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener"
+                 style="background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#1a0f00;font-weight:700;border-radius:99px;padding:13px 28px;text-decoration:none;display:inline-block;">
+                Pay $4.40 by card
+              </a>
+              <p style="margin:12px 0 0 0;font-size:.78rem;color:var(--muted);">Includes 40c Stripe processing fee.</p>
+            </div>
+          </div>
+        </details>
+
+        <!-- Vault CTA -->
+        <div class="vault-cta ha">
+          <h2>Set up your member dashboard</h2>
+          <p>Your member dashboard is where you vote, track your $4 payment, and manage your membership. Takes less than two minutes.</p>
+          <div class="vault-cta-actions">
+            <a class="btn-secondary" id="vault-link" href="../partners/index.html?welcome=1">
+              Set up your member dashboard
+            </a>
+          </div>
+          <div class="payment-note">Your membership activates when your $4 arrives.</div>
+        </div>
+
+        <!-- Voice submission panel -->
+        <div style="max-width:520px;margin:0 auto 10px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2)">While you wait</div>
         <div class="vs-ty-panel" id="vs-ty-panel">
           <div class="vs-kicker">Before you open your vault</div>
           <h3>In one sentence — why did you join?</h3>
@@ -220,109 +325,6 @@
             <p id="vs-ty-done-msg">Your submission is saved and will be reviewed shortly.</p>
           </div>
         </div>
-
-        <!-- Pass the Coin panel -->
-        <div class="ptc-panel" id="ptc-panel" style="max-width:520px;margin:0 auto 28px;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:26px 28px;display:none">
-          <!-- Fallback state -->
-          <div id="ptc-fallback" style="display:none">
-            <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:10px">Pass the coin — your link is almost ready</h3>
-            <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:16px">Your unique invite link will be in your vault. Share it with 4 Australians after you set up your vault.</p>
-            <a class="btn-primary" href="../partners/index.html?welcome=1" style="display:inline-flex;padding:10px 20px;font-size:.85rem">Open my vault ›</a>
-          </div>
-          
-          <!-- Full state -->
-          <div id="ptc-full" style="display:none">
-            <div style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Pass the coin</div>
-            <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:6px">Now send this to 4 Australians you think deserve a say.</h3>
-            <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px">Share your unique link. Every person who joins through it becomes the next link in the chain.</p>
-            
-            <!-- Chain visual -->
-            <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:20px">
-              <div class="ptc-circle" id="ptc-inviter" style="background:rgba(255,255,255,.04);border:1.5px dashed rgba(240,209,138,.2);color:rgba(240,209,138,.3)">TB</div>
-              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-              <div class="ptc-circle ptc-you" style="background:rgba(240,209,138,.15);border:1.5px solid rgba(240,209,138,.5);color:var(--gold-1);font-weight:600">You</div>
-              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-              <div class="ptc-circle ptc-empty">?</div>
-              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-              <div class="ptc-circle ptc-empty">?</div>
-              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-              <div class="ptc-circle ptc-empty">?</div>
-              <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-              <div class="ptc-circle ptc-empty">?</div>
-            </div>
-            
-            <!-- Link box -->
-            <div style="background:rgba(255,255,255,.05);border:1px solid rgba(240,209,138,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-              <span id="ptc-link" style="font-family:monospace;font-size:.82rem;color:var(--text2);word-break:break-all;flex:1"></span>
-              <button onclick="ptcCopy(this)" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:4px 8px;border-radius:4px;white-space:nowrap">Copy</button>
-            </div>
-            
-            <!-- Share buttons -->
-            <div style="display:flex;gap:10px;margin-bottom:12px">
-              <button onclick="ptcShareFB()" class="btn-primary" style="flex:1;justify-content:center;padding:10px 20px;font-size:.85rem">Share on Facebook</button>
-            </div>
-            
-            <!-- Skip link -->
-            <div style="text-align:center">
-              <button onclick="ptcSkip()" style="font-size:.78rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">I'll share from my dashboard later</button>
-            </div>
-          </div>
-        </div>
-        
-        <style>
-          .ptc-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
-          .ptc-empty{background:rgba(255,255,255,.04);border:1.5px dashed rgba(240,209,138,.2);color:rgba(240,209,138,.3)}
-          @media(max-width:480px){
-            .ptc-circle{width:30px;height:30px}
-            #ptc-full>div:first-of-type>div:nth-child(even){width:10px}
-          }
-        </style>
-
-        <!-- Vault CTA — single job -->
-        <div class="vault-cta ha">
-          <h2>Set up your Independence Vault</h2>
-          <p>Your vault is where you vote, receive updates, and complete your $4 contribution — by bank transfer or card. Takes less than two minutes.</p>
-          <div class="vault-cta-actions">
-            <a class="btn-primary" id="vault-link" href="../partners/index.html?welcome=1">
-              Open my vault ›
-            </a>
-            <a class="btn-secondary" href="../faq/index.html#faq-vault">What is the vault?</a>
-          </div>
-        </div>
-
-        <!-- ── Stage 2: Stripe primary payment CTA ─────────────────────────── -->
-        <div class="card stripe-pay-card" id="stripe-pay-card" style="margin-bottom:16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:1px solid #8b6914;border-radius:12px;padding:24px;text-align:center;">
-          <p style="margin:0 0 6px 0;font-size:0.85em;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;">Complete your membership</p>
-          <p style="margin:0 0 20px 0;font-size:1.1em;color:#f0ede8;font-weight:600;">$4.40 by card — processed securely via Stripe</p>
-          <a id="stripe-pay-btn" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener"
-             style="display:inline-block;background:#8b6914;color:#fff;font-weight:700;font-size:1rem;padding:14px 36px;border-radius:8px;text-decoration:none;letter-spacing:0.04em;transition:background 0.2s;"
-             onmouseover="this.style.background='#a07820'" onmouseout="this.style.background='#8b6914'">
-            Pay $4.40 by card →
-          </a>
-          <p style="margin:12px 0 0 0;font-size:0.78em;color:#64748b;">Card payment is $4.40 (includes 40¢ Stripe processing fee). Prefer fee-free? Use bank transfer below.</p>
-        </div>
-        <details style="margin-bottom:16px;">
-          <summary style="cursor:pointer;color:#64748b;font-size:0.85em;padding:8px 0;list-style:none;user-select:none;">
-            ▸ Pay by bank transfer instead (fee-free, $4.00)
-          </summary>
-          <div style="padding:12px 0 0 0;">
-        <!-- ── END Stage 2 Stripe wrapper — bank transfer details follow ────── -->
-
-        <!-- Pay now convenience card -->
-        <div style="margin-top:20px;padding:18px 20px;background:rgba(232,184,75,.05);border:1.5px solid rgba(232,184,75,.22);border-radius:16px">
-          <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Ready to pay now? Transfer directly to the trust account:</div>
-          <div style="display:flex;flex-direction:column;gap:2px;font-size:.88rem">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">PayID / OSKO</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-payid" style="color:var(--gold-1);font-family:monospace">0494 578 706</strong><button onclick="tyCopy(this,'ty-payid')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">BSB</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-bsb" style="font-family:monospace">182-512</strong><button onclick="tyCopy(this,'ty-bsb')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Account</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-acct" style="font-family:monospace">975 174 624</strong><button onclick="tyCopy(this,'ty-acct')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Account name</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-aname" style="font-size:.85rem">The Trustee for the CJVM Sub-Trust A</strong><button onclick="tyCopy(this,'ty-aname')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(240,209,138,.1)"><span style="color:var(--text2)">Reference</span><span style="display:flex;align-items:center;gap:6px"><strong id="ty-bsb-ref" style="font-family:monospace;font-size:.85rem">See vault</strong><button onclick="tyCopy(this,'ty-bsb-ref')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Copy">⎘</button></span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0"><span style="color:var(--text2)">Amount</span><strong>$4.00</strong></div>
-          </div>
-          <p style="font-size:.8rem;color:var(--text2);margin-top:10px;line-height:1.5">Fee-free · Instant via OSKO · Your vault updates after payment arrives. Your payment reference code is shown in your vault payment options.</p>
-        </div>
-          </div>
-        </details>
 
       </div>
     </section>
@@ -406,9 +408,9 @@ document.addEventListener('DOMContentLoaded', function() {
       numEl.textContent = num;
       numEl.classList.remove('fallback');
     } else {
-      numEl.textContent = 'Check your email';
+      numEl.textContent = 'On its way';
       numEl.classList.add('fallback');
-      if (subEl) subEl.textContent = 'Your Member number will arrive by email shortly. Use it to sign in to your vault.';
+      if (subEl) subEl.textContent = 'Your Member ID will arrive by email within 60 seconds. Use it to sign in to your member dashboard.';
     }
   }
 
