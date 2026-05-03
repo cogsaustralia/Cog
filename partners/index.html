@@ -1231,7 +1231,7 @@
         <div id="welcome-banner" class="welcome-banner" style="display:none">
           <h3 id="wb-greeting">Welcome. You're registered.</h3>
           <div class="wb-mn" id="wb-member-number"></div>
-          <p>Your membership registration is confirmed. Choose a password below to open your Independence Vault — then complete your joining payment inside to fully activate your Partnership.</p>
+          <p>Your membership registration is confirmed. Choose a password below to open your Independence Vault. Then complete your joining payment inside to fully activate your Partnership.</p>
         </div>
 
         <!-- Login panel -->
@@ -1241,12 +1241,8 @@
           <form id="f-login">
             <input type="hidden" name="role" value="snft">
             <div class="field">
-              <label>Mobile number</label>
-              <input type="tel" name="mobile" autocomplete="tel" placeholder="04xx xxx xxx">
-            </div>
-            <div class="field" style="margin-top:-4px">
-              <label style="opacity:.7;font-size:.82rem;font-weight:400;letter-spacing:0;text-transform:none">or email address</label>
-              <input type="email" name="email" autocomplete="email" placeholder="your@email.com">
+              <label class="form-label">Mobile or email</label>
+              <input class="form-input" type="text" name="login_identity" autocomplete="username" placeholder="04xx xxx xxx or you@example.com" required>
             </div>
             <div class="field">
               <label>Password</label>
@@ -1267,7 +1263,7 @@
           <p class="sub">Your Member number and mobile are pre-filled. Choose a strong password to continue.</p>
           <form id="f-setup">
             <input type="hidden" name="role" value="snft">
-            <div class="field"><label>Member number</label><input name="member_number" required placeholder="16-digit number"></div>
+            <div class="field"><label>Member number</label><input name="member_number" required placeholder="Paste from your welcome email"><div style="font-size:.78rem;color:var(--muted);margin-top:4px">Your 16-digit Member number is in the email we sent you. Copy and paste it here.</div></div>
             <div class="field"><label>Mobile number</label><input type="tel" name="mobile" autocomplete="tel" required placeholder="04xx xxx xxx"></div>
             <div class="field"><label>New password</label><input type="password" name="password" minlength="8" required autocomplete="new-password"></div>
             <div class="field"><label>Confirm password</label><input type="password" name="confirm_password" required autocomplete="new-password"></div>
@@ -1328,42 +1324,52 @@
           <div class="member-bar ha">
             <div class="member-bar-left" style="display:none">
               <div class="welcome-badge">◈ Member community</div>
-              <div class="member-chip" id="member-number-display" style="margin-top:4px;font-size:.82rem">—</div>
+              <div class="member-chip" id="member-number-display" style="margin-top:4px;font-size:.82rem"></div>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid rgba(240,209,138,.10);margin-bottom:16px">
-              <!-- vault-pill-wrap kept for JS payment overlay injection — hidden, moved into identity card -->
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid rgba(240,209,138,.10);margin-bottom:16px;flex-wrap:wrap">
+              <!-- vault-pill-wrap kept for JS payment overlay injection — hidden -->
               <div class="vault-pill-wrap" id="vault-pill-wrap" style="display:none">
                 <a href="../wallets/member.html" class="vault-btn-primary" id="vault-pill-btn" onclick="handleVaultEntry(event);return false;">
                   <img src="../assets/cogs_coin_web.png" alt="" class="vault-coin">
                   <span>Member Independence Vault
                     <span style="display:block;font-size:.80rem;font-weight:500;opacity:.85;margin-top:3px;letter-spacing:.01em" id="pill-vault-sub">Enter Here ›</span>
                     <span style="display:block;font-size:.74rem;font-weight:400;opacity:.65;margin-top:1px">Holdings · Governance · Profile</span>
-                    <span class="vault-pay-label" id="pill-vault-pay-label">Payment due — tap to pay</span>
+                    <span class="vault-pay-label" id="pill-vault-pay-label">Payment due. Tap to pay.</span>
                   </span>
                 </a>
               </div>
-          <!-- Members Participation Pill — hidden -->
-          <div id="participation-pill-wrap" style="display:none">
-            <button type="button" class="participation-pill incomplete" id="participation-pill" onclick="handleParticipationPillClick()">
-              <span>◈</span>
-              <span id="participation-pill-label">Members Participation — complete before entering your vault</span>
-            </button>
-            <div class="part-areas-tags" id="participation-areas-tags" style="display:none"></div>
-          </div>
+              <!-- Members Participation Pill — hidden -->
+              <div id="participation-pill-wrap" style="display:none">
+                <button type="button" class="participation-pill incomplete" id="participation-pill" onclick="handleParticipationPillClick()">
+                  <span>◈</span>
+                  <span id="participation-pill-label">Members Participation: complete before entering your vault</span>
+                </button>
+                <div class="part-areas-tags" id="participation-areas-tags" style="display:none"></div>
+              </div>
               <a href="#" class="vault-btn" id="business-vault-btn" onclick="openBusinessVault(event)" style="display:none">Business →</a>
-              <button type="button" class="btn-logout" id="logout-btn">Log out</button>
-              <div style="width:1px;height:18px;background:rgba(240,209,138,.15);margin:0 2px;flex-shrink:0"></div>
-              <a href="/" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Home</a>
-              <a href="../wallets/member.html" onclick="sessionStorage.setItem('iv_intent','profile');coinTransitionAndGo('../wallets/member.html');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Profile</a>
-              <a href="../intro/voice-welcome.html" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">My Voice</a>
-              <a href="../wallets/member.html" onclick="coinTransitionAndGo('../wallets/member.html#ptc');return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">🪙 Pass the Coin</a>
-              <a href="#hub-invite-card" onclick="document.getElementById('hub-invite-card').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Invite Member</a>
-              <a href="mailto:admin@cogsaustralia.org" style="display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Email Admin</a>
-              <span style="position:relative;display:inline-flex;align-items:center">
-                <button type="button" id="phone-reveal-btn" onclick="(function(){var p=document.getElementById('phone-reveal-num');var b=document.getElementById('phone-reveal-btn');var shown=p.style.display!=='none';p.style.display=shown?'none':'inline-flex';b.title=shown?'Show admin contact':'Hide';})();" title="Show admin contact" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:99px;border:1px solid var(--gold-rim);background:none;color:var(--gold-2);font-size:1rem;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">&#9990;</button>
-                <a id="phone-reveal-num" href="tel:+61494578706" style="display:none;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:4px 12px;border-radius:99px;text-decoration:none;letter-spacing:.04em;margin-left:6px;transition:background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">+61 494 578 706</a>
-              </span>
 
+              <!-- Account topbar: member name left, dropdown right -->
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                <div style="font-family:var(--serif);font-size:.97rem;font-weight:600;color:var(--gold-1);line-height:1.2" id="account-bar-name"></div>
+                <div style="font-family:monospace;font-size:.78rem;color:var(--muted);letter-spacing:.04em" id="account-bar-number"></div>
+              </div>
+              <div style="position:relative;flex-shrink:0">
+                <button type="button" id="account-menu-btn" onclick="toggleAccountMenu()" style="display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--gold-2);border:1px solid var(--gold-rim);padding:7px 14px;border-radius:99px;background:none;cursor:pointer;transition:color .15s,border-color .15s,background .15s" onmouseover="this.style.background='rgba(240,209,138,.06)'" onmouseout="this.style.background=''">Account ▾</button>
+                <div id="account-menu-dropdown" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:180px;background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:8px;z-index:200;box-shadow:0 12px 36px rgba(0,0,0,.55)">
+                  <a href="/" style="display:block;padding:8px 12px;border-radius:8px;font-size:.84rem;color:var(--muted);text-decoration:none;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(240,209,138,.06)';this.style.color='var(--gold-1)'" onmouseout="this.style.background='';this.style.color='var(--muted)'">Home</a>
+                  <a href="../wallets/member.html" onclick="sessionStorage.setItem('iv_intent','profile');coinTransitionAndGo('../wallets/member.html');return false;" style="display:block;padding:8px 12px;border-radius:8px;font-size:.84rem;color:var(--muted);text-decoration:none;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(240,209,138,.06)';this.style.color='var(--gold-1)'" onmouseout="this.style.background='';this.style.color='var(--muted)'">Profile</a>
+                  <a href="../intro/voice-welcome.html" style="display:block;padding:8px 12px;border-radius:8px;font-size:.84rem;color:var(--muted);text-decoration:none;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(240,209,138,.06)';this.style.color='var(--gold-1)'" onmouseout="this.style.background='';this.style.color='var(--muted)'">My Voice</a>
+                  <a href="../wallets/member.html" onclick="coinTransitionAndGo('../wallets/member.html#ptc');return false;" style="display:block;padding:8px 12px;border-radius:8px;font-size:.84rem;color:var(--muted);text-decoration:none;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(240,209,138,.06)';this.style.color='var(--gold-1)'" onmouseout="this.style.background='';this.style.color='var(--muted)'">🪙 Pass the Coin</a>
+                  <a href="#hub-invite-card" onclick="document.getElementById('hub-invite-card').scrollIntoView({behavior:'smooth'});return false;" style="display:block;padding:8px 12px;border-radius:8px;font-size:.84rem;color:var(--muted);text-decoration:none;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(240,209,138,.06)';this.style.color='var(--gold-1)'" onmouseout="this.style.background='';this.style.color='var(--muted)'">Invite Member</a>
+                  <a href="mailto:admin@cogsaustralia.org" style="display:block;padding:8px 12px;border-radius:8px;font-size:.78rem;color:rgba(220,196,148,.55);text-decoration:none;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(240,209,138,.06)';this.style.color='var(--muted)'" onmouseout="this.style.background='';this.style.color='rgba(220,196,148,.55)'">Email Admin</a>
+                  <span style="position:relative;display:block;padding:8px 12px;border-radius:8px">
+                    <button type="button" id="phone-reveal-btn" onclick="(function(){var p=document.getElementById('phone-reveal-num');var b=document.getElementById('phone-reveal-btn');var shown=p.style.display!=='none';p.style.display=shown?'none':'inline';b.title=shown?'Show admin contact':'Hide';})();" title="Show admin contact" style="background:none;border:none;font-size:.78rem;color:rgba(220,196,148,.55);cursor:pointer;padding:0;transition:color .15s" onmouseover="this.style.color='var(--muted)'" onmouseout="this.style.color='rgba(220,196,148,.55)'">&#9990; Phone</button>
+                    <a id="phone-reveal-num" href="tel:+61494578706" style="display:none;font-size:.78rem;color:var(--gold-2);text-decoration:none;margin-left:8px">+61 494 578 706</a>
+                  </span>
+                  <div style="border-top:1px solid var(--line);margin:6px 0 2px"></div>
+                  <button type="button" id="logout-btn" style="display:block;width:100%;text-align:left;padding:8px 12px;border-radius:8px;background:none;border:none;font-size:.84rem;color:#f0857a;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(240,80,60,.06)'" onmouseout="this.style.background=''">Log out</button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="member-welcome-row ha" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
@@ -1375,7 +1381,7 @@
                 <span>
                   <span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em" id="hero-vault-label">Open your account</span>
                   <span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em" id="hero-vault-sub">See what you own, what you can vote on, and your details. ›</span>
-                  <span class="vault-pay-label" id="hero-vault-pay-label">Payment due — tap to pay</span>
+                  <span class="vault-pay-label" id="hero-vault-pay-label">Payment due. Tap to pay.</span>
                 </span>
               </a>
               <a href="../hubs/mainspring/" class="vault-btn-primary vault-btn-hero"
@@ -1430,19 +1436,19 @@
 
               <!-- Members -->
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:130px;text-align:center">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-members" data-countup="true">—</div>
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-members" data-countup="true"></div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Members</div>
               </div>
 
               <!-- Pending Members -->
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.06),rgba(70,120,180,.03));border:1.5px dashed rgba(110,168,216,.22);min-width:130px;text-align:center">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em;opacity:.7" id="cs-pending" data-countup="true">—</div>
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em;opacity:.7" id="cs-pending" data-countup="true"></div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.6);margin-top:6px">Pending Members</div>
               </div>
 
               <!-- JV Asset Pool -->
               <div id="cs-asset-pool-card" style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:160px;position:relative;cursor:default" onmouseenter="showAssetBreakdown()" onmouseleave="hideAssetBreakdown()">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true">—</div>
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true"></div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Community assets, total value</div>
                 <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">ASX · RWA · Sub-Trust A cash · IP formula</div>
                 <a href="../docs/COGS_System_Valuation_Report_v1_0.pdf" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:5px 10px;border-radius:8px;background:rgba(110,168,216,.15);border:1px solid rgba(110,168,216,.35);color:#6ea8d8;font-size:.68rem;font-weight:600;letter-spacing:.04em;text-decoration:none;transition:background .2s,border-color .2s" onmouseover="this.style.background='rgba(110,168,216,.28)';this.style.borderColor='rgba(110,168,216,.60)'" onmouseout="this.style.background='rgba(110,168,216,.15)';this.style.borderColor='rgba(110,168,216,.35)'">&#x2B07; IP Valuation Report</a>
@@ -1450,12 +1456,12 @@
                 <div id="asset-breakdown-panel" style="display:none;position:absolute;bottom:calc(100% + 8px);left:0;min-width:260px;padding:12px 14px;border-radius:12px;background:rgba(10,16,28,.97);border:1px solid rgba(110,168,216,.30);box-shadow:0 12px 36px rgba(0,0,0,.65);z-index:60;pointer-events:none">
                   <div style="font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(110,168,216,.55);margin-bottom:8px">Calculation breakdown</div>
                   <table style="width:100%;border-collapse:collapse;font-size:.72rem;line-height:1.6">
-                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">ASX book value</td><td id="bp-asx" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
-                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">RWA verified valuation</td><td id="bp-rwa" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
-                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">Sub-Trust A cash</td><td id="bp-cash" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
-                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">IP formula ($475k + $250×N) <span style="font-weight:400;opacity:.7">(self-assessed valuation — not a verified holding)</span></td><td id="bp-ip" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600">—</td></tr>
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">ASX book value</td><td id="bp-asx" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600"></td></tr>
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">RWA verified valuation</td><td id="bp-rwa" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600"></td></tr>
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">Sub-Trust A cash</td><td id="bp-cash" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600"></td></tr>
+                    <tr><td style="color:rgba(200,220,240,.70);padding:2px 0">IP formula ($475k + $250×N) <span style="font-weight:400;opacity:.7">(self-assessed valuation, not a verified holding)</span></td><td id="bp-ip" style="text-align:right;color:#6ea8d8;font-family:monospace;font-weight:600"></td></tr>
                     <tr><td colspan="2" style="border-top:1px solid rgba(110,168,216,.20);padding-top:5px;margin-top:3px"></td></tr>
-                    <tr><td style="color:#a0c8f0;font-weight:700;padding:2px 0">Total Asset Pool</td><td id="bp-total" style="text-align:right;color:#a0c8f0;font-family:monospace;font-weight:700">—</td></tr>
+                    <tr><td style="color:#a0c8f0;font-weight:700;padding:2px 0">Total Asset Pool</td><td id="bp-total" style="text-align:right;color:#a0c8f0;font-family:monospace;font-weight:700"></td></tr>
                   </table>
                   <div style="margin-top:6px;font-size:.60rem;color:rgba(110,168,216,.35);font-style:italic">IP valuation: Trustee-adopted formula v1.0</div>
                 </div>
@@ -1463,7 +1469,7 @@
 
               <!-- Asset Value Per Member -->
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:140px">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-per-member" data-countup="true">—</div>
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-per-member" data-countup="true"></div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Community assets per Member</div>
                 <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">Asset pool ÷ members<br><span style="font-style:italic">Incl. IP valuation formula</span></div>
               </div>
@@ -1479,19 +1485,19 @@
 
               <!-- COG$ Reserved -->
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(126,232,162,.07),rgba(82,184,122,.03));border:1.5px solid rgba(126,232,162,.20);min-width:130px">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-cogs" data-countup="true">—</div>
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-cogs" data-countup="true"></div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.65);margin-top:6px">COG$ Reserved</div>
               </div>
 
               <!-- Reservation Value -->
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(126,232,162,.07),rgba(82,184,122,.03));border:1.5px solid rgba(126,232,162,.20);min-width:130px">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-value" data-countup="true">—</div>
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-value" data-countup="true"></div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.65);margin-top:6px">Reservation Value</div>
               </div>
 
               <!-- Avg Reservation Value Per Member -->
               <div style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(126,232,162,.07),rgba(82,184,122,.03));border:1.5px solid rgba(126,232,162,.20);min-width:160px">
-                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-reservation-per-member" data-countup="true">—</div>
+                <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ok);line-height:1;letter-spacing:-.02em" id="cs-reservation-per-member" data-countup="true"></div>
                 <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(126,232,162,.65);margin-top:6px">Avg. Reservation Value Per Member</div>
                 <div style="font-size:.67rem;color:rgba(126,232,162,.35);margin-top:3px;line-height:1.4">Reservation value ÷ members</div>
               </div>
@@ -1505,7 +1511,7 @@
             <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
               <div style="font-size:2rem;line-height:1;flex-shrink:0;margin-top:2px">⚠</div>
               <div style="flex:1;min-width:220px">
-                <div style="font-family:var(--serif);font-size:1.15rem;font-weight:700;color:#f0c060;margin-bottom:6px;letter-spacing:-.01em">One thing left to do — sign the Members' agreement.</div>
+                <div style="font-family:var(--serif);font-size:1.15rem;font-weight:700;color:#f0c060;margin-bottom:6px;letter-spacing:-.01em">One thing left to do: sign the Members' agreement.</div>
                 <div id="jvpa-banner-desc" style="font-size:.98rem;color:rgba(240,220,160,.85);line-height:1.65;margin-bottom:16px">Read the agreement and tick to accept it. Until you do, you can't vote.</div>
                 <button type="button" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#f0c030,#e08820);color:#1a0800;font-weight:700;font-size:1rem;padding:13px 26px;border-radius:12px;border:none;cursor:pointer;font-family:var(--serif);box-shadow:0 4px 20px rgba(240,160,30,.35);transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 28px rgba(240,160,30,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(240,160,30,.35)'" onclick="openJvpaModal()">Read &amp; sign the agreement <span style="font-size:1.2em">→</span></button>
               </div>
@@ -1582,27 +1588,27 @@
               <div class="milestone-card milestone-done">
                 <div class="milestone-ico">✓</div>
                 <div class="milestone-step">Step 1</div>
-                <div class="milestone-title">Step 1 — Registered.</div>
+                <div class="milestone-title">Step 1: Registered.</div>
                 <div class="milestone-body">Your Member number is saved.</div>
               </div>
               <div class="milestone-card" id="milestone-sign">
                 <div class="milestone-ico" id="milestone-sign-ico">◎</div>
                 <div class="milestone-step">Step 2</div>
-                <div class="milestone-title">Step 2 — Sign the Members' agreement.</div>
+                <div class="milestone-title">Step 2: Sign the Members' agreement.</div>
                 <div class="milestone-body">Read it, then tick to accept.</div>
                 <button type="button" class="milestone-cta" id="milestone-sign-btn" onclick="openJvpaModal()" style="display:none">Sign now →</button>
               </div>
               <div class="milestone-card" id="milestone-pay">
                 <div class="milestone-ico" id="milestone-pay-ico">◎</div>
                 <div class="milestone-step">Step 3</div>
-                <div class="milestone-title">Step 3 — Pay $4.</div>
+                <div class="milestone-title">Step 3: Pay $4.</div>
                 <div class="milestone-body">This activates your account.</div>
                 <button type="button" class="milestone-cta" id="milestone-pay-btn" onclick="handleVaultEntry(event)" style="display:none">Pay now →</button>
               </div>
               <div class="milestone-card" id="milestone-active">
                 <div class="milestone-ico" id="milestone-active-ico">◎</div>
                 <div class="milestone-step">Step 4</div>
-                <div class="milestone-title">Step 4 — You're in.</div>
+                <div class="milestone-title">Step 4: You're in.</div>
                 <div class="milestone-body">You can vote, send Community COG$, and see your share.</div>
               </div>
             </div>
@@ -1615,29 +1621,29 @@
             <h3 class="four-spokes-heading">Why we're built like this (5 min read)</h3>
             <div class="four-spokes-body">
               <p>A wheel is one of humanity's oldest and most elegant solutions. It doesn't consume what it moves across — it simply turns, converting energy into forward motion, distributing force evenly, and returning to the same point it started from before moving on. That is exactly what the COG$ circular economy is designed to do: not extract, not accumulate, not collapse inward — but turn. Continuously, sustainably, and together.</p>
-              <p>At the centre of the wheel sits the hub — the Community Joint Venture itself. It is the fixed point around which everything rotates, the anchor that holds the spokes in tension and gives the wheel its form. Without the community, there is no wheel. Without the wheel, the community goes nowhere.</p>
-              <p>From that hub extend four spokes. Each one is distinct in its material, its purpose, and the load it carries. But a wheel with uneven spokes wobbles. A wheel with a missing spoke buckles under pressure. The COG$ model is designed so that all four spokes are present, tensioned, and load-bearing — because the integrity of the whole depends on the integrity of each.</p>
+              <p>At the centre of the wheel sits the hub, which is the Community Joint Venture itself,. It is the fixed point around which everything rotates, the anchor that holds the spokes in tension and gives the wheel its form. Without the community, there is no wheel. Without the wheel, the community goes nowhere.</p>
+              <p>From that hub extend four spokes. Each one is distinct in its material, its purpose, and the load it carries. But a wheel with uneven spokes wobbles. A wheel with a missing spoke buckles under pressure. The COG$ model is designed so that all four spokes are present, tensioned, and load-bearing. The integrity of the whole depends on the integrity of each.</p>
 
               <div class="four-spokes-grid">
                 <div class="spoke-card">
                   <div class="spoke-label">Spoke of identity</div>
                   <div class="spoke-token">NFT COG$</div>
-                  <p class="spoke-body"><strong>Membership tokens — one per Member, can't be sold or moved.</strong> This is the spoke that names every participant and gives them their place in the wheel. Minted once, at the moment an individual member or business joins the community, each NFT COG$ is permanently and uniquely bound to that participant — their signature on the wheel, their seat at the table. It cannot be transferred, replicated, or cashed out, because identity cannot be transferred, replicated, or sold. This spoke does not stretch to accommodate demand. It grows only as the community genuinely grows — one consenting participant at a time — because a community built on manufactured membership is not a community at all. It is a rim without a hub.</p>
+                  <p class="spoke-body"><strong>Membership tokens: one per Member, cannot be sold or moved.</strong> This is the spoke that names every participant and gives them their place in the wheel. Minted once, at the moment an individual member or business joins the community, each NFT COG$ is permanently and uniquely bound to that participant — their signature on the wheel, their seat at the table. It cannot be transferred, replicated, or cashed out, because identity cannot be transferred, replicated, or sold. This spoke does not stretch to accommodate demand. It grows only as the community genuinely grows — one consenting participant at a time — because a community built on manufactured membership is not a community at all. It is a rim without a hub.</p>
                 </div>
                 <div class="spoke-card">
                   <div class="spoke-label">Spoke of equity</div>
                   <div class="spoke-token">ASX COG$</div>
-                  <p class="spoke-body"><strong>Investment tokens — backed by shares we own in resource companies.</strong> This is the spoke that connects the wheel to the broader economy of real, publicly accountable resource companies. Minted against a pooled holding of shares in ASX-listed resource companies, every ASX COG$ represents a proportional stake in that pool — and it cannot exist without a corresponding share underpinning it. The spoke lengthens only when the pool grows, through new company joint ventures or additional share contributions. It is market-anchored and transparent by design, tied directly to the performance of real companies operating under real regulatory scrutiny. This spoke does not speculate. It reflects.</p>
+                  <p class="spoke-body"><strong>Investment tokens: backed by shares we own in resource companies.</strong> This is the spoke that connects the wheel to the broader economy of real, publicly accountable resource companies. Minted against a pooled holding of shares in ASX-listed resource companies, every ASX COG$ represents a proportional stake in that pool — and it cannot exist without a corresponding share underpinning it. The spoke lengthens only when the pool grows, through new company joint ventures or additional share contributions. It is market-anchored and transparent by design, tied directly to the performance of real companies operating under real regulatory scrutiny. This spoke does not speculate. It reflects.</p>
                 </div>
                 <div class="spoke-card">
                   <div class="spoke-label">Spoke of resource</div>
                   <div class="spoke-token">RWA COG$</div>
-                  <p class="spoke-body"><strong>Resource tokens — backed by minerals we've valued in the ground.</strong> This is the deepest spoke — reaching furthest from the hub, anchored not in markets or memberships but in the earth itself. Not yet in circulation, each RWA COG$ will be minted via smart contract and tied to an independently verified, in-situ resource: minerals, biological assets, or other natural assets valued before a single gram is extracted. The minting quantity is fixed at the point of independent valuation and cannot be revisited. If the underlying resource increases in value, existing tokens appreciate — the spoke carries more weight, but it does not grow longer. The only way to extend this spoke is to register additional verified resources. This is the spoke that makes inflation structurally impossible — not by rule, but by architecture.</p>
+                  <p class="spoke-body"><strong>Resource tokens: backed by minerals we have valued in the ground.</strong> This is the deepest spoke — reaching furthest from the hub, anchored not in markets or memberships but in the earth itself. Not yet in circulation, each RWA COG$ will be minted via smart contract and tied to an independently verified, in-situ resource: minerals, biological assets, or other natural assets valued before a single gram is extracted. The minting quantity is fixed at the point of independent valuation and cannot be revisited. If the underlying resource increases in value, existing tokens appreciate — the spoke carries more weight, but it does not grow longer. The only way to extend this spoke is to register additional verified resources. This is the spoke that makes inflation structurally impossible — not by rule, but by architecture.</p>
                 </div>
                 <div class="spoke-card">
                   <div class="spoke-label">Spoke of exchange</div>
                   <div class="spoke-token">Community COG$ (CC)</div>
-                  <p class="spoke-body"><strong>Community tokens — for swapping help, services and gifts inside the community.</strong> This is the most active spoke — the one in constant motion, flexing and turning with the daily life of the community. Carrying no directly linked underlying asset, Community COG$ derive their value entirely from what members agree they are worth through the exchange of real goods and services. Every Individual Member receives 1,000 CC upon entry; every Business Member receives 10,000 CC — enough to begin participating, not enough to dominate. Additional CC may be minted and issued only in exchange for genuine goods or services. This spoke grows in direct proportion to the productive activity of the community itself.</p>
+                  <p class="spoke-body"><strong>Community tokens: for swapping help, services and gifts inside the community.</strong> This is the most active spoke — the one in constant motion, flexing and turning with the daily life of the community. Carrying no directly linked underlying asset, Community COG$ derive their value entirely from what members agree they are worth through the exchange of real goods and services. Every Individual Member receives 1,000 CC upon entry; every Business Member receives 10,000 CC — enough to begin participating, not enough to dominate. Additional CC may be minted and issued only in exchange for genuine goods or services. This spoke grows in direct proportion to the productive activity of the community itself.</p>
                 </div>
               </div>
 
@@ -1662,27 +1668,27 @@
         <div class="container">
           <span class="kicker">The Members Asset Pool</span>
           <h2 style="font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.3rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">What we are building together.</h2>
-          <p class="section-lead">Every dollar contributed becomes a permanent unit in a community-owned trust structure. The trust flow below shows exactly where income goes, who governs it, and why no single person — including the Trustee — can change the rules without the community. Click each step to follow the money.</p>
-          <p style="font-size:.88rem;color:var(--muted);line-height:1.75;margin-bottom:28px;max-width:64ch">A permanent, collectively owned pool of ASX-listed resource company shares and blockchain-verified Real World Assets — held directly on the CHESS Register in the Foundation's name. It can never be sold. It only grows.</p>
+          <p class="section-lead">Every dollar contributed becomes a permanent unit in a community-owned trust structure. The trust flow below shows exactly where income goes, who governs it, and why no single person, including the Trustee, can change the rules without the community. Click each step to follow the money.</p>
+          <p style="font-size:.88rem;color:var(--muted);line-height:1.75;margin-bottom:28px;max-width:64ch">A permanent, collectively owned pool of ASX-listed resource company shares and blockchain-verified Real World Assets, held directly on the CHESS Register in the Foundation's name. It can never be sold. It only grows.</p>
 
           <!-- Trust architecture — step-by-step walkthrough -->
           <div class="trust-flow" style="max-width:640px;margin:0 auto 28px">
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(240,209,138,.7);animation:payPulse 2s ease-in-out infinite;flex-shrink:0"></span><span style="font-size:1rem;color:var(--text2);font-weight:500">Follow the flow — tap each step to learn how the structure works</span></div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(240,209,138,.7);animation:payPulse 2s ease-in-out infinite;flex-shrink:0"></span><span style="font-size:1rem;color:var(--text2);font-weight:500">Follow the flow. Tap each step to learn how the structure works.</span></div>
 
             <!-- Step 1 -->
             <div class="tf-step open first-pulse" id="tf-step-1" onclick="openFlowStep(1)">
-              <div class="tf-step-hd"><span class="tf-num">1</span><span class="tf-step-title">The Members Asset Pool — Sub-Trust A</span><span class="tf-arrow">▾</span></div>
+              <div class="tf-step-hd"><span class="tf-num">1</span><span class="tf-step-title">The Members Asset Pool: Sub-Trust A</span><span class="tf-arrow">▾</span></div>
               <div class="tf-step-body" id="tf-body-1">
-                <p class="tf-note">Sub-Trust A is the engine room. It holds every ASX share and Real World Asset the community owns — registered directly on the CHESS Register in the Foundation's name. It is also the sole minting engine for every token class. Nothing leaves. Assets are held in perpetuity with no power of sale.</p>
+                <p class="tf-note">Sub-Trust A is the engine room. It holds every ASX share and Real World Asset the community owns, registered directly on the CHESS Register in the Foundation's name. It is also the sole minting engine for every token class. Nothing leaves. Assets are held in perpetuity with no power of sale.</p>
                 <div style="padding:14px 16px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(93,202,165,.18);margin:12px 0 8px">
-                  <span style="font-size:.76rem;font-weight:600;color:#6ea8d8">Tier 1 — Immediate</span>
+                  <span style="font-size:.76rem;font-weight:600;color:#6ea8d8">Tier 1: Immediate</span>
                   <div style="margin-top:6px"><span class="tf-pill tf-p1">S-NFT</span><span class="tf-pill tf-p1">kS-NFT</span><span class="tf-pill tf-p1">B-NFT</span><span class="tf-pill tf-p1d">Pay it forward</span><span class="tf-pill tf-p1d">Donation</span><span class="tf-pill tf-p1g">Community</span><span class="tf-pill tf-p1">Resident</span></div>
-                  <p class="tf-detail">Governance and community tokens. Issued under the Members' joint venture framework — no managed investment scheme applies. Active immediately.</p>
+                  <p class="tf-detail">Governance and community tokens. Issued under the Members' joint venture framework. No managed investment scheme applies. Active immediately.</p>
                 </div>
                 <div style="padding:14px 16px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(93,202,165,.18)">
-                  <span style="font-size:.76rem;font-weight:600;color:#7ee8a2">Tier 2 — Expansion Day</span>
+                  <span style="font-size:.76rem;font-weight:600;color:#7ee8a2">Tier 2: Expansion Day</span>
                   <div style="margin-top:6px"><span class="tf-pill tf-p2">ASX</span><span class="tf-pill tf-p2">Landholder</span><span class="tf-pill tf-p2">RWA</span><span class="tf-pill tf-p2">Business property</span></div>
-                  <p class="tf-detail">Investment tokens. Activated on Expansion Day — when the first Sovereign Node goes live on the Members Consensus Network, the Foundation's own Member-controlled infrastructure, and the Members' proprietary governance system becomes operational.</p>
+                  <p class="tf-detail">Investment tokens. Activated on Expansion Day, when the first Sovereign Node goes live on the Members Consensus Network, the Foundation's own Member-controlled infrastructure, and the Members' proprietary governance system becomes operational.</p>
                 </div>
                 <div class="tf-next" onclick="event.stopPropagation();openFlowStep(2)">Next: How dividends are split →</div>
               </div>
@@ -1692,19 +1698,19 @@
 
             <!-- Step 2 -->
             <div class="tf-step" id="tf-step-2" onclick="openFlowStep(2)">
-              <div class="tf-step-hd"><span class="tf-num">2</span><span class="tf-step-title">The Dividend Engine — two income streams</span><span class="tf-arrow">▸</span></div>
+              <div class="tf-step-hd"><span class="tf-num">2</span><span class="tf-step-title">The Dividend Engine: two income streams</span><span class="tf-arrow">▸</span></div>
               <div class="tf-step-body" id="tf-body-2">
-                <p class="tf-note">When ASX companies in the Members Asset Pool pay dividends, that income arrives in Sub-Trust A. Within 5 business days the Trustee must apply mandatory splits. There are two separate streams, determined by the Donation Ledger. These splits are entrenched under clause 35(g) — they cannot be changed by any vote.</p>
+                <p class="tf-note">When ASX companies in the Members Asset Pool pay dividends, that income arrives in Sub-Trust A. Within 5 business days the Trustee must apply mandatory splits. There are two separate streams, determined by the Donation Ledger. These splits are entrenched under clause 35(g) and cannot be changed by any vote.</p>
 
                 <div style="font-size:.80rem;font-weight:600;color:#7ee8a2;margin:12px 0 6px">Beneficiary Distribution Stream</div>
                 <p class="tf-detail" style="margin-bottom:8px">Income from all token classes except the Donation invested component (S-NFT, kS-NFT, B-NFT, ASX, Landholder, RWA, Business Property, Community).</p>
                 <div class="tf-split-row"><span class="tf-pct">50%</span><span class="tf-bar" style="background:rgba(15,110,86,.5)"></span><span class="tf-dest">→ Transferred to Sub-Trust B for Member distribution</span></div>
-                <div class="tf-split-row"><span class="tf-pct">50%</span><span class="tf-bar" style="background:rgba(93,202,165,.35)"></span><span class="tf-dest">→ Retained in Sub-Trust A — mandatory reinvestment</span></div>
+                <div class="tf-split-row"><span class="tf-pct">50%</span><span class="tf-bar" style="background:rgba(93,202,165,.35)"></span><span class="tf-dest">Retained in Sub-Trust A: mandatory reinvestment</span></div>
 
                 <div style="font-size:.80rem;font-weight:600;color:#c4b0f0;margin:14px 0 6px">Donation Dividend Stream</div>
-                <p class="tf-detail" style="margin-bottom:8px">Income from the $2.00 invested component of each Donation COG$, tracked separately via the Donation Ledger. This stream does NOT flow directly to Sub-Trust C — it flows through Sub-Trust B.</p>
+                <p class="tf-detail" style="margin-bottom:8px">Income from the $2.00 invested component of each Donation COG$, tracked separately via the Donation Ledger. This stream does NOT flow directly to Sub-Trust C. It flows through Sub-Trust B.</p>
                 <div class="tf-split-row"><span class="tf-pct">50%</span><span class="tf-bar" style="background:rgba(83,74,183,.45)"></span><span class="tf-dest">→ Transferred to Sub-Trust B for all unit holders</span></div>
-                <div class="tf-split-row"><span class="tf-pct">25%</span><span class="tf-bar" style="flex:.5;background:rgba(175,169,236,.3)"></span><span class="tf-dest">→ Retained in Sub-Trust A — mandatory reinvestment</span></div>
+                <div class="tf-split-row"><span class="tf-pct">25%</span><span class="tf-bar" style="flex:.5;background:rgba(175,169,236,.3)"></span><span class="tf-dest">Retained in Sub-Trust A: mandatory reinvestment</span></div>
                 <div class="tf-split-row"><span class="tf-pct">25%</span><span class="tf-bar" style="flex:.5;background:rgba(206,203,246,.2)"></span><span class="tf-dest">→ Trustee administration costs (surplus to Sub-Trust C)</span></div>
 
                 <div class="tf-callout">Failure to transfer within 5 business days constitutes a breach of trust enforceable by any Beneficiary Holder in the Supreme Court of South Australia.</div>
@@ -1716,9 +1722,9 @@
 
             <!-- Step 3 -->
             <div class="tf-step" id="tf-step-3" onclick="openFlowStep(3)">
-              <div class="tf-step-hd"><span class="tf-num">3</span><span class="tf-step-title">Sub-Trust B — distribution to unit holders</span><span class="tf-arrow">▸</span></div>
+              <div class="tf-step-hd"><span class="tf-num">3</span><span class="tf-step-title">Sub-Trust B: distribution to unit holders</span><span class="tf-arrow">▸</span></div>
               <div class="tf-step-body" id="tf-body-3">
-                <p class="tf-note">Sub-Trust B is a distribution vehicle only — it does not hold assets. It receives income from Sub-Trust A and distributes 100% proportionally to every Beneficial Unit holder within 60 days. This is non-discretionary, mandatory, and entrenched. No one decides who gets what — it is determined by the number of income units held.</p>
+                <p class="tf-note">Sub-Trust B is a distribution vehicle only. It does not hold assets. It receives income from Sub-Trust A and distributes 100% proportionally to every Beneficial Unit holder within 60 days. This is non-discretionary, mandatory, and entrenched. No one decides who gets what. The amount is determined by the number of income units held.</p>
 
                 <div style="font-size:.78rem;font-weight:500;color:var(--gold-2);margin:10px 0 6px">Every token class carries 1 Beneficial Unit in Sub-Trust B:</div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
@@ -1730,9 +1736,9 @@
                   <div class="tf-ben"><span class="tf-dot" style="background:#52b87a"></span><span class="tf-bn">Business property</span><span class="tf-bu">Class BP</span></div>
                   <div class="tf-ben"><span class="tf-dot" style="background:#52b87a"></span><span class="tf-bn">RWA COG$</span><span class="tf-bu">Class R</span></div>
                 </div>
-                <div class="tf-ben tf-ben-d" style="margin:6px 0 0"><span class="tf-dot" style="background:#8b80d8"></span><span class="tf-bn" style="color:#c4b0f0">Donation COG$</span><span class="tf-bu" style="color:rgba(180,170,210,.6)">1 unit per Donation COG$ issued — held by Sub-Trust C</span></div>
+                <div class="tf-ben tf-ben-d" style="margin:6px 0 0"><span class="tf-dot" style="background:#8b80d8"></span><span class="tf-bn" style="color:#c4b0f0">Donation COG$</span><span class="tf-bu" style="color:rgba(180,170,210,.6)">1 unit per Donation COG$ issued, held by Sub-Trust C</span></div>
 
-                <div class="tf-callout" style="border-color:rgba(240,209,138,.15)"><span style="font-weight:500;color:var(--gold-1)">Election:</span> Each Member chooses — AUD to their bank account (default) or new ASX COG$ at the constitutional price. Sub-Trust C receives AUD to its trust bank account for charitable purposes.</div>
+                <div class="tf-callout" style="border-color:rgba(240,209,138,.15)"><span style="font-weight:500;color:var(--gold-1)">Election:</span> Each Member chooses: AUD to their bank account (default) or new ASX COG$ at the constitutional price. Sub-Trust C receives AUD to its trust bank account for charitable purposes.</div>
                 <div class="tf-next" onclick="event.stopPropagation();openFlowStep(4)">Next: Where the money ends up →</div>
               </div>
             </div>
@@ -1741,15 +1747,15 @@
 
             <!-- Step 4 -->
             <div class="tf-step" id="tf-step-4" onclick="openFlowStep(4)">
-              <div class="tf-step-hd"><span class="tf-num">4</span><span class="tf-step-title">Outcomes — Members and community projects</span><span class="tf-arrow">▸</span></div>
+              <div class="tf-step-hd"><span class="tf-num">4</span><span class="tf-step-title">Outcomes: Members and community projects</span><span class="tf-arrow">▸</span></div>
               <div class="tf-step-body" id="tf-body-4">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
                   <div style="padding:16px 18px;border-radius:12px;background:rgba(240,209,138,.06);border:1px solid rgba(240,209,138,.18)">
                     <div style="font-size:.82rem;font-weight:500;color:var(--gold-1);margin-bottom:4px">Member returns</div>
-                    <p class="tf-detail">Your proportional share of Members Asset Pool dividends paid as a Members bonus. As reinvested dividends grow the basket each cycle, your future returns compound — the longer you hold, the more the engine produces.</p>
+                    <p class="tf-detail">Your proportional share of Members Asset Pool dividends paid as a Members bonus. As reinvested dividends grow the basket each cycle, your future returns compound. The longer you hold, the more the engine produces.</p>
                   </div>
                   <div style="padding:16px 18px;border-radius:12px;background:rgba(83,74,183,.06);border:1px solid rgba(83,74,183,.18)">
-                    <div style="font-size:.82rem;font-weight:500;color:#c4b0f0;margin-bottom:4px">Sub-Trust C — Community projects</div>
+                    <div style="font-size:.82rem;font-weight:500;color:#c4b0f0;margin-bottom:4px">Sub-Trust C: Community projects</div>
                     <p class="tf-detail">Charitable trust funded from two sources: (1) $2.00 direct payment per Donation COG$ at minting and (2) Sub-Trust C's proportional D Class share through Sub-Trust B. Funds First Nations programs, environmental stewardship, and community initiatives. DGR/ACNC pathway.</p>
                   </div>
                 </div>
@@ -1778,7 +1784,7 @@
                   </div>
                 </div>
 
-                <div class="tf-callout" style="border-color:rgba(240,209,138,.15)">The dividend splits are entrenched founding principles under clause 35(g) and cannot be reduced or altered by any resolution. The compounding engine runs in perpetuity — the longer the structure exists, the stronger it becomes.</div>
+                <div class="tf-callout" style="border-color:rgba(240,209,138,.15)">The dividend splits are entrenched founding principles under clause 35(g) and cannot be reduced or altered by any resolution. The compounding engine runs in perpetuity. The longer the structure exists, the stronger it becomes.</div>
               </div>
             </div>
           </div>
@@ -1787,9 +1793,9 @@
             <div class="basket-card">
               <span class="basket-ico">🏛️</span>
               <h3>Permanent collective ownership</h3>
-              <p>Every share acquired is held forever. The Trustee has no power of sale — entrenched and cannot be changed by any vote.</p>
+              <p>Every share acquired is held forever. The Trustee has no power of sale. This is entrenched and cannot be changed by any vote.</p>
               <button type="button" class="expand-btn" onclick="toggleExpand(this)">Read more ↓</button>
-              <div class="expand-content">The only exceptions are compulsory government acquisition and mandatory corporate actions — in both cases, all proceeds are reinvested into the Members Asset Pool. Poor ESG performance does not trigger divestment. The Foundation engages from within as a registered CHESS holder.</div>
+              <div class="expand-content">The only exceptions are compulsory government acquisition and mandatory corporate actions. In both cases, all proceeds are reinvested into the Members Asset Pool. Poor ESG performance does not trigger divestment. The Foundation engages from within as a registered CHESS holder.</div>
             </div>
             <div class="basket-card">
               <span class="basket-ico">📊</span>
@@ -1801,7 +1807,7 @@
             <div class="basket-card">
               <span class="basket-ico">🔗</span>
               <h3>Blockchain-verified RWA</h3>
-              <p>Every holding is recorded on-chain as a Real World Asset — transparent, tamper-resistant, independently auditable.</p>
+              <p>Every holding is recorded on-chain as a Real World Asset: transparent, tamper-resistant, independently auditable.</p>
               <button type="button" class="expand-btn" onclick="toggleExpand(this)">Read more ↓</button>
               <div class="expand-content">The Foundation's permissioned EVM blockchain provides on-chain provenance for every Members Asset Pool asset. The CHESS Register remains the primary legal record. Any discrepancy must be resolved in favour of the CHESS record and remedied within 10 business days.</div>
             </div>
@@ -1811,7 +1817,7 @@
           <div class="principle-strip">
             <div class="principle-item">
               <div class="principle-num">∞</div>
-              <div class="principle-lbl">Hold forever — no power of sale</div>
+              <div class="principle-lbl">Hold forever. No power of sale.</div>
             </div>
             <div class="principle-item">
               <div class="principle-num">50%</div>
@@ -1841,12 +1847,12 @@
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap">
               <div>
                 <h2 style="font-family:var(--serif);font-size:clamp(1.3rem,3vw,1.8rem);font-weight:500;letter-spacing:-.02em;margin-top:8px;color:#a0c4f0">What the community holds, right now</h2>
-          <p class="section-lead">These figures come directly from the live COG$ Registry — not a snapshot, not a projection. Every token class, every issued unit, every multi-signature threshold shown below reflects the actual state of the Foundation right now. This is the proof.</p>
+          <p class="section-lead">These figures come directly from the live COG$ Registry, not a snapshot, not a projection. Every token class, every issued unit, every multi-signature threshold shown below reflects the actual state of the Foundation right now. This is the proof.</p>
                 <p style="font-size:.86rem;color:rgba(160,196,240,.45);margin-top:6px;line-height:1.5">Hover or tap any cell to learn what it means. All numbers update live from the database.</p>
               </div>
               <div class="display-only-badge" style="flex-shrink:0;margin-top:4px">
                 <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#7ee8a2;animation:pulse 2s infinite;margin-right:3px"></span>
-                Live data — last updated <span id="mc-last-updated">now</span>
+                Live data: last updated <span id="mc-last-updated">now</span>
               </div>
             </div>
 
@@ -1855,17 +1861,17 @@
             <div class="mc-row mc-row-3" style="margin-bottom:16px">
               <div class="mc-cell mc-cell-warm" data-tip="Total individual Australians who have completed membership registration and hold a Personal S-NFT COG$ token.">
                 <div class="mc-ico">◈</div>
-                <div class="mc-val" id="mc-members">—</div>
+                <div class="mc-val" id="mc-members"></div>
                 <div class="mc-sub">Personal Members</div>
               </div>
               <div class="mc-cell mc-cell-warm" data-tip="Australian businesses that have registered a B-NFT membership. Business Members hold limited governance rights and participate in Sub-Trust B distributions.">
                 <div class="mc-ico">◇</div>
-                <div class="mc-val" id="mc-businesses">—</div>
+                <div class="mc-val" id="mc-businesses"></div>
                 <div class="mc-sub">Businesses</div>
               </div>
               <div class="mc-cell mc-cell-warm" data-tip="Kids kS-NFT tokens registered by adult Members for children under 18. Held in trust until the child turns 18, at which point the kS-NFT auto-converts to a full Personal S-NFT.">
                 <div class="mc-ico">🧒</div>
-                <div class="mc-val" id="mc-kids">—</div>
+                <div class="mc-val" id="mc-kids"></div>
                 <div class="mc-sub">Kids registered</div>
               </div>
             </div>
@@ -1874,15 +1880,15 @@
             <div class="mc-section-hd mc-hd-teal">🗺️ Geographic reach</div>
             <div class="mc-row mc-row-3" style="margin-bottom:16px">
               <div class="mc-cell mc-cell-teal" data-tip="Number of Australian states and territories with at least one registered member. Goal: all 8 (NSW, VIC, QLD, WA, SA, TAS, ACT, NT).">
-                <div class="mc-val" id="mc-states">—</div>
+                <div class="mc-val" id="mc-states"></div>
                 <div class="mc-sub">States / territories</div>
               </div>
               <div class="mc-cell mc-cell-teal" data-tip="Count of unique postcodes across all registered Members — shows how widely the Foundation's community spreads across Australia.">
-                <div class="mc-val" id="mc-postcodes">—</div>
+                <div class="mc-val" id="mc-postcodes"></div>
                 <div class="mc-sub">Unique postcodes</div>
               </div>
               <div class="mc-cell mc-cell-teal" data-tip="Count of unique suburbs from member addresses — a measure of community diversity and geographic distribution.">
-                <div class="mc-val" id="mc-suburbs">—</div>
+                <div class="mc-val" id="mc-suburbs"></div>
                 <div class="mc-sub">Unique suburbs</div>
               </div>
             </div>
@@ -1899,25 +1905,25 @@
             <div class="mc-row mc-row-4">
               <div class="mc-cell mc-cell-gold" data-tip="Personal S-NFT — your core membership token. Soulbound (non-transferable), carries 1 governance vote and 1 Beneficial Unit in Sub-Trust B. Issue price: $4.00. Every Australian gets exactly one.">
                 <div class="mc-ico">◈</div>
-                <div class="mc-val mc-gold" id="mc-snft">—</div>
+                <div class="mc-val mc-gold" id="mc-snft"></div>
                 <div class="mc-sub">Personal S-NFT</div>
                 <div class="mc-tier">Tier 1</div>
               </div>
               <div class="mc-cell mc-cell-gold" data-tip="Kids kS-NFT — registered by a parent or guardian for a child under 18. Held in trust. $1.00 issue price. Auto-converts to a full S-NFT at age 18 with full governance rights.">
                 <div class="mc-ico">🧒</div>
-                <div class="mc-val mc-gold" id="mc-ksnft">—</div>
+                <div class="mc-val mc-gold" id="mc-ksnft"></div>
                 <div class="mc-sub">Kids kS-NFT</div>
                 <div class="mc-tier">Tier 1</div>
               </div>
               <div class="mc-cell mc-cell-gold" data-tip="Business B-NFT — the business-entity membership token. Issued to registered Australian businesses at $40.00. Carries limited governance rights and a Sub-Trust B income unit. One per business.">
                 <div class="mc-ico">🏢</div>
-                <div class="mc-val mc-gold" id="mc-bnft">—</div>
+                <div class="mc-val mc-gold" id="mc-bnft"></div>
                 <div class="mc-sub">Business B-NFT</div>
                 <div class="mc-tier">Tier 1</div>
               </div>
               <div class="mc-cell mc-cell-gold" data-tip="ASX COG$ — investment-grade token tied to ASX resource company shares in the Members Asset Pool. Subject to any regulatory requirements determined by applicable law. Lock period applies from Expansion Day. $4.00 issue price.">
                 <div class="mc-ico">📈</div>
-                <div class="mc-val mc-gold" id="mc-asx">—</div>
+                <div class="mc-val mc-gold" id="mc-asx"></div>
                 <div class="mc-sub">ASX COG$</div>
                 <div class="mc-tier t2">Tier 2</div>
               </div>
@@ -1925,25 +1931,25 @@
             <div class="mc-row mc-row-4" style="margin-top:8px">
               <div class="mc-cell mc-cell-green" data-tip="Donation COG$ — $4 issue price splits: $2 directly to Sub-Trust C for community projects, $2 invested in Sub-Trust A. Creates a D Class Beneficial Unit in Sub-Trust B so Sub-Trust C receives ongoing dividend income.">
                 <div class="mc-ico">💚</div>
-                <div class="mc-val mc-green" id="mc-donation">—</div>
+                <div class="mc-val mc-green" id="mc-donation"></div>
                 <div class="mc-sub">Donation COG$</div>
                 <div class="mc-tier t1g">Tier 1</div>
               </div>
               <div class="mc-cell mc-cell-green" data-tip="Pay It Forward COG$ — a $4 charitable donation that funds a free S-NFT membership for someone who cannot afford $4. $3 to admin, $1 to Sub-Trust A for the recipient. Donor cap: $40,000/year.">
                 <div class="mc-ico">🤝</div>
-                <div class="mc-val mc-green" id="mc-pif">—</div>
+                <div class="mc-val mc-green" id="mc-pif"></div>
                 <div class="mc-sub">Pay It Forward</div>
                 <div class="mc-tier t1g">Tier 1</div>
               </div>
               <div class="mc-cell mc-cell-gold" data-tip="Landholder COG$ — issued to verified ALRA/NTA landholders whose eligible land overlaps with Members Asset Pool tenements. Zero cost. Verification through FNAC. Carries Sub-Trust B entitlement.">
                 <div class="mc-ico">🏞️</div>
-                <div class="mc-val mc-gold" id="mc-landholder">—</div>
+                <div class="mc-val mc-gold" id="mc-landholder"></div>
                 <div class="mc-sub">Landholder COG$</div>
                 <div class="mc-tier t2">Tier 2</div>
               </div>
               <div class="mc-cell mc-cell-gold" data-tip="Resident COG$ — auto-allocated to Members whose verified address falls within an Affected Zone (geographic area near Members Asset Pool tenements). No fee. Carries an additional 1,000 weighted vote units for Local Decision Votes.">
                 <div class="mc-ico">📍</div>
-                <div class="mc-val mc-gold" id="mc-lr">—</div>
+                <div class="mc-val mc-gold" id="mc-lr"></div>
                 <div class="mc-sub">Resident COG$</div>
                 <div class="mc-tier">Tier 1</div>
               </div>
@@ -1951,7 +1957,7 @@
             <div class="mc-row mc-row-4" style="margin-top:8px">
               <div class="mc-cell mc-cell-gold" data-tip="RWA COG$ — Real World Asset token tied to in-ground mineral value. Blockchain-verified, not speculative. Activated on Expansion Day, subject to any regulatory requirements determined by applicable law.">
                 <div class="mc-ico">🌏</div>
-                <div class="mc-val mc-gold" id="mc-rwa">—</div>
+                <div class="mc-val mc-gold" id="mc-rwa"></div>
                 <div class="mc-sub">RWA COG$</div>
                 <div class="mc-tier t2">Tier 2</div>
               </div>
@@ -1959,19 +1965,19 @@
                 <div class="mc-ico">
                   <img src="../assets/cogs_coin_web.png" alt="COG$" style="width:22px;height:22px;border-radius:50%;vertical-align:middle">
                 </div>
-                <div class="mc-val mc-teal" id="mc-community">—</div>
+                <div class="mc-val mc-teal" id="mc-community"></div>
                 <div class="mc-sub">Community COG$</div>
                 <div class="mc-tier">Tier 2</div>
               </div>
               <div class="mc-cell mc-cell-gold" data-tip="Business Property COG$ (Class BP) — issued to eligible commercial property holders at $40.00 per unit. Carries weighted affected-zone governance rights and one Sub-Trust B income unit per validly issued unit. P2P transferable via Members Vault with 3-of-Board multisig.">
                 <div class="mc-ico">🏗️</div>
-                <div class="mc-val mc-gold" id="mc-bp">—</div>
+                <div class="mc-val mc-gold" id="mc-bp"></div>
                 <div class="mc-sub">Business Property</div>
                 <div class="mc-tier t2">Tier 2</div>
               </div>
               <div class="mc-cell mc-cell-gold" style="opacity:.45;cursor:default" data-tip="Future token class — reserved for additional Unit classes the Trustee may issue at the request of Beneficiaries from time to time, as provided in the Declaration.">
                 <div class="mc-ico">⊕</div>
-                <div class="mc-val mc-gold">—</div>
+                <div class="mc-val mc-gold"></div>
                 <div class="mc-sub">Future class</div>
                 <div class="mc-tier">Reserved</div>
               </div>
@@ -1999,8 +2005,8 @@
         <div class="container">
           <span class="kicker" style="color:#f0a870">Bring others in</span>
           <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">Australia's resources should carry Australian voices.</h2>
-          <p class="section-lead">COG$ grows by word of mouth — Partner to Partner. Your personalised invite link carries your Partner number, so every person you bring in is permanently linked to your community record. The spread calculator below shows what happens when each Partner brings just three people.</p>
-          <p style="font-size:.88rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:64ch">Right now, the governance of Australia's resource wealth is shaped by foreign banks, offshore hedge funds, and institutional shareholders who have no connection to the land, the communities near it, or the people it belongs to. COGs exists to change that — permanently.</p>
+          <p class="section-lead">COG$ grows by word of mouth, Partner to Partner. Your personalised invite link carries your Partner number, so every person you bring in is permanently linked to your community record. The spread calculator below shows what happens when each Partner brings just three people.</p>
+          <p style="font-size:.88rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:64ch">Right now, the governance of Australia's resource wealth is shaped by foreign banks, offshore hedge funds, and institutional shareholders who have no connection to the land, the communities near it, or the people it belongs to. COGs exists to change that. Permanently.</p>
 
           <picture style="display:block;margin:0 auto 24px;max-width:420px;border-radius:16px;overflow:hidden;border:1px solid rgba(240,168,112,.15)">
             <source srcset="../assets/coin_shake.webp" type="image/webp">
@@ -2012,7 +2018,7 @@
             <div class="stag-cell">
               <div style="font-size:1.4rem;margin-bottom:8px">🏔️</div>
               <div style="font-size:.82rem;font-weight:500;color:var(--gold-1);margin-bottom:6px">In-ground value</div>
-              <div style="font-size:.82rem;color:var(--muted);line-height:1.55">Resources held in the ground under community stewardship carry real, measurable value. Extraction is not the only outcome — and it should never be the default.</div>
+              <div style="font-size:.82rem;color:var(--muted);line-height:1.55">Resources held in the ground under community stewardship carry real, measurable value. Extraction is not the only outcome. It should never be the default.</div>
             </div>
             <div class="stag-cell">
               <div style="font-size:1.4rem;margin-bottom:8px">🤝</div>
@@ -2022,21 +2028,21 @@
             <div class="stag-cell stag-cell-hl">
               <div style="font-size:1.4rem;margin-bottom:8px">♾️</div>
               <div style="font-size:.82rem;font-weight:500;color:#f0a870;margin-bottom:6px">Permanent compounding</div>
-              <div style="font-size:.72rem;color:var(--muted);line-height:1.55">Every person who joins adds to the Members Asset Pool. The basket can never be sold. Dividends are reinvested. The longer this runs, the stronger it gets — for everyone who came before and everyone who comes after.</div>
+              <div style="font-size:.72rem;color:var(--muted);line-height:1.55">Every person who joins adds to the Members Asset Pool. The basket can never be sold. Dividends are reinvested. The longer this runs, the stronger it gets, for everyone who came before and everyone who comes after.</div>
             </div>
           </div>
 
           <!-- The transparency point -->
           <div style="padding:22px 24px;border-radius:16px;background:linear-gradient(160deg,rgba(35,25,12,.9),rgba(18,12,4,.92));border:1px solid rgba(240,168,112,.2);margin-bottom:18px">
             <h3 style="font-family:var(--serif);font-size:1rem;font-weight:500;color:#f0a870;margin-bottom:8px">You don't have to take anyone's word for it.</h3>
-            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0 0 8px">The Members Asset Pool is held directly on the ASX CHESS Register — not with a custodian, not through a fund manager, not behind a login. The token registry is blockchain-verified. The dashboard above shows live joint venture data, geographic spread, and every token class in real time.</p>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0 0 8px">The Members Asset Pool is held directly on the ASX CHESS Register, not with a custodian, not through a fund manager, not behind a login. The token registry is blockchain-verified. The dashboard above shows live joint venture data, geographic spread, and every token class in real time.</p>
             <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0">This isn't a promise about what might happen. <strong style="color:var(--gold-1)">It's a structure you can see working.</strong></p>
           </div>
 
           <!-- How to explain it -->
           <div style="padding:20px 24px;border-radius:16px;background:rgba(255,255,255,.02);border:1px solid var(--line);margin-bottom:18px">
             <div style="font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:8px">🗣️ How to explain COGs in 30 seconds</div>
-            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0;font-style:italic">"It's a community trust that buys shares in Australian resource companies and holds them permanently. Dividends are split — half to Members, half reinvested to buy more. The community votes on how those companies are governed. The resources stay in the ground unless the community — including Traditional Owners — agrees otherwise. No one can sell the basket. It just compounds, forever."</p>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0;font-style:italic">"It's a community trust that buys shares in Australian resource companies and holds them permanently. Dividends are split: half to Members, half reinvested to buy more. The community votes on how those companies are governed. The resources stay in the ground unless the community, including Traditional Owners, agrees otherwise. No one can sell the basket. It just compounds, forever."</p>
           </div>
 
         </div>
@@ -2053,24 +2059,24 @@
           <span class="kicker" style="color:#6ea8d8">Foundation Holdings</span>
           <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">Real assets held by the Foundation.</h2>
           <p class="section-lead">The Foundation holds CHESS-registered ASX shares in Legacy Minerals Holdings (ASX: LGM) and tokenised real-world assets on behalf of all Partners. These holdings back the in-ground resource token economy. All prices and quantities are live from the CHESS register and verified on-chain.</p>
-          <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">These windows show actual ASX shareholdings on the CHESS Register and blockchain-verified Real World Asset pools — the real assets that back every COG$ minted. Different from the Truth Window above, which shows Member reservations.</p>
+          <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">These windows show actual ASX shareholdings on the CHESS Register and blockchain-verified Real World Asset pools: the real assets that back every COG$ minted. Different from the Truth Window above, which shows Member reservations.</p>
 
           <!-- Community COG$ total strip -->
           <div class="fh-strip" id="fh-strip">
             <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-minted">—</span>
+              <span class="fh-stat-val" id="fh-cc-minted"></span>
               <span class="fh-stat-lbl">Community COG$ minted</span>
             </div>
             <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-circ">—</span>
+              <span class="fh-stat-val" id="fh-cc-circ"></span>
               <span class="fh-stat-lbl">Community COG$ in circulation</span>
             </div>
             <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-asx">—</span>
+              <span class="fh-stat-val" id="fh-cc-asx"></span>
               <span class="fh-stat-lbl">ASX COG$ minted (total)</span>
             </div>
             <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-rwa">—</span>
+              <span class="fh-stat-val" id="fh-cc-rwa"></span>
               <span class="fh-stat-lbl">RWA COG$ minted (total)</span>
             </div>
           </div>
@@ -2141,14 +2147,14 @@
         <div class="container">
           <span class="kicker">Stewardship & engagement</span>
           <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">We never sell. We engage from within.</h2>
-          <p class="section-lead">Every resource company in the COG$ basket is a target for active community stewardship — not divestment. Partners hold a collective voice at shareholder meetings, governance proposals, and environmental reviews. The Foundation's First Nations Advisory Council holds binding veto rights over any disposition of land-linked assets.</p>
+          <p class="section-lead">Every resource company in the COG$ basket is a target for active community stewardship, not divestment. Partners hold a collective voice at shareholder meetings, governance proposals, and environmental reviews. The Foundation's First Nations Advisory Council holds binding veto rights over any disposition of land-linked assets.</p>
 
           <!-- Purpose trio cards -->
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px" class="purpose-trio">
             <div class="purpose-card">
               <div class="purpose-ico">🗳</div>
               <h3 class="purpose-card-hd">Active shareholder voice</h3>
-              <p class="purpose-card-body">Partners collectively direct proxy votes at AGMs of every ASX company in the basket. One community, one coordinated position — not thousands of ignored individual shareholders.</p>
+              <p class="purpose-card-body">Partners collectively direct proxy votes at AGMs of every ASX company in the basket. One community, one coordinated position, not thousands of ignored individual shareholders.</p>
             </div>
             <div class="purpose-card">
               <div class="purpose-ico">🌿</div>
@@ -2162,20 +2168,20 @@
             </div>
           </div>
 
-          <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">The Foundation acquires permanent shareholdings in resource companies and uses that position to drive ESG change at the boardroom level — backed by Traditional Owner authority.</p>
+          <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">The Foundation acquires permanent shareholdings in resource companies and uses that position to drive ESG change at the boardroom level, backed by Traditional Owner authority.</p>
 
           <div class="rwa-split" style="margin-bottom:16px">
             <div class="esg-card">
               <span class="esg-badge">Active ESG strategy</span>
               <h3 style="margin-top:12px">Poor ESG Targets</h3>
-              <p style="margin-bottom:0">The Board and FNAC jointly identify companies with poor records. The Foundation builds a minimum 5% registered holding — permanent, never sold — then uses AGM voting rights and direct board engagement to drive change. Your governance vote goes directly to the company.</p>
+              <p style="margin-bottom:0">The Board and FNAC jointly identify companies with poor records. The Foundation builds a minimum 5% registered holding, permanent and never sold, then uses AGM voting rights and direct board engagement to drive change. Your governance vote goes directly to the company.</p>
             </div>
             <div style="padding:20px;border-radius:var(--r);background:linear-gradient(160deg,rgba(35,25,12,.9),rgba(18,12,4,.92));border:1px solid rgba(200,151,62,.25);box-shadow:var(--shadow)">
               <div class="fnac-grid" style="gap:16px;margin-bottom:0">
                 <div>
                   <span style="font-size:.74rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-2)">FNAC</span>
                   <h3 style="font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);margin:6px 0">57.8% of critical mineral projects sit on Indigenous lands.</h3>
-                  <p style="font-size:.86rem;color:var(--muted);line-height:1.6;margin:0">3–7 Traditional Owner representatives with entrenched authority over ESG, Sub-Trust C grants, and FPIC. At least one Board Director must be FNAC-nominated. 30% minimum of Sub-Trust C to First Nations — cannot be reduced.</p>
+                  <p style="font-size:.86rem;color:var(--muted);line-height:1.6;margin:0">3–7 Traditional Owner representatives with entrenched authority over ESG, Sub-Trust C grants, and FPIC. At least one Board Director must be FNAC-nominated. 30% minimum of Sub-Trust C to First Nations. This cannot be reduced.</p>
                 </div>
                 <picture style="flex-shrink:0;width:120px;border-radius:12px;overflow:hidden;border:1px solid rgba(240,209,138,.15)">
                   <source srcset="../assets/cogs_fnac.webp" type="image/webp">
@@ -2208,7 +2214,7 @@
         <div class="container">
           <span class="kicker">What we're doing</span>
           <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">The strategy. The history. The working.</h2>
-          <p class="section-lead">The Foundation publishes everything that can be published, to the people it is meant for. These pages are the mechanics — the acquisition strategy, the governance pathway, the fifty-year record, and the framing principles — available to every member.</p>
+          <p class="section-lead">The Foundation publishes everything that can be published, to the people it is meant for. These pages are the mechanics: the acquisition strategy, the governance pathway, the fifty-year record, and the framing principles, available to every member.</p>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px" class="wwd-grid">
 
@@ -2217,7 +2223,7 @@
                onmouseover="this.style.borderColor='rgba(200,151,62,.55)'" onmouseout="this.style.borderColor='rgba(200,151,62,.25)'">
               <span style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2)">Strategy</span>
               <span style="font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);line-height:1.3">Dual Poor ESG Target Acquisition Strategy</span>
-              <span style="font-size:.81rem;color:var(--muted);line-height:1.6">Santos (STO) &amp; Origin (ORG) — the acquisition plan, ESG improvement objectives, and FNAC pathway. v1.1, issued 30 April 2026.</span>
+              <span style="font-size:.81rem;color:var(--muted);line-height:1.6">Santos (STO) &amp; Origin (ORG): the acquisition plan, ESG improvement objectives, and FNAC pathway. v1.1, issued 30 April 2026.</span>
             </a>
 
             <a href="/governance/fnac-review/" target="_blank"
@@ -2233,7 +2239,7 @@
                onmouseover="this.style.borderColor='rgba(200,151,62,.55)'" onmouseout="this.style.borderColor='rgba(200,151,62,.25)'">
               <span style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2)">The public record</span>
               <span style="font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);line-height:1.3">The Fifty Years</span>
-              <span style="font-size:.81rem;color:var(--muted);line-height:1.6">Five PMs. Three Premiers. Five decades of defeated attempts to capture the community's share of Australian resource value — and why this instrument is different.</span>
+              <span style="font-size:.81rem;color:var(--muted);line-height:1.6">Five PMs. Three Premiers. Five decades of defeated attempts to capture the community's share of Australian resource value : why this instrument is different.</span>
             </a>
 
             <a href="/principles/" target="_blank"
@@ -2241,13 +2247,13 @@
                onmouseover="this.style.borderColor='rgba(200,151,62,.55)'" onmouseout="this.style.borderColor='rgba(200,151,62,.25)'">
               <span style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2)">Foundation doctrine</span>
               <span style="font-family:var(--serif);font-size:1rem;font-weight:500;color:var(--gold-1);line-height:1.3">Framing Principles</span>
-              <span style="font-size:.81rem;color:var(--muted);line-height:1.6">Civic Synergy, Community Cohesion, and Australian Community Fellowship — the three principles that explain what this instrument is and why it works where others have failed.</span>
+              <span style="font-size:.81rem;color:var(--muted);line-height:1.6">Civic Synergy, Community Cohesion, and Australian Community Fellowship: the three principles that explain what this instrument is and why it works where others have failed.</span>
             </a>
 
           </div>
 
           <p style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-top:18px">
-            Members also have access to the <a href="/fair-say-relay/" style="color:var(--gold-2);text-decoration:none">Fair Say Relay briefing</a> — the campaign working documents, caption family, and response protocol, published to members before they drop publicly.
+            Members also have access to the <a href="/fair-say-relay/" style="color:var(--gold-2);text-decoration:none">Fair Say Relay briefing</a> : campaign working documents, caption family, and response protocol, published to members before they drop publicly.
           </p>
         </div>
       </section>
@@ -2262,8 +2268,8 @@
         <div class="container">
           <span class="kicker">Foundation library</span>
           <h2 style="font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.3rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">Governing documents &amp; Foundation papers.</h2>
-          <p class="section-lead">Every instrument that creates, governs, and protects the Foundation is available to every Partner. Nothing is hidden. The trust deed, source code, financials, and governance proposals are open. Read them, critique them, or propose improvements — that is the point.</p>
-          <p style="font-size:.86rem;color:var(--muted);line-height:1.7;margin-bottom:26px;max-width:62ch">All documents that shape the Foundation structure — trust declarations/deeds, blockchain  and technical specifications, the narrative paper — and more - available here for Member reference.</p>
+          <p class="section-lead">Every instrument that creates, governs, and protects the Foundation is available to every Partner. Nothing is hidden. The trust deed, source code, financials, and governance proposals are open. Read them, critique them, or propose improvements. That is the point.</p>
+          <p style="font-size:.86rem;color:var(--muted);line-height:1.7;margin-bottom:26px;max-width:62ch">All documents that shape the Foundation structure: trust declarations, deeds, blockchain and technical specifications, the narrative paper, and more, available here for Member reference.</p>
 
           <div class="lib-grid">
 
@@ -2271,7 +2277,7 @@
               <div class="lib-ico lib-ico-pdf">◈</div>
               <div class="lib-copy">
                 <div class="lib-title">CJVM Joint Venture Agreement</div>
-                <div class="lib-desc">The Supreme Governing Agreement of the Joint Venture Members. The highest instrument in the COG$ document stack — all other documents are subordinate to this Agreement.</div>
+                <div class="lib-desc">The Supreme Governing Agreement of the Joint Venture Members. The highest instrument in the COG$ document stack. All other documents are subordinate to this Agreement.</div>
                 <span class="lib-badge lib-badge-pdf">PDF · Download</span>
               </div>
             </div>
@@ -2280,7 +2286,7 @@
               <div class="lib-ico lib-ico-pdf">📄</div>
               <div class="lib-copy">
                 <div class="lib-title">Black &amp; White Paper</div>
-                <div class="lib-desc">The foundational narrative paper — a public constitutional statement and formal white paper for the COG$ of Australia Foundation.</div>
+                <div class="lib-desc">The foundational narrative paper: a public constitutional statement and formal white paper for the COG$ of Australia Foundation.</div>
                 <span class="lib-badge lib-badge-pdf">PDF · Download</span>
               </div>
             </div>
@@ -2289,7 +2295,7 @@
               <div class="lib-ico lib-ico-doc">⚖</div>
               <div class="lib-copy">
                 <div class="lib-title">COGS Hybrid Trust Declaration</div>
-                <div class="lib-desc">The master trust declaration governing the CJVM Hybrid Trust structure — defines all unit classes, entrenched provisions, issuance conditions, and trustee obligations.</div>
+                <div class="lib-desc">The master trust declaration governing the CJVM Hybrid Trust structure. Defines all unit classes, entrenched provisions, issuance conditions, and trustee obligations.</div>
                 <span class="lib-badge lib-badge-docx">DOCX · Download</span>
               </div>
             </div>
@@ -2297,8 +2303,8 @@
             <div class="lib-item" onclick="downloadDoc('COGS_SubTrustA.pdf')">
               <div class="lib-ico lib-ico-doc">◇</div>
               <div class="lib-copy">
-                <div class="lib-title">Sub-Trust A — Members Asset Pool Deed</div>
-                <div class="lib-desc">Governs the Members Asset Pool — the permanent, collectively owned pool of ASX shares and Real World Assets held on the CHESS Register. It can never be sold.</div>
+                <div class="lib-title">Sub-Trust A: Members Asset Pool Deed</div>
+                <div class="lib-desc">Governs the Members Asset Pool: the permanent, collectively owned pool of ASX shares and Real World Assets held on the CHESS Register. It can never be sold.</div>
                 <span class="lib-badge lib-badge-pdf">PDF · Download</span>
               </div>
             </div>
@@ -2306,8 +2312,8 @@
             <div class="lib-item" onclick="downloadDoc('COGS_SubTrustB.pdf')">
               <div class="lib-ico lib-ico-doc">◇</div>
               <div class="lib-copy">
-                <div class="lib-title">Sub-Trust B — Dividend Distribution Deed</div>
-                <div class="lib-desc">Governs mandatory dividend distribution to all Beneficial Unit holders within 60 days of receipt. Non-discretionary — the Trustee has no power to withhold or delay.</div>
+                <div class="lib-title">Sub-Trust B: Dividend Distribution Deed</div>
+                <div class="lib-desc">Governs mandatory dividend distribution to all Beneficial Unit holders within 60 days of receipt. Non-discretionary. The Trustee has no power to withhold or delay.</div>
                 <span class="lib-badge lib-badge-pdf">PDF · Download</span>
               </div>
             </div>
@@ -2315,8 +2321,8 @@
             <div class="lib-item" onclick="downloadDoc('COGS_SubTrustC.pdf')">
               <div class="lib-ico lib-ico-doc">♡</div>
               <div class="lib-copy">
-                <div class="lib-title">Sub-Trust C — Community Projects Deed</div>
-                <div class="lib-desc">Governs the community projects fund — funded by Donation COG$ and Sub-Trust B distributions. Supports First Nations programs, environmental stewardship, and community initiatives.</div>
+                <div class="lib-title">Sub-Trust C: Community Projects Deed</div>
+                <div class="lib-desc">Governs the community projects fund, funded by Donation COG$ and Sub-Trust B distributions. Supports First Nations programs, environmental stewardship, and community initiatives.</div>
                 <span class="lib-badge lib-badge-pdf">PDF · Download</span>
               </div>
             </div>
@@ -2334,7 +2340,7 @@
 
           <div class="info-box" style="margin-top:16px">
             <strong>Document access</strong>
-            All documents are provided for Member reference. These are governing and specification documents — they define the legal structure, trust deeds, and technical architecture that underpin COG$ of Australia Foundation.
+            All documents are provided for Member reference. These are governing and specification documents: they define the legal structure, trust deeds, and technical architecture that underpin COG$ of Australia Foundation.
           </div>
         </div>
       </section>
@@ -2361,7 +2367,7 @@
       <p class="pay-intercept-body">Your <strong style="color:var(--gold-1)">$4 membership contribution</strong> is required to activate your Membership and open your vault. It takes less than a minute via Stripe.</p>
       <div class="pay-intercept-stripe" id="pay-intercept-stripe-container"></div>
       <div class="pay-intercept-links">
-        <button type="button" class="pay-check-link" onclick="checkPaymentAndProceed()">I've already paid — check my status</button>
+        <button type="button" class="pay-check-link" onclick="checkPaymentAndProceed()">I've already paid. Check my status.</button>
         <button type="button" class="pay-anyway-link" onclick="proceedToVaultAnyway()">Continue to vault anyway →</button>
       </div>
     </div>
@@ -2523,6 +2529,53 @@ function flash(id,msg,kind){
   el.className='flash '+(kind||'');
 }
 
+/* ── Account dropdown ── */
+function toggleAccountMenu(){
+  var dd = document.getElementById('account-menu-dropdown');
+  if(!dd) return;
+  var open = dd.style.display !== 'none';
+  dd.style.display = open ? 'none' : 'block';
+}
+document.addEventListener('click', function(e){
+  var btn = document.getElementById('account-menu-btn');
+  var dd  = document.getElementById('account-menu-dropdown');
+  if(!dd || !btn) return;
+  if(!btn.contains(e.target) && !dd.contains(e.target)){
+    dd.style.display = 'none';
+  }
+});
+
+/* ── Hero button reorder by payment status ── */
+function reorderHeroButtons(paymentStatus){
+  var pair = document.querySelector('.hero-pill-pair');
+  if(!pair) return;
+  var btns = Array.from(pair.children);
+  if(btns.length < 4) return;
+  var vault  = document.getElementById('hero-vault-btn');
+  var hub    = btns.find(function(b){ return b !== vault && b.href && b.href.indexOf('mainspring') !== -1; });
+  var voice  = btns.find(function(b){ return b !== vault && b.href && b.href.indexOf('voice-welcome') !== -1; });
+  var invite = btns.find(function(b){ return b !== vault && b !== hub && b !== voice; });
+  var order = (paymentStatus === 'unpaid')
+    ? [vault, hub, invite, voice]
+    : [vault, hub, invite, voice];
+  if(paymentStatus === 'unpaid'){
+    var payBtn = document.createElement('a');
+    payBtn.href = '#';
+    payBtn.className = 'vault-btn-primary vault-btn-hero visible';
+    payBtn.setAttribute('onclick', 'handleVaultEntry(event);return false;');
+    payBtn.style.cssText = 'display:inline-flex;border-color:rgba(200,112,32,.7);background:linear-gradient(135deg,rgba(200,112,32,.18),rgba(160,72,12,.12))';
+    payBtn.innerHTML = '<span style="font-size:1.4rem;flex-shrink:0;width:42px;text-align:center">💳</span><span><span style="display:block;font-size:1rem;font-weight:800;letter-spacing:.01em;color:#f0c070">Pay $4 — your membership is waiting</span><span style="display:block;font-size:.82rem;font-weight:500;opacity:.75;margin-top:2px;letter-spacing:.01em">Tap to complete your joining payment. ›</span></span>';
+    order = [payBtn, vault, hub, invite];
+  }
+  while(pair.firstChild) pair.removeChild(pair.firstChild);
+  order.forEach(function(el){ if(el){ el.classList.add('visible'); pair.appendChild(el); } });
+  var first = pair.firstElementChild;
+  if(first){
+    first.style.borderColor = 'var(--gold-1)';
+    first.style.background = 'rgba(232,184,75,.08)';
+  }
+}
+
 /* ── Enter community ── */
 function enterCommunity(data){
   document.getElementById('auth-gate').style.display='none';
@@ -2536,6 +2589,11 @@ function enterCommunity(data){
     var num = data.member_number||'';
     mnDisplay.textContent = num ? num.replace(/(.{4})(?=.)/g,'$1 ') : '';
   }
+  // Populate account topbar
+  var acName = document.getElementById('account-bar-name');
+  if(acName) acName.textContent = data.full_name || first || '';
+  var acNum = document.getElementById('account-bar-number');
+  if(acNum && data.member_number) acNum.textContent = data.member_number.replace(/(.{4})(?=.)/g,'$1 ');
   // Populate identity card header member number
   var hubMn = document.getElementById('hub-id-member-number');
   if(hubMn && data.member_number) hubMn.textContent = data.member_number.replace(/(.{4})(?=.)/g,'$1 ');
@@ -2593,6 +2651,8 @@ function enterCommunity(data){
   if(typeof window.setStickyPayDue === 'function'){
     window.setStickyPayDue(_snftDue || _secDue, _dueLabel || 'Payment due');
   }
+
+  reorderHeroButtons(paymentStatus);
 
   // ── Fire cogsDataReady for milestone + next-step update ──
   var _jvpaStatus = (window._communityData && window._communityData.jvpa_acceptance) || {};
@@ -2981,11 +3041,17 @@ setTimeout(dismissSplash, 4000);
     if(prefillParams.get('welcome') !== '1'){
       try {
         var savedIdentity = JSON.parse(localStorage.getItem('cogs_login_identity')||'{}');
-        var loginMobile = document.querySelector('#f-login input[name="mobile"]');
-        var loginEmail  = document.querySelector('#f-login input[name="email"]');
-        if(loginMobile && savedIdentity.mobile) loginMobile.value = savedIdentity.mobile;
-        if(loginEmail  && savedIdentity.email)  loginEmail.value  = savedIdentity.email;
+        var loginIdentity = document.querySelector('#f-login input[name="login_identity"]');
+        if(loginIdentity && (savedIdentity.mobile||savedIdentity.email)){
+          loginIdentity.value = savedIdentity.mobile || savedIdentity.email;
+        }
       } catch(ex){}
+    }
+
+    // ── Voice token handoff — ?vt= link lands on setup panel ──
+    var vtParams = new URLSearchParams(window.location.search);
+    if(vtParams.get('vt') && !vtParams.get('welcome')) {
+      showPanel('ap-setup');
     }
 
     // ── Welcome handoff from join form ──
@@ -3048,8 +3114,12 @@ document.getElementById('f-login')?.addEventListener('submit', async function(e)
   flash('login-fl','');
   try{
     var fd = Object.fromEntries(new FormData(e.target));
-    _loginCreds = {role: fd.role, mobile: fd.mobile||'', email: fd.email||'', password: fd.password||''};
-    var d = await api('auth/login',{method:'POST',body:JSON.stringify(fd)});
+    var val = (fd.login_identity||'').trim();
+    var isEmail = val.includes('@');
+    var loginBody = {role: fd.role, password: fd.password||''};
+    if(isEmail){ loginBody.email = val; } else { loginBody.mobile = val; }
+    _loginCreds = {role: fd.role, mobile: isEmail ? '' : val, email: isEmail ? val : '', password: fd.password||''};
+    var d = await api('auth/login',{method:'POST',body:JSON.stringify(loginBody)});
 
     // Check if 2FA OTP is required
     if(d.otp_required){
