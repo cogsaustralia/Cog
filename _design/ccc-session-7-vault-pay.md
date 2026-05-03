@@ -73,6 +73,28 @@ Add a small text line in the footer (below the main content, above </body>):
 Style: font-size:.72rem; color:var(--text3); text-align:center; padding:16px;
 margin-top:24px; border-top:1px solid var(--border);
 
+
+## CHANGE K6-PAY — Sharper pay modal strings from k6 audit
+
+  "Complete your $4.00 membership contribution" (modal heading)
+  → "Pay your $4 to finish joining."
+
+  "Pay $4.40 by card via Stripe" (Stripe button label)
+  → "Pay $4 + 40c card fee — by Apple Pay, Google Pay, or card."
+
+  "The Trustee for the CJVM Sub-Trust A" (account name display label, NOT the actual account name)
+  Add below it: "COGS Members Fund (legal name: The Trustee for the CJVM Sub-Trust A)."
+
+  "$2.00 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream."
+  → "$2 goes to community projects. The other $2 is invested, and the income from it goes to those projects."
+
+  "Pay It Forward sponsors another Member's $4 entry who cannot afford it."
+  → "Pay $4 for someone who can't afford to join. They get the same vote as you."
+
+  "Distribution election — When dividend distributions are active (post-Expansion Day), choose how you receive your share."
+  → "How would you like to be paid later? Choose Australian dollars or new COG$. Decide closer to the date."
+  (Note: this section is being hidden per change W.1 — ensure the placeholder note uses this wording)
+
 ## VERIFICATION
 1. div balance
 2. script balance

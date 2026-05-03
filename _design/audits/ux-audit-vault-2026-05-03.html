@@ -250,6 +250,9 @@
 <dl class="toc">
   <dt>01</dt><dd><a href="#summary">Headline read &amp; reading-level snapshot</a></dd>
   <dt>02</dt><dd><a href="#priorities">Top priorities (fix-now, fix-next, fix-later)</a></dd>
+  <dt>02b</dt><dd><a href="#entrypoint">/wallets/ entry point — the redirect itself</a></dd>
+  <dt>02c</dt><dd><a href="#visual">Visual UX / UI — what the page looks like</a></dd>
+  <dt>02d</dt><dd><a href="#k6">K–6 reading-level pass — read aloud by a Year 5 child</a></dd>
   <dt>03</dt><dd><a href="#firstrun">First 60 seconds in the vault</a></dd>
   <dt>04</dt><dd><a href="#nav">Navigation, tabs &amp; information architecture</a></dd>
   <dt>05</dt><dd><a href="#overview">Overview tab</a></dd>
@@ -321,6 +324,379 @@
       </ol>
     </div>
   </div>
+</section>
+
+<!-- ─────────────── WALLETS ENTRY POINT ─────────────── -->
+<section id="entrypoint">
+  <div class="section-num">02b — /wallets/ entry point</div>
+  <h2>The "wallets index" is a 246-byte redirect. That is the finding.</h2>
+
+  <p>The URL <code>/wallets/</code> resolves to <code>wallets/index.html</code>, which is six lines of HTML containing nothing but <code>&lt;meta http-equiv="refresh" content="0;url=member.html"&gt;</code>. Anyone — bookmarked link, shared URL, returning member, search engine, screen reader — gets bounced into the Member Vault before the page renders. There is no router, no auth gate at this layer, no choice screen between member / business wallets (despite <code>wallets/business.html</code> existing as a sibling).</p>
+
+  <p>Three concrete consequences for first impressions:</p>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">2b.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Meta-refresh from <code>/wallets/</code> straight into the authenticated vault.</h3>
+        <p>A meta-refresh fires before any auth check — the user sees the vault chrome flash even when they are not logged in. On a flaky connection, screen readers announce "Redirecting…" then "Member Vault — you are entering your Member Vault" with no time to read either. The page also has <code>noindex,nofollow,noarchive</code>, so any shared <code>/wallets/</code> link is a dead end for previewers.</p>
+        <div class="ev">Source: <code>wallets/index.html</code> · 246 bytes · <code>&lt;meta http-equiv="refresh" content="0;url=member.html"&gt;</code></div>
+      </div>
+      <div class="fix"><b>Fix</b>Replace with a server-side redirect (301/302) when authenticated, and a real <i>"Pick your wallet — Member · Business"</i> chooser when not. Never rely on meta-refresh into authenticated chrome.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2b.02</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>No member/business chooser despite two distinct wallet apps existing.</h3>
+        <p><code>wallets/business.html</code> is 108 KB — a fully separate experience — but the <code>/wallets/</code> URL hard-codes the member redirect. A business member who lands on <code>/wallets/</code> gets the wrong app and has to navigate out.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Either route by user type on the server, or show a 2-card chooser at <code>/wallets/</code>: <i>"Personal account"</i> / <i>"Business account."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2b.03</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The redirect's fallback link reads "your vault."</h3>
+        <p>The visible HTML for users whose meta-refresh fails (older browsers, strict privacy modes, screen readers) is <i>"Redirecting to your vault…"</i> Same vault-vs-account language problem as the rest of the audit, in the very first thing a slow-connection user sees.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rewrite the fallback as <i>"Loading your COGS account…"</i> with a real link.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── VISUAL UX / UI PASS ─────────────── -->
+<section id="visual">
+  <div class="section-num">02c — Visual UX / UI</div>
+  <h2>What the page looks like, before you read a word of it.</h2>
+
+  <p>The previous sections audited the language. This one ignores language entirely and looks only at <i>visual signals</i> — colour, hierarchy, density, motion, weight — that fire in the first second a new member sees the page. Those signals shape "do I trust this?" before the reader even parses a sentence.</p>
+
+  <div class="reading-strip">
+    <div><b>Palette read</b>Pure-black <code>#080808</code> ground · gold <code>#e8b84b</code> accent · white text at 88% / 55% · serif italic numerals.</div>
+    <div><b>Genre signal</b>High-end crypto exchange / private banking. Bloomberg-meets-Binance. Not "community fund."</div>
+    <div><b>Mismatch</b>Cold funnel sells <i>community, $4, one equal vote.</i> Vault visually screams <i>seven-figure portfolio.</i></div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">2c.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The visual register contradicts the brand promise.</h3>
+        <p>The vault is dark mode + gold gradient + serif italic numerals + spinning coin splash + "vault" framing. Every cue is borrowed from premium-finance UI (Revolut Metal, Coinbase Pro, private banking apps). The cold funnel positioned COGS as <i>community-owned, one equal vote, $4-in.</i> When a member who paid $4 lands in a UI that visually says <i>"high-net-worth crypto holdings"</i>, the dissonance reads as either a bait-and-switch or a scam dressed up.</p>
+        <div class="ev">Evidence: <code>--bg:#080808</code>, gold-on-black gradients on every CTA, <code>vaultEntrySpin</code> coin animation on splash, serif italic for all balances at 2.2rem.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Light-mode default with restrained warm neutrals; reserve dark+gold for an opt-in "Pro" view if it must exist. Match the visual register to the funnel: warm, civic, plain. The funnel and the vault should look like the same product.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.02</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Gold is overloaded — it means everything, so it means nothing.</h3>
+        <p>Gold is used for: the brand wordmark, every primary CTA, the topbar pills on hover, all monetary balances, the splash text, the "unread" rail dot on news, the active tab underline, the kpi top-line gradients, the chip on Reservations, the action-required banner border, the kpi values, the editable input borders, the inline-edit save button, the kS-NFT row icon, the "I've sent payment" notify button. A user has no way to tell which of these gold elements is actually clickable, urgent, financial, or decorative.</p>
+        <div class="ev">17+ distinct gold treatments visible in the first viewport: <code>--gold</code>, <code>--gold-bg</code>, <code>--gold-bdr</code>, gold linear-gradients, gold pulsing dots, gold underlines.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Gold = action only (one CTA per region, max). Use neutral surface treatments for status, brand, balances. Status colours should be functional (green=ok, amber=attention, red=problem), not decorative gold.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.03</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The splash animation is the loudest motion on the page and runs every visit.</h3>
+        <p>A coin spins for ~1.6 seconds with a 0–360° Y-axis rotate, drop-shadow glow, then fade-in lines reading <i>"Member Vault — You are entering your Member Vault."</i> Every page load. The animation is heavy on the senses, makes the product feel ceremonial, and delays first interaction. For a returning user opening the app for the 50th time, it is a tax. For a new user, it sets a tone the rest of the product cannot live up to.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Show splash once (first ever load), then never again — or replace with a 200ms fade. Treat the vault like an app, not a temple.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.04</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Serif italic numerals at 2.2rem make every balance look like fine-print prose.</h3>
+        <p>Balances use the Cormorant Garamond serif at 2.2rem, italic-leaning, gold-on-black, with negative letter-spacing. Numbers in financial UIs should be tabular monospace or geometric sans so digits line up and scan fast. The current treatment optimises for "elegant magazine spread," not for "is my balance correct." It also makes <code>—</code> (loading state) and <code>0</code> visually similar at a glance.</p>
+        <div class="ev"><code>.kpi-val</code>, <code>.tr-amt</code>, <code>#xch-balance-val</code>, <code>#give-hero-val</code> all use serif weight 500 with letter-spacing -.02em.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Tabular-figures sans-serif for all numbers (<code>font-variant-numeric: tabular-nums</code>). Reserve the serif for headings and editorial copy, not balances.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.05</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Hover-translateY(-2px) on six different elements creates a jittery first interaction.</h3>
+        <p>Every primary button, every topbar pill, every tab, every tour pill, every inline-edit, every "send payment" notify button lifts on hover with a 2px translate plus a 6px gold shadow. Mousing across the topbar makes the entire row of pills bob in sequence. It reads as theme-park, not as a bank.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Remove the translateY across the board. Restrict hover state to colour/border change. Save motion for genuinely interactive transitions (panel open, modal slide).</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.06</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Topbar wastes its real estate on three icon-pills before the page identifies itself.</h3>
+        <p>Top of the screen, left to right: small coin logo, the words "Member Vault" in gold serif, the user's name, the user's member number in monospace, then ⚙ Profile / 🏠 Members Hub / ↩ Log out. A new member sees no entity name, no ABN, no support contact, no "what is this product." The most prominent actions in the topbar are <i>leave</i> (Members Hub) and <i>log out</i>.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Topbar left: full entity name + ABN microcopy. Topbar right: a single "Account" menu containing profile, settings, support, log-out. Reduce to a single dropdown.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.07</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Three competing top-level nav surfaces stack within 100px of vertical space.</h3>
+        <p>From the top: (1) topbar with brand and pills, (2) tab nav fixed below it with 7 horizontal tabs, (3) inside Overview, a "section divider" that styles like another tab strip ("Community COG$", "COG$ Reservations", "Management Hubs"). Each looks navigable. The tab nav and the in-page section dividers are visually almost identical (gold underline, uppercase tracking, same height). A new user cannot tell whether scrolling moves them through Overview content or whether they need to click another tab.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Differentiate the section dividers with completely different styling — left-aligned serif headlines at 1.4rem, no underline, no gold. Tab nav and section headers should not look like siblings.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.08</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The "Action required" governance banner uses the same gold-on-navy treatment as a high-stakes financial alert.</h3>
+        <p>The banner asking for street/suburb/state/DOB sits at the top of Overview in <code>linear-gradient(135deg,#1a1a2e,#16213e)</code> with a gold border and an amber CTA. This treatment is reserved in most financial UIs for <i>"unauthorized transaction detected"</i> or <i>"verify identity to prevent account closure."</i> Using it for a profile-completion ask creates manufactured urgency around a low-stakes task.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Demote to a calm light card with a neutral border. No urgency styling. Place inside a profile setup checklist, not floating at the top of Overview.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.09</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Body text is locked at <code>1.02rem</code> across almost every element.</h3>
+        <p>Card subtitles, table descriptions, inline notes, footer chips, button labels, tooltips, form labels, helper microcopy — almost all sit at 1.02rem. There is no visual hierarchy between "this is a major instruction" and "this is a 0.78em footnote." The page reads as a wall of equally-weighted small text broken only by serif balance numerals.</p>
+        <div class="ev">26 occurrences of <code>font-size:1.02rem</code> across the stylesheet.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Build a 4-step type scale: 13/15/18/24px. Use one and only one size per role. Body 15, helper 13, section title 18, card hero 24.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.10</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Chip soup: 8+ chip variants, no system.</h3>
+        <p>Chips for status (paid/unpaid), chip for "Released after Expansion Day", chip for unread news count, chip for tab badge, chip for invite count, chip for governance "Action required," chip for "No fees" / "$0.40 fee," chip for "Class C" type identifiers. Each is its own colour pairing — gold/amber/blue/green/dim — with overlapping semantics. A new user cannot decode <i>"is this colour telling me good, bad, or neutral?"</i></p>
+      </div>
+      <div class="fix"><b>Fix</b>Three chip families only: <i>status</i> (green/amber/red), <i>category</i> (one neutral grey), <i>numeric badge</i> (one accent). Document and enforce.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.11</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The KPI cards have a 1px gold gradient line at the top of every tile.</h3>
+        <p>It is decorative — it carries no meaning, no state, no CTA. Combined with the gold balance number inside, the gold border on the parent card, and the gold tab underline above, the page becomes a stack of horizontal gold lines competing for attention.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Remove. If a "premium feel" is desired, do it through type and spacing, not decorative borders.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.12</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The "Independence Vault" / "Cryptographic DB · Active" footer chip is decorative chrome that sets off alarms.</h3>
+        <p>It sits in the sidebar foot, flanked by a green dot and the date <i>"Foundation Day 14 May 2026."</i> Pure cosmetic — but it is the only piece of dynamic-looking signal in the rail. Users will read it as "this is the system status I should monitor." If the underlying DB is Postgres, calling it "Cryptographic DB" in user-facing UI is unwise.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Remove. Or replace with <i>"All systems normal"</i> linking to a real status page.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.13</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Empty / loading states show <code>—</code> everywhere instead of meaningful zero-state.</h3>
+        <p>Community COG$ balance, reservations, kids count, give hero, exchange address — all show <code>—</code> until JS resolves. A new member with $0 of CC and no reservations sees a page full of dashes that look like errors.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use real zero states: <i>"You don't have any Community COG$ yet — you can earn or buy them after Foundation Day."</i> Skeleton shimmers (already partly implemented) for genuine loading.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.14</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"i" / "?" tooltip buttons are the same size as text, and there are 22 of them in the first viewport.</h3>
+        <p>Tooltips at the same visual weight as the heading they sit beside create constant visual noise — the eye tracks each one. They also signal <i>"this product is too complex to explain inline."</i></p>
+      </div>
+      <div class="fix"><b>Fix</b>Inline the explanation in body copy. Keep "?" only for second-level legal text. When used, render as a 12px neutral icon, not a 1.02rem button.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">2c.15</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>The brand wordmark uses the dollar sign in "COG$".</h3>
+        <p>It is on-brand for the project but visually screams crypto-token-ticker. In a vault that asks for $4 of community money, the dollar-sign-as-letter-S reinforces the trading-platform misread. Use "COGS" in the topbar wordmark; reserve "COG$" for the token unit name.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Topbar wordmark: <i>COGS</i>. Token references in body copy: <i>COG$</i>. Different roles, different glyphs.</div>
+    </div>
+
+  </div>
+
+  <p style="margin-top:24px"><i>If a new member screenshots this page and sends it to a friend, the friend's first guess is "is this a crypto exchange?" or "is this a private bank?" — never "is this a community fund I should join?" That is the visual gap to close.</i></p>
+</section>
+
+<!-- ─────────────── K-6 READING PASS ─────────────── -->
+<section id="k6">
+  <div class="section-num">02d — K–6 reading-level pass</div>
+  <h2>Read aloud by a Year 5 child. Here is what works and what doesn't.</h2>
+
+  <p>The audit's target is a Year 5–6 (age 10–12) reading level, the Australian average for adult web copy. Below: every literal string a brand-new member encounters in the first viewport, scored on whether a Year-5 child reading it aloud would understand what the page wants them to do.</p>
+
+  <div class="reading-strip">
+    <div><b>Method</b>Strings copied verbatim from <code>wallets/member.html</code>. Scored against Hemingway / Flesch–Kincaid grade and "could a 10-year-old say what this means in their own words."</div>
+    <div><b>Result</b>27 of the 32 strings tested fail. Most fail on undefined nouns (<i>vault, soulbound, sub-trust, NFT, distribution, reservation</i>) not on sentence length.</div>
+    <div><b>Headline</b>The vault uses ~26 specialist terms in the first 800px. A Year 5 child can read the words. They cannot do the things the words ask.</div>
+  </div>
+
+  <div class="translate">
+    <div class="tr-row hd"><div>Verbatim string on the page</div><div>K–6 rewrite (≤ Year 5)</div></div>
+
+    <div class="tr-row">
+      <div>"You are entering your Member Vault"</div>
+      <div>"Welcome to your COGS account."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Member Vault — COG$ of Australia Foundation"</div>
+      <div>"Your COGS account · COGS of Australia."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Cryptographic DB · Active"</div>
+      <div>(remove — a child cannot say what this is for, and neither can most adults)</div>
+    </div>
+    <div class="tr-row">
+      <div>"Foundation Day 14 May 2026"</div>
+      <div>"First COGS vote — 14 May 2026."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Action required — Complete your governance record to vote on 14 May"</div>
+      <div>"To vote on 14 May, we need to check you live in Australia. Add your address and birthday."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Class C · Transferable now · Live exchange"</div>
+      <div>"You can send these to other members today."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Class S · Soulbound · One equal national governance vote"</div>
+      <div>"This gives you 1 equal vote in Australia. You can't sell it."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Class kS · Guardian-held soulbound token · converts to Class S on child's 18th birthday"</div>
+      <div>"You hold this for your child. On their 18th birthday it becomes their own vote."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Class Lr · Address-bound · Admin-activated via GNAF zone verification"</div>
+      <div>"Given to people who live in an area where COGS is helping. We use the address on your profile to check."</div>
+    </div>
+    <div class="tr-row">
+      <div>"COG$ Reservations — No Obligation"</div>
+      <div>"Future COG$ — your interest list (no money, no commitment)."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Released after Expansion Day"</div>
+      <div>"Becomes real once COGS is approved by ASIC. We'll email you."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Initiate a Members Poll"</div>
+      <div>"Start a vote."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Threshold: lesser of 10 Members or 1% of active Members"</div>
+      <div>"You'll need 10 other members to back your vote before it goes live."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Responses are cryptographically receipted. Tallies show counts only — your identity and choice are never exposed."</div>
+      <div>"Each vote gets a one-way receipt. The total never shows who voted for what."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Donation COG$ funds Sub-Trust C — First Nations programs, environmental stewardship, and community initiatives."</div>
+      <div>"Donation COG$ pay for First Nations programs, the environment, and community work."</div>
+    </div>
+    <div class="tr-row">
+      <div>"$2.00 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream."</div>
+      <div>"$2 goes straight to community projects. The other $2 is invested, and the income from it goes to those projects forever."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Pay It Forward sponsors another Member's $4 entry who cannot afford it."</div>
+      <div>"Pay $4 for someone who can't afford to join. They get the same vote as you."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Your Community COG$ receive address"</div>
+      <div>"Your address — share this with friends so they can send you Community COG$."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Enter the recipient's Community COG$ hash address (COGS-CC-...) and the amount to transfer."</div>
+      <div>"Type the member's number, or paste their Community COG$ address."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Only Community COG$ can move Member-to-Member before Expansion Day."</div>
+      <div>"Right now, only Community COG$ can be sent to other members."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Distribution election — When dividend distributions are active (post-Expansion Day), choose how you receive your share."</div>
+      <div>"How would you like to be paid later? You can choose by Australian dollars or new COG$. (Decide closer to the date.)"</div>
+    </div>
+    <div class="tr-row">
+      <div>"Mainspring Hub — Governance, acquisitions, first nations, community projects, and more"</div>
+      <div>"Community work — projects, acquisitions, partnerships."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Mobile and address changes are reviewed by the Foundation team — they are used for identity verification and cannot be self-served."</div>
+      <div>"To change your phone or address, send us a request. We check it by hand to keep your account safe."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Complete your $4.00 membership contribution"</div>
+      <div>"Pay your $4 to finish joining."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Pay $4.40 by card via Stripe"</div>
+      <div>"Pay $4 + 40c card fee — by Apple Pay, Google Pay, or card."</div>
+    </div>
+    <div class="tr-row">
+      <div>"The Trustee for the CJVM Sub-Trust A"</div>
+      <div>"COGS Members Fund (legal name: The Trustee for the CJVM Sub-Trust A)."</div>
+    </div>
+    <div class="tr-row">
+      <div>"I've sent this payment →"</div>
+      <div>"I've sent it. Tell me when it arrives."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Member action log — Every action against your Membership — read-only and unalterable."</div>
+      <div>"Your history. Everything you've done in your account, in order. Can't be changed."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Voting integrity"</div>
+      <div>"How we keep votes honest."</div>
+    </div>
+    <div class="tr-row">
+      <div>"COG$ Management — Proposals & Polls"</div>
+      <div>"Polls — start a vote, or vote on others."</div>
+    </div>
+    <div class="tr-row">
+      <div>"Independence Vault"</div>
+      <div>"Your COGS account."</div>
+    </div>
+    <div class="tr-row">
+      <div>"All-time community contribution"</div>
+      <div>"What you've given so far."</div>
+    </div>
+  </div>
+
+  <p style="margin-top:18px"><b>Three rules of thumb for every new string written for the vault:</b></p>
+  <ol style="margin:8px 0 0 22px; font-size:14px; color:var(--ink-2); line-height:1.7">
+    <li><b>Verb first, noun second.</b> "Pay $4 to finish joining" beats "Complete your membership contribution."</li>
+    <li><b>If the word ends in <i>-ation</i>, <i>-ity</i>, or <i>-ance</i>, replace it.</b> Distribution → payment. Integrity → honest. Governance → voting.</li>
+    <li><b>If a 10-year-old needs a tooltip to read the headline, the headline is wrong.</b> Move the explanation up; remove the tooltip.</li>
+  </ol>
 </section>
 
 <!-- ─────────────── FIRST 60 SECONDS ─────────────── -->
@@ -870,7 +1246,7 @@
 
 <footer class="doc-ft">
   <div>COGS · Member Vault audit · plain-English pass · companion to <code>audit.html</code></div>
-  <div>Findings: 36 · Critical: 9 · High: 13 · Medium: 11 · Nits: 3</div>
+  <div>Findings: 54 · Critical: 12 · High: 20 · Medium: 18 · Nits: 4</div>
 </footer>
 
 </div>
