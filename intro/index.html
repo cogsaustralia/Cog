@@ -486,7 +486,7 @@
   <!-- Top bar -->
   <div id="top-bar">
     <a class="wordmark" id="wordmark-home" href="/" aria-label="COG$ of Australia — go to home page">COG$</a>
-    <span id="step-label">1 of 5</span>
+    <span id="step-label" aria-live="polite" aria-label="Step 1 of 5">1 of 5</span>
     <button id="questions-btn" aria-label="Read the Skeptic's Guide before joining">Questions first →</button>
     <button id="skip-btn" aria-label="Skip introduction">Skip intro →</button>
     <div id="progress-track"><div id="progress-fill"></div></div>
@@ -501,9 +501,6 @@
     </div>
   </div>
 
-  <!-- Trust anchor strip -->
-  <div id="trust-anchor" aria-hidden="true">COG$ of Australia Foundation · ABN 91 341 497 529 · Drake Village NSW</div>
-
   <!-- Card stage -->
   <div id="card-stage" aria-live="polite" aria-atomic="true">
 
@@ -512,8 +509,8 @@
       <div class="card-inner">
         <!-- Inviter strip -->
         <div id="intro-inviter-strip" style="background:rgba(82,184,122,.08);border:1px solid rgba(82,184,122,.28);border-radius:10px;padding:9px 14px;margin-bottom:14px;font-size:.82rem;color:#8ddcb0;display:none;align-items:center;gap:10px">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(82,184,122,.18);border:1px solid rgba(82,184,122,.35);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#52b87a;flex-shrink:0" id="intro-inviter-avatar"></div>
-          <span id="intro-inviter-text"></span>
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(82,184,122,.18);border:1px solid rgba(82,184,122,.35);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#52b87a;flex-shrink:0" id="intro-inviter-avatar">A</div>
+          <span id="intro-inviter-text">A member sent you this link.</span>
         </div>
         
         <!-- Foundation Day countdown chip -->
@@ -695,6 +692,9 @@
 
 </div><!-- /intro-wrap -->
 
+<!-- Trust anchor -->
+<div id="trust-anchor" aria-hidden="true" style="text-align:center;font-size:.62rem;letter-spacing:.07em;color:rgba(240,225,196,.32);padding:4px 20px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">COG$ of Australia Foundation &middot; ABN 91 341 497 529 &middot; Drake Village NSW</div>
+
 <script>
 // ═══════════════════════════════════════════════════
 //  COG$ INTRO — onboarding sequence
@@ -769,6 +769,7 @@
 
     // Step label
     stepLbl.textContent = (idx + 1) + ' of ' + TOTAL;
+    stepLbl.setAttribute('aria-label', 'Step ' + (idx + 1) + ' of ' + TOTAL);
 
     // Dots (aria)
     dots.forEach(function (d, i) {
@@ -845,11 +846,10 @@
     window.location.href = destination();
   }
 
-  // ── 8. Skip ──
+  // ── 8. Skip — go to Card 5 instead of leaving ──
   function skip() {
     try { if (window.__cogsTrack) window.__cogsTrack('intro_skipped'); } catch(_) {}
-    try { localStorage.setItem('cogs_intro_seen', '1'); } catch (e) {}
-    window.location.href = destination();
+    goTo(TOTAL - 1, 'forward');
   }
 
   // ── 9. Listeners ──
@@ -912,8 +912,10 @@
     activeCode = sessionStorage.getItem('cogs_intro_code');
   } catch(e) {}
   
-  // Inviter strip logic
+  // Inviter strip: show immediately with placeholder if code present, update with real name on API resolve
   if (activeCode) {
+    var strip = document.getElementById('intro-inviter-strip');
+    if (strip) strip.style.display = 'flex';
     fetch('/_app/api/index.php?route=invitations/validate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
