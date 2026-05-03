@@ -3717,7 +3717,7 @@ el('f-login')?.addEventListener('submit', async function(e){
     openVault(v);
   }catch(err){
     flash('login-fl', err.message||'Login failed.','err');
-    btn.disabled=false; btn.textContent='Enter Member Vault';
+    btn.disabled=false; btn.textContent='Open your account';
   }
 });
 
@@ -4771,7 +4771,7 @@ function renderTabOverview(d){
   if(_pr2) _pr2.textContent = _refCode2 || 'Your reference code';
 
   /* ── B: Business pill + Tour pill ── */
-  var tourPill = '<button class="tour-pill-inline btn btn-ghost btn-sm" onclick="startWalletTour()" style="display:inline-flex;align-items:center;gap:6px">🧭 Member Vault Tour</button>';
+  var tourPill = '<button class="tour-pill-inline btn btn-ghost btn-sm" onclick="startWalletTour()" style="display:inline-flex;align-items:center;gap:6px">🧭 Account Tour</button>';
   // Always show the tour pill immediately — business pill added once API responds
   var bpill = document.getElementById('ov-business-pill');
   if(bpill){
@@ -5650,7 +5650,7 @@ function renderParticipationPathways(d){
     '<div class="ov-path ov-path-mainspring" data-pathway-key="__mainspring__" onclick="openPathway(this.dataset.pathwayKey)" title="Mainspring Hub — all 9 management hubs at a glance">' +
     '<div class="ov-path-top">' +
     '<span style="font-size:.85rem;line-height:1;flex-shrink:0">⬡</span>' +
-    '<span class="ov-path-name" style="color:var(--gold)">Mainspring</span>' +
+    '<span class="ov-path-name" style="color:var(--gold)">Community work</span>' +
     '</div>' +
     '<div class="ov-path-sub" style="color:var(--text3)">All hubs</div>' +
     '</div>';
@@ -5686,7 +5686,7 @@ function renderParticipationPathways(d){
 function openPathway(key){
   // Mainspring special key
   if(key === '__mainspring__'){
-    coinTransition('../hubs/mainspring/', 'Opening Mainspring Hub');
+    coinTransition('../hubs/mainspring/', 'Opening Community work');
     return;
   }
   // Navigate to the management hub page for this area key
