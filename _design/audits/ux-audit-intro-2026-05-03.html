@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COGS /intro/ — UX Audit (Warm Traffic, K-6 pass)</title>
+<style>
+  :root{
+    --paper:#faf7f2;
+    --ink:#171513;
+    --ink-2:#3a342e;
+    --ink-3:#6b6157;
+    --rule:#e6dfd4;
+    --rule-2:#d6cdbf;
+    --warm:#f4eee2;
+    --hi: oklch(0.62 0.14 38);
+    --hi-soft: oklch(0.94 0.04 38);
+    --crit: oklch(0.55 0.16 28);
+    --crit-soft: oklch(0.94 0.05 28);
+    --ok: oklch(0.55 0.10 145);
+    --ok-soft: oklch(0.94 0.04 145);
+    --warmth: oklch(0.62 0.13 145);
+    --warmth-soft: oklch(0.95 0.05 145);
+    --serif: ui-serif, "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:15.5px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:64px 32px 96px}
+  header.doc-hd{
+    border-bottom:1px solid var(--rule);
+    padding-bottom:28px; margin-bottom:40px;
+    display:grid; grid-template-columns:1fr auto; gap:24px; align-items:end;
+  }
+  .doc-mark{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3);
+  }
+  h1{
+    font-family:var(--serif); font-weight:500; font-style:italic;
+    font-size:38px; line-height:1.1; letter-spacing:-.01em;
+    margin-top:8px; max-width:18ch;
+  }
+  .doc-meta{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    text-align:right; line-height:1.7;
+  }
+  .doc-meta b{color:var(--ink); font-weight:500}
+  .lede{
+    font-size:17px; line-height:1.6; color:var(--ink-2);
+    max-width:64ch; margin-top:24px;
+  }
+  .lede + .lede{margin-top:14px}
+  .toc{
+    background:var(--warm); border:1px solid var(--rule-2);
+    padding:18px 22px; margin:36px 0 48px;
+    display:grid; grid-template-columns:auto 1fr; gap:12px 22px;
+    font-size:13.5px;
+  }
+  .toc dt{
+    font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); padding-top:1px;
+  }
+  .toc dd a{color:var(--ink); text-decoration:none; border-bottom:1px solid var(--rule-2)}
+  .toc dd a:hover{border-bottom-color:var(--ink)}
+
+  section{margin:56px 0}
+  .section-num{
+    font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:8px;
+  }
+  h2{
+    font-family:var(--serif); font-weight:500;
+    font-size:26px; line-height:1.2; letter-spacing:-.005em;
+    margin-bottom:18px; padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+  }
+  h3{
+    font-family:var(--sans); font-weight:600; font-size:15px;
+    letter-spacing:-.005em; margin:0 0 6px;
+  }
+  p{margin:0 0 12px; color:var(--ink-2); max-width:64ch}
+  p.tight{margin-bottom:6px}
+  code{
+    font-family:var(--mono); font-size:.86em;
+    background:var(--warm); padding:1px 5px; border-radius:3px;
+    color:var(--ink);
+  }
+
+  .translate{
+    border:1px solid var(--rule-2); margin:18px 0 8px;
+    background:var(--paper);
+  }
+  .tr-row{
+    display:grid; grid-template-columns: 1fr 1fr;
+    border-bottom:1px solid var(--rule);
+  }
+  .tr-row:last-child{border-bottom:none}
+  .tr-row > div{padding:12px 16px}
+  .tr-row > div:first-child{
+    border-right:1px solid var(--rule);
+    font-family:var(--serif); font-style:italic;
+    color:var(--ink-2); font-size:14px; line-height:1.45;
+  }
+  .tr-row > div:last-child{
+    font-family:var(--sans); font-size:14px; color:var(--ink); line-height:1.5;
+  }
+  .tr-row.hd > div{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); font-style:normal;
+    background:var(--warm); padding:8px 16px;
+  }
+
+  .findings{border-top:1px solid var(--ink); margin-top:8px}
+  .finding{
+    display:grid;
+    grid-template-columns: 36px 88px 1fr 90px;
+    gap:18px;
+    padding:18px 0 18px;
+    border-bottom:1px solid var(--rule);
+    align-items:start;
+  }
+  .finding .num{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    padding-top:3px; letter-spacing:.04em;
+  }
+  .finding .sev{padding-top:2px}
+  .pill{
+    display:inline-block; font-family:var(--mono);
+    font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    padding:2px 8px; border:1px solid; border-radius:99px;
+    line-height:1.5;
+  }
+  .pill.crit{color:var(--crit); border-color:var(--crit); background:var(--crit-soft)}
+  .pill.high{color:var(--hi); border-color:var(--hi); background:var(--hi-soft)}
+  .pill.med{color:var(--ink-2); border-color:var(--rule-2); background:var(--warm)}
+  .pill.nit{color:var(--ink-3); border-color:var(--rule-2); background:transparent}
+  .pill.warm{color:var(--warmth); border-color:var(--warmth); background:var(--warmth-soft)}
+  .finding .body h3{margin-bottom:4px}
+  .finding .body p{margin:4px 0 0; font-size:14px}
+  .finding .body .ev{
+    font-size:12.5px; color:var(--ink-3); margin-top:8px;
+    font-family:var(--mono); line-height:1.55;
+  }
+  .finding .fix{
+    font-size:12.5px; color:var(--ink-2); padding-top:3px;
+    line-height:1.5;
+  }
+  .finding .fix b{
+    display:block; font-family:var(--mono);
+    font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:500; margin-bottom:3px;
+  }
+
+  .page-row{
+    display:grid; grid-template-columns:36px 1fr auto;
+    gap:18px; align-items:baseline;
+    padding:22px 0 10px;
+    border-bottom:2px solid var(--ink);
+    margin-top:12px;
+  }
+  .page-row .num{font-family:var(--serif); font-style:italic; font-size:22px; color:var(--ink)}
+  .page-row .ttl{font-family:var(--serif); font-size:22px; font-weight:500; letter-spacing:-.005em}
+  .page-row .url{font-family:var(--mono); font-size:11px; color:var(--ink-3)}
+
+  .priority-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+    margin-top:20px;
+  }
+  .pcard{
+    border:1px solid var(--rule-2); padding:18px 20px;
+    background:var(--paper);
+  }
+  .pcard.now{border-left:3px solid var(--crit)}
+  .pcard.next{border-left:3px solid var(--hi)}
+  .pcard.later{border-left:3px solid var(--rule-2)}
+  .pcard .h{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:10px;
+  }
+  .pcard ol{margin:0 0 0 18px; padding:0}
+  .pcard li{font-size:13.5px; color:var(--ink-2); margin-bottom:8px; line-height:1.5}
+  .pcard li b{color:var(--ink); font-weight:600}
+
+  .reading-strip{
+    background:var(--warm); border:1px solid var(--rule-2);
+    padding:14px 18px; margin:8px 0 24px;
+    display:grid; grid-template-columns: repeat(3, 1fr);
+    font-family:var(--mono); font-size:11.5px; color:var(--ink-2);
+    gap:10px;
+  }
+  .reading-strip b{color:var(--ink); display:block; margin-bottom:2px;
+    font-weight:500; font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-3);
+  }
+
+  .atf-callout{
+    background:var(--warm); border-left:3px solid var(--hi);
+    padding:18px 22px; margin:0 0 36px;
+  }
+  .atf-callout .lbl{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--hi); margin-bottom:6px;
+  }
+  .atf-callout.warmth{border-left-color:var(--warmth)}
+  .atf-callout.warmth .lbl{color:var(--warmth)}
+  .atf-callout.crit{border-left-color:var(--crit)}
+  .atf-callout.crit .lbl{color:var(--crit)}
+
+  .journey{
+    border:1px solid var(--rule-2); padding:0;
+    margin:18px 0 8px; background:var(--paper);
+  }
+  .jrow{
+    display:grid; grid-template-columns: 88px 1fr;
+    border-bottom:1px solid var(--rule); padding:10px 16px;
+  }
+  .jrow:last-child{border-bottom:none}
+  .jrow .t{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    letter-spacing:.05em; padding-top:2px;
+  }
+  .jrow .a{font-size:13.5px; color:var(--ink-2); line-height:1.55}
+  .jrow .a b{color:var(--ink); font-weight:600}
+
+  footer.doc-ft{
+    margin-top:64px; padding-top:24px;
+    border-top:1px solid var(--rule);
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+
+  @media (max-width:680px){
+    .wrap{padding:40px 20px 64px}
+    h1{font-size:30px}
+    header.doc-hd{grid-template-columns:1fr}
+    .doc-meta{text-align:left}
+    .finding{grid-template-columns:24px 1fr; row-gap:8px}
+    .finding .sev{grid-column:2}
+    .finding .body{grid-column:1 / -1}
+    .finding .fix{grid-column:1 / -1; padding-top:0}
+    .priority-grid{grid-template-columns:1fr}
+    .reading-strip{grid-template-columns:1fr}
+    .tr-row{grid-template-columns:1fr}
+    .tr-row > div:first-child{border-right:none; border-bottom:1px solid var(--rule)}
+    .jrow{grid-template-columns:1fr; gap:4px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc-hd">
+  <div>
+    <div class="doc-mark">UX Audit · /intro/ — warm-traffic gateway</div>
+    <h1>A friend sent them. The page acts like a stranger.</h1>
+  </div>
+  <div class="doc-meta">
+    <b>COG$ of Australia</b><br>
+    intro/ · 6 pages<br>
+    Companion to: vault-audit, hub-audit<br>
+    Reading level: K–6 (Year 5–6)
+  </div>
+</header>
+
+<p class="lede">The visitor arrives at <code>/intro/</code> because someone they trust sent the link. A daughter, a brother, the bloke at the pub. They are <i>warm</i> — but the warmth is borrowed, not earned. The page has roughly fifteen seconds to either honour the introducer's credit or burn it. Below: every place the language, layout, defaults, or sequencing fails that test, page-by-page across the six files in <code>intro/</code>.</p>
+<p class="lede">This audit is read at a Year 5–6 reading level (K–6) on purpose. The page sells a community membership to <i>every Australian</i>. Every Australian includes a 16-year-old at a kitchen table, a 71-year-old on a Nokia, and a tradie reading on the bus between jobs. If a Year-5 child cannot say what each card is about after reading it once, the card is broken.</p>
+
+<dl class="toc">
+  <dt>22</dt><dd><a href="#i-summary">Headline read &amp; warm-vs-cold framing</a></dd>
+  <dt>23</dt><dd><a href="#i-priorities">Top priorities (fix-now, fix-next, fix-later)</a></dd>
+  <dt>24</dt><dd><a href="#i-firstview">First viewport — the warm visitor's first 8 seconds</a></dd>
+  <dt>25</dt><dd><a href="#i-card1">Card 1 — "What is COG$"</a></dd>
+  <dt>26</dt><dd><a href="#i-card2">Card 2 — "Your Voice"</a></dd>
+  <dt>27</dt><dd><a href="#i-card3">Card 3 — "What We Own"</a></dd>
+  <dt>28</dt><dd><a href="#i-card4">Card 4 — "What Your $4 Means"</a></dd>
+  <dt>29</dt><dd><a href="#i-card5">Card 5 — "Your Timing" + the final CTA</a></dd>
+  <dt>30</dt><dd><a href="#i-mech">Carousel mechanics — skip, back, swipe, returning visitors</a></dd>
+  <dt>31</dt><dd><a href="#i-fallback">The hard-coded <code>FOUNDER_FALLBACK_CODE</code> issue</a></dd>
+  <dt>32</dt><dd><a href="#vw">voice-welcome.html — three buttons, one consent question</a></dd>
+  <dt>33</dt><dd><a href="#vt">voice-text.html — the 280-character form, default disclosure, banned-word warning</a></dd>
+  <dt>34</dt><dd><a href="#va-vv">voice-audio.html &amp; voice-video.html — recording, permissions, fallbacks</a></dd>
+  <dt>35</dt><dd><a href="#vc">voice-confirmed.html — the three-asks-stacked confirmation page</a></dd>
+  <dt>36</dt><dd><a href="#i-rewrites">Card-by-card K–6 rewrites of every string in <code>intro/</code></a></dd>
+  <dt>37</dt><dd><a href="#i-journey">Member journey — Karen's brother sends her the link</a></dd>
+</dl>
+
+<!-- ─────────────── 22 SUMMARY ─────────────── -->
+<section id="i-summary">
+  <div class="section-num">22 — Summary</div>
+  <h2>Warm traffic is not just cold traffic with the friction turned down. It needs a different page.</h2>
+
+  <p>The visitor at <code>/intro/?code=COGS-XXXXX</code> arrived because someone in their life — sister, mate, mum — clicked share. That introducer staked a small piece of their reputation. The job of <code>/intro/</code> is to <i>cash in the warmth</i>: identify the introducer up front, mirror what the introducer probably said, and get to "join" before the warmth cools. The current page does the opposite. It buries the inviter's name in an async API call (so the strip pops in late, or never), runs five carousel cards of philosophical positioning, and only mentions the price on the final button.</p>
+
+  <p>The five cards are well-written for someone who has already decided. They are not written for someone who came in on a friend's recommendation and is asking three questions in this order: <i>(1) Did Sarah really send this? (2) Is this a scam? (3) What is it actually going to cost me?</i> Card 1 doesn't answer (1) reliably (the strip is async). Card 1 doesn't answer (3) at all (the price is in a pill but reads as one of four pills). Card 5 finally answers (3) — by which point a non-trivial share of warm visitors have closed the tab.</p>
+
+  <div class="reading-strip">
+    <div><b>Audience</b>Warm Australian sent here by a friend. Has not researched. Trusts the friend, not yet the page.</div>
+    <div><b>Reading level (current)</b>~ Year 9–10 in places (Card 3 "CHESS-registered", Card 4 "soulbound / financialised").</div>
+    <div><b>Target reading level</b>Year 5–6 (K–6). Same target as Vault &amp; Hub audits. Plain English on every screen.</div>
+  </div>
+
+  <div class="atf-callout warmth">
+    <div class="lbl">Warm-traffic principle</div>
+    <p style="margin:0; font-size:14px">A page for warm traffic should feel like the friend is still in the room. The first thing on screen should be <i>"Sarah sent you. Here's why she thought you'd want this."</i> — not <i>"COG$"</i>, a step counter, a skip button, and an ABN strip in 9-point grey.</p>
+  </div>
+</section>
+
+<!-- ─────────────── 23 PRIORITIES ─────────────── -->
+<section id="i-priorities">
+  <div class="section-num">23 — Priorities</div>
+  <h2>If you only fix three things this week.</h2>
+
+  <div class="priority-grid">
+    <div class="pcard now">
+      <div class="h">Fix now · Trust-critical</div>
+      <ol>
+        <li><b>Render the inviter strip server-side, not via fetch.</b> Right now <code>"Sarah thinks you deserve a say"</code> only appears <i>after</i> a successful POST to <code>/_app/api/index.php?route=invitations/validate</code>. On slow mobile, the warm signal arrives second-paint or never. The single most valuable pixel on the page is rendered as an empty green box. Inject the inviter's first name from the URL code at request time, before the page is sent.</li>
+        <li><b>Remove the hard-coded <code>FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L'</code>.</b> Every cold visitor without a code is currently being attributed to the founder by default, with a comment in the source saying "REMOVE AFTER 72 HOURS." This is in production. It will skew Pass-the-Coin attribution, the Founding Members ledger, and any incentive maths. Ship a removal commit before any other change.</li>
+        <li><b>Put the price in Card 1, not on the Card 5 button.</b> The button label <i>"Secure my place. $4 once only ›"</i> is the first time most users see the cost is locked in <i>now</i>. By Year-6 reading level, "Secure my place" parses as "save my spot for later." Hoist the $4 into the Card 1 callout in plain English: <i>"It costs $4, once. We don't take it until you say yes on the next page."</i></li>
+      </ol>
+    </div>
+    <div class="pcard next">
+      <div class="h">Fix next · Reading level</div>
+      <ol>
+        <li><b>Replace "soulbound" everywhere it appears.</b> Card 4 uses it without definition. A Year-6 child will read it as a fantasy-novel word. Use <i>"yours forever and only yours"</i> or <i>"it stays in your name and cannot be sold"</i>.</li>
+        <li><b>Replace "financialised" with a Year-6 sentence.</b> Card 4: <i>"The system cannot be financialised."</i> Rewrite: <i>"Nobody can buy the votes. The tokens cannot be sold for money."</i></li>
+        <li><b>Define "Foundation Day" and "Expansion Day" in Card 5 in one sentence each.</b> Same finding as Vault audit; same rewrite. Don't make the reader figure out the difference from the timeline icons (📅 vs ⛓️).</li>
+      </ol>
+    </div>
+    <div class="pcard later">
+      <div class="h">Fix later · Voice flow</div>
+      <ol>
+        <li><b>Stop asking the brand-new Member for a video testimonial as their second screen.</b> <code>voice-welcome.html</code> currently sits one click after payment. The user has no story yet — they have a receipt. Move it into the Hub as an evergreen prompt.</li>
+        <li><b>Fix the consent default on text submissions.</b> <code>voice-text.html</code> shows <i>"Shown as: your first name, your state"</i> with a "Change" link — the disclosure is opt-out, not opt-in. State-level location should be a tick, not a default.</li>
+        <li><b>Don't auto-submit the Santos / Origin canvass on first click.</b> <code>voice-confirmed.html</code> POSTs the moment a sentiment button is tapped. There is no review step and no undo. Add a confirmation row.</li>
+      </ol>
+    </div>
+    <div class="pcard later">
+      <div class="h">Fix later · Sequencing</div>
+      <ol>
+        <li><b>Cut the carousel from 5 cards to 3.</b> Cards 2 and 4 say similar things in different words ("one vote" / "you're an operator, not a passenger"). Merge Cards 2+4 into one card titled <i>"What you actually get for $4"</i>.</li>
+        <li><b>Move "Questions first →" out of the topbar and into the bottom of Card 1.</b> Right now the topbar has <i>two</i> escape hatches (Skip + Questions first) styled almost identically. The cold-funnel audit had the same finding for the Vault topbar — the same fix applies here.</li>
+        <li><b>Replace localStorage <code>cogs_intro_seen</code> with a session flag, not a permanent one.</b> Once a visitor sees the intro, they never see it again on the same browser, even years later. A returning warm visitor (different campaign, different inviter) skips straight to <code>/join/</code> with no re-orientation.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── 24 FIRST VIEWPORT ─────────────── -->
+<section id="i-firstview">
+  <div class="section-num">24 — First viewport</div>
+  <h2>What the warm visitor's eye does in the first eight seconds.</h2>
+
+  <p>Eye-tracking on referral landings is brutal: warm visitors look for <i>the friend</i> first, then the price, then the promise. <code>/intro/</code> answers them in this order: wordmark, step counter, two dismiss buttons, ABN strip, card-1 number badge, heading, deck, four pills, callout. The friend is supposed to be in the green strip above the number badge — but the strip is <code>display:none</code> until the API call resolves.</p>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">24.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The inviter strip is async — the warmest pixel on the page paints last</h3>
+        <p>The single sentence the warm visitor came to see — <i>"Sarah thinks you deserve a say"</i> — only appears after <code>fetch(/api/invitations/validate)</code> resolves. On a 4G phone in a regional area that is 600–1500ms after first paint. By that time the user has already scrolled or read the heading. The strip is also <code>display:none</code> by default and only flips to <code>display:flex</code> on success — so any fetch error means the warm signal never appears.</p>
+        <p class="ev">intro/index.html line 354: <code>document.getElementById('intro-inviter-strip').style.display = 'flex';</code> — only after <code>data.valid === true &amp;&amp; data.inviter_name</code>.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Server-render the inviter strip from the URL code at request time. The HTML arrives with the name already in it. The fetch becomes a confirmation, not a reveal.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">24.2</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Two dismiss buttons in the topbar, styled the same</h3>
+        <p>The topbar shows, left to right: wordmark · "1 of 5" · "Questions first →" · "Skip intro →". The latter two are both grey, both have arrows, both sit in the same row, both pull the user away from the content. A warm visitor reads them as <i>"escape hatch"</i> and <i>"escape hatch."</i> "Questions first" is actually a useful detour to a Skeptic's Guide. "Skip intro" is a finalising action that sets <code>localStorage.cogs_intro_seen = '1'</code> forever. They should not look identical.</p>
+        <p class="ev">intro/index.html lines 481–489: both buttons share <code>color: var(--muted)</code>, <code>background:none</code>, <code>border:none</code>, ~0.78–0.82rem.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Demote "Skip intro" to a small text link in the bottom-bar, beside "Back". Promote "Questions first?" to a labelled link inside Card 1 ("Want the long version first? Read the Skeptic's Guide.") with no permanent skip side-effect.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">24.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The trust-anchor strip is illegible</h3>
+        <p>Above the topbar, in 0.62rem (≈9.9px) at 32% opacity on a near-black background, runs: <i>"COG$ of Australia Foundation · ABN 91 341 497 529 · Drake Village NSW"</i>. This is the legal identity of the entity asking for $4. It fails WCAG contrast and is below the 12px legibility floor on every device.</p>
+        <p class="ev">intro/index.html lines 67–77: <code>font-size: .62rem; color: rgba(240,225,196,.32); pointer-events: none;</code> — and explicitly non-interactive.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Move the ABN to the bottom-bar next to "Back", at 0.78rem and 60% opacity, as a focusable link to the registered-charity page. Take it off the top, where it competes with the warm signal.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">24.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"1 of 5" is a deflating first signal for warm traffic</h3>
+        <p>For a cold visitor, "1 of 5" is reassuring: there's structure, a known length. For a warm visitor who landed here from a one-line text from their sister, "1 of 5" reads as <i>"this is going to take a while."</i> Combined with the two skip buttons immediately to its right, the topbar's strongest message is <i>"there's a lot here, and you can leave."</i></p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace "1 of 5" with the inviter strip when an inviter is present. The progress count belongs inside the bottom-bar (next to Back / Next), not in the trust-establishing band.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">24.5</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The wordmark is a clickable home link with no affordance</h3>
+        <p>"COG$" in the top-left is an <code>&lt;a&gt;</code> linking to <code>/</code> (with the partner code preserved). It looks like a static brand mark — no underline, no hover signal in the rendered CSS. Warm visitors don't expect the brand to be a way out, so they don't click it; cold visitors who do click lose their place in the carousel without warning.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Either kill the link (the wordmark is decorative on a 5-card carousel) or add a tiny <i>"Home"</i> label beside it. Don't ship invisible navigation.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">24.6</div>
+      <div class="sev"><span class="pill warm">Warm-only</span></div>
+      <div class="body">
+        <h3>The Foundation Day countdown chip only shows in the last 30 days</h3>
+        <p>Lines 374–384 of <code>index.html</code>: <i>"daysLeft &gt;= 1 &amp;&amp; daysLeft &lt;= 30"</i>. Outside that window the warm visitor has no urgency cue at all — and a warm visitor 60 days out is still a person whose friend just shared a once-in-a-foundation moment. The chip should appear earlier (90 days?) and shift copy as the date approaches.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Show <i>"Foundation Day · 14 May 2026"</i> always (no countdown), and add a "<b>X days away</b>" suffix when 90 or fewer.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 25 CARD 1 ─────────────── -->
+<section id="i-card1">
+  <div class="section-num">25 — Card 1</div>
+  <div class="page-row">
+    <div class="num">1</div>
+    <div class="ttl">"What is COG$ — A community that owns its say on Country."</div>
+    <div class="url">intro/index.html · #card-0</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">25.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The price is buried in a pill that competes with three other pills</h3>
+        <p>The fact-row reads: <i>"Once-only $4 membership · Open to every Australian · No ongoing fees · Not a fund · Not a subscription · Not financial advice."</i> The price is one of four pills, identically sized, and the last pill is a triple-disclaimer that visually rebalances against the price. A warm visitor scanning this row registers <i>"some money / open to all / no fees / disclaimers"</i> — they don't register <i>"$4 once and that's it."</i></p>
+        <p class="ev">intro/index.html lines 543–547: four <code>.fact-pill</code> children, all identical layout, no visual hierarchy.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Pull the price out of the pill row and give it its own line in plain English: <i>"It costs $4. One time. That's the whole price."</i> Keep the disclaimers in a smaller footer band at card-foot.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">25.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"A community that <em>owns its say</em> on Country" — well written for an essay, hard for a Year 5</h3>
+        <p>The italicised phrase "owns its say" is doing two things at once: a cultural reference to <i>Country</i> (Indigenous land), and a metaphor for governance ownership. A Year-6 child reads it twice. The deck below ("a gold country town", "ASX-listed resource company", "joint venture") doubles down on the abstraction without ever saying what the visitor will <i>do</i>.</p>
+        <p class="ev">intro/index.html line 533: <code>&lt;h1&gt;A community that &lt;em&gt;owns its say&lt;/em&gt; on Country.&lt;/h1&gt;</code></p>
+      </div>
+      <div class="fix"><b>Fix</b>Heading: <i>"A community that owns a real say in what happens on Australian land."</i> Deck-line 1: <i>"COG$ started in Drake Village, a small gold-mining town in NSW. The locals decided they wanted a real say in what happens to the land around them — not just a vote at the council, but a legal share in the company doing the mining."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">25.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Not a fund, not an app, not a promise" — three negations before one assertion</h3>
+        <p>The deck spends a sentence telling the user what COG$ <i>isn't</i> before it tells them what it <i>is</i>. For a cold reader on a research path, that's smart positioning. For a warm reader on a friend's recommendation, that's a defensive opening that primes "scam" before it primes "community."</p>
+      </div>
+      <div class="fix"><b>Fix</b>Lead with what it <i>is</i>: <i>"COG$ is a community joint venture. Members own real shares in a mining company together, and vote on what happens to the land. It is not a fund, not an app — and your friend can't earn a commission for you joining."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">25.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The 🌏 callout is well-meaning but pads the card without progressing the reader</h3>
+        <p><i>"For every Australian who thinks the people living on the land should have a say in what happens to it. No exceptions. No tiers."</i> — this is brand voice, not user value. It's the fourth piece of "we exist for everyone" copy on a card that hasn't yet said what the user will do next.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace the callout with the warm-traffic specific line: <i>"The friend who sent you the link doesn't get paid if you join. No referral fees. Your $4 goes to the same place theirs did."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">25.5</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Card 1 has no visible "next" affordance besides the bottom button</h3>
+        <p>The card content ends with the callout; there is no inline arrow, no <i>"keep reading →"</i>, no scroll cue. On phones taller than 760px the bottom-bar drifts a long way below the fold. A warm visitor who has read to the end of the callout has no signal that there are 4 more cards coming, only the topbar's "1 of 5".</p>
+      </div>
+      <div class="fix"><b>Fix</b>Add a subtle <i>"Next: Your Voice →"</i> link below the callout that previews the next card's title. Carries the reader rather than dropping them at the bottom-bar.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 26 CARD 2 ─────────────── -->
+<section id="i-card2">
+  <div class="section-num">26 — Card 2</div>
+  <div class="page-row">
+    <div class="num">2</div>
+    <div class="ttl">"Your Voice — One member. One vote. No exceptions."</div>
+    <div class="url">intro/index.html · #card-1</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">26.1</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Your Independence Vault" appears here for the first time, undefined</h3>
+        <p>Deck paragraph 2: <i>"Members vote online through your Independence Vault."</i> A warm visitor has never heard the phrase. The Vault audit already flagged that "Vault" is the wrong noun for the post-login dashboard; here, "Independence Vault" arrives in Card 2 of an introduction and is never explained.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace with <i>"Members vote online from their COG$ account."</i> Match the same noun the Vault audit recommends. One word for one thing across the whole product.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">26.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"The Trustee holds legal title but does not make the decisions"</h3>
+        <p>Trust-law vocabulary on Card 2. A Year-6 reader does not know what a Trustee is, what "legal title" is, and why those two things appear in the same sentence. The point is good — <i>members decide, the Trustee does the paperwork</i> — but it needs Year-5 words.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"There is a Trustee — a person whose legal job is to do the paperwork (signing, filing, holding the shares in the right name). They do not decide what the community does. We do, by voting."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">26.3</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"More people, more cogs, more weight behind the decisions"</h3>
+        <p>"More cogs" is the brand pun. It reads as a typo to a Year-5 child until they have already seen the COG$ wordmark several times. Combined with "wealth does not buy additional voice" in the same paragraph, the card piles three abstract phrases on a reader who hasn't been told what they're voting <i>on</i>.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Cut the "more cogs" pun on this card. Save it for Card 4 once the reader knows what a "cog" means in the system.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">26.4</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The 🗳️ callout repeats the heading</h3>
+        <p>Heading: <i>"One member. One vote. No exceptions."</i> Callout: <i>"Your vote carries the same legal weight as every other member's."</i> Same sentence in two voices. A warm visitor reads it as filler.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use the callout for an answer to the warm visitor's actual next question: <i>"What does a member actually vote on? Three examples: (a) which mining proposals to support; (b) how Foundation funds are spent; (c) which companies the Foundation buys shares in."</i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 27 CARD 3 ─────────────── -->
+<section id="i-card3">
+  <div class="section-num">27 — Card 3</div>
+  <div class="page-row">
+    <div class="num">3</div>
+    <div class="ttl">"What We Own — Real shares. Real say at the company table."</div>
+    <div class="url">intro/index.html · #card-2</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">27.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>"Our view: minerals left in the ground may be worth more than minerals dug up" — financial-claim adjacent on a "not financial advice" page</h3>
+        <p>This sentence is doing speculative financial framing in everything but name. "Worth more" + "may be" is a price-prediction hedged with a maybe. On a page that elsewhere asserts <i>"Not financial advice"</i> as a pill, and on a flow whose <code>compliance-terms.js</code> bans "worth more later" as a banned framing term, having the official page itself include this construction is internally inconsistent and externally risky under ASIC's misleading-statement provisions.</p>
+        <p class="ev">intro/js/compliance-terms.js: <code>/\bworth more later\b/i</code> is on the banned list. intro/index.html line 575: <code>"minerals left in the ground may be worth more than minerals dug up."</code></p>
+      </div>
+      <div class="fix"><b>Fix</b>Reframe as a values statement, not a price one: <i>"Many members believe minerals can be more valuable to a community when they stay in the ground than when they are dug up. That is a community view, not financial advice."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">27.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"CHESS-registered shares in ASX-listed resource companies" lands in Year-11 prose</h3>
+        <p>Two acronyms (CHESS, ASX), two compound nouns (CHESS-registered, ASX-listed), in one clause. The card tries to soften with <i>"CHESS is the national securities register, the same one every stockbroker in Australia uses"</i> — but "national securities register" and "stockbroker" are both Year-9 vocabulary themselves.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"The shares are real. They sit in your name on the same official Australian share-register that every stock broker uses (it's called CHESS). They are not tokens. Not a certificate in a drawer. They are the kind of shares your bank manager would recognise."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">27.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"We are building toward a 1% holding in Legacy Minerals Holdings Limited (ASX:LGM)"</h3>
+        <p>Naming the specific listed company by ASX ticker makes Card 3 a financial-product-adjacent page. It also creates a directional signal — <i>"$4 + COG$ → 1% LGM"</i> — that a Year-6 reader reasonably misreads as <i>"my $4 buys me LGM shares."</i> It does not. The Foundation collectively buys LGM shares; the member's $4 buys membership.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Two-step: (a) replace the ticker with <i>"a real Australian mining company"</i> on Card 3; (b) link to a separate "Where the money goes" page with the LGM detail, the company's filings, and the percentage maths. Don't put a security identifier on the warmest page in the funnel.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">27.4</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"AGMs, lodge resolutions" — board-level vocabulary on the warmth page</h3>
+        <p>"At 1%, we can formally attend AGMs, lodge resolutions, and vote on company decisions." A Year-5 child has not heard "AGM" or "lodge a resolution." They will guess that AGM is some kind of meeting and skim past it.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"At 1% we can show up at the company's yearly meeting (its AGM) and ask the company to vote on things — like 'should we mine here?' or 'how much should we spend on cleaning up?'"</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">27.5</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The 📊 callout includes the awkward phrase "community member legal voice"</h3>
+        <p><i>"A registered shareholding and a community member legal voice on extraction and valuation."</i> Three nouns in a row that don't fit together grammatically. Reads like a phrase that was written in two passes and never reconciled.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"This is a real share. With it, members get a real legal voice on what gets dug up, how much it's said to be worth, and what happens to the land."</i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 28 CARD 4 ─────────────── -->
+<section id="i-card4">
+  <div class="section-num">28 — Card 4</div>
+  <div class="page-row">
+    <div class="num">4</div>
+    <div class="ttl">"What Your $4 Means — You join as an operator. Real protections built in."</div>
+    <div class="url">intro/index.html · #card-3</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">28.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>"Soulbound" — fantasy-novel vocabulary on the price-justification card</h3>
+        <p>The first means-list item: <i>"Your membership cannot be taken from you. It is soulbound."</i> "Soulbound" is a video-game term (World of Warcraft, Diablo) that has migrated into NFT marketing. To a 47-year-old in Wagga Wagga reading her brother's text, "soulbound" reads as either fantasy-novel filler or a crypto buzzword — both are warmth-killers.</p>
+        <p class="ev">intro/index.html line 605: <code>"It is soulbound."</code></p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"Your membership stays in your name forever. Nobody can buy it from you, take it from you, or transfer it without you. Even we can't."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">28.2</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>"The system cannot be financialised" — abstraction at exactly the wrong moment</h3>
+        <p>Card 4 is the moment a warm visitor decides whether the $4 is worth it. The second means-item leads with <i>"The system cannot be financialised. Tokens cannot be traded or redeemed for cash, by design."</i> Two technical words ("financialised", "redeemed") in a row, both negations, both Year-11 reading level. The user does not know yet that there are tokens, and being told they cannot be traded is a confusing answer to a question they didn't ask.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Drop "financialised" entirely. <i>"Nobody can buy the votes. The membership tokens are not money — they cannot be sold, traded, or cashed in. That's how we keep the one-member-one-vote rule fair."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">28.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Members are operators of the joint venture" — corporate-law construction on a kitchen-table page</h3>
+        <p><i>"You are joining a shared structure, not making a purchase. Your $4 sets up your permanent Member record."</i> The user just paid (or is about to pay). Telling them they are not making a purchase contradicts the receipt they're about to receive. The framing is legally precise (members are partners in a joint venture, not customers) but reading it cold, a Year-6 reader concludes <i>"so it isn't really a purchase, why am I being charged?"</i></p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"You are not buying a product. You are joining a community that owns shares together. The $4 sets up your spot in the ledger so the votes stay fair."</i> — keep the legal point, lose the corporate verb.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">28.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Funds go toward governance infrastructure and more shares in Legacy Minerals"</h3>
+        <p>Two issues in one sentence. (1) "Governance infrastructure" is bureaucratic plural-noun-stack. (2) Saying $4 buys "more shares in Legacy Minerals" without further qualification reads as a personal-portfolio claim. A Year-6 child reads it as <i>"part of my $4 buys me LGM shares."</i> They get nothing of the sort — the Foundation collectively buys; the member gets a vote.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"Your $4 helps pay for the running costs of the community (the website, the bookkeeping, the lawyer who keeps it legal) and helps the Foundation buy more shares — in everyone's name together, not in yours."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">28.5</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The 📋 callout: "The Trustee executes. Members decide and manage. You are an operator, not a passenger."</h3>
+        <p>Three short sentences, three abstract verbs (executes / manage / operator). The intent is good ("you have agency"), the execution is jargon. "Operator" is also a word that, for Australians of a certain age, primarily means <i>truck driver</i> or <i>plant operator</i> — neither of which is the intended meaning.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"The Trustee handles the paperwork. Members make the decisions. You won't be a passenger — you'll get to vote on what happens."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">28.6</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The lock-emoji theme is over-used on this card</h3>
+        <p>🔐, 🔒, ⚙️, 🏗️ — four icons, two of which are different padlocks and two of which are construction symbols. The visual story reads "this is a security product." It isn't. It's a community membership.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use one icon style and one metaphor. The card is about the four <i>protections</i> built into membership — pick four icons that share a theme (e.g. all from a "civic / community" family). If brand has no icon set yet, use simple letter pips (A, B, C, D) and a single colour.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 29 CARD 5 ─────────────── -->
+<section id="i-card5">
+  <div class="section-num">29 — Card 5</div>
+  <div class="page-row">
+    <div class="num">5</div>
+    <div class="ttl">"Your Timing — Two milestones. Your place secures before both."</div>
+    <div class="url">intro/index.html · #card-4</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">29.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The price appears on the button for the first time, six cards into a five-card carousel</h3>
+        <p>The Next button label changes on Card 5 from <i>"Next ›"</i> to <i>"Secure my place. $4 once only ›"</i>. This is the first time the button itself acknowledges money will change hands. A warm visitor who skimmed through Cards 1-4 watching for "what does this cost" will see the dollar sign, halt, and have to reread to find out where they were told this earlier. (They weren't, except in a pill on Card 1.)</p>
+        <p class="ev">intro/index.html line 728: <code>nextBtn.innerHTML = "Secure my place. $4 once only ›";</code></p>
+      </div>
+      <div class="fix"><b>Fix</b>Two changes. (a) Set the price expectation on Card 1 in plain text, not a pill. (b) Change the Card-5 button to <i>"Pay $4 and join →"</i> — the verb "pay" appears nowhere on the page yet, and avoiding it is what makes the button feel like a soft commitment when it is in fact a hard one.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">29.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Foundation Day" vs "Expansion Day" — two named dates with no scaffolding</h3>
+        <p>Same finding as Vault Audit §3.7 and Hub audit §15. The timeline drops two named days in capital case (📅 Foundation Day, ⛓️ Expansion Day) and expects the user to remember which is which on subsequent screens. A Year-6 reader without prior context can't tell which one matters more. The two icons (calendar and chain) are aesthetically different but don't communicate the difference between "first vote" and "infrastructure goes live."</p>
+      </div>
+      <div class="fix"><b>Fix</b>One-sentence subhead under each title. <i>"Foundation Day — the first vote. The community decides its first big question together."</i> / <i>"Expansion Day — when the new Member tools turn on. The community votes when this happens, so there is no fixed date yet."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">29.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Date set by Members" creates a soft "join now" pressure that doesn't add up</h3>
+        <p>Expansion Day's date is <i>"set by Members"</i> — meaning the existing membership votes on when it happens. The implicit pressure ("join before both") rests on Foundation Day (14 May). The Expansion Day half of the timeline is doing nothing for the user except adding a second deadline that isn't a deadline. It actually weakens the urgency.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Cut the Expansion Day row from the timeline on the warm-traffic page. Mention it in one line: <i>"Later, members will vote on a second milestone (we call it Expansion Day) — but you don't need to know about that yet to join."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">29.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The privacy strip is the only mention of what data is collected, in the smallest type on the card</h3>
+        <p>At line 660: <i>"Your name, email, mobile, and address are held by the Foundation under the Australian Privacy Act. We do not sell, share, or monetise your information. Your mobile is used only for vault login."</i> 0.84rem, 70% opacity, on a card whose primary message is "join before the deadline." A warm visitor cares <i>more</i> about this — they want to know what their friend got them into, data-wise — and the page hides it.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Promote to a third timeline-row above the milestones, titled <i>"What happens to your details"</i> — same type size as the milestones. Make it the answer to the warm visitor's third question, not the page's footnote.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">29.5</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The ✅ callout repeats the heading</h3>
+        <p>Heading: <i>"Two milestones. Your place secures before both."</i> Callout: <i>"Joining now records your position before both milestones."</i> Same point twice. Card 5 has the most work to do (price, dates, privacy, button-of-no-return) and uses its callout to restate the heading.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use the callout for the warm-traffic specific reassurance: <i>"You can change your mind. If you do, email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a3cacdc5cce3c0ccc4d0c2d6d0d7d1c2cfcac28dccd1c4">[email&#160;protected]</a> within 14 days and we'll refund the $4 with no questions."</i> (If the cooling-off policy is different, use whatever is true — but use the callout for a guarantee, not an echo.)</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 30 MECHANICS ─────────────── -->
+<section id="i-mech">
+  <div class="section-num">30 — Carousel mechanics</div>
+  <h2>Skip, back, swipe, returning visitors — what the JS actually does.</h2>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">30.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3><code>localStorage.cogs_intro_seen</code> is set permanently on first run</h3>
+        <p>On any "Next past Card 5" or any "Skip", the code writes <code>localStorage.setItem('cogs_intro_seen', '1')</code> and on next visit redirects straight to <code>/join/</code>. This means: a warm visitor who opens the link, reads two cards, gets distracted, comes back tomorrow — never sees the carousel again, even though they never finished it. Cookie-clear / private-window behaviour is fine; routine return-visit behaviour is broken.</p>
+        <p class="ev">intro/index.html lines 695–704: <code>if (localStorage.getItem('cogs_intro_seen') === '1') { window.location.replace(destination()); return; }</code></p>
+      </div>
+      <div class="fix"><b>Fix</b>Set <code>cogs_intro_seen</code> only on (a) successful join completion (read the flag from the join page) or (b) explicit "Skip intro" — not on "Next past Card 5" alone. On return, default to Card 1 unless the user pressed Skip the previous time.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">30.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The "Skip" button has the same finalising side-effect as completing the carousel</h3>
+        <p>Both <code>complete()</code> and <code>skip()</code> set <code>cogs_intro_seen = '1'</code> and route to <code>/join/</code>. From the visitor's perspective, "Skip" reads as <i>"I don't want this right now"</i> — but the code reads it as <i>"I am committing to having seen this."</i> The two should not be equivalent.</p>
+      </div>
+      <div class="fix"><b>Fix</b>"Skip" should set a <i>session</i> flag (sessionStorage), not a permanent one. Returning visitors get the carousel again. "Complete the join" is the only event that should permanently mark the intro as seen.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">30.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Swipe distance is 48px — too low; bounces while reading on a phone</h3>
+        <p>Lines 757–765: <code>if (Math.abs(dx) > 48)</code> registers as a swipe. On a phone, that's a typical scroll-correction motion. A warm visitor reading Card 3 with a finger nudge slips forward to Card 4 mid-paragraph. The default carousel libraries use 80–120px for this reason.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Raise the swipe threshold to 96px and add a vertical-bias check (only register as a horizontal swipe when <code>|dx| &gt; 1.5 * |dy|</code>).</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">30.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Keyboard arrows complete the carousel without a final-card warning</h3>
+        <p>Lines 740–747: <code>ArrowRight</code> on Card 5 calls <code>complete()</code> and routes to <code>/join/</code>. A user who arrowed through to read the cards, then pressed Right out of habit, is suddenly on the join form. There is no "you sure?" gate, no <i>"Next →</i> turning into <i>"Pay $4 →"</i> for keyboard users.</p>
+      </div>
+      <div class="fix"><b>Fix</b>The button itself changes label on Card 5 ("Pay $4 and join →"). Match keyboard behaviour: on Card 5, ArrowRight triggers a focus shift to the button and visually highlights it, but does NOT auto-route. The user has to press Enter or click to commit.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">30.5</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Reduced-motion users get a worse experience: cards <code>display: none</code> hard-cuts</h3>
+        <p>Lines 169–175: <code>@media (prefers-reduced-motion: reduce) { .intro-card { display: none; } .intro-card.active { display: flex; } }</code>. This is correct in intent (no slide animation), but the hard cut between cards loses the spatial relationship. A user with motion sensitivity benefits from a fade — not from "card disappears, new card appears."</p>
+      </div>
+      <div class="fix"><b>Fix</b>For reduced-motion, use a 200ms opacity-only crossfade, not <code>display:none</code>.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">30.6</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The progress bar uses a "bouncy" easing curve on a serious topic</h3>
+        <p><code>transition: width .5s cubic-bezier(0.34, 1.56, 0.64, 1);</code> — that's an overshoot easing (the bar pings past 100% and settles back). Snappy on a B2C product launch. Off-tone for "real shares in a mining company on Country."</p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace with <code>cubic-bezier(.4, 0, .2, 1)</code> (a calm Material-style ease). Same speed, no overshoot.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">30.7</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Aria-only progress dots are a non-equivalent fallback</h3>
+        <p>The visible progress is a thin gold bar. The aria progress is five dots in a hidden grid (<code>display: none</code>). Screen-reader users do get card labels via <code>aria-label="Card 1 of 5"</code> on each <code>.intro-card</code>, but the dots themselves announce as "tab" — a UI metaphor users can't actually tab to (they're <code>display:none</code>).</p>
+      </div>
+      <div class="fix"><b>Fix</b>Drop the hidden dots entirely. Put <code>aria-current="step"</code> on the visible progress bar and <code>role="progressbar"</code> with <code>aria-valuenow</code> matching <code>currentCard / TOTAL</code>.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 31 FOUNDER FALLBACK ─────────────── -->
+<section id="i-fallback">
+  <div class="section-num">31 — Founder fallback code</div>
+  <h2>A "remove after 72 hours" comment is in production.</h2>
+
+  <p>This deserves its own section because every other finding in this document is downstream of it.</p>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">31.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3><code>FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L'</code> attributes every code-less visitor to the founder</h3>
+        <p>Top of the IIFE in <code>intro/index.html</code>:</p>
+        <p class="ev">// ── FOUNDER FALLBACK CODE — REMOVE AFTER 72 HOURS ──<br>var FOUNDER_FALLBACK_CODE = 'COGS-FUHT2L';<br>// ── END REMOVE BLOCK ──</p>
+        <p>Then: <code>var activeCode = urlCode || FOUNDER_FALLBACK_CODE;</code>. Any visitor without a partner_code in the URL — including organic search arrivals, anyone who typed the URL, anyone who got a screenshot of the page — is silently attributed to the founder. The intended 72-hour lifespan has clearly expired or was never enforced. This contaminates: (a) Pass-the-Coin chain attribution, (b) the Founding Members ledger, (c) the inviter strip ("the founder thinks you deserve a say" — for everyone), (d) any incentive maths or analytics segmentation on referral origin.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Remove the const, the assignment, and the comment block. If the original intent was "credit the founder for the first 72 hours of organic traffic", that's a server-side analytics tag, not a per-visitor attribution. If the intent was "show the inviter strip even for code-less visitors", show a generic "<i>You were sent by a Founding Member.</i>" strip instead.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">31.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The fallback also poisons <code>sessionStorage</code></h3>
+        <p>Once <code>activeCode</code> is set (to either the URL code or the fallback), it's written to <code>sessionStorage.cogs_intro_code</code>. The "Pass the Coin" panel on <code>voice-confirmed.html</code> later reads this. So a code-less visitor who pays $4, then submits a voice quote, gets a confirmation page that may show the founder's initials in the chain visual (<code>ptc-inviter</code> circle).</p>
+      </div>
+      <div class="fix"><b>Fix</b>When the fallback is removed, add a guard: if there is no inviter, the chain visual on voice-confirmed should show an empty inviter circle (the dashed-border "?"), not someone's initials.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">31.3</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The wordmark home link inherits the fallback</h3>
+        <p><code>var homeHref = activeCode ? '/?partner_code=' + ... : '/';</code> — clicking the brand mark from the fallback state takes the user to <code>/?partner_code=COGS-FUHT2L</code>, propagating the bad attribution to the homepage.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Ship 31.1 first; this disappears.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 32 voice-welcome ─────────────── -->
+<section id="vw">
+  <div class="section-num">32 — voice-welcome.html</div>
+  <div class="page-row">
+    <div class="num">vw</div>
+    <div class="ttl">"In one sentence, why did you join?"</div>
+    <div class="url">intro/voice-welcome.html</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">32.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>This page is shown as the second screen after $4 — the worst possible moment for a testimonial</h3>
+        <p>The sequence runs: <code>/intro/</code> → <code>/join/</code> (pay $4) → confirmation → <code>/intro/voice-welcome.html</code>. The user has been a Member for 90 seconds. They have no story. They have a receipt. Asking for a 30-second video quote on "why did you join" right now produces (a) low-quality submissions, (b) buyer's-remorse undertone in the videos themselves, (c) a coercive feel that erodes the warmth the friend originally provided.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Move the voice-submission flow into the Hub as an evergreen prompt. On the post-pay screen, link to it as a soft CTA (<i>"Want to record a 30-second 'why I joined' for the community? Do it now or anytime from your account."</i>) — but do not redirect.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">32.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The consent disclosure is in the subhead, not the consent box</h3>
+        <p>The subhead reads: <i>"We use member voices on our Facebook and YouTube channels and at Foundation Day."</i> That is the consent ask. The form has no checkbox on this welcome screen — consent is collected later, on the per-mode page. So a user who clicks "Text" has already passed the disclosure-displaying screen and may not see it on the next page (they will, but separated by a navigation, which weakens the link).</p>
+      </div>
+      <div class="fix"><b>Fix</b>Either (a) move the consent checkbox onto this welcome screen so the user opts in <i>before</i> picking a mode, or (b) drop the disclosure here entirely and put it only on the mode-specific page where the checkbox lives. The current "disclosure separate from consent" pattern is risky under Privacy Act guidance on bundled consents.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">32.3</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Up to 280 chars" / "Up to 30 sec" — character-count and duration in the same row</h3>
+        <p>Three mode buttons, three different units. A Year-5 reader pauses at "chars" (does not yet read as <i>characters</i>) and at the difference between "chars" and "sec." Worse, the implicit message is <i>"more is better"</i> when the actual editorial preference is the opposite — short, real, in their own words.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"Type · short and to the point"</i> / <i>"Speak · 30 seconds is plenty"</i> / <i>"Film · 30 seconds is plenty"</i>. Cut the unit specs from the button. Move them onto the mode-specific page only.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">32.4</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Skip — I'll do this later from my dashboard" — uses the V word the user just heard a different version of</h3>
+        <p>"Dashboard" appears here for the first time. The Vault audit recommends "your COG$ account." The Hub audit recommends consistent terminology across the product. This page introduces a third noun.</p>
+      </div>
+      <div class="fix"><b>Fix</b><i>"Skip — I'll do it later from my COG$ account."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">32.5</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>Safari MediaRecorder check is good — but the message is still tech-y</h3>
+        <p><i>"Audio and video recording work best in Chrome or Firefox."</i> Lands fine. But the buttons are still clickable (only opacity is reduced), so a Safari user can click through and fail. Better: disable the buttons fully on Safari and offer "Use text instead" as the route.</p>
+      </div>
+      <div class="fix"><b>Fix</b>On Safari without MediaRecorder, replace audio/video buttons with a single message + a one-click "Switch to text" link.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 33 voice-text ─────────────── -->
+<section id="vt">
+  <div class="section-num">33 — voice-text.html</div>
+  <div class="page-row">
+    <div class="num">vt</div>
+    <div class="ttl">"Tell us why — Text · 280 character max"</div>
+    <div class="url">intro/voice-text.html</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">33.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Default disclosure is "first name + state" — opt-out, not opt-in</h3>
+        <p>The display-as line reads <i>"Shown as: your first name, your state"</i> with a "Change" link. State-level location (NSW / VIC / etc.) is identifying information when combined with a first name and a quote — especially in regional Australia where "Karen, NSW" narrows quickly. The user has to actively click "Change" and discover the option to suppress the state. That is opt-out disclosure. Privacy Act best practice (and OAIC guidance) is opt-in for any data attached to public-facing material.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Default to first name only. Add a tick: <i>"☐ Also show my state."</i> Reword the explanation under the box: <i>"By default we'll show only your first name. Tick the box if you'd also like your state shown."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">33.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The banned-framing warning names the banned word back to the user</h3>
+        <p>From <code>voice-submission.js</code>: <i>"⚠ The phrase 'returns' sounds like a financial claim. Could you rephrase to focus on why you joined the community rather than expected returns?"</i> Two issues: (a) the warning <i>repeats</i> the banned word in its own text — a Year-5 child reads <i>"so the banned word is 'returns'? OK, I'll just say 'profits' instead."</i> (b) the warning fires on a 250ms debounce, so it appears mid-typing, which feels like correction-while-talking.</p>
+        <p class="ev">voice-submission.js line 35: <code>warning.textContent = '\u26a0 The phrase \u201c' + hit + '\u201d sounds like a financial claim.'</code></p>
+      </div>
+      <div class="fix"><b>Fix</b>(a) Don't echo the word: <i>"Some words in your message sound like a money promise. We can't share posts that look like financial advice. Could you say it in your own words instead?"</i> (b) Fire the warning only on blur, not on debounce — let the user finish their thought.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">33.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The consent label is a wall of text</h3>
+        <p><i>"I agree my submission can be used on COG$ social media as a member quote. My first name and state may be shown. I can withdraw consent at any time by emailing <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4c25222a230c2f232b3f2d393f383e2d20252d62233e2b">[email&#160;protected]</a> or from my member dashboard."</i> Three sentences, two compound clauses, one email address — all attached to a tickbox. A Year-5 reader ticks without reading.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Three lines, three ticks (or one tick + a clearer statement):<br>(1) <i>I'm OK with COG$ posting this on Facebook or YouTube.</i><br>(2) <i>Show my name as: ___ (first name only / first name + state).</i><br>(3) Below the box, in plain text: <i>"You can change your mind any time — email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="244d4a424b64474b4357455157505645484d450a4b5643">[email&#160;protected]</a> or click 'My voice' in your account."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">33.4</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The placeholder "I joined because…" sets a leading pattern</h3>
+        <p>Every quote will now start with "I joined because" — an editorial monoculture. Variety helps community pages feel real. The current placeholder primes the same opener every time.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rotate three placeholders at random: <i>"I joined because…"</i> / <i>"What COG$ means to me is…"</i> / <i>"I want my say in…"</i> — or leave blank with a small <i>"Write whatever feels true. One sentence is plenty."</i> below.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">33.5</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"0 / 280" character-counter has no warning state at the limit</h3>
+        <p>The counter just shows the raw count. No colour change at 250, no soft warning at 280. Users hit the cap mid-sentence and lose flow.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Turn the count amber at 250 and red at 280, with a friendly note: <i>"You're nearly out of room — short is good!"</i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 34 voice-audio + voice-video ─────────────── -->
+<section id="va-vv">
+  <div class="section-num">34 — voice-audio.html &amp; voice-video.html</div>
+  <div class="page-row">
+    <div class="num">va</div>
+    <div class="ttl">"Record up to 30 seconds" — audio + video recorders</div>
+    <div class="url">intro/voice-audio.html · intro/voice-video.html</div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">34.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Permission prompt fires immediately on page load (video) — no warm-up</h3>
+        <p><code>voice-video.html</code> calls <code>initCamera()</code> the moment the page mounts. A user who arrived to <i>look at</i> the recording option, not necessarily use it, gets a system-level "Allow camera?" dialog the second the page loads. iOS in particular treats the first refusal as sticky (the user has to revisit Settings to unblock).</p>
+      </div>
+      <div class="fix"><b>Fix</b>Don't call <code>getUserMedia</code> until the user clicks the record button. Show a "Tap to start recording" CTA first; the camera permission dialog should follow that intentional click.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">34.2</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The error message includes step-by-step Chrome and Firefox instructions in a tooltip</h3>
+        <p><i>"To fix in Chrome: click the camera icon in the address bar → Allow → Reload. To fix in Firefox: click the camera icon..."</i> — the help is good, but it's three lines of HTML inside a warning <code>&lt;div role="alert"&gt;</code>. Screen readers read the entire string at once. Visual users see a wall of red-orange text.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Show the headline ("Camera blocked.") in the alert; put the per-browser fix steps in a "<i>How to unblock the camera →</i>" expand-on-tap section.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">34.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The "Upload a video file" fallback accepts up to 50 MB without preview validation</h3>
+        <p><code>handleFileUpload</code> checks size (≤50MB) but doesn't check duration. A user can upload a 25-second clip — fine — or a 4-minute clip under 50MB — also accepted. The 30-second on-page recorder enforces a duration; the upload path doesn't.</p>
+      </div>
+      <div class="fix"><b>Fix</b>After file selection, load the video metadata and reject if <code>video.duration &gt; 35</code> (a small grace over the 30-sec target). Show: <i>"That file is X seconds. Please trim it to 30 seconds or less."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">34.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The consent box appears <i>after</i> recording, not before</h3>
+        <p>Both audio and video pages hide the consent row until the user has finished recording (then <code>consentRow.style.display = 'flex'</code>). This means a user records a 30-second video, only then sees the social-media consent ask, and feels the sunk-cost pressure. Privacy Act best practice and basic respect both want consent <i>before</i> the recording, with the same wording, so the recording can be done with the eventual use already in mind.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Show consent above the record button. Disable the record button until the consent box is ticked. Re-show consent on the playback view as a confirmation, not a first-time disclosure.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">34.5</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Aspect ratio is hard-locked to 9:16 vertical</h3>
+        <p><code>aspect-ratio: 9/16; max-height: 300px</code> — fine for phones, awkward on desktops. A laptop user gets a tiny portrait box in the centre of a wide card. The page is also titled <i>"Vertical video · Front camera preferred"</i>, which assumes phone — but many users will reach this page on a laptop.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Allow either orientation. Detect the connected device's natural orientation and adjust the preview frame accordingly. Drop "Vertical video" from the subtitle.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">34.6</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>The 🎙️ / 🎬 emojis are the only labels on the record button</h3>
+        <p>The button has no text label, only an emoji. A user with reduced motion, reduced graphics, or Emoji-Off accessibility settings sees an empty circle. The aria-label says <i>"Start / stop recording"</i>, which is correct — but the visual button could simply say <i>Start</i> / <i>Stop</i> in addition to (or instead of) the emoji.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Show the word "Start" inside the idle button and "Stop" inside the recording button. Keep the colour/animation difference for visual users.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 35 voice-confirmed ─────────────── -->
+<section id="vc">
+  <div class="section-num">35 — voice-confirmed.html</div>
+  <div class="page-row">
+    <div class="num">vc</div>
+    <div class="ttl">"Thank you. — Submission received."</div>
+    <div class="url">intro/voice-confirmed.html</div>
+  </div>
+
+  <p>This page is the most over-asked screen in the project. In one viewport: thank-you tick, "Pass the Coin" panel (4-Australians chain visual + Facebook share button), Santos &amp; Origin sentiment canvass (auto-submitting), "Submit another voice" link, and a privacy note. Five distinct asks stacked behind a "Thank you."</p>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">35.1</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Three asks stacked behind a "Thank you." headline</h3>
+        <p>The user submitted one voice quote. The page rewards them with:<br>
+          (1) Pass the Coin — share to 4 Australians + a Facebook share button.<br>
+          (2) Canvass — vote sentiment on Santos and Origin Energy.<br>
+          (3) "Submit another voice" link.<br>
+        Each is a separate piece of governance / marketing weight, dropped together on the warmest moment of the user's day. The "thank you" reads as a polite preamble to three more requests.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Pick one. The strongest single follow-on for a voice-submitter is "Pass the Coin" (it's why the platform's chain works). Cut the canvass entirely from this page — move it into the Hub as a separate "your votes" tab. Move "Submit another voice" to a small text link only after the user dismisses the share prompt.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">35.2</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The Santos / Origin canvass auto-submits on first click — no review, no undo</h3>
+        <p>The four sentiment buttons (Support / Support with concerns / Oppose / No view) call <code>submitCanvass</code> on click. The function POSTs immediately to <code>/voice-submissions?id=canvass</code>, then sets <code>submitted[designationId] = true</code> so it can't be re-submitted. A user who mis-tapped "Oppose" on a phone, intending "Support", has no recourse on this page. The status text says <i>"View recorded for Santos Limited."</i> — a legal-looking record from an accidental tap.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Add a confirmation row before POST: <i>"You're about to record 'Oppose' for Santos. ✓ Confirm / ↺ Change"</i>. Allow a second click within 30 seconds to overwrite. Don't POST on first tap.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">35.3</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The "Pass the Coin" Facebook share text is pre-written and attributed to the user</h3>
+        <p><code>ptcShareFB</code> opens a Facebook sharer with: <i>"I joined COG$ of Australia — a $4 community say in our minerals. Join before Foundation Day on 14 May: [link]. Not financial advice."</i> Facebook attaches this to the user's account as <i>their</i> post. The user did not write it. They clicked one button. The phrase "$4 community say in our minerals" is a marketing line, not a user voice — and the disclaimer "Not financial advice" buried at the end of <i>their post</i> looks like the user is making a financial pitch.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Don't pre-fill the share quote. Open the sharer with only the URL; let Facebook generate a preview from the page's OpenGraph tags. If a default message is desired, prompt: <i>"Want to add a sentence in your own words? (Optional)"</i> with an empty textarea before the share opens.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">35.4</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Most submissions are reviewed within 24 hours" is the only timing the user gets</h3>
+        <p>The user has just contributed text/audio/video. They want to know when it goes live, where they can see it once approved, and what "review" means. The current copy ("we'll email you when it's cleared") is accurate but cold. A warm-traffic Member submitting their first voice quote deserves a clearer arc: <i>"Here's what happens next. Then this. Then this."</i></p>
+      </div>
+      <div class="fix"><b>Fix</b>Add a 3-step "what happens next" strip:<br>① <i>"A real person reads your message (usually within a day)."</i><br>② <i>"If anything's unclear, we'll email and ask before posting."</i><br>③ <i>"You'll see a 'Cleared' tick in your account when it's ready to share."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">35.5</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>The chain visual shows 4 empty "?" circles — implies a quota</h3>
+        <p>The "Pass the Coin" chain has: inviter · You · ? · ? · ? · ? . Visually, this reads as <i>"you have to fill four slots"</i> — a quota. The body copy reinforces it: <i>"share with 4 Australians."</i> A warm visitor at minute 2 of their membership is not psychologically ready to commit to bringing in four people. Setting the bar there now creates a soft failure state — <i>"I only invited two, so I haven't done my bit."</i></p>
+      </div>
+      <div class="fix"><b>Fix</b>Show one "next link" slot, not four. <i>"Pass the link to one Australian who'd want a say. (You can pass it again later from your account.)"</i> Keep the four-slot visual for the Hub once they're ready.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">35.6</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"What does a fair say and a fair share mean to you?" — heading repeats inside body</h3>
+        <p>Heading: <i>"What does a fair say and a fair share mean to you?"</i> Body, two sentences later: <i>"What does a fair say and a fair share mean to you — for each company?"</i> Same question, twice, in adjacent paragraphs. The repetition was probably a copy-paste artefact.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Heading: <i>"Two companies the Foundation is watching."</i> Body intro: <i>"Where do you stand on each? Your view will be recorded — you can change it later from your account."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">35.7</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Poor ESG Target candidates under clause 30.3 of the Partnership Agreement"</h3>
+        <p>The body asks the user to vote sentiment on two companies (Santos, Origin) and frames them with the phrase <i>"identified as Poor ESG Target candidates under clause 30.3."</i> "ESG" is not a Year-5 concept. "Poor ESG Target" reads as either a value judgement (the user is being told the answer) or a clause-reference that requires reading the Partnership Agreement. Either way, the question is not neutral.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Drop the clause reference and the "Poor ESG Target" framing. <i>"The Foundation is keeping an eye on two companies because of how they treat the environment and local communities — Santos (gas) and Origin (energy). What do you think?"</i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 36 REWRITES ─────────────── -->
+<section id="i-rewrites">
+  <div class="section-num">36 — Copy rewrites</div>
+  <h2>Every string in <code>intro/</code>, side-by-side, K-6 reading level.</h2>
+
+  <p>Same format as the Vault and Hub rewrite tables. Live copy on the left; the rewrite on the right. Where a phrase carries a financial-claim risk, the rewrite removes the claim. Where a phrase is unique to <code>/intro/</code>'s warm-traffic role, the rewrite leans into the friend-introduced framing.</p>
+
+  <h3 style="margin-top:24px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">Card 1 — What is COG$</h3>
+  <div class="translate">
+    <div class="tr-row hd"><div>Live copy</div><div>K-6 rewrite</div></div>
+    <div class="tr-row"><div>A community that owns its say on Country.</div><div>A community that owns a real say on Australian land.</div></div>
+    <div class="tr-row"><div>COG$ started in Drake Village, NSW, a gold country town where locals decided there was another way.</div><div>COG$ started in Drake Village, a small gold-mining town in NSW. The locals decided they wanted a real say in what happens to the land around them.</div></div>
+    <div class="tr-row"><div>Instead of value being extracted from the land and flowing elsewhere, what if the community held a registered stake and a legal voice in what happens?</div><div>Right now most of the money from mining flows out of the community. We thought: what if the community owned part of the company, and got a vote on what happens?</div></div>
+    <div class="tr-row"><div>A community joint venture. Not a fund, not an app, not a promise.</div><div>This is not a fund or an app. It is a group of Australians who own shares together and vote together — like a club, but with real shares.</div></div>
+    <div class="tr-row"><div>A real shareholding in an ASX-listed resource company, owned collectively by members, governed by members, one equal vote each.</div><div>Members own real shares in an Australian mining company. Every member gets one vote. Same vote for everyone.</div></div>
+    <div class="tr-row"><div>Once-only $4 membership / Open to every Australian / No ongoing fees / Not a fund · Not a subscription · Not financial advice</div><div>It costs $4. Just once. No yearly fee, no subscription. Open to any Australian over 18. This is not financial advice — we don't promise you'll make money.</div></div>
+    <div class="tr-row"><div>For every Australian who thinks the people living on the land should have a say in what happens to it. No exceptions. No tiers.</div><div>The friend who sent you this link doesn't get paid if you join. There is no referral fee. Your $4 goes to the same place theirs did.</div></div>
+  </div>
+
+  <h3 style="margin-top:24px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">Card 2 — Your Voice</h3>
+  <div class="translate">
+    <div class="tr-row hd"><div>Live copy</div><div>K-6 rewrite</div></div>
+    <div class="tr-row"><div>One member. One vote. No exceptions.</div><div>One member, one vote. Same as a footy club election. No exceptions.</div></div>
+    <div class="tr-row"><div>Members vote online through your Independence Vault. Every poll is binding.</div><div>Members vote online from their COG$ account. Every vote counts — the result is what we go with.</div></div>
+    <div class="tr-row"><div>The Trustee holds legal title but does not make the decisions.</div><div>There is a Trustee. Their legal job is the paperwork (signing, filing, holding the shares in the right name). They don't decide what we do. We do.</div></div>
+    <div class="tr-row"><div>Wealth does not buy additional voice. People are the voice.</div><div>You can't buy more votes. Whether you have $4 or $4 million, you get one vote.</div></div>
+    <div class="tr-row"><div>More people, more cogs, more weight behind the decisions that affect Country.</div><div>The more people who join, the louder the community's voice on what happens to the land.</div></div>
+    <div class="tr-row"><div>Your vote carries the same legal weight as every other member's, whether you joined on day one or day one thousand.</div><div>What kinds of things do members vote on? Three examples: which mining proposals to support; how the Foundation spends its money; which companies the Foundation buys shares in next.</div></div>
+  </div>
+
+  <h3 style="margin-top:24px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">Card 3 — What We Own</h3>
+  <div class="translate">
+    <div class="tr-row hd"><div>Live copy</div><div>K-6 rewrite</div></div>
+    <div class="tr-row"><div>Real shares. Real say at the company table.</div><div>Real shares. A real seat at the company table.</div></div>
+    <div class="tr-row"><div>Members collectively hold CHESS-registered shares in ASX-listed resource companies. CHESS is the national securities register, the same one every stockbroker in Australia uses.</div><div>The shares are real. They sit in a member's name on the same official Australian share-register that every stock broker uses (it's called CHESS). Not tokens. Not certificates in a drawer.</div></div>
+    <div class="tr-row"><div>We are building toward a 1% holding in Legacy Minerals Holdings Limited (ASX:LGM).</div><div>We are working toward owning 1% of an Australian mining company together. (When you join, your account will show you which company and how much.)</div></div>
+    <div class="tr-row"><div>At 1%, we can formally attend AGMs, lodge resolutions, and vote on company decisions affecting Country.</div><div>At 1% we can show up at the company's yearly meeting (its AGM) and ask the company to vote on things — like "should we mine here?" or "how much should we spend on cleaning up?".</div></div>
+    <div class="tr-row"><div>Our view: minerals left in the ground may be worth more than minerals dug up.</div><div>Many members believe minerals can be more valuable to a community when they stay in the ground than when they are dug up. That is a community view, not financial advice.</div></div>
+    <div class="tr-row"><div>Not a fund. Not a promise. A registered shareholding and a community member legal voice on extraction and valuation.</div><div>This is not a fund. Not a promise. It is a real share, held in members' names together, with a real legal voice on what gets dug up and how much it's said to be worth.</div></div>
+  </div>
+
+  <h3 style="margin-top:24px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">Card 4 — What Your $4 Means</h3>
+  <div class="translate">
+    <div class="tr-row hd"><div>Live copy</div><div>K-6 rewrite</div></div>
+    <div class="tr-row"><div>You join as an operator. Real protections built in.</div><div>You join as a member, not a customer. Here are four real protections built in.</div></div>
+    <div class="tr-row"><div>Your membership cannot be taken from you. It is soulbound. It cannot be sold, transferred, or seized by anyone else.</div><div>Your membership stays in your name forever. Nobody can buy it from you, take it from you, or transfer it without you. Even we can't.</div></div>
+    <div class="tr-row"><div>The system cannot be financialised. Tokens cannot be traded or redeemed for cash, by design.</div><div>Nobody can buy the votes. The membership tokens are not money — they cannot be sold, traded, or cashed in. That is how we keep one-member-one-vote fair.</div></div>
+    <div class="tr-row"><div>Members are operators of the joint venture. You are joining a shared structure, not making a purchase. Your $4 sets up your permanent Member record.</div><div>You are not buying a product. You are joining a community that owns shares together. The $4 sets up your spot in the ledger so the votes stay fair.</div></div>
+    <div class="tr-row"><div>Your contribution builds real infrastructure. Funds go toward governance infrastructure and more shares in Legacy Minerals for greater community standing.</div><div>Your $4 helps pay the running costs of the community (the website, the bookkeeping, the lawyer who keeps it legal) and helps the Foundation buy more shares — in everyone's name together, not in yours.</div></div>
+    <div class="tr-row"><div>The Trustee executes. Members decide and manage. You are an operator, not a passenger.</div><div>The Trustee handles the paperwork. Members make the decisions. You won't be a passenger — you'll get to vote on what happens.</div></div>
+  </div>
+
+  <h3 style="margin-top:24px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">Card 5 — Your Timing</h3>
+  <div class="translate">
+    <div class="tr-row hd"><div>Live copy</div><div>K-6 rewrite</div></div>
+    <div class="tr-row"><div>Two milestones. Your place secures before both.</div><div>One important date. Joining now means you're in before it.</div></div>
+    <div class="tr-row"><div>Governance Foundation Day — The first online Members' Poll. Every member who joins before this date votes on the first governance decision. One member, one vote. Your first act as a member.</div><div>Foundation Day — 14 May 2026. The community's first big vote. Every member who joins before this date votes on the first decision together. It will be your first act as a member.</div></div>
+    <div class="tr-row"><div>Expansion Day — The Foundation's own governance hardware goes live. New membership tools activate. Members vote on when this happens.</div><div>Later, members will vote on when to switch on more tools (we call this Expansion Day). You don't need to know about this yet — Foundation Day is the one that matters now.</div></div>
+    <div class="tr-row"><div>Your name, email, mobile, and address are held by the Foundation under the Australian Privacy Act. We do not sell, share, or monetise your information. Your mobile is used only for vault login.</div><div>What we keep about you: your name, email, mobile, and address. We do not sell or share it. Your mobile is only used to sign you in to your account.</div></div>
+    <div class="tr-row"><div>Joining now records your position before both milestones. Every member who joins before Foundation Day votes on the first governance decision.</div><div>If you change your mind, email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="721b1c141d32111d15011307010600131e1b135c1d0015">[email&#160;protected]</a> within 14 days and we'll refund the $4. No questions.</div></div>
+    <div class="tr-row"><div>Secure my place. $4 once only ›</div><div>Pay $4 and join →</div></div>
+  </div>
+
+  <h3 style="margin-top:24px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">Voice flow strings</h3>
+  <div class="translate">
+    <div class="tr-row hd"><div>Live copy</div><div>K-6 rewrite</div></div>
+    <div class="tr-row"><div>In one sentence, why did you join?</div><div>Want to record one sentence about why you joined? It's optional — and you can do it any time from your account.</div></div>
+    <div class="tr-row"><div>We use member voices on our Facebook and YouTube channels and at Foundation Day to show Australians what a fair say sounds like. You'll be shown as your first name and state.</div><div>We share short messages from members on Facebook and YouTube. We'll show your first name only — tick the box below if you'd also like your state shown. We won't share your full name, address, or email.</div></div>
+    <div class="tr-row"><div>⚠ The phrase "returns" sounds like a financial claim. Could you rephrase to focus on why you joined the community rather than expected returns?</div><div>Some words in your message sound like a money promise. We can't share posts that look like financial advice. Could you say it in your own words instead?</div></div>
+    <div class="tr-row"><div>I agree my submission can be used on COG$ social media as a member quote. My first name and state may be shown. I can withdraw consent at any time by emailing <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90f9fef6ffd0f3fff7e3f1e5e3e4e2f1fcf9f1beffe2f7">[email&#160;protected]</a> or from my member dashboard.</div><div>I'm OK with COG$ posting this on Facebook or YouTube. (You can change your mind any time — email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5930373f36193a363e2a382c2a2d2b3835303877362b3e">[email&#160;protected]</a> or click "My voice" in your account.)</div></div>
+    <div class="tr-row"><div>Your submission is in review. We'll email you when it's cleared — most submissions are reviewed within 24 hours.</div><div>Thanks. Here's what happens next:<br>1. A real person reads your message (usually within a day).<br>2. If anything's unclear, we'll email and ask before posting.<br>3. You'll see a "Cleared" tick in your account when it's ready to share.</div></div>
+    <div class="tr-row"><div>Now send this to 4 Australians you think deserve a say. Share your unique link. Every person who joins through it becomes the next link in the chain.</div><div>Pass the link to one Australian who'd want a say. (You can pass it again from your account, anytime.)</div></div>
+    <div class="tr-row"><div>The Foundation has identified Santos Limited (ASX: STO) and Origin Energy Limited (ASX: ORG) as Poor ESG Target candidates under clause 30.3 of the Partnership Agreement.</div><div>The Foundation is keeping an eye on two companies because of how they treat the environment and local communities — Santos (gas) and Origin (energy).</div></div>
+    <div class="tr-row"><div>What does a fair say and a fair share mean to you — for each company?</div><div>Where do you stand on each? Your view will be recorded — and you can change it later from your account.</div></div>
+  </div>
+</section>
+
+<!-- ─────────────── 37 JOURNEY ─────────────── -->
+<section id="i-journey">
+  <div class="section-num">37 — Member journey</div>
+  <h2>Karen's brother sends her the link.</h2>
+
+  <p>Karen is 47, lives in Wagga Wagga, drives a school-run Hilux. Her brother Dave sent her a Facebook message: <i>"Sis, have a read of this. Reckon you'd be into it. $4 once."</i> She opens the link on her iPhone in the school carpark at 3:11pm. Below: minute-by-minute, what happens — first as the page is now, then as the audit recommends. Both flows assume a working internet, a successful API roundtrip, and Karen reading at a Year-9 level (she does not have a Year-5 level — she has a teacher's-husband level, which is to say, normal).</p>
+
+  <h3 style="margin-top:18px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">As the page is now</h3>
+  <div class="journey">
+    <div class="jrow"><div class="t">3:11:02</div><div class="a">Karen taps the link in Messenger. Page loads on a 4G signal in the carpark.</div></div>
+    <div class="jrow"><div class="t">3:11:03</div><div class="a">First paint: COG$ wordmark, "1 of 5", "Questions first →", "Skip intro →". <b>The inviter strip is not there yet.</b> Karen does not see Dave's name.</div></div>
+    <div class="jrow"><div class="t">3:11:04</div><div class="a">Below the topbar, a 9.9px ABN strip in 32% opacity grey. She does not read it.</div></div>
+    <div class="jrow"><div class="t">3:11:05</div><div class="a">Heading appears: <i>"A community that owns its say on Country."</i> She reads it twice. "Country" with a capital C makes her think Indigenous land. She is not sure if this is for her.</div></div>
+    <div class="jrow"><div class="t">3:11:08</div><div class="a">The inviter API resolves. The green strip pops in: <i>"Dave thinks you deserve a say."</i> Karen's eye is now four lines down the deck. She doesn't notice. (She'll see it if she scrolls back.)</div></div>
+    <div class="jrow"><div class="t">3:11:14</div><div class="a">Reads the deck. Notes the four pills. <b>Spots "$4"</b> as one of four. Spots "Not financial advice" as another. Reads the callout. Taps Next.</div></div>
+    <div class="jrow"><div class="t">3:11:24</div><div class="a">Card 2. <i>"Your Independence Vault."</i> She does not know what that is. <i>"The Trustee holds legal title."</i> She does not know what that is either. She skims and taps Next.</div></div>
+    <div class="jrow"><div class="t">3:11:35</div><div class="a">Card 3. <i>"CHESS-registered shares in ASX-listed resource companies."</i> Now she's lost. She closes the tab and opens Messenger to ask Dave what this is.</div></div>
+    <div class="jrow"><div class="t">3:13</div><div class="a">Dave replies <i>"Ya it's $4 mate, get the $4 in, you'll see"</i>. Karen reopens. Goes to swipe right on Card 3 — <b>swipes 50px instead of 96px</b> — slips to Card 4. Now she's reading "soulbound" without the "What we own" context.</div></div>
+    <div class="jrow"><div class="t">3:14</div><div class="a">Card 4. The four padlock icons. The word "financialised". Karen scrolls to the bottom: <i>"Secure my place. $4 once only ›"</i>. She did not realise she was on Card 5. She thought "Secure my place" meant "save it for later." Taps it.</div></div>
+    <div class="jrow"><div class="t">3:14:30</div><div class="a">Lands on /join/. Now she's looking at a payment form. She has two questions she didn't get answered ("what is the trustee", "what is CHESS") and has just been told she's about to pay $4. She closes the tab.</div></div>
+    <div class="jrow"><div class="t">3:14:31</div><div class="a"><b>Side-effect: <code>cogs_intro_seen</code> is set to '1'.</b> She will never see the intro carousel again on this phone.</div></div>
+  </div>
+
+  <h3 style="margin-top:18px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;color:var(--ink-2)">As the audit recommends</h3>
+  <div class="journey">
+    <div class="jrow"><div class="t">3:11:02</div><div class="a">Karen taps the link. Page loads.</div></div>
+    <div class="jrow"><div class="t">3:11:03</div><div class="a"><b>First paint includes "Dave thinks you deserve a say"</b> — server-rendered. Below: <i>"COG$ — A community that owns a real say in what happens on Australian land."</i> Below that: <i>"Costs $4, once. We don't take it until you say yes on the next page."</i></div></div>
+    <div class="jrow"><div class="t">3:11:08</div><div class="a">Reads the rewritten Card 1. Sees "your friend can't earn a commission for you joining" callout. Trusts the page a little more.</div></div>
+    <div class="jrow"><div class="t">3:11:18</div><div class="a">Taps Next. Card 2 (rewritten): one vote each, what you actually vote on (three concrete examples).</div></div>
+    <div class="jrow"><div class="t">3:11:32</div><div class="a">Card 3 (rewritten): <i>"the same official Australian share-register your bank manager would recognise."</i> Recognises "share register". Continues.</div></div>
+    <div class="jrow"><div class="t">3:11:50</div><div class="a">Card 4 (rewritten, soulbound and financialised gone): <i>"Nobody can buy the votes."</i> Reads it as a positive.</div></div>
+    <div class="jrow"><div class="t">3:12:08</div><div class="a">Card 5 (rewritten): one milestone (Foundation Day, 14 May), one privacy summary, one cooling-off guarantee. Button reads <i>"Pay $4 and join →"</i>. Karen knows what's about to happen.</div></div>
+    <div class="jrow"><div class="t">3:12:20</div><div class="a">Taps the button. Lands on the existing /join/ page. The price was set on Card 1, confirmed on Card 5. No surprise.</div></div>
+  </div>
+</section>
+
+<footer class="doc-ft">
+  <div>COG$ of Australia · /intro/ audit · warm-traffic pass · companion to vault-audit + hub-audit</div>
+  <div>16 sections · 60 findings — Critical 12 · High 24 · Medium 21 · Nit 1 · Warm-only 2 · across 6 files</div>
+</footer>
+
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>
