@@ -967,9 +967,9 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <!-- ── Main content area ── -->
   <div class="vault-content">
 
-  <div id="governance-banner" style="display:none;background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #8b6914;border-radius:10px;padding:20px 24px;margin-bottom:20px;">
-    <p style="margin:0 0 4px 0;font-size:0.78em;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;">Action required</p>
-    <p style="margin:0 0 14px 0;font-size:1em;color:#f0ede8;font-weight:600;">Complete your governance record to vote on 14 May</p>
+  <div id="governance-banner" style="display:none;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:20px;">
+    <p style="margin:0 0 4px 0;font-size:0.78em;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Finish setting up your profile</p>
+    <p style="margin:0 0 14px 0;font-size:1em;color:var(--text);font-weight:600;">We need your date of birth and address to activate your vote for Foundation Day. Takes 30 seconds. We explain why we ask.</p>
     <div id="gov-form-container">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
         <div>
@@ -996,8 +996,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <input id="gov-dob" type="date" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px 10px;color:#f0ede8;font-size:0.9em;box-sizing:border-box;">
         </div>
         <div style="display:flex;align-items:flex-end;">
-          <button id="gov-submit-btn" onclick="submitGovernanceRecord()" style="width:100%;background:#8b6914;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-weight:700;font-size:0.85em;cursor:pointer;">
-            Save &amp; complete →
+          <button id="gov-submit-btn" onclick="submitGovernanceRecord()" style="width:100%;background:var(--gold-1,#8b6914);color:#fff;border:none;border-radius:6px;padding:9px 12px;font-weight:700;font-size:0.85em;cursor:pointer;">
+            Set up now
           </button>
         </div>
       </div>
@@ -1021,7 +1021,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <span>⚙</span><span class="tb-pill-lbl">Profile</span><button class="iq-btn" data-tip="Your profile and settings — update your email, change your password, manage your distribution election preference (AUD or new ASX COG$), and log out." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
       </button>
       <a class="tb-pill" href="../partners/index.html" onclick="coinTransition('../partners/index.html');return false;" title="Members Hub">
-        <span>🏠</span><span class="tb-pill-lbl">Members Hub</span><button class="iq-btn" data-tip="Return to the Members Hub — community stats, governance news, the document library, the Foundation asset overview, and your invitation code to bring new Members in." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
+        <span>🏠</span><span class="tb-pill-lbl">Home</span><button class="iq-btn" data-tip="Return to the Members Hub — community stats, governance news, the document library, the Foundation asset overview, and your invitation code to bring new Members in." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button>
       </a>
       <button class="tb-logout" id="logout-btn"><span>↩</span><span class="lbl"> Log out</span></button>
     </div>
@@ -1048,6 +1048,19 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="panel on" id="tab-overview">
     <div class="pg">
 
+      <!-- 5.01: Vote card -->
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px">
+        <div style="font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:6px">You have 1 equal vote</div>
+        <div style="font-size:.95rem;color:var(--text3);line-height:1.5">Your vote counts the same as every other member. This never changes.</div>
+      </div>
+
+      <!-- 5.06: Member token card -->
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px">
+        <div style="font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:4px">Your Member token</div>
+        <div style="font-size:.95rem;color:var(--text3);line-height:1.5;margin-bottom:2px">1 of 1 &middot; can't be sold or transferred</div>
+        <div style="font-size:.84rem;color:var(--text3);line-height:1.5">This is proof of your membership and your right to vote.</div>
+      </div>
+
       <!-- A: Status strip — name + number + paid/unpaid chip -->
       <div class="ov-strip">
         <div class="ov-strip-id">
@@ -1063,7 +1076,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div id="ov-business-pill" style="display:none;margin-bottom:12px"></div>
 
       <!-- Outstanding secondary payments nudge — shown when kids/donation/PIF payments are due -->
-      <div id="ov-outstanding-card" style="display:none;margin-bottom:14px;padding:14px 16px;background:var(--pay-gold-bg);border:1px solid var(--pay-gold-bdr);border-radius:12px">
+      <div id="ov-outstanding-card" style="display:none;margin-bottom:14px;padding:14px 16px;background:rgba(192,57,43,.06);border:1px solid #c0392b;border-radius:12px">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div style="flex:1;min-width:0">
             <div style="font-size:1rem;font-weight:600;color:var(--pay-gold);margin-bottom:3px" id="ov-outstanding-title">Payments outstanding</div>
@@ -1078,7 +1091,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- D: Community COG$ — top card -->
       <div id="ov-exchange-card" style="margin-bottom:14px">
-        <div class="sec-divider" style="margin-bottom:10px">Community COG$ <i class="info-ico" onclick="showInfo('exchange')" style="vertical-align:middle">?</i></div>
+        <div class="sec-divider" style="margin-bottom:4px">Community COG$ <i class="info-ico" onclick="showInfo('exchange')" style="vertical-align:middle">?</i></div>
+        <div style="font-size:.84rem;color:var(--text3);margin-top:4px;margin-bottom:10px;line-height:1.5">You can send these to other members today.</div>
         <div class="card">
           <div class="tr">
             <div class="hr-sym hr-sym-teal">CC</div>
@@ -1099,7 +1113,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
       <!-- E: COG$ Reservations summary -->
       <div id="ov-reservations-card" style="margin-bottom:14px">
-        <div class="sec-divider" style="margin-bottom:10px">COG$ Reservations <i class="info-ico" onclick="showInfo('reservations')" style="vertical-align:middle">?</i></div>
+        <div class="sec-divider" style="margin-bottom:4px">COG$ Reservations <i class="info-ico" onclick="showInfo('reservations')" style="vertical-align:middle">?</i></div>
+        <div style="font-size:.84rem;color:var(--text3);margin-top:4px;margin-bottom:10px;line-height:1.5">No money, no commitment — just your interest list.</div>
         <div class="card" style="padding:0">
           <div id="ov-res-rows" style="padding:4px 0"></div>
           <div style="padding:10px 18px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
@@ -1115,7 +1130,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
         <div class="card" style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div>
             <div style="font-weight:600;margin-bottom:3px">Community work</div>
-            <div style="font-size:1.02rem;color:var(--text3)">Governance, acquisitions, first nations, community projects, and more</div>
+            <div style="font-size:1.02rem;color:var(--text3)">Projects, acquisitions, partnerships and first nations governance.</div>
           </div>
           <button class="btn btn-ghost btn-sm" onclick="coinTransition('../hubs/mainspring/')">Open Hubs &rarr;</button>
         </div>
@@ -1431,7 +1446,8 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
   <div class="panel" id="tab-governance">
     <div class="pg" id="s-polls">
       <div style="margin-bottom:20px">
-        <div style="font-family:var(--serif);font-size:3.2rem;font-weight:400;color:var(--text);margin-bottom:6px;line-height:1.1">Polls <i class="info-ico" onclick="showInfo('governance-tab')" style="vertical-align:middle">?</i></div>
+        <div style="font-family:var(--serif);font-size:3.2rem;font-weight:400;color:var(--text);margin-bottom:4px;line-height:1.1">Polls <i class="info-ico" onclick="showInfo('governance-tab')" style="vertical-align:middle">?</i></div>
+        <div style="font-size:.84rem;color:var(--text3);margin-top:4px;margin-bottom:10px;line-height:1.5">One equal vote per member. Yours counts the same as everyone else's.</div>
         <p style="font-size:1.02rem;color:var(--text3);line-height:1.65">Initiate proposals, join existing initiations, and vote on open Members Polls. One equal vote per Member regardless of holdings, wealth, or location.</p>
       </div>
 
@@ -4802,14 +4818,23 @@ function renderTabOverview(d){
       {key:'rwa_tokens',        label:'RWA COG$',        code:'Class R', sym:'RWA', symCls:'hr-sym-amber'},
       {key:'landholder_tokens', label:'Landholder COG$', code:'Class Lh',sym:'Lh',  symCls:'hr-sym-green'},
     ];
-    resRows.innerHTML = resConfig.map(function(r){
-      var val = parseFloat(d[r.key]||0)||0;
-      return '<div class="tr">'+
-        '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
-        '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' · No obligation</div></div>'+
-        '<div class="tr-val"><div style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--gold);line-height:1;letter-spacing:.02em">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
-        '</div>';
-    }).join('');
+    var allZero = resConfig.every(function(r){ return !(parseFloat(d[r.key]||0)||0); });
+    if(allZero){
+      resRows.innerHTML = '<div style="padding:16px 18px">'
+        + '<div style="font-size:.95rem;color:var(--text3);margin-bottom:6px;line-height:1.5">You have no reservations yet.</div>'
+        + '<div style="font-size:.88rem;color:var(--text3);margin-bottom:10px;line-height:1.5">Reservations are your interest list for future COGS token classes. No money, no commitment.</div>'
+        + '<a href="#" onclick="tab(\'holdings\');return false;" style="font-size:.88rem;color:var(--gold-2,var(--gold))">Learn more about reservations \u2192</a>'
+        + '</div>';
+    } else {
+      resRows.innerHTML = resConfig.map(function(r){
+        var val = parseFloat(d[r.key]||0)||0;
+        return '<div class="tr">'+
+          '<div class="hr-sym '+r.symCls+'">'+r.sym+'</div>'+
+          '<div class="tr-inf"><div class="tr-name">'+r.label+'</div><div class="tr-cls">'+r.code+' \u00b7 No obligation</div></div>'+
+          '<div class="tr-val"><div style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--gold);line-height:1;letter-spacing:.02em">'+fmtDp(val)+'</div><div class="tr-amt-label">reserved</div></div>'+
+          '</div>';
+      }).join('');
+    }
   }
 
   /* ── E: Exchange balance ── */
