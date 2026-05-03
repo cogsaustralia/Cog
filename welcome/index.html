@@ -31,7 +31,7 @@ body::before {
 .site-header {
   padding:18px 24px; border-bottom:1px solid var(--gold-rim);
   background:rgba(10,8,4,.85); backdrop-filter:blur(8px);
-  position:sticky; top:0; z-index:100;
+  position:relative; z-index:100;
 }
 .nav-row { max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .brand { display:flex; align-items:center; gap:12px; text-decoration:none; }
@@ -213,6 +213,10 @@ audio.quote-media { max-height:unset; background:transparent; }
             any time to remove your message.
             <a href="/privacy/#voices" style="color:var(--gold-2)">How we use voice messages &#x203A;</a>
           </p>
+          <p style="font-size:.75rem;color:var(--muted);margin-top:6px;line-height:1.5">
+            If you join in the next 30 minutes, we'll link your message to your new account
+            automatically -- so you don't have to re-enter it.
+          </p>
         </div>
         <div class="voice-teaser" id="voice-teaser" style="display:none;margin-top:20px;text-align:left">
           <p style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">What other members have said:</p>
@@ -292,6 +296,7 @@ audio.quote-media { max-height:unset; background:transparent; }
 <script>
 (function(){
   'use strict';
+  var API_BASE = window.location.pathname.replace(/\/welcome\/?.*$/, '') + '/_app/api/';
   var SESSION_KEY = 'cogs_voice_token';
   var token = '';
   try {
@@ -333,8 +338,7 @@ audio.quote-media { max-height:unset; background:transparent; }
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sharing\u2026';
     statusEl.className = ''; statusEl.textContent = '';
-    var apiBase = window.location.pathname.replace(/\/welcome\/?.*$/, '') + '/_app/api/';
-    fetch(apiBase + 'welcome-voice', {
+    fetch(API_BASE + 'welcome-voice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text_content: text, session_token: token, ref_source: refSource, consent_social: (function(){ var el=document.getElementById('consent-social'); return el ? el.checked : false; })() })
@@ -345,10 +349,16 @@ audio.quote-media { max-height:unset; background:transparent; }
       showCta(text);
     })
     .catch(function(err){
+      var friendlyErrors = {
+        'banned_phrase': 'Your message contains a phrase we need to review. Try rewording it.',
+        'too_short': 'A sentence or two works best -- a bit more would help.',
+        'rate_limit': 'You’ve sent a few messages recently -- please try again in a few minutes.',
+      };
+      var friendlyMsg = friendlyErrors[err.code] ||
+        'Couldn’t send right now. Want to try again, or email it to <a href="mailto:info@cogsaustralia.org">info@cogsaustralia.org</a>?';
+      statusEl.innerHTML = friendlyMsg;
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Send my message \u2192';
-      statusEl.className = 'error';
-      statusEl.textContent = err.message || 'Something went wrong. Please try again.';
+      submitBtn.textContent = 'Send my message →';
     });
   });
 
@@ -370,7 +380,7 @@ audio.quote-media { max-height:unset; background:transparent; }
     var qs = ['vt=' + encodeURIComponent(token)];
     if (refSource) qs.push('ref=' + encodeURIComponent(refSource));
     document.getElementById('join-cta-btn').href = '../join/?' + qs.join('&');
-    ctaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.scrollTo({ top: ctaSection.offsetTop - 24, behavior: 'smooth' });
   }
 
   (function(){
@@ -394,12 +404,16 @@ audio.quote-media { max-height:unset; background:transparent; }
   })();
 
   (function(){
-    var apiBase = window.location.pathname.replace(/\/welcome\/?.*$/, '') + '/_app/api/';
-    fetch(apiBase + 'welcome-social')
+    fetch(API_BASE + 'welcome-social')
       .then(function(r){ return r.json(); })
       .then(function(json){
         if (!json.success) {
           console.error('[welcome-social] API error:', json.error, json.detail||'');
+          var quotesContainer = document.querySelector('.quote-rotator');
+          if(quotesContainer){
+            var loadingEl = quotesContainer.querySelector('.quote-placeholder');
+            if(loadingEl) loadingEl.textContent = "Couldn't load community voices right now -- that's OK, you can read them later.";
+          }
           return;
         }
         renderQuotes(json.data.quotes||[]);
@@ -428,7 +442,7 @@ audio.quote-media { max-height:unset; background:transparent; }
       var idx=0;
       function render(i){
         var q=quotes[i];
-        var dots=quotes.map(function(_,j){ return '<span class="quote-dot'+(j===i?' active':'')+'"></span>'; }).join('');
+        var dots=quotes.map(function(_,j){ return '<button class="quote-dot'+(j===i?' active':'')+'" onclick="goToQuote('+j+')" aria-label="Quote '+(j+1)+'"'+(j===i?' aria-current="true"':'')+'></button>'; }).join('');
         var inner='';
         if (q.type==='video'){
           inner='<p class="quote-media-label">\uD83C\uDF9E\uFE0F Video message</p>'+
@@ -448,7 +462,49 @@ audio.quote-media { max-height:unset; background:transparent; }
         el.innerHTML=inner;
       }
       render(0);
-      if (quotes.length>1){ setInterval(function(){ idx=(idx+1)%quotes.length; render(idx); },8000); }
+      if (quotes.length>1){
+        var rotatorContainer = document.getElementById('quote-rotator');
+        var rotatorInterval = setInterval(function(){
+          if(rotatorContainer){
+            var mediaEls = rotatorContainer.querySelectorAll('video, audio');
+            var anyPlaying = Array.from(mediaEls).some(function(m){ return !m.paused; });
+            if(anyPlaying) return;
+          }
+          idx=(idx+1)%quotes.length; render(idx);
+        },8000);
+        window.goToQuote = function(i){
+          idx = i; render(idx);
+          clearInterval(rotatorInterval);
+          rotatorInterval = setInterval(function(){
+            if(rotatorContainer){
+              var mediaEls = rotatorContainer.querySelectorAll('video, audio');
+              var anyPlaying = Array.from(mediaEls).some(function(m){ return !m.paused; });
+              if(anyPlaying) return;
+            }
+            idx=(idx+1)%quotes.length; render(idx);
+          },8000);
+        };
+        if(rotatorContainer){
+          rotatorContainer.addEventListener('mouseenter', function(){ clearInterval(rotatorInterval); });
+          rotatorContainer.addEventListener('mouseleave', function(){
+            rotatorInterval = setInterval(function(){
+              var mediaEls = rotatorContainer.querySelectorAll('video, audio');
+              var anyPlaying = Array.from(mediaEls).some(function(m){ return !m.paused; });
+              if(anyPlaying) return;
+              idx=(idx+1)%quotes.length; render(idx);
+            },8000);
+          });
+          rotatorContainer.addEventListener('focusin', function(){ clearInterval(rotatorInterval); });
+          rotatorContainer.addEventListener('focusout', function(){
+            rotatorInterval = setInterval(function(){
+              var mediaEls = rotatorContainer.querySelectorAll('video, audio');
+              var anyPlaying = Array.from(mediaEls).some(function(m){ return !m.paused; });
+              if(anyPlaying) return;
+              idx=(idx+1)%quotes.length; render(idx);
+            },8000);
+          });
+        }
+      }
     }
 
     function renderTicker(joiners){
