@@ -42,7 +42,13 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
   <div class="card">
     <div class="ico">✓</div>
     <h1>Thank you.</h1>
-    <p class="sub">Your submission is in review. We'll email you when it's cleared. Most submissions are reviewed within 24 hours. You can manage your submissions and withdraw consent at any time from your member dashboard.</p>
+    <p class="sub">Your submission is in review. Here is what happens next:</p>
+<ol style="margin:12px auto 18px;max-width:360px;text-align:left;font-size:.84rem;color:var(--text2);line-height:1.7;padding-left:20px">
+  <li>A real person reads your message (usually within a day).</li>
+  <li>If anything is unclear, we email and ask before posting.</li>
+  <li>You will see a cleared tick in your account when it is ready to share.</li>
+</ol>
+<p class="sub" style="font-size:.78rem;margin-top:0">You can manage your submissions and withdraw consent any time from your member dashboard.</p>
 
     <!-- Pass the Coin panel -->
     <div class="ptc-panel" id="ptc-panel" style="max-width:520px;margin:28px auto 0;background:rgba(240,209,138,.05);border:1px solid rgba(240,209,138,.22);border-radius:20px;padding:26px 28px;display:none">
@@ -56,20 +62,15 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
       <!-- Full state -->
       <div id="ptc-full" style="display:none">
         <div style="font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px">Pass the coin</div>
-        <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:6px">Now send this to 4 Australians you think deserve a say.</h3>
-        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px">Share your unique link. Every person who joins through it becomes the next link in the chain.</p>
+        <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--text);margin-bottom:6px">Pass the link to one person who would want a say.</h3>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px">You can pass it again any time from your account.</p>
         
         <!-- Chain visual -->
         <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:20px">
           <div class="ptc-circle" id="ptc-inviter" style="background:rgba(255,255,255,.04);border:1.5px dashed rgba(240,209,138,.2);color:rgba(240,209,138,.3)">TB</div>
           <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
           <div class="ptc-circle ptc-you" style="background:rgba(240,209,138,.15);border:1.5px solid rgba(240,209,138,.5);color:var(--gold-1);font-weight:600">You</div>
-          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-          <div class="ptc-circle ptc-empty">?</div>
-          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-          <div class="ptc-circle ptc-empty">?</div>
-          <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
-          <div class="ptc-circle ptc-empty">?</div>
+          
           <div style="width:14px;height:1px;background:rgba(240,209,138,.18)"></div>
           <div class="ptc-circle ptc-empty">?</div>
         </div>
@@ -175,8 +176,7 @@ h1{font-family:var(--serif);font-size:1.8rem;font-weight:500;color:var(--text);m
   
   window.ptcShareFB = function(){
     var link = document.getElementById('ptc-link').textContent;
-    var text = 'I joined COG$ of Australia — a $4 community say in our minerals. Join before Foundation Day on 14 May: ' + link + ' Not financial advice.';
-    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(text), '_blank', 'width=600,height=400');
+    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link), '_blank', 'width=600,height=400');
   };
   
   window.ptcSkip = function(){
