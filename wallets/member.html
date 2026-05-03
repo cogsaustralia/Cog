@@ -1284,10 +1284,10 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="card">
         <div class="card-hd"><h3>Give to the community</h3><button class="info-btn" onclick="showInfo('donation-pif')">How this works</button><span style="font-size:1rem;color:var(--text3)">$4 per unit</span></div>
         <div class="card-bd">
-          <p style="font-size:1rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Donation COG$ pay for First Nations programs, the environment, and community work. Pay It Forward sponsors another Member's $4 entry who cannot afford it.</p>
+          <p style="font-size:1rem;color:var(--text3);margin-bottom:16px;line-height:1.65">Donation COG$ pay for First Nations programs, the environment, and community work. Pay $4 for someone who can't afford to join. They get the same vote as you.</p>
           <div class="give-stepper-row">
             <div>
-              <div class="give-stepper-lbl">Donation COG$ (Class D)<button class="iq-btn" data-tip="$4 each. $2.00 goes directly to Sub-Trust C (the community projects fund) at the time of issue. $2.00 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
+              <div class="give-stepper-lbl">Donation COG$ (Class D)<button class="iq-btn" data-tip="$4 each. $2 goes to community projects. The other $2 is invested, and the income from it goes to those projects. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity." aria-label="More information" aria-expanded="false" onclick="event.stopPropagation();iqToggle(this)" tabindex="0">?</button></div>
               <div class="give-stepper-ctrl">
                 <button class="stepper-btn" onclick="adjustGiftQty('char-don',-1)">−</button>
                 <input class="stepper-input" id="char-don" type="number" min="0" value="1" oninput="updateCharityTotal()">
@@ -1560,13 +1560,13 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       <div class="id-grid" id="profile-grid"></div>
     </div>
 
-    <div class="profile-section">
-      <div class="profile-section-title">How you'd like to be paid (choose later) <i class="info-ico" onclick="showInfo('distribution-election')" style="vertical-align:middle">?</i></div>
-      <p style="font-size:1.02rem;color:var(--text3);margin-bottom:12px;line-height:1.6">When dividend distributions are active (post-Expansion Day), choose how you receive your share.</p>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-ghost btn-sm" id="elect-aud" onclick="setElection('aud')">AUD bank transfer</button>
-        <button class="btn btn-ghost btn-sm" id="elect-cog" onclick="setElection('cog')">New ASX COG$</button>
-      </div>
+    <div class="profile-section" id="dist-election-placeholder">
+      <div class="profile-section-title">How you'd like to be paid <i class="info-ico" onclick="showInfo('distribution-election')" style="vertical-align:middle">?</i></div>
+      <p style="font-size:.88rem;color:var(--text3);line-height:1.6">This option becomes available when COGS is approved by ASIC (Expansion Day). We will email you when you can choose.</p>
+    </div>
+    <div style="display:none" aria-hidden="true">
+      <button class="btn btn-ghost btn-sm" id="elect-aud" onclick="setElection('aud')">AUD bank transfer</button>
+      <button class="btn btn-ghost btn-sm" id="elect-cog" onclick="setElection('cog')">New ASX COG$</button>
       <div class="flash" id="elect-fl"></div>
     </div>
 
@@ -1601,28 +1601,29 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 <div class="pay-modal-bg" id="pay-modal" onclick="if(event.target===this){closePayModal();}">
   <div class="pay-modal">
     <button class="pay-modal-close" onclick="closePayModal()">✕</button>
-    <h3>Complete your $4.00 membership contribution</h3>
+    <h3>Pay your $4 to finish joining.</h3>
     <p style="font-size:.9rem;color:var(--text3);margin-bottom:10px;line-height:1.6">Your registration is confirmed. Choose how you'd like to pay — bank transfer and PayID are both instant and completely fee-free.</p>
-    <div style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:8px;padding:5px 0;border-bottom:1px solid var(--border)">Tap a payment option to expand ↓</div>
+    <div style="font-size:.78rem;font-weight:600;color:var(--text3);margin-bottom:12px;text-align:center">Bank transfer: $4.00 (no fee) | Card: $4.40 (40c Stripe fee)</div>
 
     <!-- ① Bank Transfer — open by default -->
     <div class="pay-acc">
-      <div class="pay-acc-hd" aria-expanded="false" onclick="togglePayAcc(this)">
+      <div class="pay-acc-hd" aria-expanded="true" onclick="togglePayAcc(this)">
         <span class="pay-acc-name">🏦 Bank Transfer &amp; OSKO</span>
         <span style="font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(62,207,110,.12);border:1px solid rgba(62,207,110,.28);color:var(--green)">No fees</span>
         <span class="pay-acc-arr">›</span>
       </div>
-      <div class="pay-acc-body">
+      <div class="pay-acc-body open">
         <div style="padding:10px 12px;background:rgba(232,184,75,.04);border-radius:8px;border:1px solid rgba(232,184,75,.18);margin-bottom:8px">
           <div class="bank-detail-row"><span class="bank-key">BSB</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">182-512</span><button class="copy-btn" onclick="copyVal('182-512',this)">copy</button></div></div>
           <div class="bank-detail-row"><span class="bank-key">Account</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">975 174 624</span><button class="copy-btn" onclick="copyVal('975174624',this)">copy</button></div></div>
           <div class="bank-detail-row"><span class="bank-key">Account name</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-size:.88rem">The Trustee for the CJVM Sub-Trust A</span><button class="copy-btn" onclick="copyVal('The Trustee for the CJVM Sub-Trust A',this)">copy</button></div></div>
+          <div style="font-size:.78rem;color:var(--text3);margin-top:4px;margin-bottom:4px;line-height:1.5">COGS Members Fund (legal name: The Trustee for the CJVM Sub-Trust A). Australian trust account held at Macquarie Bank.</div>
           <div class="bank-detail-row"><span class="bank-key">Bank</span><span class="bank-val">Macquarie Bank</span></div>
           <div class="bank-detail-row"><span class="bank-key">Reference</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="pay-modal-ref">Your Member number</span><button class="copy-btn" onclick="copyElVal('pay-modal-ref',this)">copy</button></div></div>
           <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val">$4.00</span></div>
         </div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Your payment goes directly from your bank to the trust account at Macquarie Bank. No third party sees your transaction. Same-day clearance via OSKO.</p>
-        <button class="pay-notify-btn" id="pm-bsb-notify-btn" onclick="notifyPaymentSent(this,'primary')">I've sent this payment →</button>
+        <button class="pay-notify-btn" id="pm-bsb-notify-btn" onclick="notifyPaymentSent(this,'primary')">I've sent it — let me know when it lands →</button>
       </div>
     </div>
 
@@ -1640,7 +1641,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
           <div class="bank-detail-row"><span class="bank-key">Amount</span><span class="bank-val">$4.00</span></div>
         </div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Open your banking app, choose PayID, and enter the number above. Arrives instantly, no fees.</p>
-        <button class="pay-notify-btn" id="pm-payid-notify-btn" onclick="notifyPaymentSent(this,'primary')">I've sent this payment →</button>
+        <button class="pay-notify-btn" id="pm-payid-notify-btn" onclick="notifyPaymentSent(this,'primary')">I've sent it — let me know when it lands →</button>
       </div>
     </div>
 
@@ -1653,7 +1654,7 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
       </div>
       <div class="pay-acc-body">
         <div id="stripe-container" style="margin-bottom:8px">
-          <a id="stripe-pay-link" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_blank" rel="noopener" class="btn btn-gold" style="display:block;text-align:center;text-decoration:none;padding:12px;font-size:.95rem">Pay $4.40 by card via Stripe ›</a>
+          <a id="stripe-pay-link" href="https://buy.stripe.com/dRmbJ31N57f4eCH2fh63K00" target="_self" rel="noopener" class="btn btn-gold" style="display:block;text-align:center;text-decoration:none;padding:12px;font-size:.95rem">Pay $4 + 40c card fee — by Apple Pay, Google Pay, or card.</a>
         </div>
         <p id="stripe-pay-sub" style="font-size:.8rem;color:var(--text3);margin:0;line-height:1.5;text-align:center">Card, Apple Pay and Google Pay accepted. Includes $0.40 Stripe processing fee.</p>
       </div>
@@ -1670,58 +1671,22 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
     <h3>Complete your contribution</h3>
     <p style="font-size:.9rem;color:var(--text3);margin-bottom:12px;line-height:1.6" id="outstanding-modal-desc"></p>
     <div id="outstanding-modal-items" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
-    <div style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:8px;padding:5px 0;border-bottom:1px solid var(--border)">Tap a payment option to expand ↓</div>
-
-    <!-- ① Bank Transfer — open by default -->
-    <div class="pay-acc">
-      <div class="pay-acc-hd" aria-expanded="false" onclick="togglePayAcc(this)">
-        <span class="pay-acc-name">🏦 Bank Transfer &amp; OSKO</span>
-        <span style="font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(62,207,110,.12);border:1px solid rgba(62,207,110,.28);color:var(--green)">No fees</span>
-        <span class="pay-acc-arr">›</span>
-      </div>
-      <div class="pay-acc-body">
-        <div style="padding:10px 12px;background:rgba(232,184,75,.04);border-radius:8px;border:1px solid rgba(232,184,75,.18);margin-bottom:8px">
-          <div class="bank-detail-row"><span class="bank-key">BSB</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">182-512</span><button class="copy-btn" onclick="copyVal('182-512',this)">copy</button></div></div>
-          <div class="bank-detail-row"><span class="bank-key">Account</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono)">975 174 624</span><button class="copy-btn" onclick="copyVal('975174624',this)">copy</button></div></div>
-          <div class="bank-detail-row"><span class="bank-key">Account name</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-size:.88rem">The Trustee for the CJVM Sub-Trust A</span><button class="copy-btn" onclick="copyVal('The Trustee for the CJVM Sub-Trust A',this)">copy</button></div></div>
-          <div class="bank-detail-row"><span class="bank-key">Bank</span><span class="bank-val">Macquarie Bank</span></div>
-          <div class="bank-detail-row"><span class="bank-key">Reference</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-ref">Your Member number</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-ref',this)">copy</button></div></div>
-          <div class="bank-detail-row"><span class="bank-key">Amount</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-total">—</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-total',this)">copy</button></div></div>
-        </div>
-        <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Payment goes directly to the trust account at Macquarie Bank. Same-day clearance via OSKO.</p>
-        <button class="pay-notify-btn" id="om-bsb-notify-btn" onclick="notifyPaymentSent(this,'outstanding')">I've sent this payment →</button>
-      </div>
+    <p style="font-size:.9rem;color:var(--text3);margin-bottom:12px;line-height:1.6">Payment details are shown below.</p>
+    <div style="padding:10px 14px;background:rgba(232,184,75,.04);border-radius:8px;border:1px solid rgba(232,184,75,.18);margin-bottom:12px;font-size:.9rem">
+      <div class="bank-detail-row"><span class="bank-key">BSB</span><span class="bank-val" style="font-family:var(--mono)">182-512</span></div>
+      <div class="bank-detail-row"><span class="bank-key">Account</span><span class="bank-val" style="font-family:var(--mono)">975 174 624</span></div>
+      <div class="bank-detail-row"><span class="bank-key">PayID</span><span class="bank-val" style="font-family:var(--mono);color:var(--gold)">0494 578 706</span></div>
+      <div class="bank-detail-row"><span class="bank-key">Reference</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-ref">Your Member number</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-ref',this)">copy</button></div></div>
+      <div class="bank-detail-row"><span class="bank-key">Amount</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-total">—</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-total',this)">copy</button></div></div>
     </div>
-
-    <!-- ② PayID -->
-    <div class="pay-acc">
-      <div class="pay-acc-hd" aria-expanded="false" onclick="togglePayAcc(this)">
-        <span class="pay-acc-name">⚡ PayID — instant transfer</span>
-        <span style="font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(62,207,110,.12);border:1px solid rgba(62,207,110,.28);color:var(--green)">No fees</span>
-        <span class="pay-acc-arr">›</span>
-      </div>
-      <div class="pay-acc-body">
-        <div style="padding:10px 12px;background:rgba(232,184,75,.04);border-radius:8px;border:1px solid rgba(232,184,75,.18);margin-bottom:8px">
-          <div class="bank-detail-row"><span class="bank-key">PayID</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" style="font-family:var(--mono);color:var(--gold)">0494 578 706</span><button class="copy-btn" onclick="copyVal('0494578706',this)">copy</button></div></div>
-          <div class="bank-detail-row"><span class="bank-key">Reference</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-payid-ref">Your Member number</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-payid-ref',this)">copy</button></div></div>
-          <div class="bank-detail-row"><span class="bank-key">Amount</span><div style="display:flex;align-items:center;gap:6px"><span class="bank-val" id="outstanding-modal-payid-total">—</span><button class="copy-btn" onclick="copyElVal('outstanding-modal-payid-total',this)">copy</button></div></div>
-        </div>
-        <p style="font-size:.8rem;color:var(--text3);line-height:1.5;margin:0">Open your banking app, choose PayID, enter the number above. Arrives instantly, no fees.</p>
-        <button class="pay-notify-btn" id="om-payid-notify-btn" onclick="notifyPaymentSent(this,'outstanding')">I've sent this payment →</button>
-      </div>
+    <button class="pay-notify-btn" id="om-bsb-notify-btn" onclick="notifyPaymentSent(this,'outstanding')">I've sent it — let me know when it lands →</button>
+    <div style="margin-top:10px">
+      <button id="outstanding-card-btn" class="btn btn-gold" style="width:100%;font-size:.95rem">Pay $4 + 40c card fee — by Apple Pay, Google Pay, or card.</button>
     </div>
-
-    <!-- ③ Card via Stripe -->
-    <div class="pay-acc">
-      <div class="pay-acc-hd" aria-expanded="false" onclick="togglePayAcc(this)">
-        <span class="pay-acc-name">💳 Pay by card via Stripe</span>
-        <span style="font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(200,112,32,.1);border:1px solid rgba(200,112,32,.3);color:var(--pay-gold)">$0.40 fee</span>
-        <span class="pay-acc-arr">›</span>
-      </div>
-      <div class="pay-acc-body">
-        <button id="outstanding-card-btn" class="btn btn-gold" style="width:100%;margin-bottom:8px;font-size:.95rem">Pay by card via Stripe ›</button>
-        <p style="font-size:.8rem;color:var(--text3);margin:0;line-height:1.5;text-align:center">Card, Apple Pay and Google Pay accepted. Includes $0.40 Stripe processing fee.</p>
-      </div>
+    <div style="display:none" aria-hidden="true">
+      <span id="outstanding-modal-payid-ref"></span>
+      <span id="outstanding-modal-payid-total"></span>
+      <button id="om-payid-notify-btn" onclick="notifyPaymentSent(this,'outstanding')"></button>
     </div>
 
     <!-- Defer / Cancel actions -->
@@ -4614,7 +4579,7 @@ var _INFO = {
   'poll-initiation':{title:'Initiating a Members Poll',body:'<p>Any Member can start a poll initiation. The legal threshold is <strong>10 Members, or 1% of all active Members</strong> — whichever is fewer.</p><p><strong>How it works:</strong></p><ol><li>You draft a proposal — title and description explaining context and what Yes/No means</li><li>Other Members join your initiation until the threshold is reached</li><li>Once the threshold is met, the initiation automatically becomes a formal open Members Poll</li><li>All active Members can then vote Yes, No, or Maybe</li></ol><p><strong>What can be polled:</strong> ASX acquisitions, AGM proxy voting positions, ESG strategy, operational rule changes, and Trustee removal (which requires a 75% Special Resolution).</p>'},
   'voting-integrity':{title:'Voting integrity',body:'<p>Every vote cast is securely logged with a one-way receipt using SHA-256 hashing.</p><ul><li><strong>Your vote is verifiable</strong> — you receive a receipt proving your participation without revealing your choice to others</li><li><strong>Tallies are anonymous</strong> — the public count shows Yes/No/Maybe numbers only, never individual identities</li><li><strong>One equal vote per Member</strong> — regardless of holdings, wealth, location, or seniority. Entrenched in the Declaration and cannot be changed by any majority vote</li><li><strong>Updatable while open</strong> — you can change your response any time before a poll closes</li></ul><p>The Foundation cannot alter, suppress, or recount votes. The cryptographic record is the authoritative tally.</p>'},
   'activity-log':{title:'Member action log',body:'<p>Every action taken against your Membership is recorded here — read-only and append-only. Nothing can be deleted or altered, by you or by the Foundation.</p><p><strong>What is logged:</strong></p><ul><li>JVPA acceptance and cryptographic signing events</li><li>Token issuances — S-NFT, kS-NFT, Community COG$, Donation COG$, Pay It Forward</li><li>Reservation updates — ASX, RWA, Landholder COG$</li><li>Community COG$ transfers sent and received</li><li>Poll votes cast</li><li>Profile changes — email, election preference</li><li>KYC submission and verification events</li></ul><p>This is your permanent personal audit trail inside the Foundation.</p>'},
-  'distribution-election':{title:'Distribution election',body:'<p>When dividend distributions are active (after Expansion Day), the Foundation distributes 50% of all dividend income proportionally to every Sub-Trust B income unit holder within 60 days. This is mandatory under the Declaration — the Trustee has no discretion to withhold or delay it.</p><p><strong>Choose how you receive your share:</strong></p><ul><li><strong>AUD bank transfer</strong> — paid directly to your registered bank account in Australian dollars</li><li><strong>New ASX COG$</strong> — reinvested to purchase additional ASX COG$ on your behalf, compounding your position in the Members Asset Pool</li></ul><p>You can change your election at any time. The election in place at each distribution date is the one applied.</p>'},
+  'distribution-election':{title:'How would you like to be paid later?',body:'<p>Choose Australian dollars or new COG$. Decide closer to the date.</p><p>When dividend distributions are active (after COGS is approved by ASIC), the Foundation distributes 50% of all dividend income proportionally to every Sub-Trust B income unit holder within 60 days. This is mandatory under the Declaration — the Trustee has no discretion to withhold or delay it.</p><p><strong>Your options:</strong></p><ul><li><strong>AUD bank transfer</strong> — paid directly to your registered bank account in Australian dollars</li><li><strong>New ASX COG$</strong> — reinvested to purchase additional ASX COG$ on your behalf, compounding your position in the Members Asset Pool</li></ul><p>You can change your election at any time before a distribution date. We will email you when this option opens.</p>'},
   'contact-change':{title:'Requesting a mobile or address change',body:'<p>Your mobile number and postal address are identity-linked fields used during registration and tied to your Membership record.</p><p><strong>Why changes require review:</strong></p><ul><li>Mobile numbers are used for authentication — an unverified change creates a security risk</li><li>Addresses are used for zone verification and Resident COG$ allocation</li><li>Review protects against account takeover and preserves the integrity of the Membership register</li></ul><p>Submit your request here and the Foundation team will contact you to verify your identity before applying the change. Typical turnaround is 1–2 business days.</p>'}
 };
 
@@ -5288,6 +5253,8 @@ window.openPayModal = function(){
   if(modal){
     modal.style.display = ''; // clear any legacy inline style
     resetModalAccordions(modal);
+    var firstHd = modal.querySelector('.pay-acc-hd');
+    if(firstHd){ firstHd.setAttribute('aria-expanded','true'); var fb = firstHd.nextElementSibling; if(fb) fb.classList.add('open'); }
     resetNotifyBtns(modal);
     modal.classList.add('open');
   }
@@ -6907,5 +6874,6 @@ async function notifyPaymentSent(btn, context) {
 })();
 </script>
 
+<div style="font-size:.72rem;color:var(--text3);text-align:center;padding:16px;margin-top:24px;border-top:1px solid var(--border)">COG$ of Australia Foundation &middot; ABN 91 341 497 529 &middot; Drake Village NSW 2469 &middot; <a href="mailto:admin@cogsaustralia.org" style="color:inherit">admin@cogsaustralia.org</a></div>
 </body>
 </html>
