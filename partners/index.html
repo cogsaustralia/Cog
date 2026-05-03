@@ -1449,8 +1449,10 @@
               <!-- JV Asset Pool -->
               <div id="cs-asset-pool-card" style="padding:16px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(110,168,216,.10),rgba(70,120,180,.05));border:1.5px solid rgba(110,168,216,.30);min-width:160px;position:relative;cursor:default" onmouseenter="showAssetBreakdown()" onmouseleave="hideAssetBreakdown()">
                 <div style="font-family:var(--serif);font-size:2rem;font-weight:600;color:#6ea8d8;line-height:1;letter-spacing:-.02em" id="cs-asset-pool" data-countup="true"></div>
-                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Community assets, total value</div>
-                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">ASX · RWA · Sub-Trust A cash · IP formula</div>
+                <div style="font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(110,168,216,.8);margin-top:6px">Community-verified assets</div>
+                <div style="font-size:.67rem;color:rgba(110,168,216,.45);margin-top:3px;line-height:1.4">CHESS holdings · verified RWA · Sub-Trust A cash</div>
+                <div id="cs-ip-line" style="font-size:.72rem;color:rgba(160,196,240,.5);margin-top:4px;line-height:1.4;display:none">Includes <span id="cs-ip-value"></span> self-assessed intellectual property valuation. <a href="#" onclick="document.getElementById('cs-ip-explainer').style.display=document.getElementById('cs-ip-explainer').style.display==='none'?'block':'none';return false;" style="color:#6ea8d8;text-decoration:underline">How is this calculated?</a></div>
+                <div id="cs-ip-explainer" style="display:none;margin-top:6px;padding:8px 10px;border-radius:8px;background:rgba(110,168,216,.07);border:1px solid rgba(110,168,216,.18);font-size:.70rem;color:rgba(160,196,240,.7);line-height:1.55">The IP formula is a Trustee-adopted self-assessed valuation: $475,000 base plus $250 per registered Member. It is not a verified asset holding and is separated from the verified ASX and RWA figures.</div>
                 <a href="../docs/COGS_System_Valuation_Report_v1_0.pdf" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:5px 10px;border-radius:8px;background:rgba(110,168,216,.15);border:1px solid rgba(110,168,216,.35);color:#6ea8d8;font-size:.68rem;font-weight:600;letter-spacing:.04em;text-decoration:none;transition:background .2s,border-color .2s" onmouseover="this.style.background='rgba(110,168,216,.28)';this.style.borderColor='rgba(110,168,216,.60)'" onmouseout="this.style.background='rgba(110,168,216,.15)';this.style.borderColor='rgba(110,168,216,.35)'">&#x2B07; IP Valuation Report</a>
                 <!-- Hover breakdown panel -->
                 <div id="asset-breakdown-panel" style="display:none;position:absolute;bottom:calc(100% + 8px);left:0;min-width:260px;padding:12px 14px;border-radius:12px;background:rgba(10,16,28,.97);border:1px solid rgba(110,168,216,.30);box-shadow:0 12px 36px rgba(0,0,0,.65);z-index:60;pointer-events:none">
@@ -1481,6 +1483,7 @@
               <div style="width:10px;height:10px;border-radius:50%;background:var(--ok);flex-shrink:0"></div>
               <div style="font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(126,232,162,.82)">What Members are planning to do (you can change yours any time).</div>
             </div>
+            <div style="font-size:.78rem;color:rgba(126,232,162,.55);font-style:italic;margin-bottom:8px">These numbers show what Members plan to do. No money has been committed.</div>
             <div style="display:flex;flex-wrap:wrap;gap:10px">
 
               <!-- COG$ Reserved -->
@@ -1616,48 +1619,12 @@
           </div>
 
           <!-- ══ Four Spokes of the COG$ Circular Economy ══════════════════════════════ -->
-          <div class="four-spokes-section" style="margin-top:8px">
-            <div class="four-spokes-eyebrow">From a Founding Member</div>
-            <h3 class="four-spokes-heading">Why we're built like this (5 min read)</h3>
-            <div class="four-spokes-body">
-              <p>A wheel is one of humanity's oldest and most elegant solutions. It doesn't consume what it moves across — it simply turns, converting energy into forward motion, distributing force evenly, and returning to the same point it started from before moving on. That is exactly what the COG$ circular economy is designed to do: not extract, not accumulate, not collapse inward — but turn. Continuously, sustainably, and together.</p>
-              <p>At the centre of the wheel sits the hub, which is the Community Joint Venture itself,. It is the fixed point around which everything rotates, the anchor that holds the spokes in tension and gives the wheel its form. Without the community, there is no wheel. Without the wheel, the community goes nowhere.</p>
-              <p>From that hub extend four spokes. Each one is distinct in its material, its purpose, and the load it carries. But a wheel with uneven spokes wobbles. A wheel with a missing spoke buckles under pressure. The COG$ model is designed so that all four spokes are present, tensioned, and load-bearing. The integrity of the whole depends on the integrity of each.</p>
-
-              <div class="four-spokes-grid">
-                <div class="spoke-card">
-                  <div class="spoke-label">Spoke of identity</div>
-                  <div class="spoke-token">NFT COG$</div>
-                  <p class="spoke-body"><strong>Membership tokens: one per Member, cannot be sold or moved.</strong> This is the spoke that names every participant and gives them their place in the wheel. Minted once, at the moment an individual member or business joins the community, each NFT COG$ is permanently and uniquely bound to that participant — their signature on the wheel, their seat at the table. It cannot be transferred, replicated, or cashed out, because identity cannot be transferred, replicated, or sold. This spoke does not stretch to accommodate demand. It grows only as the community genuinely grows — one consenting participant at a time — because a community built on manufactured membership is not a community at all. It is a rim without a hub.</p>
-                </div>
-                <div class="spoke-card">
-                  <div class="spoke-label">Spoke of equity</div>
-                  <div class="spoke-token">ASX COG$</div>
-                  <p class="spoke-body"><strong>Investment tokens: backed by shares we own in resource companies.</strong> This is the spoke that connects the wheel to the broader economy of real, publicly accountable resource companies. Minted against a pooled holding of shares in ASX-listed resource companies, every ASX COG$ represents a proportional stake in that pool — and it cannot exist without a corresponding share underpinning it. The spoke lengthens only when the pool grows, through new company joint ventures or additional share contributions. It is market-anchored and transparent by design, tied directly to the performance of real companies operating under real regulatory scrutiny. This spoke does not speculate. It reflects.</p>
-                </div>
-                <div class="spoke-card">
-                  <div class="spoke-label">Spoke of resource</div>
-                  <div class="spoke-token">RWA COG$</div>
-                  <p class="spoke-body"><strong>Resource tokens: backed by minerals we have valued in the ground.</strong> This is the deepest spoke — reaching furthest from the hub, anchored not in markets or memberships but in the earth itself. Not yet in circulation, each RWA COG$ will be minted via smart contract and tied to an independently verified, in-situ resource: minerals, biological assets, or other natural assets valued before a single gram is extracted. The minting quantity is fixed at the point of independent valuation and cannot be revisited. If the underlying resource increases in value, existing tokens appreciate — the spoke carries more weight, but it does not grow longer. The only way to extend this spoke is to register additional verified resources. This is the spoke that makes inflation structurally impossible — not by rule, but by architecture.</p>
-                </div>
-                <div class="spoke-card">
-                  <div class="spoke-label">Spoke of exchange</div>
-                  <div class="spoke-token">Community COG$ (CC)</div>
-                  <p class="spoke-body"><strong>Community tokens: for swapping help, services and gifts inside the community.</strong> This is the most active spoke — the one in constant motion, flexing and turning with the daily life of the community. Carrying no directly linked underlying asset, Community COG$ derive their value entirely from what members agree they are worth through the exchange of real goods and services. Every Individual Member receives 1,000 CC upon entry; every Business Member receives 10,000 CC — enough to begin participating, not enough to dominate. Additional CC may be minted and issued only in exchange for genuine goods or services. This spoke grows in direct proportion to the productive activity of the community itself.</p>
-                </div>
-              </div>
-
-              <div class="spoke-rim-block">
-                <div class="spoke-rim-hd">Rule 1: you can't cash COG$ out for dollars.</div>
-                <p>Four strong spokes are not enough on their own. What holds them together — what gives the wheel its shape and keeps value from flying outward — is the rim. In the COG$ model, that rim is the no-fiat rule. No COG$ token of any type can be converted to or exchanged for Australian dollars or any other fiat currency. Value generated within the circular economy stays within the circular economy. This is not a restriction imposed on the community — it is the boundary condition that makes circularity possible. A wheel without a rim is just four spokes spinning in the air. The moment a cash-out pathway exists, the wheel stops being a wheel. It becomes a funnel — and value flows in one direction only, away from the people who created it.</p>
-              </div>
-
-              <div class="spoke-road-block">
-                <div class="spoke-rim-hd">Rule 2: every COG$ is backed by something real.</div>
-                <p>A wheel is only as useful as the ground it moves on. The COG$ circular economy does not exist in abstraction — it turns on the real world. The shares are real. The in-situ resources are real. The members are real people and real businesses. The goods and services exchanged are real contributions to real community operations. And unlike extraction, which tears up the road as it goes, a wheel leaves the road as it found it.</p>
-                <p class="spoke-closing">Four spokes. One hub. One rim. One road.</p>
-              </div>
-            </div>
+          <!-- Four Spokes essay moved to /about/four-spokes/ -->
+          <div class="hub-link-card" style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:24px 0;max-width:520px">
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Foundation reading</div>
+            <h3 style="font-family:var(--serif);font-size:1.1rem;font-weight:500;margin-bottom:8px;color:var(--text)">Why we are built like this</h3>
+            <p style="font-size:.88rem;color:var(--muted);margin-bottom:14px;line-height:1.6">The four token classes, the no-fiat rule, and how the community owns real assets. About 5 minutes.</p>
+            <a href="/about/four-spokes/" style="font-size:.88rem;font-weight:600;color:var(--gold-2);text-decoration:none">Read the full explanation ›</a>
           </div>
 
       
@@ -1838,23 +1805,35 @@
 
       <hr class="divider">
 
-      <!-- ══ TRUTH WINDOW — LIVE REGISTRY ══════════════════════════════════════ -->
+      <!-- ══ WHAT THE COMMUNITY OWNS — consolidated token registry + asset holdings ══ -->
 
 
       <section class="section reveal">
         <div class="container">
-          <div class="cv-full">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap">
-              <div>
-                <h2 style="font-family:var(--serif);font-size:clamp(1.3rem,3vw,1.8rem);font-weight:500;letter-spacing:-.02em;margin-top:8px;color:#a0c4f0">What the community holds, right now</h2>
-          <p class="section-lead">These figures come directly from the live COG$ Registry, not a snapshot, not a projection. Every token class, every issued unit, every multi-signature threshold shown below reflects the actual state of the Foundation right now. This is the proof.</p>
-                <p style="font-size:.86rem;color:rgba(160,196,240,.45);margin-top:6px;line-height:1.5">Hover or tap any cell to learn what it means. All numbers update live from the database.</p>
-              </div>
-              <div class="display-only-badge" style="flex-shrink:0;margin-top:4px">
-                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#7ee8a2;animation:pulse 2s infinite;margin-right:3px"></span>
-                Live data: last updated <span id="mc-last-updated">now</span>
-              </div>
+          <div class="cv-full community-holdings-panel">
+            <div class="panel-heading" style="font-family:var(--serif);font-size:clamp(1.3rem,3vw,1.8rem);font-weight:500;letter-spacing:-.02em;margin-top:8px;color:#a0c4f0">What the community owns right now</div>
+            <p style="font-size:.84rem;color:var(--text3,rgba(160,196,240,.55));margin-bottom:16px;line-height:1.6">Live data from the Foundation ledger and the ASX CHESS register.</p>
+
+            <!-- Tab switcher -->
+            <div class="holdings-tabs" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+              <button class="holdings-tab active" onclick="switchHoldingsTab('tokens',event)" style="padding:8px 18px;border-radius:20px;border:1px solid rgba(160,196,240,.35);background:rgba(160,196,240,.12);color:#a0c4f0;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s">Tokens issued</button>
+              <button class="holdings-tab" onclick="switchHoldingsTab('assets',event)" style="padding:8px 18px;border-radius:20px;border:1px solid rgba(110,168,216,.2);background:transparent;color:rgba(110,168,216,.6);font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s">Assets backing them</button>
             </div>
+
+            <!-- Tab 1: Token registry (Truth Window) -->
+            <div id="holdings-tab-tokens" class="holdings-tab-content">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap">
+                <div>
+                  <p class="section-lead">These figures come directly from the live COG$ Registry, not a snapshot, not a projection. Every token class, every issued unit, every multi-signature threshold shown below reflects the actual state of the Foundation right now. This is the proof.</p>
+                  <p style="font-size:.86rem;color:rgba(160,196,240,.45);margin-top:6px;line-height:1.5">Hover or tap any cell to learn what it means. All numbers update live from the database.</p>
+                </div>
+                <div class="display-only-badge" style="flex-shrink:0;margin-top:4px">
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#7ee8a2;animation:pulse 2s infinite;margin-right:3px"></span>
+                  Live data: last updated <span id="mc-last-updated">now</span>
+                </div>
+              </div>
+
+              <p style="font-size:.84rem;color:rgba(160,196,240,.5);margin-bottom:16px;line-height:1.6">The tokens above are backed by the assets on the right. Every token class has a real-world asset or income stream behind it.</p>
 
             <!-- ── PEOPLE ── -->
             <div class="mc-section-hd mc-hd-warm">👤 People</div>
@@ -1991,7 +1970,89 @@
               </div>
               <p style="font-size:.86rem;color:rgba(160,196,240,.55);line-height:1.6;margin:0">Core vault operations require at least <strong style="color:#a0c4f0">three board director authorisations</strong>. No single Member or admin can unilaterally move assets, issue tokens, or alter registry records. All figures on this board are read directly from the live registry.</p>
             </div>
-          </div>
+            </div><!-- /holdings-tab-tokens -->
+
+            <!-- Tab 2: ASX + RWA assets (Foundation Holdings) -->
+            <div id="holdings-tab-assets" class="holdings-tab-content" style="display:none">
+              <p class="section-lead">The Foundation holds CHESS-registered ASX shares in Legacy Minerals Holdings (ASX: LGM) and tokenised real-world assets on behalf of all Partners. These holdings back the in-ground resource token economy. All prices and quantities are live from the CHESS register and verified on-chain.</p>
+              <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">These windows show actual ASX shareholdings on the CHESS Register and blockchain-verified Real World Asset pools: the real assets that back every COG$ minted.</p>
+
+              <!-- Community COG$ total strip -->
+              <div class="fh-strip" id="fh-strip">
+                <div class="fh-stat">
+                  <span class="fh-stat-val" id="fh-cc-minted"></span>
+                  <span class="fh-stat-lbl">Community COG$ minted</span>
+                </div>
+                <div class="fh-stat">
+                  <span class="fh-stat-val" id="fh-cc-circ"></span>
+                  <span class="fh-stat-lbl">Community COG$ in circulation</span>
+                </div>
+                <div class="fh-stat">
+                  <span class="fh-stat-val" id="fh-cc-asx"></span>
+                  <span class="fh-stat-lbl">ASX COG$ minted (total)</span>
+                </div>
+                <div class="fh-stat">
+                  <span class="fh-stat-val" id="fh-cc-rwa"></span>
+                  <span class="fh-stat-lbl">RWA COG$ minted (total)</span>
+                </div>
+              </div>
+
+              <!-- ASX Shareholdings window -->
+              <div class="fh-window fh-window-asx">
+                <div class="fh-window-hd">
+                  <div>
+                    <span class="fh-kicker">CHESS Register Holdings</span>
+                    <h3 class="fh-title">ASX Resource Company Shareholdings</h3>
+                    <p class="fh-sub">Held directly on the ASX CHESS Register in the Foundation's name. Updated from Admin.</p>
+                  </div>
+                  <div class="fh-live-badge"><span class="fh-dot"></span>Admin feed</div>
+                </div>
+                <div class="fh-table-wrap">
+                  <div class="fh-table-hd fh-table-hd-asx">
+                    <div>ASX code</div>
+                    <div>Company</div>
+                    <div class="fh-num">Shares</div>
+                    <div class="fh-num">ASX COG$ minted</div>
+                  </div>
+                  <div id="fh-asx-rows"></div>
+                  <div class="fh-table-ft fh-table-ft-asx" id="fh-asx-total-row" style="display:none">
+                    <div></div>
+                    <div style="font-weight:600;color:var(--text)">Total</div>
+                    <div class="fh-num" id="fh-asx-total-shares">0</div>
+                    <div class="fh-num" id="fh-asx-total-cogs">0</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RWA Holdings window -->
+              <div class="fh-window fh-window-rwa" style="margin-top:18px">
+                <div class="fh-window-hd">
+                  <div>
+                    <span class="fh-kicker" style="color:#c4b0f0">Blockchain-Verified Holdings</span>
+                    <h3 class="fh-title">Real World Asset Pools</h3>
+                    <p class="fh-sub">In-ground mineral value and other blockchain-verified Real World Assets held by the Foundation. Updated from Admin.</p>
+                  </div>
+                  <div class="fh-live-badge fh-live-badge-rwa"><span class="fh-dot"></span>Admin feed</div>
+                </div>
+                <div class="fh-table-wrap">
+                  <div class="fh-table-hd fh-table-hd-rwa">
+                    <div>Pool name</div>
+                    <div>Asset type</div>
+                    <div class="fh-num">Verified valuation</div>
+                    <div class="fh-num">RWA COG$ minted</div>
+                  </div>
+                  <div id="fh-rwa-rows"></div>
+                  <div class="fh-table-ft fh-table-ft-rwa" id="fh-rwa-total-row" style="display:none">
+                    <div></div>
+                    <div style="font-weight:600;color:var(--text)">Total</div>
+                    <div class="fh-num" id="fh-rwa-total-val">$0</div>
+                    <div class="fh-num" id="fh-rwa-total-cogs">0</div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- /holdings-tab-assets -->
+
+          </div><!-- /community-holdings-panel -->
         </div>
       </section>
 
@@ -2045,95 +2106,6 @@
             <p style="font-size:.82rem;color:var(--muted);line-height:1.72;margin:0;font-style:italic">"It's a community trust that buys shares in Australian resource companies and holds them permanently. Dividends are split: half to Members, half reinvested to buy more. The community votes on how those companies are governed. The resources stay in the ground unless the community, including Traditional Owners, agrees otherwise. No one can sell the basket. It just compounds, forever."</p>
           </div>
 
-        </div>
-      </section>
-
-
-      <hr class="divider">
-
-      <!-- ══ FOUNDATION HOLDINGS ═══════════════════════════════════════════════════ -->
-
-
-      <section class="section reveal">
-        <div class="container">
-          <span class="kicker" style="color:#6ea8d8">Foundation Holdings</span>
-          <h2 style="font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:10px 0 8px">Real assets held by the Foundation.</h2>
-          <p class="section-lead">The Foundation holds CHESS-registered ASX shares in Legacy Minerals Holdings (ASX: LGM) and tokenised real-world assets on behalf of all Partners. These holdings back the in-ground resource token economy. All prices and quantities are live from the CHESS register and verified on-chain.</p>
-          <p style="font-size:.86rem;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:62ch">These windows show actual ASX shareholdings on the CHESS Register and blockchain-verified Real World Asset pools: the real assets that back every COG$ minted. Different from the Truth Window above, which shows Member reservations.</p>
-
-          <!-- Community COG$ total strip -->
-          <div class="fh-strip" id="fh-strip">
-            <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-minted"></span>
-              <span class="fh-stat-lbl">Community COG$ minted</span>
-            </div>
-            <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-circ"></span>
-              <span class="fh-stat-lbl">Community COG$ in circulation</span>
-            </div>
-            <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-asx"></span>
-              <span class="fh-stat-lbl">ASX COG$ minted (total)</span>
-            </div>
-            <div class="fh-stat">
-              <span class="fh-stat-val" id="fh-cc-rwa"></span>
-              <span class="fh-stat-lbl">RWA COG$ minted (total)</span>
-            </div>
-          </div>
-
-          <!-- ASX Shareholdings window -->
-          <div class="fh-window fh-window-asx">
-            <div class="fh-window-hd">
-              <div>
-                <span class="fh-kicker">CHESS Register Holdings</span>
-                <h3 class="fh-title">ASX Resource Company Shareholdings</h3>
-                <p class="fh-sub">Held directly on the ASX CHESS Register in the Foundation's name. Updated from Admin.</p>
-              </div>
-              <div class="fh-live-badge"><span class="fh-dot"></span>Admin feed</div>
-            </div>
-            <div class="fh-table-wrap">
-              <div class="fh-table-hd fh-table-hd-asx">
-                <div>ASX code</div>
-                <div>Company</div>
-                <div class="fh-num">Shares</div>
-                <div class="fh-num">ASX COG$ minted</div>
-              </div>
-              <div id="fh-asx-rows"></div>
-              <div class="fh-table-ft fh-table-ft-asx" id="fh-asx-total-row" style="display:none">
-                <div></div>
-                <div style="font-weight:600;color:var(--text)">Total</div>
-                <div class="fh-num" id="fh-asx-total-shares">0</div>
-                <div class="fh-num" id="fh-asx-total-cogs">0</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- RWA Holdings window -->
-          <div class="fh-window fh-window-rwa" style="margin-top:18px">
-            <div class="fh-window-hd">
-              <div>
-                <span class="fh-kicker" style="color:#c4b0f0">Blockchain-Verified Holdings</span>
-                <h3 class="fh-title">Real World Asset Pools</h3>
-                <p class="fh-sub">In-ground mineral value and other blockchain-verified Real World Assets held by the Foundation. Updated from Admin.</p>
-              </div>
-              <div class="fh-live-badge fh-live-badge-rwa"><span class="fh-dot"></span>Admin feed</div>
-            </div>
-            <div class="fh-table-wrap">
-              <div class="fh-table-hd fh-table-hd-rwa">
-                <div>Pool name</div>
-                <div>Asset type</div>
-                <div class="fh-num">Verified valuation</div>
-                <div class="fh-num">RWA COG$ minted</div>
-              </div>
-              <div id="fh-rwa-rows"></div>
-              <div class="fh-table-ft fh-table-ft-rwa" id="fh-rwa-total-row" style="display:none">
-                <div></div>
-                <div style="font-weight:600;color:var(--text)">Total</div>
-                <div class="fh-num" id="fh-rwa-total-val">$0</div>
-                <div class="fh-num" id="fh-rwa-total-cogs">0</div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -2386,24 +2358,22 @@
         <button type="button" onclick="closeJvpaModal()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0" aria-label="Close">×</button>
       </div>
 
-      <!-- Document panel — link-based, works on all browsers/devices -->
+      <!-- Document panel — in-page iframe -->
       <div style="padding:0 24px;flex-shrink:0">
         <p style="font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:14px">
-          Open the agreement to read it. The acceptance checkbox enables automatically once you have had time to review it.
+          Read the agreement above. The checkbox becomes active in 30 seconds.
         </p>
-        <a id="jvpa-open-link" href="../docs/COGS_JVPA.pdf" target="_blank" rel="noopener"
-          onclick="onJvpaDocOpened()"
-          style="display:flex;align-items:center;gap:14px;background:rgba(240,209,138,.07);border:1.5px solid rgba(240,209,138,.28);border-radius:12px;padding:16px 18px;text-decoration:none;transition:background .2s">
-          <span style="font-size:2rem;line-height:1;flex-shrink:0">📄</span>
-          <span style="flex:1">
-            <span style="display:block;font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-1);margin-bottom:3px" id="jvpa-doc-link-title">COG$ of Australia Foundation Joint Venture Participation Agreement</span>
-            <span style="display:block;font-size:.8rem;color:var(--muted)">Opens in a new tab · PDF</span>
-          </span>
-          <span style="color:var(--gold-2);font-size:1.1rem;flex-shrink:0">↗</span>
-        </a>
-        <div id="jvpa-scroll-hint" style="font-size:.82rem;color:var(--muted);text-align:center;margin-top:10px;transition:opacity .3s">
-          Open the agreement above to enable your acceptance ↑
+        <div style="border:1px solid rgba(240,209,138,.28);border-radius:8px;overflow:hidden;margin:0 0 8px">
+          <iframe id="jvpa-pdf-frame" src="../docs/COGS_JVPA.pdf" width="100%" height="400px"
+                  style="border:none;display:block" title="Joint Venture Participation Agreement"
+                  onload="onJvpaFrameLoad()"></iframe>
         </div>
+        <a href="../docs/COGS_JVPA.pdf" download id="jvpa-open-link"
+           style="font-size:.82rem;color:var(--gold-2);text-decoration:none">Download PDF ›</a>
+        <div id="jvpa-scroll-hint" style="font-size:.82rem;color:var(--muted);text-align:center;margin-top:10px;transition:opacity .3s">
+          Scroll up to read the agreement.
+        </div>
+        <div id="jvpa-countdown" style="font-size:.82rem;color:rgba(240,209,138,.55);text-align:center;margin-top:6px"></div>
       </div>
 
       <!-- Acceptance area -->
@@ -2729,16 +2699,23 @@ async function loadCommunityStats(){
     if(el('cs-cogs')) el('cs-cogs').textContent = fmt(s.total_cogs);
     if(el('cs-value')) el('cs-value').textContent = fmtM(s.total_value);
     var fmtC = function(cents){ var n=parseFloat(cents||0)/100; return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); };
-    if(el('cs-asset-pool'))               el('cs-asset-pool').textContent               = fmtC(s.asset_pool_cents);
     if(el('cs-asset-per-member'))         el('cs-asset-per-member').textContent         = fmtC(s.asset_pool_per_member_cents);
     if(el('cs-reservation-per-member'))   el('cs-reservation-per-member').textContent   = fmtC(s.reservation_per_member_cents);
 
     // Populate asset pool breakdown panel (shown on hover)
     var c = s.asset_pool_components || {};
+    var verifiedCents = (c.asx_book_cents||0) + (c.rwa_val_cents||0) + (c.sta_cash_cents||0);
+    if(el('cs-asset-pool'))               el('cs-asset-pool').textContent               = fmtC(verifiedCents);
     if(el('bp-asx'))   el('bp-asx').textContent   = fmtC(c.asx_book_cents   || 0);
     if(el('bp-rwa'))   el('bp-rwa').textContent   = fmtC(c.rwa_val_cents    || 0);
     if(el('bp-cash'))  el('bp-cash').textContent  = fmtC(c.sta_cash_cents   || 0);
     if(el('bp-ip'))    el('bp-ip').textContent    = fmtC(c.ip_infra_cents   || 0);
+    var ipLine = document.getElementById('cs-ip-line');
+    var ipVal  = document.getElementById('cs-ip-value');
+    if(ipLine && ipVal && c.ip_infra_cents > 0){
+      ipVal.textContent = fmtC(c.ip_infra_cents);
+      ipLine.style.display = '';
+    }
     if(el('bp-total')) el('bp-total').textContent = fmtC(s.asset_pool_cents || 0);
 
     // Master control — people
@@ -3225,7 +3202,7 @@ function openJvpaModal() {
   // Reset hint text
   var hint = document.getElementById('jvpa-scroll-hint');
   if (hint) {
-    hint.textContent = 'Open the agreement above to enable your acceptance ↑';
+    hint.textContent = 'Scroll up to read the agreement.';
     hint.style.color = '';
     hint.style.opacity = '1';
   }
@@ -3240,21 +3217,31 @@ function closeJvpaModal() {
   document.body.style.overflow = '';
 }
 
-function onJvpaDocOpened() {
-  // Member clicked the PDF link — enable acceptance after brief delay
-  // to give the document time to open in a new tab
-  setTimeout(function() {
-    _jvpaViewed = true;
-    setJvpaAcceptEnabled(true);
-    var hint = document.getElementById('jvpa-scroll-hint');
-    if (hint) {
-      hint.textContent = '✓ Agreement opened — please read it fully before accepting.';
-      hint.style.color = 'rgba(82,184,122,.85)';
-    }
-  }, 800);
+function onJvpaDocOpened() {}
+
+function onJvpaFrameLoad() {
+  if(!_jvpaViewed){ startJvpaCountdown(); }
 }
-// Keep onJvpaFrameLoad as a no-op for safety (not used but referenced in wallet)
-function onJvpaFrameLoad() {}
+
+function startJvpaCountdown() {
+  var secs = 30;
+  var cd = document.getElementById('jvpa-countdown');
+  if(_jvpaViewed) return;
+  function tick() {
+    if(cd) cd.textContent = 'Checkbox enables in ' + secs + 's';
+    if(secs <= 0) {
+      _jvpaViewed = true;
+      setJvpaAcceptEnabled(true);
+      if(cd) cd.textContent = '';
+      var hint = document.getElementById('jvpa-scroll-hint');
+      if(hint){ hint.textContent = 'You can now tick to accept.'; hint.style.color = 'rgba(82,184,122,.85)'; }
+      return;
+    }
+    secs--;
+    setTimeout(tick, 1000);
+  }
+  tick();
+}
 
 function setJvpaAcceptEnabled(enabled) {
   var cbWrap = document.getElementById('jvpa-checkbox-wrap');
@@ -4482,6 +4469,15 @@ window.showAssetBreakdown = function() {
 window.hideAssetBreakdown = function() {
   var panel = document.getElementById('asset-breakdown-panel');
   if(panel) panel.style.display = 'none';
+};
+
+/* ── Holdings tab switcher ── */
+window.switchHoldingsTab = function(tab, evt) {
+  document.querySelectorAll('.holdings-tab').forEach(function(b){ b.classList.remove('active'); b.style.background='transparent'; b.style.borderColor='rgba(110,168,216,.2)'; b.style.color='rgba(110,168,216,.6)'; });
+  document.querySelectorAll('.holdings-tab-content').forEach(function(c){ c.style.display='none'; });
+  var content = document.getElementById('holdings-tab-'+tab);
+  if(content) content.style.display='';
+  if(evt && evt.target){ evt.target.classList.add('active'); evt.target.style.background='rgba(160,196,240,.12)'; evt.target.style.borderColor='rgba(160,196,240,.35)'; evt.target.style.color='#a0c4f0'; }
 };
 
 /* ── Share button glow on hover (JS for dynamic colour matching) ── */
