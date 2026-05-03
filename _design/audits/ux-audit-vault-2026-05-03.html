@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COGS Member Vault — UX Audit (Plain-English Pass)</title>
+<style>
+  :root{
+    --paper:#faf7f2;
+    --ink:#171513;
+    --ink-2:#3a342e;
+    --ink-3:#6b6157;
+    --rule:#e6dfd4;
+    --rule-2:#d6cdbf;
+    --warm:#f4eee2;
+    --hi: oklch(0.62 0.14 38);
+    --hi-soft: oklch(0.94 0.04 38);
+    --crit: oklch(0.55 0.16 28);
+    --crit-soft: oklch(0.94 0.05 28);
+    --ok: oklch(0.55 0.10 145);
+    --ok-soft: oklch(0.94 0.04 145);
+    --serif: ui-serif, "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:15.5px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:64px 32px 96px}
+  header.doc-hd{
+    border-bottom:1px solid var(--rule);
+    padding-bottom:28px; margin-bottom:40px;
+    display:grid; grid-template-columns:1fr auto; gap:24px; align-items:end;
+  }
+  .doc-mark{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3);
+  }
+  h1{
+    font-family:var(--serif); font-weight:500; font-style:italic;
+    font-size:38px; line-height:1.1; letter-spacing:-.01em;
+    margin-top:8px; max-width:18ch;
+  }
+  .doc-meta{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    text-align:right; line-height:1.7;
+  }
+  .doc-meta b{color:var(--ink); font-weight:500}
+  .lede{
+    font-size:17px; line-height:1.6; color:var(--ink-2);
+    max-width:64ch; margin-top:24px;
+  }
+  .toc{
+    background:var(--warm); border:1px solid var(--rule-2);
+    padding:18px 22px; margin:36px 0 48px;
+    display:grid; grid-template-columns:auto 1fr; gap:12px 22px;
+    font-size:13.5px;
+  }
+  .toc dt{
+    font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); padding-top:1px;
+  }
+  .toc dd a{color:var(--ink); text-decoration:none; border-bottom:1px solid var(--rule-2)}
+  .toc dd a:hover{border-bottom-color:var(--ink)}
+
+  section{margin:56px 0}
+  .section-num{
+    font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:8px;
+  }
+  h2{
+    font-family:var(--serif); font-weight:500;
+    font-size:26px; line-height:1.2; letter-spacing:-.005em;
+    margin-bottom:18px; padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+  }
+  h3{
+    font-family:var(--sans); font-weight:600; font-size:15px;
+    letter-spacing:-.005em; margin:0 0 6px;
+  }
+  p{margin:0 0 12px; color:var(--ink-2); max-width:64ch}
+  p.tight{margin-bottom:6px}
+  code{
+    font-family:var(--mono); font-size:.86em;
+    background:var(--warm); padding:1px 5px; border-radius:3px;
+    color:var(--ink);
+  }
+
+  /* Translation table */
+  .translate{
+    border:1px solid var(--rule-2); margin:18px 0 8px;
+    background:var(--paper);
+  }
+  .tr-row{
+    display:grid; grid-template-columns: 1fr 1fr;
+    border-bottom:1px solid var(--rule);
+  }
+  .tr-row:last-child{border-bottom:none}
+  .tr-row > div{padding:12px 16px}
+  .tr-row > div:first-child{
+    border-right:1px solid var(--rule);
+    font-family:var(--serif); font-style:italic;
+    color:var(--ink-2); font-size:14px; line-height:1.45;
+  }
+  .tr-row > div:last-child{
+    font-family:var(--sans); font-size:14px; color:var(--ink); line-height:1.5;
+  }
+  .tr-row.hd > div{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); font-style:normal;
+    background:var(--warm); padding:8px 16px;
+  }
+
+  .findings{border-top:1px solid var(--ink); margin-top:8px}
+  .finding{
+    display:grid;
+    grid-template-columns: 36px 88px 1fr 90px;
+    gap:18px;
+    padding:18px 0 18px;
+    border-bottom:1px solid var(--rule);
+    align-items:start;
+  }
+  .finding .num{
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    padding-top:3px; letter-spacing:.04em;
+  }
+  .finding .sev{padding-top:2px}
+  .pill{
+    display:inline-block; font-family:var(--mono);
+    font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    padding:2px 8px; border:1px solid; border-radius:99px;
+    line-height:1.5;
+  }
+  .pill.crit{color:var(--crit); border-color:var(--crit); background:var(--crit-soft)}
+  .pill.high{color:var(--hi); border-color:var(--hi); background:var(--hi-soft)}
+  .pill.med{color:var(--ink-2); border-color:var(--rule-2); background:var(--warm)}
+  .pill.nit{color:var(--ink-3); border-color:var(--rule-2); background:transparent}
+  .finding .body h3{margin-bottom:4px}
+  .finding .body p{margin:4px 0 0; font-size:14px}
+  .finding .body .ev{
+    font-size:12.5px; color:var(--ink-3); margin-top:8px;
+    font-family:var(--mono); line-height:1.55;
+  }
+  .finding .fix{
+    font-size:12.5px; color:var(--ink-2); padding-top:3px;
+    line-height:1.5;
+  }
+  .finding .fix b{
+    display:block; font-family:var(--mono);
+    font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:500; margin-bottom:3px;
+  }
+
+  .page-row{
+    display:grid; grid-template-columns:36px 1fr auto;
+    gap:18px; align-items:baseline;
+    padding:22px 0 10px;
+    border-bottom:2px solid var(--ink);
+    margin-top:12px;
+  }
+  .page-row .num{font-family:var(--serif); font-style:italic; font-size:22px; color:var(--ink)}
+  .page-row .ttl{font-family:var(--serif); font-size:22px; font-weight:500; letter-spacing:-.005em}
+  .page-row .url{font-family:var(--mono); font-size:11px; color:var(--ink-3)}
+
+  .priority-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+    margin-top:20px;
+  }
+  .pcard{
+    border:1px solid var(--rule-2); padding:18px 20px;
+    background:var(--paper);
+  }
+  .pcard.now{border-left:3px solid var(--crit)}
+  .pcard.next{border-left:3px solid var(--hi)}
+  .pcard.later{border-left:3px solid var(--rule-2)}
+  .pcard .h{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:10px;
+  }
+  .pcard ol{margin:0 0 0 18px; padding:0}
+  .pcard li{font-size:13.5px; color:var(--ink-2); margin-bottom:8px; line-height:1.5}
+  .pcard li b{color:var(--ink); font-weight:600}
+
+  .reading-strip{
+    background:var(--warm); border:1px solid var(--rule-2);
+    padding:14px 18px; margin:8px 0 24px;
+    display:grid; grid-template-columns: repeat(3, 1fr);
+    font-family:var(--mono); font-size:11.5px; color:var(--ink-2);
+    gap:10px;
+  }
+  .reading-strip b{color:var(--ink); display:block; margin-bottom:2px;
+    font-weight:500; font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-3);
+  }
+
+  .atf-callout{
+    background:var(--warm); border-left:3px solid var(--hi);
+    padding:18px 22px; margin:0 0 36px;
+  }
+  .atf-callout .lbl{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--hi); margin-bottom:6px;
+  }
+
+  footer.doc-ft{
+    margin-top:64px; padding-top:24px;
+    border-top:1px solid var(--rule);
+    font-family:var(--mono); font-size:11px; color:var(--ink-3);
+    display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+
+  @media (max-width:680px){
+    .wrap{padding:40px 20px 64px}
+    h1{font-size:30px}
+    header.doc-hd{grid-template-columns:1fr}
+    .doc-meta{text-align:left}
+    .finding{grid-template-columns:24px 1fr; row-gap:8px}
+    .finding .sev{grid-column:2}
+    .finding .body{grid-column:1 / -1}
+    .finding .fix{grid-column:1 / -1; padding-top:0}
+    .priority-grid{grid-template-columns:1fr}
+    .reading-strip{grid-template-columns:1fr}
+    .tr-row{grid-template-columns:1fr}
+    .tr-row > div:first-child{border-right:none; border-bottom:1px solid var(--rule)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc-hd">
+  <div>
+    <div class="doc-mark">UX Audit · Member Vault — plain-English pass</div>
+    <h1>The vault speaks fintech to people who came for community.</h1>
+  </div>
+  <div class="doc-meta">
+    <b>COGS of Australia</b><br>
+    wallets/member.html<br>
+    May 2026 · Internal review<br>
+    Companion to: cold-funnel audit
+  </div>
+</header>
+
+<p class="lede">A new Member arrives at the vault straight off a $4 contribution. They are not a crypto person. They have not read a whitepaper. They were sold a community story. The vault they land in uses six token classes, three sub-trusts, two distribution-election options, and the word "cryptographic" eight times. Below: every place the language, layout, or expectation gap will lose them — read at a Year 5–6 (K–6) reading level.</p>
+
+<dl class="toc">
+  <dt>01</dt><dd><a href="#summary">Headline read &amp; reading-level snapshot</a></dd>
+  <dt>02</dt><dd><a href="#priorities">Top priorities (fix-now, fix-next, fix-later)</a></dd>
+  <dt>03</dt><dd><a href="#firstrun">First 60 seconds in the vault</a></dd>
+  <dt>04</dt><dd><a href="#nav">Navigation, tabs &amp; information architecture</a></dd>
+  <dt>05</dt><dd><a href="#overview">Overview tab</a></dd>
+  <dt>06</dt><dd><a href="#holdings">COG$ Reservations tab</a></dd>
+  <dt>07</dt><dd><a href="#governance">COG$ Management (Polls) tab</a></dd>
+  <dt>08</dt><dd><a href="#exchange">Exchange tab</a></dd>
+  <dt>09</dt><dd><a href="#give">Give tab</a></dd>
+  <dt>10</dt><dd><a href="#payments">Payments &amp; the $4 / $4.40 split, again</a></dd>
+  <dt>11</dt><dd><a href="#language">Language &amp; reading-level rewrites</a></dd>
+</dl>
+
+<!-- ─────────────── SUMMARY ─────────────── -->
+<section id="summary">
+  <div class="section-num">01 — Summary</div>
+  <h2>The vault is a competent fintech dashboard for an audience that did not sign up for a fintech dashboard.</h2>
+
+  <p>The cold funnel sells a story: <i>own a slice of Australia, one equal vote, $4 in.</i> The vault delivers that story wrapped in vocabulary the user has never heard before — Sub-Trust A/B/C, Class S / Class C / Class D / Class kS / Class Lr / Class PIF, Personal S-NFT, Cryptographic DB, Independence Vault, Expansion Day, Foundation Day, GNAF zone verification, Distribution Election, JVPA. None of it is defined where the user first meets it. All of it appears in the first viewport.</p>
+
+  <p>Underneath the jargon the actual set of things a Member can <i>do</i> is small and reasonable: see what they have, change reservations, vote on polls, send/receive Community COG$, give to community, update their profile. The audit's central recommendation is a renaming and re-grouping pass, not a rebuild. The page below treats reading level as the primary lens because the cold-funnel audience does not have the vocabulary the vault assumes.</p>
+
+  <div class="reading-strip">
+    <div><b>Reading level (current)</b>~ Year 11–12 / business prose. Heavy nominalisation, passive voice, undefined acronyms.</div>
+    <div><b>Target reading level</b>Year 5–6 (K–6). Active voice, short sentences, every term defined on first use or replaced.</div>
+    <div><b>Audience</b>Cold Australian who paid $4 ten minutes ago. No prior crypto, governance or trust-law literacy assumed.</div>
+  </div>
+
+  <div class="atf-callout">
+    <div class="lbl">If a Year-6 child reads the first viewport aloud and cannot say what this page is for, it is broken.</div>
+    <p style="margin:0; font-size:14px">Right now the splash says <i>"You are entering your Member Vault"</i>, the topbar says <i>"Member Vault — COG$ Foundation"</i>, the sidebar shows <i>"Cryptographic DB · Active"</i> and <i>"Foundation Day 14 May 2026"</i>, and the action banner asks them to <i>"Complete your governance record to vote on 14 May."</i> A child reads all of that and learns nothing about what the page <i>does</i>.</p>
+  </div>
+</section>
+
+<!-- ─────────────── PRIORITIES ─────────────── -->
+<section id="priorities">
+  <div class="section-num">02 — Priorities</div>
+  <h2>If you only fix three things this week.</h2>
+
+  <div class="priority-grid">
+    <div class="pcard now">
+      <div class="h">Fix now · Comprehension-critical</div>
+      <ol>
+        <li><b>Replace "Vault" with "Your COGS account."</b> The word vault appears in the splash, the topbar, the wallet route, and at least four info tooltips. It signals safe-deposit-box / crypto-wallet, both of which raise anxiety. <i>Account</i> is what a member came for.</li>
+        <li><b>Replace every token-class code with a plain noun on first surface.</b> "Class C · Transferable now" should read <i>"Community COG$ — you can send these to other members today."</i> Keep the technical class codes only inside an "Advanced details" disclosure.</li>
+        <li><b>Define "Expansion Day" and "Foundation Day" once, at the top, in one sentence each.</b> Both dates are dropped on the user with no context: the sidebar shows "Foundation Day 14 May 2026" and the reservations card says "Released after Expansion Day." A new member cannot tell if these are 11 days away, 11 years away, or the same event.</li>
+      </ol>
+    </div>
+    <div class="pcard next">
+      <div class="h">Fix next · Trust-critical</div>
+      <ol>
+        <li><b>Demote the "governance record" address-of-birth banner.</b> Within seconds of paying $4 the user is asked for their <i>street, suburb, state and date of birth</i> in a gold-bordered banner labelled "Action required." This reads as a second hidden ID check after the join form. Move it to a profile setup step with a <i>why we ask</i> line.</li>
+        <li><b>Reconcile the price, again.</b> Same finding as the funnel audit: the pay modal still shows "$4.00 membership contribution" at the top and "$4.40 by card via Stripe" at the bottom. A member who has just paid $4 by bank transfer might see this modal and panic.</li>
+        <li><b>Show the entity name and ABN in the topbar or footer of the vault.</b> Currently the only legal identification visible is the words "COG$ of Australia Foundation" in the page title. ABN, registered address, and a contact link belong on every authenticated page, not just on a marketing landing.</li>
+      </ol>
+    </div>
+    <div class="pcard later">
+      <div class="h">Fix later · Polish &amp; depth</div>
+      <ol>
+        <li><b>Collapse the seven-tab top nav.</b> Overview already summarises Holdings, Exchange and Give; the dedicated tabs duplicate. Three tabs will do: <i>My COG$</i>, <i>Community</i> (polls + news), <i>Activity &amp; profile</i>.</li>
+        <li><b>Drop "kS-NFT", "S-NFT", "Lr", "PIF" and similar shorthand from user-facing copy.</b> Use them only in advanced disclosures. Replace with <i>Kids COG$, Member token, Resident COG$, Pay-it-forward.</i></li>
+        <li><b>Add a one-screen "What is this place?" on first-ever vault open.</b> 4 cards, 60 seconds. After that, never show again. Currently first-run is identical to every other run.</li>
+      </ol>
+    </div>
+    <div class="pcard later">
+      <div class="h">Watch · Risk register</div>
+      <ol>
+        <li><b>"Cryptographic DB · Active" status pip in the sidebar.</b> This is the kind of phrase that journalists screenshot. It implies blockchain. If the system is a Postgres database with hashes, say so privately and remove the phrase from the UI.</li>
+        <li><b>"Distribution election" toggle (AUD bank vs. new ASX COG$).</b> Soliciting a future-securities preference inside a $4 community account is the single most likely ASIC/securities trigger. Hide until Expansion Day or behind explicit opt-in.</li>
+        <li><b>"Cryptographically receipted" voting copy.</b> If votes are stored in the same Postgres as everything else, this overstates the system. Soften to <i>"each vote is logged with a one-way receipt — the tally cannot show who voted for what."</i></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── FIRST 60 SECONDS ─────────────── -->
+<section id="firstrun">
+  <div class="section-num">03 — First 60 seconds</div>
+  <h2>What a brand-new member sees, in order.</h2>
+
+  <p>Reconstructed from the live DOM as it loads for an unverified, just-paid member:</p>
+
+  <ol style="margin:8px 0 18px 22px; font-size:14px; color:var(--ink-2); line-height:1.7">
+    <li>Splash: <i>"Member Vault / You are entering your Member Vault"</i> over a coin animation.</li>
+    <li>Topbar: <i>"Member Vault — COG$ Foundation"</i>, their name, their member number in monospace, and three pills: <b>Profile · Members Hub · Log out</b>.</li>
+    <li>Sidebar with three section headers — <b>Financial</b>, <b>COGS Governance</b>, <b>Community</b> — eight nav items, and a footer chip reading <i>"Cryptographic DB · Active · Foundation Day 14 May 2026."</i></li>
+    <li>A gold-bordered banner: <i>"Action required — Complete your governance record to vote on 14 May."</i> Asks for street, suburb, state, date of birth.</li>
+    <li>Below that: their name and member number again, a "paid/unpaid" chip, an "Outstanding payments" card if any orders are pending.</li>
+    <li>Then the Community COG$ card showing a balance of <code>—</code> (loading or zero).</li>
+    <li>Then a COG$ Reservations card pre-loaded with three rows the member never asked for (<i>ASX COG$ / RWA COG$ / Landholder COG$</i>) with the caption <i>"Released after Expansion Day."</i></li>
+    <li>Then a Mainspring Hub link, then an invite card.</li>
+  </ol>
+
+  <p>That is roughly <b>nine distinct pieces of information</b>, four undefined acronyms, two undefined dates, one demand for personal details, and no welcome message. The user has not yet been told what they own, what to do next, or where help is.</p>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">3.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The first-run experience does not exist.</h3>
+        <p>A returning member and a brand-new member see exactly the same page. There is no "welcome — here is what just happened" panel. The single most important moment in the entire product is treated as just another page load.</p>
+        <div class="ev">No first-run flag · no <code>localStorage.firstRun</code> check · splash text identical for run #1 and run #1000.</div>
+      </div>
+      <div class="fix"><b>Fix</b>One-time welcome card at the top of Overview for the first 7 days: <i>"You are now a Member of COGS. You hold one equal vote and one Member token. Here is what you can do today."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.02</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Date-of-birth and address ask, served as "action required."</h3>
+        <p>Within seconds of arriving the user is told to enter <i>street, suburb, state, and date of birth</i> to be allowed to vote. There is no preamble, no "why we ask," no privacy link, and no option to do this later. The framing implies the $4 they just paid did not actually buy them voting rights.</p>
+        <div class="ev">Element <code>#governance-banner</code> · gold-on-navy · CTA: "Save &amp; complete →" · failure message styled as red error.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Move into a calm "Profile · finish setup" card. Lead with one sentence: <i>"To make sure each vote comes from a real person in Australia, we need to confirm your address and birthday. We never share these."</i> Make dismissable.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.03</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Two member-number readouts in the first 200px.</h3>
+        <p>The topbar shows the member number in monospace. The Overview "status strip" shows it again immediately below. New members do not yet know what a member number is for, and seeing it twice in two lines makes them think the second one is a different field.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Show member number once, in the topbar, with a <i>"copy"</i> action and a one-line tooltip: <i>"This is your unique COGS ID. You'll quote it for payments and contact."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.04</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Cryptographic DB · Active" footer chip.</h3>
+        <p>Sits in the sidebar, no tooltip, no link. Implies blockchain to a crypto-literate user, implies <i>"this is technical and possibly risky"</i> to everyone else. There is no user need that this status pip serves.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Remove. If a status indicator is needed, replace with a green dot and the words <i>"All systems normal."</i> Link to a status page if one exists.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">3.05</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Foundation Day 14 May 2026" with no context.</h3>
+        <p>Reads like an event invitation. Could be: a launch date, a vote date, a deadline, an anniversary. The user cannot tell, and the date appears in three places with three different contexts (sidebar, governance banner, reservation card).</p>
+      </div>
+      <div class="fix"><b>Fix</b>Pick one canonical phrase and use it everywhere: <i>"First national vote — 14 May 2026"</i> if that is what it is. Add an info tooltip that defines it once.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── NAV / IA ─────────────── -->
+<section id="nav">
+  <div class="section-num">04 — Navigation &amp; IA</div>
+  <h2>Seven tabs and a sidebar are too many doors for a $4 product.</h2>
+
+  <p>The current vault has both a desktop sidebar (8 items, grouped under "Financial / Governance / Community") and a horizontal tab nav (7 tabs). They duplicate each other. New members do not know which one drives the page.</p>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">4.01</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Two parallel navigation systems for the same destinations.</h3>
+        <p>Sidebar items and top-tab items overlap (Overview, Holdings/Reservations, Exchange, Polls, News, Give, Activity). Pick one. A vault this small does not need both.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Keep the top tabs. Drop the sidebar entirely on mobile (it already hides) and on desktop (replace with a left-aligned breadcrumb or simply nothing).</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.02</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Tab labels mix metaphors: "COG$ Reservations," "COG$ Management," "COG$ News."</h3>
+        <p>Three tabs starting with "COG$" make scanning slow. The labels are also internally inconsistent: <i>Management</i> means polls (governance), not management of holdings; <i>Reservations</i> means future tokens; <i>News</i> means notices.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rename to plain verbs/nouns: <i>My tokens, Polls, Updates, Send &amp; receive, Give, History.</i> Drop the COG$ prefix from tab labels.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.03</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Members Hub" and "Member Vault" are two different places, both linked from the topbar.</h3>
+        <p>The topbar pill labelled <i>"🏠 Members Hub"</i> takes the user out of the vault entirely (to <code>/partners/index.html</code>). New members will not know which is the home page for them.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Pick one home. If Members Hub is the canonical landing post-login, send the user there first and link <i>into</i> the vault from there. Don't put both in the same toolbar with the house icon on the external one.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.04</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Hidden info-buttons (<code>?</code>) carry critical definitions.</h3>
+        <p>The most important plain-English definitions in the product live inside small <code>?</code> tooltips: <i>what is Community COG$, what is the Independence Vault, what is the distribution election.</i> A user who does not click them never sees the explanation.</p>
+        <div class="ev">22 instances of <code>iq-btn</code> tooltips found in <code>wallets/member.html</code> · all default to collapsed.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Surface the one-line plain-English version inline next to the heading, in regular body text. Keep the <code>?</code> only for second-level legal/technical detail.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">4.05</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>Sidebar icons use unicode glyphs (◈ ◇ ⇄ ⬡ ✦ ◉ ♡ ◈).</h3>
+        <p>"Overview" and "Activity" share the same glyph (◈). The diamond, hexagon, and lozenge variants (◇ ⬡ ✦) are not visually distinguishable at small sizes.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use a real icon font (Lucide / Phosphor) or no icons at all. Never reuse a glyph for two destinations.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── OVERVIEW TAB ─────────────── -->
+<section id="overview">
+  <div class="page-row">
+    <div class="num">05</div>
+    <div class="ttl">Overview tab</div>
+    <div class="url"><code>#tab-overview</code></div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">5.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>Overview opens with a balance of "—" not "$0.00" or "1 vote."</h3>
+        <p>The hero number on the page is the Community COG$ balance, which for a brand-new member is zero. While loading it shows an em-dash; once loaded it shows a tiny zero. The most reassuring thing about being a member — <i>you have one equal vote, no matter what</i> — is not on the page.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Lead Overview with the Member token: <i>"You are Member 00482. You hold 1 equal vote in COGS. This never changes."</i> Treat the CC balance as secondary.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">5.02</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"COG$ Reservations" card is pre-populated with three rows the member never reserved.</h3>
+        <p>The Overview shows "ASX COG$ / RWA COG$ / Landholder COG$" with quantities and a <i>"Manage Reservations →"</i> CTA. A new member reads this as <i>"things I have already committed to,"</i> when they are actually default empty rows. Reading the source confirms they are zero-quantity placeholders, but visually they look like holdings.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Empty state: <i>"You have no reservations yet. Reservations are no-obligation interest in future COGS classes — read more →"</i> Don't render rows until a member has actually saved one.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">5.03</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>Three undefined trust names: Sub-Trust A, Sub-Trust B, Sub-Trust C.</h3>
+        <p>These appear in tooltips on the Give tab and in the Overview reservations strip. The user is told money flows to "Sub-Trust C" or is invested via "Sub-Trust A" with no explanation of what these trusts are, who runs them, or where to read more.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace with role names: <i>Members Asset Pool</i>, <i>Income Pool</i>, <i>Community Projects Fund.</i> Keep "Sub-Trust A/B/C" only in legal documents.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">5.04</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Mainspring Hub" link with no explanation of what it is.</h3>
+        <p>The Overview has a link card titled <i>"Mainspring Hub — Governance, acquisitions, first nations, community projects, and more."</i> The word <i>Mainspring</i> is not defined anywhere on the page. The phrase reads as marketing.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rename to <i>Community work — projects, acquisitions, partnerships.</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">5.05</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Outstanding payments" card uses gold styling identical to the governance-banner.</h3>
+        <p>Two different action banners (governance setup, outstanding payments) share the same colour, border and CTA style. Users will conflate them. The governance one is non-financial; the payments one is.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Reserve gold for money. Use a calm neutral for profile/setup actions.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">5.06</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>"Personal S-NFT" appears in a hidden Holdings stub but is not on Overview.</h3>
+        <p>The single most important asset a member has — their soulbound member token — only surfaces if they navigate to the Holdings tab. Hide-by-default is the wrong default for the only thing they actually own.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Promote to Overview as the first card. Rename "Personal S-NFT" to <i>"Member token (1 of 1, non-transferable)."</i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── HOLDINGS / RESERVATIONS ─────────────── -->
+<section id="holdings">
+  <div class="page-row">
+    <div class="num">06</div>
+    <div class="ttl">COG$ Reservations tab</div>
+    <div class="url"><code>#tab-holdings</code></div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">6.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The tab is named "Reservations" but contains the Membership token, kids tokens, reservations, and Resident COG$.</h3>
+        <p>Four different things in one tab. Three of them (membership, kids, resident) are not reservations and the user cannot edit them. Only the reservations rows are interactive.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rename to <i>"My tokens"</i> and group as: <b>What you have today</b> (Member token, Kids tokens, Resident COG$, Community COG$ balance), <b>What you might want later</b> (Reservations).</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">6.02</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Class kS · Guardian-held soulbound token · converts to Class S on child's 18th birthday."</h3>
+        <p>This is the actual subtitle on the Kids token row. Fully eight technical terms in one line: Class kS, guardian-held, soulbound, token, converts, Class S. A parent reading this cannot tell whether their child gets a vote, owns something, or what happens at 18.</p>
+        <div class="ev">Source: <code>tab-holdings</code> → kS-NFT row · <i>tr-cls</i> field.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Rewrite: <i>"Kids COG$ — held by you for your child. On their 18th birthday it becomes their own Member token, with one equal vote of their own. Cannot be sold or transferred."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">6.03</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"GNAF zone verification" appears in user-facing copy.</h3>
+        <p>GNAF is the Geocoded National Address File — a backend dataset the user has no reason to know about. Saying <i>"Allocated by the Foundation based on your verified address within a declared affected zone"</i> + <i>"Admin-activated via GNAF zone verification"</i> tells the user nothing useful and signals bureaucracy.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace with <i>"Resident COG$ are given to people who live in areas where COGS is running a project. We use your address (from your profile) to check."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">6.04</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Update My Options" button label is unclear.</h3>
+        <p>The reservations save button reads <i>"Update My Options."</i> A new user does not know whether <i>options</i> means choices, or financial options (puts/calls). The latter is a regulated term in AU.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rename to <i>"Save my reservations"</i> with the existing <i>"Edit freely — no obligation, no payment required"</i> caption staying as-is.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">6.05</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Released after Expansion Day" — a release the user cannot delay or accelerate.</h3>
+        <p>The phrase appears in three places. <i>Release</i> implies the user controls the timing; they don't. The Foundation does, conditional on ASIC compliance.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use <i>"Becomes available when COGS is approved by ASIC. We expect this in [quarter, year]. We will email you."</i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── GOVERNANCE / POLLS ─────────────── -->
+<section id="governance">
+  <div class="page-row">
+    <div class="num">07</div>
+    <div class="ttl">COG$ Management (Polls) tab</div>
+    <div class="url"><code>#tab-governance</code></div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">7.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The tab is called "COG$ Management" but it is for voting in polls.</h3>
+        <p><i>Management</i> in plain English means <i>looking after / running.</i> The tab does not let the user manage anything they own — it lets them vote and propose polls. The mismatch is the single most confusing label in the vault.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rename to <i>"Polls"</i> or <i>"Vote."</i> Reserve the word "manage" for places where the user actually changes something they hold.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">7.02</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Initiate a Members Poll" requires "10 Members or 1% of all active Members (whichever is fewer)."</h3>
+        <p>This is the threshold rule, but a brand-new member has no way to find 10 other members. The "Create initiation draft" button is right there, and clicking it implies they can. There is no <i>"how to gather 10 supporters"</i> guidance.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Above the form: <i>"Polls need 10 supporters before they go to vote. Save a draft, then share a private link with friends who are already members."</i> Provide that link generator.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">7.03</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Cryptographically receipted" voting copy.</h3>
+        <p>The footer notice reads: <i>"Responses are cryptographically receipted. Tallies show counts only — your identity and choice are never exposed."</i> If the back-end is a SQL database with hash-chained log entries, this is a stretch. The phrase will be challenged in any media write-up.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Soften to <i>"Each vote is logged with a one-way receipt. The tally never shows who voted for what — only the totals."</i> Match the language to the actual implementation.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">7.04</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Past Members Polls" is collapsed by default and may be empty.</h3>
+        <p>For a new product the past-polls section will sit empty for months. Showing it collapsed signals "there is content here, click to see it." There isn't.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Hide the section entirely until at least one poll has closed.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── EXCHANGE ─────────────── -->
+<section id="exchange">
+  <div class="page-row">
+    <div class="num">08</div>
+    <div class="ttl">Exchange tab</div>
+    <div class="url"><code>#tab-exchange</code></div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">8.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>"Exchange" implies trading. The tab does peer-to-peer transfer.</h3>
+        <p>The two buttons are <i>Receive</i> and <i>Send</i>. There is no order book, no price, no buy/sell. Calling it "Exchange" sets the user up to expect a market that does not exist, and triggers crypto / securities-market expectations the product is not built for.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Rename to <i>"Send &amp; receive."</i> Wait for an actual market mechanism before using the word "exchange."</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">8.02</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"COGS-CC-..." hash addresses for human-to-human transfers.</h3>
+        <p>The send form asks the user to enter another member's <i>"Community COG$ hash address (COGS-CC-...)"</i>. For a $4 community product where everyone has a member number, this is overkill. The friction is: copy-paste a long string accurately. The fail case (sending to wrong address) is irreversible.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Default to send-by-member-number-or-email. Keep the hash address as a "Show advanced" option. Add a confirm step that resolves the hash to a member name before sending.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">8.03</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Only Community COG$ can move Member-to-Member before Expansion Day."</h3>
+        <p>This sentence asks the user to know what Community COG$ are, what the alternative is, and what Expansion Day is — none of which has been defined on this tab.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace with <i>"Right now, Community COG$ are the only kind you can send to other members. The other kinds unlock when COGS is approved by ASIC."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">8.04</div>
+      <div class="sev"><span class="pill nit">Nit</span></div>
+      <div class="body">
+        <h3>"Saved contacts" UI but no way to add a contact except after entering an address.</h3>
+        <p>The contact selector is a dropdown that is empty for new users; the only way to add an entry is to first send (or type) a hash address and then click "+ Save to contacts." This pattern is not discoverable.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Allow adding a contact directly: name + member number. Resolve to hash on the server.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── GIVE ─────────────── -->
+<section id="give">
+  <div class="page-row">
+    <div class="num">09</div>
+    <div class="ttl">Give tab</div>
+    <div class="url"><code>#tab-give</code></div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">9.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>"Donation COG$ funds Sub-Trust C" — a sentence with three undefined terms.</h3>
+        <p>The Give tab body reads: <i>"Donation COG$ funds Sub-Trust C — First Nations programs, environmental stewardship, and community initiatives. Pay It Forward sponsors another Member's $4 entry who cannot afford it."</i> The user does not know what Donation COG$ are, what Sub-Trust C is, or what receiving a token in exchange for a donation means.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Lead with the action: <i>"Give $4 to fund First Nations programs, environment, and community work. You also get a Donation COG$ token — a permanent receipt that pays back a small share of community income to the Community Projects Fund forever."</i></div>
+    </div>
+
+    <div class="finding">
+      <div class="num">9.02</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The tooltip claims a "permanent Donation Dividend Stream" — investment language.</h3>
+        <p>The <code>?</code> on Donation COG$ reads: <i>"$2.00 is invested through Sub-Trust A into the Members Asset Pool, generating a permanent Donation Dividend Stream. Sub-Trust C holds a D Class income unit for each token issued — a share of future distributions in perpetuity."</i> This is securities-marketing language attached to a $4 charitable impulse. ATO and ASIC will both have opinions.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Audit with counsel. At minimum: stop using "dividend stream" and "income unit" inside a donation flow. Either the $4 is a donation (deductible/charitable) or it is buying a financial product. It cannot be both in the same UI without disclosure.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">9.03</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"Pay It Forward sponsors another Member's $4 entry who cannot afford it."</h3>
+        <p>Good intent. Three problems: (1) "PIF" is not explained where the user first sees it, (2) there is no proof this money actually reaches a real other person — no counter, no recipient flow, (3) the $4 cold-funnel ask is already non-subscription, so "could not afford it" is a low-stakes hardship claim that may strain credibility.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Show a counter (<i>"243 entries paid forward this month"</i>). Link to the criteria for receiving a sponsored entry. Keep the term <i>Pay it forward</i>, drop "PIF" entirely from copy.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">9.04</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Stepper inputs default to 0 and the "Place order" button is disabled with no hint.</h3>
+        <p>A user opens Give, sees two zero-filled steppers and a greyed-out button. There is no microcopy explaining "increase one of these to enable." Discovery time is the only friction here, but it is unnecessary.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Disabled-state caption: <i>"Add at least one to continue."</i> Or pre-fill the first stepper to 1.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── PAYMENTS ─────────────── -->
+<section id="payments">
+  <div class="page-row">
+    <div class="num">10</div>
+    <div class="ttl">Payments &amp; the $4 / $4.40 split</div>
+    <div class="url"><code>#pay-modal</code></div>
+  </div>
+
+  <div class="findings">
+
+    <div class="finding">
+      <div class="num">10.01</div>
+      <div class="sev"><span class="pill crit">Critical</span></div>
+      <div class="body">
+        <h3>The pay modal repeats the $4 / $4.40 inconsistency from the cold funnel.</h3>
+        <p>Modal heading: <i>"Complete your $4.00 membership contribution."</i> Card option, three accordions down: <i>"Pay $4.40 by card via Stripe."</i> The user is reasonably going to ask <i>"is it $4 or is it $4.40?"</i> and there is no answer on the page.</p>
+        <div class="ev">Modal: <code>#pay-modal</code> · h3 + Stripe button text · 0.40 fee disclosed only on the third (collapsed) accordion.</div>
+      </div>
+      <div class="fix"><b>Fix</b>Choose one. Either eat the 40c on Stripe or change the headline to <i>"Pay $4 (or $4.40 by card)."</i> Show all three options at the same level — do not bury the cheapest behind a default-collapsed accordion that is "open by default" but visually identical to the closed ones.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">10.02</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"The Trustee for the CJVM Sub-Trust A" account name.</h3>
+        <p>This is the legal account holder, but it appears with no plain-English line. A user transferring $4 from their banking app to <i>"The Trustee for the CJVM Sub-Trust A"</i> at Macquarie will reasonably wonder if they are being scammed.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Add a line: <i>"This is the legal name of the COGS member fund. CJVM = Community Joint Venture Members. Australian trust account, Macquarie Bank."</i> Link to the entity's ABN lookup.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">10.03</div>
+      <div class="sev"><span class="pill high">High</span></div>
+      <div class="body">
+        <h3>"I've sent this payment →" button uses honour-system confirmation.</h3>
+        <p>Two of the three pay options (Bank, PayID) end with a button labelled <i>"I've sent this payment →"</i>. The system has no way to verify this for several minutes (Osko) to a day (regular bank). Clicking it before payment clears means the user's vault could surface "paid" before the trust account has the money.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Replace with <i>"I've sent it — let me know when it lands."</i> Show a clear pending state until the bank reconciliation matches.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">10.04</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>Stripe button opens in a new tab (<code>target="_blank"</code>).</h3>
+        <p>For a $4 transaction with a member who probably joined on a phone, breaking out to a new tab is a good way to lose them. Mobile Safari handles new-tab Stripe links inconsistently.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Use Stripe Checkout in-page (Stripe Elements) or at minimum a same-tab redirect with a clear "back to vault" landing.</div>
+    </div>
+
+    <div class="finding">
+      <div class="num">10.05</div>
+      <div class="sev"><span class="pill med">Medium</span></div>
+      <div class="body">
+        <h3>"Outstanding payments modal" duplicates the primary pay modal almost line-for-line.</h3>
+        <p>Two modals, same bank details, same PayID, same Stripe link. They differ only in the items listed at the top. This makes the codebase hard to keep in sync — and the cold-funnel audit's <i>"$4 vs $4.40"</i> finding is now in two places.</p>
+      </div>
+      <div class="fix"><b>Fix</b>Single pay modal, parameterised. The "items" list is the only thing that should change.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── LANGUAGE ─────────────── -->
+<section id="language">
+  <div class="section-num">11 — Language</div>
+  <h2>Plain-English rewrites for every term in the vault.</h2>
+
+  <p>Below: every recurring term in the member vault, the current copy, and a suggested K–6 reading-level rewrite. Use these as the canonical strings; keep the technical originals only inside legal documents and "Advanced details" disclosures.</p>
+
+  <div class="translate">
+    <div class="tr-row hd"><div>Current term</div><div>Plain-English replacement</div></div>
+    <div class="tr-row"><div>Member Vault</div><div>Your COGS account</div></div>
+    <div class="tr-row"><div>Independence Vault</div><div>Your COGS account (the secure one)</div></div>
+    <div class="tr-row"><div>Personal S-NFT · Class S</div><div>Your Member token — 1 equal vote, can't be sold</div></div>
+    <div class="tr-row"><div>Kids S-NFT · Class kS</div><div>Kids COG$ — held by you for your child until 18</div></div>
+    <div class="tr-row"><div>Community COG$ · Class C</div><div>Community COG$ — money you can send to other members</div></div>
+    <div class="tr-row"><div>Donation COG$ · Class D</div><div>Donation tokens — your receipt for giving to community projects</div></div>
+    <div class="tr-row"><div>Pay It Forward · Class PIF</div><div>Pay-it-forward — sponsor someone else's $4 join</div></div>
+    <div class="tr-row"><div>Resident COG$ · Class Lr</div><div>Resident COG$ — given when COGS runs a project where you live</div></div>
+    <div class="tr-row"><div>ASX COG$ / RWA COG$ / Landholder COG$</div><div>(Future kinds — described once they're approved)</div></div>
+    <div class="tr-row"><div>Reservation</div><div>Interest list (no money, no commitment)</div></div>
+    <div class="tr-row"><div>Sub-Trust A</div><div>Members Asset Pool</div></div>
+    <div class="tr-row"><div>Sub-Trust B</div><div>Members Income Pool</div></div>
+    <div class="tr-row"><div>Sub-Trust C</div><div>Community Projects Fund</div></div>
+    <div class="tr-row"><div>Foundation Day</div><div>First national vote — 14 May 2026</div></div>
+    <div class="tr-row"><div>Expansion Day</div><div>The day COGS is approved by ASIC (date TBC)</div></div>
+    <div class="tr-row"><div>Cryptographic DB · Active</div><div>(remove)</div></div>
+    <div class="tr-row"><div>Cryptographically receipted</div><div>Each vote gets a one-way receipt</div></div>
+    <div class="tr-row"><div>Distribution election</div><div>How you'd like to be paid (choose later)</div></div>
+    <div class="tr-row"><div>JVPA</div><div>The members' agreement (read it first)</div></div>
+    <div class="tr-row"><div>Initiate a Members Poll</div><div>Start a vote</div></div>
+    <div class="tr-row"><div>COG$ Management (tab)</div><div>Polls</div></div>
+    <div class="tr-row"><div>COG$ Reservations (tab)</div><div>My tokens</div></div>
+    <div class="tr-row"><div>COG$ News (tab)</div><div>Updates</div></div>
+    <div class="tr-row"><div>Exchange (tab)</div><div>Send &amp; receive</div></div>
+    <div class="tr-row"><div>Give (tab)</div><div>Give</div></div>
+    <div class="tr-row"><div>Activity (tab)</div><div>History</div></div>
+    <div class="tr-row"><div>Members Hub</div><div>(merge with the account home)</div></div>
+    <div class="tr-row"><div>Mainspring Hub</div><div>Community work</div></div>
+    <div class="tr-row"><div>GNAF zone verification</div><div>We check using the address on your profile</div></div>
+    <div class="tr-row"><div>Soulbound</div><div>Can't be sold or transferred</div></div>
+    <div class="tr-row"><div>Class C / Class S / Class D / Class kS / Class Lr / Class PIF</div><div>(remove from main UI; keep only in advanced details)</div></div>
+  </div>
+
+  <p style="margin-top:18px"><i>If a member has to click a tooltip to understand the title of a section, the title is wrong. The translation table above is the cheapest, fastest, and most legible upgrade you can ship.</i></p>
+</section>
+
+<footer class="doc-ft">
+  <div>COGS · Member Vault audit · plain-English pass · companion to <code>audit.html</code></div>
+  <div>Findings: 36 · Critical: 9 · High: 13 · Medium: 11 · Nits: 3</div>
+</footer>
+
+</div>
+</body>
+</html>
