@@ -748,7 +748,7 @@ async function validateInviteCode() {
       document.getElementById('invite_verified_at').value       = new Date().toISOString();
       wrap.classList.add('validated');
       st.className = 'invite-status ok';
-      st.innerHTML = 'Invitation confirmed &#10003; — invited by Member: <span class="invite-inviter-name">' + escText(_inviterName) + '</span>.';
+      st.innerHTML = 'Invitation confirmed &#10003;: invited by Member: <span class="invite-inviter-name">' + escText(_inviterName) + '</span>.';
       var ht = document.getElementById('invite-helper-text');
       if (ht) ht.style.display = 'none';
       var an = document.getElementById('invite-admin-note');
