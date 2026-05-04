@@ -1,6 +1,7 @@
 # CCC Session 33: cron-error-digest.php — daily digest + hourly error alert
 # Branch: review/session-33
 # FILES: _app/api/cron-error-digest.php · _skills/cogs-error-digest.md
+#         _app/monitoring/crontab.txt · _app/monitoring/install-crontab.sh
 
 ## Purpose
 Adds belt-and-braces error monitoring on top of the real-time beacon alert
@@ -97,30 +98,26 @@ Abort if any check FAILS.
 
 ---
 
-## Step 3 — Add cron jobs via cPanel
+## Step 3 — Verify crontab.txt and install-crontab.sh are in repo
 
-This session does NOT modify the crontab automatically.
-Thomas adds the two jobs manually in cPanel after merge.
-
-Print the exact cron lines for Thomas to copy:
+The cron jobs are defined in `_app/monitoring/crontab.txt` (canonical record)
+and installed via `_app/monitoring/install-crontab.sh` (one-command installer).
+Both files must exist in the repo before this step passes.
 
 ```bash
+echo "=== crontab.txt present ==="
+cat _app/monitoring/crontab.txt
+
 echo ""
-echo "======================================================"
-echo "ADD THESE TWO CRON JOBS IN CPANEL AFTER MERGE:"
-echo "======================================================"
+echo "=== install-crontab.sh present and executable ==="
+ls -la _app/monitoring/install-crontab.sh
+
 echo ""
-echo "1. Hourly new-error alert (fires at :05 past every hour):"
-echo "   5 * * * * php /home4/cogsaust/public_html/_app/api/cron-error-digest.php --mode=hourly >> /home4/cogsaust/logs/error-digest.log 2>&1"
-echo ""
-echo "2. Daily digest at 07:00 AEST (= 21:00 UTC):"
-echo "   0 21 * * * php /home4/cogsaust/public_html/_app/api/cron-error-digest.php --mode=daily >> /home4/cogsaust/logs/error-digest.log 2>&1"
-echo ""
-echo "3. Ensure log directory exists:"
-echo "   mkdir -p /home4/cogsaust/logs"
-echo ""
-echo "======================================================"
+echo "=== error-digest jobs in crontab.txt ==="
+grep "cron-error-digest" _app/monitoring/crontab.txt
 ```
+
+Abort if either file is missing or if grep returns no lines.
 
 ---
 
@@ -182,7 +179,8 @@ Only if ALL PASS above.
 
 ```bash
 git checkout -b review/session-33
-git add _app/api/cron-error-digest.php _skills/cogs-error-digest.md
+git add _app/api/cron-error-digest.php _skills/cogs-error-digest.md \
+        _app/monitoring/crontab.txt _app/monitoring/install-crontab.sh
 git diff --cached --stat
 git commit -m "feat(monitoring): error digest cron + deferred OpenClaw skill
 
@@ -194,7 +192,8 @@ cron-error-digest.php:
 - HTML email with error class table + acknowledge link
 - Guards: CLI-only, mailerEnabled(), table existence check
 - Falls silent on empty hourly run (no errors = no email)
-- Cron lines in comment header for Thomas to add in cPanel
+- Cron jobs defined in _app/monitoring/crontab.txt (version-controlled)
+- Installed via _app/monitoring/install-crontab.sh (one command, backs up first)
 
 cogs-error-digest.md (OpenClaw skill — DEFERRED):
 - Telegram push layer, inactive until OpenClaw stable
@@ -207,11 +206,18 @@ git push origin review/session-33
 
 ## After merge — Thomas action required
 
-Add the two cron jobs in cPanel (exact lines printed in Step 3).
-Ensure `/home4/cogsaust/logs/` directory exists.
+The cron jobs are in the repo. Install them with one command via SSH or cPanel Terminal:
 
-Email alerting is fully operational after the cron jobs are added.
-Thomas will receive alerts directly at ThomasC@cogsaustralia.org.
+```bash
+cd /home4/cogsaust/public_html && bash _app/monitoring/install-crontab.sh
+```
+
+This replaces the entire live crontab with `_app/monitoring/crontab.txt`.
+It backs up the current crontab to `/home4/cogsaust/logs/` before overwriting.
+It prints what was installed and the live job count for confirmation.
+
+To add or change any cron job in future: edit `_app/monitoring/crontab.txt`,
+commit, push, pull on server, run install-crontab.sh again.
 
 OpenClaw Telegram push is deferred. The skill file (`_skills/cogs-error-digest.md`)
 contains activation instructions for when OpenClaw is stable.

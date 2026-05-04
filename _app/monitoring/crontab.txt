@@ -1,0 +1,52 @@
+# =============================================================================
+# COG$ of Australia Foundation — Canonical Crontab
+# =============================================================================
+#
+# THIS FILE IS THE SINGLE SOURCE OF TRUTH for all cron jobs.
+# It lives in the repo at _app/monitoring/crontab.txt and is version-controlled.
+#
+# To install or update on the server, run from the repo root:
+#   bash _app/monitoring/install-crontab.sh
+#
+# The install script does a full replace — it overwrites whatever is currently
+# live with exactly what is in this file. No manual cPanel edits.
+#
+# After any change to this file:
+#   1. Commit and push to main.
+#   2. Pull on the server (GitHub Actions auto-deploys to public_html, but
+#      _app/monitoring/crontab.txt is deployed there too).
+#   3. Run install-crontab.sh via SSH or cPanel Terminal.
+#
+# Server: cogsaust@shorty.serversaurus.com.au
+# Home:   /home4/cogsaust/
+# Web:    /home4/cogsaust/public_html/
+#
+# All logs write to /home4/cogsaust/logs/ — ensure this directory exists.
+# Run once to create: mkdir -p /home4/cogsaust/logs
+#
+# =============================================================================
+
+# ── Server health monitor ─────────────────────────────────────────────────────
+# Runs every 5 minutes. Watches Apache error rate, PHP errors, request volume.
+# Writes cogs-alert.json for the admin monitor dashboard.
+# Script lives one level above public_html (not web-accessible).
+*/5 * * * * /home4/cogsaust/cogs-monitor.sh >> /home4/cogsaust/cron-monitor.log 2>&1
+
+# ── Email queue processor ─────────────────────────────────────────────────────
+# Processes the email_queue table every 5 minutes.
+# Handles transactional emails that could not send inline.
+*/5 * * * * php /home4/cogsaust/public_html/_app/api/cron-email.php >> /home4/cogsaust/logs/email-cron.log 2>&1
+
+# ── Hub weekly digest ─────────────────────────────────────────────────────────
+# Friday 18:00 AEST (08:00 UTC). Sends hub activity digest to hub members.
+0 8 * * 5 php /home4/cogsaust/public_html/_app/api/cron-hub-digest.php >> /home4/cogsaust/logs/hub-digest.log 2>&1
+
+# ── Error digest — hourly new-error alert ────────────────────────────────────
+# Fires at :05 past every hour. Silent if no new unacknowledged errors.
+# Emails admin@cogsaustralia.org and ThomasC@cogsaustralia.org if new errors exist.
+5 * * * * php /home4/cogsaust/public_html/_app/api/cron-error-digest.php --mode=hourly >> /home4/cogsaust/logs/error-digest.log 2>&1
+
+# ── Error digest — daily summary ─────────────────────────────────────────────
+# 07:00 AEST daily (21:00 UTC). Always sends — clean bill of health or breakdown.
+# Emails admin@cogsaustralia.org and ThomasC@cogsaustralia.org.
+0 21 * * * php /home4/cogsaust/public_html/_app/api/cron-error-digest.php --mode=daily >> /home4/cogsaust/logs/error-digest.log 2>&1
