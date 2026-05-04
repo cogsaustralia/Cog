@@ -118,6 +118,49 @@ ops_require_admin();
             <p>Real-time system health and performance metrics</p>
         </div>
 
+        <\!-- ── CAMPAIGN LEADS PANEL ─────────────────────────────────── -->
+        <div class="card" style="margin-bottom:24px;border:2px solid #b8860b;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h2 style="margin:0;">🧲 Lead Captures — /seat/</h2>
+                <div style="text-align:right;">
+                    <span style="font-size:2rem;font-weight:700;color:#f0d18a;" id="leadsTotal">—</span>
+                    <div style="font-size:0.75em;color:#94a3b8;">total leads</div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+                <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;text-align:center;">
+                    <div style="font-size:1.4rem;font-weight:700;color:#f0d18a;" id="leadsToday">—</div>
+                    <div style="font-size:0.75em;color:#94a3b8;margin-top:2px;">today</div>
+                </div>
+                <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;text-align:center;">
+                    <div style="font-size:1.4rem;font-weight:700;color:#52b87a;" id="leadsConverted">—</div>
+                    <div style="font-size:0.75em;color:#94a3b8;margin-top:2px;">joined</div>
+                </div>
+                <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;text-align:center;">
+                    <div style="font-size:1.4rem;font-weight:700;color:#7dd3fc;" id="leadsPhone">—</div>
+                    <div style="font-size:0.75em;color:#94a3b8;margin-top:2px;">gave phone</div>
+                </div>
+            </div>
+            <div id="leadsTableWrap">
+                <table class="click-table" id="leadsTable">
+                    <thead><tr>
+                        <th>#</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Source</th>
+                        <th>Joined</th>
+                        <th>Captured</th>
+                    </tr></thead>
+                    <tbody id="leadsTableBody">
+                        <tr><td colspan="6" style="color:#64748b;text-align:center;">Loading leads...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="leadsNotReady" style="display:none;" class="not-ready-note">
+                No leads yet — campaign just launched.
+            </div>
+        </div>
+
         <div class="status-card">
             <div class="status-indicator" id="statusIndicator"></div>
             <div class="status-text" id="statusText">Loading...</div>
@@ -412,6 +455,69 @@ ops_require_admin();
             }
         }
 
+        async function loadLeads() {
+            try {
+                const res = await fetch('/_app/api/index.php?route=admin/visit-funnel', {
+                    credentials: 'include', cache: 'no-store'
+                });
+                if (\!res.ok) return;
+                const json = await res.json();
+                const d = json.data || json;
+                const leads = d.recent_leads || [];
+
+                if (leads.length === 0) {
+                    document.getElementById('leadsNotReady').style.display = 'block';
+                    document.getElementById('leadsTableWrap').style.display = 'none';
+                    document.getElementById('leadsTotal').textContent = '0';
+                    document.getElementById('leadsToday').textContent = '0';
+                    document.getElementById('leadsConverted').textContent = '0';
+                    document.getElementById('leadsPhone').textContent = '0';
+                    return;
+                }
+
+                document.getElementById('leadsTotal').textContent = leads.length;
+
+                const today = new Date().toDateString();
+                const todayCount = leads.filter(l =>
+                    new Date(l.created_at).toDateString() === today
+                ).length;
+                document.getElementById('leadsToday').textContent = todayCount;
+
+                const converted = leads.filter(l => l.converted \!== 'not yet').length;
+                document.getElementById('leadsConverted').textContent = converted;
+
+                const withPhone = leads.filter(l => l.has_phone === '✓').length;
+                document.getElementById('leadsPhone').textContent = withPhone;
+
+                const srcIcons = {fb:'🟦',yt:'🔴',ig:'📸',organic:'🌿',direct:'🔗'};
+
+                document.getElementById('leadsTableBody').innerHTML = leads.map((l, i) => {
+                    const src = l.source || 'direct';
+                    const icon = Object.entries(srcIcons).find(([k]) => src.startsWith(k));
+                    const srcLabel = (icon ? icon[1] + ' ' : '') + src;
+                    const dt = new Date(l.created_at);
+                    const dtStr = dt.toLocaleString('en-AU', {
+                        day:'2-digit', month:'short',
+                        hour:'2-digit', minute:'2-digit'
+                    });
+                    const joinedStyle = l.converted === 'not yet'
+                        ? 'color:#f59e0b;'
+                        : 'color:#52b87a;font-weight:600;';
+                    return `<tr>
+                        <td style="color:#64748b;">${i + 1}</td>
+                        <td style="font-family:monospace;font-size:0.85em;">${l.email_masked}</td>
+                        <td style="text-align:center;">${l.has_phone}</td>
+                        <td style="font-size:0.85em;">${srcLabel}</td>
+                        <td style="${joinedStyle}">${l.converted}</td>
+                        <td style="color:#94a3b8;font-size:0.82em;">${dtStr}</td>
+                    </tr>`;
+                }).join('');
+
+            } catch(e) {
+                console.error('loadLeads error:', e);
+            }
+        }
+
         async function loadDashboard() {
             try {
                 let alerts = [];
@@ -492,6 +598,7 @@ ops_require_admin();
                 updateRecommendation();
                 
                 document.getElementById('updateTime').textContent = new Date().toLocaleTimeString();
+                loadLeads();
                 loadFunnel();
                 loadConversionFunnel();
             } catch (error) {

@@ -634,6 +634,24 @@ function adminVisitFunnel(): void {
     }
     unset($row);
 
+    $recentLeads = $db->query(
+        "SELECT id, email, phone, source, landing_page,
+                converted_to_member_id, created_at
+         FROM lead_captures
+         ORDER BY created_at DESC
+         LIMIT 50"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    // Mask email for display: show first 3 chars then ***@domain
+    foreach ($recentLeads as &$lead) {
+        $parts = explode('@', (string)$lead['email']);
+        $lead['email_masked'] = substr($parts[0], 0, 3) . '***@' . ($parts[1] ?? '');
+        $lead['has_phone'] = \!empty($lead['phone']) ? '✓' : '—';
+        $lead['converted'] = \!empty($lead['converted_to_member_id']) ? '✓ joined' : 'not yet';
+        unset($lead['phone']); // never expose phone to JS
+    }
+    unset($lead);
+
     apiSuccess([
         'tables_ready'     => true,
         'window_days'      => 7,
@@ -648,6 +666,7 @@ function adminVisitFunnel(): void {
         'sessions_seat'        => $sessionsSeat,
         'sessions_seat_inside' => $sessionsSeatInside,
         'recent_visits'    => $recent,
+        'recent_leads'     => $recentLeads,
     ]);
 }
 
