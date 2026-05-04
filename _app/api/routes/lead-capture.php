@@ -74,7 +74,7 @@ try {
 
     // Only send confirmation on first capture (fresh insert = rowCount 1).
     if ($stmt->rowCount() === 1 && $leadId > 0) {
-        require_once __DIR__ . '/../../integrations/mailer.php';
+        require_once __DIR__ . '/../integrations/mailer.php';
         queueEmail(
             $db,
             'lead_capture',
