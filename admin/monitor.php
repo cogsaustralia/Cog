@@ -6,6 +6,27 @@ require_once __DIR__ . '/includes/ops_workflow.php';
 // Define monitoring data directory (2 levels up from public_html/admin/)
 define('COGS_ALERT_DIR', dirname(__DIR__, 2));
 
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'admin-summary') {
+    ops_require_admin();
+    header('Content-Type: application/json');
+    header('Cache-Control: no-store');
+    $pdo2 = ops_db();
+    $unack = 0;
+    $recent = [];
+    try {
+        if (function_exists('ops_has_table') && ops_has_table($pdo2, 'app_error_log')) {
+            $unack = (int)($pdo2->query("SELECT COUNT(*) FROM app_error_log WHERE acknowledged=0")->fetchColumn() ?: 0);
+            $recent = $pdo2->query(
+                "SELECT route, http_status, LEFT(error_message,200) AS msg, area_key, created_at
+                   FROM app_error_log WHERE acknowledged=0
+                  ORDER BY id DESC LIMIT 5"
+            )->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        }
+    } catch (Throwable $e) {}
+    echo json_encode(['success'=>true,'data'=>['unack_errors'=>$unack,'recent_errors'=>$recent]]);
+    exit;
+}
+
 // Handle AJAX requests for monitoring data
 if (isset($_GET['ajax']) && $_GET['ajax'] === 'monitor-data') {
     ops_require_admin();
@@ -694,5 +715,63 @@ ops_require_admin();
         loadDashboard();
         setInterval(loadDashboard, 300000); // Refresh every 5 minutes
     </script>
+
+<!-- Live Error Panel -->
+<div style="margin-top:24px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <h2 style="font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin:0;">Live Errors</h2>
+    <span id="errorBadge" style="display:none;background:#ef4444;color:#fff;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:99px;"></span>
+    <span style="font-size:0.75rem;color:#475569;margin-left:auto;">Auto-refresh 30s &nbsp;|&nbsp; <a href="errors.php" style="color:#d4b25c;text-decoration:none;">Full log &rarr;</a></span>
+  </div>
+  <div id="errorPanelBody" style="background:#0f1923;border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;">
+    <div style="padding:20px;text-align:center;color:#475569;font-size:0.83rem;" id="errorPanelLoading">Loading...</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  function loadErrorPanel(){
+    fetch('dashboard.php?ajax=admin-summary', {credentials:'include'})
+      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+      .then(function(json){
+        var d = (json.data || json);
+        var unack = parseInt(d.unack_errors || 0);
+        var errors = Array.isArray(d.recent_errors) ? d.recent_errors : [];
+        var badge = document.getElementById('errorBadge');
+        var body  = document.getElementById('errorPanelBody');
+        if(unack > 0){
+          badge.textContent = unack + ' unacknowledged';
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+        if(errors.length === 0){
+          body.innerHTML = '<div style="padding:20px;text-align:center;color:#22c55e;font-size:0.83rem;">No unacknowledged errors.</div>';
+          return;
+        }
+        var rows = errors.map(function(e){
+          var statusColor = parseInt(e.http_status)===0 ? '#38bdf8' : '#ef4444';
+          var statusLabel = parseInt(e.http_status)===0 ? 'JS' : e.http_status;
+          return '<div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:start;">'
+            + '<span style="font-weight:700;font-size:0.78rem;color:'+statusColor+';padding-top:1px;">'+statusLabel+'</span>'
+            + '<div>'
+            +   '<div style="font-family:monospace;font-size:0.78rem;color:#94a3b8;margin-bottom:2px;">'+esc(e.route||'')+'</div>'
+            +   '<div style="font-size:0.82rem;color:#e2e8f0;word-break:break-word;">'+esc((e.msg||'').slice(0,160))+'</div>'
+            + '</div>'
+            + '<div style="font-size:0.72rem;color:#475569;white-space:nowrap;padding-top:2px;">'+(e.created_at||'').slice(0,16)+'</div>'
+            + '</div>';
+        }).join('');
+        body.innerHTML = rows
+          + '<div style="padding:8px 14px;text-align:right;">'
+          + '<a href="errors.php" style="font-size:0.78rem;color:#d4b25c;text-decoration:none;">Acknowledge in full log &rarr;</a></div>';
+      })
+      .catch(function(){ /* silent */ });
+  }
+  function esc(s){ var d=document.createElement('div');d.textContent=s;return d.innerHTML; }
+  loadErrorPanel();
+  setInterval(loadErrorPanel, 30000);
+})();
+</script>
+
 </body>
 </html>
