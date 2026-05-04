@@ -1523,7 +1523,7 @@ return [$html, $plain];
                 . '<p><a href="' . htmlspecialchars($guideUrl) . '" style="display:inline-block;background:#b8860b;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold;">Read: Seat at the Table &rarr;</a></p>'
                 . '<p>It explains four things. How one share gets you into the room. Why ESG laws put a dollar value on your voice. What words open the door with a mining company. And why COG$ multiplies all of it.</p>'
                 . '<p>Five minutes. Plain English. No jargon.</p>'
-                . '<p>Foundation Day is <strong>14 May 2026</strong>. That is when the doors open for $4 membership.</p>'
+                . '<p>You can join now for $4 at <a href="https://cogsaustralia.org/join">cogsaustralia.org/join</a>. Foundation Day is <strong>14 May 2026</strong> at 5pm AEST &mdash; that is when the first community vote happens.</p>'
                 . '<p>In the meantime, the CEO Power Cheat Sheet is on Substack: <a href="' . htmlspecialchars($substack) . '">read it here</a>.</p>'
                 . '<p style="margin-top:32px;">Thomas<br>COG$ of Australia Foundation<br>Drake Village NSW &nbsp;|&nbsp; Wahlubal Country, Bundjalung Nation</p>'
                 . '<p style="font-size:11px;color:#888;margin-top:24px;">You received this because you asked for the free guide at cogsaustralia.org. Reply to this email to unsubscribe.</p>'
@@ -1534,7 +1534,8 @@ return [$html, $plain];
                 . $guideUrl . "\n\n"
                 . "It explains four things. How one share gets you into the room. Why ESG laws put a dollar value on your voice. What words open the door with a mining company. And why COG\$ multiplies all of it.\n\n"
                 . "Five minutes. Plain English. No jargon.\n\n"
-                . "Foundation Day is 14 May 2026. That is when the doors open for \$4 membership.\n\n"
+                . "You can join now for $4 at cogsaustralia.org/join\n\n"
+                . "Foundation Day is 14 May 2026 at 5pm AEST -- the first community vote.\n\n"
                 . "CEO Power Cheat Sheet on Substack:\n" . $substack . "\n\n"
                 . "Thomas\n"
                 . "COG\$ of Australia Foundation\n"
