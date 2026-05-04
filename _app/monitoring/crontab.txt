@@ -44,7 +44,7 @@
 # -- Error digest -- hourly new-error alert ------------------------------------
 # Fires at :05 past every hour. Silent if no new unacknowledged errors.
 # Emails admin@cogsaustralia.org and ThomasC@cogsaustralia.org if new errors exist.
-5 * * * * php /home4/cogsaust/public_html/_app/api/cron-error-digest.php --mode=hourly >> /home4/cogsaust/logs/error-digest.log 2>&1
+5 * * * * bash /home4/cogsaust/public_html/_app/monitoring/run-error-digest-hourly.sh >> /home4/cogsaust/logs/error-digest.log 2>&1
 
 # -- Error digest -- daily summary ---------------------------------------------
 # 07:00 AEST daily (21:00 UTC). Always sends -- clean bill of health or breakdown.
