@@ -439,7 +439,7 @@ $html = '<!DOCTYPE html>
         <tr><td style="padding:20px 22px">
           <div style="font-size:15px;font-weight:bold;color:#2d6e45;margin-bottom:14px;font-family:Georgia,serif">What the Foundation holds right now</div>
           <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
-            The Foundation holds 1,545 shares in Legacy Minerals Holdings (ASX: LGM), registered on the CHESS Share Register in the Foundation's name.
+            The Foundation holds 1,545 shares in Legacy Minerals Holdings (ASX: LGM), registered on the CHESS Share Register in the Foundation&#39;s name.
           </p>
           <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
             Legacy Minerals holds around 9,000 square kilometres of mineral tenements across northern New South Wales, on Bundjalung Nation Country. Their current resource figures are in their 2025 JORC Mineral Resource Estimate at <a href="https://legacyminerals.com.au" style="color:#2d6e45">legacyminerals.com.au</a>.
@@ -477,7 +477,7 @@ $html = '<!DOCTYPE html>
             For decisions about a specific place &mdash; a mine, a pipeline, a corridor &mdash; the people who live there and the Traditional Owners of that Country carry more weight on that specific vote. Not on everything. Just on the decisions that affect their backyard directly.
           </p>
           <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
-            That is what fair say looks like in practice. It is written into the Foundation's governing agreement and takes 75% of all members to change. Full details at <a href="https://cogsaustralia.org/jvpa" style="color:#2d6e45">cogsaustralia.org/jvpa</a> and <a href="https://cogsaustralia.org/faq" style="color:#2d6e45">cogsaustralia.org/faq</a>.
+            That is what fair say looks like in practice. It is written into the Foundation&#39;s governing agreement and takes 75% of all members to change. Full details at <a href="https://cogsaustralia.org/jvpa" style="color:#2d6e45">cogsaustralia.org/jvpa</a> and <a href="https://cogsaustralia.org/faq" style="color:#2d6e45">cogsaustralia.org/faq</a>.
           </p>
           <div style="font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;font-family:Georgia,serif">14-day cooling off</div>
           <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 0;font-family:Arial,sans-serif">
