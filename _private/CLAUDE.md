@@ -1,215 +1,374 @@
-# COG$ of Australia Foundation — Claude Code Project Context
+# COGS of Australia Foundation — Claude Code Project Context
 
-This file is read by Claude Code at the start of every session. It carries standing rules and the verified ground-truth pointers Claude Code needs to work safely in this repository. It is intentionally short. It does **not** mirror the full schema or document the entire codebase — both are subject to change. When you need detail, query the source: read the file, query the schema, run `git log` on the path. This file's job is to make sure you know **how** to do that without breaking anything.
+*Every instruction in this file serves the Foundation Statement and the
+Eight Governing Principles held in _private/FOUNDATION.md.
+When in doubt about any action, return to those documents first.*
 
-Last revised by Claude on 30 April 2026 against repo HEAD `c908173` and SQL dump `cogsaust_TRUST__65_.sql`. See "When this file needs updating" at the end.
+*Caretaker Trustee: Thomas Boyd Cunliffe*
+*Project Coordinator: Claude (chat)*
+*Last revised: 4 May 2026 against repo HEAD 3fbb011*
+
+---
+
+## 0. The Foundation
+
+COGS — the Community Owned Governance System — is a permanent, legally
+entrenched, community joint venture built to give communities direct,
+enforceable governance rights over the natural wealth of this country.
+One person, one vote. Not one dollar, one vote.
+
+The full Foundation Statement and Eight Governing Principles are in
+_private/FOUNDATION.md. Read them. Every decision in this repo serves them.
 
 ---
 
 ## 1. Permissions
 
-Claude Code has standing permission to run all bash commands in this repository without per-command approval — git, grep, sed, cat, find, head, tail, wc, ls, mv, cp, python3, php, mysql, curl, and any other shell utility used for development. Do not prompt on individual bash invocations. Pressing approval thirty times per session is not the workflow.
+Claude Code has standing permission to run all bash commands in this
+repository without per-command approval — git, grep, sed, cat, find,
+head, tail, wc, ls, mv, cp, python3, php, mysql, curl, and any other
+shell utility used for development. Do not prompt on individual bash
+invocations.
 
 ---
 
-## 2. Standing rules — non-negotiable
+## 2. Standing Rules — Non-Negotiable
 
-**Ground truth before any action.** Run `git status && git log --oneline -5` at session start and before any edit. Never assume a file matches a previous session. Read it first.
+**Ground truth before any action.**
+Run: git status && git log --oneline -5
+At session start and before any edit. Never assume a file matches a
+previous session. Read it first.
 
-**Diff review gate.** Run `git diff --cached <file> | cat` and STOP. Do not commit until Thomas types **"approved"** or **"proceed"**. One review gate per logical change. Never combine unrelated changes into one commit.
+**Diff review gate.**
+Run: git diff --cached <file> | cat
+STOP. Do not commit until Thomas types "approved" or "proceed".
+One review gate per logical change.
+Never combine unrelated changes into one commit.
 
-**Deploy order.** SQL → PHP → HTML/JS. Never deploy PHP that depends on a column the SQL migration has not yet applied. Same rule reversed for rollbacks.
+**Deploy order.**
+SQL then PHP then HTML/JS.
+Never deploy PHP that depends on a column the SQL migration has not applied.
 
-**Stage explicitly.** `git add <path1> <path2>...` Never `git add .` or `git add -A`. Never add files outside the announced scope.
+**Stage explicitly.**
+git add <path1> <path2>...
+Never git add . or git add -A.
+Never add files outside the announced scope.
 
-**Push sequence.** `git commit -m "..."` then `git pull --rebase origin main` then `git push origin main`. The rebase before push catches concurrent commits without a merge bubble.
+**Push sequence.**
+git commit -m "..." then git pull --rebase origin main then git push origin main.
 
-**Editing tools.** Use `python3 /dev/stdin` heredoc with `content.replace(old, new, 1)` for multi-line PHP/JS/HTML substitutions. Never `sed -i` for multi-line patches — it mishandles PHP `$` variables, JS template literals, and HTML entities. Single-line `sed` is acceptable for trivial value replacement.
+**Editing tools.**
+Use python3 /dev/stdin heredoc with content.replace(old, new, 1) for
+multi-line PHP/JS/HTML substitutions.
+Never sed -i for multi-line patches.
+Single-line sed is acceptable for trivial value replacement.
 
-**File creation.** Use `cat > <path> <<'EOF' ... EOF` heredoc for new files. The `Write` tool occasionally produces content variations — heredoc is verbatim. For files that already exist, use `python3` str_replace, never `Write`.
+**File creation.**
+Use Python open().write() for all new files. Never heredoc for file creation.
 
-**Lint after edit.** Always run `php -l <file>` after a PHP edit. After every HTML edit run the structure check below. Each tag count should be 1 unless documented otherwise (e.g. `thank-you/index.html` has 2 `</style>` blocks).
-
-```bash
+**Lint after edit.**
+Always run php -l <file> after a PHP edit.
+After every HTML edit run the structure check:
 for tag in '</style>' '</head>' '<body' '</body>'; do
   printf "%s=%d  " "$tag" "$(grep -c "$tag" <file>)"
 done
-```
 
-**Scope discipline.** No "while I'm here" cleanups. No unsolicited refactors. No comment changes that weren't requested.
+**Scope discipline.**
+No while-I-am-here cleanups.
+No unsolicited refactors.
+No comment changes that were not requested.
 
-**Diff display.** When showing a `git diff`, always pipe through `| cat`. Print every line. Never summarise, abbreviate, or collapse with `…`. Reviewers need literal text.
+**Diff display.**
+Always pipe through | cat.
+Print every line. Never summarise or collapse.
 
-**Live data.** All members in the database are real Australians. There are no test members. There is no test data. `members.id = 1` is Thomas Cunliffe, `id = 2` is Max Graham, and so on — these are founding partners who have accepted the JVPA, paid, and are part of the live cohort. Never truncate, modify, or delete member rows. Never run destructive queries against the live database.
+**Live data.**
+All members in the database are real Australians. There is no test data.
+members.id = 1 is Thomas Cunliffe. id = 2 is Max Graham.
+Never truncate, modify, or delete member rows.
+Never run destructive queries against the live database.
 
-**No legal document edits.** Do not modify, draft, or alter the JVPA, Trust Declaration, Sub-Trust Deeds, or any document under `/docs/`. These are executed instruments. Editorial work on legal text happens in Claude (chat) sessions, not Claude Code.
+**No legal document edits.**
+Do not modify, draft, or alter the JVPA, Trust Declaration, Sub-Trust Deeds,
+or any document under /docs/. These are executed instruments.
 
 ---
 
 ## 3. Stack
 
-- Backend: PHP 8.4 / MariaDB 10.6 / Apache (cPanel shared hosting on Serversaurus)
+- Backend: PHP 8.4 / MariaDB 10.6 / Apache (cPanel, Serversaurus)
 - Frontend: vanilla JS, static HTML, no build step, no bundler
-- Repo: `cogsaustralia/Cog` on GitHub. GitHub Actions auto-deploys `main` branch to live server on push
-- Live server: `/home4/cogsaust/public_html` (mapped to repo root)
-- Live DB: `cogsaust_TRUST` — Thomas accesses via `tunnel` then `livedb` aliases (`~/.bash_profile`)
-- Local mirror DB: `mysql -u root -pCogs2026!! cogs_mirror`
-- Read-only auditor account: `cogsaust_auditor` (SELECT, SHOW VIEW only)
+- Repo: cogsaustralia/Cog on GitHub
+- GitHub Actions auto-deploys main branch to live server on push
+- Live server: /home4/cogsaust/public_html (mapped to repo root)
+- Live DB: cogsaust_TRUST
+- Local mirror: mysql -u root -pCogs2026!! cogs_mirror
 
-`.htaccess` blocks direct access to `/_app`, `/_private`, `/database`, `/inc`. Only `/_app/api/...` is publicly reachable inside `/_app`. Everything else falls through to `index.html` (SPA-style fallback).
+.htaccess blocks direct access to /_app, /_private, /database, /inc.
+Only /_app/api/... is publicly reachable inside /_app.
 
 ---
 
-## 4. Where things live
+## 4. Where Things Live
 
-```
-/                          public root (mirrors public_html)
-  index.html               homepage — first-visit redirects to /intro/
+/
+  index.html               homepage
+  seat/                    LEAD MAGNET — cold door A
+    index.html             email capture — Get a Seat at the Table
+    inside/index.html      guide delivery + phone capture
+  welcome/                 LEAD MAGNET — cold door B
+    index.html             voice submission + join CTA
   intro/                   5-card cold-visitor onboarding
   join/                    member registration form
-  thank-you/               post-registration page (Stripe primary, PayID secondary)
+  thank-you/               post-registration page
   wallets/
-    member.html            personal Independence Vault Wallet
-    business.html          business Independence Vault Wallet
-  hubs/                    member hubs (12 total — see project knowledge for list)
-  partners/                partner-facing landing
-  faq/, vision/, terms/, privacy/, skeptic/, gold-cogs/, landholders/   static content
-  docs/                    public PDFs (JVPA, Trust Declaration, Sub-Trust Deeds, B&W Paper)
-  _app/api/                API layer (blocked except /api/)
-    index.php              router — dispatches by ?route= param
-    helpers.php            getAuthPrincipal, requireAuth, trust_cols, OTP, rate limiting, validation
+    member.html            Independence Vault — personal member dashboard
+    business.html          business dashboard
+  hubs/                    member hubs
+  about/four-spokes/       four-spokes page
+  faq/ vision/ terms/ privacy/ skeptic/ gold-cogs/ landholders/
+  docs/                    public PDFs — executed legal instruments
+  _app/api/                API layer
+    index.php              router
+    helpers.php            auth, validation, rate limiting
     config/
-      bootstrap.php        env loading, constants, CORS
-      database.php         getDB() — PDO connection
+      bootstrap.php        env, constants, CORS
+      database.php         getDB() PDO singleton
     routes/<name>.php      route handlers
     services/<Name>.php    domain services
     integrations/
-      mailer.php           SMTP — escape COG\$ in double-quoted strings
-    migrations/            dated migration files (informational — applied via phpMyAdmin)
-    stripe-webhook.php     Stripe webhook (standalone, NOT through router)
-  admin/                   admin panel
-    includes/              shared admin includes
+      mailer.php           SMTP
+    migrations/            dated migration files
+    stripe-webhook.php     Stripe webhook — standalone, not through router
+  admin/
     monitor.php            system + conversion funnel dashboard
     foundation_day.php     Foundation Day readiness + inaugural poll
-  sql/                     repo-tracked SQL migrations applied via phpMyAdmin
+  sql/                     repo-tracked SQL migrations
   assets/                  CSS, JS, images
-  CLAUDE.md                this file
-```
-
-To find a route handler: `grep -l "route.*<name>" _app/api/routes/*.php`. To find a service consumer: `grep -rln "ServiceName::method" _app/`. Do not hardcode counts of routes or services in this file — they change.
-
----
-
-## 5. Critical patterns
-
-**Authentication.** Members authenticate via password + **email magic-link** 2FA. The 6-digit OTP/SMS path is now used only for admin login, not member login. The file `_app/api/auth.php` does not exist — it is a tombstone. All auth logic is in `_app/api/routes/auth.php`. Magic-link tokens flow through `one_time_tokens` and `member_otp_challenges`.
-
-**Database access.** Always via `getDB()` from `_app/api/config/database.php`. Returns a singleton PDO connection.
-
-**Column-guard pattern.** Registration and similar wide-INSERT routes use `trust_cols($db, 'table_name')` to discover which columns exist at runtime, then filter the data array to only those columns. Missing columns are silently skipped — **always verify the column exists before relying on it being persisted**. This is how the snft-reserve and bnft-reserve routes survive schema drift.
-
-**Two-table member pattern.** `members` is the canonical record (linked to auth, holds structured KYC fields). `snft_memberships` is the reservation/token record with class-specific token counts and reservation values. Both keyed on `member_number` (16-digit format `6082XXXXXXXXXXXX`). They are written together; neither is sufficient on its own.
-
-**`COG$` escaping.** In PHP double-quoted strings, `$` introduces a variable. The literal text `COG$` must be written as `COG\$` in double-quoted strings, or use single quotes. Common bug site: `mailer.php`. Email subject lines have been broken by this in the past.
-
-**Stripe webhook.** `_app/api/stripe-webhook.php` is standalone — it does not go through the router. Verifies signature via manual HMAC-SHA256 (no SDK). Idempotency via `stripe_processed_events`. Matches payments to members via `client_reference_id` (set to `member_number` from the thank-you page). Sends 200 to Stripe immediately via `stripe_finish_response()` then continues processing — Stripe's retry decision is based on status code, not body.
-
-**Stage 1 conversion funnel.** Anonymous visit + funnel event logger at `_app/api/routes/track.php`. Pixel beacon at `?route=track/visit`, event POST at `?route=track/event`. Privacy posture: SHA-256 hashed IP, 120-char truncated UA, anonymous session cookie (90d). Mirrors the older `jvpa_pdf_clicks` pattern. Admin dashboard at `admin/monitor.php` reads via `?route=admin/visit-funnel`.
-
-**Mobile number format.** Stored in `04xx` format throughout. Auth path normalises `+614xx` to `04xx` automatically. `members.phone` and `snft_memberships.mobile` may carry the same value under different column names in different contexts.
-
-**Address pipeline.** Live, not future. `members` table holds structured address columns: `street_address`, `suburb`, `state_code`, `postcode`, plus Geoscape G-NAF fields `gnaf_pid`, `zone_id`, `address_lat`, `address_lng`, `address_evidence_hash`, `address_verified_at`. `_app/api/services/GnafAddressAgent.php` and `ParcelLandholderAgent.php` drive verification.
+  _private/
+    CLAUDE.md              this file
+    FOUNDATION.md          Foundation Statement + Eight Governing Principles
+    CAMPAIGN.md            Stage 4 campaign operations — active until 14 May 2026
 
 ---
 
-## 6. Foundation entities and ABNs
+## 5. Critical Patterns
 
-The Foundation comprises the CJVM Hybrid Trust with three Sub-Trusts. Each ABN belongs to a specific entity — do not interchange them.
+**Authentication.**
+Members authenticate via password + email magic-link 2FA.
+OTP/SMS path used only for admin login.
+All auth logic is in _app/api/routes/auth.php.
 
-| Entity | ABN | Notes |
-|---|---|---|
-| **Sub-Trust A** (trading trust) | **91 341 497 529** | Public-facing Foundation ABN for member registrations and partner contributions |
-| **Sub-Trust B** (internal) | none | No ABN — internal transactions only, does not trade as a business |
-| **Sub-Trust C** (charity) | **61 734 327 831** | Exclusive to Sub-Trust C, ACNC charity registration in progress, DGR endorsement contemplated under ITAA 1997 Div.30 |
+**Database access.**
+Always via getDB() from _app/api/config/database.php.
+Returns a singleton PDO connection.
 
-When writing or updating any code, email template, or document that surfaces an ABN to a Member or to the public, **default to Sub-Trust A's ABN (`91 341 497 529`)** unless the context is explicitly charity-side (Sub-Trust C grants, donations, or ACNC reporting).
+**Column-guard pattern.**
+Wide-INSERT routes use trust_cols($db, 'table_name') to discover columns
+at runtime, then filter to only those columns.
+Always verify a column exists before relying on it being persisted.
 
-There is a known bug in `email_templates.unitholder_certificate` (row id 13) which cites `61 734 327 831` where it should cite `91 341 497 529`. Flag if encountered; do not fix without explicit instruction.
+**Two-table member pattern.**
+members is the canonical record.
+snft_memberships is the reservation and token record.
+Both keyed on member_number (16-digit format 6082XXXXXXXXXXXX).
+Written together. Neither is sufficient on its own.
 
----
+**Lead capture pattern.**
+Cold visitors who give their email on /seat/ are written to lead_captures
+table via _app/api/routes/lead-capture.php.
+Fires a confirmation email on first capture.
+ON DUPLICATE KEY UPDATE for safe re-submission.
+Phone capture happens on /seat/inside/.
+Every lead in lead_captures is a real person who has expressed interest.
+Treat with the same care as member rows.
 
-## 7. Two distinct UI surfaces
+**COG$ escaping.**
+In PHP double-quoted strings write COG\$. Common bug site: mailer.php.
 
-**Mainspring Management Hub** (`/hubs/mainspring/`) — JV operational and financial management. Governance, holdings, community-wide views.
+**Stripe webhook.**
+_app/api/stripe-webhook.php is standalone — not through the router.
+Verifies signature via HMAC-SHA256.
+Idempotency via stripe_processed_events.
+Matches payments to members via client_reference_id.
+Sends 200 immediately then continues processing.
 
-**Independence Financial Vault** (`/wallets/member.html`) — personal digital financial management. Personal holdings, profile, identity, P2P transfers.
+**Conversion funnel.**
+Anonymous visit logger at _app/api/routes/track.php.
+Admin dashboard at admin/monitor.php.
 
-The two are not interchangeable. Never label vault features as Mainspring or vice versa. Navigation copy must reflect the distinction.
+**Mobile number format.**
+Stored in 04xx format. Auth normalises +614xx to 04xx.
 
----
+**Address pipeline.**
+members table holds structured address columns including Geoscape G-NAF fields.
+GnafAddressAgent.php and ParcelLandholderAgent.php drive verification.
 
-## 8. Real-world resource doctrine
-
-A constitutional principle of the Foundation, not a marketing line: **in-ground minerals retain real economic value as appreciating stewardship assets without extraction.** Whenever ASX-listed shares are mentioned in code comments, copy, or admin tooling, also reference the RWA value of in-ground resources. Correct framing: shares give the community a legal voice; in-ground minerals carry real measurable value recognisable WITHOUT extraction — before extraction becomes default, potentially in lieu of extraction. Apply across all tools and comms.
-
----
-
-## 9. Foundation Day timing
-
-- **Foundation Day:** Thursday 14 May 2026, 17:00 AEST. First community vote.
-- **Expansion Day:** approximately 12–24 months after Foundation Day. Triggers AFSL/MIS considerations.
-- **Today's date** is the source of truth for D-counts. Campaign launched D-15 (29 Apr 2026); D-0 is Foundation Day itself.
-- The Foundation Day inaugural poll is created via `admin/foundation_day.php`. Do not create polls or change Foundation Day flags from any other entry point.
-
----
-
-## 10. Local environment shortcuts
-
-Thomas runs:
-
-- `tunnel` — opens SSH tunnel `~/.ssh/serversaurus` → `shorty.serversaurus.com.au:22`, forwards `3307 → live MariaDB`
-- `livedb` — `mysql -h 127.0.0.1 -P 3307 -u cogsaust -p cogsaust_TRUST` (Thomas pastes results back into chat)
-- Local mirror: `mysql -u root -pCogs2026!! cogs_mirror`
-
-Claude Code cannot SSH directly. Server-side files outside the public_html repo (e.g. `cogs-monitor.sh`, `monitor.html`, alert configs at `/home4/cogsaust/`) require Thomas to upload manually.
-
----
-
-## 11. Handover patterns
-
-- **Claude (chat) → Claude Code.** Claude (chat) writes the comprehensive prompt with all SQL/PHP/JS embedded inline as text. Claude Code creates and edits in the repo, runs ground-truth checks, stages, shows the diff, and stops for review. No zip handovers.
-- **Claude Code → Thomas.** Stop at the diff. Do not commit until approved.
-- **OpenClaw** is a separate operational tool for scheduled reminders and Telegram nudges. Do not invoke OpenClaw from Claude Code or vice versa. Do not assume OpenClaw is healthy — it is being stabilised separately.
-
----
-
-## 12. When this file needs updating
-
-This file should be revised when any of the following changes:
-
-1. **Standing rules change.** New deploy-order constraints, new editing tooling, new prohibited patterns.
-2. **Stack change.** PHP version, MariaDB version, hosting provider, deploy mechanism.
-3. **Authentication model change.** Magic-link replaced or supplemented; admin 2FA replaced; session model changed.
-4. **A pattern in §5 changes.** New widely-used pattern emerges (a third member table, a new column-guard pattern, a new escape requirement); old pattern is deprecated.
-5. **A Foundation entity or ABN changes.** Sub-Trust C charity registration is approved (ABN may change or new TFN attaches); Expansion Day occurs; new Sub-Trust is added.
-6. **The Mainspring/Vault distinction in §7 evolves.** New surfaces emerge.
-7. **Foundation Day or Expansion Day moves.**
-8. **The repo gains a permanent new top-level folder** that materially changes navigation (e.g. `/sovereign-node/`, `/landholder-portal/`).
-
-This file does **not** need to be revised when:
-
-- Routes are added to `_app/api/routes/`. Use `ls _app/api/routes/` to enumerate.
-- Tables are added to the schema. Use `SHOW TABLES` against `cogsaust_TRUST` or read the latest dump.
-- Migrations are added. They live in `_app/api/migrations/` and `sql/`.
-- Members are added. Member counts are dynamic and are not recorded here.
-- Token classes are added or repriced. Read `token_classes` table.
-- Hubs are added. Read `ls hubs/`.
-- Stage 2 conversion improvements ship. The pattern in §5 covers them.
-
-A revision should always preserve §1, §2, §6, §7, §8, §11, and §12 unless explicitly instructed otherwise. These are the constitutional sections — they protect the safety properties of the project. Sections 3–5, 9, 10 are operational and may change as the project evolves.
-
-When in doubt about whether a change requires a CLAUDE.md update, default to **not** updating. A misleading CLAUDE.md is worse than a slightly stale one. Stale parts surface during ground-truth checks; misleading parts cause wrong decisions.
+**Known production bug.**
+email_templates row id 13 (unitholder certificate) cites ABN 61 734 327 831
+(Sub-Trust C) where it should cite 91 341 497 529 (Sub-Trust A).
+Flag if encountered. Do not fix without explicit instruction from Thomas.
+Decision pending before Foundation Day.
 
 ---
 
-*End of file. Read this once per session, then act on it.*
+## 6. Foundation Entities and ABNs
+
+| Entity         | ABN            | Notes                              |
+|----------------|----------------|------------------------------------|
+| Sub-Trust A    | 91 341 497 529 | Public-facing ABN, member regs     |
+| Sub-Trust B    | none           | Internal transactions only         |
+| Sub-Trust C    | 61 734 327 831 | Charity — ACNC registration active |
+
+Default to Sub-Trust A ABN in all member-facing code unless context is
+explicitly charity-side (Sub-Trust C grants, donations, ACNC reporting).
+
+---
+
+## 7. Two Distinct UI Surfaces
+
+**Mainspring Management Hub** (/hubs/mainspring/)
+JV operational and financial management.
+Governance, holdings, community-wide views.
+
+**Independence Vault** (/wallets/member.html)
+Personal member dashboard.
+Personal holdings, profile, identity, transfers.
+
+Never label vault features as Mainspring or vice versa.
+
+---
+
+## 8. Real-World Resource Doctrine
+
+Constitutional principle, not a marketing line.
+In-ground minerals retain real economic value as appreciating stewardship
+assets without extraction.
+Whenever ASX-listed shares are mentioned in code, copy, or admin tooling,
+also reference the RWA value of in-ground resources.
+Shares give the community a legal voice.
+In-ground minerals carry real measurable value without extraction.
+Apply across all tools and communications.
+
+---
+
+## 9. Current Project Stage — Stage 4: Public Launch and Conversion
+
+Today: Monday 4 May 2026.
+Foundation Day: Thursday 14 May 2026, 5:00pm AEST.
+Days remaining: 10.
+
+The platform is built. The legal structure is executed.
+The lead magnet funnel is live. The campaign launched today.
+
+Priority work between now and Foundation Day:
+1. Campaign content — one post per day, local-first, personal voice, phone video
+2. Lead conversion — every email and phone lead followed up personally by Thomas
+3. Personal engagement — every comment, DM, and share replied to personally
+4. Foundation Day readiness — poll live, livestream prepared, script selected
+   morning of 14 May based on federal budget outcome
+
+Cold-path doors:
+/seat/    — email capture, lead magnet, primary campaign destination
+/welcome/ — voice submission, emotional and local posts
+
+Never send cold traffic directly to /join/.
+
+Full campaign operations: _private/CAMPAIGN.md
+
+Expansion Day: approximately 12 to 24 months after Foundation Day.
+Triggers AFSL and MIS considerations.
+
+---
+
+## 10. Content Standards — Non-Negotiable
+
+Apply to every piece of user-facing text in this repository, every stage.
+
+**K-6 plain English.**
+Write at the reading level of a confident twelve-year-old.
+Define every technical term in the same sentence it is first used.
+
+**Zero AI tells.**
+Banned in all user-facing copy:
+em-dashes (--), "I understand" repeated, "for the avoidance of doubt",
+passive constructions, not-X-not-Y-not-Z tricolon patterns,
+"straightforward", "genuinely", "honestly".
+
+**No financial promotion language.**
+Every post, email, and page mentioning shares or dividends closes with:
+A community membership invitation. Not financial advice.
+
+**No co-branding.**
+No party, candidate, journalist, podcast, or commentator named or implied
+as endorsing COGS.
+
+**Public-figure discipline.**
+Every claim naming a public figure or quoting a number is tagged to its
+public source on the face of the document.
+
+**COGS in public-facing copy.**
+The public name is COGS. COG$ is acceptable in internal documents and code.
+
+---
+
+## 11. Local Environment
+
+tunnel  — SSH tunnel via ~/.ssh/serversaurus to shorty.serversaurus.com.au:22,
+          forwards 3307 to live MariaDB
+livedb  — mysql -h 127.0.0.1 -P 3307 -u cogsaust -p cogsaust_TRUST
+mirror  — mysql -u root -pCogs2026!! cogs_mirror
+
+Claude Code cannot SSH directly.
+Server-side files outside public_html require manual upload by Thomas.
+
+---
+
+## 12. Handover Patterns
+
+**Project Coordinator (Claude chat) to Claude Code.**
+The Coordinator drafts all CCC prompts with SQL, PHP, JS, HTML embedded inline.
+The Coordinator does not edit files directly.
+Claude Code creates and edits in the repo, runs ground-truth checks,
+stages, shows the diff, and stops for Thomas's review.
+
+**Claude Code to Thomas.**
+Stop at the diff. Do not commit until Thomas types "approved" or "proceed".
+
+**Thomas to Project Coordinator.**
+Thomas directs all work through the Coordinator in Claude chat.
+The Coordinator maintains project state, drafts CCC prompts, and keeps
+campaign and technical work aligned with the Foundation Statement and
+Governing Principles.
+
+**OpenClaw.**
+Separate tool for scheduled reminders and Telegram nudges.
+Do not invoke from Claude Code. Do not assume it is healthy.
+
+---
+
+## 13. When This File Needs Updating
+
+Update when:
+1. Project moves between stages (Stage 4 to Foundation Day to Stage 6)
+2. Standing rules change
+3. Stack changes
+4. Authentication model changes
+5. A pattern in section 5 changes materially
+6. A Foundation entity or ABN changes
+7. The Mainspring/Vault distinction evolves
+8. Foundation Day or Expansion Day moves
+9. The repo gains a permanent new top-level folder
+
+Do not update when routes, tables, migrations, members, token classes,
+or hubs are added. Discover those dynamically with ls, SHOW TABLES, git log.
+
+A misleading CLAUDE.md is worse than a slightly stale one.
+When in doubt, do not update.
+
+---
+
+*End of file. Read once per session. Then act on it.*
+*Caretaker Trustee: Thomas Boyd Cunliffe*
+*Project Coordinator: Claude*
+*Drake Village, Wahlubal Country, Bundjalung Nation*
