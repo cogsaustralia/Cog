@@ -43,6 +43,37 @@ body { font-family:var(--sans); background:var(--bg); color:var(--text); min-hei
 .substack-link a { color:var(--gold-1); }
 .ftr { text-align:center; font-size:.8rem; color:var(--muted); padding:32px 0 0; border-top:1px solid var(--gold-rim); margin-top:48px; }
 </style>
+<script>
+/* Client-side JS error beacon -- injected for pages that do not load site.js */
+(function(){
+  'use strict';
+  var MAX=3,n=0,ROOT='../../';
+  function ep(){return ROOT+'_app/api/index.php/client-error';}
+  function send(p){
+    if(n>=MAX)return;n++;
+    try{
+      var b=JSON.stringify(p);
+      if(navigator.sendBeacon){navigator.sendBeacon(ep(),new Blob([b],{type:'application/json'}));}
+      else{fetch(ep(),{method:'POST',body:b,keepalive:true,headers:{'Content-Type':'application/json'}}).catch(function(){});}
+    }catch(e){}
+  }
+  window.onerror=function(msg,src,line,col,err){
+    send({message:String(msg||'').slice(0,500),source:String(src||'').slice(0,255),
+          line:line||null,col:col||null,
+          stack:err&&err.stack?String(err.stack).slice(0,2000):null,
+          page:window.location.pathname.slice(0,120),
+          ua_hint:(navigator.userAgent||'').slice(0,80)});
+    return false;
+  };
+  window.addEventListener('unhandledrejection',function(e){
+    var r=e&&e.reason,msg=r instanceof Error?r.message:String(r||'Unhandled promise rejection');
+    send({message:msg.slice(0,500),source:null,line:null,col:null,
+          stack:r instanceof Error&&r.stack?String(r.stack).slice(0,2000):null,
+          page:window.location.pathname.slice(0,120),
+          ua_hint:(navigator.userAgent||'').slice(0,80)});
+  });
+})();
+</script>
 </head>
 <body><div class="page">
 <header class="hdr"><a href="/seat/" class="hdr-mark">COG$</a></header>

@@ -89,6 +89,38 @@ try {
         $uaHash,
     ]);
 
+    // First-seen alert: email admin if this error class has not fired in the last 60 minutes.
+    // Debounced by route + message snippet to avoid flooding on repeat errors.
+    try {
+        $snippet = substr($fullMessage, 0, 120);
+        $stmt2 = $db->prepare(
+            "SELECT COUNT(*) FROM app_error_log
+              WHERE route = ? AND LEFT(error_message,120) = ?
+                AND created_at >= DATE_SUB(NOW(), INTERVAL 60 MINUTE)
+                AND created_at < NOW()"
+        );
+        $stmt2->execute([$route, $snippet]);
+        $priorCount = (int)($stmt2->fetchColumn() ?: 0);
+
+        if ($priorCount === 0 && function_exists('smtpSendEmail') && mailerEnabled()) {
+            $adminTo = defined('MAIL_ADMIN_EMAIL') ? MAIL_ADMIN_EMAIL : 'admin@cogsaustralia.org';
+            $subject = '[COGS Alert] New JS error: ' . substr($route, 0, 60);
+            $html = '<p><strong>New client-side JS error detected on cogsaustralia.org</strong></p>'
+                . '<p><strong>Route/Page:</strong> ' . htmlspecialchars($route) . '</p>'
+                . '<p><strong>Error:</strong> ' . htmlspecialchars(substr($fullMessage, 0, 500)) . '</p>'
+                . '<p><strong>Time:</strong> ' . date('Y-m-d H:i:s T') . '</p>'
+                . '<p>View and acknowledge at <a href="https://cogsaustralia.org/admin/errors.php">admin/errors.php</a></p>';
+            $text = "New client-side JS error detected on cogsaustralia.org\n"
+                . "Route/Page: {$route}\n"
+                . "Error: " . substr($fullMessage, 0, 500) . "\n"
+                . "Time: " . date('Y-m-d H:i:s T') . "\n"
+                . "View: https://cogsaustralia.org/admin/errors.php";
+            smtpSendEmail($adminTo, $subject, $html, $text);
+        }
+    } catch (Throwable $alertEx) {
+        error_log('[client-error alert] ' . $alertEx->getMessage());
+    }
+
 } catch (Throwable $e) {
     // Silent fail — never expose errors to the browser
     error_log('[client-error beacon] ' . $e->getMessage());

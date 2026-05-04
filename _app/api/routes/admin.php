@@ -128,6 +128,22 @@ function adminSummary(): void {
         'votes' => (static function() use ($db): array { try { return fetchVoteDashboard($db, 20); } catch (Throwable $e) { return []; } })(),
         'disputes' => (static function() use ($db): array { try { return fetchDisputeDashboard($db, 20); } catch (Throwable $e) { return []; } })(),
         'crm_provider' => CRM_PROVIDER,
+        'unack_errors' => (static function() use ($db): int {
+            try {
+                if (!api_table_exists($db, 'app_error_log')) return 0;
+                return (int)($db->query("SELECT COUNT(*) FROM app_error_log WHERE acknowledged=0")->fetchColumn() ?: 0);
+            } catch (Throwable $e) { return 0; }
+        })(),
+        'recent_errors' => (static function() use ($db): array {
+            try {
+                if (!api_table_exists($db, 'app_error_log')) return [];
+                return $db->query(
+                    "SELECT route, http_status, LEFT(error_message,200) AS msg, area_key, created_at
+                       FROM app_error_log WHERE acknowledged=0
+                      ORDER BY id DESC LIMIT 5"
+                )->fetchAll() ?: [];
+            } catch (Throwable $e) { return []; }
+        })(),
         'binding_status' => 'beta_non_binding',
         'phase_c_prepared' => true,
         'refreshed_at' => nowUtc(),
