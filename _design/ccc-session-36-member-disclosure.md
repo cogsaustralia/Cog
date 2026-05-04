@@ -43,7 +43,7 @@ block = (
     "          </p>\n"
     "          <p style=\"font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;"
     "font-family:Arial,sans-serif\">\n"
-    "            At today's price, 1,545 shares is a small position. That is the truth."
+    "            The current shareholding at 1,545 ordinary shares is a relatively small position."
     " We are at the beginning.\n"
     "          </p>\n"
     "          <div style=\"font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;"
