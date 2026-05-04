@@ -111,26 +111,76 @@ FB ad A vs B, YT video A vs B, etc. This is where platform-level
 | `fb-b`     | Facebook ad — creative variant B             |
 | `yt-a`     | YouTube ad — video variant A                 |
 | `yt-b`     | YouTube ad — video variant B                 |
-| `ig-a`     | Instagram post — variant A                   |
+| `ig-a`     | Instagram post / ad — creative variant A     |
+| `ig-b`     | Instagram post / ad — creative variant B     |
 | `post-1`   | Organic post number 1                        |
 | `post-2`   | Organic post number 2                        |
 
-### Example full tracking URLs
+### Campaign Link Library — Ready to Paste
 
-Facebook ad A to cold path:
+Copy the exact link for each platform and variant. Do not edit the parameters.
+These are the canonical links. If a new variant is needed, add it here first.
+
+#### COLD PATH — /seat/ (lead magnet)
+
+**Facebook (Meta)**
 ```
-https://cogsaustralia.org/seat/?ref=fb&utm_campaign=seat-launch&utm_content=fb-a
+Variant A: https://cogsaustralia.org/seat/?ref=fb&utm_campaign=seat-launch&utm_content=fb-a
+Variant B: https://cogsaustralia.org/seat/?ref=fb&utm_campaign=seat-launch&utm_content=fb-b
 ```
 
-YouTube ad B to cold path:
+**YouTube**
 ```
-https://cogsaustralia.org/seat/?ref=yt&utm_campaign=seat-launch&utm_content=yt-b
+Variant A: https://cogsaustralia.org/seat/?ref=yt&utm_campaign=seat-launch&utm_content=yt-a
+Variant B: https://cogsaustralia.org/seat/?ref=yt&utm_campaign=seat-launch&utm_content=yt-b
 ```
 
-Facebook organic post to homepage:
+**Instagram**
 ```
-https://cogsaustralia.org/?ref=fb&utm_campaign=fairsay&utm_content=post-3
+Variant A: https://cogsaustralia.org/seat/?ref=ig&utm_campaign=seat-launch&utm_content=ig-a
+Variant B: https://cogsaustralia.org/seat/?ref=ig&utm_campaign=seat-launch&utm_content=ig-b
 ```
+
+#### WARM PATH — / (homepage, organic Fair Say posts)
+
+**Facebook (Meta)**
+```
+Post 1: https://cogsaustralia.org/?ref=fb&utm_campaign=fairsay&utm_content=post-1
+Post 2: https://cogsaustralia.org/?ref=fb&utm_campaign=fairsay&utm_content=post-2
+Post 3: https://cogsaustralia.org/?ref=fb&utm_campaign=fairsay&utm_content=post-3
+```
+
+**YouTube**
+```
+Post 1: https://cogsaustralia.org/?ref=yt&utm_campaign=fairsay&utm_content=post-1
+Post 2: https://cogsaustralia.org/?ref=yt&utm_campaign=fairsay&utm_content=post-2
+```
+
+**Instagram**
+```
+Post 1: https://cogsaustralia.org/?ref=ig&utm_campaign=fairsay&utm_content=post-1
+Post 2: https://cogsaustralia.org/?ref=ig&utm_campaign=fairsay&utm_content=post-2
+```
+
+#### WARM PATH — /intro/ (intro flow)
+
+**Facebook (Meta)**
+```
+https://cogsaustralia.org/intro/?ref=fb&utm_campaign=fairsay&utm_content=fb-a
+```
+
+**YouTube**
+```
+https://cogsaustralia.org/intro/?ref=yt&utm_campaign=fairsay&utm_content=yt-a
+```
+
+**Instagram**
+```
+https://cogsaustralia.org/intro/?ref=ig&utm_campaign=fairsay&utm_content=ig-a
+```
+
+#### RULE: These links are displayed live in admin/monitor.php Campaign Links panel.
+#### If you add a new link here, also add it to the monitor panel (see CCC session 40).
 
 ---
 
