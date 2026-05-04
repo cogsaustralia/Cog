@@ -99,7 +99,7 @@ $ALLOWED_EVENTS = [
 ];
 
 $ALLOWED_PATHS = [
-    'index', 'intro', 'join', 'thank-you', 'thank-you-business',
+    'index', 'intro', 'seat', 'seat_inside', 'join', 'thank-you', 'thank-you-business',
     'welcome', 'skeptic', 'tell-me-more', 'vision',
     'landholders', 'gold-cogs', 'businesses', 'community', 'faq',
 ];

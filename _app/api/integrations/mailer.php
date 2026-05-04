@@ -146,6 +146,19 @@ function processEmailQueue(PDO $db, int $limit = 10): array {
             smtpSendEmail((string)$row['recipient'], (string)$row['subject'], $html, $text);
             $upd = $db->prepare('UPDATE email_queue SET status = "sent", attempt_count = attempt_count + 1, last_error = NULL, sent_at = UTC_TIMESTAMP(), updated_at = UTC_TIMESTAMP() WHERE id = ?');
             $upd->execute([(int)$row['id']]);
+            // Write email_sent_at on lead_captures when the lead magnet confirmation sends.
+            // lead_captures.email_sent_at was never updated — this makes it the reliable send indicator.
+            if ((string)$row['template_key'] === 'lead_magnet_confirmation'
+                && (string)$row['entity_type'] === 'lead_capture'
+                && (int)$row['entity_id'] > 0) {
+                try {
+                    $db->prepare(
+                        'UPDATE lead_captures SET email_sent_at = UTC_TIMESTAMP(), updated_at = UTC_TIMESTAMP() WHERE id = ? AND email_sent_at IS NULL'
+                    )->execute([(int)$row['entity_id']]);
+                } catch (Throwable $leadUpd) {
+                    error_log('[mailer/lead_sent_at] ' . $leadUpd->getMessage());
+                }
+            }
         } catch (Throwable $e) {
             $upd = $db->prepare('UPDATE email_queue SET status = "failed", attempt_count = attempt_count + 1, last_error = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?');
             $upd->execute([$e->getMessage(), (int)$row['id']]);
