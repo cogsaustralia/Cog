@@ -2127,3 +2127,60 @@
     });
   })();
 })();
+
+
+// ─── Client-side JS error beacon ─────────────────────────────────────────────
+// Posts uncaught JS errors to /api/client-error for visibility in admin/errors.php
+// Rate-limited to 3 per page load. Silent fail. No PII. Uses sendBeacon.
+(function () {
+  'use strict';
+  var MAX_REPORTS = 3;
+  var reported = 0;
+
+  function apiRoot() {
+    var root = window.COGS_ROOT || './';
+    return root + '_app/api/index.php/client-error';
+  }
+
+  function send(payload) {
+    if (reported >= MAX_REPORTS) return;
+    reported++;
+    try {
+      var body = JSON.stringify(payload);
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(apiRoot(), new Blob([body], { type: 'application/json' }));
+      } else {
+        fetch(apiRoot(), { method: 'POST', body: body, keepalive: true,
+          headers: { 'Content-Type': 'application/json' } }).catch(function () {});
+      }
+    } catch (e) { /* silent */ }
+  }
+
+  window.onerror = function (msg, src, line, col, err) {
+    send({
+      message: String(msg || '').slice(0, 500),
+      source:  String(src  || '').slice(0, 255),
+      line:    line  || null,
+      col:     col   || null,
+      stack:   err && err.stack ? String(err.stack).slice(0, 2000) : null,
+      page:    window.location.pathname.slice(0, 120),
+      ua_hint: (navigator.userAgent || '').slice(0, 80)
+    });
+    return false; // don't suppress default browser handling
+  };
+
+  window.addEventListener('unhandledrejection', function (e) {
+    var reason = e && e.reason;
+    var msg = reason instanceof Error ? reason.message : String(reason || 'Unhandled promise rejection');
+    var stack = reason instanceof Error && reason.stack ? String(reason.stack).slice(0, 2000) : null;
+    send({
+      message: msg.slice(0, 500),
+      source:  null,
+      line:    null,
+      col:     null,
+      stack:   stack,
+      page:    window.location.pathname.slice(0, 120),
+      ua_hint: (navigator.userAgent || '').slice(0, 80)
+    });
+  });
+})();
