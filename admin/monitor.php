@@ -252,7 +252,7 @@ ops_require_admin();
                 </div>
             </div>
             <div id="funnelNotReady" style="display:none;" class="not-ready-note">
-                ⚠️ DB table not ready — run <code>jvpa_clicks_migration.sql</code> in phpMyAdmin first.
+                DB table not ready — run <code>jvpa_clicks_migration.sql</code> in phpMyAdmin first.
             </div>
         </div>
 
@@ -303,7 +303,7 @@ ops_require_admin();
         </div>
 
         <div class="recommendation" id="recommendationBox">
-            <h3>🔄 Rebuild Recommendation</h3>
+            <h3>Rebuild Recommendation</h3>
             <p id="recommendationText">Analyzing trends...</p>
         </div>
 
@@ -417,7 +417,7 @@ ops_require_admin();
                 const spp   = d.source_per_path||[];
                 const pages = [...new Set(spp.map(r=>r.path))].sort();
                 const srcs  = [...new Set(spp.map(r=>r.src))].sort();
-                const icons = {fb:'🟦 fb',yt:'🔴 yt',ig:'📸 ig',tw:'🐦 tw',li:'💼 li',email:'📧 email',sms:'💬 sms',direct:'🔗 direct',qr:'📷 qr',other:'🔘 other'};
+                const icons = {fb:'fb',yt:'yt',ig:'ig',tw:'tw',li:'li',email:'email',sms:'sms',direct:'direct',qr:'qr',other:'other'};
 
                 document.getElementById('cfMatrixHead').innerHTML =
                     '<th>Page</th>' + srcs.map(s=>`<th style="text-align:right;">${icons[s]||s}</th>`).join('') + '<th style="text-align:right;">Total</th>';
@@ -445,7 +445,7 @@ ops_require_admin();
                             <td>${r.path||'—'}</td>
                             <td>${si}</td>
                             <td>${r.partner_code||'<span style="color:#475569">—</span>'}</td>
-                            <td>${+r.is_mobile?'📱':'🖥️'}</td>
+                            <td>${+r.is_mobile?'mob':'desk'}</td>
                             <td style="color:#94a3b8;font-size:0.82em;">${new Date(r.visited_at).toLocaleString('en-AU')}</td>
                         </tr>`;
                     }).join('');
@@ -603,7 +603,7 @@ ops_require_admin();
                 loadConversionFunnel();
             } catch (error) {
                 console.error('Fatal error loading dashboard:', error);
-                document.getElementById('statusText').textContent = '❌ Error loading data';
+                document.getElementById('statusText').textContent = 'Error loading data';
             }
         }
         
@@ -617,13 +617,13 @@ ops_require_admin();
             
             if (currentAlert && hasRecentAlert) {
                 indicator.className = 'status-indicator status-alert';
-                text.textContent = '🚨 ALERT ACTIVE (Last Hour)';
+                text.textContent = 'ALERT ACTIVE (Last Hour)';
             } else if (alerts.length > 0) {
                 indicator.className = 'status-indicator status-alert';
-                text.textContent = `⚠️ ${alerts.length} Issues (Last 7d)`;
+                text.textContent = `${alerts.length} Issues (Last 7d)`;
             } else {
                 indicator.className = 'status-indicator status-healthy';
-                text.textContent = '✅ HEALTHY';
+                text.textContent = 'HEALTHY';
             }
             
             document.getElementById('lastCheck').textContent = `Last check: ${now.toLocaleTimeString()} | ${alerts.length} unique issues`;
@@ -664,7 +664,7 @@ ops_require_admin();
             const list = document.getElementById('alertsList');
             
             if (alerts.length === 0) {
-                list.innerHTML = '<p style="color: #64748b; text-align: center;">✓ No errors in the past 7 days</p>';
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No errors in the past 7 days</p>';
                 return;
             }
             
@@ -686,7 +686,7 @@ ops_require_admin();
             const box = document.getElementById('recommendationBox');
             box.className = 'recommendation recommendation-no';
             box.innerHTML = `
-                <h3>🔄 Rebuild Recommendation</h3>
+                <h3>Rebuild Recommendation</h3>
                 <p>System healthy - monitoring active. No rebuild required.</p>
             `;
         }
