@@ -1,5 +1,5 @@
-# CCC Session 44: _app/monitoring/crontab.txt — fix PHP binary path in cron jobs
-# Branch: review/session-44
+# CCC Session 45: _app/monitoring/crontab.txt — fix PHP binary path in cron jobs
+# Branch: review/session-45
 # FILES: _app/monitoring/crontab.txt
 
 ## Context
@@ -93,10 +93,10 @@ PYEOF2
 Only if all checks pass.
 
 ```bash
-git checkout -b review/session-44
+git checkout -b review/session-45
 git add _app/monitoring/crontab.txt
 git commit -m "fix(cron): use /usr/local/bin/php in all cron jobs — bare php runs as web SAPI and gets 403"
-git push origin review/session-44
+git push origin review/session-45
 ```
 
 ---
