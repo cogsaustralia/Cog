@@ -1586,29 +1586,96 @@ return [$html, $plain];
         })(),
 
         'lead_magnet_confirmation' => (function() use ($p) {
-            $guideUrl  = $p['guide_url']  ?? 'https://cogsaustralia.org/seat/inside/';
-            $site      = 'https://cogsaustralia.org';
+            $cheatSheetUrl = 'https://open.substack.com/pub/cogsaustralia/p/the-ceo-power-cheat-sheet?r=8bqc6h&utm_campaign=post&utm_medium=web';
+            $guideUrl      = 'https://cogsaustralia.org/seat/inside/';
+            $joinUrl       = 'https://cogsaustralia.org/join/';
 
-            $html = '<!DOCTYPE html><html><body style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1a1a1a;">'
-                . '<p style="font-size:18px;font-weight:bold;">Your free guide is ready.</p>'
-                . '<p>You asked for the guide. Here it is.</p>'
-                . '<p><a href="' . htmlspecialchars($guideUrl) . '" style="display:inline-block;background:#b8860b;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold;">Read: Seat at the Table &rarr;</a></p>'
-                . '<p>It explains four things. How one share gets you into the room. Why ESG laws put a dollar value on your voice. What words open the door with a mining company. And why COG$ multiplies all of it.</p>'
-                . '<p>Five minutes. Plain English. No jargon.</p>'
-                . '<p>You can join now for $4 at <a href="https://cogsaustralia.org/join">cogsaustralia.org/join</a>. Foundation Day is <strong>14 May 2026</strong> at 5pm AEST &mdash; that is when the first community vote happens.</p>'
-                . '<p style="margin-top:32px;">Thomas<br>COG$ of Australia Foundation<br>Drake Village NSW &nbsp;|&nbsp; Wahlubal Country, Bundjalung Nation</p>'
-                . '<p style="font-size:11px;color:#888;margin-top:24px;">You received this because you asked for the free guide at cogsaustralia.org. Reply to this email to unsubscribe.</p>'
+            $html = '<!DOCTYPE html>'
+                . '<html lang="en"><head><meta charset="UTF-8">'
+                . '<title>Your CEO Power Cheat Sheet</title></head>'
+                . '<body style="margin:0;padding:0;background:#f5f0e8;font-family:Georgia,serif">'
+                . '<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0e8">'
+                . '<tr><td align="center" style="padding:32px 16px">'
+                . '<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">'
+
+                . '<tr><td style="background:#1a0e00;padding:24px 32px;border-bottom:3px solid #c8901a">'
+                . '<div style="font-size:20px;font-weight:bold;color:#c8901a;font-family:Georgia,serif">COG$ of Australia Foundation</div>'
+                . '<div style="font-size:12px;color:#9a8a74;margin-top:4px;font-family:Arial,sans-serif">Drake Village NSW &middot; Wahlubal Country, Bundjalung Nation</div>'
+                . '</td></tr>'
+
+                . '<tr><td style="padding:32px 32px 0">'
+                . '<div style="font-size:24px;font-weight:bold;color:#1a0e00;font-family:Georgia,serif;line-height:1.2">Here is your Cheat Sheet.</div>'
+                . '<p style="font-size:15px;color:#2a1a08;line-height:1.75;margin:16px 0 0;font-family:Arial,sans-serif">'
+                . 'One share puts the CEO in your pocket. This is how.'
+                . '</p>'
+                . '</td></tr>'
+
+                . '<tr><td style="padding:24px 32px 0" align="center">'
+                . '<a href="' . htmlspecialchars($cheatSheetUrl) . '" '
+                . 'style="display:inline-block;background:#c8901a;color:#ffffff;font-weight:bold;'
+                . 'text-decoration:none;padding:16px 36px;border-radius:6px;font-size:16px;'
+                . 'font-family:Arial,sans-serif;letter-spacing:.01em">'
+                . 'Read the CEO Power Cheat Sheet &rarr;'
+                . '</a>'
+                . '</td></tr>'
+
+                . '<tr><td style="padding:28px 32px 0">'
+                . '<hr style="border:none;border-top:1px solid #e8e0d0;margin:0 0 24px">'
+                . '<p style="font-size:14px;color:#2a1a08;line-height:1.75;margin:0 0 14px;font-family:Arial,sans-serif">'
+                . 'The Cheat Sheet is the quick version. The full guide goes deeper &mdash; '
+                . 'the three laws that give you standing, the sentence that opens the door, '
+                . 'and why five thousand of us changes the calculation entirely.'
+                . '</p>'
+                . '<p style="font-size:14px;color:#2a1a08;line-height:1.75;margin:0 0 24px;font-family:Arial,sans-serif">'
+                . '<a href="' . htmlspecialchars($guideUrl) . '" style="color:#c8901a;font-weight:bold;text-decoration:none">'
+                . 'Read the full guide: Seat at the Table &rarr;</a>'
+                . '</p>'
+                . '<hr style="border:none;border-top:1px solid #e8e0d0;margin:0 0 24px">'
+                . '</td></tr>'
+
+                . '<tr><td style="padding:0 32px 0;background:#fffdf7;border-top:1px solid #e8e0d0">'
+                . '<table width="100%" cellpadding="0" cellspacing="0">'
+                . '<tr><td style="padding:20px 0">'
+                . '<div style="font-size:13px;font-weight:bold;color:#c8901a;text-transform:uppercase;'
+                . 'letter-spacing:.08em;font-family:Arial,sans-serif;margin-bottom:10px">Foundation Day &mdash; 14 May 2026</div>'
+                . '<p style="font-size:14px;color:#2a1a08;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">'
+                . 'The first community vote. $4. Once only. Your seat at the table is locked in for life.'
+                . '</p>'
+                . '<a href="' . htmlspecialchars($joinUrl) . '" '
+                . 'style="display:inline-block;background:#1a0e00;color:#c8901a;font-weight:bold;'
+                . 'text-decoration:none;padding:12px 28px;border-radius:6px;font-size:14px;'
+                . 'font-family:Arial,sans-serif">'
+                . 'Join for $4 on Foundation Day &rarr;'
+                . '</a>'
+                . '</td></tr></table>'
+                . '</td></tr>'
+
+                . '<tr><td style="background:#1a0e00;padding:18px 32px;border-top:2px solid #c8901a">'
+                . '<div style="font-size:11px;color:#6b5c44;line-height:1.9;font-family:Arial,sans-serif">'
+                . 'Thomas Cunliffe &middot; Caretaker Trustee &middot; COG$ of Australia Foundation<br>'
+                . 'ABN: 91 341 497 529 &middot; Drake Village NSW 2469<br>'
+                . 'You received this because you asked for the free guide at cogsaustralia.org. '
+                . 'Reply to unsubscribe.'
+                . '</div>'
+                . '</td></tr>'
+
+                . '</table></td></tr></table>'
                 . '</body></html>';
 
-            $plain = "Your free guide is ready.\n\n"
-                . "You asked for the guide. Here it is:\n"
-                . $guideUrl . "\n\n"
-                . "It explains four things. How one share gets you into the room. Why ESG laws put a dollar value on your voice. What words open the door with a mining company. And why COG\$ multiplies all of it.\n\n"
-                . "Five minutes. Plain English. No jargon.\n\n"
-                . "You can join now for $4 at cogsaustralia.org/join\n\n"
-                . "Foundation Day is 14 May 2026 at 5pm AEST -- the first community vote.\n\n"
-                . "Thomas\n"
-                . "COG\$ of Australia Foundation\n"
+            $plain = "Here is your CEO Power Cheat Sheet.\n\n"
+                . "One share puts the CEO in your pocket. This is how.\n\n"
+                . $cheatSheetUrl . "\n\n"
+                . "---\n\n"
+                . "The Cheat Sheet is the quick version. The full guide goes deeper --\n"
+                . "the three laws that give you standing, the sentence that opens the door,\n"
+                . "and why five thousand of us changes the calculation entirely.\n\n"
+                . "Full guide: " . $guideUrl . "\n\n"
+                . "---\n\n"
+                . "Foundation Day is 14 May 2026 at 5pm AEST.\n"
+                . "Membership is $4. Once only. Your seat at the table locked in for life.\n\n"
+                . $joinUrl . "\n\n"
+                . "Thomas Cunliffe\n"
+                . "Caretaker Trustee, COG\$ of Australia Foundation\n"
                 . "Drake Village NSW | Wahlubal Country, Bundjalung Nation\n\n"
                 . "---\n"
                 . "You received this because you asked for the free guide at cogsaustralia.org. Reply to unsubscribe.";
