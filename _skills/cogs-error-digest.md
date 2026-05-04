@@ -1,9 +1,22 @@
 # cogs-error-digest
 
-Monitors the application error log and alerts Thomas via Telegram when
+NOTE: This skill is DEFERRED until OpenClaw is stable.
+Email alerting to Thomas and admin is live via cron-error-digest.php
+(sessions 33). This skill should be activated once OpenClaw reliability
+is confirmed. At that point it adds Telegram push on top of the emails.
+
+---
+
+Monitors the application error log and pushes Telegram alerts when
 errors need attention. Companion to the email digest cron — Telegram
-gives the same information as a push notification so nothing waits until
-Thomas opens his email.
+gives the same information as a push notification so Thomas sees it
+before opening email.
+
+## Status
+
+INACTIVE — activate after OpenClaw stability is confirmed.
+Email alerting is already running via cron-error-digest.php.
+This skill adds the Telegram push layer only.
 
 ## Trigger
 
@@ -12,7 +25,7 @@ Two schedules:
 - `5 * * * *`  — Hourly check (fires at :05 past each hour, every hour)
 - `0 21 * * *` — Daily summary (07:00 AEST = 21:00 UTC), every day
 
-Active: always. No expiry.
+Active: only after explicit activation by Thomas.
 
 ## Model
 
@@ -64,9 +77,9 @@ Read `unack_errors` from the response.
 If `unack_errors = 0`: silent. Log OK to journal. Done.
 
 If `unack_errors > 0`:
-- Check journal for a ERRORS ACTIVE alert in the last 50 minutes.
+- Check journal for an ERRORS ACTIVE alert in the last 50 minutes.
 - If found AND unack_errors has not increased: silent (already notified).
-- If not found OR count has increased: send Telegram alert (see format below).
+- If not found OR count has increased: send Telegram alert.
 
 ### Daily summary (07:00 AEST)
 
@@ -80,9 +93,8 @@ Always send — even if zero errors. The daily message is a status report.
 ERROR ALERT [HH:MM AEST]
 N unacknowledged error(s) on cogsaustralia.org
 
-<for each error in recent_errors, max 5>
 [JS] client-error:seat/index.html
-Cannot read properties of null (22 chars truncated)
+Cannot read properties of null (truncated to 100 chars)
 2026-05-15 08:43
 
 [500] vault/member
@@ -90,22 +102,24 @@ Server error: ... (truncated to 100 chars)
 2026-05-15 08:45
 
 Action: Acknowledge at admin/errors.php
+(Email also sent to Thomas and admin@)
 ```
 
 Label rules:
-- http_status = 0 → label is [JS]
-- http_status >= 500 → label is [500] in red (bold)
-- http_status 4xx → label is [404] etc
+- http_status = 0 → [JS]
+- http_status >= 500 → [500]
+- http_status 4xx → [404] etc
 
 ### Daily summary — errors present
 
 ```
 DAILY ERROR REPORT [07:00 AEST Mon DD MMM]
-Last 24h: use unack_errors as proxy
 Unacknowledged: N
 
-Top errors: (list route and short message for each in recent_errors)
-Action: Review and acknowledge at admin/errors.php
+(list route + short message for each in recent_errors, max 5)
+
+Action: Review at admin/errors.php
+(Daily digest email also sent to Thomas and admin@)
 ```
 
 ### Daily summary — clean
@@ -134,21 +148,14 @@ If non-200 or invalid JSON: send connection error message. Then stop.
 
 Read `data.unack_errors` (integer) and `data.recent_errors` (array).
 
-### 4. Apply alert logic
+### 4. Apply alert logic per above.
 
-Follow the alert logic section above exactly.
-
-### 5. Send to Telegram
-
-Use the message format matching the trigger and condition.
+### 5. Send to Telegram.
 
 ### 6. Log to journal
 
-Hourly check:
-`[YYYY-MM-DD HH:MM AEST] ERROR-DIGEST/hourly: unack=N — ALERTED` or `OK`
-
-Daily:
-`[YYYY-MM-DD HH:MM AEST] ERROR-DIGEST/daily: unack=N — SENT`
+Hourly: `[YYYY-MM-DD HH:MM AEST] ERROR-DIGEST/hourly: unack=N — ALERTED` or `OK`
+Daily:  `[YYYY-MM-DD HH:MM AEST] ERROR-DIGEST/daily: unack=N — SENT`
 
 ## Error handling
 
@@ -157,12 +164,16 @@ Daily:
 - JSON parse failure: send `cogs-error-digest: Invalid response from admin-summary.`
 - Never crash silently — always log to journal before exiting.
 
+## Activation steps (when OpenClaw is ready)
+
+1. Log in to admin panel in a browser.
+2. Export the `cogs_admin_session` cookie value.
+3. `echo "cogs_admin_session=<value>" > ~/.cogs-secrets/admin-session.cookie && chmod 600 ~/.cogs-secrets/admin-session.cookie`
+4. Enable skill in OpenClaw.
+5. Confirm session 32 is merged (requires admin-summary AJAX endpoint).
+
 ## Dependency note
 
-Requires session 32 to be merged (admin-summary AJAX endpoint on monitor.php).
-Requires the admin session cookie to be generated and stored at
-`~/.cogs-secrets/admin-session.cookie`.
-
-To generate the cookie: log in to admin panel in a browser, export the
-`cogs_admin_session` cookie value, write it to the secrets file:
-`echo "cogs_admin_session=<value>" > ~/.cogs-secrets/admin-session.cookie && chmod 600 ~/.cogs-secrets/admin-session.cookie`
+Requires session 32 merged (admin-summary AJAX on monitor.php).
+Email alerting runs independently via cron-error-digest.php — this
+skill adds Telegram push only and can be activated at any time.

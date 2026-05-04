@@ -59,8 +59,9 @@ if (!mailerEnabled()) {
     exit(0);
 }
 
-$adminEmail = MAIL_ADMIN_EMAIL ?: 'admin@cogsaustralia.org';
-$alertEmail = 'admin@cogsaustralia.org';  // always CC this regardless of env config
+$adminEmail  = MAIL_ADMIN_EMAIL ?: 'admin@cogsaustralia.org';
+$alertEmail  = 'admin@cogsaustralia.org';  // always send to admin@ regardless of env config
+$thomasEmail = 'ThomasC@cogsaustralia.org'; // always send direct to Thomas
 
 try {
     $db = getDB();
@@ -105,7 +106,7 @@ try {
             "SELECT COUNT(*) FROM app_error_log WHERE acknowledged = 0"
         )->fetchColumn();
 
-        sendHourlyAlert($adminEmail, $alertEmail, $newCount, $totalUnack, $newErrors, $timestamp);
+        sendHourlyAlert($adminEmail, $alertEmail, $thomasEmail, $newCount, $totalUnack, $newErrors, $timestamp);
 
         $elapsed = round(microtime(true) - $startTime, 2);
         echo "[{$timestamp}] [cron-error-digest/hourly] Sent alert — {$newCount} new error(s) in last 65min ({$elapsed}s)\n";
@@ -149,7 +150,7 @@ try {
     )->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
     sendDailyDigest(
-        $adminEmail, $alertEmail,
+        $adminEmail, $alertEmail, $thomasEmail,
         $last24hTotal, $totalUnack,
         $breakdown, $recentUnack,
         $timestamp
@@ -169,7 +170,7 @@ try {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function sendHourlyAlert(
-    string $to, string $cc,
+    string $to, string $cc, string $thomas,
     int $newCount, int $totalUnack,
     array $errors,
     string $timestamp
@@ -223,10 +224,13 @@ function sendHourlyAlert(
     if ($cc !== $to) {
         try { smtpSendEmail($cc, $subject, $html, $text); } catch (Throwable $e) {}
     }
+    if ($thomas !== $to && $thomas !== $cc) {
+        try { smtpSendEmail($thomas, $subject, $html, $text); } catch (Throwable $e) {}
+    }
 }
 
 function sendDailyDigest(
-    string $to, string $cc,
+    string $to, string $cc, string $thomas,
     int $last24h, int $totalUnack,
     array $breakdown, array $recentUnack,
     string $timestamp
@@ -304,5 +308,8 @@ function sendDailyDigest(
     smtpSendEmail($to, $subject, $html, $text);
     if ($cc !== $to) {
         try { smtpSendEmail($cc, $subject, $html, $text); } catch (Throwable $e) {}
+    }
+    if ($thomas !== $to && $thomas !== $cc) {
+        try { smtpSendEmail($thomas, $subject, $html, $text); } catch (Throwable $e) {}
     }
 }

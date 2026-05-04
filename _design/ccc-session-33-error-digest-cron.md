@@ -12,8 +12,13 @@ from sessions 31/32. Two new cron jobs:
   2. Daily at 07:00 AEST — full digest regardless of error count. Clean bill
      of health email when zero errors. Error breakdown table when errors exist.
 
-Both jobs email admin@cogsaustralia.org (and MAIL_ADMIN_EMAIL from .env).
+Both jobs email three addresses directly:
+  - admin@cogsaustralia.org (admin inbox)
+  - ThomasC@cogsaustralia.org (Thomas direct)
+  - MAIL_ADMIN_EMAIL from .env (if different from the above)
+
 Uses the existing smtpSendEmail() — no new dependencies.
+OpenClaw Telegram skill is written but DEFERRED until OpenClaw is stable.
 
 ---
 
@@ -179,22 +184,22 @@ Only if ALL PASS above.
 git checkout -b review/session-33
 git add _app/api/cron-error-digest.php _skills/cogs-error-digest.md
 git diff --cached --stat
-git commit -m "feat(monitoring): error digest cron + OpenClaw skill
+git commit -m "feat(monitoring): error digest cron + deferred OpenClaw skill
 
 cron-error-digest.php:
 - --mode=hourly: emails admin on new unacknowledged errors every 65 minutes
 - --mode=daily: full 24h digest at 07:00 AEST, clean bill of health when zero
-- Emails admin@cogsaustralia.org + MAIL_ADMIN_EMAIL (deduplicated if same)
+- Emails admin@cogsaustralia.org + ThomasC@cogsaustralia.org + MAIL_ADMIN_EMAIL
+- Deduplication guards prevent duplicate sends to same address
 - HTML email with error class table + acknowledge link
 - Guards: CLI-only, mailerEnabled(), table existence check
 - Falls silent on empty hourly run (no errors = no email)
 - Cron lines in comment header for Thomas to add in cPanel
 
-cogs-error-digest.md (OpenClaw skill):
-- Hourly Telegram push when unack errors detected
-- Daily 07:00 AEST summary (clean or breakdown)
-- Deduplication: suppress if same count notified in last 50min
-- Depends on session-32 admin-summary AJAX endpoint"
+cogs-error-digest.md (OpenClaw skill — DEFERRED):
+- Telegram push layer, inactive until OpenClaw stable
+- Email alerting via cron-error-digest.php is the active channel
+- Skill contains activation steps for when OpenClaw is ready"
 git push origin review/session-33
 ```
 
@@ -204,5 +209,9 @@ git push origin review/session-33
 
 Add the two cron jobs in cPanel (exact lines printed in Step 3).
 Ensure `/home4/cogsaust/logs/` directory exists.
-Activate `cogs-error-digest` skill in OpenClaw after generating
-the admin session cookie (instructions in skill file).
+
+Email alerting is fully operational after the cron jobs are added.
+Thomas will receive alerts directly at ThomasC@cogsaustralia.org.
+
+OpenClaw Telegram push is deferred. The skill file (`_skills/cogs-error-digest.md`)
+contains activation instructions for when OpenClaw is stable.
