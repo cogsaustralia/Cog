@@ -14,7 +14,8 @@
  *   }
  *
  * Writes to app_error_log with http_status=0 to distinguish from server errors.
- * No authentication required. Rate-limiting is enforced client-side (3 per page load).
+ * No authentication required. Rate-limiting: 10 writes per IP per 60 seconds (server-side,
+ * via app_error_log count) + 3 per page load (client-side). Silent exit on breach.
  * Fails silently — never returns an error to the browser.
  * IP and UA are hashed before storage. No raw PII stored.
  */
@@ -75,7 +76,29 @@ try {
     $ipHash = $rawIp !== '' ? hash('sha256', $rawIp) : null;
     $uaHash = $rawUa !== '' ? hash('sha256', $rawUa) : null;
 
+    // Server-side rate limit: 10 writes per IP per 60 seconds.
+    // Uses app_error_log as the counter — no new table required.
+    // Silent exit on breach — never reveal throttling to an attacker.
+    // Legitimate browsers send at most 3 per page load; 10/60s is generous.
     $db = getDB();
+    if ($ipHash !== null) {
+        try {
+            $rl = $db->prepare(
+                "SELECT COUNT(*) FROM app_error_log
+                  WHERE ip_hash = ?
+                    AND http_status = 0
+                    AND created_at >= DATE_SUB(NOW(), INTERVAL 60 SECOND)"
+            );
+            $rl->execute([$ipHash]);
+            if ((int)($rl->fetchColumn() ?: 0) >= 10) {
+                exit; // silent — same 204 already sent above
+            }
+        } catch (Throwable $rlEx) {
+            // Rate limit check failed — fail open (allow write) rather than
+            // block legitimate errors. Log silently.
+            error_log('[client-error rate-limit] ' . $rlEx->getMessage());
+        }
+    }
     $db->prepare(
         "INSERT INTO app_error_log
            (route, http_status, error_message, area_key,
