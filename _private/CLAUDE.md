@@ -36,7 +36,9 @@ invocations.
 
 **Ground truth before any action.**
 Run: git status && git log --oneline -5
-At session start and before any edit. Never assume a file matches a
+Then read: _skills/PROJECT_STATE.md
+PROJECT_STATE.md defines the active campaign, active documents, and open dependencies.
+Read it at session start and before any edit. Never assume a file matches a
 previous session. Read it first.
 
 **Diff review gate.**
@@ -148,7 +150,14 @@ Only /_app/api/... is publicly reachable inside /_app.
   _private/
     CLAUDE.md              this file
     FOUNDATION.md          Foundation Statement + Eight Governing Principles
-    CAMPAIGN.md            Stage 4 campaign operations — active until 14 May 2026
+    CAMPAIGN.md            Stage 4 campaign operations -- active until 14 May 2026
+  _skills/               operational skill and reference files -- read by Claude (chat) and CCC
+    PROJECT_STATE.md       ground truth: campaign state, active docs, open dependencies
+    compliance-list.md     section 2 banned-framing list
+    cogs-compliance-check.md  OpenClaw compliance check skill
+    cogs-queue-monitor.md     OpenClaw lead captures monitor skill
+    cogs-fday-countdown.md    OpenClaw Foundation Day countdown skill
+  _archive/              superseded files -- reference only, never operational
 
 ---
 
@@ -359,6 +368,7 @@ Update when:
 7. The Mainspring/Vault distinction evolves
 8. Foundation Day or Expansion Day moves
 9. The repo gains a permanent new top-level folder
+10. A skill in _skills/ changes its trigger, endpoint, or alert thresholds
 
 Do not update when routes, tables, migrations, members, token classes,
 or hubs are added. Discover those dynamically with ls, SHOW TABLES, git log.
