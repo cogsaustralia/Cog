@@ -1,5 +1,5 @@
-# CCC Session 41: monitor.php — 4 targeted fixes
-# Branch: review/session-41-monitor-fixes
+# CCC Session 44: monitor.php — 4 targeted fixes
+# Branch: review/session-44-monitor-fixes
 # FILES: admin/monitor.php
 
 ## Purpose
@@ -386,7 +386,7 @@ PYEOF
 Only if ALL PASS and PHP lint clean.
 
 ```bash
-git checkout -b review/session-41-monitor-fixes
+git checkout -b review/session-44-monitor-fixes
 git add admin/monitor.php
 git diff --cached --stat
 git commit -m "fix(monitor): 4 targeted monitor.php fixes
@@ -404,7 +404,7 @@ git commit -m "fix(monitor): 4 targeted monitor.php fixes
 
 4. JS bindings: cfPaid/cfLandedKpi replaced with
    cfColdLanded/cfWarmLanded pointing to correct API fields"
-git push origin review/session-41-monitor-fixes
+git push origin review/session-44-monitor-fixes
 ```
 
 ## STOP — paste full verification output and diff stat for review before merge.
