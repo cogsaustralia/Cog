@@ -27,6 +27,9 @@ ServerSignature Off
   RedirectMatch 301 ^/business/?$ /businesses/
 
   # ── Serve real files and directories as-is ───────────────────────────────
+  # -- Short links -> go.php (add new slugs to go.php $LINKS array) --
+  RewriteRule ^(fb|yt|ig|tele|email|sms|qr)$ go.php?s=$1 [L,QSA]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
 
