@@ -432,6 +432,66 @@ $html = '<!DOCTYPE html>
       </table>
     </td></tr>
 
+
+    <!-- Member disclosure section -->
+    <tr><td style="padding:0 32px 0">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f8f4;border:1px solid #a8d5b8;border-radius:10px;margin:0 0 8px">
+        <tr><td style="padding:20px 22px">
+          <div style="font-size:15px;font-weight:bold;color:#2d6e45;margin-bottom:14px;font-family:Georgia,serif">What the Foundation holds right now</div>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            The Foundation holds 1,545 shares in Legacy Minerals Holdings (ASX: LGM), registered on the CHESS Share Register in the Foundation's name.
+          </p>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            Legacy Minerals holds around 9,000 square kilometres of mineral tenements across northern New South Wales, on Bundjalung Nation Country. Their current resource figures are in their 2025 JORC Mineral Resource Estimate at <a href="https://legacyminerals.com.au" style="color:#2d6e45">legacyminerals.com.au</a>.
+          </p>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            The current shareholding at 1,545 ordinary shares is a relatively small position. We are at the beginning.
+          </p>
+          <div style="font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;font-family:Georgia,serif">Why the shares matter</div>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            The gold, gas, and minerals beneath this Country are worth real money right now, whether anyone digs them up or not. Mining companies price that value every day on the stock market. Our shares give this community a legal right to sit inside that system. To show up at the AGM. To put questions to the CEO on the record. To vote on real decisions about what happens to the Country above those resources.
+          </p>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            That right exists because we hold the shares. As more people join, we buy more shares. More shares means a louder voice at the table.
+          </p>
+          <div style="font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;font-family:Georgia,serif">Where your $4 goes</div>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            Three places. Running the Foundation. Buying more shares in ASX-listed resource companies operating on Country &mdash; starting with planned positions in Santos and Origin Energy. And building hardware the Foundation owns outright, run by us and our First Nations partners, answerable to no one else.
+          </p>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            Every purchase goes on the public record at cogsaustralia.org. You can check it any time.
+          </p>
+          <div style="font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;font-family:Georgia,serif">What this is not</div>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            This is a membership. Not an investment product. Not a managed fund. You are not buying a financial return. You are buying a seat at the table and the right to use it.
+          </p>
+          <div style="font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;font-family:Georgia,serif">Dividends</div>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            If the companies we hold pay dividends, we get a share. Half goes back to members. Half goes toward buying more shares. No dividend is guaranteed. It depends on what the companies decide to pay, if anything.
+          </p>
+          <div style="font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;font-family:Georgia,serif">Your vote</div>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            One member, one vote. That does not change.
+          </p>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            For decisions about a specific place &mdash; a mine, a pipeline, a corridor &mdash; the people who live there and the Traditional Owners of that Country carry more weight on that specific vote. Not on everything. Just on the decisions that affect their backyard directly.
+          </p>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 12px;font-family:Arial,sans-serif">
+            That is what fair say looks like in practice. It is written into the Foundation's governing agreement and takes 75% of all members to change. Full details at <a href="https://cogsaustralia.org/jvpa" style="color:#2d6e45">cogsaustralia.org/jvpa</a> and <a href="https://cogsaustralia.org/faq" style="color:#2d6e45">cogsaustralia.org/faq</a>.
+          </p>
+          <div style="font-size:13px;font-weight:bold;color:#2d6e45;margin:14px 0 6px;font-family:Georgia,serif">14-day cooling off</div>
+          <p style="font-size:13px;color:#1e3a2a;line-height:1.75;margin:0 0 0;font-family:Arial,sans-serif">
+            Changed your mind? Email <a href="mailto:ThomasC@cogsaustralia.org" style="color:#2d6e45">ThomasC@cogsaustralia.org</a> with your name and the word <strong>refund</strong> within 14 days. No questions. Done. After 14 days your membership is permanent and your seat is locked in.
+          </p>
+          <p style="font-size:11px;color:#4a7a5a;margin:14px 0 0;font-family:Arial,sans-serif">
+            <em>A community membership invitation. Not financial advice.<br>
+            Share holdings: CHESS Share Register, May 2026.<br>
+            Resource figures: Legacy Minerals Holdings 2025 JORC MRE.</em>
+          </p>
+        </td></tr>
+      </table>
+    </td></tr>
+
     <!-- Founding phase notice -->
     <tr><td style="padding:20px 32px 28px">
       <p style="font-size:11px;color:#b0a090;line-height:1.7;margin:0;border-top:1px solid #e8e0d0;padding-top:16px;font-family:Arial,sans-serif">
