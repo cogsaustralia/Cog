@@ -1,7 +1,7 @@
 # PROJECT_STATE.md
 # COGs of Australia Foundation — Ground Truth Document Register
 # Read this first. It defines what is active, what is reference, and what is retired.
-# Last updated: 4 May 2026 · D-10
+# Last updated: 4 May 2026 · D-10 · 15:30 AEST
 
 ---
 
@@ -19,6 +19,9 @@ is NOT the campaign strategy. Do not read Fair Say Relay documents as the
 active operational plan.
 
 **Foundation Day:** Thursday 14 May 2026, 5:00pm AEST.
+
+**Platform state:** Admin monitor live and functional. All data is real campaign data.
+Build data cleared. Project folder cleared. OpenClaw symlinked to _skills/.
 
 ---
 
@@ -58,12 +61,15 @@ active operational plan.
 
 ## OPEN DEPENDENCIES
 
-| Item | Owner | Due |
-|---|---|---|
-| JLALC Acknowledgement of Country sign-off | Thomas | D-8 (6 May) |
-| `cogs-fday-countdown.md` milestone update from CAMPAIGN.md | Coordinator | This week |
-| `admin/api/lead_status.php` endpoint | CCC | Before D-5 |
-| Stripe upsell $1K/$10K tiers | CCC | D-2 (12 May) |
+| Item | Owner | Due | Status |
+|---|---|---|---|
+| JLALC Acknowledgement of Country sign-off | Thomas | D-8 (6 May) | Open |
+| `cogs-fday-countdown.md` milestone update from CAMPAIGN.md | Coordinator | This week | Open — needs CAMPAIGN.md milestones |
+| `admin/api/lead_status.php` endpoint | CCC | Before D-5 | Open — required for cogs-queue-monitor skill |
+| Stripe upsell $1K/$10K tiers | CCC | D-2 (12 May) | Open |
+| Project folder cleared | Thomas | Done | CLOSED |
+| OpenClaw symlinked to `_skills/` | Thomas | Done | CLOSED |
+| Sessions 28, 28b, 29, 30 merged | CCC | Done | CLOSED |
 
 ---
 
