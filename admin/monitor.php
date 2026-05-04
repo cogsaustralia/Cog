@@ -438,7 +438,7 @@ ops_require_admin();
                 const spp   = d.source_per_path||[];
                 const pages = [...new Set(spp.map(r=>r.path))].sort();
                 const srcs  = [...new Set(spp.map(r=>r.src))].sort();
-                const icons = {fb:'fb',yt:'yt',ig:'ig',tw:'tw',li:'li',email:'email',sms:'sms',direct:'direct',qr:'qr',other:'other'};
+                const icons = {fb:'Facebook',yt:'YouTube',ig:'Instagram',tw:'Twitter',li:'LinkedIn',email:'Email',sms:'SMS',direct:'Direct',qr:'QR code',other:'Other'};
 
                 document.getElementById('cfMatrixHead').innerHTML =
                     '<th>Page</th>' + srcs.map(s=>`<th style="text-align:right;">${icons[s]||s}</th>`).join('') + '<th style="text-align:right;">Total</th>';
@@ -510,7 +510,7 @@ ops_require_admin();
                 const withPhone = leads.filter(l => l.has_phone === 'y').length;
                 document.getElementById('leadsPhone').textContent = withPhone;
 
-                const srcIcons = {fb:'fb',yt:'yt',ig:'ig',organic:'organic',direct:'direct'};
+                const srcIcons = {fb:'Facebook',yt:'YouTube',ig:'Instagram',organic:'Organic',direct:'Direct'};
 
                 document.getElementById('leadsTableBody').innerHTML = leads.map((l, i) => {
                     const src = l.source || 'direct';
@@ -715,6 +715,103 @@ ops_require_admin();
         loadDashboard();
         setInterval(loadDashboard, 300000); // Refresh every 5 minutes
     </script>
+
+<!-- Campaign Links Panel -->
+<div style="margin-top:24px;margin-bottom:24px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <h2 style="font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin:0;">Campaign Links</h2>
+    <span style="font-size:0.75rem;color:#475569;margin-left:auto;">Copy and paste — do not edit parameters</span>
+  </div>
+  <div style="background:#0f1923;border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;padding:16px 20px;">
+
+    <div style="margin-bottom:18px;">
+      <div style="font-size:0.78rem;font-weight:700;color:#d4b25c;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Cold Path — /seat/ (lead magnet)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;width:120px;">Facebook A</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/seat/?ref=fb&amp;utm_campaign=seat-launch&amp;utm_content=fb-a</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Facebook B</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/seat/?ref=fb&amp;utm_campaign=seat-launch&amp;utm_content=fb-b</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">YouTube A</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/seat/?ref=yt&amp;utm_campaign=seat-launch&amp;utm_content=yt-a</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">YouTube B</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/seat/?ref=yt&amp;utm_campaign=seat-launch&amp;utm_content=yt-b</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Instagram A</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/seat/?ref=ig&amp;utm_campaign=seat-launch&amp;utm_content=ig-a</span></td>
+        </tr>
+        <tr>
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Instagram B</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/seat/?ref=ig&amp;utm_campaign=seat-launch&amp;utm_content=ig-b</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="margin-bottom:18px;">
+      <div style="font-size:0.78rem;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Warm Path — / (homepage, Fair Say organic posts)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;width:120px;">Facebook 1</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/?ref=fb&amp;utm_campaign=fairsay&amp;utm_content=post-1</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Facebook 2</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/?ref=fb&amp;utm_campaign=fairsay&amp;utm_content=post-2</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Facebook 3</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/?ref=fb&amp;utm_campaign=fairsay&amp;utm_content=post-3</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">YouTube 1</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/?ref=yt&amp;utm_campaign=fairsay&amp;utm_content=post-1</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">YouTube 2</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/?ref=yt&amp;utm_campaign=fairsay&amp;utm_content=post-2</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Instagram 1</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/?ref=ig&amp;utm_campaign=fairsay&amp;utm_content=post-1</span></td>
+        </tr>
+        <tr>
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Instagram 2</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/?ref=ig&amp;utm_campaign=fairsay&amp;utm_content=post-2</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div>
+      <div style="font-size:0.78rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Warm Path — /intro/ (intro flow)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;width:120px;">Facebook</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/intro/?ref=fb&amp;utm_campaign=fairsay&amp;utm_content=fb-a</span></td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">YouTube</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/intro/?ref=yt&amp;utm_campaign=fairsay&amp;utm_content=yt-a</span></td>
+        </tr>
+        <tr>
+          <td style="padding:5px 10px 5px 0;color:#64748b;white-space:nowrap;">Instagram</td>
+          <td style="padding:5px 0;font-family:monospace;font-size:0.76rem;"><span style="color:#94a3b8;user-select:all;">https://cogsaustralia.org/intro/?ref=ig&amp;utm_campaign=fairsay&amp;utm_content=ig-a</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);font-size:0.75rem;color:#334155;">
+      Source: <code style="color:#64748b;">_design/TRACKING-SPEC.md</code> &nbsp;|&nbsp;
+      Add new links there first, then update this panel.
+    </div>
+  </div>
+</div>
 
 <!-- Live Error Panel -->
 <div style="margin-top:24px;">
