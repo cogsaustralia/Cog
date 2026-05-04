@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>org.cogsaustralia.repo-sync-check</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/imac/cogs-repo-local/_app/monitoring/check-repo-sync.sh</string>
+    </array>
+
+    <!-- Run every 5 minutes -->
+    <key>StartInterval</key>
+    <integer>300</integer>
+
+    <!-- Start immediately on load -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Restart if it crashes -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- Log stdout and stderr -->
+    <key>StandardOutPath</key>
+    <string>/Users/imac/Library/Logs/cogs-repo-sync.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/imac/Library/Logs/cogs-repo-sync-error.log</string>
+
+    <!-- Run as the user, not root -->
+    <key>UserName</key>
+    <string>imac</string>
+
+    <!-- Require network -->
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

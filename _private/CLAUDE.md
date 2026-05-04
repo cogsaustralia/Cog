@@ -34,12 +34,29 @@ invocations.
 
 ## 2. Standing Rules — Non-Negotiable
 
-**Ground truth before any action.**
-Run: git status && git log --oneline -5
-Then read: _skills/PROJECT_STATE.md
+**Ground truth before any action — MANDATORY SYNC CHECK FIRST.**
+Run these in order. Abort the entire session if step 1 fails.
+
+Step 1 — Verify local is in sync with origin/main:
+  git fetch origin main --quiet
+  LOCAL=$(git rev-parse HEAD)
+  REMOTE=$(git rev-parse origin/main)
+  if [ "$LOCAL" != "$REMOTE" ]; then
+    echo "ABORT: local repo is behind origin/main. Run: git pull --rebase origin main first."
+    exit 1
+  fi
+  echo "SYNC OK: $(git log --oneline -1)"
+
+Step 2 — Confirm state:
+  git status && git log --oneline -5
+
+Step 3 — Read ground truth:
+  _skills/PROJECT_STATE.md
 PROJECT_STATE.md defines the active campaign, active documents, and open dependencies.
 Read it at session start and before any edit. Never assume a file matches a
 previous session. Read it first.
+
+If local is behind origin/main: stop. Do not proceed. Tell Thomas to pull first.
 
 **Diff review gate.**
 Run: git diff --cached <file> | cat
