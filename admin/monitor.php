@@ -96,7 +96,7 @@ ops_require_admin();
         .recommendation-no { background: #1e293b; border-color: #64748b; }
         .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 0.9em; }
 
-        /* ── JVPA Funnel panel ─────────────────────────────── */
+        /* JVPA Funnel panel */
         .funnel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
         .funnel-stat { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 14px; text-align: center; }
         .funnel-stat .fs-val { font-size: 1.8em; font-weight: 700; }
@@ -114,14 +114,14 @@ ops_require_admin();
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 COGS Monitoring Dashboard</h1>
+            <h1>COGS Monitoring Dashboard</h1>
             <p>Real-time system health and performance metrics</p>
         </div>
 
-        <\!-- ── CAMPAIGN LEADS PANEL ─────────────────────────────────── -->
+        <!-- CAMPAIGN LEADS PANEL -->
         <div class="card" style="margin-bottom:24px;border:2px solid #b8860b;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                <h2 style="margin:0;">🧲 Lead Captures — /seat/</h2>
+                <h2 style="margin:0;">Lead Captures – /seat/</h2>
                 <div style="text-align:right;">
                     <span style="font-size:2rem;font-weight:700;color:#f0d18a;" id="leadsTotal">—</span>
                     <div style="font-size:0.75em;color:#94a3b8;">total leads</div>
@@ -169,7 +169,7 @@ ops_require_admin();
 
         <div class="grid">
             <div class="card">
-                <h2>📊 Current Metrics</h2>
+                <h2>Current Metrics</h2>
                 <div class="metric">
                     <span class="metric-label">Requests/sec</span>
                     <span class="metric-value" id="reqPerSec">—</span>
@@ -189,7 +189,7 @@ ops_require_admin();
             </div>
 
             <div class="card">
-                <h2>📈 Trend Analysis</h2>
+                <h2>Trend Analysis</h2>
                 <div class="metric">
                     <span class="metric-label">Peak Traffic</span>
                     <span class="metric-value" id="peakTraffic">—</span>
@@ -210,7 +210,7 @@ ops_require_admin();
         </div>
 
         <div class="card">
-            <h2>🚨 Recent Alerts (Last 7 Days)</h2>
+            <h2>Recent Alerts (Last 7 Days)</h2>
             <div class="alerts-list" id="alertsList">
                 <p style="color: #64748b; text-align: center;">Loading alerts...</p>
             </div>
@@ -218,7 +218,7 @@ ops_require_admin();
 
 
         <div class="card" style="margin-bottom:20px;">
-            <h2>📋 JVPA Download Funnel <span style="font-size:0.7em;color:#64748b;font-weight:400;">(last 7 days)</span></h2>
+            <h2>JVPA Download Funnel <span style="font-size:0.7em;color:#64748b;font-weight:400;">(last 7 days)</span></h2>
             <div id="funnelLoading" style="color:#64748b;font-size:0.85em;padding:16px 0;">Loading funnel data…</div>
             <div id="funnelContent" style="display:none;">
                 <div class="funnel-grid">
@@ -257,7 +257,7 @@ ops_require_admin();
         </div>
 
         <div class="card" style="margin-bottom:20px;">
-            <h2>🎯 Conversion Funnels <span style="font-size:0.7em;color:#64748b;font-weight:400;">(last 7 days)</span></h2>
+            <h2>Conversion Funnels <span style="font-size:0.7em;color:#64748b;font-weight:400;">(last 7 days)</span></h2>
             <div id="cfLoading" style="color:#64748b;font-size:0.85em;padding:16px 0;">Loading conversion funnel…</div>
             <div id="cfContent" style="display:none;">
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
@@ -276,11 +276,11 @@ ops_require_admin();
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
                     <div>
-                        <h3 style="font-size:0.78em;color:#f0d18a;font-weight:700;margin:0 0 10px 0;text-transform:uppercase;letter-spacing:0.07em;">🧲 Cold path — /seat/</h3>
+                        <h3 style="font-size:0.78em;color:#f0d18a;font-weight:700;margin:0 0 10px 0;text-transform:uppercase;letter-spacing:0.07em;">Cold path – /seat/</h3>
                         <div id="cfColdStages" style="display:flex;flex-direction:column;gap:5px;"></div>
                     </div>
                     <div>
-                        <h3 style="font-size:0.78em;color:#7dd3fc;font-weight:700;margin:0 0 10px 0;text-transform:uppercase;letter-spacing:0.07em;">🤝 Warm path — invited</h3>
+                        <h3 style="font-size:0.78em;color:#7dd3fc;font-weight:700;margin:0 0 10px 0;text-transform:uppercase;letter-spacing:0.07em;">Warm path – invited</h3>
                         <div id="cfWarmStages" style="display:flex;flex-direction:column;gap:5px;"></div>
                     </div>
                 </div>
@@ -298,7 +298,7 @@ ops_require_admin();
                 </table>
             </div>
             <div id="cfNotReady" style="display:none;" class="not-ready-note">
-                ⚠️ DB tables not ready — run <code>page_visits_migration_v1.sql</code> in phpMyAdmin first.
+                DB tables not ready – run <code>page_visits_migration_v1.sql</code> in phpMyAdmin first.
             </div>
         </div>
 
@@ -460,7 +460,7 @@ ops_require_admin();
                 const res = await fetch('/_app/api/index.php?route=admin/visit-funnel', {
                     credentials: 'include', cache: 'no-store'
                 });
-                if (\!res.ok) return;
+                if (!res.ok) return;
                 const json = await res.json();
                 const d = json.data || json;
                 const leads = d.recent_leads || [];
@@ -483,7 +483,7 @@ ops_require_admin();
                 ).length;
                 document.getElementById('leadsToday').textContent = todayCount;
 
-                const converted = leads.filter(l => l.converted \!== 'not yet').length;
+                const converted = leads.filter(l => l.converted !== 'not yet').length;
                 document.getElementById('leadsConverted').textContent = converted;
 
                 const withPhone = leads.filter(l => l.has_phone === 'y').length;
