@@ -915,6 +915,21 @@ body[data-density="compact"] h1,body[data-density="compact"] h2{letter-spacing:-
 
 <!-- ══ VAULT DASHBOARD ══ -->
 <div id="vault" style="display:none;min-height:100vh">
+
+<\!-- ── First-run welcome card ── -->
+<div id="welcome-card" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(10,8,4,.82);display:flex;align-items:center;justify-content:center;padding:20px" aria-modal="true" role="dialog" aria-labelledby="wc-heading">
+  <div style="background:var(--panel,#1a1509);border:1px solid var(--gold-rim,rgba(240,209,138,.18));border-radius:14px;max-width:380px;width:100%;padding:32px 28px;text-align:center">
+    <div style="font-size:1.5rem;font-weight:700;color:var(--gold-1,#f0d18a);margin-bottom:8px;font-family:var(--serif,'Playfair Display',Georgia,serif)" id="wc-heading">Welcome to COG$ of Australia.</div>
+    <div style="font-size:1rem;color:var(--text2,rgba(255,248,232,.88));margin-bottom:20px;font-weight:500">You are now a founding member.</div>
+    <div style="font-size:.88rem;color:var(--text2,rgba(255,248,232,.88));line-height:1.7;margin-bottom:28px">
+      <p style="margin:0 0 8px">Foundation Day is 14 May 2026. Your first vote is waiting.</p>
+      <p style="margin:0">Have a look around. Everything here is yours.</p>
+    </div>
+    <button onclick="dismissWelcomeCard()" style="background:var(--gold-2,#c9973d);color:#0a0804;border:none;border-radius:8px;padding:12px 32px;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;font-family:var(--sans,'DM Sans',system-ui,sans-serif)">Got it</button>
+  </div>
+</div>
+<\!-- ── End first-run welcome card ── -->
+
 <div class="vault-shell">
 
   <!-- ── Desktop sidebar rail (hidden on mobile via CSS media query) ── -->
@@ -6520,6 +6535,7 @@ async function pgSubmit(){
     hideParticipationGate();
     document.getElementById('vault').style.display = 'block';
     updateTourPill();
+    showWelcomeCard();
     // Auto-open payment modal if $4 is still outstanding after participation completes
     if(window._vaultData && (window._vaultData.payment_status||'pending').toLowerCase() !== 'paid'){
       setTimeout(function(){ if(typeof window.openPayModal === 'function') window.openPayModal(); }, 600);
@@ -6547,6 +6563,22 @@ async function pgSubmit(){
     alert(e.message || 'Could not save. Please try again.');
   }
 }
+
+
+/* ── First-run welcome card ── */
+function showWelcomeCard() {
+  if (localStorage.getItem('cogs_vault_welcomed')) return;
+  var card = document.getElementById('welcome-card');
+  if (card) card.style.display = 'flex';
+}
+
+function dismissWelcomeCard() {
+  localStorage.setItem('cogs_vault_welcomed', '1');
+  var card = document.getElementById('welcome-card');
+  if (card) card.style.display = 'none';
+  startWalletTour();
+}
+/* ── End first-run welcome card ── */
 
 /* VAULT TOUR — global scope */
 var _tourStep = 1, _tourTotal = 6;
