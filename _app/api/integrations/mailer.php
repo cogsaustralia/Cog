@@ -1514,7 +1514,6 @@ return [$html, $plain];
 
         'lead_magnet_confirmation' => (function() use ($p) {
             $guideUrl  = $p['guide_url']  ?? 'https://cogsaustralia.org/seat/inside/';
-            $substack  = 'https://open.substack.com/pub/cogsaustralia/p/the-ceo-power-cheat-sheet?r=8bqc6h&utm_campaign=post&utm_medium=web';
             $site      = 'https://cogsaustralia.org';
 
             $html = '<!DOCTYPE html><html><body style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1a1a1a;">'
@@ -1524,7 +1523,6 @@ return [$html, $plain];
                 . '<p>It explains four things. How one share gets you into the room. Why ESG laws put a dollar value on your voice. What words open the door with a mining company. And why COG$ multiplies all of it.</p>'
                 . '<p>Five minutes. Plain English. No jargon.</p>'
                 . '<p>You can join now for $4 at <a href="https://cogsaustralia.org/join">cogsaustralia.org/join</a>. Foundation Day is <strong>14 May 2026</strong> at 5pm AEST &mdash; that is when the first community vote happens.</p>'
-                . '<p>In the meantime, the CEO Power Cheat Sheet is on Substack: <a href="' . htmlspecialchars($substack) . '">read it here</a>.</p>'
                 . '<p style="margin-top:32px;">Thomas<br>COG$ of Australia Foundation<br>Drake Village NSW &nbsp;|&nbsp; Wahlubal Country, Bundjalung Nation</p>'
                 . '<p style="font-size:11px;color:#888;margin-top:24px;">You received this because you asked for the free guide at cogsaustralia.org. Reply to this email to unsubscribe.</p>'
                 . '</body></html>';
@@ -1536,7 +1534,6 @@ return [$html, $plain];
                 . "Five minutes. Plain English. No jargon.\n\n"
                 . "You can join now for $4 at cogsaustralia.org/join\n\n"
                 . "Foundation Day is 14 May 2026 at 5pm AEST -- the first community vote.\n\n"
-                . "CEO Power Cheat Sheet on Substack:\n" . $substack . "\n\n"
                 . "Thomas\n"
                 . "COG\$ of Australia Foundation\n"
                 . "Drake Village NSW | Wahlubal Country, Bundjalung Nation\n\n"
