@@ -233,7 +233,7 @@ function renderEmailTemplate(string $templateKey, array $p): array {
 
 
     return match ($templateKey) {
-        'snft_user_confirmation' => (function() use ($p, $setupUrl, $foundingNotice, $site, $activationToken) {
+        'snft_user_confirmation' => (function() use ($p, $setupUrl, $foundingNotice, $site, $activationToken, $partnersUrl) {
 // ── NEW snft_user_confirmation template ──────────────────────────────────────
 // Table-based HTML, light background, warm copy, get-involved section
 // All styles inline for Gmail/Outlook compatibility
@@ -1018,7 +1018,7 @@ return [$html, $plain];
             return [$html, $plain];
         })(),
 
-        'payment_intent_member' => (function() use ($p, $site) {
+        'payment_intent_member' => (function() use ($p, $site, $partnersUrl) {
             $name = htmlspecialchars((string)($p['full_name'] ?? 'Member'));
             $firstName = htmlspecialchars(explode(' ', trim((string)($p['full_name'] ?? 'there')))[0]);
             $ref = htmlspecialchars((string)($p['reference'] ?? ''));
@@ -1179,7 +1179,7 @@ return [$html, $plain];
             return [$html, $plain];
         })(),
 
-        'hub_weekly_digest' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $h3Style, $pStyle, $boxStyle, $btnStyle, $urlStyle, $noticeStyle, $site): array {
+        'hub_weekly_digest' => (function() use ($p, $wrapOpen, $headerBar, $body, $footerBar, $wrapClose, $h2Style, $h3Style, $pStyle, $boxStyle, $btnStyle, $urlStyle, $noticeStyle, $site, $partnersUrl): array {
             $firstName    = htmlspecialchars((string)($p['member_first_name'] ?? 'Member'));
             $weekEnding   = htmlspecialchars((string)($p['week_ending']       ?? date('Y-m-d')));
             $mainspringUrl = $partnersUrl;
