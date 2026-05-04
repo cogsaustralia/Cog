@@ -646,7 +646,7 @@ function adminVisitFunnel(): void {
     foreach ($recentLeads as &$lead) {
         $parts = explode('@', (string)$lead['email']);
         $lead['email_masked'] = substr($parts[0], 0, 3) . '***@' . ($parts[1] ?? '');
-        $lead['has_phone'] = \!empty($lead['phone']) ? '✓' : '—';
+        $lead['has_phone'] = !empty($lead['phone']) ? 'y' : 'n';
         $lead['converted'] = \!empty($lead['converted_to_member_id']) ? '✓ joined' : 'not yet';
         unset($lead['phone']); // never expose phone to JS
     }

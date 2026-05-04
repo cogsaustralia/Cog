@@ -486,10 +486,10 @@ ops_require_admin();
                 const converted = leads.filter(l => l.converted \!== 'not yet').length;
                 document.getElementById('leadsConverted').textContent = converted;
 
-                const withPhone = leads.filter(l => l.has_phone === '✓').length;
+                const withPhone = leads.filter(l => l.has_phone === 'y').length;
                 document.getElementById('leadsPhone').textContent = withPhone;
 
-                const srcIcons = {fb:'🟦',yt:'🔴',ig:'📸',organic:'🌿',direct:'🔗'};
+                const srcIcons = {fb:'fb',yt:'yt',ig:'ig',organic:'organic',direct:'direct'};
 
                 document.getElementById('leadsTableBody').innerHTML = leads.map((l, i) => {
                     const src = l.source || 'direct';
@@ -506,7 +506,7 @@ ops_require_admin();
                     return `<tr>
                         <td style="color:#64748b;">${i + 1}</td>
                         <td style="font-family:monospace;font-size:0.85em;">${l.email_masked}</td>
-                        <td style="text-align:center;">${l.has_phone}</td>
+                        <td style="text-align:center;color:${l.has_phone==='y'?'#52b87a':'#475569'}">${l.has_phone==='y'?'yes':'no'}</td>
                         <td style="font-size:0.85em;">${srcLabel}</td>
                         <td style="${joinedStyle}">${l.converted}</td>
                         <td style="color:#94a3b8;font-size:0.82em;">${dtStr}</td>
