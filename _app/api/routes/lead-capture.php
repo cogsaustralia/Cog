@@ -87,6 +87,42 @@ try {
                 'guide_url'=> 'https://cogsaustralia.org/seat/inside/',
             ]
         );
+
+        // Instant alert to Thomas — fires only on genuine new leads.
+        // Uses smtpSendEmail directly (not the queue) so Thomas is
+        // notified in the same request, not delayed by cron.
+        try {
+            if (mailerEnabled()) {
+                $hasPhone  = $phone !== '' ? 'Yes' : 'No';
+                $srcLabel  = $source !== '' ? $source : 'direct';
+                $pageLabel = $page   !== '' ? $page   : 'unknown';
+                $alertTo   = 'ThomasC@cogsaustralia.org';
+                $subject   = '[COGS] New lead #' . $leadId . ' — ' . $srcLabel;
+                $html = '<p><strong>New lead captured on cogsaustralia.org/seat/</strong></p>'
+                    . '<table style="font-family:Arial,sans-serif;font-size:0.9em;border-collapse:collapse;">'
+                    . '<tr><td style="padding:4px 12px 4px 0;color:#64748b;">Lead ID</td><td><strong>#' . $leadId . '</strong></td></tr>'
+                    . '<tr><td style="padding:4px 12px 4px 0;color:#64748b;">Email</td><td>' . htmlspecialchars(substr($email, 0, 3)) . '***@' . htmlspecialchars(explode('@', $email)[1] ?? '') . '</td></tr>'
+                    . '<tr><td style="padding:4px 12px 4px 0;color:#64748b;">Phone</td><td>' . $hasPhone . '</td></tr>'
+                    . '<tr><td style="padding:4px 12px 4px 0;color:#64748b;">Source</td><td>' . htmlspecialchars($srcLabel) . '</td></tr>'
+                    . '<tr><td style="padding:4px 12px 4px 0;color:#64748b;">Page</td><td>' . htmlspecialchars($pageLabel) . '</td></tr>'
+                    . '<tr><td style="padding:4px 12px 4px 0;color:#64748b;">Time</td><td>' . date('Y-m-d H:i:s T') . '</td></tr>'
+                    . '</table>'
+                    . '<p style="margin-top:16px;"><a href="https://cogsaustralia.org/admin/monitor.php" style="background:#1e293b;color:#fff;padding:8px 16px;border-radius:4px;text-decoration:none;font-weight:bold;">View all leads</a></p>';
+                $text = "New lead captured on cogsaustralia.org/seat/\n"
+                    . "Lead ID: #" . $leadId . "\n"
+                    . "Email: " . substr($email, 0, 3) . "***@" . (explode('@', $email)[1] ?? '') . "\n"
+                    . "Phone: " . $hasPhone . "\n"
+                    . "Source: " . $srcLabel . "\n"
+                    . "Page: " . $pageLabel . "\n"
+                    . "Time: " . date('Y-m-d H:i:s T') . "\n"
+                    . "View leads: https://cogsaustralia.org/admin/monitor.php";
+                smtpSendEmail($alertTo, $subject, $html, $text);
+            }
+        } catch (Throwable $alertEx) {
+            // Silent fail — lead is already saved. Alert failure must never
+            // affect the lead capture response or the visitor experience.
+            error_log('[lead-capture alert] ' . $alertEx->getMessage());
+        }
     }
 
     echo json_encode(['success' => true, 'data' => ['captured' => true]]);
