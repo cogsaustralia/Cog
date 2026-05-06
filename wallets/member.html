@@ -6921,7 +6921,7 @@ function resetNotifyBtns(modal) {
   modal.querySelectorAll('.pay-notify-btn').forEach(function(btn) {
     btn.disabled = false;
     btn.classList.remove('sent');
-    btn.textContent = 'I’ve sent this payment →';
+    btn.textContent = 'I\'ve sent this payment →';
   });
 }
 
@@ -6996,7 +6996,7 @@ async function notifyPaymentSent(btn, context) {
       await window.api('vault/notify-bank-payment', { method: 'POST', body: JSON.stringify({}) });
     }
     // Success state
-    var sentMsg = '✓ Noted — we’ll confirm on receipt and update your vault';
+    var sentMsg = '✓ Noted — we\'ll confirm on receipt and update your vault';
     btn.textContent = sentMsg;
     btn.classList.add('sent');
     if (sib) { sib.textContent = sentMsg; sib.classList.add('sent'); }
@@ -7007,7 +7007,7 @@ async function notifyPaymentSent(btn, context) {
     }, 2200);
   } catch(e) {
     btn.disabled = false;
-    btn.textContent = 'I’ve sent this payment →';
+    btn.textContent = 'I\'ve sent this payment →';
     if (sib) { sib.disabled = false; }
     alert((e && e.message) || 'Could not record notification. Please try again.');
   }
